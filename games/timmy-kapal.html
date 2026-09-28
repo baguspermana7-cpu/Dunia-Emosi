@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B1A3A">
+<link rel="icon" href="../assets/db/lib/game/compass.webp">
+<title>Timmy &amp; Kapal Legendaris</title>
+<!--
+  G30 "Timmy & Kapal Legendaris" — story adventure across 14 legendary ships (PRD v2:
+  documentation and standarization/TIMMY_LEGENDARY_SHIPS_PRD_v2.md). Standalone page like
+  G27–G29; the map only launches it. Offline PWA, per-avatar save, no API calls.
+  Modules: tk-story (panels), tk-grid (command programming), tk-steer (ship control),
+  tk-quiz (learning engine), data/tk-worlds (content), data/tk-art (art slots).
+-->
+<link rel="stylesheet" href="timmy-kapal.css?v=v63.7-20260928a">
+</head>
+<body data-scr="scr-home">
+
+<!-- HOME (mockup: home landscape/portrait) -->
+<section class="scr active" id="scr-home">
+  <div class="px" id="home-px">
+    <div class="px-l" data-d="0.08" id="home-sky"></div>
+    <div class="px-l gulls" data-d="0.2"><i></i><i></i><i></i></div>
+    <div class="px-l" data-d="0.6"><img class="home-ship" id="home-ship" alt=""></div>
+    <div class="px-l waves" data-d="0.4"></div>
+    <div class="px-l" data-d="1.2"><img class="home-timmy" id="home-timmy" alt="Timmy"></div>
+  </div>
+  <div class="home-ui">
+    <div class="hud">
+      <button class="ibtn" id="btn-map" type="button" aria-label="Kembali ke peta dunia"><i class="ico" data-ico="worldmap"></i></button>
+      <span class="sp"></span>
+      <div class="pchip glass"><img id="pchip-av" alt=""><div><b class="fk">Timmy</b><small id="pchip-lv">Level 1</small><span class="xp"><i id="pchip-xp"></i></span></div></div>
+      <button class="ibtn" id="btn-settings" type="button" aria-label="Pengaturan"><i class="ico" data-ico="settings"></i></button>
+      <button class="ibtn" id="btn-parent" type="button" aria-label="Orang tua"><i class="ico" data-ico="parent"></i></button>
+      <button class="ibtn snd" id="btn-sound" type="button" aria-label="Suara: nyala" aria-pressed="true"><i class="ico" data-ico="sound"></i></button>
+    </div>
+    <img class="logo-img hide" id="logo-img" alt="Timmy &amp; Kapal Legendaris">
+    <div class="logo">
+      <i class="wheel ico" data-ico="wheel" aria-hidden="true"></i>
+      <div class="logo-t fk">Timmy</div>
+      <div class="logo-rib fk">&amp; KAPAL LEGENDARIS</div>
+      <div class="logo-sub">Jelajahi · Belajar · Temukan · Jadi Lebih Baik</div>
+    </div>
+    <div class="home-main">
+      <button class="btn b-gold big fk" id="btn-start" type="button"><i class="ico" data-ico="start"></i><span id="start-t">Mulai Petualangan</span></button>
+      <div class="tiles">
+        <button class="tile" id="btn-ships" type="button"><img src="../assets/db/lib/vehicles/sailboat.webp" alt=""><span>Pilih Kapal</span></button>
+        <button class="tile" id="btn-room" type="button"><img src="../assets/db/lib/game/treasure-chest.webp" alt=""><span>Kamarku</span></button>
+        <button class="tile" id="btn-ach" type="button"><img src="../assets/db/lib/game/trophy-gold.webp" alt=""><span>Pencapaian</span></button>
+        <button class="tile" id="btn-gallery" type="button"><img src="../assets/db/lib/school/books.webp" alt=""><span>Galeri</span></button>
+      </div>
+    </div>
+    <div class="dock glass">
+      <div class="dock-h"><b class="fk">Kapal Legendaris</b><button class="link" id="btn-all" type="button">Lihat Semua</button></div>
+      <div class="carousel" id="carousel"></div>
+      <div class="cats" id="cats"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHIP SELECT -->
+<section class="scr" id="scr-ships">
+  <div class="paper"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="home" aria-label="Kembali"><i class="ico back" data-ico="back"></i></button>
+    <div class="plate"><b class="fk">Pilih Kapalmu</b><small>Tiap kapal punya kisah menakjubkan. Mau ke mana?</small></div><span class="starpill fk" id="ships-stars"></span></div>
+  <div class="chips" id="ship-filter"></div>
+  <div class="ships-body"><div class="list" id="ship-list"></div><aside class="detail glass" id="ship-detail"></aside></div>
+  <p class="paper-note">Tiap kapal punya kisah, tantangan seru, dan hal baru untuk dipelajari!</p>
+</section>
+
+<!-- WORLD MAP (mockup ui-06): ships as numbered islands -->
+<section class="scr" id="scr-world">
+  <div class="sea-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="home" aria-label="Kembali"><i class="ico back" data-ico="back"></i></button>
+    <div class="plate"><b class="fk">Peta Dunia</b><small>Berlayar melintasi waktu, jelajahi kapal legendaris!</small></div><span class="starpill fk" id="world-stars"></span></div>
+  <div class="islands" id="islands"></div>
+  <button class="btn b-gold fk cont" id="btn-continue" type="button">Lanjutkan Perjalanan</button>
+  <nav class="bnav" id="bnav"></nav>
+</section>
+
+<!-- LEVEL MAP -->
+<section class="scr" id="scr-map">
+  <div class="map-bg" id="map-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="ships" aria-label="Kembali"><i class="ico back" data-ico="back"></i></button>
+    <div class="map-title"><h1 class="fk" id="map-name"></h1><small id="map-value"></small></div>
+    <span class="starpill fk" id="map-stars"></span><button class="ibtn" id="btn-story" type="button" aria-label="Kartu sejarah"><i class="ico" data-ico="book"></i></button></div>
+  <div class="route" id="route"></div>
+  <div class="captain glass" id="captain"></div>
+</section>
+
+<!-- PLAY -->
+<section class="scr" id="scr-play">
+  <div class="play-host" id="play-host"></div>
+  <aside class="chapter glass" id="chapter"></aside>
+  <div class="play-hud">
+    <button class="ibtn" id="btn-pause" type="button" aria-label="Jeda"><i class="ico" data-ico="pause"></i></button>
+    <span class="lvchip glass fk" id="lvchip"></span>
+    <div class="goalbar" id="goalbar" role="status"></div>
+    <span class="sp"></span>
+    <span class="journal glass" id="journal"><i class="ico" data-ico="journal" aria-label="Jurnal"></i><b id="journal-n">0</b></span>
+  </div>
+</section>
+
+<!-- REWARD -->
+<section class="scr" id="scr-reward">
+  <div class="reward-bg"></div>
+  <div class="reward glass">
+    <div class="rw-stars" id="rw-stars"></div>
+    <h2 class="fk" id="rw-title">Level Selesai!</h2>
+    <ul class="rw-list" id="rw-list"></ul>
+    <div class="rw-earn" id="rw-earn"></div>
+    <div class="rw-fact" id="rw-fact"></div>
+    <div class="rw-frag" id="rw-frag"></div>
+    <div class="rw-btns"><button class="btn b-blue fk" id="rw-again" type="button">Ulangi</button><button class="btn b-gold fk" id="rw-next" type="button">Lanjut</button><button class="btn b-soft fk" id="rw-map" type="button">Peta</button></div>
+    <div class="rw-strip" id="rw-strip"></div>
+  </div>
+</section>
+
+<!-- TIMMY'S ROOM (collection hub) -->
+<section class="scr" id="scr-room">
+  <div class="room-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="home" aria-label="Kembali"><i class="ico back" data-ico="back"></i></button><h1 class="fk">Kamar Timmy</h1></div>
+  <div class="room">
+    <div class="room-tabs" id="room-tabs"></div>
+    <div class="room-body" id="room-body"></div>
+  </div>
+</section>
+
+<div class="overlay" id="pause"><div class="panel glass"><h2 class="fk">Jeda</h2>
+  <button class="btn b-gold fk" id="p-resume" type="button">Lanjut Main</button>
+  <button class="btn b-soft fk" id="p-map" type="button">Peta Level</button>
+  <button class="btn b-soft fk" id="p-home" type="button">Beranda</button></div></div>
+<section class="scr" id="scr-settings">
+  <div class="sea-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="home" aria-label="Kembali"><i class="ico back" data-ico="back"></i></button><div class="plate"><b class="fk">Pengaturan</b><small>Atur petualanganmu!</small></div></div>
+  <div class="settings" id="settings"></div>
+</section>
+<div class="overlay" id="parent"></div>
+<div class="overlay" id="cards"></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="fly-layer" id="fly"></div>
+
+<script src="data/asset-index.js?v=v63.7-20260928a"></script>
+<script src="data/save-engine.js?v=v63.7-20260928a"></script>
+<script src="data/sfx-engine.js?v=v63.7-20260928a"></script>
+<script src="vfx-engine.js?v=v63.7-20260928a"></script>
+<script src="data/tk-art.js?v=v63.7-20260928a"></script>
+<script src="data/tk-worlds.js?v=v63.7-20260928a"></script>
+<script src="data/tk-questions.js?v=v63.7-20260928a"></script>
+<script src="tk-story.js?v=v63.7-20260928a"></script>
+<script src="tk-grid.js?v=v63.7-20260928a"></script>
+<script src="tk-steer.js?v=v63.7-20260928a"></script>
+<script src="tk-quiz.js?v=v63.7-20260928a"></script>
+<script src="timmy-kapal.js?v=v63.7-20260928a"></script>
+<script src="sw-reload.js?v=v63.7-20260928a"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TK Quiz harness</title>
+<link rel="icon" href="data:,">
+<!-- Kept harness for tools/qa-tk-questions.mjs: mounts TKQuiz sets by URL (?set=math5|ladder|arab|arrange|sort|campur)
+     over a fake 70 px host HUD, and records onDone results in window.__tkDone. -->
+<style>
+@font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}
+html,body{margin:0;height:100%;background:#0E3A66}
+body{background:linear-gradient(#7FC4F0 0%,#BFE3F7 38%,#2E7FBF 39%,#11497E 100%)}
+#hud{position:fixed;left:0;right:0;top:0;height:70px;background:rgba(10,30,70,.75);color:#fff;font:18px system-ui;display:flex;align-items:center;padding:0 16px;z-index:5}
+#host{position:fixed;inset:0}
+</style>
+</head>
+<body>
+<div id="host"></div>
+<div id="hud">HUD host (70 px)</div>
+<script src="../games/data/asset-index.js"></script>
+<script src="../games/data/sfx-engine.js"></script>
+<script src="../games/data/tk-questions.js"></script>
+<script src="../games/tk-quiz.js"></script>
+<script>
+(function () {
+  var P = new URLSearchParams(location.search), name = P.get('set') || 'math5'
+  var host = document.getElementById('host'), r = TKQuiz.rng(+(P.get('seed') || 7))
+  var opts = { topInset: 70, reducedMotion: P.get('rm') === '1', sound: false, mastery: +(P.get('m') || 0),
+    onDone: function (res) { window.__tkDone = res } }
+  var byId = function (id) { var q = TKQuestions.items.filter(function (o) { return o.id === id })[0]; return Object.assign({}, q, { choices: q.choices.slice() }) }
+  var sets = {
+    // 5 math questions, one per presentation idea (objects + ship context, clock, groups, two-step)
+    math5: function () { return [TKQuiz.make('matematika', 1, r, { kind: 'add', world: 'titanic' }), TKQuiz.make('matematika', 1, r, { kind: 'count' }),
+      TKQuiz.make('matematika', 2, r, { kind: 'groups' }), TKQuiz.make('matematika', 3, r, { kind: 'clock' }), TKQuiz.make('matematika', 4, r, { kind: 'twostep' })] },
+    ladder: function () { return [TKQuiz.make('matematika', 3, r, { kind: 'add' }), TKQuiz.make('matematika', 2, r, { kind: 'sub' })] },
+    arab: function () { return [byId('ar-pw-14'), byId('ar-wp-21'), byId('ar-ls-01'), byId('ar-wc-2')] },
+    arrange: function () { return [byId('ar-ar-01')] },
+    curated: function () { return [byId('lg-pt-1'), byId('um-02'), byId('is-40'), byId('lg-od-2')] },
+    campur: function () { return { domain: 'campur', world: 'titanic', count: 5, seed: 11, islam: P.get('islam') !== '0' } }
+  }
+  window.__tk = { opts: opts }
+  if (name === 'sort') {
+    var s = TKQuiz.sortSet(P.get('domain') || 'umum', P.get('world') || 'calypso', r, { count: 6 })
+    window.__tk.ctl = TKQuiz.mountSort(host, s, opts)
+  } else {
+    window.__tk.ctl = TKQuiz.mount(host, sets[name](), opts)
+  }
+})()
+</script>
+</body>
+</html>

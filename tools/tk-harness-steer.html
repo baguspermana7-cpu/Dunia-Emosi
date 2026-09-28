@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TKSteer harness</title>
+<!-- Kept QA harness for games/tk-steer.js (tools/qa-tk-steer.mjs). Query:
+     ?mode=gates|ice|scripted|sail|current &vessel=… &len=… &seed=… &rm=1 &muted=1 &tl=seconds
+     window.__mount(level, opts) re-mounts; window.__h = handle; window.__done = onDone payloads. -->
+<style>
+  html, body { margin: 0; height: 100%; background: #0c3656; overflow: hidden; font-family: Nunito, system-ui, sans-serif }
+  #host { position: fixed; inset: 0 }
+</style>
+</head>
+<body>
+<div id="host"></div>
+<script src="../games/data/asset-index.js"></script>
+<script src="../games/data/sfx-engine.js"></script>
+<script src="../games/tk-steer.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search)
+  window.__done = []
+  function lib (k) { return window.AssetIndex ? AssetIndex.path(k) : null }
+  window.__mount = function (level, extra) {
+    if (window.__h) window.__h.destroy()
+    var o = { lib: lib, sfx: { muted: q.get('muted') === '1' }, reducedMotion: q.get('rm') === '1',
+      onDone: function (r) { window.__done.push(r) } }
+    if (extra) for (var k in extra) o[k] = extra[k]
+    window.__h = TKSteer.mount(document.getElementById('host'), level, o)
+    return true
+  }
+  var lvl = { mode: q.get('mode') || 'gates', seed: +(q.get('seed') || 7) }
+  if (q.get('vessel')) lvl.vessel = q.get('vessel')
+  if (q.get('len')) lvl.length = +q.get('len')
+  if (q.get('tl')) lvl.timeLimit = +q.get('tl')
+  if (q.get('goal')) lvl.goal = q.get('goal')
+  if (q.get('manual') !== '1') window.__mount(lvl)
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TKGrid harness</title>
+<link rel="icon" href="data:,">
+<!--
+  Test harness for games/tk-grid.js (Timmy & Kapal Legendaris grid level), used by
+  tools/qa-tk-grid.mjs. ?l=0|1|2 picks a sample level (basic · currents+ice with
+  Maju/Kiri/Kanan · pick/drop+repeat); ?s=0..5 mounts TKGrid.SAMPLES[s] instead.
+  ?rm=1 forces reduced motion. The 70 px top bar stands in for the host page's HUD
+  (TKGrid leaves opts.topInset free for it). window.__h = mount handle,
+  window.__done = last onDone payload.
+-->
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#0a1f45;font-family:system-ui,sans-serif}
+  #host{position:fixed;inset:0}
+  #hud{position:fixed;left:0;right:0;top:0;height:70px;z-index:50;display:flex;align-items:center;gap:10px;padding:0 14px;color:#fff;
+    background:linear-gradient(180deg,rgba(6,20,50,.9),rgba(6,20,50,.4));pointer-events:none}
+  #hud b{font-size:18px} #hud span{font-size:13px;opacity:.8}
+</style></head>
+<body>
+  <div id="host"></div>
+  <div id="hud"><div><b id="ttl">Latihan Navigasi</b><br><span id="sub">Harness TKGrid</span></div></div>
+  <script src="../games/data/asset-index.js"></script>
+  <script src="../games/data/sfx-engine.js"></script>
+  <script src="../games/tk-grid.js"></script>
+  <script>
+  (function () {
+    var LEVELS = [
+      { id: 'h1', title: 'Latihan Navigasi', mission: 'Bawa kapal ke mercusuar. Hindari gunung es!', maxLen: 12,
+        w: 6, h: 4, start: { x: 0, y: 0, dir: 'E' }, goal: { x: 5, y: 2 },
+        blocks: [{ x: 2, y: 0 }, { x: 2, y: 1 }, { x: 4, y: 1 }, { x: 4, y: 2 }, { x: 1, y: 3 }], tools: ['N', 'E', 'S', 'W'] },
+      { id: 'h2', title: 'Arus dan Es Bergerak', mission: 'Pakai arus, dan awas es yang bergerak!',
+        w: 6, h: 4, start: { x: 0, y: 0, dir: 'E' }, goal: { x: 5, y: 3 },
+        blocks: [{ x: 3, y: 0 }, { x: 3, y: 1 }, { x: 0, y: 3 }], currents: [{ x: 2, y: 0, dir: 'S' }],
+        ice: [{ path: [{ x: 4, y: 1 }, { x: 4, y: 2 }, { x: 4, y: 3 }, { x: 4, y: 2 }] }], tools: ['F', 'L', 'R'] },
+      { id: 'h3', title: 'Antar Peti', mission: 'Ambil peti, lalu antar ke tanda kuning.',
+        w: 6, h: 3, start: { x: 0, y: 0, dir: 'E' }, items: [{ x: 3, y: 0, id: 'peti' }], drop: { x: 5, y: 2 },
+        blocks: [{ x: 1, y: 1 }, { x: 4, y: 1 }], tools: ['N', 'E', 'S', 'W', 'P', 'D', 'R2', 'R3'] }
+    ]
+    var q = new URLSearchParams(location.search)
+    var def = q.has('s') ? TKGrid.SAMPLES[+q.get('s')] : LEVELS[+(q.get('l') || 0)]
+    document.getElementById('ttl').textContent = def.title || 'Latihan Navigasi'
+    document.getElementById('sub').textContent = 'Level ' + def.id
+    window.__levels = LEVELS
+    window.__def = def
+    window.__done = null
+    window.__h = TKGrid.mount(document.getElementById('host'), def, {
+      topInset: 70,
+      reducedMotion: q.get('rm') === '1' ? true : undefined,
+      onDone: function (r) { window.__done = r }
+    })
+  })()
+  </script>
+</body></html>

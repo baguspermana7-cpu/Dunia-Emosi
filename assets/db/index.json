@@ -12794,6 +12794,8521 @@
    "h": 262,
    "psnr": 42.4
   },
+  "tk-char/captain-binoculars": {
+   "file": "assets/db/lib/tk-char/captain-binoculars.webp",
+   "cat": "tk-char",
+   "tags": [
+    "captain",
+    "binoculars",
+    "cartoon"
+   ],
+   "source": "chars-d-30#5",
+   "w": 271,
+   "h": 234,
+   "psnr": 45.2
+  },
+  "tk-char/captain-map": {
+   "file": "assets/db/lib/tk-char/captain-map.webp",
+   "cat": "tk-char",
+   "tags": [
+    "captain",
+    "map",
+    "cartoon"
+   ],
+   "source": "chars-c-30#3",
+   "w": 273,
+   "h": 243,
+   "psnr": 44.9
+  },
+  "tk-char/captain-old": {
+   "file": "assets/db/lib/tk-char/captain-old.webp",
+   "cat": "tk-char",
+   "tags": [
+    "captain",
+    "old",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#4",
+   "w": 237,
+   "h": 244,
+   "psnr": 45.1
+  },
+  "tk-char/captain-pointing": {
+   "file": "assets/db/lib/tk-char/captain-pointing.webp",
+   "cat": "tk-char",
+   "tags": [
+    "captain",
+    "pointing",
+    "cartoon"
+   ],
+   "source": "chars-b-30#3",
+   "w": 237,
+   "h": 240,
+   "psnr": 45.2
+  },
+  "tk-char/chef": {
+   "file": "assets/db/lib/tk-char/chef.webp",
+   "cat": "tk-char",
+   "tags": [
+    "chef",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#6",
+   "w": 236,
+   "h": 243,
+   "psnr": 44.9
+  },
+  "tk-char/diver": {
+   "file": "assets/db/lib/tk-char/diver.webp",
+   "cat": "tk-char",
+   "tags": [
+    "diver",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#7",
+   "w": 265,
+   "h": 235,
+   "psnr": 43.9
+  },
+  "tk-char/diver-2": {
+   "file": "assets/db/lib/tk-char/diver-2.webp",
+   "cat": "tk-char",
+   "tags": [
+    "diver",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-b-30#6",
+   "w": 258,
+   "h": 241,
+   "psnr": 44.0
+  },
+  "tk-char/diver-bearded": {
+   "file": "assets/db/lib/tk-char/diver-bearded.webp",
+   "cat": "tk-char",
+   "tags": [
+    "diver",
+    "bearded",
+    "cartoon"
+   ],
+   "source": "chars-c-30#6",
+   "w": 268,
+   "h": 242,
+   "psnr": 44.5
+  },
+  "tk-char/explorer-kid": {
+   "file": "assets/db/lib/tk-char/explorer-kid.webp",
+   "cat": "tk-char",
+   "tags": [
+    "explorer",
+    "kid",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#2",
+   "w": 226,
+   "h": 246,
+   "psnr": 44.2
+  },
+  "tk-char/hijab-girl-blueprint": {
+   "file": "assets/db/lib/tk-char/hijab-girl-blueprint.webp",
+   "cat": "tk-char",
+   "tags": [
+    "hijab",
+    "girl",
+    "blueprint",
+    "cartoon"
+   ],
+   "source": "chars-b-30#4",
+   "w": 276,
+   "h": 240,
+   "psnr": 44.9
+  },
+  "tk-char/hijab-girl-book": {
+   "file": "assets/db/lib/tk-char/hijab-girl-book.webp",
+   "cat": "tk-char",
+   "tags": [
+    "hijab",
+    "girl",
+    "book",
+    "cartoon"
+   ],
+   "source": "chars-b-30#2",
+   "w": 237,
+   "h": 240,
+   "psnr": 45.2
+  },
+  "tk-char/hijab-girl-camera": {
+   "file": "assets/db/lib/tk-char/hijab-girl-camera.webp",
+   "cat": "tk-char",
+   "tags": [
+    "hijab",
+    "girl",
+    "camera",
+    "cartoon"
+   ],
+   "source": "chars-c-30#5",
+   "w": 228,
+   "h": 242,
+   "psnr": 45.1
+  },
+  "tk-char/hijab-girl-map": {
+   "file": "assets/db/lib/tk-char/hijab-girl-map.webp",
+   "cat": "tk-char",
+   "tags": [
+    "hijab",
+    "girl",
+    "map",
+    "cartoon"
+   ],
+   "source": "world-25#4",
+   "w": 307,
+   "h": 234,
+   "psnr": 45.3
+  },
+  "tk-char/hijab-officer-pointing": {
+   "file": "assets/db/lib/tk-char/hijab-officer-pointing.webp",
+   "cat": "tk-char",
+   "tags": [
+    "hijab",
+    "officer",
+    "pointing",
+    "cartoon"
+   ],
+   "source": "chars-d-30#3",
+   "w": 243,
+   "h": 233,
+   "psnr": 45.0
+  },
+  "tk-char/hijab-officer-tablet": {
+   "file": "assets/db/lib/tk-char/hijab-officer-tablet.webp",
+   "cat": "tk-char",
+   "tags": [
+    "hijab",
+    "officer",
+    "tablet",
+    "cartoon"
+   ],
+   "source": "chars-c-30#2",
+   "w": 243,
+   "h": 243,
+   "psnr": 45.4
+  },
+  "tk-char/lady-hat": {
+   "file": "assets/db/lib/tk-char/lady-hat.webp",
+   "cat": "tk-char",
+   "tags": [
+    "lady",
+    "hat",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#3",
+   "w": 247,
+   "h": 243,
+   "psnr": 44.0
+  },
+  "tk-char/lantern-boy": {
+   "file": "assets/db/lib/tk-char/lantern-boy.webp",
+   "cat": "tk-char",
+   "tags": [
+    "lantern",
+    "boy",
+    "cartoon"
+   ],
+   "source": "chars-b-30#1",
+   "w": 249,
+   "h": 240,
+   "psnr": 44.1
+  },
+  "tk-char/maid": {
+   "file": "assets/db/lib/tk-char/maid.webp",
+   "cat": "tk-char",
+   "tags": [
+    "maid",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#5",
+   "w": 227,
+   "h": 243,
+   "psnr": 45.1
+  },
+  "tk-char/mechanic-boy": {
+   "file": "assets/db/lib/tk-char/mechanic-boy.webp",
+   "cat": "tk-char",
+   "tags": [
+    "mechanic",
+    "boy",
+    "cartoon"
+   ],
+   "source": "chars-b-30#5",
+   "w": 254,
+   "h": 239,
+   "psnr": 44.9
+  },
+  "tk-char/mechanic-boy-2": {
+   "file": "assets/db/lib/tk-char/mechanic-boy-2.webp",
+   "cat": "tk-char",
+   "tags": [
+    "mechanic",
+    "boy",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-d-30#6",
+   "w": 248,
+   "h": 232,
+   "psnr": 44.0
+  },
+  "tk-char/mechanic-boy-wrench": {
+   "file": "assets/db/lib/tk-char/mechanic-boy-wrench.webp",
+   "cat": "tk-char",
+   "tags": [
+    "mechanic",
+    "boy",
+    "wrench",
+    "cartoon"
+   ],
+   "source": "chars-c-30#4",
+   "w": 235,
+   "h": 242,
+   "psnr": 44.5
+  },
+  "tk-char/officer-boy": {
+   "file": "assets/db/lib/tk-char/officer-boy.webp",
+   "cat": "tk-char",
+   "tags": [
+    "officer",
+    "boy",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#1",
+   "w": 234,
+   "h": 244,
+   "psnr": 44.9
+  },
+  "tk-char/officer-boy-binoculars": {
+   "file": "assets/db/lib/tk-char/officer-boy-binoculars.webp",
+   "cat": "tk-char",
+   "tags": [
+    "officer",
+    "boy",
+    "binoculars",
+    "cartoon"
+   ],
+   "source": "chars-c-30#1",
+   "w": 243,
+   "h": 243,
+   "psnr": 44.6
+  },
+  "tk-char/officer-boy-salute": {
+   "file": "assets/db/lib/tk-char/officer-boy-salute.webp",
+   "cat": "tk-char",
+   "tags": [
+    "officer",
+    "boy",
+    "salute",
+    "cartoon"
+   ],
+   "source": "chars-d-30#2",
+   "w": 252,
+   "h": 234,
+   "psnr": 44.3
+  },
+  "tk-char/penguin-captain": {
+   "file": "assets/db/lib/tk-char/penguin-captain.webp",
+   "cat": "tk-char",
+   "tags": [
+    "penguin",
+    "captain",
+    "cartoon"
+   ],
+   "source": "world-25#3",
+   "w": 247,
+   "h": 233,
+   "psnr": 45.0
+  },
+  "tk-char/penguin-sailor": {
+   "file": "assets/db/lib/tk-char/penguin-sailor.webp",
+   "cat": "tk-char",
+   "tags": [
+    "penguin",
+    "sailor",
+    "cartoon"
+   ],
+   "source": "chars-d-30#4",
+   "w": 240,
+   "h": 232,
+   "psnr": 45.7
+  },
+  "tk-char/timmy-map": {
+   "file": "assets/db/lib/tk-char/timmy-map.webp",
+   "cat": "tk-char",
+   "tags": [
+    "timmy",
+    "map",
+    "cartoon"
+   ],
+   "source": "chars-d-30#1",
+   "w": 267,
+   "h": 234,
+   "psnr": 43.8
+  },
+  "tk-char/timmy-reading": {
+   "file": "assets/db/lib/tk-char/timmy-reading.webp",
+   "cat": "tk-char",
+   "tags": [
+    "timmy",
+    "reading",
+    "cartoon"
+   ],
+   "source": "world-25#1",
+   "w": 306,
+   "h": 234,
+   "psnr": 44.3
+  },
+  "tk-char/timmy-spyglass-2": {
+   "file": "assets/db/lib/tk-char/timmy-spyglass-2.webp",
+   "cat": "tk-char",
+   "tags": [
+    "timmy",
+    "spyglass",
+    "2",
+    "cartoon"
+   ],
+   "source": "world-25#2",
+   "w": 296,
+   "h": 234,
+   "psnr": 43.7
+  },
+  "tk-key/backpack": {
+   "file": "assets/db/lib/tk-key/backpack.webp",
+   "cat": "tk-key",
+   "tags": [
+    "backpack",
+    "cartoon"
+   ],
+   "source": "keyart-free:backpack",
+   "w": 175,
+   "h": 170,
+   "psnr": 44.2
+  },
+  "tk-key/captain-arms": {
+   "file": "assets/db/lib/tk-key/captain-arms.webp",
+   "cat": "tk-key",
+   "tags": [
+    "captain",
+    "arms",
+    "cartoon"
+   ],
+   "source": "keyart-free:captain-arms",
+   "w": 196,
+   "h": 260,
+   "psnr": 44.9
+  },
+  "tk-key/captain-hat": {
+   "file": "assets/db/lib/tk-key/captain-hat.webp",
+   "cat": "tk-key",
+   "tags": [
+    "captain",
+    "hat",
+    "cartoon"
+   ],
+   "source": "keyart-free:captain-hat",
+   "w": 184,
+   "h": 140,
+   "psnr": 44.2
+  },
+  "tk-key/compass": {
+   "file": "assets/db/lib/tk-key/compass.webp",
+   "cat": "tk-key",
+   "tags": [
+    "compass",
+    "cartoon"
+   ],
+   "source": "keyart-free:compass",
+   "w": 144,
+   "h": 150,
+   "psnr": 43.8
+  },
+  "tk-key/crate-hanging": {
+   "file": "assets/db/lib/tk-key/crate-hanging.webp",
+   "cat": "tk-key",
+   "tags": [
+    "crate",
+    "hanging",
+    "cartoon"
+   ],
+   "source": "keyart-free:crate-hanging",
+   "w": 204,
+   "h": 255,
+   "psnr": 44.9
+  },
+  "tk-key/crystal": {
+   "file": "assets/db/lib/tk-key/crystal.webp",
+   "cat": "tk-key",
+   "tags": [
+    "crystal",
+    "cartoon"
+   ],
+   "source": "keyart-free:crystal",
+   "w": 115,
+   "h": 150,
+   "psnr": 40.6
+  },
+  "tk-key/dock": {
+   "file": "assets/db/lib/tk-key/dock.webp",
+   "cat": "tk-key",
+   "tags": [
+    "dock",
+    "cartoon"
+   ],
+   "source": "keyart-free:dock",
+   "w": 324,
+   "h": 213,
+   "psnr": 45.1
+  },
+  "tk-key/iceberg": {
+   "file": "assets/db/lib/tk-key/iceberg.webp",
+   "cat": "tk-key",
+   "tags": [
+    "iceberg",
+    "cartoon"
+   ],
+   "source": "keyart-free:iceberg",
+   "w": 200,
+   "h": 178,
+   "psnr": 40.2
+  },
+  "tk-key/lifebuoy": {
+   "file": "assets/db/lib/tk-key/lifebuoy.webp",
+   "cat": "tk-key",
+   "tags": [
+    "lifebuoy",
+    "cartoon"
+   ],
+   "source": "keyart-free:lifebuoy",
+   "w": 175,
+   "h": 160,
+   "psnr": 44.5
+  },
+  "tk-key/logo": {
+   "file": "assets/db/lib/tk-key/logo.webp",
+   "cat": "tk-key",
+   "tags": [
+    "logo",
+    "cartoon"
+   ],
+   "source": "keyart-free:logo",
+   "w": 285,
+   "h": 274,
+   "psnr": 43.4
+  },
+  "tk-key/mission-complete": {
+   "file": "assets/db/lib/tk-key/mission-complete.webp",
+   "cat": "tk-key",
+   "tags": [
+    "mission",
+    "complete",
+    "cartoon"
+   ],
+   "source": "keyart-free:mission-complete",
+   "w": 284,
+   "h": 172,
+   "psnr": 44.8
+  },
+  "tk-key/portal": {
+   "file": "assets/db/lib/tk-key/portal.webp",
+   "cat": "tk-key",
+   "tags": [
+    "portal",
+    "cartoon"
+   ],
+   "source": "keyart-free:portal",
+   "w": 216,
+   "h": 118,
+   "psnr": 44.2
+  },
+  "tk-key/radar": {
+   "file": "assets/db/lib/tk-key/radar.webp",
+   "cat": "tk-key",
+   "tags": [
+    "radar",
+    "cartoon"
+   ],
+   "source": "keyart-free:radar",
+   "w": 172,
+   "h": 170,
+   "psnr": 45.2
+  },
+  "tk-key/ship-log": {
+   "file": "assets/db/lib/tk-key/ship-log.webp",
+   "cat": "tk-key",
+   "tags": [
+    "ship",
+    "log",
+    "cartoon"
+   ],
+   "source": "keyart-free:ship-log",
+   "w": 197,
+   "h": 145,
+   "psnr": 44.9
+  },
+  "tk-key/ship-wheel": {
+   "file": "assets/db/lib/tk-key/ship-wheel.webp",
+   "cat": "tk-key",
+   "tags": [
+    "ship",
+    "wheel",
+    "cartoon"
+   ],
+   "source": "keyart-free:ship-wheel",
+   "w": 166,
+   "h": 170,
+   "psnr": 43.8
+  },
+  "tk-key/sign-kinder": {
+   "file": "assets/db/lib/tk-key/sign-kinder.webp",
+   "cat": "tk-key",
+   "tags": [
+    "sign",
+    "kinder",
+    "cartoon"
+   ],
+   "source": "keyart-free:sign-kinder",
+   "w": 209,
+   "h": 159,
+   "psnr": 44.0
+  },
+  "tk-key/signpost": {
+   "file": "assets/db/lib/tk-key/signpost.webp",
+   "cat": "tk-key",
+   "tags": [
+    "signpost",
+    "cartoon"
+   ],
+   "source": "keyart-free:signpost",
+   "w": 180,
+   "h": 194,
+   "psnr": 44.1
+  },
+  "tk-key/spyglass": {
+   "file": "assets/db/lib/tk-key/spyglass.webp",
+   "cat": "tk-key",
+   "tags": [
+    "spyglass",
+    "cartoon"
+   ],
+   "source": "keyart-free:spyglass",
+   "w": 203,
+   "h": 149,
+   "psnr": 43.5
+  },
+  "tk-key/star": {
+   "file": "assets/db/lib/tk-key/star.webp",
+   "cat": "tk-key",
+   "tags": [
+    "star",
+    "cartoon"
+   ],
+   "source": "keyart-free:star",
+   "w": 133,
+   "h": 130,
+   "psnr": 42.9
+  },
+  "tk-key/timmy": {
+   "file": "assets/db/lib/tk-key/timmy.webp",
+   "cat": "tk-key",
+   "tags": [
+    "timmy",
+    "cartoon"
+   ],
+   "source": "keyart-free:timmy",
+   "w": 202,
+   "h": 288,
+   "psnr": 44.3
+  },
+  "tk-key/timmy-flying": {
+   "file": "assets/db/lib/tk-key/timmy-flying.webp",
+   "cat": "tk-key",
+   "tags": [
+    "timmy",
+    "flying",
+    "cartoon"
+   ],
+   "source": "keyart-free:timmy-flying",
+   "w": 254,
+   "h": 258,
+   "psnr": 43.8
+  },
+  "tk-key/timmy-sleeping": {
+   "file": "assets/db/lib/tk-key/timmy-sleeping.webp",
+   "cat": "tk-key",
+   "tags": [
+    "timmy",
+    "sleeping",
+    "cartoon"
+   ],
+   "source": "keyart-free:timmy-sleeping",
+   "w": 242,
+   "h": 246,
+   "psnr": 45.2
+  },
+  "tk-key/titanic-bow": {
+   "file": "assets/db/lib/tk-key/titanic-bow.webp",
+   "cat": "tk-key",
+   "tags": [
+    "titanic",
+    "bow",
+    "cartoon"
+   ],
+   "source": "keyart-free:titanic-bow",
+   "w": 217,
+   "h": 264,
+   "psnr": 44.1
+  },
+  "tk-key/titanic-smoke": {
+   "file": "assets/db/lib/tk-key/titanic-smoke.webp",
+   "cat": "tk-key",
+   "tags": [
+    "titanic",
+    "smoke",
+    "cartoon"
+   ],
+   "source": "keyart-free:titanic-smoke",
+   "w": 269,
+   "h": 262,
+   "psnr": 43.9
+  },
+  "tk-key/treasure-map": {
+   "file": "assets/db/lib/tk-key/treasure-map.webp",
+   "cat": "tk-key",
+   "tags": [
+    "treasure",
+    "map",
+    "cartoon"
+   ],
+   "source": "keyart-free:treasure-map",
+   "w": 199,
+   "h": 194,
+   "psnr": 44.3
+  },
+  "tk-legend/bedroom": {
+   "file": "assets/db/lib/tk-legend/bedroom.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "bedroom",
+    "cartoon"
+   ],
+   "source": "legend-25#2",
+   "w": 333,
+   "h": 218,
+   "psnr": 45.0
+  },
+  "tk-legend/bell-good-journey": {
+   "file": "assets/db/lib/tk-legend/bell-good-journey.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "bell",
+    "good",
+    "journey",
+    "cartoon"
+   ],
+   "source": "legend-25#24",
+   "w": 222,
+   "h": 259,
+   "psnr": 44.9
+  },
+  "tk-legend/hourglass": {
+   "file": "assets/db/lib/tk-legend/hourglass.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "hourglass",
+    "cartoon"
+   ],
+   "source": "legend-25#20",
+   "w": 147,
+   "h": 218,
+   "psnr": 44.2
+  },
+  "tk-legend/iceberg-4": {
+   "file": "assets/db/lib/tk-legend/iceberg-4.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "iceberg",
+    "4",
+    "cartoon"
+   ],
+   "source": "legend-25#23",
+   "w": 295,
+   "h": 252,
+   "psnr": 43.2
+  },
+  "tk-legend/journal-book": {
+   "file": "assets/db/lib/tk-legend/journal-book.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "journal",
+    "book",
+    "cartoon"
+   ],
+   "source": "legend-25#25",
+   "w": 285,
+   "h": 252,
+   "psnr": 44.3
+  },
+  "tk-legend/seagull-3": {
+   "file": "assets/db/lib/tk-legend/seagull-3.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "seagull",
+    "3",
+    "cartoon"
+   ],
+   "source": "legend-25#21",
+   "w": 257,
+   "h": 260,
+   "psnr": 45.3
+  },
+  "tk-legend/sextant-3": {
+   "file": "assets/db/lib/tk-legend/sextant-3.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "sextant",
+    "3",
+    "cartoon"
+   ],
+   "source": "legend-25#18",
+   "w": 242,
+   "h": 217,
+   "psnr": 43.9
+  },
+  "tk-legend/ship-arizona": {
+   "file": "assets/db/lib/tk-legend/ship-arizona.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "arizona",
+    "cartoon"
+   ],
+   "source": "legend-25#6",
+   "w": 309,
+   "h": 210,
+   "psnr": 44.9
+  },
+  "tk-legend/ship-arizona-clean": {
+   "file": "assets/db/lib/tk-legend/ship-arizona-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "arizona",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#6-clean",
+   "w": 301,
+   "h": 165,
+   "psnr": 44.7
+  },
+  "tk-legend/ship-britannic": {
+   "file": "assets/db/lib/tk-legend/ship-britannic.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "britannic",
+    "cartoon"
+   ],
+   "source": "legend-25#5",
+   "w": 337,
+   "h": 209,
+   "psnr": 44.5
+  },
+  "tk-legend/ship-britannic-clean": {
+   "file": "assets/db/lib/tk-legend/ship-britannic-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "britannic",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#5-clean",
+   "w": 330,
+   "h": 162,
+   "psnr": 44.7
+  },
+  "tk-legend/ship-calypso": {
+   "file": "assets/db/lib/tk-legend/ship-calypso.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "calypso",
+    "cartoon"
+   ],
+   "source": "legend-25#13",
+   "w": 290,
+   "h": 211,
+   "psnr": 44.8
+  },
+  "tk-legend/ship-calypso-clean": {
+   "file": "assets/db/lib/tk-legend/ship-calypso-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "calypso",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#13-clean",
+   "w": 282,
+   "h": 164,
+   "psnr": 45.0
+  },
+  "tk-legend/ship-cuttysark": {
+   "file": "assets/db/lib/tk-legend/ship-cuttysark.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "cuttysark",
+    "cartoon"
+   ],
+   "source": "legend-25#7",
+   "w": 312,
+   "h": 209,
+   "psnr": 44.6
+  },
+  "tk-legend/ship-cuttysark-clean": {
+   "file": "assets/db/lib/tk-legend/ship-cuttysark-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "cuttysark",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#7-clean",
+   "w": 308,
+   "h": 162,
+   "psnr": 44.8
+  },
+  "tk-legend/ship-endurance": {
+   "file": "assets/db/lib/tk-legend/ship-endurance.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "endurance",
+    "cartoon"
+   ],
+   "source": "legend-25#11",
+   "w": 311,
+   "h": 214,
+   "psnr": 45.0
+  },
+  "tk-legend/ship-endurance-clean": {
+   "file": "assets/db/lib/tk-legend/ship-endurance-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "endurance",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#11-clean",
+   "w": 294,
+   "h": 167,
+   "psnr": 44.9
+  },
+  "tk-legend/ship-kontiki": {
+   "file": "assets/db/lib/tk-legend/ship-kontiki.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "kontiki",
+    "cartoon"
+   ],
+   "source": "legend-25#12",
+   "w": 325,
+   "h": 216,
+   "psnr": 43.8
+  },
+  "tk-legend/ship-kontiki-clean": {
+   "file": "assets/db/lib/tk-legend/ship-kontiki-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "kontiki",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#12-clean",
+   "w": 309,
+   "h": 169,
+   "psnr": 43.9
+  },
+  "tk-legend/ship-mayflower": {
+   "file": "assets/db/lib/tk-legend/ship-mayflower.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "mayflower",
+    "cartoon"
+   ],
+   "source": "legend-25#10",
+   "w": 281,
+   "h": 215,
+   "psnr": 44.2
+  },
+  "tk-legend/ship-mayflower-clean": {
+   "file": "assets/db/lib/tk-legend/ship-mayflower-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "mayflower",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#10-clean",
+   "w": 281,
+   "h": 168,
+   "psnr": 44.3
+  },
+  "tk-legend/ship-nautilus": {
+   "file": "assets/db/lib/tk-legend/ship-nautilus.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "nautilus",
+    "cartoon"
+   ],
+   "source": "legend-25#15",
+   "w": 330,
+   "h": 192,
+   "psnr": 44.4
+  },
+  "tk-legend/ship-nautilus-clean": {
+   "file": "assets/db/lib/tk-legend/ship-nautilus-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "nautilus",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#15-clean",
+   "w": 330,
+   "h": 145,
+   "psnr": 44.2
+  },
+  "tk-legend/ship-queenmary": {
+   "file": "assets/db/lib/tk-legend/ship-queenmary.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "queenmary",
+    "cartoon"
+   ],
+   "source": "legend-25#14",
+   "w": 344,
+   "h": 215,
+   "psnr": 44.7
+  },
+  "tk-legend/ship-queenmary-clean": {
+   "file": "assets/db/lib/tk-legend/ship-queenmary-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "queenmary",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#14-clean",
+   "w": 321,
+   "h": 168,
+   "psnr": 44.7
+  },
+  "tk-legend/ship-titanic": {
+   "file": "assets/db/lib/tk-legend/ship-titanic.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "titanic",
+    "cartoon"
+   ],
+   "source": "legend-25#4",
+   "w": 341,
+   "h": 219,
+   "psnr": 44.4
+  },
+  "tk-legend/ship-titanic-clean": {
+   "file": "assets/db/lib/tk-legend/ship-titanic-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "titanic",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#4-clean",
+   "w": 327,
+   "h": 172,
+   "psnr": 44.8
+  },
+  "tk-legend/ship-vasa": {
+   "file": "assets/db/lib/tk-legend/ship-vasa.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "vasa",
+    "cartoon"
+   ],
+   "source": "legend-25#9",
+   "w": 295,
+   "h": 216,
+   "psnr": 43.9
+  },
+  "tk-legend/ship-vasa-clean": {
+   "file": "assets/db/lib/tk-legend/ship-vasa-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "vasa",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#9-clean",
+   "w": 285,
+   "h": 170,
+   "psnr": 43.9
+  },
+  "tk-legend/ship-victory": {
+   "file": "assets/db/lib/tk-legend/ship-victory.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "victory",
+    "cartoon"
+   ],
+   "source": "legend-25#8",
+   "w": 257,
+   "h": 214,
+   "psnr": 44.0
+  },
+  "tk-legend/ship-victory-clean": {
+   "file": "assets/db/lib/tk-legend/ship-victory-clean.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "victory",
+    "clean",
+    "cartoon"
+   ],
+   "source": "legend-25#8-clean",
+   "w": 249,
+   "h": 167,
+   "psnr": 44.3
+  },
+  "tk-legend/ship-wheel-3": {
+   "file": "assets/db/lib/tk-legend/ship-wheel-3.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "ship",
+    "wheel",
+    "3",
+    "cartoon"
+   ],
+   "source": "legend-25#17",
+   "w": 282,
+   "h": 226,
+   "psnr": 43.7
+  },
+  "tk-legend/signpost-ships": {
+   "file": "assets/db/lib/tk-legend/signpost-ships.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "signpost",
+    "ships",
+    "cartoon"
+   ],
+   "source": "legend-25#22",
+   "w": 226,
+   "h": 256,
+   "psnr": 44.1
+  },
+  "tk-legend/time-harbor": {
+   "file": "assets/db/lib/tk-legend/time-harbor.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "time",
+    "harbor",
+    "cartoon"
+   ],
+   "source": "legend-25#16",
+   "w": 311,
+   "h": 220,
+   "psnr": 45.0
+  },
+  "tk-legend/time-portal": {
+   "file": "assets/db/lib/tk-legend/time-portal.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "time",
+    "portal",
+    "cartoon"
+   ],
+   "source": "legend-25#3",
+   "w": 275,
+   "h": 221,
+   "psnr": 42.7
+  },
+  "tk-legend/timmy-spyglass": {
+   "file": "assets/db/lib/tk-legend/timmy-spyglass.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "timmy",
+    "spyglass",
+    "cartoon"
+   ],
+   "source": "legend-25#1",
+   "w": 284,
+   "h": 227,
+   "psnr": 45.1
+  },
+  "tk-legend/world-map-scroll": {
+   "file": "assets/db/lib/tk-legend/world-map-scroll.webp",
+   "cat": "tk-legend",
+   "tags": [
+    "world",
+    "map",
+    "scroll",
+    "cartoon"
+   ],
+   "source": "legend-25#19",
+   "w": 326,
+   "h": 216,
+   "psnr": 44.9
+  },
+  "tk-prop/adventure-log": {
+   "file": "assets/db/lib/tk-prop/adventure-log.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "adventure",
+    "log",
+    "cartoon"
+   ],
+   "source": "chars-d-30#30",
+   "w": 240,
+   "h": 249,
+   "psnr": 44.2
+  },
+  "tk-prop/anchor": {
+   "file": "assets/db/lib/tk-prop/anchor.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "anchor",
+    "cartoon"
+   ],
+   "source": "props-a-30#13",
+   "w": 239,
+   "h": 224,
+   "psnr": 45.2
+  },
+  "tk-prop/anchor-2": {
+   "file": "assets/db/lib/tk-prop/anchor-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "anchor",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-c-25#15",
+   "w": 209,
+   "h": 221,
+   "psnr": 44.7
+  },
+  "tk-prop/anchor-3": {
+   "file": "assets/db/lib/tk-prop/anchor-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "anchor",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-d-30#9",
+   "w": 240,
+   "h": 218,
+   "psnr": 45.0
+  },
+  "tk-prop/anchor-4": {
+   "file": "assets/db/lib/tk-prop/anchor-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "anchor",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-f-25#12",
+   "w": 237,
+   "h": 224,
+   "psnr": 44.8
+  },
+  "tk-prop/anchor-gold": {
+   "file": "assets/db/lib/tk-prop/anchor-gold.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "anchor",
+    "gold",
+    "cartoon"
+   ],
+   "source": "world-25#8",
+   "w": 264,
+   "h": 238,
+   "psnr": 43.1
+  },
+  "tk-prop/armillary-globe": {
+   "file": "assets/db/lib/tk-prop/armillary-globe.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "armillary",
+    "globe",
+    "cartoon"
+   ],
+   "source": "props-d-30#27",
+   "w": 233,
+   "h": 245,
+   "psnr": 43.6
+  },
+  "tk-prop/atlantic-map": {
+   "file": "assets/db/lib/tk-prop/atlantic-map.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "atlantic",
+    "map",
+    "cartoon"
+   ],
+   "source": "chars-c-30#29",
+   "w": 274,
+   "h": 236,
+   "psnr": 45.1
+  },
+  "tk-prop/banner-event": {
+   "file": "assets/db/lib/tk-prop/banner-event.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "banner",
+    "event",
+    "cartoon"
+   ],
+   "source": "chars-b-30#27",
+   "w": 254,
+   "h": 223,
+   "psnr": 43.4
+  },
+  "tk-prop/barrel": {
+   "file": "assets/db/lib/tk-prop/barrel.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "barrel",
+    "cartoon"
+   ],
+   "source": "props-c-25#13",
+   "w": 198,
+   "h": 220,
+   "psnr": 44.8
+  },
+  "tk-prop/bell-good-journey-2": {
+   "file": "assets/db/lib/tk-prop/bell-good-journey-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "bell",
+    "good",
+    "journey",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-b-30#18",
+   "w": 230,
+   "h": 223,
+   "psnr": 44.1
+  },
+  "tk-prop/binoculars": {
+   "file": "assets/db/lib/tk-prop/binoculars.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "binoculars",
+    "cartoon"
+   ],
+   "source": "props-a-30#27",
+   "w": 248,
+   "h": 218,
+   "psnr": 44.5
+  },
+  "tk-prop/binoculars-2": {
+   "file": "assets/db/lib/tk-prop/binoculars-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "binoculars",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#28",
+   "w": 265,
+   "h": 210,
+   "psnr": 44.2
+  },
+  "tk-prop/binoculars-3": {
+   "file": "assets/db/lib/tk-prop/binoculars-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "binoculars",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#8",
+   "w": 290,
+   "h": 205,
+   "psnr": 44.8
+  },
+  "tk-prop/binoculars-4": {
+   "file": "assets/db/lib/tk-prop/binoculars-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "binoculars",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#14",
+   "w": 276,
+   "h": 214,
+   "psnr": 44.2
+  },
+  "tk-prop/binoculars-5": {
+   "file": "assets/db/lib/tk-prop/binoculars-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "binoculars",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-e-25#8",
+   "w": 285,
+   "h": 215,
+   "psnr": 44.4
+  },
+  "tk-prop/binoculars-6": {
+   "file": "assets/db/lib/tk-prop/binoculars-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "binoculars",
+    "6",
+    "cartoon"
+   ],
+   "source": "props-f-25#9",
+   "w": 318,
+   "h": 210,
+   "psnr": 44.3
+  },
+  "tk-prop/binoculars-7": {
+   "file": "assets/db/lib/tk-prop/binoculars-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "binoculars",
+    "7",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#12",
+   "w": 272,
+   "h": 227,
+   "psnr": 44.2
+  },
+  "tk-prop/blanket": {
+   "file": "assets/db/lib/tk-prop/blanket.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blanket",
+    "cartoon"
+   ],
+   "source": "props-a-30#28",
+   "w": 277,
+   "h": 220,
+   "psnr": 45.1
+  },
+  "tk-prop/blanket-2": {
+   "file": "assets/db/lib/tk-prop/blanket-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blanket",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#11",
+   "w": 267,
+   "h": 207,
+   "psnr": 44.6
+  },
+  "tk-prop/blanket-navy": {
+   "file": "assets/db/lib/tk-prop/blanket-navy.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blanket",
+    "navy",
+    "cartoon"
+   ],
+   "source": "props-f-25#13",
+   "w": 292,
+   "h": 212,
+   "psnr": 44.4
+  },
+  "tk-prop/blueprint": {
+   "file": "assets/db/lib/tk-prop/blueprint.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blueprint",
+    "cartoon"
+   ],
+   "source": "props-f-25#22",
+   "w": 314,
+   "h": 235,
+   "psnr": 45.1
+  },
+  "tk-prop/blueprint-2": {
+   "file": "assets/db/lib/tk-prop/blueprint-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blueprint",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-b-30#9",
+   "w": 282,
+   "h": 234,
+   "psnr": 44.8
+  },
+  "tk-prop/blueprint-3": {
+   "file": "assets/db/lib/tk-prop/blueprint-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blueprint",
+    "3",
+    "cartoon"
+   ],
+   "source": "chars-c-30#15",
+   "w": 278,
+   "h": 204,
+   "psnr": 45.0
+  },
+  "tk-prop/blueprint-4": {
+   "file": "assets/db/lib/tk-prop/blueprint-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blueprint",
+    "4",
+    "cartoon"
+   ],
+   "source": "chars-d-30#13",
+   "w": 273,
+   "h": 212,
+   "psnr": 44.8
+  },
+  "tk-prop/blueprint-scroll": {
+   "file": "assets/db/lib/tk-prop/blueprint-scroll.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "blueprint",
+    "scroll",
+    "cartoon"
+   ],
+   "source": "props-e-25#16",
+   "w": 295,
+   "h": 222,
+   "psnr": 45.3
+  },
+  "tk-prop/boarding-pass": {
+   "file": "assets/db/lib/tk-prop/boarding-pass.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "boarding",
+    "pass",
+    "cartoon"
+   ],
+   "source": "props-a-30#5",
+   "w": 280,
+   "h": 226,
+   "psnr": 44.8
+  },
+  "tk-prop/boarding-pass-2": {
+   "file": "assets/db/lib/tk-prop/boarding-pass-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "boarding",
+    "pass",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#23",
+   "w": 274,
+   "h": 207,
+   "psnr": 46.5
+  },
+  "tk-prop/boarding-pass-3": {
+   "file": "assets/db/lib/tk-prop/boarding-pass-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "boarding",
+    "pass",
+    "3",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#18",
+   "w": 273,
+   "h": 229,
+   "psnr": 45.0
+  },
+  "tk-prop/boarding-pass-4": {
+   "file": "assets/db/lib/tk-prop/boarding-pass-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "boarding",
+    "pass",
+    "4",
+    "cartoon"
+   ],
+   "source": "chars-d-30#23",
+   "w": 223,
+   "h": 215,
+   "psnr": 44.1
+  },
+  "tk-prop/books-ocean": {
+   "file": "assets/db/lib/tk-prop/books-ocean.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "books",
+    "ocean",
+    "cartoon"
+   ],
+   "source": "world-25#25",
+   "w": 300,
+   "h": 229,
+   "psnr": 44.5
+  },
+  "tk-prop/books-passenger-list": {
+   "file": "assets/db/lib/tk-prop/books-passenger-list.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "books",
+    "passenger",
+    "list",
+    "cartoon"
+   ],
+   "source": "props-b-30#27",
+   "w": 272,
+   "h": 224,
+   "psnr": 45.4
+  },
+  "tk-prop/bulb-horn": {
+   "file": "assets/db/lib/tk-prop/bulb-horn.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "bulb",
+    "horn",
+    "cartoon"
+   ],
+   "source": "chars-b-30#13",
+   "w": 272,
+   "h": 217,
+   "psnr": 44.3
+  },
+  "tk-prop/buoy-light": {
+   "file": "assets/db/lib/tk-prop/buoy-light.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "buoy",
+    "light",
+    "cartoon"
+   ],
+   "source": "chars-d-30#18",
+   "w": 202,
+   "h": 220,
+   "psnr": 39.8
+  },
+  "tk-prop/cabin-key": {
+   "file": "assets/db/lib/tk-prop/cabin-key.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "cabin",
+    "key",
+    "cartoon"
+   ],
+   "source": "chars-b-30#28",
+   "w": 259,
+   "h": 231,
+   "psnr": 44.0
+  },
+  "tk-prop/captain-hat": {
+   "file": "assets/db/lib/tk-prop/captain-hat.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captain",
+    "hat",
+    "cartoon"
+   ],
+   "source": "props-a-30#10",
+   "w": 266,
+   "h": 197,
+   "psnr": 44.9
+  },
+  "tk-prop/captain-hat-3": {
+   "file": "assets/db/lib/tk-prop/captain-hat-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captain",
+    "hat",
+    "3",
+    "cartoon"
+   ],
+   "source": "chars-b-30#14",
+   "w": 271,
+   "h": 210,
+   "psnr": 44.4
+  },
+  "tk-prop/captain-hat-4": {
+   "file": "assets/db/lib/tk-prop/captain-hat-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captain",
+    "hat",
+    "4",
+    "cartoon"
+   ],
+   "source": "chars-d-30#28",
+   "w": 261,
+   "h": 201,
+   "psnr": 44.5
+  },
+  "tk-prop/captain-hat-white": {
+   "file": "assets/db/lib/tk-prop/captain-hat-white.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captain",
+    "hat",
+    "white",
+    "cartoon"
+   ],
+   "source": "props-e-25#23",
+   "w": 270,
+   "h": 218,
+   "psnr": 45.1
+  },
+  "tk-prop/captain-hat-white-2": {
+   "file": "assets/db/lib/tk-prop/captain-hat-white-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captain",
+    "hat",
+    "white",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-f-25#14",
+   "w": 298,
+   "h": 213,
+   "psnr": 45.4
+  },
+  "tk-prop/captain-key": {
+   "file": "assets/db/lib/tk-prop/captain-key.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captain",
+    "key",
+    "cartoon"
+   ],
+   "source": "props-c-25#20",
+   "w": 300,
+   "h": 198,
+   "psnr": 44.0
+  },
+  "tk-prop/captain-key-2": {
+   "file": "assets/db/lib/tk-prop/captain-key-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captain",
+    "key",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-d-30#20",
+   "w": 251,
+   "h": 211,
+   "psnr": 42.3
+  },
+  "tk-prop/captains-log": {
+   "file": "assets/db/lib/tk-prop/captains-log.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "captains",
+    "log",
+    "cartoon"
+   ],
+   "source": "chars-c-30#28",
+   "w": 242,
+   "h": 236,
+   "psnr": 44.4
+  },
+  "tk-prop/champagne-bottle": {
+   "file": "assets/db/lib/tk-prop/champagne-bottle.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "champagne",
+    "bottle",
+    "cartoon"
+   ],
+   "source": "props-b-30#19",
+   "w": 164,
+   "h": 214,
+   "psnr": 44.6
+  },
+  "tk-prop/champagne-bottle-2": {
+   "file": "assets/db/lib/tk-prop/champagne-bottle-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "champagne",
+    "bottle",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-f-25#16",
+   "w": 149,
+   "h": 216,
+   "psnr": 44.3
+  },
+  "tk-prop/champagne-bucket": {
+   "file": "assets/db/lib/tk-prop/champagne-bucket.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "champagne",
+    "bucket",
+    "cartoon"
+   ],
+   "source": "props-e-25#19",
+   "w": 273,
+   "h": 226,
+   "psnr": 44.7
+  },
+  "tk-prop/cloche": {
+   "file": "assets/db/lib/tk-prop/cloche.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "cloche",
+    "cartoon"
+   ],
+   "source": "props-e-25#6",
+   "w": 289,
+   "h": 205,
+   "psnr": 45.4
+  },
+  "tk-prop/coal-cart": {
+   "file": "assets/db/lib/tk-prop/coal-cart.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "coal",
+    "cart",
+    "cartoon"
+   ],
+   "source": "chars-c-30#23",
+   "w": 254,
+   "h": 201,
+   "psnr": 45.4
+  },
+  "tk-prop/coal-crate": {
+   "file": "assets/db/lib/tk-prop/coal-crate.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "coal",
+    "crate",
+    "cartoon"
+   ],
+   "source": "props-d-30#19",
+   "w": 271,
+   "h": 219,
+   "psnr": 45.0
+  },
+  "tk-prop/coal-lump": {
+   "file": "assets/db/lib/tk-prop/coal-lump.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "coal",
+    "lump",
+    "cartoon"
+   ],
+   "source": "props-a-30#22",
+   "w": 243,
+   "h": 206,
+   "psnr": 45.3
+  },
+  "tk-prop/coal-pile": {
+   "file": "assets/db/lib/tk-prop/coal-pile.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "coal",
+    "pile",
+    "cartoon"
+   ],
+   "source": "props-b-30#17",
+   "w": 274,
+   "h": 211,
+   "psnr": 45.0
+  },
+  "tk-prop/coal-scoop": {
+   "file": "assets/db/lib/tk-prop/coal-scoop.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "coal",
+    "scoop",
+    "cartoon"
+   ],
+   "source": "props-f-25#23",
+   "w": 273,
+   "h": 235,
+   "psnr": 45.2
+  },
+  "tk-prop/compass": {
+   "file": "assets/db/lib/tk-prop/compass.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "compass",
+    "cartoon"
+   ],
+   "source": "props-b-30#9",
+   "w": 207,
+   "h": 218,
+   "psnr": 44.1
+  },
+  "tk-prop/compass-2": {
+   "file": "assets/db/lib/tk-prop/compass-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "compass",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-c-25#9",
+   "w": 210,
+   "h": 236,
+   "psnr": 44.2
+  },
+  "tk-prop/compass-3": {
+   "file": "assets/db/lib/tk-prop/compass-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "compass",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-f-25#6",
+   "w": 219,
+   "h": 224,
+   "psnr": 44.4
+  },
+  "tk-prop/compass-open-2": {
+   "file": "assets/db/lib/tk-prop/compass-open-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "compass",
+    "open",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#17",
+   "w": 254,
+   "h": 240,
+   "psnr": 43.8
+  },
+  "tk-prop/compass-open-3": {
+   "file": "assets/db/lib/tk-prop/compass-open-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "compass",
+    "open",
+    "3",
+    "cartoon"
+   ],
+   "source": "world-25#21",
+   "w": 310,
+   "h": 241,
+   "psnr": 43.1
+  },
+  "tk-prop/crate-engine-room": {
+   "file": "assets/db/lib/tk-prop/crate-engine-room.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "engine",
+    "room",
+    "cartoon"
+   ],
+   "source": "props-f-25#4",
+   "w": 314,
+   "h": 227,
+   "psnr": 44.7
+  },
+  "tk-prop/crate-fragile": {
+   "file": "assets/db/lib/tk-prop/crate-fragile.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "fragile",
+    "cartoon"
+   ],
+   "source": "props-a-30#29",
+   "w": 268,
+   "h": 233,
+   "psnr": 45.1
+  },
+  "tk-prop/crate-hanging": {
+   "file": "assets/db/lib/tk-prop/crate-hanging.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "hanging",
+    "cartoon"
+   ],
+   "source": "chars-b-30#16",
+   "w": 221,
+   "h": 201,
+   "psnr": 44.4
+  },
+  "tk-prop/crate-rms": {
+   "file": "assets/db/lib/tk-prop/crate-rms.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "rms",
+    "cartoon"
+   ],
+   "source": "props-d-30#10",
+   "w": 271,
+   "h": 218,
+   "psnr": 44.8
+  },
+  "tk-prop/crate-spare-parts": {
+   "file": "assets/db/lib/tk-prop/crate-spare-parts.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "spare",
+    "parts",
+    "cartoon"
+   ],
+   "source": "props-f-25#21",
+   "w": 280,
+   "h": 236,
+   "psnr": 44.8
+  },
+  "tk-prop/crate-supplies": {
+   "file": "assets/db/lib/tk-prop/crate-supplies.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "supplies",
+    "cartoon"
+   ],
+   "source": "props-b-30#14",
+   "w": 260,
+   "h": 217,
+   "psnr": 44.8
+  },
+  "tk-prop/crate-titanic": {
+   "file": "assets/db/lib/tk-prop/crate-titanic.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "titanic",
+    "cartoon"
+   ],
+   "source": "props-c-25#12",
+   "w": 269,
+   "h": 202,
+   "psnr": 45.2
+  },
+  "tk-prop/crate-white-star": {
+   "file": "assets/db/lib/tk-prop/crate-white-star.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crate",
+    "white",
+    "star",
+    "cartoon"
+   ],
+   "source": "props-a-30#15",
+   "w": 259,
+   "h": 215,
+   "psnr": 45.2
+  },
+  "tk-prop/crystal-goblet": {
+   "file": "assets/db/lib/tk-prop/crystal-goblet.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "crystal",
+    "goblet",
+    "cartoon"
+   ],
+   "source": "props-e-25#14",
+   "w": 131,
+   "h": 218,
+   "psnr": 44.7
+  },
+  "tk-prop/deck-bench": {
+   "file": "assets/db/lib/tk-prop/deck-bench.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "bench",
+    "cartoon"
+   ],
+   "source": "props-e-25#10",
+   "w": 341,
+   "h": 212,
+   "psnr": 45.1
+  },
+  "tk-prop/deck-chair": {
+   "file": "assets/db/lib/tk-prop/deck-chair.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "cartoon"
+   ],
+   "source": "props-a-30#7",
+   "w": 240,
+   "h": 216,
+   "psnr": 44.5
+  },
+  "tk-prop/deck-chair-2": {
+   "file": "assets/db/lib/tk-prop/deck-chair-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#2",
+   "w": 269,
+   "h": 234,
+   "psnr": 45.3
+  },
+  "tk-prop/deck-chair-3": {
+   "file": "assets/db/lib/tk-prop/deck-chair-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#24",
+   "w": 276,
+   "h": 246,
+   "psnr": 44.9
+  },
+  "tk-prop/deck-chair-4": {
+   "file": "assets/db/lib/tk-prop/deck-chair-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#7",
+   "w": 255,
+   "h": 219,
+   "psnr": 44.9
+  },
+  "tk-prop/deck-chair-5": {
+   "file": "assets/db/lib/tk-prop/deck-chair-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-e-25#2",
+   "w": 266,
+   "h": 229,
+   "psnr": 44.9
+  },
+  "tk-prop/deck-chair-6": {
+   "file": "assets/db/lib/tk-prop/deck-chair-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "6",
+    "cartoon"
+   ],
+   "source": "props-f-25#11",
+   "w": 252,
+   "h": 215,
+   "psnr": 44.3
+  },
+  "tk-prop/deck-chair-7": {
+   "file": "assets/db/lib/tk-prop/deck-chair-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "7",
+    "cartoon"
+   ],
+   "source": "chars-b-30#15",
+   "w": 242,
+   "h": 215,
+   "psnr": 44.3
+  },
+  "tk-prop/deck-chair-8": {
+   "file": "assets/db/lib/tk-prop/deck-chair-8.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "chair",
+    "8",
+    "cartoon"
+   ],
+   "source": "chars-c-30#10",
+   "w": 252,
+   "h": 221,
+   "psnr": 44.4
+  },
+  "tk-prop/deck-railing": {
+   "file": "assets/db/lib/tk-prop/deck-railing.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "deck",
+    "railing",
+    "cartoon"
+   ],
+   "source": "props-e-25#22",
+   "w": 272,
+   "h": 238,
+   "psnr": 45.1
+  },
+  "tk-prop/dinner-plate": {
+   "file": "assets/db/lib/tk-prop/dinner-plate.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "dinner",
+    "plate",
+    "cartoon"
+   ],
+   "source": "props-b-30#20",
+   "w": 266,
+   "h": 205,
+   "psnr": 45.4
+  },
+  "tk-prop/dinner-plate-2": {
+   "file": "assets/db/lib/tk-prop/dinner-plate-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "dinner",
+    "plate",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-c-30#19",
+   "w": 250,
+   "h": 204,
+   "psnr": 45.1
+  },
+  "tk-prop/diving-helmet": {
+   "file": "assets/db/lib/tk-prop/diving-helmet.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "diving",
+    "helmet",
+    "cartoon"
+   ],
+   "source": "props-b-30#18",
+   "w": 197,
+   "h": 225,
+   "psnr": 43.7
+  },
+  "tk-prop/diving-helmet-2": {
+   "file": "assets/db/lib/tk-prop/diving-helmet-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "diving",
+    "helmet",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-d-30#12",
+   "w": 203,
+   "h": 230,
+   "psnr": 43.3
+  },
+  "tk-prop/diving-helmet-3": {
+   "file": "assets/db/lib/tk-prop/diving-helmet-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "diving",
+    "helmet",
+    "3",
+    "cartoon"
+   ],
+   "source": "chars-d-30#11",
+   "w": 278,
+   "h": 231,
+   "psnr": 42.4
+  },
+  "tk-prop/diving-suit": {
+   "file": "assets/db/lib/tk-prop/diving-suit.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "diving",
+    "suit",
+    "cartoon"
+   ],
+   "source": "chars-c-30#9",
+   "w": 269,
+   "h": 229,
+   "psnr": 43.5
+  },
+  "tk-prop/duffel-bag": {
+   "file": "assets/db/lib/tk-prop/duffel-bag.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "duffel",
+    "bag",
+    "cartoon"
+   ],
+   "source": "chars-b-30#19",
+   "w": 272,
+   "h": 204,
+   "psnr": 44.2
+  },
+  "tk-prop/engine-telegraph": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "cartoon"
+   ],
+   "source": "props-a-30#6",
+   "w": 254,
+   "h": 232,
+   "psnr": 43.0
+  },
+  "tk-prop/engine-telegraph-2": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#1",
+   "w": 239,
+   "h": 234,
+   "psnr": 43.7
+  },
+  "tk-prop/engine-telegraph-3": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#21",
+   "w": 267,
+   "h": 252,
+   "psnr": 43.1
+  },
+  "tk-prop/engine-telegraph-4": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#8",
+   "w": 249,
+   "h": 218,
+   "psnr": 44.1
+  },
+  "tk-prop/engine-telegraph-5": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-e-25#3",
+   "w": 276,
+   "h": 234,
+   "psnr": 42.9
+  },
+  "tk-prop/engine-telegraph-6": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "6",
+    "cartoon"
+   ],
+   "source": "props-f-25#1",
+   "w": 257,
+   "h": 235,
+   "psnr": 42.6
+  },
+  "tk-prop/engine-telegraph-7": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "7",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#11",
+   "w": 261,
+   "h": 233,
+   "psnr": 43.7
+  },
+  "tk-prop/engine-telegraph-8": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-8.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "8",
+    "cartoon"
+   ],
+   "source": "chars-b-30#7",
+   "w": 252,
+   "h": 234,
+   "psnr": 43.4
+  },
+  "tk-prop/engine-telegraph-9": {
+   "file": "assets/db/lib/tk-prop/engine-telegraph-9.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "engine",
+    "telegraph",
+    "9",
+    "cartoon"
+   ],
+   "source": "chars-d-30#7",
+   "w": 241,
+   "h": 231,
+   "psnr": 41.9
+  },
+  "tk-prop/envelope-new-york": {
+   "file": "assets/db/lib/tk-prop/envelope-new-york.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "envelope",
+    "new",
+    "york",
+    "cartoon"
+   ],
+   "source": "chars-c-30#26",
+   "w": 270,
+   "h": 225,
+   "psnr": 44.4
+  },
+  "tk-prop/first-class-key": {
+   "file": "assets/db/lib/tk-prop/first-class-key.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "first",
+    "class",
+    "key",
+    "cartoon"
+   ],
+   "source": "props-b-30#22",
+   "w": 256,
+   "h": 202,
+   "psnr": 43.6
+  },
+  "tk-prop/first-class-sign": {
+   "file": "assets/db/lib/tk-prop/first-class-sign.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "first",
+    "class",
+    "sign",
+    "cartoon"
+   ],
+   "source": "props-b-30#29",
+   "w": 270,
+   "h": 197,
+   "psnr": 44.9
+  },
+  "tk-prop/flag-white-star": {
+   "file": "assets/db/lib/tk-prop/flag-white-star.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "flag",
+    "white",
+    "star",
+    "cartoon"
+   ],
+   "source": "props-a-30#20",
+   "w": 237,
+   "h": 209,
+   "psnr": 45.2
+  },
+  "tk-prop/flag-white-star-2": {
+   "file": "assets/db/lib/tk-prop/flag-white-star-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "flag",
+    "white",
+    "star",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#21",
+   "w": 237,
+   "h": 213,
+   "psnr": 44.8
+  },
+  "tk-prop/flag-white-star-3": {
+   "file": "assets/db/lib/tk-prop/flag-white-star-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "flag",
+    "white",
+    "star",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-d-30#26",
+   "w": 249,
+   "h": 240,
+   "psnr": 43.7
+  },
+  "tk-prop/flag-white-star-4": {
+   "file": "assets/db/lib/tk-prop/flag-white-star-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "flag",
+    "white",
+    "star",
+    "4",
+    "cartoon"
+   ],
+   "source": "chars-c-30#16",
+   "w": 243,
+   "h": 216,
+   "psnr": 44.0
+  },
+  "tk-prop/funnel": {
+   "file": "assets/db/lib/tk-prop/funnel.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "funnel",
+    "cartoon"
+   ],
+   "source": "props-c-25#16",
+   "w": 221,
+   "h": 209,
+   "psnr": 46.3
+  },
+  "tk-prop/funnel-2": {
+   "file": "assets/db/lib/tk-prop/funnel-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "funnel",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-e-25#1",
+   "w": 233,
+   "h": 229,
+   "psnr": 45.9
+  },
+  "tk-prop/gear-upgrade": {
+   "file": "assets/db/lib/tk-prop/gear-upgrade.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "gear",
+    "upgrade",
+    "cartoon"
+   ],
+   "source": "chars-b-30#26",
+   "w": 225,
+   "h": 232,
+   "psnr": 45.1
+  },
+  "tk-prop/globe": {
+   "file": "assets/db/lib/tk-prop/globe.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "globe",
+    "cartoon"
+   ],
+   "source": "chars-c-30#13",
+   "w": 191,
+   "h": 214,
+   "psnr": 44.4
+  },
+  "tk-prop/globe-2": {
+   "file": "assets/db/lib/tk-prop/globe-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "globe",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-d-30#24",
+   "w": 204,
+   "h": 220,
+   "psnr": 44.0
+  },
+  "tk-prop/grand-staircase": {
+   "file": "assets/db/lib/tk-prop/grand-staircase.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "grand",
+    "staircase",
+    "cartoon"
+   ],
+   "source": "props-a-30#19",
+   "w": 263,
+   "h": 194,
+   "psnr": 44.7
+  },
+  "tk-prop/grand-staircase-2": {
+   "file": "assets/db/lib/tk-prop/grand-staircase-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "grand",
+    "staircase",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-f-25#5",
+   "w": 356,
+   "h": 225,
+   "psnr": 43.4
+  },
+  "tk-prop/grand-staircase-3": {
+   "file": "assets/db/lib/tk-prop/grand-staircase-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "grand",
+    "staircase",
+    "3",
+    "cartoon"
+   ],
+   "source": "chars-c-30#22",
+   "w": 168,
+   "h": 147,
+   "psnr": 42.7
+  },
+  "tk-prop/hourglass-2": {
+   "file": "assets/db/lib/tk-prop/hourglass-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "hourglass",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-d-30#19",
+   "w": 177,
+   "h": 218,
+   "psnr": 43.2
+  },
+  "tk-prop/ice-crystal": {
+   "file": "assets/db/lib/tk-prop/ice-crystal.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ice",
+    "crystal",
+    "cartoon"
+   ],
+   "source": "props-c-25#22",
+   "w": 236,
+   "h": 228,
+   "psnr": 43.2
+  },
+  "tk-prop/ice-cube": {
+   "file": "assets/db/lib/tk-prop/ice-cube.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ice",
+    "cube",
+    "cartoon"
+   ],
+   "source": "props-a-30#30",
+   "w": 251,
+   "h": 225,
+   "psnr": 44.7
+  },
+  "tk-prop/ice-floe": {
+   "file": "assets/db/lib/tk-prop/ice-floe.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ice",
+    "floe",
+    "cartoon"
+   ],
+   "source": "props-c-25#3",
+   "w": 300,
+   "h": 192,
+   "psnr": 44.2
+  },
+  "tk-prop/iceberg": {
+   "file": "assets/db/lib/tk-prop/iceberg.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "cartoon"
+   ],
+   "source": "props-a-30#1",
+   "w": 272,
+   "h": 227,
+   "psnr": 44.1
+  },
+  "tk-prop/iceberg-10": {
+   "file": "assets/db/lib/tk-prop/iceberg-10.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "10",
+    "cartoon"
+   ],
+   "source": "chars-c-30#12",
+   "w": 272,
+   "h": 228,
+   "psnr": 41.4
+  },
+  "tk-prop/iceberg-11": {
+   "file": "assets/db/lib/tk-prop/iceberg-11.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "11",
+    "cartoon"
+   ],
+   "source": "chars-d-30#16",
+   "w": 287,
+   "h": 214,
+   "psnr": 41.1
+  },
+  "tk-prop/iceberg-2": {
+   "file": "assets/db/lib/tk-prop/iceberg-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#8",
+   "w": 275,
+   "h": 217,
+   "psnr": 43.0
+  },
+  "tk-prop/iceberg-3": {
+   "file": "assets/db/lib/tk-prop/iceberg-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#2",
+   "w": 313,
+   "h": 227,
+   "psnr": 43.7
+  },
+  "tk-prop/iceberg-5": {
+   "file": "assets/db/lib/tk-prop/iceberg-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-d-30#6",
+   "w": 271,
+   "h": 229,
+   "psnr": 42.6
+  },
+  "tk-prop/iceberg-6": {
+   "file": "assets/db/lib/tk-prop/iceberg-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "6",
+    "cartoon"
+   ],
+   "source": "props-e-25#21",
+   "w": 294,
+   "h": 244,
+   "psnr": 44.3
+  },
+  "tk-prop/iceberg-7": {
+   "file": "assets/db/lib/tk-prop/iceberg-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "7",
+    "cartoon"
+   ],
+   "source": "props-f-25#7",
+   "w": 304,
+   "h": 222,
+   "psnr": 43.1
+  },
+  "tk-prop/iceberg-8": {
+   "file": "assets/db/lib/tk-prop/iceberg-8.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "8",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#8",
+   "w": 269,
+   "h": 229,
+   "psnr": 41.8
+  },
+  "tk-prop/iceberg-9": {
+   "file": "assets/db/lib/tk-prop/iceberg-9.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "iceberg",
+    "9",
+    "cartoon"
+   ],
+   "source": "chars-b-30#23",
+   "w": 273,
+   "h": 206,
+   "psnr": 41.4
+  },
+  "tk-prop/journey-scroll": {
+   "file": "assets/db/lib/tk-prop/journey-scroll.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "journey",
+    "scroll",
+    "cartoon"
+   ],
+   "source": "props-d-30#28",
+   "w": 273,
+   "h": 218,
+   "psnr": 45.1
+  },
+  "tk-prop/lantern": {
+   "file": "assets/db/lib/tk-prop/lantern.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lantern",
+    "cartoon"
+   ],
+   "source": "props-a-30#25",
+   "w": 144,
+   "h": 230,
+   "psnr": 45.0
+  },
+  "tk-prop/lantern-2": {
+   "file": "assets/db/lib/tk-prop/lantern-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lantern",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#13",
+   "w": 148,
+   "h": 222,
+   "psnr": 43.5
+  },
+  "tk-prop/lantern-3": {
+   "file": "assets/db/lib/tk-prop/lantern-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lantern",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#18",
+   "w": 141,
+   "h": 213,
+   "psnr": 44.6
+  },
+  "tk-prop/lantern-4": {
+   "file": "assets/db/lib/tk-prop/lantern-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lantern",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#20",
+   "w": 165,
+   "h": 229,
+   "psnr": 43.0
+  },
+  "tk-prop/lantern-5": {
+   "file": "assets/db/lib/tk-prop/lantern-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lantern",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-f-25#19",
+   "w": 153,
+   "h": 218,
+   "psnr": 43.8
+  },
+  "tk-prop/lantern-6": {
+   "file": "assets/db/lib/tk-prop/lantern-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lantern",
+    "6",
+    "cartoon"
+   ],
+   "source": "world-25#7",
+   "w": 305,
+   "h": 239,
+   "psnr": 42.5
+  },
+  "tk-prop/lantern-red": {
+   "file": "assets/db/lib/tk-prop/lantern-red.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lantern",
+    "red",
+    "cartoon"
+   ],
+   "source": "props-e-25#11",
+   "w": 158,
+   "h": 244,
+   "psnr": 43.3
+  },
+  "tk-prop/life-vest": {
+   "file": "assets/db/lib/tk-prop/life-vest.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "life",
+    "vest",
+    "cartoon"
+   ],
+   "source": "props-d-30#2",
+   "w": 228,
+   "h": 224,
+   "psnr": 44.4
+  },
+  "tk-prop/lifeboat": {
+   "file": "assets/db/lib/tk-prop/lifeboat.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifeboat",
+    "cartoon"
+   ],
+   "source": "props-a-30#8",
+   "w": 272,
+   "h": 189,
+   "psnr": 44.9
+  },
+  "tk-prop/lifeboat-11": {
+   "file": "assets/db/lib/tk-prop/lifeboat-11.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifeboat",
+    "11",
+    "cartoon"
+   ],
+   "source": "props-e-25#13",
+   "w": 285,
+   "h": 215,
+   "psnr": 44.7
+  },
+  "tk-prop/lifeboat-14": {
+   "file": "assets/db/lib/tk-prop/lifeboat-14.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifeboat",
+    "14",
+    "cartoon"
+   ],
+   "source": "chars-b-30#20",
+   "w": 272,
+   "h": 197,
+   "psnr": 44.3
+  },
+  "tk-prop/lifeboat-6": {
+   "file": "assets/db/lib/tk-prop/lifeboat-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifeboat",
+    "6",
+    "cartoon"
+   ],
+   "source": "props-b-30#7",
+   "w": 267,
+   "h": 193,
+   "psnr": 44.6
+  },
+  "tk-prop/lifeboat-6b": {
+   "file": "assets/db/lib/tk-prop/lifeboat-6b.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifeboat",
+    "6b",
+    "cartoon"
+   ],
+   "source": "chars-d-30#17",
+   "w": 272,
+   "h": 211,
+   "psnr": 43.4
+  },
+  "tk-prop/lifebuoy": {
+   "file": "assets/db/lib/tk-prop/lifebuoy.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "cartoon"
+   ],
+   "source": "props-a-30#16",
+   "w": 242,
+   "h": 217,
+   "psnr": 45.6
+  },
+  "tk-prop/lifebuoy-2": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#15",
+   "w": 254,
+   "h": 216,
+   "psnr": 44.6
+  },
+  "tk-prop/lifebuoy-3": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#5",
+   "w": 287,
+   "h": 239,
+   "psnr": 45.5
+  },
+  "tk-prop/lifebuoy-4": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#13",
+   "w": 261,
+   "h": 217,
+   "psnr": 45.2
+  },
+  "tk-prop/lifebuoy-5": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-f-25#8",
+   "w": 263,
+   "h": 216,
+   "psnr": 44.5
+  },
+  "tk-prop/lifebuoy-6": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "6",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#16",
+   "w": 273,
+   "h": 241,
+   "psnr": 43.8
+  },
+  "tk-prop/lifebuoy-7": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "7",
+    "cartoon"
+   ],
+   "source": "chars-c-30#20",
+   "w": 249,
+   "h": 212,
+   "psnr": 43.7
+  },
+  "tk-prop/lifebuoy-8": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-8.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "8",
+    "cartoon"
+   ],
+   "source": "world-25#23",
+   "w": 296,
+   "h": 241,
+   "psnr": 44.2
+  },
+  "tk-prop/lifebuoy-9": {
+   "file": "assets/db/lib/tk-prop/lifebuoy-9.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "lifebuoy",
+    "9",
+    "cartoon"
+   ],
+   "source": "chars-d-30#22",
+   "w": 267,
+   "h": 220,
+   "psnr": 42.9
+  },
+  "tk-prop/message-bottle": {
+   "file": "assets/db/lib/tk-prop/message-bottle.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "message",
+    "bottle",
+    "cartoon"
+   ],
+   "source": "props-d-30#29",
+   "w": 272,
+   "h": 225,
+   "psnr": 45.1
+  },
+  "tk-prop/message-bottle-help": {
+   "file": "assets/db/lib/tk-prop/message-bottle-help.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "message",
+    "bottle",
+    "help",
+    "cartoon"
+   ],
+   "source": "chars-b-30#29",
+   "w": 252,
+   "h": 232,
+   "psnr": 44.0
+  },
+  "tk-prop/message-bottle-hope": {
+   "file": "assets/db/lib/tk-prop/message-bottle-hope.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "message",
+    "bottle",
+    "hope",
+    "cartoon"
+   ],
+   "source": "chars-c-30#30",
+   "w": 272,
+   "h": 234,
+   "psnr": 44.2
+  },
+  "tk-prop/mission-scroll": {
+   "file": "assets/db/lib/tk-prop/mission-scroll.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "mission",
+    "scroll",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#13",
+   "w": 274,
+   "h": 242,
+   "psnr": 44.6
+  },
+  "tk-prop/napkin": {
+   "file": "assets/db/lib/tk-prop/napkin.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "napkin",
+    "cartoon"
+   ],
+   "source": "props-e-25#9",
+   "w": 321,
+   "h": 212,
+   "psnr": 44.9
+  },
+  "tk-prop/nautical-chart": {
+   "file": "assets/db/lib/tk-prop/nautical-chart.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "nautical",
+    "chart",
+    "cartoon"
+   ],
+   "source": "props-d-30#5",
+   "w": 284,
+   "h": 225,
+   "psnr": 44.6
+  },
+  "tk-prop/necklace-box": {
+   "file": "assets/db/lib/tk-prop/necklace-box.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "necklace",
+    "box",
+    "cartoon"
+   ],
+   "source": "props-a-30#4",
+   "w": 239,
+   "h": 234,
+   "psnr": 43.1
+  },
+  "tk-prop/newspaper": {
+   "file": "assets/db/lib/tk-prop/newspaper.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "newspaper",
+    "cartoon"
+   ],
+   "source": "props-f-25#24",
+   "w": 306,
+   "h": 236,
+   "psnr": 45.4
+  },
+  "tk-prop/open-compass": {
+   "file": "assets/db/lib/tk-prop/open-compass.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "open",
+    "compass",
+    "cartoon"
+   ],
+   "source": "props-d-30#17",
+   "w": 243,
+   "h": 217,
+   "psnr": 44.0
+  },
+  "tk-prop/passenger-book": {
+   "file": "assets/db/lib/tk-prop/passenger-book.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "passenger",
+    "book",
+    "cartoon"
+   ],
+   "source": "props-d-30#18",
+   "w": 237,
+   "h": 217,
+   "psnr": 45.1
+  },
+  "tk-prop/picnic-basket": {
+   "file": "assets/db/lib/tk-prop/picnic-basket.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "picnic",
+    "basket",
+    "cartoon"
+   ],
+   "source": "props-d-30#22",
+   "w": 273,
+   "h": 220,
+   "psnr": 43.7
+  },
+  "tk-prop/pocket-watch": {
+   "file": "assets/db/lib/tk-prop/pocket-watch.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "pocket",
+    "watch",
+    "cartoon"
+   ],
+   "source": "props-a-30#21",
+   "w": 200,
+   "h": 233,
+   "psnr": 44.7
+  },
+  "tk-prop/pocket-watch-2": {
+   "file": "assets/db/lib/tk-prop/pocket-watch-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "pocket",
+    "watch",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#25",
+   "w": 249,
+   "h": 224,
+   "psnr": 44.5
+  },
+  "tk-prop/pocket-watch-3": {
+   "file": "assets/db/lib/tk-prop/pocket-watch-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "pocket",
+    "watch",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#19",
+   "w": 201,
+   "h": 230,
+   "psnr": 44.7
+  },
+  "tk-prop/pocket-watch-4": {
+   "file": "assets/db/lib/tk-prop/pocket-watch-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "pocket",
+    "watch",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-f-25#25",
+   "w": 267,
+   "h": 244,
+   "psnr": 44.6
+  },
+  "tk-prop/pocket-watch-5": {
+   "file": "assets/db/lib/tk-prop/pocket-watch-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "pocket",
+    "watch",
+    "5",
+    "cartoon"
+   ],
+   "source": "chars-b-30#10",
+   "w": 262,
+   "h": 261,
+   "psnr": 43.7
+  },
+  "tk-prop/pocket-watch-6": {
+   "file": "assets/db/lib/tk-prop/pocket-watch-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "pocket",
+    "watch",
+    "6",
+    "cartoon"
+   ],
+   "source": "chars-c-30#27",
+   "w": 266,
+   "h": 234,
+   "psnr": 43.3
+  },
+  "tk-prop/pocket-watch-7": {
+   "file": "assets/db/lib/tk-prop/pocket-watch-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "pocket",
+    "watch",
+    "7",
+    "cartoon"
+   ],
+   "source": "chars-d-30#25",
+   "w": 258,
+   "h": 229,
+   "psnr": 43.5
+  },
+  "tk-prop/porthole": {
+   "file": "assets/db/lib/tk-prop/porthole.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "cartoon"
+   ],
+   "source": "props-a-30#3",
+   "w": 245,
+   "h": 230,
+   "psnr": 44.3
+  },
+  "tk-prop/porthole-2": {
+   "file": "assets/db/lib/tk-prop/porthole-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#3",
+   "w": 249,
+   "h": 229,
+   "psnr": 43.6
+  },
+  "tk-prop/porthole-3": {
+   "file": "assets/db/lib/tk-prop/porthole-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#17",
+   "w": 249,
+   "h": 227,
+   "psnr": 44.7
+  },
+  "tk-prop/porthole-4": {
+   "file": "assets/db/lib/tk-prop/porthole-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#23",
+   "w": 249,
+   "h": 233,
+   "psnr": 43.2
+  },
+  "tk-prop/porthole-5": {
+   "file": "assets/db/lib/tk-prop/porthole-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "5",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#15",
+   "w": 264,
+   "h": 243,
+   "psnr": 42.8
+  },
+  "tk-prop/porthole-moon": {
+   "file": "assets/db/lib/tk-prop/porthole-moon.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "moon",
+    "cartoon"
+   ],
+   "source": "chars-d-30#29",
+   "w": 246,
+   "h": 234,
+   "psnr": 42.8
+  },
+  "tk-prop/porthole-night": {
+   "file": "assets/db/lib/tk-prop/porthole-night.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "night",
+    "cartoon"
+   ],
+   "source": "chars-b-30#25",
+   "w": 242,
+   "h": 231,
+   "psnr": 43.1
+  },
+  "tk-prop/porthole-open": {
+   "file": "assets/db/lib/tk-prop/porthole-open.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "open",
+    "cartoon"
+   ],
+   "source": "props-e-25#4",
+   "w": 354,
+   "h": 233,
+   "psnr": 45.0
+  },
+  "tk-prop/porthole-underwater": {
+   "file": "assets/db/lib/tk-prop/porthole-underwater.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "underwater",
+    "cartoon"
+   ],
+   "source": "props-f-25#2",
+   "w": 258,
+   "h": 228,
+   "psnr": 43.3
+  },
+  "tk-prop/porthole-whale-2": {
+   "file": "assets/db/lib/tk-prop/porthole-whale-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "whale",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-d-30#9",
+   "w": 248,
+   "h": 233,
+   "psnr": 42.2
+  },
+  "tk-prop/porthole-whales": {
+   "file": "assets/db/lib/tk-prop/porthole-whales.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "porthole",
+    "whales",
+    "cartoon"
+   ],
+   "source": "chars-c-30#25",
+   "w": 252,
+   "h": 235,
+   "psnr": 41.6
+  },
+  "tk-prop/propeller": {
+   "file": "assets/db/lib/tk-prop/propeller.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "propeller",
+    "cartoon"
+   ],
+   "source": "props-a-30#2",
+   "w": 228,
+   "h": 226,
+   "psnr": 45.5
+  },
+  "tk-prop/propeller-2": {
+   "file": "assets/db/lib/tk-prop/propeller-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "propeller",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-d-30#24",
+   "w": 240,
+   "h": 218,
+   "psnr": 45.1
+  },
+  "tk-prop/propeller-3": {
+   "file": "assets/db/lib/tk-prop/propeller-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "propeller",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-e-25#15",
+   "w": 258,
+   "h": 235,
+   "psnr": 45.1
+  },
+  "tk-prop/propeller-4": {
+   "file": "assets/db/lib/tk-prop/propeller-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "propeller",
+    "4",
+    "cartoon"
+   ],
+   "source": "chars-c-30#8",
+   "w": 234,
+   "h": 220,
+   "psnr": 45.2
+  },
+  "tk-prop/rope-coil": {
+   "file": "assets/db/lib/tk-prop/rope-coil.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "rope",
+    "coil",
+    "cartoon"
+   ],
+   "source": "props-a-30#14",
+   "w": 249,
+   "h": 213,
+   "psnr": 44.3
+  },
+  "tk-prop/rope-coil-2": {
+   "file": "assets/db/lib/tk-prop/rope-coil-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "rope",
+    "coil",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-c-25#14",
+   "w": 290,
+   "h": 205,
+   "psnr": 44.2
+  },
+  "tk-prop/rope-coil-3": {
+   "file": "assets/db/lib/tk-prop/rope-coil-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "rope",
+    "coil",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-d-30#11",
+   "w": 257,
+   "h": 207,
+   "psnr": 44.2
+  },
+  "tk-prop/rope-knot": {
+   "file": "assets/db/lib/tk-prop/rope-knot.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "rope",
+    "knot",
+    "cartoon"
+   ],
+   "source": "props-d-30#16",
+   "w": 196,
+   "h": 215,
+   "psnr": 44.3
+  },
+  "tk-prop/route-scroll": {
+   "file": "assets/db/lib/tk-prop/route-scroll.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "route",
+    "scroll",
+    "cartoon"
+   ],
+   "source": "props-e-25#25",
+   "w": 359,
+   "h": 227,
+   "psnr": 45.0
+  },
+  "tk-prop/rowboat": {
+   "file": "assets/db/lib/tk-prop/rowboat.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "rowboat",
+    "cartoon"
+   ],
+   "source": "props-c-25#4",
+   "w": 319,
+   "h": 225,
+   "psnr": 44.7
+  },
+  "tk-prop/rowboat-2": {
+   "file": "assets/db/lib/tk-prop/rowboat-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "rowboat",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#9",
+   "w": 273,
+   "h": 208,
+   "psnr": 44.3
+  },
+  "tk-prop/scroll-sealed": {
+   "file": "assets/db/lib/tk-prop/scroll-sealed.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "scroll",
+    "sealed",
+    "cartoon"
+   ],
+   "source": "chars-b-30#22",
+   "w": 273,
+   "h": 186,
+   "psnr": 44.5
+  },
+  "tk-prop/scroll-sealed-2": {
+   "file": "assets/db/lib/tk-prop/scroll-sealed-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "scroll",
+    "sealed",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-d-30#26",
+   "w": 273,
+   "h": 200,
+   "psnr": 42.8
+  },
+  "tk-prop/seagull": {
+   "file": "assets/db/lib/tk-prop/seagull.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "seagull",
+    "cartoon"
+   ],
+   "source": "props-a-30#18",
+   "w": 256,
+   "h": 208,
+   "psnr": 45.3
+  },
+  "tk-prop/seagull-2": {
+   "file": "assets/db/lib/tk-prop/seagull-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "seagull",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-c-25#23",
+   "w": 291,
+   "h": 226,
+   "psnr": 44.8
+  },
+  "tk-prop/seagull-4": {
+   "file": "assets/db/lib/tk-prop/seagull-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "seagull",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#21",
+   "w": 265,
+   "h": 217,
+   "psnr": 45.5
+  },
+  "tk-prop/seagull-5": {
+   "file": "assets/db/lib/tk-prop/seagull-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "seagull",
+    "5",
+    "cartoon"
+   ],
+   "source": "chars-c-30#18",
+   "w": 272,
+   "h": 204,
+   "psnr": 44.8
+  },
+  "tk-prop/sealed-letter": {
+   "file": "assets/db/lib/tk-prop/sealed-letter.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sealed",
+    "letter",
+    "cartoon"
+   ],
+   "source": "props-e-25#7",
+   "w": 285,
+   "h": 209,
+   "psnr": 45.9
+  },
+  "tk-prop/searchlight": {
+   "file": "assets/db/lib/tk-prop/searchlight.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "searchlight",
+    "cartoon"
+   ],
+   "source": "props-a-30#17",
+   "w": 186,
+   "h": 221,
+   "psnr": 44.8
+  },
+  "tk-prop/searchlight-2": {
+   "file": "assets/db/lib/tk-prop/searchlight-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "searchlight",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-b-30#17",
+   "w": 216,
+   "h": 223,
+   "psnr": 43.5
+  },
+  "tk-prop/sextant": {
+   "file": "assets/db/lib/tk-prop/sextant.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "cartoon"
+   ],
+   "source": "props-a-30#26",
+   "w": 261,
+   "h": 238,
+   "psnr": 44.1
+  },
+  "tk-prop/sextant-2": {
+   "file": "assets/db/lib/tk-prop/sextant-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#16",
+   "w": 257,
+   "h": 222,
+   "psnr": 44.1
+  },
+  "tk-prop/sextant-4": {
+   "file": "assets/db/lib/tk-prop/sextant-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#3",
+   "w": 267,
+   "h": 227,
+   "psnr": 43.8
+  },
+  "tk-prop/sextant-5": {
+   "file": "assets/db/lib/tk-prop/sextant-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-e-25#24",
+   "w": 309,
+   "h": 244,
+   "psnr": 44.2
+  },
+  "tk-prop/sextant-6": {
+   "file": "assets/db/lib/tk-prop/sextant-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "6",
+    "cartoon"
+   ],
+   "source": "props-f-25#20",
+   "w": 277,
+   "h": 220,
+   "psnr": 44.5
+  },
+  "tk-prop/sextant-7": {
+   "file": "assets/db/lib/tk-prop/sextant-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "7",
+    "cartoon"
+   ],
+   "source": "chars-b-30#8",
+   "w": 257,
+   "h": 224,
+   "psnr": 43.7
+  },
+  "tk-prop/sextant-8": {
+   "file": "assets/db/lib/tk-prop/sextant-8.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "8",
+    "cartoon"
+   ],
+   "source": "chars-c-30#17",
+   "w": 255,
+   "h": 209,
+   "psnr": 43.8
+  },
+  "tk-prop/sextant-9": {
+   "file": "assets/db/lib/tk-prop/sextant-9.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sextant",
+    "9",
+    "cartoon"
+   ],
+   "source": "chars-d-30#10",
+   "w": 267,
+   "h": 227,
+   "psnr": 42.5
+  },
+  "tk-prop/ship-bell": {
+   "file": "assets/db/lib/tk-prop/ship-bell.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "bell",
+    "cartoon"
+   ],
+   "source": "props-a-30#9",
+   "w": 217,
+   "h": 218,
+   "psnr": 45.0
+  },
+  "tk-prop/ship-bell-1912": {
+   "file": "assets/db/lib/tk-prop/ship-bell-1912.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "bell",
+    "1912",
+    "cartoon"
+   ],
+   "source": "props-f-25#3",
+   "w": 236,
+   "h": 239,
+   "psnr": 44.4
+  },
+  "tk-prop/ship-bell-2": {
+   "file": "assets/db/lib/tk-prop/ship-bell-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "bell",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#4",
+   "w": 225,
+   "h": 252,
+   "psnr": 44.4
+  },
+  "tk-prop/ship-bell-3": {
+   "file": "assets/db/lib/tk-prop/ship-bell-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "bell",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#6",
+   "w": 236,
+   "h": 230,
+   "psnr": 45.0
+  },
+  "tk-prop/ship-bell-4": {
+   "file": "assets/db/lib/tk-prop/ship-bell-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "bell",
+    "4",
+    "cartoon"
+   ],
+   "source": "chars-d-30#8",
+   "w": 251,
+   "h": 231,
+   "psnr": 43.4
+  },
+  "tk-prop/ship-bell-wall": {
+   "file": "assets/db/lib/tk-prop/ship-bell-wall.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "bell",
+    "wall",
+    "cartoon"
+   ],
+   "source": "chars-c-30#7",
+   "w": 245,
+   "h": 230,
+   "psnr": 44.0
+  },
+  "tk-prop/ship-horn": {
+   "file": "assets/db/lib/tk-prop/ship-horn.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "horn",
+    "cartoon"
+   ],
+   "source": "props-e-25#5",
+   "w": 320,
+   "h": 220,
+   "psnr": 44.7
+  },
+  "tk-prop/ship-wheel": {
+   "file": "assets/db/lib/tk-prop/ship-wheel.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "wheel",
+    "cartoon"
+   ],
+   "source": "props-b-30#6",
+   "w": 266,
+   "h": 236,
+   "psnr": 44.4
+  },
+  "tk-prop/ship-wheel-2": {
+   "file": "assets/db/lib/tk-prop/ship-wheel-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "wheel",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-c-25#7",
+   "w": 263,
+   "h": 230,
+   "psnr": 44.6
+  },
+  "tk-prop/ship-wheel-4": {
+   "file": "assets/db/lib/tk-prop/ship-wheel-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "wheel",
+    "4",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#10",
+   "w": 242,
+   "h": 232,
+   "psnr": 44.3
+  },
+  "tk-prop/ship-wheel-5": {
+   "file": "assets/db/lib/tk-prop/ship-wheel-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ship",
+    "wheel",
+    "5",
+    "cartoon"
+   ],
+   "source": "world-25#6",
+   "w": 272,
+   "h": 237,
+   "psnr": 43.7
+  },
+  "tk-prop/ships-bell": {
+   "file": "assets/db/lib/tk-prop/ships-bell.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ships",
+    "bell",
+    "cartoon"
+   ],
+   "source": "props-d-30#4",
+   "w": 212,
+   "h": 228,
+   "psnr": 44.3
+  },
+  "tk-prop/sign-adventure-awaits": {
+   "file": "assets/db/lib/tk-prop/sign-adventure-awaits.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sign",
+    "adventure",
+    "awaits",
+    "cartoon"
+   ],
+   "source": "chars-d-30#27",
+   "w": 264,
+   "h": 227,
+   "psnr": 44.0
+  },
+  "tk-prop/sign-next-destination": {
+   "file": "assets/db/lib/tk-prop/sign-next-destination.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sign",
+    "next",
+    "destination",
+    "cartoon"
+   ],
+   "source": "world-25#9",
+   "w": 294,
+   "h": 235,
+   "psnr": 44.6
+  },
+  "tk-prop/sign-next-voyage": {
+   "file": "assets/db/lib/tk-prop/sign-next-voyage.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sign",
+    "next",
+    "voyage",
+    "cartoon"
+   ],
+   "source": "chars-b-30#30",
+   "w": 249,
+   "h": 223,
+   "psnr": 44.6
+  },
+  "tk-prop/sign-welcome-aboard": {
+   "file": "assets/db/lib/tk-prop/sign-welcome-aboard.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "sign",
+    "welcome",
+    "aboard",
+    "cartoon"
+   ],
+   "source": "chars-b-30#12",
+   "w": 259,
+   "h": 216,
+   "psnr": 44.4
+  },
+  "tk-prop/signpost-bridge": {
+   "file": "assets/db/lib/tk-prop/signpost-bridge.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "signpost",
+    "bridge",
+    "cartoon"
+   ],
+   "source": "chars-c-30#24",
+   "w": 227,
+   "h": 211,
+   "psnr": 44.7
+  },
+  "tk-prop/signpost-deck": {
+   "file": "assets/db/lib/tk-prop/signpost-deck.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "signpost",
+    "deck",
+    "cartoon"
+   ],
+   "source": "chars-b-30#21",
+   "w": 200,
+   "h": 210,
+   "psnr": 44.2
+  },
+  "tk-prop/signpost-harbor": {
+   "file": "assets/db/lib/tk-prop/signpost-harbor.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "signpost",
+    "harbor",
+    "cartoon"
+   ],
+   "source": "world-25#20",
+   "w": 240,
+   "h": 218,
+   "psnr": 43.8
+  },
+  "tk-prop/spyglass": {
+   "file": "assets/db/lib/tk-prop/spyglass.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "spyglass",
+    "cartoon"
+   ],
+   "source": "props-a-30#11",
+   "w": 283,
+   "h": 204,
+   "psnr": 44.2
+  },
+  "tk-prop/spyglass-2": {
+   "file": "assets/db/lib/tk-prop/spyglass-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "spyglass",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#10",
+   "w": 267,
+   "h": 188,
+   "psnr": 44.0
+  },
+  "tk-prop/spyglass-3": {
+   "file": "assets/db/lib/tk-prop/spyglass-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "spyglass",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#11",
+   "w": 302,
+   "h": 198,
+   "psnr": 44.2
+  },
+  "tk-prop/spyglass-4": {
+   "file": "assets/db/lib/tk-prop/spyglass-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "spyglass",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-d-30#1",
+   "w": 255,
+   "h": 221,
+   "psnr": 44.8
+  },
+  "tk-prop/spyglass-5": {
+   "file": "assets/db/lib/tk-prop/spyglass-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "spyglass",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-e-25#20",
+   "w": 327,
+   "h": 210,
+   "psnr": 44.3
+  },
+  "tk-prop/spyglass-6": {
+   "file": "assets/db/lib/tk-prop/spyglass-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "spyglass",
+    "6",
+    "cartoon"
+   ],
+   "source": "chars-c-30#14",
+   "w": 273,
+   "h": 198,
+   "psnr": 43.9
+  },
+  "tk-prop/spyglass-7": {
+   "file": "assets/db/lib/tk-prop/spyglass-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "spyglass",
+    "7",
+    "cartoon"
+   ],
+   "source": "world-25#22",
+   "w": 290,
+   "h": 231,
+   "psnr": 43.4
+  },
+  "tk-prop/submersible-expedition": {
+   "file": "assets/db/lib/tk-prop/submersible-expedition.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "submersible",
+    "expedition",
+    "cartoon"
+   ],
+   "source": "chars-d-30#14",
+   "w": 275,
+   "h": 212,
+   "psnr": 44.6
+  },
+  "tk-prop/suitcase": {
+   "file": "assets/db/lib/tk-prop/suitcase.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "cartoon"
+   ],
+   "source": "props-a-30#12",
+   "w": 265,
+   "h": 213,
+   "psnr": 45.0
+  },
+  "tk-prop/suitcase-2": {
+   "file": "assets/db/lib/tk-prop/suitcase-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#5",
+   "w": 258,
+   "h": 226,
+   "psnr": 44.6
+  },
+  "tk-prop/suitcase-3": {
+   "file": "assets/db/lib/tk-prop/suitcase-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "3",
+    "cartoon"
+   ],
+   "source": "props-c-25#25",
+   "w": 288,
+   "h": 237,
+   "psnr": 45.4
+  },
+  "tk-prop/suitcase-4": {
+   "file": "assets/db/lib/tk-prop/suitcase-4.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "4",
+    "cartoon"
+   ],
+   "source": "props-e-25#12",
+   "w": 286,
+   "h": 225,
+   "psnr": 45.0
+  },
+  "tk-prop/suitcase-5": {
+   "file": "assets/db/lib/tk-prop/suitcase-5.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "5",
+    "cartoon"
+   ],
+   "source": "props-f-25#10",
+   "w": 330,
+   "h": 222,
+   "psnr": 44.0
+  },
+  "tk-prop/suitcase-6": {
+   "file": "assets/db/lib/tk-prop/suitcase-6.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "6",
+    "cartoon"
+   ],
+   "source": "chars-b-30#11",
+   "w": 273,
+   "h": 226,
+   "psnr": 43.9
+  },
+  "tk-prop/suitcase-7": {
+   "file": "assets/db/lib/tk-prop/suitcase-7.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "7",
+    "cartoon"
+   ],
+   "source": "chars-c-30#11",
+   "w": 269,
+   "h": 225,
+   "psnr": 44.2
+  },
+  "tk-prop/suitcase-8": {
+   "file": "assets/db/lib/tk-prop/suitcase-8.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "8",
+    "cartoon"
+   ],
+   "source": "world-25#24",
+   "w": 297,
+   "h": 228,
+   "psnr": 44.3
+  },
+  "tk-prop/suitcase-9": {
+   "file": "assets/db/lib/tk-prop/suitcase-9.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "9",
+    "cartoon"
+   ],
+   "source": "chars-d-30#21",
+   "w": 273,
+   "h": 215,
+   "psnr": 43.7
+  },
+  "tk-prop/suitcase-first-class": {
+   "file": "assets/db/lib/tk-prop/suitcase-first-class.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "suitcase",
+    "first",
+    "class",
+    "cartoon"
+   ],
+   "source": "props-e-25#18",
+   "w": 286,
+   "h": 225,
+   "psnr": 45.2
+  },
+  "tk-prop/tea-set": {
+   "file": "assets/db/lib/tk-prop/tea-set.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "tea",
+    "set",
+    "cartoon"
+   ],
+   "source": "props-f-25#17",
+   "w": 299,
+   "h": 214,
+   "psnr": 44.7
+  },
+  "tk-prop/teacup": {
+   "file": "assets/db/lib/tk-prop/teacup.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "teacup",
+    "cartoon"
+   ],
+   "source": "props-a-30#23",
+   "w": 262,
+   "h": 174,
+   "psnr": 45.8
+  },
+  "tk-prop/teacup-2": {
+   "file": "assets/db/lib/tk-prop/teacup-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "teacup",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-b-30#26",
+   "w": 266,
+   "h": 196,
+   "psnr": 45.1
+  },
+  "tk-prop/telescope-tripod": {
+   "file": "assets/db/lib/tk-prop/telescope-tripod.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "telescope",
+    "tripod",
+    "cartoon"
+   ],
+   "source": "chars-b-30#24",
+   "w": 240,
+   "h": 209,
+   "psnr": 43.8
+  },
+  "tk-prop/ticket-first-class": {
+   "file": "assets/db/lib/tk-prop/ticket-first-class.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "ticket",
+    "first",
+    "class",
+    "cartoon"
+   ],
+   "source": "props-f-25#18",
+   "w": 292,
+   "h": 211,
+   "psnr": 46.1
+  },
+  "tk-prop/titanic-ship": {
+   "file": "assets/db/lib/tk-prop/titanic-ship.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "titanic",
+    "ship",
+    "cartoon"
+   ],
+   "source": "props-c-25#1",
+   "w": 308,
+   "h": 229,
+   "psnr": 44.9
+  },
+  "tk-prop/titanic-ship-2": {
+   "file": "assets/db/lib/tk-prop/titanic-ship-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "titanic",
+    "ship",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-d-30#15",
+   "w": 280,
+   "h": 222,
+   "psnr": 44.6
+  },
+  "tk-prop/top-hat": {
+   "file": "assets/db/lib/tk-prop/top-hat.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "top",
+    "hat",
+    "cartoon"
+   ],
+   "source": "props-b-30#12",
+   "w": 266,
+   "h": 210,
+   "psnr": 45.7
+  },
+  "tk-prop/treasure-chest-2": {
+   "file": "assets/db/lib/tk-prop/treasure-chest-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "treasure",
+    "chest",
+    "2",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#14",
+   "w": 271,
+   "h": 237,
+   "psnr": 43.4
+  },
+  "tk-prop/treasure-chest-3": {
+   "file": "assets/db/lib/tk-prop/treasure-chest-3.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "treasure",
+    "chest",
+    "3",
+    "cartoon"
+   ],
+   "source": "chars-d-30#12",
+   "w": 256,
+   "h": 229,
+   "psnr": 43.2
+  },
+  "tk-prop/treasure-chest-open": {
+   "file": "assets/db/lib/tk-prop/treasure-chest-open.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "treasure",
+    "chest",
+    "open",
+    "cartoon"
+   ],
+   "source": "props-d-30#30",
+   "w": 271,
+   "h": 230,
+   "psnr": 44.3
+  },
+  "tk-prop/treasure-map": {
+   "file": "assets/db/lib/tk-prop/treasure-map.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "treasure",
+    "map",
+    "cartoon"
+   ],
+   "source": "props-c-25#10",
+   "w": 300,
+   "h": 213,
+   "psnr": 45.2
+  },
+  "tk-prop/treasure-map-2": {
+   "file": "assets/db/lib/tk-prop/treasure-map-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "treasure",
+    "map",
+    "2",
+    "cartoon"
+   ],
+   "source": "world-25#5",
+   "w": 302,
+   "h": 230,
+   "psnr": 44.6
+  },
+  "tk-prop/trunk": {
+   "file": "assets/db/lib/tk-prop/trunk.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "trunk",
+    "cartoon"
+   ],
+   "source": "props-b-30#30",
+   "w": 265,
+   "h": 215,
+   "psnr": 44.9
+  },
+  "tk-prop/violin": {
+   "file": "assets/db/lib/tk-prop/violin.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "violin",
+    "cartoon"
+   ],
+   "source": "props-b-30#24",
+   "w": 266,
+   "h": 227,
+   "psnr": 44.0
+  },
+  "tk-prop/violin-2": {
+   "file": "assets/db/lib/tk-prop/violin-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "violin",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-f-25#15",
+   "w": 327,
+   "h": 224,
+   "psnr": 43.9
+  },
+  "tk-prop/vip-rope": {
+   "file": "assets/db/lib/tk-prop/vip-rope.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "vip",
+    "rope",
+    "cartoon"
+   ],
+   "source": "chars-c-30#21",
+   "w": 278,
+   "h": 205,
+   "psnr": 43.8
+  },
+  "tk-prop/wall-clock": {
+   "file": "assets/db/lib/tk-prop/wall-clock.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "wall",
+    "clock",
+    "cartoon"
+   ],
+   "source": "props-e-25#17",
+   "w": 245,
+   "h": 225,
+   "psnr": 44.7
+  },
+  "tk-prop/water-barrel": {
+   "file": "assets/db/lib/tk-prop/water-barrel.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "water",
+    "barrel",
+    "cartoon"
+   ],
+   "source": "props-a-30#24",
+   "w": 195,
+   "h": 210,
+   "psnr": 45.2
+  },
+  "tk-prop/water-barrel-2": {
+   "file": "assets/db/lib/tk-prop/water-barrel-2.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "water",
+    "barrel",
+    "2",
+    "cartoon"
+   ],
+   "source": "props-d-30#15",
+   "w": 202,
+   "h": 217,
+   "psnr": 45.1
+  },
+  "tk-prop/whistle": {
+   "file": "assets/db/lib/tk-prop/whistle.webp",
+   "cat": "tk-prop",
+   "tags": [
+    "whistle",
+    "cartoon"
+   ],
+   "source": "props-d-30#25",
+   "w": 251,
+   "h": 234,
+   "psnr": 43.9
+  },
+  "tk-scene/aurora-ice-land": {
+   "file": "assets/db/lib/tk-scene/aurora-ice-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "aurora-ice",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "aurora-ice",
+   "source": "bg-aurora-ice (owner)",
+   "w": 2000,
+   "h": 1352
+  },
+  "tk-scene/aurora-ice-port": {
+   "file": "assets/db/lib/tk-scene/aurora-ice-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "aurora-ice",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "aurora-ice",
+   "source": "bg-aurora-ice (owner)",
+   "w": 884,
+   "h": 2000
+  },
+  "tk-scene/engine-room-land": {
+   "file": "assets/db/lib/tk-scene/engine-room-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "engine-room",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "engine-room",
+   "source": "bg-engine-room (owner)",
+   "w": 2000,
+   "h": 1276
+  },
+  "tk-scene/engine-room-port": {
+   "file": "assets/db/lib/tk-scene/engine-room-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "engine-room",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "engine-room",
+   "source": "bg-engine-room (owner)",
+   "w": 884,
+   "h": 2000
+  },
+  "tk-scene/grand-staircase-land": {
+   "file": "assets/db/lib/tk-scene/grand-staircase-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "grand-staircase",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "Tangga Megah",
+   "source": "bg-grand-staircase (owner, as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1309
+  },
+  "tk-scene/grand-staircase-port": {
+   "file": "assets/db/lib/tk-scene/grand-staircase-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "grand-staircase",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "Tangga Megah",
+   "source": "bg-grand-staircase (owner, as supplied, ESRGAN x4)",
+   "w": 874,
+   "h": 2000
+  },
+  "tk-scene/harbor-dock-land": {
+   "file": "assets/db/lib/tk-scene/harbor-dock-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "harbor-dock",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "Dermaga Pelabuhan",
+   "source": "bg-harbor-dock (owner, as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1387
+  },
+  "tk-scene/harbor-dock-port": {
+   "file": "assets/db/lib/tk-scene/harbor-dock-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "harbor-dock",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "Dermaga Pelabuhan",
+   "source": "bg-harbor-dock (owner, as supplied, ESRGAN x4)",
+   "w": 914,
+   "h": 2000
+  },
+  "tk-scene/ice-night-land": {
+   "file": "assets/db/lib/tk-scene/ice-night-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "ice-night",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "Laut Es Malam",
+   "source": "bg-ice-night (owner, as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1298
+  },
+  "tk-scene/ice-night-port": {
+   "file": "assets/db/lib/tk-scene/ice-night-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "ice-night",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "Laut Es Malam",
+   "source": "bg-ice-night (owner, as supplied, ESRGAN x4)",
+   "w": 848,
+   "h": 2000
+  },
+  "tk-scene/island-cliff-land": {
+   "file": "assets/db/lib/tk-scene/island-cliff-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "island-cliff",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "Tebing Pulau",
+   "source": "bg-island-cliff (owner, as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1445
+  },
+  "tk-scene/island-cliff-port": {
+   "file": "assets/db/lib/tk-scene/island-cliff-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "island-cliff",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "Tebing Pulau",
+   "source": "bg-island-cliff (owner, as supplied, ESRGAN x4)",
+   "w": 914,
+   "h": 2000
+  },
+  "tk-scene/jungle-falls-land": {
+   "file": "assets/db/lib/tk-scene/jungle-falls-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "jungle-falls",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "jungle-falls",
+   "source": "bg-jungle-falls (owner)",
+   "w": 2000,
+   "h": 1329
+  },
+  "tk-scene/jungle-falls-port": {
+   "file": "assets/db/lib/tk-scene/jungle-falls-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "jungle-falls",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "jungle-falls",
+   "source": "bg-jungle-falls (owner)",
+   "w": 894,
+   "h": 2000
+  },
+  "tk-scene/ship-deck-land": {
+   "file": "assets/db/lib/tk-scene/ship-deck-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "ship-deck",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "Dek Kapal",
+   "source": "bg-ship-deck (owner, as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1324
+  },
+  "tk-scene/ship-deck-port": {
+   "file": "assets/db/lib/tk-scene/ship-deck-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "ship-deck",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "Dek Kapal",
+   "source": "bg-ship-deck (owner, as supplied, ESRGAN x4)",
+   "w": 804,
+   "h": 2000
+  },
+  "tk-scene/sky-plaza-land": {
+   "file": "assets/db/lib/tk-scene/sky-plaza-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "sky-plaza",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "Pelabuhan Langit",
+   "source": "bg-sky-plaza (owner, as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1396
+  },
+  "tk-scene/sky-plaza-port": {
+   "file": "assets/db/lib/tk-scene/sky-plaza-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "sky-plaza",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "Pelabuhan Langit",
+   "source": "bg-sky-plaza (owner, as supplied, ESRGAN x4)",
+   "w": 914,
+   "h": 2000
+  },
+  "tk-scene/sunset-port-land": {
+   "file": "assets/db/lib/tk-scene/sunset-port-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "sunset-port",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "sunset-port",
+   "source": "bg-sunset-port (owner)",
+   "w": 2000,
+   "h": 1354
+  },
+  "tk-scene/sunset-port-port": {
+   "file": "assets/db/lib/tk-scene/sunset-port-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "sunset-port",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "sunset-port",
+   "source": "bg-sunset-port (owner)",
+   "w": 870,
+   "h": 2000
+  },
+  "tk-scene/titanic-night-deck-land": {
+   "file": "assets/db/lib/tk-scene/titanic-night-deck-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "titanic-night-deck",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "Dek Titanic Malam",
+   "source": "bg-titanic-night-deck (owner, as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1193
+  },
+  "tk-scene/titanic-night-deck-port": {
+   "file": "assets/db/lib/tk-scene/titanic-night-deck-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "titanic-night-deck",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "Dek Titanic Malam",
+   "source": "bg-titanic-night-deck (owner, as supplied, ESRGAN x4)",
+   "w": 903,
+   "h": 2000
+  },
+  "tk-scene/underwater-land": {
+   "file": "assets/db/lib/tk-scene/underwater-land.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "underwater",
+    "land",
+    "background",
+    "timmy"
+   ],
+   "name": "underwater",
+   "source": "bg-underwater (owner)",
+   "w": 2000,
+   "h": 1299
+  },
+  "tk-scene/underwater-port": {
+   "file": "assets/db/lib/tk-scene/underwater-port.webp",
+   "cat": "tk-scene",
+   "tags": [
+    "underwater",
+    "port",
+    "background",
+    "timmy"
+   ],
+   "name": "underwater",
+   "source": "bg-underwater (owner)",
+   "w": 877,
+   "h": 2000
+  },
+  "tk-ship/aircraft-carrier": {
+   "file": "assets/db/lib/tk-ship/aircraft-carrier.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "aircraft",
+    "carrier",
+    "cartoon"
+   ],
+   "source": "ships-a-25#18",
+   "w": 297,
+   "h": 219,
+   "psnr": 45.4
+  },
+  "tk-ship/airship": {
+   "file": "assets/db/lib/tk-ship/airship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "airship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#21",
+   "w": 281,
+   "h": 224,
+   "psnr": 45.0
+  },
+  "tk-ship/caravel-cross": {
+   "file": "assets/db/lib/tk-ship/caravel-cross.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "caravel",
+    "cross",
+    "cartoon"
+   ],
+   "source": "ships-a-25#13",
+   "w": 277,
+   "h": 221,
+   "psnr": 44.2
+  },
+  "tk-ship/cargo-sailboat": {
+   "file": "assets/db/lib/tk-ship/cargo-sailboat.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "cargo",
+    "sailboat",
+    "cartoon"
+   ],
+   "source": "ships-a-25#17",
+   "w": 273,
+   "h": 219,
+   "psnr": 45.1
+  },
+  "tk-ship/chinese-junk": {
+   "file": "assets/db/lib/tk-ship/chinese-junk.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "chinese",
+    "junk",
+    "cartoon"
+   ],
+   "source": "ships-a-25#7",
+   "w": 258,
+   "h": 219,
+   "psnr": 43.5
+  },
+  "tk-ship/container-ship": {
+   "file": "assets/db/lib/tk-ship/container-ship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "container",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#24",
+   "w": 302,
+   "h": 184,
+   "psnr": 45.3
+  },
+  "tk-ship/dragon-boat": {
+   "file": "assets/db/lib/tk-ship/dragon-boat.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "dragon",
+    "boat",
+    "cartoon"
+   ],
+   "source": "ships-a-25#14",
+   "w": 305,
+   "h": 216,
+   "psnr": 42.5
+  },
+  "tk-ship/fishing-trawler": {
+   "file": "assets/db/lib/tk-ship/fishing-trawler.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "fishing",
+    "trawler",
+    "cartoon"
+   ],
+   "source": "ships-a-25#8",
+   "w": 262,
+   "h": 217,
+   "psnr": 44.3
+  },
+  "tk-ship/galleon-blue": {
+   "file": "assets/db/lib/tk-ship/galleon-blue.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "galleon",
+    "blue",
+    "cartoon"
+   ],
+   "source": "ships-a-25#2",
+   "w": 252,
+   "h": 232,
+   "psnr": 44.9
+  },
+  "tk-ship/ghost-ship": {
+   "file": "assets/db/lib/tk-ship/ghost-ship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "ghost",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#15",
+   "w": 267,
+   "h": 220,
+   "psnr": 42.8
+  },
+  "tk-ship/icebreaker": {
+   "file": "assets/db/lib/tk-ship/icebreaker.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "icebreaker",
+    "cartoon"
+   ],
+   "source": "ships-a-25#12",
+   "w": 290,
+   "h": 218,
+   "psnr": 44.0
+  },
+  "tk-ship/lightship": {
+   "file": "assets/db/lib/tk-ship/lightship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "lightship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#22",
+   "w": 248,
+   "h": 224,
+   "psnr": 43.2
+  },
+  "tk-ship/orca-submarine": {
+   "file": "assets/db/lib/tk-ship/orca-submarine.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "orca",
+    "submarine",
+    "cartoon"
+   ],
+   "source": "ships-a-25#25",
+   "w": 306,
+   "h": 218,
+   "psnr": 45.7
+  },
+  "tk-ship/paddle-steamer": {
+   "file": "assets/db/lib/tk-ship/paddle-steamer.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "paddle",
+    "steamer",
+    "cartoon"
+   ],
+   "source": "ships-a-25#23",
+   "w": 294,
+   "h": 215,
+   "psnr": 43.2
+  },
+  "tk-ship/pirate-ship": {
+   "file": "assets/db/lib/tk-ship/pirate-ship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "pirate",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#1",
+   "w": 275,
+   "h": 232,
+   "psnr": 44.7
+  },
+  "tk-ship/pirate-ship-red": {
+   "file": "assets/db/lib/tk-ship/pirate-ship-red.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "pirate",
+    "ship",
+    "red",
+    "cartoon"
+   ],
+   "source": "ships-a-25#10",
+   "w": 296,
+   "h": 219,
+   "psnr": 44.0
+  },
+  "tk-ship/sailboat": {
+   "file": "assets/db/lib/tk-ship/sailboat.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "sailboat",
+    "cartoon"
+   ],
+   "source": "ships-a-25#20",
+   "w": 224,
+   "h": 219,
+   "psnr": 45.1
+  },
+  "tk-ship/shark-battleship": {
+   "file": "assets/db/lib/tk-ship/shark-battleship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "shark",
+    "battleship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#9",
+   "w": 291,
+   "h": 217,
+   "psnr": 45.2
+  },
+  "tk-ship/steampunk-submarine": {
+   "file": "assets/db/lib/tk-ship/steampunk-submarine.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "steampunk",
+    "submarine",
+    "cartoon"
+   ],
+   "source": "ships-a-25#5",
+   "w": 295,
+   "h": 226,
+   "psnr": 45.0
+  },
+  "tk-ship/submarine-black": {
+   "file": "assets/db/lib/tk-ship/submarine-black.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "submarine",
+    "black",
+    "cartoon"
+   ],
+   "source": "ships-a-25#19",
+   "w": 300,
+   "h": 216,
+   "psnr": 45.7
+  },
+  "tk-ship/tugboat-black": {
+   "file": "assets/db/lib/tk-ship/tugboat-black.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "tugboat",
+    "black",
+    "cartoon"
+   ],
+   "source": "ships-a-25#16",
+   "w": 248,
+   "h": 217,
+   "psnr": 45.1
+  },
+  "tk-ship/tugboat-red": {
+   "file": "assets/db/lib/tk-ship/tugboat-red.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "tugboat",
+    "red",
+    "cartoon"
+   ],
+   "source": "ships-a-25#3",
+   "w": 260,
+   "h": 227,
+   "psnr": 44.6
+  },
+  "tk-ship/turtle-ship": {
+   "file": "assets/db/lib/tk-ship/turtle-ship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "turtle",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#11",
+   "w": 287,
+   "h": 219,
+   "psnr": 44.7
+  },
+  "tk-ship/viking-longship": {
+   "file": "assets/db/lib/tk-ship/viking-longship.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "viking",
+    "longship",
+    "cartoon"
+   ],
+   "source": "ships-a-25#4",
+   "w": 267,
+   "h": 227,
+   "psnr": 44.5
+  },
+  "tk-ship/yacht": {
+   "file": "assets/db/lib/tk-ship/yacht.webp",
+   "cat": "tk-ship",
+   "tags": [
+    "yacht",
+    "cartoon"
+   ],
+   "source": "ships-a-25#6",
+   "w": 301,
+   "h": 216,
+   "psnr": 45.6
+  },
+  "tk-ship2/arctic-explorer": {
+   "file": "assets/db/lib/tk-ship2/arctic-explorer.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "arctic",
+    "explorer",
+    "cartoon"
+   ],
+   "source": "ships-b-25#20",
+   "w": 318,
+   "h": 214,
+   "psnr": 43.8
+  },
+  "tk-ship2/arctic-explorer-clean": {
+   "file": "assets/db/lib/tk-ship2/arctic-explorer-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "arctic",
+    "explorer",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#20-clean",
+   "w": 308,
+   "h": 171,
+   "psnr": 44.3
+  },
+  "tk-ship2/atakebune": {
+   "file": "assets/db/lib/tk-ship2/atakebune.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "atakebune",
+    "cartoon"
+   ],
+   "source": "ships-b-25#17",
+   "w": 308,
+   "h": 211,
+   "psnr": 43.5
+  },
+  "tk-ship2/atakebune-clean": {
+   "file": "assets/db/lib/tk-ship2/atakebune-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "atakebune",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#17-clean",
+   "w": 287,
+   "h": 164,
+   "psnr": 43.9
+  },
+  "tk-ship2/blackbeard": {
+   "file": "assets/db/lib/tk-ship2/blackbeard.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "blackbeard",
+    "cartoon"
+   ],
+   "source": "ships-b-25#15",
+   "w": 300,
+   "h": 221,
+   "psnr": 44.0
+  },
+  "tk-ship2/blackbeard-clean": {
+   "file": "assets/db/lib/tk-ship2/blackbeard-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "blackbeard",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#15-clean",
+   "w": 293,
+   "h": 170,
+   "psnr": 44.3
+  },
+  "tk-ship2/calypso": {
+   "file": "assets/db/lib/tk-ship2/calypso.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "calypso",
+    "cartoon"
+   ],
+   "source": "ships-b-25#10",
+   "w": 309,
+   "h": 218,
+   "psnr": 44.1
+  },
+  "tk-ship2/calypso-clean": {
+   "file": "assets/db/lib/tk-ship2/calypso-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "calypso",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#10-clean",
+   "w": 289,
+   "h": 171,
+   "psnr": 44.5
+  },
+  "tk-ship2/coast-guard-cutter": {
+   "file": "assets/db/lib/tk-ship2/coast-guard-cutter.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "coast",
+    "guard",
+    "cutter",
+    "cartoon"
+   ],
+   "source": "ships-b-25#23",
+   "w": 331,
+   "h": 233,
+   "psnr": 44.4
+  },
+  "tk-ship2/coast-guard-cutter-clean": {
+   "file": "assets/db/lib/tk-ship2/coast-guard-cutter-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "coast",
+    "guard",
+    "cutter",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#23-clean",
+   "w": 331,
+   "h": 186,
+   "psnr": 45.2
+  },
+  "tk-ship2/container-ship": {
+   "file": "assets/db/lib/tk-ship2/container-ship.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "container",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-b-25#19",
+   "w": 319,
+   "h": 204,
+   "psnr": 44.0
+  },
+  "tk-ship2/container-ship-clean": {
+   "file": "assets/db/lib/tk-ship2/container-ship-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "container",
+    "ship",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#19-clean",
+   "w": 319,
+   "h": 157,
+   "psnr": 44.3
+  },
+  "tk-ship2/cutty-sark": {
+   "file": "assets/db/lib/tk-ship2/cutty-sark.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "cutty",
+    "sark",
+    "cartoon"
+   ],
+   "source": "ships-b-25#4",
+   "w": 320,
+   "h": 220,
+   "psnr": 44.2
+  },
+  "tk-ship2/cutty-sark-clean": {
+   "file": "assets/db/lib/tk-ship2/cutty-sark-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "cutty",
+    "sark",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#4-clean",
+   "w": 315,
+   "h": 173,
+   "psnr": 44.6
+  },
+  "tk-ship2/endurance": {
+   "file": "assets/db/lib/tk-ship2/endurance.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "endurance",
+    "cartoon"
+   ],
+   "source": "ships-b-25#8",
+   "w": 321,
+   "h": 214,
+   "psnr": 44.3
+  },
+  "tk-ship2/endurance-clean": {
+   "file": "assets/db/lib/tk-ship2/endurance-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "endurance",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#8-clean",
+   "w": 311,
+   "h": 167,
+   "psnr": 44.8
+  },
+  "tk-ship2/fishing-boat": {
+   "file": "assets/db/lib/tk-ship2/fishing-boat.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "fishing",
+    "boat",
+    "cartoon"
+   ],
+   "source": "ships-b-25#25",
+   "w": 312,
+   "h": 233,
+   "psnr": 43.8
+  },
+  "tk-ship2/fishing-boat-clean": {
+   "file": "assets/db/lib/tk-ship2/fishing-boat-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "fishing",
+    "boat",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#25-clean",
+   "w": 312,
+   "h": 186,
+   "psnr": 43.8
+  },
+  "tk-ship2/hmhs-britannic": {
+   "file": "assets/db/lib/tk-ship2/hmhs-britannic.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "hmhs",
+    "britannic",
+    "cartoon"
+   ],
+   "source": "ships-b-25#2",
+   "w": 327,
+   "h": 220,
+   "psnr": 43.8
+  },
+  "tk-ship2/hmhs-britannic-clean": {
+   "file": "assets/db/lib/tk-ship2/hmhs-britannic-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "hmhs",
+    "britannic",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#2-clean",
+   "w": 325,
+   "h": 173,
+   "psnr": 44.7
+  },
+  "tk-ship2/hms-victory": {
+   "file": "assets/db/lib/tk-ship2/hms-victory.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "hms",
+    "victory",
+    "cartoon"
+   ],
+   "source": "ships-b-25#5",
+   "w": 308,
+   "h": 220,
+   "psnr": 43.3
+  },
+  "tk-ship2/hms-victory-clean": {
+   "file": "assets/db/lib/tk-ship2/hms-victory-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "hms",
+    "victory",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#5-clean",
+   "w": 290,
+   "h": 173,
+   "psnr": 43.6
+  },
+  "tk-ship2/kon-tiki": {
+   "file": "assets/db/lib/tk-ship2/kon-tiki.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "kon",
+    "tiki",
+    "cartoon"
+   ],
+   "source": "ships-b-25#9",
+   "w": 320,
+   "h": 212,
+   "psnr": 43.1
+  },
+  "tk-ship2/kon-tiki-clean": {
+   "file": "assets/db/lib/tk-ship2/kon-tiki-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "kon",
+    "tiki",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#9-clean",
+   "w": 301,
+   "h": 165,
+   "psnr": 43.3
+  },
+  "tk-ship2/mayflower": {
+   "file": "assets/db/lib/tk-ship2/mayflower.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "mayflower",
+    "cartoon"
+   ],
+   "source": "ships-b-25#7",
+   "w": 283,
+   "h": 213,
+   "psnr": 43.7
+  },
+  "tk-ship2/mayflower-clean": {
+   "file": "assets/db/lib/tk-ship2/mayflower-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "mayflower",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#7-clean",
+   "w": 279,
+   "h": 166,
+   "psnr": 44.0
+  },
+  "tk-ship2/mississippi-steamboat": {
+   "file": "assets/db/lib/tk-ship2/mississippi-steamboat.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "mississippi",
+    "steamboat",
+    "cartoon"
+   ],
+   "source": "ships-b-25#22",
+   "w": 325,
+   "h": 233,
+   "psnr": 42.8
+  },
+  "tk-ship2/mississippi-steamboat-clean": {
+   "file": "assets/db/lib/tk-ship2/mississippi-steamboat-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "mississippi",
+    "steamboat",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#22-clean",
+   "w": 325,
+   "h": 186,
+   "psnr": 42.4
+  },
+  "tk-ship2/nautilus": {
+   "file": "assets/db/lib/tk-ship2/nautilus.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "nautilus",
+    "cartoon"
+   ],
+   "source": "ships-b-25#12",
+   "w": 320,
+   "h": 199,
+   "psnr": 44.0
+  },
+  "tk-ship2/nautilus-clean": {
+   "file": "assets/db/lib/tk-ship2/nautilus-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "nautilus",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#12-clean",
+   "w": 320,
+   "h": 152,
+   "psnr": 44.1
+  },
+  "tk-ship2/ocean-dream-yacht": {
+   "file": "assets/db/lib/tk-ship2/ocean-dream-yacht.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "ocean",
+    "dream",
+    "yacht",
+    "cartoon"
+   ],
+   "source": "ships-b-25#24",
+   "w": 324,
+   "h": 217,
+   "psnr": 44.3
+  },
+  "tk-ship2/ocean-dream-yacht-clean": {
+   "file": "assets/db/lib/tk-ship2/ocean-dream-yacht-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "ocean",
+    "dream",
+    "yacht",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#24-clean",
+   "w": 324,
+   "h": 170,
+   "psnr": 44.2
+  },
+  "tk-ship2/queen-mary": {
+   "file": "assets/db/lib/tk-ship2/queen-mary.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "queen",
+    "mary",
+    "cartoon"
+   ],
+   "source": "ships-b-25#11",
+   "w": 319,
+   "h": 218,
+   "psnr": 43.5
+  },
+  "tk-ship2/queen-mary-clean": {
+   "file": "assets/db/lib/tk-ship2/queen-mary-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "queen",
+    "mary",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#11-clean",
+   "w": 309,
+   "h": 168,
+   "psnr": 44.2
+  },
+  "tk-ship2/red-dragon-junk": {
+   "file": "assets/db/lib/tk-ship2/red-dragon-junk.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "red",
+    "dragon",
+    "junk",
+    "cartoon"
+   ],
+   "source": "ships-b-25#14",
+   "w": 299,
+   "h": 220,
+   "psnr": 42.4
+  },
+  "tk-ship2/red-dragon-junk-clean": {
+   "file": "assets/db/lib/tk-ship2/red-dragon-junk-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "red",
+    "dragon",
+    "junk",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#14-clean",
+   "w": 281,
+   "h": 173,
+   "psnr": 42.5
+  },
+  "tk-ship2/rms-titanic": {
+   "file": "assets/db/lib/tk-ship2/rms-titanic.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "rms",
+    "titanic",
+    "cartoon"
+   ],
+   "source": "ships-b-25#1",
+   "w": 319,
+   "h": 221,
+   "psnr": 44.1
+  },
+  "tk-ship2/rms-titanic-clean": {
+   "file": "assets/db/lib/tk-ship2/rms-titanic-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "rms",
+    "titanic",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#1-clean",
+   "w": 303,
+   "h": 174,
+   "psnr": 44.7
+  },
+  "tk-ship2/santa-maria": {
+   "file": "assets/db/lib/tk-ship2/santa-maria.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "santa",
+    "maria",
+    "cartoon"
+   ],
+   "source": "ships-b-25#16",
+   "w": 302,
+   "h": 213,
+   "psnr": 43.1
+  },
+  "tk-ship2/santa-maria-clean": {
+   "file": "assets/db/lib/tk-ship2/santa-maria-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "santa",
+    "maria",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#16-clean",
+   "w": 286,
+   "h": 166,
+   "psnr": 43.0
+  },
+  "tk-ship2/uss-arizona": {
+   "file": "assets/db/lib/tk-ship2/uss-arizona.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "uss",
+    "arizona",
+    "cartoon"
+   ],
+   "source": "ships-b-25#3",
+   "w": 331,
+   "h": 220,
+   "psnr": 44.0
+  },
+  "tk-ship2/uss-arizona-clean": {
+   "file": "assets/db/lib/tk-ship2/uss-arizona-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "uss",
+    "arizona",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#3-clean",
+   "w": 329,
+   "h": 173,
+   "psnr": 44.6
+  },
+  "tk-ship2/uss-enterprise": {
+   "file": "assets/db/lib/tk-ship2/uss-enterprise.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "uss",
+    "enterprise",
+    "cartoon"
+   ],
+   "source": "ships-b-25#18",
+   "w": 324,
+   "h": 203,
+   "psnr": 43.9
+  },
+  "tk-ship2/uss-enterprise-clean": {
+   "file": "assets/db/lib/tk-ship2/uss-enterprise-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "uss",
+    "enterprise",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#18-clean",
+   "w": 324,
+   "h": 156,
+   "psnr": 44.1
+  },
+  "tk-ship2/vasa": {
+   "file": "assets/db/lib/tk-ship2/vasa.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "vasa",
+    "cartoon"
+   ],
+   "source": "ships-b-25#6",
+   "w": 287,
+   "h": 218,
+   "psnr": 43.1
+  },
+  "tk-ship2/vasa-clean": {
+   "file": "assets/db/lib/tk-ship2/vasa-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "vasa",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#6-clean",
+   "w": 260,
+   "h": 171,
+   "psnr": 43.7
+  },
+  "tk-ship2/venetian-gondola": {
+   "file": "assets/db/lib/tk-ship2/venetian-gondola.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "venetian",
+    "gondola",
+    "cartoon"
+   ],
+   "source": "ships-b-25#21",
+   "w": 270,
+   "h": 228,
+   "psnr": 43.7
+  },
+  "tk-ship2/venetian-gondola-clean": {
+   "file": "assets/db/lib/tk-ship2/venetian-gondola-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "venetian",
+    "gondola",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#21-clean",
+   "w": 259,
+   "h": 181,
+   "psnr": 43.5
+  },
+  "tk-ship2/viking-longship": {
+   "file": "assets/db/lib/tk-ship2/viking-longship.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "viking",
+    "longship",
+    "cartoon"
+   ],
+   "source": "ships-b-25#13",
+   "w": 310,
+   "h": 217,
+   "psnr": 42.9
+  },
+  "tk-ship2/viking-longship-clean": {
+   "file": "assets/db/lib/tk-ship2/viking-longship-clean.webp",
+   "cat": "tk-ship2",
+   "tags": [
+    "viking",
+    "longship",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-b-25#13-clean",
+   "w": 284,
+   "h": 170,
+   "psnr": 42.9
+  },
+  "tk-ship3/arabian-dhow": {
+   "file": "assets/db/lib/tk-ship3/arabian-dhow.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "arabian",
+    "dhow",
+    "cartoon"
+   ],
+   "source": "ships-d-30#10",
+   "w": 271,
+   "h": 212,
+   "psnr": 42.8
+  },
+  "tk-ship3/arabian-dhow-clean": {
+   "file": "assets/db/lib/tk-ship3/arabian-dhow-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "arabian",
+    "dhow",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#10-clean",
+   "w": 262,
+   "h": 165,
+   "psnr": 43.3
+  },
+  "tk-ship3/arctic-venture": {
+   "file": "assets/db/lib/tk-ship3/arctic-venture.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "arctic",
+    "venture",
+    "cartoon"
+   ],
+   "source": "ships-e-30#10",
+   "w": 273,
+   "h": 220,
+   "psnr": 43.2
+  },
+  "tk-ship3/arctic-venture-clean": {
+   "file": "assets/db/lib/tk-ship3/arctic-venture-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "arctic",
+    "venture",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#10-clean",
+   "w": 267,
+   "h": 173,
+   "psnr": 43.4
+  },
+  "tk-ship3/atago": {
+   "file": "assets/db/lib/tk-ship3/atago.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "atago",
+    "cartoon"
+   ],
+   "source": "ships-d-30#4",
+   "w": 273,
+   "h": 211,
+   "psnr": 43.7
+  },
+  "tk-ship3/atago-clean": {
+   "file": "assets/db/lib/tk-ship3/atago-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "atago",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#4-clean",
+   "w": 239,
+   "h": 152,
+   "psnr": 43.5
+  },
+  "tk-ship3/atakebune-2": {
+   "file": "assets/db/lib/tk-ship3/atakebune-2.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "atakebune",
+    "2",
+    "cartoon"
+   ],
+   "source": "ships-c-25#4",
+   "w": 310,
+   "h": 223,
+   "psnr": 43.5
+  },
+  "tk-ship3/atakebune-2-clean": {
+   "file": "assets/db/lib/tk-ship3/atakebune-2-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "atakebune",
+    "2",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#4-clean",
+   "w": 298,
+   "h": 176,
+   "psnr": 43.9
+  },
+  "tk-ship3/athenian-trireme": {
+   "file": "assets/db/lib/tk-ship3/athenian-trireme.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "athenian",
+    "trireme",
+    "cartoon"
+   ],
+   "source": "ships-d-30#1",
+   "w": 273,
+   "h": 211,
+   "psnr": 42.7
+  },
+  "tk-ship3/athenian-trireme-clean": {
+   "file": "assets/db/lib/tk-ship3/athenian-trireme-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "athenian",
+    "trireme",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#1-clean",
+   "w": 237,
+   "h": 153,
+   "psnr": 43.2
+  },
+  "tk-ship3/aurora-cruise": {
+   "file": "assets/db/lib/tk-ship3/aurora-cruise.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "aurora",
+    "cruise",
+    "cartoon"
+   ],
+   "source": "ships-e-30#30",
+   "w": 273,
+   "h": 225,
+   "psnr": 43.5
+  },
+  "tk-ship3/aurora-cruise-clean": {
+   "file": "assets/db/lib/tk-ship3/aurora-cruise-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "aurora",
+    "cruise",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#30-clean",
+   "w": 273,
+   "h": 178,
+   "psnr": 43.9
+  },
+  "tk-ship3/azzam-yacht": {
+   "file": "assets/db/lib/tk-ship3/azzam-yacht.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "azzam",
+    "yacht",
+    "cartoon"
+   ],
+   "source": "ships-d-30#21",
+   "w": 275,
+   "h": 195,
+   "psnr": 43.8
+  },
+  "tk-ship3/azzam-yacht-clean": {
+   "file": "assets/db/lib/tk-ship3/azzam-yacht-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "azzam",
+    "yacht",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#21-clean",
+   "w": 275,
+   "h": 148,
+   "psnr": 45.0
+  },
+  "tk-ship3/bismarck": {
+   "file": "assets/db/lib/tk-ship3/bismarck.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "bismarck",
+    "cartoon"
+   ],
+   "source": "ships-d-30#13",
+   "w": 274,
+   "h": 200,
+   "psnr": 43.4
+  },
+  "tk-ship3/bismarck-clean": {
+   "file": "assets/db/lib/tk-ship3/bismarck-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "bismarck",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#13-clean",
+   "w": 274,
+   "h": 153,
+   "psnr": 44.6
+  },
+  "tk-ship3/bluewave-express": {
+   "file": "assets/db/lib/tk-ship3/bluewave-express.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "bluewave",
+    "express",
+    "cartoon"
+   ],
+   "source": "ships-e-30#6",
+   "w": 272,
+   "h": 232,
+   "psnr": 43.2
+  },
+  "tk-ship3/bluewave-express-clean": {
+   "file": "assets/db/lib/tk-ship3/bluewave-express-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "bluewave",
+    "express",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#6-clean",
+   "w": 272,
+   "h": 185,
+   "psnr": 43.9
+  },
+  "tk-ship3/borealis-heavy-lift": {
+   "file": "assets/db/lib/tk-ship3/borealis-heavy-lift.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "borealis",
+    "heavy",
+    "lift",
+    "cartoon"
+   ],
+   "source": "ships-e-30#20",
+   "w": 281,
+   "h": 205,
+   "psnr": 43.4
+  },
+  "tk-ship3/borealis-heavy-lift-clean": {
+   "file": "assets/db/lib/tk-ship3/borealis-heavy-lift-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "borealis",
+    "heavy",
+    "lift",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#20-clean",
+   "w": 273,
+   "h": 158,
+   "psnr": 43.8
+  },
+  "tk-ship3/cable-layer": {
+   "file": "assets/db/lib/tk-ship3/cable-layer.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "cable",
+    "layer",
+    "cartoon"
+   ],
+   "source": "ships-e-30#21",
+   "w": 272,
+   "h": 205,
+   "psnr": 42.9
+  },
+  "tk-ship3/cable-layer-clean": {
+   "file": "assets/db/lib/tk-ship3/cable-layer-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "cable",
+    "layer",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#21-clean",
+   "w": 266,
+   "h": 158,
+   "psnr": 42.8
+  },
+  "tk-ship3/chikyu": {
+   "file": "assets/db/lib/tk-ship3/chikyu.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "chikyu",
+    "cartoon"
+   ],
+   "source": "ships-d-30#16",
+   "w": 278,
+   "h": 210,
+   "psnr": 43.1
+  },
+  "tk-ship3/chikyu-clean": {
+   "file": "assets/db/lib/tk-ship3/chikyu-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "chikyu",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#16-clean",
+   "w": 273,
+   "h": 163,
+   "psnr": 43.9
+  },
+  "tk-ship3/chinese-junk-2": {
+   "file": "assets/db/lib/tk-ship3/chinese-junk-2.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "chinese",
+    "junk",
+    "2",
+    "cartoon"
+   ],
+   "source": "ships-c-25#3",
+   "w": 312,
+   "h": 223,
+   "psnr": 42.5
+  },
+  "tk-ship3/chinese-junk-2-clean": {
+   "file": "assets/db/lib/tk-ship3/chinese-junk-2-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "chinese",
+    "junk",
+    "2",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#3-clean",
+   "w": 286,
+   "h": 176,
+   "psnr": 42.8
+  },
+  "tk-ship3/clermont": {
+   "file": "assets/db/lib/tk-ship3/clermont.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "clermont",
+    "cartoon"
+   ],
+   "source": "ships-e-30#7",
+   "w": 272,
+   "h": 228,
+   "psnr": 43.7
+  },
+  "tk-ship3/clermont-clean": {
+   "file": "assets/db/lib/tk-ship3/clermont-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "clermont",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#7-clean",
+   "w": 271,
+   "h": 177,
+   "psnr": 44.1
+  },
+  "tk-ship3/corvette": {
+   "file": "assets/db/lib/tk-ship3/corvette.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "corvette",
+    "cartoon"
+   ],
+   "source": "ships-c-25#23",
+   "w": 317,
+   "h": 240,
+   "psnr": 44.2
+  },
+  "tk-ship3/corvette-clean": {
+   "file": "assets/db/lib/tk-ship3/corvette-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "corvette",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#23-clean",
+   "w": 311,
+   "h": 193,
+   "psnr": 45.0
+  },
+  "tk-ship3/cruise-ship-symphony": {
+   "file": "assets/db/lib/tk-ship3/cruise-ship-symphony.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "cruise",
+    "ship",
+    "symphony",
+    "cartoon"
+   ],
+   "source": "ships-c-25#19",
+   "w": 330,
+   "h": 214,
+   "psnr": 44.0
+  },
+  "tk-ship3/cruise-ship-symphony-clean": {
+   "file": "assets/db/lib/tk-ship3/cruise-ship-symphony-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "cruise",
+    "ship",
+    "symphony",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#19-clean",
+   "w": 330,
+   "h": 167,
+   "psnr": 44.5
+  },
+  "tk-ship3/cutty-sark-2": {
+   "file": "assets/db/lib/tk-ship3/cutty-sark-2.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "cutty",
+    "sark",
+    "2",
+    "cartoon"
+   ],
+   "source": "ships-e-30#8",
+   "w": 273,
+   "h": 217,
+   "psnr": 43.9
+  },
+  "tk-ship3/cutty-sark-2-clean": {
+   "file": "assets/db/lib/tk-ship3/cutty-sark-2-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "cutty",
+    "sark",
+    "2",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#8-clean",
+   "w": 273,
+   "h": 170,
+   "psnr": 44.1
+  },
+  "tk-ship3/deep-driller": {
+   "file": "assets/db/lib/tk-ship3/deep-driller.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "deep",
+    "driller",
+    "cartoon"
+   ],
+   "source": "ships-e-30#22",
+   "w": 281,
+   "h": 211,
+   "psnr": 43.8
+  },
+  "tk-ship3/deep-driller-clean": {
+   "file": "assets/db/lib/tk-ship3/deep-driller-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "deep",
+    "driller",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#22-clean",
+   "w": 272,
+   "h": 164,
+   "psnr": 44.1
+  },
+  "tk-ship3/deepsea-voyager": {
+   "file": "assets/db/lib/tk-ship3/deepsea-voyager.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "deepsea",
+    "voyager",
+    "cartoon"
+   ],
+   "source": "ships-e-30#13",
+   "w": 273,
+   "h": 203,
+   "psnr": 43.7
+  },
+  "tk-ship3/deepsea-voyager-clean": {
+   "file": "assets/db/lib/tk-ship3/deepsea-voyager-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "deepsea",
+    "voyager",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#13-clean",
+   "w": 260,
+   "h": 160,
+   "psnr": 43.7
+  },
+  "tk-ship3/drakkar": {
+   "file": "assets/db/lib/tk-ship3/drakkar.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "drakkar",
+    "cartoon"
+   ],
+   "source": "ships-e-30#1",
+   "w": 273,
+   "h": 236,
+   "psnr": 43.2
+  },
+  "tk-ship3/drakkar-clean": {
+   "file": "assets/db/lib/tk-ship3/drakkar-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "drakkar",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#1-clean",
+   "w": 264,
+   "h": 189,
+   "psnr": 43.4
+  },
+  "tk-ship3/dutch-east-indiaman": {
+   "file": "assets/db/lib/tk-ship3/dutch-east-indiaman.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "dutch",
+    "east",
+    "indiaman",
+    "cartoon"
+   ],
+   "source": "ships-c-25#7",
+   "w": 315,
+   "h": 218,
+   "psnr": 43.7
+  },
+  "tk-ship3/dutch-east-indiaman-clean": {
+   "file": "assets/db/lib/tk-ship3/dutch-east-indiaman-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "dutch",
+    "east",
+    "indiaman",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#7-clean",
+   "w": 308,
+   "h": 171,
+   "psnr": 44.4
+  },
+  "tk-ship3/eclipse-yacht": {
+   "file": "assets/db/lib/tk-ship3/eclipse-yacht.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "eclipse",
+    "yacht",
+    "cartoon"
+   ],
+   "source": "ships-d-30#20",
+   "w": 275,
+   "h": 202,
+   "psnr": 43.9
+  },
+  "tk-ship3/eclipse-yacht-clean": {
+   "file": "assets/db/lib/tk-ship3/eclipse-yacht-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "eclipse",
+    "yacht",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#20-clean",
+   "w": 275,
+   "h": 155,
+   "psnr": 45.3
+  },
+  "tk-ship3/energy-observer": {
+   "file": "assets/db/lib/tk-ship3/energy-observer.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "energy",
+    "observer",
+    "cartoon"
+   ],
+   "source": "ships-d-30#23",
+   "w": 274,
+   "h": 206,
+   "psnr": 43.3
+  },
+  "tk-ship3/energy-observer-clean": {
+   "file": "assets/db/lib/tk-ship3/energy-observer-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "energy",
+    "observer",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#23-clean",
+   "w": 274,
+   "h": 159,
+   "psnr": 43.7
+  },
+  "tk-ship3/euroferry": {
+   "file": "assets/db/lib/tk-ship3/euroferry.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "euroferry",
+    "cartoon"
+   ],
+   "source": "ships-e-30#12",
+   "w": 273,
+   "h": 222,
+   "psnr": 43.7
+  },
+  "tk-ship3/euroferry-clean": {
+   "file": "assets/db/lib/tk-ship3/euroferry-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "euroferry",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#12-clean",
+   "w": 273,
+   "h": 174,
+   "psnr": 44.3
+  },
+  "tk-ship3/fdny-fireboat": {
+   "file": "assets/db/lib/tk-ship3/fdny-fireboat.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "fdny",
+    "fireboat",
+    "cartoon"
+   ],
+   "source": "ships-d-30#29",
+   "w": 278,
+   "h": 229,
+   "psnr": 41.8
+  },
+  "tk-ship3/fdny-fireboat-clean": {
+   "file": "assets/db/lib/tk-ship3/fdny-fireboat-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "fdny",
+    "fireboat",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#29-clean",
+   "w": 277,
+   "h": 182,
+   "psnr": 41.5
+  },
+  "tk-ship3/flying-cloud": {
+   "file": "assets/db/lib/tk-ship3/flying-cloud.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "flying",
+    "cloud",
+    "cartoon"
+   ],
+   "source": "ships-c-25#16",
+   "w": 299,
+   "h": 220,
+   "psnr": 44.1
+  },
+  "tk-ship3/flying-cloud-clean": {
+   "file": "assets/db/lib/tk-ship3/flying-cloud-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "flying",
+    "cloud",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#16-clean",
+   "w": 288,
+   "h": 173,
+   "psnr": 44.7
+  },
+  "tk-ship3/fujian-junk": {
+   "file": "assets/db/lib/tk-ship3/fujian-junk.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "fujian",
+    "junk",
+    "cartoon"
+   ],
+   "source": "ships-d-30#25",
+   "w": 266,
+   "h": 229,
+   "psnr": 42.9
+  },
+  "tk-ship3/fujian-junk-clean": {
+   "file": "assets/db/lib/tk-ship3/fujian-junk-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "fujian",
+    "junk",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#25-clean",
+   "w": 256,
+   "h": 182,
+   "psnr": 42.7
+  },
+  "tk-ship3/fv-atlantic-star": {
+   "file": "assets/db/lib/tk-ship3/fv-atlantic-star.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "fv",
+    "atlantic",
+    "star",
+    "cartoon"
+   ],
+   "source": "ships-c-25#21",
+   "w": 315,
+   "h": 235,
+   "psnr": 44.3
+  },
+  "tk-ship3/fv-atlantic-star-clean": {
+   "file": "assets/db/lib/tk-ship3/fv-atlantic-star-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "fv",
+    "atlantic",
+    "star",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#21-clean",
+   "w": 315,
+   "h": 188,
+   "psnr": 44.5
+  },
+  "tk-ship3/global-mercy": {
+   "file": "assets/db/lib/tk-ship3/global-mercy.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "global",
+    "mercy",
+    "cartoon"
+   ],
+   "source": "ships-e-30#18",
+   "w": 273,
+   "h": 201,
+   "psnr": 43.1
+  },
+  "tk-ship3/global-mercy-clean": {
+   "file": "assets/db/lib/tk-ship3/global-mercy-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "global",
+    "mercy",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#18-clean",
+   "w": 273,
+   "h": 158,
+   "psnr": 43.4
+  },
+  "tk-ship3/harbor-tug": {
+   "file": "assets/db/lib/tk-ship3/harbor-tug.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "harbor",
+    "tug",
+    "cartoon"
+   ],
+   "source": "ships-c-25#22",
+   "w": 309,
+   "h": 239,
+   "psnr": 43.9
+  },
+  "tk-ship3/harbor-tug-clean": {
+   "file": "assets/db/lib/tk-ship3/harbor-tug-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "harbor",
+    "tug",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#22-clean",
+   "w": 309,
+   "h": 192,
+   "psnr": 44.2
+  },
+  "tk-ship3/hms-beagle": {
+   "file": "assets/db/lib/tk-ship3/hms-beagle.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hms",
+    "beagle",
+    "cartoon"
+   ],
+   "source": "ships-d-30#7",
+   "w": 262,
+   "h": 212,
+   "psnr": 43.3
+  },
+  "tk-ship3/hms-beagle-clean": {
+   "file": "assets/db/lib/tk-ship3/hms-beagle-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hms",
+    "beagle",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#7-clean",
+   "w": 259,
+   "h": 165,
+   "psnr": 43.7
+  },
+  "tk-ship3/hms-dreadnought-f111": {
+   "file": "assets/db/lib/tk-ship3/hms-dreadnought-f111.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hms",
+    "dreadnought",
+    "f111",
+    "cartoon"
+   ],
+   "source": "ships-d-30#5",
+   "w": 275,
+   "h": 211,
+   "psnr": 44.6
+  },
+  "tk-ship3/hms-dreadnought-f111-clean": {
+   "file": "assets/db/lib/tk-ship3/hms-dreadnought-f111-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hms",
+    "dreadnought",
+    "f111",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#5-clean",
+   "w": 241,
+   "h": 152,
+   "psnr": 44.9
+  },
+  "tk-ship3/hms-endeavour": {
+   "file": "assets/db/lib/tk-ship3/hms-endeavour.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hms",
+    "endeavour",
+    "cartoon"
+   ],
+   "source": "ships-d-30#8",
+   "w": 269,
+   "h": 211,
+   "psnr": 43.7
+  },
+  "tk-ship3/hms-endeavour-clean": {
+   "file": "assets/db/lib/tk-ship3/hms-endeavour-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hms",
+    "endeavour",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#8-clean",
+   "w": 248,
+   "h": 164,
+   "psnr": 44.1
+  },
+  "tk-ship3/hos-achiever": {
+   "file": "assets/db/lib/tk-ship3/hos-achiever.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hos",
+    "achiever",
+    "cartoon"
+   ],
+   "source": "ships-d-30#27",
+   "w": 276,
+   "h": 229,
+   "psnr": 43.1
+  },
+  "tk-ship3/hos-achiever-clean": {
+   "file": "assets/db/lib/tk-ship3/hos-achiever-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hos",
+    "achiever",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#27-clean",
+   "w": 276,
+   "h": 182,
+   "psnr": 43.3
+  },
+  "tk-ship3/hovercraft": {
+   "file": "assets/db/lib/tk-ship3/hovercraft.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hovercraft",
+    "cartoon"
+   ],
+   "source": "ships-e-30#16",
+   "w": 273,
+   "h": 179,
+   "psnr": 44.2
+  },
+  "tk-ship3/hovercraft-clean": {
+   "file": "assets/db/lib/tk-ship3/hovercraft-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hovercraft",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#16-clean",
+   "w": 268,
+   "h": 132,
+   "psnr": 44.3
+  },
+  "tk-ship3/hydrofoil-x1": {
+   "file": "assets/db/lib/tk-ship3/hydrofoil-x1.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hydrofoil",
+    "x1",
+    "cartoon"
+   ],
+   "source": "ships-e-30#17",
+   "w": 273,
+   "h": 184,
+   "psnr": 43.2
+  },
+  "tk-ship3/hydrofoil-x1-clean": {
+   "file": "assets/db/lib/tk-ship3/hydrofoil-x1-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "hydrofoil",
+    "x1",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#17-clean",
+   "w": 271,
+   "h": 137,
+   "psnr": 42.9
+  },
+  "tk-ship3/icebreaker-50-let-pobedy": {
+   "file": "assets/db/lib/tk-ship3/icebreaker-50-let-pobedy.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "icebreaker",
+    "50",
+    "let",
+    "pobedy",
+    "cartoon"
+   ],
+   "source": "ships-c-25#15",
+   "w": 309,
+   "h": 214,
+   "psnr": 42.8
+  },
+  "tk-ship3/icebreaker-50-let-pobedy-clean": {
+   "file": "assets/db/lib/tk-ship3/icebreaker-50-let-pobedy-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "icebreaker",
+    "50",
+    "let",
+    "pobedy",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#15-clean",
+   "w": 291,
+   "h": 167,
+   "psnr": 43.1
+  },
+  "tk-ship3/ijn-akagi": {
+   "file": "assets/db/lib/tk-ship3/ijn-akagi.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ijn",
+    "akagi",
+    "cartoon"
+   ],
+   "source": "ships-d-30#14",
+   "w": 273,
+   "h": 201,
+   "psnr": 43.8
+  },
+  "tk-ship3/ijn-akagi-clean": {
+   "file": "assets/db/lib/tk-ship3/ijn-akagi-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ijn",
+    "akagi",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#14-clean",
+   "w": 271,
+   "h": 154,
+   "psnr": 44.9
+  },
+  "tk-ship3/japanese-sekibune": {
+   "file": "assets/db/lib/tk-ship3/japanese-sekibune.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "japanese",
+    "sekibune",
+    "cartoon"
+   ],
+   "source": "ships-e-30#4",
+   "w": 272,
+   "h": 236,
+   "psnr": 43.5
+  },
+  "tk-ship3/japanese-sekibune-clean": {
+   "file": "assets/db/lib/tk-ship3/japanese-sekibune-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "japanese",
+    "sekibune",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#4-clean",
+   "w": 272,
+   "h": 189,
+   "psnr": 43.7
+  },
+  "tk-ship3/krusenstern": {
+   "file": "assets/db/lib/tk-ship3/krusenstern.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "krusenstern",
+    "cartoon"
+   ],
+   "source": "ships-d-30#26",
+   "w": 273,
+   "h": 221,
+   "psnr": 44.5
+  },
+  "tk-ship3/krusenstern-clean": {
+   "file": "assets/db/lib/tk-ship3/krusenstern-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "krusenstern",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#26-clean",
+   "w": 273,
+   "h": 174,
+   "psnr": 44.8
+  },
+  "tk-ship3/le-commandant": {
+   "file": "assets/db/lib/tk-ship3/le-commandant.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "le",
+    "commandant",
+    "cartoon"
+   ],
+   "source": "ships-e-30#14",
+   "w": 276,
+   "h": 205,
+   "psnr": 43.8
+  },
+  "tk-ship3/le-commandant-clean": {
+   "file": "assets/db/lib/tk-ship3/le-commandant-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "le",
+    "commandant",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#14-clean",
+   "w": 276,
+   "h": 158,
+   "psnr": 44.9
+  },
+  "tk-ship3/lightship-nantucket": {
+   "file": "assets/db/lib/tk-ship3/lightship-nantucket.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "lightship",
+    "nantucket",
+    "cartoon"
+   ],
+   "source": "ships-c-25#20",
+   "w": 304,
+   "h": 220,
+   "psnr": 40.6
+  },
+  "tk-ship3/lightship-nantucket-clean": {
+   "file": "assets/db/lib/tk-ship3/lightship-nantucket-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "lightship",
+    "nantucket",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#20-clean",
+   "w": 294,
+   "h": 173,
+   "psnr": 40.3
+  },
+  "tk-ship3/lng-carrier": {
+   "file": "assets/db/lib/tk-ship3/lng-carrier.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "lng",
+    "carrier",
+    "cartoon"
+   ],
+   "source": "ships-c-25#17",
+   "w": 332,
+   "h": 206,
+   "psnr": 44.0
+  },
+  "tk-ship3/lng-carrier-clean": {
+   "file": "assets/db/lib/tk-ship3/lng-carrier-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "lng",
+    "carrier",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#17-clean",
+   "w": 332,
+   "h": 159,
+   "psnr": 45.2
+  },
+  "tk-ship3/lng-voyager": {
+   "file": "assets/db/lib/tk-ship3/lng-voyager.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "lng",
+    "voyager",
+    "cartoon"
+   ],
+   "source": "ships-e-30#19",
+   "w": 273,
+   "h": 205,
+   "psnr": 44.3
+  },
+  "tk-ship3/lng-voyager-clean": {
+   "file": "assets/db/lib/tk-ship3/lng-voyager-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "lng",
+    "voyager",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#19-clean",
+   "w": 271,
+   "h": 158,
+   "psnr": 45.0
+  },
+  "tk-ship3/msc-container-ship": {
+   "file": "assets/db/lib/tk-ship3/msc-container-ship.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "msc",
+    "container",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-c-25#18",
+   "w": 327,
+   "h": 206,
+   "psnr": 44.0
+  },
+  "tk-ship3/msc-container-ship-clean": {
+   "file": "assets/db/lib/tk-ship3/msc-container-ship-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "msc",
+    "container",
+    "ship",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#18-clean",
+   "w": 326,
+   "h": 159,
+   "psnr": 44.7
+  },
+  "tk-ship3/mv-malama": {
+   "file": "assets/db/lib/tk-ship3/mv-malama.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "mv",
+    "malama",
+    "cartoon"
+   ],
+   "source": "ships-d-30#24",
+   "w": 275,
+   "h": 195,
+   "psnr": 43.6
+  },
+  "tk-ship3/mv-malama-clean": {
+   "file": "assets/db/lib/tk-ship3/mv-malama-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "mv",
+    "malama",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#24-clean",
+   "w": 275,
+   "h": 148,
+   "psnr": 44.7
+  },
+  "tk-ship3/national-guard-cutter": {
+   "file": "assets/db/lib/tk-ship3/national-guard-cutter.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "national",
+    "guard",
+    "cutter",
+    "cartoon"
+   ],
+   "source": "ships-e-30#15",
+   "w": 276,
+   "h": 205,
+   "psnr": 43.6
+  },
+  "tk-ship3/national-guard-cutter-clean": {
+   "file": "assets/db/lib/tk-ship3/national-guard-cutter-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "national",
+    "guard",
+    "cutter",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#15-clean",
+   "w": 276,
+   "h": 158,
+   "psnr": 44.6
+  },
+  "tk-ship3/nile-river-boat": {
+   "file": "assets/db/lib/tk-ship3/nile-river-boat.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "nile",
+    "river",
+    "boat",
+    "cartoon"
+   ],
+   "source": "ships-e-30#2",
+   "w": 273,
+   "h": 236,
+   "psnr": 43.1
+  },
+  "tk-ship3/nile-river-boat-clean": {
+   "file": "assets/db/lib/tk-ship3/nile-river-boat-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "nile",
+    "river",
+    "boat",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#2-clean",
+   "w": 267,
+   "h": 189,
+   "psnr": 43.5
+  },
+  "tk-ship3/ocean-carrier": {
+   "file": "assets/db/lib/tk-ship3/ocean-carrier.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ocean",
+    "carrier",
+    "cartoon"
+   ],
+   "source": "ships-e-30#29",
+   "w": 275,
+   "h": 210,
+   "psnr": 44.0
+  },
+  "tk-ship3/ocean-carrier-clean": {
+   "file": "assets/db/lib/tk-ship3/ocean-carrier-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ocean",
+    "carrier",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#29-clean",
+   "w": 275,
+   "h": 163,
+   "psnr": 44.8
+  },
+  "tk-ship3/oceanx-explorer": {
+   "file": "assets/db/lib/tk-ship3/oceanx-explorer.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "oceanx",
+    "explorer",
+    "cartoon"
+   ],
+   "source": "ships-e-30#11",
+   "w": 277,
+   "h": 220,
+   "psnr": 43.7
+  },
+  "tk-ship3/oceanx-explorer-clean": {
+   "file": "assets/db/lib/tk-ship3/oceanx-explorer-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "oceanx",
+    "explorer",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#11-clean",
+   "w": 273,
+   "h": 173,
+   "psnr": 44.4
+  },
+  "tk-ship3/pirate-galleon": {
+   "file": "assets/db/lib/tk-ship3/pirate-galleon.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "pirate",
+    "galleon",
+    "cartoon"
+   ],
+   "source": "ships-c-25#5",
+   "w": 302,
+   "h": 223,
+   "psnr": 44.1
+  },
+  "tk-ship3/pirate-galleon-clean": {
+   "file": "assets/db/lib/tk-ship3/pirate-galleon-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "pirate",
+    "galleon",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#5-clean",
+   "w": 292,
+   "h": 176,
+   "psnr": 44.6
+  },
+  "tk-ship3/planetsolar": {
+   "file": "assets/db/lib/tk-ship3/planetsolar.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "planetsolar",
+    "cartoon"
+   ],
+   "source": "ships-c-25#25",
+   "w": 316,
+   "h": 197,
+   "psnr": 43.8
+  },
+  "tk-ship3/planetsolar-clean": {
+   "file": "assets/db/lib/tk-ship3/planetsolar-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "planetsolar",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#25-clean",
+   "w": 316,
+   "h": 150,
+   "psnr": 43.7
+  },
+  "tk-ship3/polar-supply": {
+   "file": "assets/db/lib/tk-ship3/polar-supply.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "polar",
+    "supply",
+    "cartoon"
+   ],
+   "source": "ships-e-30#28",
+   "w": 279,
+   "h": 227,
+   "psnr": 42.9
+  },
+  "tk-ship3/polar-supply-clean": {
+   "file": "assets/db/lib/tk-ship3/polar-supply-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "polar",
+    "supply",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#28-clean",
+   "w": 279,
+   "h": 180,
+   "psnr": 43.3
+  },
+  "tk-ship3/polarstern": {
+   "file": "assets/db/lib/tk-ship3/polarstern.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "polarstern",
+    "cartoon"
+   ],
+   "source": "ships-d-30#18",
+   "w": 273,
+   "h": 201,
+   "psnr": 43.5
+  },
+  "tk-ship3/polarstern-clean": {
+   "file": "assets/db/lib/tk-ship3/polarstern-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "polarstern",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#18-clean",
+   "w": 261,
+   "h": 154,
+   "psnr": 44.4
+  },
+  "tk-ship3/rainbow-warrior": {
+   "file": "assets/db/lib/tk-ship3/rainbow-warrior.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "rainbow",
+    "warrior",
+    "cartoon"
+   ],
+   "source": "ships-d-30#17",
+   "w": 276,
+   "h": 211,
+   "psnr": 43.9
+  },
+  "tk-ship3/rainbow-warrior-clean": {
+   "file": "assets/db/lib/tk-ship3/rainbow-warrior-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "rainbow",
+    "warrior",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#17-clean",
+   "w": 265,
+   "h": 164,
+   "psnr": 44.4
+  },
+  "tk-ship3/river-steamboat": {
+   "file": "assets/db/lib/tk-ship3/river-steamboat.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "river",
+    "steamboat",
+    "cartoon"
+   ],
+   "source": "ships-c-25#9",
+   "w": 324,
+   "h": 218,
+   "psnr": 41.5
+  },
+  "tk-ship3/river-steamboat-clean": {
+   "file": "assets/db/lib/tk-ship3/river-steamboat-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "river",
+    "steamboat",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#9-clean",
+   "w": 314,
+   "h": 171,
+   "psnr": 41.4
+  },
+  "tk-ship3/roald-amundsen": {
+   "file": "assets/db/lib/tk-ship3/roald-amundsen.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "roald",
+    "amundsen",
+    "cartoon"
+   ],
+   "source": "ships-d-30#22",
+   "w": 279,
+   "h": 197,
+   "psnr": 43.3
+  },
+  "tk-ship3/roald-amundsen-clean": {
+   "file": "assets/db/lib/tk-ship3/roald-amundsen-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "roald",
+    "amundsen",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#22-clean",
+   "w": 276,
+   "h": 150,
+   "psnr": 43.7
+  },
+  "tk-ship3/roman-quinquereme": {
+   "file": "assets/db/lib/tk-ship3/roman-quinquereme.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "roman",
+    "quinquereme",
+    "cartoon"
+   ],
+   "source": "ships-d-30#2",
+   "w": 272,
+   "h": 211,
+   "psnr": 42.7
+  },
+  "tk-ship3/roman-quinquereme-clean": {
+   "file": "assets/db/lib/tk-ship3/roman-quinquereme-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "roman",
+    "quinquereme",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#2-clean",
+   "w": 255,
+   "h": 152,
+   "psnr": 43.0
+  },
+  "tk-ship3/royal-frigate": {
+   "file": "assets/db/lib/tk-ship3/royal-frigate.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "royal",
+    "frigate",
+    "cartoon"
+   ],
+   "source": "ships-c-25#8",
+   "w": 310,
+   "h": 218,
+   "psnr": 43.7
+  },
+  "tk-ship3/royal-frigate-clean": {
+   "file": "assets/db/lib/tk-ship3/royal-frigate-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "royal",
+    "frigate",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#8-clean",
+   "w": 302,
+   "h": 171,
+   "psnr": 44.2
+  },
+  "tk-ship3/rv-atlantis": {
+   "file": "assets/db/lib/tk-ship3/rv-atlantis.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "rv",
+    "atlantis",
+    "cartoon"
+   ],
+   "source": "ships-d-30#12",
+   "w": 274,
+   "h": 212,
+   "psnr": 43.8
+  },
+  "tk-ship3/rv-atlantis-clean": {
+   "file": "assets/db/lib/tk-ship3/rv-atlantis-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "rv",
+    "atlantis",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#12-clean",
+   "w": 267,
+   "h": 165,
+   "psnr": 45.3
+  },
+  "tk-ship3/rv-discovery": {
+   "file": "assets/db/lib/tk-ship3/rv-discovery.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "rv",
+    "discovery",
+    "cartoon"
+   ],
+   "source": "ships-c-25#14",
+   "w": 318,
+   "h": 218,
+   "psnr": 43.8
+  },
+  "tk-ship3/rv-discovery-clean": {
+   "file": "assets/db/lib/tk-ship3/rv-discovery-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "rv",
+    "discovery",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#14-clean",
+   "w": 303,
+   "h": 171,
+   "psnr": 44.4
+  },
+  "tk-ship3/salvage-master": {
+   "file": "assets/db/lib/tk-ship3/salvage-master.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "salvage",
+    "master",
+    "cartoon"
+   ],
+   "source": "ships-e-30#24",
+   "w": 273,
+   "h": 207,
+   "psnr": 43.2
+  },
+  "tk-ship3/salvage-master-clean": {
+   "file": "assets/db/lib/tk-ship3/salvage-master-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "salvage",
+    "master",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#24-clean",
+   "w": 273,
+   "h": 160,
+   "psnr": 42.9
+  },
+  "tk-ship3/sao-gabriel": {
+   "file": "assets/db/lib/tk-ship3/sao-gabriel.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "sao",
+    "gabriel",
+    "cartoon"
+   ],
+   "source": "ships-d-30#9",
+   "w": 271,
+   "h": 212,
+   "psnr": 41.2
+  },
+  "tk-ship3/sao-gabriel-clean": {
+   "file": "assets/db/lib/tk-ship3/sao-gabriel-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "sao",
+    "gabriel",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#9-clean",
+   "w": 261,
+   "h": 165,
+   "psnr": 40.9
+  },
+  "tk-ship3/sea-explorer": {
+   "file": "assets/db/lib/tk-ship3/sea-explorer.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "sea",
+    "explorer",
+    "cartoon"
+   ],
+   "source": "ships-d-30#28",
+   "w": 280,
+   "h": 229,
+   "psnr": 43.1
+  },
+  "tk-ship3/sea-explorer-clean": {
+   "file": "assets/db/lib/tk-ship3/sea-explorer-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "sea",
+    "explorer",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#28-clean",
+   "w": 280,
+   "h": 182,
+   "psnr": 43.5
+  },
+  "tk-ship3/sea-guardian": {
+   "file": "assets/db/lib/tk-ship3/sea-guardian.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "sea",
+    "guardian",
+    "cartoon"
+   ],
+   "source": "ships-e-30#25",
+   "w": 274,
+   "h": 225,
+   "psnr": 42.7
+  },
+  "tk-ship3/sea-guardian-clean": {
+   "file": "assets/db/lib/tk-ship3/sea-guardian-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "sea",
+    "guardian",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#25-clean",
+   "w": 274,
+   "h": 178,
+   "psnr": 42.5
+  },
+  "tk-ship3/seismic-explorer": {
+   "file": "assets/db/lib/tk-ship3/seismic-explorer.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "seismic",
+    "explorer",
+    "cartoon"
+   ],
+   "source": "ships-e-30#23",
+   "w": 273,
+   "h": 198,
+   "psnr": 44.0
+  },
+  "tk-ship3/seismic-explorer-clean": {
+   "file": "assets/db/lib/tk-ship3/seismic-explorer-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "seismic",
+    "explorer",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#23-clean",
+   "w": 272,
+   "h": 151,
+   "psnr": 44.2
+  },
+  "tk-ship3/spanish-galleon": {
+   "file": "assets/db/lib/tk-ship3/spanish-galleon.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "spanish",
+    "galleon",
+    "cartoon"
+   ],
+   "source": "ships-c-25#6",
+   "w": 298,
+   "h": 218,
+   "psnr": 42.2
+  },
+  "tk-ship3/spanish-galleon-clean": {
+   "file": "assets/db/lib/tk-ship3/spanish-galleon-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "spanish",
+    "galleon",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#6-clean",
+   "w": 282,
+   "h": 171,
+   "psnr": 42.2
+  },
+  "tk-ship3/ss-great-eastern": {
+   "file": "assets/db/lib/tk-ship3/ss-great-eastern.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ss",
+    "great",
+    "eastern",
+    "cartoon"
+   ],
+   "source": "ships-d-30#11",
+   "w": 277,
+   "h": 211,
+   "psnr": 43.0
+  },
+  "tk-ship3/ss-great-eastern-clean": {
+   "file": "assets/db/lib/tk-ship3/ss-great-eastern-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ss",
+    "great",
+    "eastern",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#11-clean",
+   "w": 273,
+   "h": 164,
+   "psnr": 43.2
+  },
+  "tk-ship3/ss-rotterdam": {
+   "file": "assets/db/lib/tk-ship3/ss-rotterdam.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ss",
+    "rotterdam",
+    "cartoon"
+   ],
+   "source": "ships-e-30#9",
+   "w": 274,
+   "h": 218,
+   "psnr": 43.7
+  },
+  "tk-ship3/ss-rotterdam-clean": {
+   "file": "assets/db/lib/tk-ship3/ss-rotterdam-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "ss",
+    "rotterdam",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#9-clean",
+   "w": 270,
+   "h": 171,
+   "psnr": 44.7
+  },
+  "tk-ship3/stad-amsterdam": {
+   "file": "assets/db/lib/tk-ship3/stad-amsterdam.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "stad",
+    "amsterdam",
+    "cartoon"
+   ],
+   "source": "ships-d-30#19",
+   "w": 271,
+   "h": 206,
+   "psnr": 44.2
+  },
+  "tk-ship3/stad-amsterdam-clean": {
+   "file": "assets/db/lib/tk-ship3/stad-amsterdam-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "stad",
+    "amsterdam",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#19-clean",
+   "w": 263,
+   "h": 159,
+   "psnr": 44.9
+  },
+  "tk-ship3/submarine-support": {
+   "file": "assets/db/lib/tk-ship3/submarine-support.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "submarine",
+    "support",
+    "cartoon"
+   ],
+   "source": "ships-e-30#27",
+   "w": 284,
+   "h": 210,
+   "psnr": 43.3
+  },
+  "tk-ship3/submarine-support-clean": {
+   "file": "assets/db/lib/tk-ship3/submarine-support-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "submarine",
+    "support",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#27-clean",
+   "w": 284,
+   "h": 164,
+   "psnr": 43.7
+  },
+  "tk-ship3/suzumushi": {
+   "file": "assets/db/lib/tk-ship3/suzumushi.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "suzumushi",
+    "cartoon"
+   ],
+   "source": "ships-d-30#30",
+   "w": 273,
+   "h": 229,
+   "psnr": 44.1
+  },
+  "tk-ship3/suzumushi-clean": {
+   "file": "assets/db/lib/tk-ship3/suzumushi-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "suzumushi",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#30-clean",
+   "w": 273,
+   "h": 182,
+   "psnr": 45.2
+  },
+  "tk-ship3/treasure-junk": {
+   "file": "assets/db/lib/tk-ship3/treasure-junk.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "treasure",
+    "junk",
+    "cartoon"
+   ],
+   "source": "ships-e-30#3",
+   "w": 273,
+   "h": 236,
+   "psnr": 41.0
+  },
+  "tk-ship3/treasure-junk-clean": {
+   "file": "assets/db/lib/tk-ship3/treasure-junk-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "treasure",
+    "junk",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#3-clean",
+   "w": 273,
+   "h": 189,
+   "psnr": 40.7
+  },
+  "tk-ship3/trireme": {
+   "file": "assets/db/lib/tk-ship3/trireme.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "trireme",
+    "cartoon"
+   ],
+   "source": "ships-c-25#1",
+   "w": 315,
+   "h": 223,
+   "psnr": 42.1
+  },
+  "tk-ship3/trireme-clean": {
+   "file": "assets/db/lib/tk-ship3/trireme-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "trireme",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#1-clean",
+   "w": 287,
+   "h": 176,
+   "psnr": 41.8
+  },
+  "tk-ship3/u-boat": {
+   "file": "assets/db/lib/tk-ship3/u-boat.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "u",
+    "boat",
+    "cartoon"
+   ],
+   "source": "ships-c-25#11",
+   "w": 313,
+   "h": 212,
+   "psnr": 43.7
+  },
+  "tk-ship3/u-boat-clean": {
+   "file": "assets/db/lib/tk-ship3/u-boat-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "u",
+    "boat",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#11-clean",
+   "w": 311,
+   "h": 165,
+   "psnr": 44.2
+  },
+  "tk-ship3/usns-mercy": {
+   "file": "assets/db/lib/tk-ship3/usns-mercy.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "usns",
+    "mercy",
+    "cartoon"
+   ],
+   "source": "ships-c-25#24",
+   "w": 333,
+   "h": 235,
+   "psnr": 43.7
+  },
+  "tk-ship3/usns-mercy-clean": {
+   "file": "assets/db/lib/tk-ship3/usns-mercy-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "usns",
+    "mercy",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#24-clean",
+   "w": 333,
+   "h": 188,
+   "psnr": 44.3
+  },
+  "tk-ship3/uss-arleigh-burke": {
+   "file": "assets/db/lib/tk-ship3/uss-arleigh-burke.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "arleigh",
+    "burke",
+    "cartoon"
+   ],
+   "source": "ships-d-30#15",
+   "w": 276,
+   "h": 211,
+   "psnr": 44.2
+  },
+  "tk-ship3/uss-arleigh-burke-clean": {
+   "file": "assets/db/lib/tk-ship3/uss-arleigh-burke-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "arleigh",
+    "burke",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#15-clean",
+   "w": 271,
+   "h": 164,
+   "psnr": 44.8
+  },
+  "tk-ship3/uss-monitor": {
+   "file": "assets/db/lib/tk-ship3/uss-monitor.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "monitor",
+    "cartoon"
+   ],
+   "source": "ships-c-25#10",
+   "w": 316,
+   "h": 218,
+   "psnr": 44.1
+  },
+  "tk-ship3/uss-monitor-2": {
+   "file": "assets/db/lib/tk-ship3/uss-monitor-2.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "monitor",
+    "2",
+    "cartoon"
+   ],
+   "source": "ships-e-30#5",
+   "w": 277,
+   "h": 231,
+   "psnr": 43.0
+  },
+  "tk-ship3/uss-monitor-2-clean": {
+   "file": "assets/db/lib/tk-ship3/uss-monitor-2-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "monitor",
+    "2",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#5-clean",
+   "w": 273,
+   "h": 184,
+   "psnr": 42.8
+  },
+  "tk-ship3/uss-monitor-clean": {
+   "file": "assets/db/lib/tk-ship3/uss-monitor-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "monitor",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#10-clean",
+   "w": 313,
+   "h": 176,
+   "psnr": 45.0
+  },
+  "tk-ship3/uss-nimitz": {
+   "file": "assets/db/lib/tk-ship3/uss-nimitz.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "nimitz",
+    "cartoon"
+   ],
+   "source": "ships-c-25#12",
+   "w": 332,
+   "h": 214,
+   "psnr": 43.5
+  },
+  "tk-ship3/uss-nimitz-clean": {
+   "file": "assets/db/lib/tk-ship3/uss-nimitz-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "nimitz",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#12-clean",
+   "w": 332,
+   "h": 167,
+   "psnr": 44.1
+  },
+  "tk-ship3/uss-zumwalt": {
+   "file": "assets/db/lib/tk-ship3/uss-zumwalt.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "zumwalt",
+    "cartoon"
+   ],
+   "source": "ships-c-25#13",
+   "w": 324,
+   "h": 218,
+   "psnr": 43.9
+  },
+  "tk-ship3/uss-zumwalt-clean": {
+   "file": "assets/db/lib/tk-ship3/uss-zumwalt-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "uss",
+    "zumwalt",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#13-clean",
+   "w": 314,
+   "h": 171,
+   "psnr": 45.1
+  },
+  "tk-ship3/viking-ship": {
+   "file": "assets/db/lib/tk-ship3/viking-ship.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "viking",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-c-25#2",
+   "w": 315,
+   "h": 223,
+   "psnr": 42.1
+  },
+  "tk-ship3/viking-ship-clean": {
+   "file": "assets/db/lib/tk-ship3/viking-ship-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "viking",
+    "ship",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-c-25#2-clean",
+   "w": 281,
+   "h": 176,
+   "psnr": 42.0
+  },
+  "tk-ship3/windrunner": {
+   "file": "assets/db/lib/tk-ship3/windrunner.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "windrunner",
+    "cartoon"
+   ],
+   "source": "ships-e-30#26",
+   "w": 285,
+   "h": 223,
+   "psnr": 44.9
+  },
+  "tk-ship3/windrunner-clean": {
+   "file": "assets/db/lib/tk-ship3/windrunner-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "windrunner",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-e-30#26-clean",
+   "w": 280,
+   "h": 176,
+   "psnr": 45.8
+  },
+  "tk-ship3/yamal": {
+   "file": "assets/db/lib/tk-ship3/yamal.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "yamal",
+    "cartoon"
+   ],
+   "source": "ships-d-30#6",
+   "w": 270,
+   "h": 211,
+   "psnr": 43.1
+  },
+  "tk-ship3/yamal-clean": {
+   "file": "assets/db/lib/tk-ship3/yamal-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "yamal",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#6-clean",
+   "w": 257,
+   "h": 153,
+   "psnr": 42.5
+  },
+  "tk-ship3/zheng-he-treasure-ship": {
+   "file": "assets/db/lib/tk-ship3/zheng-he-treasure-ship.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "zheng",
+    "he",
+    "treasure",
+    "ship",
+    "cartoon"
+   ],
+   "source": "ships-d-30#3",
+   "w": 270,
+   "h": 211,
+   "psnr": 43.6
+  },
+  "tk-ship3/zheng-he-treasure-ship-clean": {
+   "file": "assets/db/lib/tk-ship3/zheng-he-treasure-ship-clean.webp",
+   "cat": "tk-ship3",
+   "tags": [
+    "zheng",
+    "he",
+    "treasure",
+    "ship",
+    "clean",
+    "cartoon"
+   ],
+   "source": "ships-d-30#3-clean",
+   "w": 255,
+   "h": 152,
+   "psnr": 43.2
+  },
+  "tk-ui/anchor-coin": {
+   "file": "assets/db/lib/tk-ui/anchor-coin.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "anchor",
+    "coin",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#27",
+   "w": 226,
+   "h": 223,
+   "psnr": 42.2
+  },
+  "tk-ui/btn-achievements": {
+   "file": "assets/db/lib/tk-ui/btn-achievements.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "btn",
+    "achievements",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#23",
+   "w": 273,
+   "h": 162,
+   "psnr": 44.4
+  },
+  "tk-ui/btn-exit": {
+   "file": "assets/db/lib/tk-ui/btn-exit.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "btn",
+    "exit",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#24",
+   "w": 273,
+   "h": 161,
+   "psnr": 45.2
+  },
+  "tk-ui/btn-map": {
+   "file": "assets/db/lib/tk-ui/btn-map.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "btn",
+    "map",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#21",
+   "w": 273,
+   "h": 163,
+   "psnr": 44.0
+  },
+  "tk-ui/btn-play": {
+   "file": "assets/db/lib/tk-ui/btn-play.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "btn",
+    "play",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#19",
+   "w": 272,
+   "h": 159,
+   "psnr": 44.3
+  },
+  "tk-ui/btn-settings": {
+   "file": "assets/db/lib/tk-ui/btn-settings.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "btn",
+    "settings",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#20",
+   "w": 273,
+   "h": 163,
+   "psnr": 44.6
+  },
+  "tk-ui/btn-shop": {
+   "file": "assets/db/lib/tk-ui/btn-shop.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "btn",
+    "shop",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#22",
+   "w": 273,
+   "h": 161,
+   "psnr": 42.4
+  },
+  "tk-ui/diamond": {
+   "file": "assets/db/lib/tk-ui/diamond.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "diamond",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#28",
+   "w": 213,
+   "h": 193,
+   "psnr": 41.4
+  },
+  "tk-ui/heart": {
+   "file": "assets/db/lib/tk-ui/heart.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "heart",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#26",
+   "w": 228,
+   "h": 202,
+   "psnr": 44.2
+  },
+  "tk-ui/hourglass": {
+   "file": "assets/db/lib/tk-ui/hourglass.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "hourglass",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#29",
+   "w": 186,
+   "h": 222,
+   "psnr": 44.9
+  },
+  "tk-ui/level-complete": {
+   "file": "assets/db/lib/tk-ui/level-complete.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "level",
+    "complete",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#30",
+   "w": 269,
+   "h": 225,
+   "psnr": 44.8
+  },
+  "tk-ui/star": {
+   "file": "assets/db/lib/tk-ui/star.webp",
+   "cat": "tk-ui",
+   "tags": [
+    "star",
+    "cartoon"
+   ],
+   "source": "chars-ui-30#25",
+   "w": 221,
+   "h": 211,
+   "psnr": 43.7
+  },
+  "tk-world/arch-island": {
+   "file": "assets/db/lib/tk-world/arch-island.webp",
+   "cat": "tk-world",
+   "tags": [
+    "arch",
+    "island",
+    "cartoon"
+   ],
+   "source": "world-25#19",
+   "w": 326,
+   "h": 211,
+   "psnr": 42.9
+  },
+  "tk-world/cave-island": {
+   "file": "assets/db/lib/tk-world/cave-island.webp",
+   "cat": "tk-world",
+   "tags": [
+    "cave",
+    "island",
+    "cartoon"
+   ],
+   "source": "world-25#12",
+   "w": 327,
+   "h": 212,
+   "psnr": 42.0
+  },
+  "tk-world/harbor-station": {
+   "file": "assets/db/lib/tk-world/harbor-station.webp",
+   "cat": "tk-world",
+   "tags": [
+    "harbor",
+    "station",
+    "cartoon"
+   ],
+   "source": "world-25#18",
+   "w": 325,
+   "h": 210,
+   "psnr": 44.1
+  },
+  "tk-world/iceberg-big": {
+   "file": "assets/db/lib/tk-world/iceberg-big.webp",
+   "cat": "tk-world",
+   "tags": [
+    "iceberg",
+    "big",
+    "cartoon"
+   ],
+   "source": "world-25#11",
+   "w": 318,
+   "h": 214,
+   "psnr": 41.8
+  },
+  "tk-world/lighthouse-island": {
+   "file": "assets/db/lib/tk-world/lighthouse-island.webp",
+   "cat": "tk-world",
+   "tags": [
+    "lighthouse",
+    "island",
+    "cartoon"
+   ],
+   "source": "world-25#10",
+   "w": 238,
+   "h": 211,
+   "psnr": 43.0
+  },
+  "tk-world/moon-sea": {
+   "file": "assets/db/lib/tk-world/moon-sea.webp",
+   "cat": "tk-world",
+   "tags": [
+    "moon",
+    "sea",
+    "cartoon"
+   ],
+   "source": "world-25#16",
+   "w": 264,
+   "h": 168,
+   "psnr": 45.0
+  },
+  "tk-world/snow-island": {
+   "file": "assets/db/lib/tk-world/snow-island.webp",
+   "cat": "tk-world",
+   "tags": [
+    "snow",
+    "island",
+    "cartoon"
+   ],
+   "source": "world-25#17",
+   "w": 325,
+   "h": 216,
+   "psnr": 42.7
+  },
+  "tk-world/storm-cloud": {
+   "file": "assets/db/lib/tk-world/storm-cloud.webp",
+   "cat": "tk-world",
+   "tags": [
+    "storm",
+    "cloud",
+    "cartoon"
+   ],
+   "source": "world-25#14",
+   "w": 319,
+   "h": 208,
+   "psnr": 45.2
+  },
+  "tk-world/sunset-sea": {
+   "file": "assets/db/lib/tk-world/sunset-sea.webp",
+   "cat": "tk-world",
+   "tags": [
+    "sunset",
+    "sea",
+    "cartoon"
+   ],
+   "source": "world-25#15",
+   "w": 214,
+   "h": 167,
+   "psnr": 43.6
+  },
+  "tk-world/whirlpool": {
+   "file": "assets/db/lib/tk-world/whirlpool.webp",
+   "cat": "tk-world",
+   "tags": [
+    "whirlpool",
+    "cartoon"
+   ],
+   "source": "world-25#13",
+   "w": 325,
+   "h": 212,
+   "psnr": 41.7
+  },
   "toys/basketball": {
    "file": "assets/db/lib/toys/basketball.webp",
    "cat": "toys",
