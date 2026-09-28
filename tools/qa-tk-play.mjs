@@ -45,6 +45,14 @@ async function playLevel (p, tag) {
       const q = await p.evaluate(() => { const h = __tk.handle(); return h && h.state ? h.state() : null })
       if (!q) { await sleep(300); continue }
       if (q.answered) { if (!(await tapSel(p, '.tkq-next:not([disabled])'))) await sleep(300); await sleep(450); continue }
+      // arrange-letters (Arabic): tap the tiles in answer order
+      if (await p.evaluate(() => !!document.querySelector('.tkq-tile'))) {
+        for (const ch of [...String(q.answer)]) {
+          const r = await p.evaluate(c => { const t = [...document.querySelectorAll('.tkq-tile')].find(x => !x.disabled && !x.classList.contains('used') && x.textContent.trim() === c); if (!t) return null; const b = t.getBoundingClientRect(); return { x: b.left + b.width / 2, y: b.top + b.height / 2 } }, ch)
+          if (r) { await p.touchscreen.tap(r.x, r.y); await sleep(250) }
+        }
+        await sleep(900); continue
+      }
       const sel = `.tkq-ans [data-c="${String(q.answer).replace(/"/g, '\\"')}"]`
       if (!(await tapSel(p, sel))) { check(false, `${tag}: quiz answer button missing (${q.answer})`); return false }
       await sleep(900); continue

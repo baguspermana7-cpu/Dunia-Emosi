@@ -19,7 +19,7 @@
   // Owner sheets (2026-09-28, tools/ingest-asset-sheets.py). Ships use the banner-free
   // '-clean' twins (the labelled ones carry a baked-in name plate).
   var L = 'assets/db/lib/'
-  var OVERRIDE = {
+  var OVERRIDE = { 'fx/lifeboat': 'assets/db/lib/tk-prop/lifeboat-11.webp',
     // Titanic = the key-art side view with smoke (no name plate); legend twin: tk-legend/ship-titanic-clean
     'ship/titanic': L + 'tk-key/titanic-smoke.webp', 'ship/britannic': L + 'tk-legend/ship-britannic-clean.webp',
     'ship/arizona': L + 'tk-legend/ship-arizona-clean.webp', 'ship/cuttysark': L + 'tk-legend/ship-cuttysark-clean.webp',
@@ -59,7 +59,7 @@
     'ship-deck': 'grand-staircase', 'old-deck': 'ship-deck', 'hospital-ship': 'ship-deck', 'engine': 'engine-room',
     'open-sea': 'jungle-falls', 'research-sea': 'island-cliff', 'shipyard': 'island-cliff',
     'deep-sea': 'underwater', 'antarctic': 'aurora-ice',
-    'night-ocean': 'titanic-night-deck', 'lifeboat': 'ice-night', 'collision-far': 'ice-night',
+    'night-ocean': 'ice-night', 'night-deck': 'titanic-night-deck', 'lifeboat': 'ice-night', 'collision-far': 'ice-night',
     'time-harbor': 'sky-plaza'
   }
   var PLACEHOLDER = {
@@ -176,12 +176,12 @@
   }
   function scene (k) {
     var d = SCN[k] || SCN['harbor-day']
-    if (OVERRIDE['scene/' + k]) return 'url("' + BASE + OVERRIDE['scene/' + k] + '") center/cover'
+    if (OVERRIDE['scene/' + k]) return "url('" + BASE + OVERRIDE['scene/' + k] + "') center/cover"
     if (SCENE_ART[k]) {
       var port = false; try { port = W.innerHeight > W.innerWidth } catch (e) {}
-      return 'url("' + lib('tk-scene/' + SCENE_ART[k] + (port ? '-port' : '-land')) + '") center bottom/cover no-repeat, ' + d[0]
+      return "url('" + lib('tk-scene/' + SCENE_ART[k] + (port ? '-port' : '-land')) + "') center bottom/cover no-repeat, " + d[0]
     }
-    return 'url("' + sceneSvg(d[1]) + '") center bottom/cover no-repeat, ' + d[0]
+    return "url('" + sceneSvg(d[1]).replace(/'/g, '%27') + "') center bottom/cover no-repeat, " + d[0]
   }
   W.TKArt = { src: src, scene: scene, lib: lib, OVERRIDE: OVERRIDE, PROPS: PROPS, CHARS: CHARS, SCENE_ART: SCENE_ART, KIND: KIND, scenes: SCN, BASE: BASE }
 })()

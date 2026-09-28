@@ -188,7 +188,7 @@
       cards: C(['queenmary-1', 'Tahun 1936', 'Queen Mary berlayar pertama kali pada tahun 1936 antara Inggris dan Amerika.'],
         ['queenmary-2', 'Hotel Terapung', 'Kini Queen Mary menjadi hotel dan museum di Long Beach, California.'],
         ['queenmary-3', 'Jadwal', 'Kapal penumpang harus menjaga jadwal agar semua penumpang tiba tepat waktu.']) }),
-    arc({ id: 'arizona', name: 'USS Arizona', year: 1916, value: 'Mengenang & Belajar', cat: 'perang-damai', color: '#5A6B7A', scene: 'harbor-morning', dom: 'logika',
+    arc({ id: 'arizona', name: 'USS Arizona', year: 1915, value: 'Mengenang & Belajar', cat: 'perang-damai', color: '#5A6B7A', scene: 'harbor-morning', dom: 'logika',
       captain: { name: 'Penjaga Monumen', quote: 'Kita mengenang agar kita belajar menjaga perdamaian.' },
       intro: 'Pagi yang tenang di Pearl Harbor. Kapal-kapal berjajar di pelabuhan.',
       t: ['Pagi yang Tenang', 'Pola Sinyal', 'Pesan Pagi', 'Bendera Kapal', 'Mengenang', 'Kepingan XI'],
