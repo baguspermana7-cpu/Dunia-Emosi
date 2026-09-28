@@ -14,6 +14,13 @@
  *   TKQuiz.mount(host, set, opts)            -> controller { el, state(), hint(), destroy() }
  *   TKQuiz.sortSet(domain, world, rng, opts) -> {prompt, bins, items}
  *   TKQuiz.mountSort(host, set, opts)        -> controller (drag archetype)
+ *   TKQuiz.challenge(host, opts)             -> Promise<{correct, tries, hints, points, qid, domain, mastery}>
+ *        one Knowledge Challenge card over host (tk-lanes collision, cinema questions). opts: domain
+ *        ('campur' default | matematika | islam | arab | umum | logika), world, grade, mastery, islam, seed,
+ *        title, intro (plate subtitle), nextLabel, question ({prompt, choices, answer, explain, hint1?, hint2?,
+ *        step1?, eq?, domain?, scene?} = a fixed question), + any mount opts (lib, sfx, reducedMotion ...).
+ *        correct = right on the first try; the child can never get stuck (hint ladder, guided answer).
+ *        The promise has .close() (removes the card, resolves {correct:false, closed:true}).
  * set  = [questions] or {domain, world, count, level, grade, islam, seed, type?:'sort'}
  * opts = { domain, grade, mastery (number | {domain:n}), islam, onDone({right, asked, hints,
  *          masteryDelta, mastery, points, byDomain}), sfx (fn(name) | {name:fn}), lib(key)->url,
@@ -66,19 +73,24 @@
     missouri: [['game/flag-red', 'bendera'], ['game/crate-wood', 'peti']],
     nautilus: [['animals/clownfish', 'ikan'], ['animals/pufferfish', 'ikan buntal']]
   }
+  // fase A (Kelas 1–2, owner 2026-09-28): numbers <= 20, whole-hour clocks, no multiplication / division.
+  // groups / share / groupsplus stay in the generator (TKQuiz.make(..., { kind })) but are never scheduled.
   var KINDS = {
     1: [['count', 40], ['add', 25], ['sub', 20], ['biggest', 15]],
-    2: [['add', 25], ['sub', 25], ['groups', 15], ['clock', 15], ['count', 10], ['diff', 10]],
-    3: [['add', 20], ['sub', 20], ['share', 15], ['capacity', 15], ['clock', 15], ['groups', 15]],
-    4: [['twostep', 40], ['diff', 15], ['groupsplus', 15], ['share', 10], ['clock', 10], ['capacity', 10]]
+    2: [['add', 25], ['sub', 25], ['count', 15], ['clock', 15], ['diff', 10], ['capacity', 10]],
+    3: [['add', 25], ['sub', 25], ['capacity', 15], ['clock', 15], ['diff', 20]],
+    4: [['twostep', 35], ['add', 15], ['sub', 15], ['diff', 15], ['clock', 10], ['capacity', 10]]
   }
+  var MAXN = 20
+  var EASY_KINDS = [['count', 45], ['add', 30], ['sub', 25]]
   function cap (level) { return level <= 2 ? 10 : 20 }
   function clockLabel (h, m) { return m === 30 ? 'Pukul setengah ' + (h % 12 + 1) : 'Pukul ' + h }
   function numChoices (ans, near, r, max) {
     var seen = {}, out = [ans]; seen[ans] = 1
     var pool = shuffle(near.concat([ans + 1, ans - 1, ans + 2, ans - 2]), r)
-    for (var i = 0; i < pool.length && out.length < 4; i++) { var v = pool[i]; if (v >= 0 && v <= max + 3 && !seen[v] && v === Math.round(v)) { seen[v] = 1; out.push(v) } }
-    for (var d = 3; out.length < 4; d++) { [ans + d, ans - d].forEach(function (v) { if (out.length < 4 && v >= 0 && !seen[v]) { seen[v] = 1; out.push(v) } }) }
+    var top = Math.min(max + 3, MAXN)
+    for (var i = 0; i < pool.length && out.length < 4; i++) { var v = pool[i]; if (v >= 0 && v <= top && !seen[v] && v === Math.round(v)) { seen[v] = 1; out.push(v) } }
+    for (var d = 3; out.length < 4 && d < 40; d++) { [ans + d, ans - d].forEach(function (v) { if (out.length < 4 && v >= 0 && v <= MAXN && !seen[v]) { seen[v] = 1; out.push(v) } }) }
     return shuffle(out, r).map(String)
   }
 
@@ -88,6 +100,8 @@
     var th = THEME[opts.world] || THEME._, it = oneOf(th, r), key = it[0], noun = it[1]
     var kinds = KINDS[level]
     if (opts.world === 'queenmary') kinds = kinds.concat([['clock', 60]])
+    // easy (Kelas 1 / low mastery): picture-first counting only — every number is an object on screen
+    if (opts.easy && level <= 2) kinds = EASY_KINDS
     if (opts.kind) kinds = [[opts.kind, 1]]
     var kind = wpick(kinds, r), M = cap(level), q
     var G = function (k, n, role) { return { key: k, n: n, role: role || 'base' } }
@@ -101,7 +115,7 @@
       }
       case 'add': {
         var a = ri(r, 1, M - 1), b = ri(r, 1, Math.min(M - a, level <= 2 ? 5 : 9)), s = a + b
-        q = { prompt: 'Ada ' + a + ' ' + noun + ' di kapal. ' + b + ' ' + noun + ' lagi dimuat. Berapa ' + noun + ' sekarang?', eq: a + ' + ' + b + ' = ?', ans: s,
+        q = { prompt: 'Ada ' + a + ' ' + noun + ' di kapal. ' + b + ' lagi dimuat. Jadi berapa?', eq: a + ' + ' + b + ' = ?', ans: s,
           near: [a, b, Math.abs(a - b), s + 1, s - 1], scene: { mode: 'add', groups: [G(key, a), G(key, b, 'add')] },
           hint1: 'Gabungkan dua kelompok ' + noun + '.', hint2: 'Mulai dari ' + a + ', lalu hitung maju ' + b + ' lagi.',
           step1: 'Mulai dari ' + a + ': ' + seqStr(a + 1, Math.min(s, a + 2)) + (b > 2 ? ', …' : ''), explain: a + ' + ' + b + ' = ' + s + '. Semua ' + noun + ' naik ke kapal!', calc: { op: '+', a: a, b: b } }
@@ -109,7 +123,7 @@
       }
       case 'sub': {
         var a2 = ri(r, 3, M), b2 = ri(r, 1, Math.min(a2 - 1, level <= 2 ? 5 : 9)), d2 = a2 - b2
-        q = { prompt: 'Ada ' + a2 + ' ' + noun + ' di dek. ' + b2 + ' ' + noun + ' diturunkan ke dermaga. Berapa ' + noun + ' yang masih di dek?', eq: a2 + ' − ' + b2 + ' = ?', ans: d2,
+        q = { prompt: 'Ada ' + a2 + ' ' + noun + ' di dek. ' + b2 + ' diturunkan. Sisa berapa?', eq: a2 + ' − ' + b2 + ' = ?', ans: d2,
           near: [a2 + b2 <= M + 3 ? a2 + b2 : d2 + 3, b2, a2, d2 + 1, d2 - 1], scene: { mode: 'sub', groups: [G(key, d2), G(key, b2, 'leave')] },
           hint1: 'Yang diturunkan tidak dihitung lagi.', hint2: 'Tutup ' + b2 + ' ' + noun + ' yang pergi, hitung sisanya.',
           step1: 'Mulai dari ' + a2 + ', hitung mundur ' + b2 + ': ' + seqStr(a2 - 1, Math.max(d2, a2 - 2), -1) + (b2 > 2 ? ', …' : ''), explain: a2 + ' − ' + b2 + ' = ' + d2 + '.', calc: { op: '-', a: a2, b: b2 } }
@@ -117,25 +131,25 @@
       }
       case 'biggest': {
         var vals = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], r).slice(0, 4), mx = Math.max.apply(null, vals)
-        q = { prompt: 'Kapten butuh kapal dengan peti paling banyak. Angka mana yang paling besar?', eq: null, ans: mx, fixed: vals.map(String),
+        q = { prompt: 'Angka mana yang paling besar?', eq: null, ans: mx, fixed: vals.map(String),
           scene: { mode: 'none', groups: [] }, hint1: 'Angka besar artinya lebih banyak.', hint2: 'Bayangkan urutan 1 sampai 10. Mana yang paling akhir?',
           step1: 'Bandingkan dua angka dulu, simpan yang lebih besar.', explain: mx + ' adalah angka paling besar.', calc: { op: 'max', list: vals } }
         break
       }
       case 'groups': case 'groupsplus': {
-        var g = ri(r, 2, level <= 2 ? 3 : 4), k = ri(r, 2, level <= 2 ? Math.floor(10 / g) : Math.min(5, Math.floor((kind === 'groupsplus' ? 17 : 20) / g)))
+        var g = ri(r, 2, 3), k = ri(r, 2, kind === 'groupsplus' ? Math.min(5, Math.floor(17 / g)) : Math.floor(10 / g))
         var e = kind === 'groupsplus' ? ri(r, 1, Math.min(3, 20 - g * k)) : 0, tot = g * k + e
         var grp = []; for (var gi = 0; gi < g; gi++) grp.push(G(key, k, 'group'))
         if (e) grp.push(G(key, e, 'add'))
-        q = { prompt: 'Ada ' + g + ' sekoci. Tiap sekoci membawa ' + k + ' ' + noun + '.' + (e ? ' Lalu ' + e + ' ' + noun + ' lagi datang.' : '') + ' Berapa ' + noun + ' semuanya?',
+        q = { prompt: 'Ada ' + g + ' sekoci. Tiap sekoci ' + k + ' ' + noun + '.' + (e ? ' ' + e + ' lagi datang.' : '') + ' Semuanya berapa?',
           eq: new Array(g + 1).join(k + ' + ').slice(0, -3) + (e ? ' + ' + e : '') + ' = ?', ans: tot, near: [g + k, g * k + (e ? 0 : k), tot + k, tot - 1, tot + 1],
           scene: { mode: 'groups', groups: grp }, hint1: 'Hitung isi setiap sekoci.', hint2: 'Tiap sekoci ' + k + '. Hitung loncat: ' + seqStr(k, k * Math.min(g, 3), k) + (g > 3 ? ', …' : ''),
           step1: k + ' + ' + k + ' = ' + (2 * k) + (g > 2 || e ? ', lalu tambah lagi.' : '.'), explain: 'Semuanya ' + tot + ' ' + noun + '.', calc: { op: 'groups', g: g, k: k, e: e } }
         break
       }
       case 'share': {
-        var g3 = ri(r, 2, 4), k3 = ri(r, 2, Math.floor((level <= 3 ? 16 : 20) / g3)), t3 = g3 * k3
-        q = { prompt: t3 + ' ' + noun + ' dibagi sama rata ke ' + g3 + ' sekoci. Berapa ' + noun + ' di tiap sekoci?', eq: t3 + ' : ' + g3 + ' = ?', ans: k3,
+        var g3 = ri(r, 2, 3), k3 = ri(r, 2, Math.floor(10 / g3)), t3 = g3 * k3
+        q = { prompt: t3 + ' ' + noun + ' dibagi ke ' + g3 + ' sekoci. Tiap sekoci dapat berapa?', eq: t3 + ' : ' + g3 + ' = ?', ans: k3,
           near: [k3 + 1, k3 - 1, g3, k3 + 2], scene: { mode: 'share', groups: [G(key, t3)], boats: g3 },
           hint1: 'Bagikan satu per satu ke tiap sekoci, bergiliran.', hint2: 'Tiap sekoci harus dapat sama banyak.',
           step1: 'Beri 1 ' + noun + ' ke tiap sekoci: sudah ' + g3 + ' terbagi. Ulangi sampai habis.', explain: t3 + ' dibagi ' + g3 + ' = ' + k3 + '. Tiap sekoci dapat ' + k3 + '.', calc: { op: 'share', t: t3, g: g3 } }
@@ -143,7 +157,7 @@
       }
       case 'capacity': {
         var c = ri(r, 5, level <= 3 ? 10 : 12), x = ri(r, 1, c - 1), room = c - x
-        q = { prompt: 'Sekoci ini muat ' + c + ' orang. Sudah ada ' + x + ' orang. Berapa orang lagi yang bisa naik?', eq: c + ' − ' + x + ' = ?', ans: room,
+        q = { prompt: 'Sekoci muat ' + c + ' orang. Sudah ada ' + x + '. Berapa lagi bisa naik?', eq: c + ' − ' + x + ' = ?', ans: room,
           near: [c, x, room + 1, room - 1, c + x <= 20 ? c + x : room + 2], scene: { mode: 'capacity', cap: c, fill: x, groups: [] },
           hint1: 'Hitung kursi yang masih kosong.', hint2: 'Kursi kosong = kursi semua dikurangi yang sudah terisi.',
           step1: 'Mulai dari ' + x + ', hitung maju sampai ' + c + '.', explain: c + ' − ' + x + ' = ' + room + '. Masih ada ' + room + ' kursi kosong.', calc: { op: '-', a: c, b: x } }
@@ -152,7 +166,7 @@
       case 'diff': {
         var p = ri(r, 3, M), o = ri(r, 1, p - 1), df = p - o
         var red = r() < 0.5
-        q = { prompt: 'Kapal Merah membawa ' + (red ? p : o) + ' ' + noun + '. Kapal Biru membawa ' + (red ? o : p) + ' ' + noun + '. Berapa selisihnya?', eq: p + ' − ' + o + ' = ?', ans: df,
+        q = { prompt: 'Kapal Merah bawa ' + (red ? p : o) + ' ' + noun + '. Kapal Biru bawa ' + (red ? o : p) + '. Selisihnya berapa?', eq: p + ' − ' + o + ' = ?', ans: df,
           near: [p + o <= M + 3 ? p + o : df + 3, df + 1, df - 1, o], scene: { mode: 'diff', groups: [G(key, red ? p : o, 'red'), G(key, red ? o : p, 'blue')] },
           hint1: 'Selisih artinya berapa lebih banyak.', hint2: 'Pasangkan satu-satu. Hitung yang tidak punya pasangan.',
           step1: 'Yang banyak ' + p + ', yang sedikit ' + o + '. Hitung dari ' + o + ' sampai ' + p + '.', explain: p + ' − ' + o + ' = ' + df + '.', calc: { op: '-', a: p, b: o } }
@@ -160,7 +174,7 @@
       }
       case 'twostep': {
         var a4 = ri(r, 3, 12), b4 = ri(r, 2, Math.min(8, 20 - a4)), c4 = ri(r, 1, Math.min(9, a4 + b4 - 1)), res = a4 + b4 - c4
-        q = { prompt: 'Ada ' + a4 + ' ' + noun + ' di kapal. ' + b4 + ' lagi dimuat, lalu ' + c4 + ' diturunkan. Berapa ' + noun + ' sekarang?', eq: a4 + ' + ' + b4 + ' − ' + c4 + ' = ?', ans: res,
+        q = { prompt: 'Ada ' + a4 + ' ' + noun + '. ' + b4 + ' dimuat, ' + c4 + ' diturunkan. Sekarang berapa?', eq: a4 + ' + ' + b4 + ' − ' + c4 + ' = ?', ans: res,
           near: [a4 + b4, a4 - c4 >= 0 ? a4 - c4 : res + 2, res + 1, res - 1, res + 2], scene: { mode: 'twostep', groups: [G(key, a4), G(key, b4, 'add')], leave: c4 },
           hint1: 'Kerjakan satu langkah dulu.', hint2: 'Langkah 1: tambah yang dimuat. Langkah 2: kurangi yang diturunkan.',
           step1: 'Langkah 1: ' + a4 + ' + ' + b4 + ' = ' + (a4 + b4) + '. Sekarang kurangi ' + c4 + '.', explain: a4 + ' + ' + b4 + ' = ' + (a4 + b4) + ', lalu ' + (a4 + b4) + ' − ' + c4 + ' = ' + res + '.',
@@ -168,10 +182,11 @@
         break
       }
       case 'clock': {
-        var h = ri(r, 1, 12), half = level >= 3 && r() < 0.6, m = half ? 30 : 0, lab = clockLabel(h, m)
-        var alt = [clockLabel(h % 12 + 1, m), clockLabel((h + 10) % 12 + 1, m), clockLabel(h, half ? 0 : 30), clockLabel(h % 12 + 1, half ? 0 : 30)]
+        // fase A: whole hours only, in the answer AND the wrong choices
+        var h = ri(r, 1, 12), half = false, m = 0, lab = clockLabel(h, m)
+        var alt = [clockLabel(h % 12 + 1, 0), clockLabel((h + 10) % 12 + 1, 0), clockLabel((h + 1) % 12 + 1, 0), clockLabel((h + 9) % 12 + 1, 0)]
         var ch = [lab]; alt.forEach(function (v) { if (ch.length < 4 && ch.indexOf(v) < 0) ch.push(v) })
-        q = { prompt: 'Kapal berangkat tepat waktu. Pukul berapa sekarang?', eq: null, ans: lab, fixed: ch,
+        q = { prompt: 'Lihat jamnya. Pukul berapa sekarang?', eq: null, ans: lab, fixed: ch,
           scene: { mode: 'clock', h: h, m: m, groups: [] }, hint1: 'Lihat jarum pendek dulu.', hint2: half ? 'Jarum panjang di angka 6 artinya setengah.' : 'Jarum panjang di angka 12 artinya tepat.',
           step1: 'Jarum pendek ' + (half ? 'di antara ' + h + ' dan ' + (h % 12 + 1) : 'menunjuk angka ' + h) + '.',
           explain: half ? 'Jarum panjang di 6 dan jarum pendek lewat angka ' + h + ': ' + lab.toLowerCase() + '.' : 'Jarum pendek di ' + h + ' dan jarum panjang di 12: ' + lab.toLowerCase() + '.',
@@ -191,7 +206,8 @@
   function validate (q) {
     var p = []
     if (!q || !q.choices) return ['missing']
-    if (q.choices.length !== 4) p.push('choices != 4')
+    if (q.domain === 'matematika' || q.letters) { if (q.choices.length !== (q.easy ? 3 : 4)) p.push('choices != ' + (q.easy ? 3 : 4)) }
+    else if (q.choices.length < 3 || q.choices.length > 4) p.push('choices not 3–4')
     var seen = {}; q.choices.forEach(function (c) { if (seen[c]) p.push('duplicate choice ' + c); seen[c] = 1 })
     var hits = q.choices.filter(function (c) { return c === q.answer }).length
     if (hits !== 1) p.push('answer present ' + hits + 'x')
@@ -210,6 +226,7 @@
         if (!(truth >= 0)) p.push('negative/invalid truth')
         ;['a', 'b', 'c', 'n', 't'].forEach(function (k) { if (c[k] != null && (c[k] < 0 || c[k] > M)) p.push('operand ' + k + '=' + c[k] + ' outside 0..' + M) })
         if (truth > M) p.push('answer above ' + M)
+        q.choices.forEach(function (x) { if (+x > MAXN) p.push('choice ' + x + ' above ' + MAXN) })
         if (c.op === 'max' && q.choices.filter(function (x) { return +x === truth }).length !== 1) p.push('max not unique')
       } else if (clockLabel(c.h, c.m) !== q.answer) p.push('clock label mismatch')
     }
@@ -235,6 +252,37 @@
     }
   }
   function normGrade (g) { if (g == null) return 0; var s = String(g); return /1/.test(s) ? 1 : /2/.test(s) ? 2 : 0 }
+  /* easy mode: Kelas 1 always; Adaptif while the domain is still at tier 1 (mastery <= 30); Kelas 2 never.
+     opts.easy (true/false) overrides. */
+  function isEasy (grade, m, force) {
+    if (force === true || force === false) return force
+    var g = normGrade(grade)
+    return g === 1 || (g !== 2 && mastery.tier(m) === 1)
+  }
+  /* 3 choices instead of 4: a NEW question object (the bank item is never mutated). The answer and the
+     two nearest distractors stay (numbers: closest value; words: the first two in presented order). */
+  function easyify (q) {
+    if (!q || q.letters || !q.choices || q.choices.length <= 3) return q
+    var o = {}; for (var k in q) o[k] = q[k]
+    var h = 0; String(q.id).split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) | 0 })
+    var wrong = q.choices.filter(function (c) { return c !== q.answer })
+    if (/^\d+$/.test(q.answer) && !(q.calc && q.calc.op === 'max') && wrong.every(function (c) { return /^\d+$/.test(c) })) {
+      // numbers: the three nearest values inside 0..10 (the easy range), one dropped (by the id) so the
+      // answer is not always the middle value; order shuffled deterministically
+      var a = +q.answer, top = Math.max(10, a), seen = {}, pool = []
+      seen[a] = 1
+      wrong.map(Number).concat([a - 1, a + 1, a - 2, a + 2, a - 3, a + 3]).forEach(function (v) { if (v >= 0 && v <= top && !seen[v]) { seen[v] = 1; pool.push(v) } })
+      pool.sort(function (x, y) { return Math.abs(x - a) - Math.abs(y - a) })
+      pool = pool.slice(0, 3); if (pool.length === 3) pool.splice(Math.abs(h) % 3, 1)
+      o.choices = shuffle([a].concat(pool.slice(0, 2)), rng(h)).map(String)
+    } else {
+      var keep = wrong.slice(0, 2)
+      o.choices = q.choices.filter(function (c) { return c === q.answer || keep.indexOf(c) >= 0 })
+    }
+    if (q.calc && q.calc.op === 'max') o.calc = { op: 'max', list: o.choices.map(Number) }
+    o.easy = true
+    return o
+  }
 
   /* ══ CURATED PICK ════════════════════════════════════════════════════ */
   function present (item, r) {
@@ -291,7 +339,8 @@
   var MATH_TOPIC = [[/bagi/, 'share'], [/pukul|jam\b|waktu|jadwal/, 'clock'], [/muat|kursi|sekoci/, 'capacity'], [/selisih|banding/, 'diff'], [/kelompok|rombongan/, 'groups'],
     [/turun|kurang|sisa/, 'sub'], [/muatan|dimuat|naik|tambah|kargo/, 'add'], [/hitung|berapa/, 'count']]
   function mathKindFor (topic, level) {
-    var t = String(topic || '').toLowerCase(), have = (KINDS[level] || []).map(function (k) { return k[0] })
+    // share / groups are topic-only in fase A ("Bagikan selimut…"): fair sharing / equal groups within 10, with pictures
+    var t = String(topic || '').toLowerCase(), have = (KINDS[level] || []).map(function (k) { return k[0] }).concat(['share', 'groups'])
     for (var i = 0; i < MATH_TOPIC.length; i++) if (MATH_TOPIC[i][0].test(t) && have.indexOf(MATH_TOPIC[i][1]) >= 0) return MATH_TOPIC[i][1]
     return null
   }
@@ -315,7 +364,7 @@
       if (d === 'campur') d = chooseDomain(r, { islam: spec.islam, world: spec.world, exclude: used, domains: spec.domains })
       if (d === 'islam' && spec.islam === false) d = 'umum'
       var lv = lvOf(d)
-      var popts = { islam: spec.islam, world: spec.world, exclude: used, mixed: mixed }
+      var popts = { islam: spec.islam, world: spec.world, exclude: used, mixed: mixed, easy: isEasy(spec.grade, masteryOf(spec.mastery, d), spec.easy) }
       if (d === 'matematika' && i < onTopic) { var mk = mathKindFor(spec.topic, lv); if (mk) popts.kind = mk }
       var q = null
       for (var t = 0; t < 10 && (!q || used[q.id]); t++) q = pick(d, lv, r, popts)
@@ -356,10 +405,38 @@
   // glyphs, no drawn pictograms. Getters, because timmy-kapal.js (which defines TKIcon) loads after
   // this file; outside the game (QA harness) an icon is simply omitted.
   function ic (n, cls, alt) { return W.TKIcon ? W.TKIcon(n, cls, alt) : '' }
+  // passenger figures: boys, men and HIJAB girls only (owner rule) — mirrors TKIcon p0..p7 for pages without it
+  var PEOPLE_KEYS = ['tk-char/hijab-girl-book', 'tk-char/explorer-kid', 'tk-char/officer-boy', 'tk-char/hijab-girl-camera', 'tk-char/chef', 'tk-char/mechanic-boy', 'tk-char/hijab-officer-tablet', 'tk-char/lantern-boy']
   var personN = 0
-  function npeople () { return (W.TKIcon && W.TKIcon.PEOPLE) || 1 }
-  function person () { return ic('p' + (personN++ % npeople()), 'tkq-p') }
-  function people (n, seed) { var h = ''; for (var i = 0; i < n; i++) h += ic('p' + ((seed * 3 + i) % npeople()), 'tkq-p'); return h }
+  function npeople () { return (W.TKIcon && W.TKIcon.PEOPLE) || PEOPLE_KEYS.length }
+  function pfig (k, cls) { return W.TKIcon ? ic('p' + k, cls) : '<img class="' + cls + '" src="' + esc(libFn(null)(PEOPLE_KEYS[k % PEOPLE_KEYS.length])) + '" alt="" draggable="false">' }
+  function person () { return pfig(personN++ % npeople(), 'tkq-p') }
+  function people (n, seed) { var h = ''; for (var i = 0; i < n; i++) h += pfig((seed * 3 + i) % npeople(), 'tkq-p'); return h }
+  // a sprite icon through the TKIcon re-skin table, or straight from the library outside the game
+  function sprite (name, key, lib) { return W.TKIcon ? ic(name) : '<img src="' + esc(lib(key)) + '" alt="" draggable="false">' }
+  /* ── read-aloud: Indonesian narration via the hub (TKHub.say respects the narration settings) ── */
+  var NUMW = ['nol', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas']
+  function numWord (n) { return n <= 11 ? NUMW[n] : n < 20 ? NUMW[n - 10] + ' belas' : n === 20 ? 'dua puluh' : String(n) }
+  // Arabic script is dropped from the Indonesian voice (it would be spelled out); the transliteration is used instead
+  function spoken (t) { return String(t == null ? '' : t).replace(/[\u0600-\u06FF\u0750-\u077F]+/g, ' ').replace(/[«»]/g, '').replace(/\s+/g, ' ').trim() }
+  function narrator (opts) {
+    return function (text, force) {
+      if (opts.narrate === false && !force) return false
+      try { if (W.TKHub && typeof W.TKHub.say === 'function') { W.TKHub.say(spoken(text)); return true } } catch (e) {}
+      return false
+    }
+  }
+  function choiceWords (q, c) {
+    if (q.trs && q.trs[c]) return q.trs[c]
+    if (/[\u0600-\u06FF]/.test(c)) return q.tr || ''
+    return c
+  }
+  function questionWords (q) {
+    var t = q.prompt
+    if (q.ar && q.tr && !q.listen && !q.letters) t += ' ' + q.tr
+    return t
+  }
+  var SORT_TUTORED = false
   var ICON = {}
   Object.defineProperties(ICON, {
     check: { get: function () { return ic('ok') } }, arrow: { get: function () { return ic('next') } },
@@ -453,7 +530,7 @@
     '.tkq-grp.boat{background:rgba(244,227,189,.9);border:2px solid #C9A56A;max-width:30%}',
     '.tkq-grp.red{background:rgba(229,57,53,.12);border:2px solid rgba(229,57,53,.5)}.tkq-grp.blue{background:rgba(30,136,229,.12);border:2px solid rgba(30,136,229,.5)}',
     '.tkq-grp .tag{position:absolute;top:-10px;left:8px;font-size:11px;padding:1px 6px;border-radius:8px;color:#fff}.tkq-grp.red .tag{background:#E53935}.tkq-grp.blue .tag{background:#1E88E5}',
-    '.tkq-o{position:relative;width:var(--s,44px);height:var(--s,44px);display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(10px) scale(.8);transition:opacity .35s ' + EASE + ',transform .45s ' + EASE + '}',
+    '.tkq-o{position:relative;width:calc(var(--s,44px) * var(--k,1));height:calc(var(--s,44px) * var(--k,1));display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(10px) scale(.8);transition:opacity .35s ' + EASE + ',transform .45s ' + EASE + '}',
     '.tkq-o.in{opacity:1;transform:none}',
     '.tkq-o img,.tkq-o svg{width:100%;height:100%;object-fit:contain;pointer-events:none;-webkit-user-drag:none}',
     '.tkq-o.leave.in{opacity:.38}',
@@ -464,7 +541,7 @@
     '.tkq-op{width:40px;height:40px;flex:none;opacity:0;transition:opacity .35s ' + EASE + '}.tkq-op.in{opacity:1}.tkq-op svg{width:100%;height:100%}',
     '.tkq-ship{width:108px;flex:none;align-self:flex-end;transition:transform .5s ' + EASE + '}.tkq-ship svg{width:100%;height:auto;display:block}',
     '.tkq-ship img{width:100%;height:auto;display:block}.tkq-ship.done img{animation:tkqBob .6s ' + EASE + '}@keyframes tkqBob{40%{transform:translateY(-6px)}}',
-    '.tkq-q{width:var(--s,44px);height:var(--s,44px);border-radius:12px;border:3px dashed #C9A56A;background:#fff;display:flex;align-items:center;justify-content:center;color:#8A6A1E;font-size:26px}',
+    '.tkq-q{width:calc(var(--s,44px) * var(--k,1));height:calc(var(--s,44px) * var(--k,1));border-radius:12px;border:3px dashed #C9A56A;background:#fff;display:flex;align-items:center;justify-content:center;color:#8A6A1E;font-size:26px}',
     '.tkq-swatch{width:96px;height:64px;border-radius:14px;border:3px solid #6B4B1F;box-shadow:inset 0 0 0 3px rgba(255,255,255,.6)}',
     '.tkq-arw{display:flex;flex-direction:column;align-items:center;gap:2px}',
     '.tkq-ar{font-family:"Noto Naskh Arabic","Amiri","Scheherazade New","Geeza Pro","Traditional Arabic","Noto Sans Arabic",serif;direction:rtl;unicode-bidi:isolate;line-height:1.5}',
@@ -524,7 +601,7 @@
     '.tkq-item img{width:48px;height:48px;object-fit:contain;pointer-events:none}.tkq-item .lb{max-width:110px;text-align:center;line-height:1.1}.tkq-item .num{font-size:30px}',
     '.tkq-item .ppl{display:flex;align-items:flex-end;padding-left:8px}.tkq-item .ppl img{width:30px;height:38px;object-fit:contain;margin-left:-9px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}',
     '.tkq-op{display:grid;place-items:center}.tkq-opx{font-size:34px;line-height:1;color:#1F4FA0;font-family:inherit}.tkq-seat{display:block;width:100%;height:100%;border:2px dashed #8A6A1E;border-radius:8px}.tkq-o img.tkq-p{object-fit:contain}',
-    '.tkq-bin .bh img.tk-ico--lifeboat{width:54px;height:34px}.tkq-say img,.tkq-next img,.tkq-hintbtn img{width:28px;height:28px;object-fit:contain}.tkq-opt .ck img{width:100%;height:100%;object-fit:contain}',
+    '.tkq-bin .bh .bi{flex:none;display:inline-flex}.tkq-bin .bh img.tk-ico--lifeboat{width:54px;height:34px}.tkq-say img,.tkq-next img,.tkq-hintbtn img{width:28px;height:28px;object-fit:contain}.tkq-opt .ck img{width:100%;height:100%;object-fit:contain}',
     // sort layout: tall = plate / card (bins over tray) / footer; wide = bins beside the tray so nothing sits below the fold
     '.tkq-sort.tkq-tall{grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"top" "card" "foot"}',
     '.tkq-sort.tkq-wide{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"top" "card" "foot"}',
@@ -561,7 +638,117 @@
     '.tkq-rm .tkq-opt.no,.tkq-rm .tkq-slots.no,.tkq-rm .tkq-item.no{animation:tkqFade .42s linear}',
     '.tkq-rm .tkq-opt.guide,.tkq-rm .tkq-o.hl::before,.tkq-rm .tkq-tile.hl,.tkq-rm .tkq-stat b.bump,.tkq-rm .tkq-bub.pop{animation:none}',
     '.tkq-rm .tkq-btn:active:not(:disabled){transform:none}',
-    '@media (hover:hover){.tkq-opt:hover:not(:disabled){filter:brightness(1.04)}}'
+    '@media (hover:hover){.tkq-opt:hover:not(:disabled){filter:brightness(1.04)}}',
+    /* ── TKQuiz.challenge: one question card over the game (collision -> answer -> sail on) ── */
+    '.tkq-chal{position:absolute;inset:0;z-index:60;display:grid;place-items:center;background:rgba(4,16,40,.7);opacity:0;transition:opacity .25s ease-out}.tkq-chal.on{opacity:1}',
+    '.tkq-chal-box{position:relative;width:min(760px,calc(100% - 12px));height:min(700px,calc(100% - 12px));transform:translateY(16px) scale(.97);transition:transform .38s ' + EASE + '}.tkq-chal.on .tkq-chal-box{transform:none}',
+    '.tkq-chal.rm .tkq-chal-box{transform:none;transition:none}',
+    '.tkq.tkq-chmode{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,max-content) auto auto;align-content:center;grid-template-areas:"top" "card" "chars" "foot";gap:8px;padding:6px}',
+    '.tkq.tkq-chmode .tkq-card{width:100%;justify-self:stretch;align-self:start;margin:0}.tkq.tkq-chmode .tkq-plate p{white-space:normal}',
+    '.tkq.tkq-chmode .tkq-next:disabled{opacity:.8}',
+    '.tkq.tkq-chmode .tkq-chars{display:flex;align-items:flex-end;gap:6px}.tkq.tkq-chmode .tkq-chars .tkq-bub{flex:1;max-width:none;margin-bottom:12px}.tkq.tkq-chmode .tkq-cimg{height:clamp(64px,11vh,110px)}',
+    '.tkq.tkq-chmode.tkq-short .tkq-chars{display:none}.tkq.tkq-chmode .tkq-help:not(:empty){display:block}',
+    '.tkq.tkq-chmode .tkq-steps,.tkq.tkq-chmode .tkq-back{display:none}.tkq.tkq-chmode .tkq-foot{justify-content:center;background:transparent;border:0;box-shadow:none;padding:0}',
+    '.tkq.tkq-chmode .tkq-next{min-width:240px;min-height:64px}.tkq.tkq-chmode .tkq-next:not(:disabled){box-shadow:0 4px 0 #A87700,0 0 0 5px rgba(255,226,122,.55)}',
+    '.tkq.tkq-chmode .tkq-plate h2{font-size:clamp(20px,3vw,30px)}.tkq.tkq-chmode.tkq-short .tkq-plate p{display:block;font-size:12px}',
+    /* ── ease pass (5–8 y, many not reading yet): speaker, glowing lantern, 3 big choices, tap-to-count,
+       two-tap read-aloud answers, star burst, stepper motion, sort tutorial + seat rows ── */
+    '.tkq-speak{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:60px;height:60px;min-width:56px;min-height:56px;padding:0;border-radius:50%;background:radial-gradient(circle at 50% 38%,#FFF6D8,#F5D27A 70%,#D9A93F);border:3px solid #B98A4A;box-shadow:0 3px 0 #9A6E2E,0 6px 12px rgba(60,40,10,.25)}',
+    '.tkq-speak img{width:40px;height:40px;object-fit:contain;pointer-events:none}',
+    '.tkq-speak.talk img{animation:tkqRing .7s ' + EASE + '}',
+    '@keyframes tkqRing{0%,100%{transform:none}25%{transform:rotate(-14deg)}55%{transform:rotate(11deg)}80%{transform:rotate(-5deg)}}',
+    '.tkq-hintbtn{position:relative;isolation:isolate}.tkq-hintbtn img{width:32px;height:32px;object-fit:contain;position:relative;z-index:1}.tkq-hintbtn span{position:relative;z-index:1}',
+    '.tkq-hintbtn::after{content:"";position:absolute;inset:-6px;border-radius:20px;background:radial-gradient(circle,rgba(255,214,90,.95) 0%,rgba(255,214,90,.45) 45%,rgba(255,214,90,0) 72%);opacity:0;pointer-events:none;z-index:0;transition:opacity .3s ' + EASE + '}',
+    '.tkq-hintbtn.glow{border-color:#F5B700;background:#FFE890}.tkq-hintbtn.glow::after{animation:tkqGlow 1.5s ' + EASE + ' infinite}',
+    '@keyframes tkqGlow{0%,100%{opacity:.35;transform:scale(.94)}50%{opacity:1;transform:scale(1.08)}}',
+    // easy: bigger words, picture first, 3 roomy answers
+    '.tkq-easy .tkq-prompt{font-size:clamp(20px,3vw,28px);line-height:1.25}',
+    '.tkq-tall .tkq-head .tkq-badge{display:none}.tkq-tall.tkq-easy:not(.tkq-sort) .tkq-card .tkq-head{order:-3}.tkq-tall.tkq-easy .tkq-card .tkq-scene,.tkq-wide:not(.tkq-short).tkq-easy .tkq-card .tkq-scene{order:-2}.tkq-wide:not(.tkq-short).tkq-easy .tkq-card .tkq-head{order:-3}',
+    '.tkq-ans.n3.num{grid-template-columns:repeat(3,minmax(0,1fr))!important}.tkq-ans.n3.txt{grid-template-columns:minmax(0,1fr)!important}.tkq-wide:not(.tkq-short) .tkq-ans.n3.txt{grid-template-columns:repeat(3,minmax(0,1fr))!important}',
+    '.tkq-easy .tkq-opt.num{font-size:clamp(32px,4.4vw,42px)}.tkq-easy .tkq-opt{min-height:72px;font-size:clamp(19px,2.6vw,26px)}.tkq-short.tkq-easy .tkq-opt{min-height:60px}.tkq-short.tkq-easy .tkq-opt.num{font-size:32px}',
+    '.tkq-short.tkq-easy .tkq-prompt{font-size:19px;line-height:1.2}.tkq-short .tkq-head .tkq-count{display:none}.tkq-short .tkq-speak{width:56px;height:56px}.tkq-short .tkq-speak img{width:36px;height:36px}',
+    // short landscape: speaker + lantern become a slim column on the left so the answers get the full right-column height
+    '.tkq-short:not(.tkq-sort) .tkq-card{grid-template-columns:56px minmax(0,1.35fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"head prompt ans" "head eq ans" "head scene ans" "head explain ans"}',
+    '.tkq-short:not(.tkq-sort) .tkq-head{flex-direction:column;justify-content:flex-start;align-items:center;gap:8px;align-self:start}.tkq-short .tkq-hintbtn{width:56px;padding:2px;justify-content:center}.tkq-short .tkq-hintbtn span{display:none}',
+    '.tkq-short.tkq-easy .tkq-grp{max-width:100%}',
+    '.tkq-short .tkq-bin .tkq-item.placed{min-width:56px;min-height:56px;padding:2px}.tkq-short .tkq-bin .tkq-item.placed .lb{display:none}.tkq-short .tkq-bin .tkq-seats{margin-top:-2px}.tkq-short .tkq-bin .tkq-seats+.cap{display:none}.tkq-short.tkq-sort .tkq-explain{grid-area:x;padding:3px 8px;font-size:14px}',
+    '.tkq-easy .tkq-opt img{width:60px;height:60px}.tkq-short.tkq-easy .tkq-opt img{width:44px;height:44px}',
+    // two-tap read-aloud: first tap = hear it (ring), second tap = choose
+    '.tkq-opt.armed{border-color:#F5B700;box-shadow:0 0 0 4px rgba(255,213,74,.9),0 3px 0 #8DB3DD;transform:translateY(-2px)}',
+    '.tkq-opt .ear{position:absolute;left:6px;top:5px;width:22px;height:22px;opacity:0;transform:scale(.5);transition:opacity .2s ' + EASE + ',transform .25s ' + EASE + '}.tkq-opt .ear img{width:100%;height:100%;object-fit:contain}.tkq-opt.armed .ear{opacity:1;transform:none}',
+    // tap-to-count
+    '.tkq-scene.tapcount .tkq-o:not(.leave){cursor:pointer;pointer-events:auto}.tkq-o.counted img{filter:drop-shadow(0 0 5px rgba(255,200,40,.95))}',
+    '.tkq-o .n{min-width:24px;height:24px;line-height:24px;font-size:14px;right:-6px;top:-8px;box-shadow:0 2px 0 rgba(0,0,0,.2)}',
+    '.tkq-o.tick{animation:tkqTick .32s ' + EASE + '}@keyframes tkqTick{40%{transform:scale(1.18)}100%{transform:none}}',
+    // correct: star burst sprites
+    '.tkq-burst{position:fixed;left:0;top:0;width:26px;height:26px;z-index:9998;pointer-events:none}.tkq-burst img{width:100%;height:100%}',
+    // stepper: current dot pops in, the dotted trail before it draws
+    '.tkq-step.cur i{animation:tkqStepIn .55s ' + EASE + ' both}.tkq-step.cur::before{transform-origin:left center;animation:tkqDraw .6s ' + EASE + ' both}',
+    '@keyframes tkqStepIn{0%{transform:scale(.55);opacity:.3}70%{transform:scale(1.12)}100%{transform:none;opacity:1}}@keyframes tkqDraw{0%{transform:scaleX(0)}100%{transform:none}}',
+    // sort tutorial + capacity seat rows
+    '.tkq-item.tut{animation:tkqTut 1.1s ' + EASE + ' infinite;border-color:#F5B700;box-shadow:0 0 0 4px rgba(255,213,74,.85),0 3px 0 #8DB3DD}',
+    '@keyframes tkqTut{0%,100%{transform:none}50%{transform:translateY(-6px) scale(1.06)}}',
+    '.tkq-bin.tut{animation:tkqBinTut .9s ' + EASE + ' 2;border-color:#2EAD4B;border-style:solid}@keyframes tkqBinTut{0%,100%{transform:none}50%{transform:scale(1.05)}}',
+    '.tkq-seats{display:flex;flex-wrap:wrap;justify-content:center;gap:3px}',
+    '.tkq-seatp{position:relative;display:grid;place-items:end center;width:30px;height:40px;border-radius:9px 9px 5px 5px;background:linear-gradient(#8B5A2B,#6B4220);box-shadow:inset 0 -5px 0 rgba(0,0,0,.25)}',
+    '.tkq-seatp.full{background:linear-gradient(#5E9BD8,#2F66A8)}.tkq-seatp img{width:30px;height:38px;object-fit:contain;opacity:0;transform:translateY(6px);transition:opacity .3s ' + EASE + ',transform .35s ' + EASE + '}.tkq-seatp.full img{opacity:1;transform:none}',
+    '.tkq-short .tkq-seatp{width:24px;height:32px}.tkq-short .tkq-seatp img{width:24px;height:30px}',
+    '.tkq-rm .tkq-hintbtn.glow::after{animation:tkqFade 1.6s linear infinite}.tkq-rm .tkq-item.tut,.tkq-rm .tkq-bin.tut{animation:tkqFade 1.2s linear 2}.tkq-rm .tkq-step.cur i,.tkq-rm .tkq-step.cur::before,.tkq-rm .tkq-o.tick,.tkq-rm .tkq-speak.talk img{animation:none}.tkq-rm .tkq-opt.armed{transform:none}',
+    /* ── fill the frame (owner, real tablet 2026-09-28: a small card in a big empty space). The card takes the
+       whole middle column; the answers take the rest of the card and grow into big picture cards (3 in a row
+       on a landscape tablet, stacked on portrait, 2x2 for four); pictures and labels scale with the button. ── */
+    '.tkq-fill.tkq-wide{grid-template-columns:minmax(120px,15%) minmax(0,1fr) minmax(140px,15%)}',
+    '.tkq-fill.tkq-wide .tkq-card{width:min(1180px,100%);align-self:stretch;margin-top:0;max-height:100%}',
+    '.tkq-fill .tkq-card{gap:10px}',
+    '.tkq-fill .tkq-ans{flex:1 1 auto;min-height:0;grid-auto-rows:minmax(64px,1fr);align-content:stretch;align-items:center;gap:12px}',
+    '.tkq-fill .tkq-opt{height:100%;max-height:340px;min-height:64px;padding:clamp(4px,1vh,10px) 8px;gap:clamp(2px,.6vh,6px);border-radius:20px;border-width:3px;box-shadow:0 4px 0 #8DB3DD}',
+    '.tkq-fill .tkq-opt img{flex:1 1 0;width:100%;min-height:20px;max-height:200px;height:auto}',
+    '.tkq-fill .tkq-opt .lb{flex:none;font-size:clamp(17px,2.2vw,30px);line-height:1.1}',
+    '.tkq-fill .tkq-opt>span:first-child:not(.tkq-ar){font-size:clamp(20px,3vw,40px)}.tkq-fill .tkq-opt.num>span:first-child{font-size:clamp(34px,5vw,64px)}',
+    '.tkq-fill .tkq-opt .tkq-ar{font-size:clamp(30px,4vw,52px)}',
+    '.tkq-fill .tkq-opt .ck{width:clamp(22px,3vw,36px);height:clamp(22px,3vw,36px)}',
+    '.tkq-fill .tkq-prompt{font-size:clamp(20px,2.8vw,36px)}',
+    '.tkq-fill.tkq-wide .tkq-ans.n3{grid-template-columns:repeat(3,minmax(0,1fr))!important}',
+    '.tkq-fill.tkq-wide .tkq-ans:not(.n3){grid-template-columns:repeat(2,minmax(0,1fr))}',
+    // portrait: three stack (one per row), four go 2x2; a stacked picture card lays out picture | label
+    '.tkq-fill.tkq-tall .tkq-ans.n3{grid-template-columns:minmax(0,1fr)!important}',
+    '.tkq-fill.tkq-tall .tkq-ans.n3 .tkq-opt{flex-direction:row;justify-content:center;gap:clamp(10px,3vw,28px);max-height:240px}',
+    '.tkq-fill.tkq-tall .tkq-ans.n3 .tkq-opt img{flex:0 1 auto;width:auto;height:100%;max-width:45%;max-height:180px}.tkq-fill.tkq-tall .tkq-ans.n3 .tkq-opt .lb{flex:0 1 auto;min-width:0}',
+    '.tkq-fill.tkq-tall .tkq-ans.n3 .tkq-opt .lb{font-size:clamp(20px,4.4vw,34px)}',
+    '.tkq-fill.tkq-tall .tkq-ans.n3.num:not(.pic){grid-template-columns:repeat(3,minmax(0,1fr))!important}.tkq-fill.tkq-tall .tkq-ans.n3.num:not(.pic) .tkq-opt{max-height:360px}',
+    '.tkq-fill.tkq-tall .tkq-ans.n3.pic .tkq-opt{max-height:300px}.tkq-fill.tkq-tall .tkq-ans.n3.pic .tkq-opt img{max-height:240px}',
+    '.tkq-fill.tkq-tall .tkq-prompt{font-size:clamp(20px,4.2vw,34px)}',
+    '.tkq-fill .tkq-scene{flex:0 1 auto}',
+    // compact card (fitCard): tighter gaps and answer heights (still >= 44 px targets); pictures scale by --k
+    '.tkq-cmp .tkq-card{gap:4px;padding-top:6px;padding-bottom:8px}.tkq-cmp .tkq-ans{gap:6px!important;grid-auto-rows:minmax(56px,1fr)!important}.tkq-cmp .tkq-opt{min-height:56px!important;padding-top:2px;padding-bottom:2px}',
+    '.tkq-cmp .tkq-scene{min-height:0!important;padding:0 2px;gap:4px 8px}.tkq-cmp .tkq-head{min-height:0}.tkq-cmp .tkq-prompt{line-height:1.15}',
+    '.tkq-card .tkq-clock{width:calc(var(--cw,128px) * var(--k,1));height:calc(var(--cw,128px) * var(--k,1))}.tkq-tall .tkq-card{--cw:104px}.tkq-short .tkq-card{--cw:96px}',
+    '.tkq-card .tkq-ship{width:calc(var(--sw,108px) * var(--k,1))}.tkq-tall .tkq-card{--sw:84px}.tkq-short .tkq-card{--sw:64px}.tkq-cmp .tkq-opt img{min-height:16px}',
+    // small phones (360x640): the tabs, the plate subtitle and the stats labels go first so the answers stay on screen
+    '@media (max-height:720px){.tkq-tall .tkq-tabs,.tkq-tall .tkq-plate p,.tkq-tall .tkq-stat small{display:none}.tkq-tall .tkq-cimg{height:56px}.tkq-tall .tkq-cimg.peng{height:50px}.tkq-tall .tkq-chars .tkq-bub{margin-bottom:4px}.tkq-fill.tkq-tall .tkq-ans{grid-auto-rows:minmax(52px,1fr)}.tkq-fill.tkq-tall .tkq-opt{min-height:52px}.tkq-tall .tkq-card{padding:8px 10px 10px}.tkq-fill.tkq-tall .tkq-ans{gap:8px}}',
+    '@media (max-height:680px){.tkq-tall:not(.tkq-chmode) .tkq-chars{display:none}.tkq-tall .tkq-head{min-height:0}.tkq-tall .tkq-speak{width:48px;height:48px;min-width:48px;min-height:48px}.tkq-tall .tkq-hintbtn{min-height:48px}}',
+    // answer labels: centred, padded, never past the button edge (fitAnswers shrinks them first)
+    '.tkq-opt{overflow:hidden;min-width:0;justify-content:center;align-items:center;padding-left:10px;padding-right:10px}',
+    '.tkq-opt>span:not(.ck):not(.ear){display:block;max-width:100%;min-width:0;overflow:hidden;text-align:center;overflow-wrap:normal;word-break:normal}',
+    '.tkq-opt.brk>span:not(.ck):not(.ear){overflow-wrap:anywhere}',
+    '.tkq-short .tkq-ans.n3.pic{grid-template-columns:minmax(0,1fr)!important}.tkq-short .tkq-ans.n3.pic .tkq-opt{flex-direction:row;gap:8px}.tkq-short .tkq-ans.n3.pic .tkq-opt img{height:100%;max-height:44px;width:auto;flex:0 0 auto}.tkq-short .tkq-ans.n3.pic .tkq-opt .lb{flex:0 1 auto;min-width:0}',
+    '.tkq-opt img{flex:0 1 auto;min-height:20px}.tkq-opt .lb{flex:none;font-size:max(16px,1em)}.tkq-fill .tkq-opt .lb{font-size:clamp(17px,2.2vw,30px)}',
+    // rotated after mount: landscape markup shown tall / portrait markup shown wide
+    '.tkq-mw.tkq-tall{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;grid-template-areas:"top top" "stats stats" "card card" "tim peng" "foot foot"}',
+    '.tkq-mw .tkq-side{display:contents}.tkq-mw .tkq-char.timmy{grid-area:tim;flex-direction:row;align-items:flex-end}.tkq-mw .tkq-char.peng{grid-area:peng;flex-direction:row-reverse;align-items:flex-end}',
+    '.tkq-mw .tkq-char img{height:clamp(64px,10vh,120px)}.tkq-mw .tkq-bub{max-width:none;flex:1}.tkq-mw .tkq-stats{flex-direction:row;justify-content:space-around}',
+    '.tkq.tkq-mt.tkq-wide{grid-template-columns:minmax(140px,17%) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"stats top" "chars card" "foot foot"}',
+    '.tkq-mt .tkq-chars{flex-direction:column;justify-content:flex-end;align-items:center}.tkq-mt .tkq-chars .tkq-bub{flex:none;margin:0}',
+    // sort fill: the card takes the full height, the bins grow, items / seats / people are tablet-sized
+    '.tkq-sfill.tkq-wide .tkq-card{align-self:stretch;max-height:100%}.tkq-sfill .tkq-sortbody{flex:1 1 auto;min-height:0}.tkq-sfill .tkq-card{gap:10px}',
+    '.tkq-sfill.tkq-tall .tkq-bins{flex:1 1 auto;min-height:0}.tkq-sfill.tkq-tall .tkq-bin{min-height:0}.tkq-sfill.tkq-tall .tkq-seatp{flex-basis:50px}',
+    '.tkq-sfill .tkq-bin{padding:10px;gap:8px}.tkq-sfill .tkq-bin .bh{font-size:clamp(16px,1.8vw,22px)}.tkq-sfill .tkq-bin .bh img{width:48px;height:48px}.tkq-sfill .tkq-bin .bh img.tk-ico--lifeboat{width:76px;height:48px}.tkq-sfill .tkq-bin .cap{font-size:15px}',
+    '.tkq-sfill .tkq-tray{gap:clamp(6px,1.2vh,12px);padding:clamp(6px,1vh,10px)}.tkq-sfill .tkq-item{min-width:clamp(88px,9vw,112px);min-height:clamp(72px,11vh,104px);padding:4px 8px;font-size:15px;border-width:3px}.tkq-sfill .tkq-item img{width:clamp(40px,6.4vh,68px);height:clamp(40px,6.4vh,68px)}.tkq-sfill .tkq-item .num{font-size:clamp(28px,4.4vh,40px)}',
+    '.tkq-sfill .tkq-item .ppl{padding-left:12px}.tkq-sfill .tkq-item .ppl img{width:clamp(30px,4.2vh,44px);height:clamp(40px,5.6vh,58px);margin-left:-12px}.tkq-sfill .tkq-item .lb{max-width:150px;font-size:16px}',
+    '.tkq-sfill .tkq-item.placed{min-width:84px;min-height:78px}.tkq-sfill .tkq-item.placed img{width:52px;height:52px}.tkq-sfill .tkq-item.placed .ppl img{width:36px;height:48px}',
+    // seats stay on one row: each seat shrinks with its lifeboat card (5 across) instead of wrapping to 4 + 1
+    '.tkq-sfill .tkq-seats{gap:5px;flex-wrap:nowrap;width:100%;justify-content:center}.tkq-sfill .tkq-seatp{flex:0 1 48px;min-width:22px;width:auto;height:auto;aspect-ratio:3/4}.tkq-sfill .tkq-seatp img{width:100%;height:95%}.tkq-sfill .tkq-seats:has(.tkq-seatp:nth-child(9)){flex-wrap:wrap}.tkq-sfill .tkq-seats:has(.tkq-seatp:nth-child(9)) .tkq-seatp{flex:0 0 30px}',
+    '.tkq.tkq-mt.tkq-short{grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"chars card" "foot foot"}.tkq-mt.tkq-short .tkq-stats,.tkq-mt.tkq-short .tkq-top{display:none}'
   ].join('\n')
   function injectCSS () {
     if (typeof document === 'undefined' || document.getElementById('tkq-css')) return
@@ -618,6 +805,25 @@
     if (typeof opts.scene === 'string' && opts.scene) root.style.background = opts.scene
     return root
   }
+  // re-layout on rotate / resize without re-mounting (state lives in the closure): swap the layout classes;
+  // the markup built for the other orientation is placed by the .tkq-mw / .tkq-mt rules below
+  function watchLayout (host, root, L0, fill) {
+    var cur = L0.wide + ':' + L0.short, ro = null
+    function check () {
+      var L = layoutOf(host)
+      if (!host.clientWidth || !host.clientHeight) return
+      var k = L.wide + ':' + L.short
+      if (k === cur) return
+      cur = k
+      root.classList.toggle('tkq-wide', L.wide); root.classList.toggle('tkq-tall', !L.wide); root.classList.toggle('tkq-short', L.short)
+      root.classList.toggle('tkq-mw', L0.wide && !L.wide); root.classList.toggle('tkq-mt', !L0.wide && L.wide)
+      if (fill) root.classList.toggle('tkq-fill', !L.short)
+      if (root.classList.contains('tkq-sort')) root.classList.toggle('tkq-sfill', !L.short)
+    }
+    try { if (W.ResizeObserver) { ro = new W.ResizeObserver(check); ro.observe(host) } } catch (e) { ro = null }
+    if (!ro && W.addEventListener) W.addEventListener('resize', check)
+    return function () { try { if (ro) ro.disconnect(); else if (W.removeEventListener) W.removeEventListener('resize', check) } catch (e) {} }
+  }
   function charSrc (opts, lib, who) {
     if (who === 'timmy') return opts.timmy || (W.TKArt ? W.TKArt.src('char/timmy') : lib('sd/explorer'))
     return opts.penguin || (W.TKArt ? W.TKArt.src('char/penguin') : lib('animals/penguin'))
@@ -653,18 +859,23 @@
     if (set && !Array.isArray(set) && set.type === 'sort') return mountSort(host, sortSet(set.domain, set.world, rng(set.seed || Date.now()), set), opts)
     var qs = Array.isArray(set) ? set : build({ domain: (set && set.domain) || opts.domain, world: set && set.world, count: set && set.count, level: set && set.level,
       grade: (set && set.grade) || opts.grade, islam: set && set.islam != null ? set.islam : opts.islam, mastery: opts.mastery, seed: (set && set.seed) || opts.seed,
-      topic: (set && set.topic) || opts.topic })
+      topic: (set && set.topic) || opts.topic, easy: opts.easy })
     if (opts.islam === false) qs = qs.filter(function (q) { return !q.islam })
-    var lib = libFn(opts), sfx = sfxFn(opts), reduced = isReduced(opts)
+    // easy mode per question (Kelas 1 / low mastery): 3 choices, bigger words, picture first
+    var grade = (set && !Array.isArray(set) && set.grade) || opts.grade
+    qs = qs.map(function (q) { return isEasy(grade, masteryOf(opts.mastery, q.domain), opts.easy) ? easyify(q) : q })
+    var lib = libFn(opts), sfx = sfxFn(opts), reduced = isReduced(opts), narrate = narrator(opts), twoTap = opts.readAloud === true
     var timers = [], alive = true
     function later (fn, ms) { var t = setTimeout(function () { if (alive) fn() }, reduced ? Math.min(ms, 120) : ms); timers.push(t); return t }
     var ms0 = {}, ms = {}
     qs.forEach(function (q) { if (!(q.domain in ms0)) { ms0[q.domain] = masteryOf(opts.mastery, q.domain); ms[q.domain] = ms0[q.domain] } })
-    var S = { i: 0, right: 0, asked: 0, hints: 0, points: 0, streak: 0, rung: 0, answered: false, results: [] }
+    var S = { i: 0, right: 0, asked: 0, hints: 0, points: 0, streak: 0, rung: 0, wrong: 0, counted: 0, answered: false, results: [] }
     var noHints = opts.hints === false
 
     var L = layoutOf(host), wide = L.wide
     var root = rootFor(host, opts, L, reduced)
+    if (!L.short && !opts.challenge) root.classList.add('tkq-fill')   // answers grow to fill the card (tablets)
+    var unwatch = watchLayout(host, root, L, !opts.challenge)
     var timmySrc = charSrc(opts, lib, 'timmy'), pengSrc = charSrc(opts, lib, 'peng')
     var specDom = (set && !Array.isArray(set) && set.domain) || opts.domain
     var single = specDom !== 'campur' && qs.length && qs.every(function (q) { return q.domain === qs[0].domain }) ? qs[0].domain : null
@@ -678,13 +889,22 @@
     var timmyHTML = '<div class="tkq-char timmy">' + bubT + '<img src="' + esc(timmySrc) + '" alt="Timmy" draggable="false"></div>'
     var pengHTML = '<div class="tkq-char peng">' + (L.short ? '' : '<div class="tkq-bub from-p" data-b="p"><b>' + PENGUIN + '</b><div class="tx">Semangat, pelaut kecil!</div></div>') +
       '<img src="' + esc(pengSrc) + '" alt="' + PENGUIN + '" draggable="false"></div>'
-    var cardHTML = '<section class="tkq-card" aria-live="off"><div class="tkq-head"><span class="tkq-count"></span>' +
-      (noHints ? '' : '<button type="button" class="tkq-btn tkq-hintbtn" aria-label="Petunjuk">' + ICON.lamp + '<span>Petunjuk</span></button>') + '<span class="tkq-badge"></span></div>' +
+    var cardHTML = '<section class="tkq-card" aria-live="off"><div class="tkq-head">' +
+      '<button type="button" class="tkq-btn tkq-speak" aria-label="Dengar soal">' + sprite('listen', 'tk-prop/ship-bell', lib) + '</button><span class="tkq-count"></span>' +
+      (noHints ? '' : '<button type="button" class="tkq-btn tkq-hintbtn" aria-label="Petunjuk">' + sprite('hint', 'tk-prop/lantern', lib) + '<span>Petunjuk</span></button>') + '<span class="tkq-badge"></span></div>' +
       '<div class="tkq-prompt"></div><div class="tkq-eq" hidden></div><div class="tkq-scene"></div><div class="tkq-help" aria-live="polite"></div>' +
       '<div class="tkq-ans" role="group" aria-label="Pilihan jawaban"></div><div class="tkq-explain" hidden aria-live="polite"></div></section>'
     var topHTML = '<div class="tkq-top">' + plateHTML(title, topic || DEFAULT_SUB) + tabsHTML(lib, opts, qs[0] && qs[0].domain) + '</div>'
-    var foot = footHTML(opts, stepOf(opts, 0), 'Lanjut')
-    root.innerHTML = wide
+    var chal = !!opts.challenge, chalNext = opts.nextLabel || 'Lanjut Berlayar'
+    var foot = footHTML(opts, stepOf(opts, 0), chal ? chalNext : 'Lanjut')
+    if (chal) {
+      // TKQuiz.challenge: plate + one card + Timmy's bubble + a single big "Lanjut Berlayar" (no tabs/stats/stepper)
+      root.classList.add('tkq-chmode')
+      root.innerHTML = '<div class="tkq-top">' + plateHTML(opts.title || 'Tantangan Pengetahuan', opts.intro || topic || DEFAULT_SUB) + '</div>' + cardHTML +
+        '<div class="tkq-chars"><img class="tkq-cimg" src="' + esc(timmySrc) + '" alt="Timmy" draggable="false">' +
+        '<div class="tkq-bub" data-b="x"><b>Timmy</b><div class="tx">Ayo kita pecahkan bersama!</div></div>' +
+        '<img class="tkq-cimg peng" src="' + esc(pengSrc) + '" alt="' + PENGUIN + '" draggable="false"></div>' + foot
+    } else root.innerHTML = wide
       ? topHTML + '<div class="tkq-side tkq-left">' + timmyHTML + '</div>' + cardHTML + '<div class="tkq-side tkq-right">' + statsHTML + pengHTML + '</div>' + foot
       : statsHTML + topHTML + cardHTML + '<div class="tkq-chars"><img class="tkq-cimg" src="' + esc(timmySrc) + '" alt="Timmy" draggable="false">' +
         '<div class="tkq-bub" data-b="x"><b>Timmy</b><div class="tx">Ayo kita pecahkan bersama!</div></div>' +
@@ -692,7 +912,9 @@
     host.appendChild(root)
     var $ = function (s) { return root.querySelector(s) }
     var E = { count: $('.tkq-count'), badge: $('.tkq-badge'), prompt: $('.tkq-prompt'), eq: $('.tkq-eq'), scene: $('.tkq-scene'), help: $('.tkq-help'),
-      ans: $('.tkq-ans'), explain: $('.tkq-explain'), next: $('.tkq-next'), hint: $('.tkq-hintbtn'), card: $('.tkq-card') }
+      ans: $('.tkq-ans'), explain: $('.tkq-explain'), next: $('.tkq-next'), hint: $('.tkq-hintbtn'), card: $('.tkq-card'), speak: $('.tkq-speak') }
+    function ring () { if (!E.speak) return; E.speak.classList.remove('talk'); void E.speak.offsetWidth; E.speak.classList.add('talk') }
+    function readQuestion (force) { var q = qs[S.i]; if (!q) return; if (narrate(questionWords(q), force)) ring() }
 
     function say (who, text) {
       if (helpLock && who === 't') return
@@ -704,7 +926,7 @@
     function stat (k, v) { var b = root.querySelector('[data-k="' + k + '"]'); if (!b) return; b.textContent = v; b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump') }
     // phone layouts have no room for a hint line inside the card (it pushed the answers below the fold):
     // Timmy says it instead, and holds it until the question changes or is answered
-    var bubbleHelp = !wide || L.short, helpLock = false
+    var bubbleHelp = !chal && (!wide || L.short), helpLock = false
     function help (t) {
       E.help.textContent = t || ''; E.help.classList.toggle('on', !!t)
       if (!bubbleHelp) return
@@ -723,6 +945,7 @@
       if (q.domain === 'matematika') {
         var total = 0; (sc.groups || []).forEach(function (g) { total += g.n })
         size = L.short ? (total <= 6 ? 38 : total <= 10 ? 30 : total <= 16 ? 24 : 22) : wide ? (total <= 6 ? 62 : total <= 10 ? 50 : total <= 16 ? 38 : 32) : (total <= 6 ? 44 : total <= 10 ? 34 : total <= 16 ? 28 : 24)
+        if (q.easy && !L.short) size = Math.round(size * (wide ? 1.1 : 1.18))
         var grp = function (g, extra, tag) {
           var s = '<div class="tkq-grp' + (extra ? ' ' + extra : '') + '" data-role="' + g.role + '">' + (tag ? '<span class="tag">' + tag + '</span>' : '')
           for (var j = 0; j < g.n; j++) s += objHTML(g.key, idx++, g.role === 'leave' ? 'leave' : '', size)
@@ -759,6 +982,8 @@
       function inner (g, cls) { var s = ''; for (var j = 0; j < g.n; j++) s += objHTML(g.key, idx++, cls, size); return s }
       E.scene.innerHTML = h
       E.scene.style.display = h ? '' : 'none'
+      // counting scenes: every object can be tapped to count it aloud ("satu, dua, ...")
+      E.scene.classList.toggle('tapcount', q.domain === 'matematika' && /^(count|add|sub|groups|diff|twostep)$/.test(sc.mode))
       var sayBtn = E.scene.querySelector('.tkq-say'); if (sayBtn) sayBtn.addEventListener('click', function () { speak(q.listen) })
       // objects arrive: stagger (base first, then the arriving group)
       var os = E.scene.querySelectorAll('.tkq-o,.tkq-op')
@@ -783,17 +1008,67 @@
       if (q.pics && q.pics[c]) inner = '<img src="' + lib(q.pics[c]) + '" alt=""><span class="lb">' + esc(c) + '</span>'
       else if (q.rtl && /[؀-ۿ]/.test(c)) inner = '<span class="tkq-ar" dir="rtl" lang="ar">' + esc(c) + '</span>' + (q.trs && q.trs[c] ? '<span class="tkq-tr">' + esc(q.trs[c]) + '</span>' : '')
       else { inner = '<span>' + esc(c) + '</span>'; if (/^\d+$/.test(c)) cls += ' num' }
-      return '<button type="button" class="' + cls + '" data-c="' + esc(c) + '" data-i="' + i + '" aria-label="' + esc(q.pics && q.pics[c] ? c : (q.trs && q.trs[c]) || c) + '">' + inner + '<span class="ck">' + ICON.check + '</span></button>'
+      return '<button type="button" class="' + cls + '" data-c="' + esc(c) + '" data-i="' + i + '" aria-label="' + esc(q.pics && q.pics[c] ? c : (q.trs && q.trs[c]) || c) + '">' + inner +
+        (twoTap ? '<span class="ear" aria-hidden="true">' + sprite('listen', 'tk-prop/ship-bell', lib) + '</span>' : '') + '<span class="ck">' + ICON.check + '</span></button>'
     }
     function renderAnswers (q) {
       if (q.letters) return renderArrange(q)
       E.ans.style.display = ''
+      var n3 = q.choices.length === 3, short = q.choices.every(function (c) { return String(c).length <= 7 || (q.pics && q.pics[c]) })
+      var pic = q.choices.some(function (c) { return q.pics && q.pics[c] })
+      E.ans.className = 'tkq-ans' + (n3 ? ' n3 ' + (short ? 'num' : 'txt') : '') + (pic ? ' pic' : '')
       E.ans.innerHTML = q.choices.map(function (c, i) { return optHTML(q, c, i) }).join('')
       Array.prototype.forEach.call(E.ans.querySelectorAll('.tkq-opt'), function (b, k) {
         later(function () { b.classList.add('in') }, 120 + k * 45)
         b.addEventListener('click', function () { choose(b) })
       })
+      fitAnswers()
     }
+    /* fit the answers (owner tablet photo 2026-09-28: "Alhamdulillah" / "Wa'alaikumussalam" spilled out of a
+       4-up row): four long answers go 2x2 instead of 4-up; then each label steps its font down to a 16 px
+       floor until it sits inside its button; only then may a long word break (last resort). */
+    var fitKey = ''
+    function fitAnswers () {
+      var bs = E.ans.querySelectorAll('.tkq-opt')
+      if (!bs.length || !E.ans.clientWidth) return
+      var texts = []
+      Array.prototype.forEach.call(bs, function (b) {
+        b.classList.remove('brk')
+        Array.prototype.forEach.call(b.children, function (t) { if (t.tagName === 'SPAN' && !/\b(ck|ear)\b/.test(t.className)) { t.style.fontSize = ''; texts.push([b, t]) } })
+      })
+      E.ans.style.gridTemplateColumns = ''
+      if (bs.length === 4 && root.classList.contains('tkq-wide') && !root.classList.contains('tkq-fill') && !root.classList.contains('tkq-short')) {
+        // 4-up only when the widest label fits a quarter of the row at its own size
+        var gap = parseFloat(getComputedStyle(E.ans).columnGap) || 10, per = (E.ans.clientWidth - 3 * gap) / 4 - 22, need = 0
+        texts.forEach(function (bt) { var t = bt[1], ws = t.style.whiteSpace; t.style.whiteSpace = 'nowrap'; need = Math.max(need, t.scrollWidth); t.style.whiteSpace = ws })
+        E.ans.style.gridTemplateColumns = need <= per ? 'repeat(4,minmax(0,1fr))' : 'repeat(2,minmax(0,1fr))'
+      }
+      texts.forEach(function (bt) {
+        var b = bt[0], t = bt[1], fs = parseFloat(getComputedStyle(t).fontSize) || 20, n = 0
+        while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1) && fs > 16 && n++ < 40) { fs = Math.max(16, fs - 1); t.style.fontSize = fs + 'px' }
+        if (t.scrollWidth > t.clientWidth + 1) b.classList.add('brk')
+      })
+      fitCard()
+      fitKey = E.ans.clientWidth + 'x' + E.ans.clientHeight
+    }
+    /* the card never hides an answer below its edge (390x844 / 844x390: the third answer sat under the card's
+       bottom): tighten the gaps first, then shrink the scene pictures (--k) down to half size */
+    function fitCard () {
+      var c = E.card; if (!c || !c.clientHeight) return
+      var over = function () { return c.scrollHeight > c.clientHeight + 1 }
+      root.classList.remove('tkq-cmp'); c.style.removeProperty('--k')
+      if (!over()) return
+      root.classList.add('tkq-cmp')
+      for (var k = 0.9; over() && k >= 0.45; k -= 0.1) c.style.setProperty('--k', k.toFixed(2))
+    }
+    var fitRO = null
+    try {
+      if (W.ResizeObserver) {
+        fitRO = new W.ResizeObserver(function () { if (alive && E.ans.clientWidth + 'x' + E.ans.clientHeight !== fitKey) fitAnswers() })
+        fitRO.observe(E.ans)
+      }
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (alive) fitAnswers() })
+    } catch (e) {}
     /* arrange letters (RTL slots) */
     var AR = null
     function renderArrange (q) {
@@ -853,6 +1128,8 @@
       for (var r = before + 1; r <= S.rung; r++) applyRung(q, r)
       S.hints += S.rung - before
     }
+    // after two wrong tries the answer is shown kindly (it glows; the child taps it to finish)
+    function guideNow () { if (S.rung < 5) climb(5 - S.rung) }
     function applyRung (q, r) {
       var math = q.domain === 'matematika'
       if (r === 1) { help(q.hint1); say('t', 'Ayo coba lagi, pelan-pelan!') }
@@ -869,13 +1146,16 @@
         else dimOneWrong(q)
       }
       if (r === 4) {
-        if (math) { help(q.step1); if (q.eq) { E.eq.hidden = false; E.eq.textContent = q.eq } }
+        // easy mode stays picture-first: no abstract equation, the counted objects carry the step
+        if (math) { help(q.step1); if (q.eq && !q.easy) { E.eq.hidden = false; E.eq.textContent = q.eq } }
         else { help(q.hint2 + ' Tinggal dua pilihan.'); dimOneWrong(q) }
         if (q.letters && AR.slots.length === 0) { var t0 = Array.prototype.filter.call(E.ans.querySelectorAll('.tkq-tile:not(.used)'), function (x) { return AR.tiles[+x.dataset.t] === q.answer.split('')[0] })[0]; if (t0) tapTile(t0) }
       }
       if (r === 5) {
-        help('Ini jawabannya. Ketuk yang bersinar untuk menyelesaikan.')
+        var aw = q.letters ? '' : choiceWords(q, q.answer)
+        help(q.letters ? 'Ini jawabannya. Ketuk yang bersinar untuk menyelesaikan.' : 'Jawabannya ' + aw + '. Ketuk yang bersinar, ya!')
         say('t', 'Kita selesaikan bersama, ya!')
+        if (!q.letters) narrate('Tidak apa-apa. Jawabannya ' + aw + '. Ketuk yang bersinar, ya!')
         if (q.letters) { markNextTile(); return }
         Array.prototype.forEach.call(E.ans.querySelectorAll('.tkq-opt'), function (b) {
           if (b.dataset.c === q.answer) { b.classList.add('guide'); b.disabled = false } else { b.disabled = true; b.classList.add('tried') }
@@ -890,19 +1170,50 @@
     function countOn (q) {
       var os = Array.prototype.filter.call(E.scene.querySelectorAll('.tkq-o'), function (o) { return !o.classList.contains('leave') && !o.classList.contains('seat') })
       if (q.scene.mode === 'capacity') os = Array.prototype.slice.call(E.scene.querySelectorAll('.tkq-o.seat'))
-      os.forEach(function (o, k) { later(function () { var n = o.querySelector('.n'); n.textContent = k + 1; n.classList.add('on'); if (k % 2 === 0) sfx('click') }, k * (reduced ? 0 : 260)) })
+      os.forEach(function (o, k) { later(function () { var n = o.querySelector('.n'); n.textContent = k + 1; n.classList.add('on'); o.classList.add('counted'); if (k % 2 === 0) sfx('click') }, k * (reduced ? 0 : 260)) })
+      S.counted = os.length
     }
+    /* tap-to-count: each tap numbers the next object and says the number word */
+    function countables () { return Array.prototype.filter.call(E.scene.querySelectorAll('.tkq-o'), function (o) { return !o.classList.contains('leave') && !o.classList.contains('seat') }) }
+    function tapCount (o) {
+      var n = o.querySelector('.n'); if (!n) return
+      var all = countables(); if (all.indexOf(o) < 0) return
+      if (!o.classList.contains('counted')) {
+        if (S.counted >= all.length) { all.forEach(function (x) { x.classList.remove('counted'); var m = x.querySelector('.n'); m.classList.remove('on'); m.textContent = '' }); S.counted = 0 }
+        S.counted++; n.textContent = S.counted; n.classList.add('on'); o.classList.add('counted')
+      }
+      o.classList.remove('tick'); void o.offsetWidth; o.classList.add('tick')
+      sfx('click'); narrate(numWord(+n.textContent), true)
+      if (S.counted === all.length && !S.answered && o.classList.contains('counted') && +n.textContent === all.length) say('t', 'Kamu menghitung sampai ' + all.length + '!')
+    }
+    E.scene.addEventListener('click', function (e) {
+      var o = e.target.closest && e.target.closest('.tkq-o')
+      if (o && E.scene.classList.contains('tapcount')) tapCount(o)
+    })
 
     /* answering */
     function choose (b) {
       if (S.answered || b.disabled) return
       var q = qs[S.i]
+      // read-aloud (pre-readers): first tap says the choice, a second tap on it chooses
+      if (twoTap && !b.classList.contains('armed')) {
+        Array.prototype.forEach.call(E.ans.querySelectorAll('.tkq-opt.armed'), function (x) { x.classList.remove('armed') })
+        b.classList.add('armed'); sfx('click')
+        narrate(choiceWords(q, b.dataset.c), true)
+        if (!S.armedOnce) { S.armedOnce = true; say('t', 'Ketuk sekali lagi untuk memilih.') }
+        return
+      }
+      b.classList.remove('armed')
       if (b.dataset.c === q.answer) return correct(b)
       sfx('wrong')
       b.classList.remove('no'); void b.offsetWidth
       b.classList.add('no', 'tried'); b.disabled = true   // gentle wiggle, then it stays faded
-      say('p', ENCOURAGE[S.rung % ENCOURAGE.length])
-      climb(1)
+      S.wrong++
+      var enc = ENCOURAGE[S.rung % ENCOURAGE.length]
+      say('p', enc)
+      if (E.hint) E.hint.classList.add('glow')             // the lantern lights up after a wrong answer
+      if (!noHints && S.wrong >= 2) guideNow()
+      else { climb(1); narrate(enc) }
     }
     function correct (b) {
       var q = qs[S.i]
@@ -919,7 +1230,10 @@
       ms[q.domain] = mastery.update(before, { right: true, firstTry: first, rung: S.rung, streak: S.streak - 1 })
       S.results.push({ id: q.id, domain: q.domain, first: first, rung: S.rung })
       consequence(q)
+      if (E.hint) E.hint.classList.remove('glow')
+      burst(b || E.ans)
       flyStar(b || E.ans)
+      narrate((first ? oneOf(['Hebat!', 'Betul!', 'Pintar!'], Math.random) : 'Bagus!') + ' ' + q.explain)
       later(function () { stat('poin', S.points); stat('soal', S.asked + '/' + qs.length); stat('streak', S.streak); sfx('star') }, 520)
       say('p', first ? oneOf(PRAISE, Math.random) : 'Bagus! Kamu tidak menyerah!')
       help('')
@@ -965,6 +1279,20 @@
         if (ship.animate && !reduced) ship.animate([{ transform: 'none' }, { transform: 'translateY(4px)' }, { transform: 'translateY(-2px)' }, { transform: 'none' }], { duration: 700, easing: EASE })
       }, 120 + os.length * 55 + 380)
     }
+    // correct: a small ring of star sprites pops out of the answer
+    function burst (from) {
+      if (reduced) return
+      var a = from.getBoundingClientRect(), cx = a.left + a.width / 2 - 13, cy = a.top + a.height / 2 - 13
+      for (var k = 0; k < 7; k++) {
+        var s = document.createElement('div'); s.className = 'tkq-burst'; s.innerHTML = '<img src="' + lib('tk-ui/star') + '" alt="">'
+        document.body.appendChild(s)
+        var ang = (k / 7) * Math.PI * 2 - Math.PI / 2, d = 46 + (k % 2) * 16
+        if (!s.animate) { s.remove(); continue }
+        var an = s.animate([{ transform: 'translate(' + cx + 'px,' + cy + 'px) scale(.3)', opacity: 1 },
+          { transform: 'translate(' + (cx + Math.cos(ang) * d) + 'px,' + (cy + Math.sin(ang) * d) + 'px) scale(1) rotate(' + (k * 40) + 'deg)', opacity: 0 }], { duration: 560, easing: EASE, fill: 'forwards' })
+        ;(function (el) { an.onfinish = function () { el.remove() }; timers.push(setTimeout(function () { if (el.parentNode) el.remove() }, 900)) })(s)
+      }
+    }
     function flyStar (from) {
       var to = root.querySelector('[data-k="poin"]'); if (!to || reduced) return
       var a = from.getBoundingClientRect(), bb = to.getBoundingClientRect()
@@ -980,8 +1308,10 @@
 
     function show (i) {
       var q = qs[i]
-      S.rung = 0; S.answered = false; AR = null
-      E.count.textContent = 'Soal ' + (i + 1) + ' dari ' + qs.length
+      S.rung = 0; S.wrong = 0; S.counted = 0; S.answered = false; AR = null
+      root.classList.toggle('tkq-easy', !!q.easy)
+      if (E.hint) E.hint.classList.remove('glow')
+      E.count.textContent = chal ? '' : 'Soal ' + (i + 1) + ' dari ' + qs.length
       var du = DOMAIN_UI[q.domain] || DOMAIN_UI.umum
       E.badge.innerHTML = (du.svg || '<img src="' + lib(du.icon) + '" alt="">') + '<span>' + esc(du.label) + '</span>'
       E.prompt.textContent = q.prompt
@@ -993,16 +1323,18 @@
       Array.prototype.forEach.call(root.querySelectorAll('.tkq-tab'), function (tb) { var on = tb.dataset.d === q.domain; tb.classList.toggle('on', on); if (on) tb.setAttribute('aria-current', 'true'); else tb.removeAttribute('aria-current') })
       E.explain.hidden = true; E.explain.classList.remove('on')
       E.next.disabled = true
-      E.next.innerHTML = (i === qs.length - 1 ? 'Selesai ' : 'Lanjut ') + '<span class="tkq-ai" aria-hidden="true"></span>'
+      E.next.innerHTML = (chal ? esc(chalNext) + ' ' : i === qs.length - 1 ? 'Selesai ' : 'Lanjut ') + '<span class="tkq-ai" aria-hidden="true"></span>'
       renderScene(q)
       renderAnswers(q)
       E.card.scrollTop = 0
-      say('t', i === 0 ? 'Ayo kita pecahkan bersama!' : oneOf(['Soal berikutnya!', 'Kita pasti bisa!', 'Ayo, lanjut berlayar!'], Math.random))
+      var tapHint = E.scene.classList.contains('tapcount') && E.scene.style.display !== 'none'
+      say('t', tapHint && (q.easy || i === 0) ? 'Ketuk bendanya untuk menghitung!' : i === 0 ? 'Ayo kita pecahkan bersama!' : oneOf(['Soal berikutnya!', 'Kita pasti bisa!', 'Ayo, lanjut berlayar!'], Math.random))
+      later(function () { readQuestion(false) }, 380)
     }
     function finish () {
       var delta = 0, by = {}
       Object.keys(ms).forEach(function (d) { by[d] = ms[d] - ms0[d]; delta += by[d] })
-      var res = { right: S.right, asked: S.asked, hints: S.hints, masteryDelta: delta, byDomain: by, mastery: ms, points: S.points, results: S.results }
+      var res = { right: S.right, asked: S.asked, hints: S.hints, masteryDelta: delta, byDomain: by, mastery: ms, points: S.points, results: S.results, wrong: S.wrong }
       S.done = true
       E.next.disabled = true
       say('p', S.right === S.asked ? 'Sempurna! Semua benar!' : 'Hebat! Kamu sudah berusaha!')
@@ -1014,15 +1346,16 @@
       if (S.i + 1 >= qs.length) return finish()
       S.i++; show(S.i)
     })
-    if (E.hint) E.hint.addEventListener('click', function () { if (S.answered || S.done) return; sfx('click'); climb(1) })
+    if (E.hint) E.hint.addEventListener('click', function () { if (S.answered || S.done) return; sfx('click'); E.hint.classList.remove('glow'); climb(1); var h = E.help.textContent; if (h) narrate(h, true) })
+    if (E.speak) E.speak.addEventListener('click', function () { sfx('click'); readQuestion(true) })
     wireBack(root, opts, sfx)
-    if (!qs.length) { E.prompt.textContent = 'Belum ada soal.'; return { el: root, state: function () { return S }, destroy: function () { root.remove() } } }
+    if (!qs.length) { E.prompt.textContent = 'Belum ada soal.'; return { el: root, state: function () { return S }, destroy: function () { unwatch(); root.remove() } } }
     show(0)
     return {
       el: root, questions: qs,
-      state: function () { var q = qs[S.i]; return { i: S.i, n: qs.length, rung: S.rung, answered: !!S.answered, done: !!S.done, qid: q && q.id, answer: q && q.answer, right: S.right, asked: S.asked, hints: S.hints, points: S.points, streak: S.streak } },
+      state: function () { var q = qs[S.i]; return { i: S.i, n: qs.length, rung: S.rung, wrong: S.wrong, answered: !!S.answered, done: !!S.done, qid: q && q.id, answer: q && q.answer, easy: !!(q && q.easy), choices: q && q.choices ? q.choices.length : 0, counted: S.counted, right: S.right, asked: S.asked, hints: S.hints, points: S.points, streak: S.streak } },
       hint: function () { if (!S.answered) climb(1) },
-      destroy: function () { alive = false; timers.forEach(clearTimeout); if (root.parentNode) root.parentNode.removeChild(root) }
+      destroy: function () { alive = false; unwatch(); try { if (fitRO) fitRO.disconnect() } catch (e) {} timers.forEach(clearTimeout); try { if (W.TKHub && W.TKHub.say) W.TKHub.say('') } catch (e) {} if (root.parentNode) root.parentNode.removeChild(root) }
     }
   }
 
@@ -1031,24 +1364,31 @@
     opts = opts || {}
     injectCSS()
     if (set && !set.bins) set = sortSet(set.domain, set.world, rng(set.seed || Date.now()), set)
-    var lib = libFn(opts), sfx = sfxFn(opts), reduced = isReduced(opts), alive = true, timers = []
+    var lib = libFn(opts), sfx = sfxFn(opts), reduced = isReduced(opts), alive = true, timers = [], narrate = narrator(opts)
     function later (fn, ms) { var t = setTimeout(function () { if (alive) fn() }, reduced ? Math.min(ms, 100) : ms); timers.push(t) }
+    // first sort of the game: the first item pulses ("tap me"), then its bin pulses once
+    var tut = opts.tutorial != null ? !!opts.tutorial : !SORT_TUTORED
+    SORT_TUTORED = true
     var m0 = masteryOf(opts.mastery, set.domain)
     var S = { placed: 0, wrong: 0, firstOK: 0, tried: {}, sel: null, done: false }
     var L = layoutOf(host)
     var root = rootFor(host, opts, L, reduced)
     root.classList.add('tkq-sort')
+    if (!L.short) root.classList.add('tkq-sfill')
+    var unwatch = watchLayout(host, root, L, false)
     var du = DOMAIN_UI[set.domain] || DOMAIN_UI.umum
     // wording follows the set: families into lifeboats, words, numbers, or things into groups
     var noun = set.capacity ? 'keluarga' : set.items.some(function (x) { return x.rtl }) ? 'kata' : set.items.every(function (x) { return !x.sprite && !x.people }) ? 'angka' : 'barang'
     var target = set.capacity ? 'sekocinya' : 'kelompoknya'
     var startHint = 'Ketuk satu ' + noun + ', lalu ketuk ' + target + '.'
-    var binHTML = set.bins.map(function (b) {
+    var binHTML = set.bins.map(function (b, bi) {
       return '<div class="tkq-bin" data-bin="' + esc(b.id) + '" role="group" aria-label="' + esc(b.label) + '"><div class="bh">' +
-        (b.sprite ? '<img src="' + lib(b.sprite) + '" alt="">' : b.color ? '<span class="sw" style="background:' + esc(b.color) + '"></span>' : set.capacity ? '<span style="width:54px">' + ICON.boat + '</span>' : '') +
+        (b.sprite ? '<img src="' + lib(b.sprite) + '" alt="">' : b.color ? '<span class="sw" style="background:' + esc(b.color) + '"></span>' : set.capacity ? '<span class="bi">' + ICON.boat + '</span>' : '') +
         '<span' + (b.rtl ? ' class="tkq-ar" dir="rtl" lang="ar"' : '') + '>' + esc(b.label) + '</span></div>' +
-        (b.cap ? '<div class="cap" data-cap="' + esc(b.id) + '">0 / ' + b.cap + ' orang</div>' : '') + '<div class="tkq-stack"></div></div>'
+        (b.cap ? '<div class="tkq-seats" data-seats="' + esc(b.id) + '" aria-hidden="true">' + seatRow(b, bi) + '</div><div class="cap" data-cap="' + esc(b.id) + '">0 / ' + b.cap + ' orang</div>' : '') + '<div class="tkq-stack"></div></div>'
     }).join('')
+    // capacity: one seat per place; a filled seat shows a passenger sprite (hijab girls, boys, men only)
+    function seatRow (b, bi) { var h = ''; for (var j = 0; j < b.cap; j++) h += '<span class="tkq-seatp" data-j="' + j + '">' + pfig((bi * 3 + j) % npeople(), 'tkq-p') + '</span>'; return h }
     var itemHTML = set.items.map(function (it) {
       var pic = it.sprite ? '<img src="' + lib(it.sprite) + '" alt="">' : it.people ? '<span class="ppl">' + people(it.people, parseInt(String(it.id).replace(/\D/g, ''), 10) || 0) + '</span>' : '<span class="num">' + esc(it.label) + '</span>'
       var lb = it.sprite || it.people ? '<span class="lb' + (it.rtl ? ' tkq-ar" dir="rtl" lang="ar' : '') + '">' + esc(it.label) + '</span>' : ''
@@ -1056,7 +1396,7 @@
     }).join('')
     var topic = set.topic || opts.topic
     root.innerHTML = (L.short ? '' : '<div class="tkq-top">' + plateHTML(opts.title || 'Tantangan ' + du.label, topic || '') + '</div>') +
-      '<section class="tkq-card"><div class="tkq-head"><span class="tkq-count" data-k="left"></span>' +
+      '<section class="tkq-card"><div class="tkq-head"><button type="button" class="tkq-btn tkq-speak" aria-label="Dengar perintah">' + sprite('listen', 'tk-prop/ship-bell', lib) + '</button><span class="tkq-count" data-k="left"></span>' +
       '<span class="tkq-badge">' + (du.svg || '<img src="' + lib(du.icon) + '" alt="">') + '<span>' + esc(du.label) + '</span></span></div>' +
       '<div class="tkq-prompt">' + esc(set.prompt) + '</div><div class="tkq-help" aria-live="polite"></div>' +
       '<div class="tkq-sortbody"><div class="tkq-bins">' + binHTML + '</div><div class="tkq-tray" aria-label="Barang yang belum dipilah">' + itemHTML + '</div></div>' +
@@ -1068,8 +1408,32 @@
     var load = {}; set.bins.forEach(function (b) { load[b.id] = 0 })
     function help (t) { helpEl.textContent = t || ''; helpEl.classList.toggle('on', !!t) }
     function left () { var n = set.items.length - S.placed; $('[data-k="left"]').textContent = n ? n + ' ' + noun + ' lagi' : 'Selesai!' }
-    left(); help(startHint)
+    left(); help(tut ? 'Ketuk ' + noun + ' yang bergoyang.' : startHint)
     wireBack(root, opts, sfx)
+    var speakBtn = $('.tkq-speak')
+    function readPrompt (force) { if (narrate(set.prompt, force) && speakBtn) { speakBtn.classList.remove('talk'); void speakBtn.offsetWidth; speakBtn.classList.add('talk') } }
+    speakBtn.addEventListener('click', function () { sfx('click'); readPrompt(true) })
+    later(function () { readPrompt(false) }, 380)
+    function seats (bid) {
+      var row = root.querySelector('[data-seats="' + bid + '"]'); if (!row) return
+      Array.prototype.forEach.call(row.children, function (x, j) { x.classList.toggle('full', j < load[bid]) })
+    }
+    // tutorial: which bin is right for this item (capacity: the first that still fits)
+    function goodBin (el) { var it = byId[el.dataset.id]; for (var i = 0; i < set.bins.length; i++) if (fits(it, set.bins[i])) return root.querySelector('.tkq-bin[data-bin="' + set.bins[i].id + '"]'); return null }
+    function tutBin (el, keepItem) {
+      if (!tut) return
+      var bEl = goodBin(el); if (!bEl) return
+      Array.prototype.forEach.call(root.querySelectorAll('.tkq-bin.tut'), function (x) { x.classList.remove('tut') })
+      void bEl.offsetWidth; bEl.classList.add('tut')
+      later(function () { bEl.classList.remove('tut') }, 1900)
+      var tItem = tray.querySelector('.tkq-item.tut'); if (tItem && !keepItem) tItem.classList.remove('tut')
+    }
+    function endTut () { tut = false; Array.prototype.forEach.call(root.querySelectorAll('.tut'), function (x) { x.classList.remove('tut') }) }
+    if (tut) {
+      var first = tray.querySelector('.tkq-item'); if (first) first.classList.add('tut')
+      // nobody tapped yet: show where it goes anyway, once
+      later(function () { if (tut && S.placed === 0 && !S.sel && first && first.parentNode === tray) tutBin(first, true) }, 3400)
+    }
     function binOf (id) { for (var i = 0; i < set.bins.length; i++) if (set.bins[i].id === id) return set.bins[i] }
     function fits (it, b) {
       if (set.capacity) return load[b.id] + it.n <= b.cap
@@ -1094,8 +1458,9 @@
           void el.offsetWidth; el.classList.add('snap'); el.style.transform = ''
           later(function () { el.classList.remove('snap') }, 420)
         }
-        if (set.capacity) { load[b.id] += it.n; var c = root.querySelector('[data-cap="' + b.id + '"]'); if (c) c.textContent = load[b.id] + ' / ' + b.cap + ' orang' }
+        if (set.capacity) { load[b.id] += it.n; var c = root.querySelector('[data-cap="' + b.id + '"]'); if (c) c.textContent = load[b.id] + ' / ' + b.cap + ' orang'; seats(b.id) }
         S.placed++; if (!S.tried[it.id]) S.firstOK++
+        if (tut) endTut()
         sfx('correct'); help(''); left()
         if (S.placed === set.items.length) return complete()
         if (set.capacity && !anyFits()) help('Belum muat. Ketuk satu keluarga di sekoci untuk mengeluarkannya, lalu susun lagi.')
@@ -1125,6 +1490,7 @@
       var bEl = el.closest('.tkq-bin'), it = byId[el.dataset.id]; if (!bEl) return
       load[bEl.dataset.bin] -= it.n; S.placed--
       var c = root.querySelector('[data-cap="' + bEl.dataset.bin + '"]'); if (c) c.textContent = load[bEl.dataset.bin] + ' / ' + binOf(bEl.dataset.bin).cap + ' orang'
+      seats(bEl.dataset.bin)
       el.classList.remove('placed'); tray.appendChild(el); sfx('click'); left(); help('')
     }
     function complete () {
@@ -1132,6 +1498,7 @@
       var asked = set.items.length, right = S.firstOK
       var mNew = mastery.update(m0, { right: true, firstTry: S.wrong === 0, rung: Math.min(5, S.wrong), streak: 0 })
       var ex = $('.tkq-explain'); ex.hidden = false; ex.textContent = set.capacity ? 'Hebat! Semua keluarga naik sekoci dan tetap bersama.' : 'Hebat! Semua sudah di tempatnya.'
+      narrate(ex.textContent)
       later(function () { ex.classList.add('on') }, 30)
       sfx('star')
       next.disabled = false
@@ -1150,7 +1517,7 @@
         if (!st || e.pointerId !== st.id) return
         var dx = e.clientX - st.x, dy = e.clientY - st.y
         if (!st.moved && Math.abs(dx) + Math.abs(dy) < 8) return
-        if (!st.moved) { st.moved = true; el.classList.add('drag'); el.classList.remove('snap', 'sel'); S.sel = null }
+        if (!st.moved) { st.moved = true; el.classList.add('drag'); el.classList.remove('snap', 'sel'); S.sel = null; tutBin(el) }
         el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(1.06)'
         var over = binAt(e.clientX, e.clientY)
         Array.prototype.forEach.call(root.querySelectorAll('.tkq-bin'), function (x) { x.classList.toggle('over', x === over) })
@@ -1177,7 +1544,7 @@
         sfx('click')
         if (S.sel && S.sel !== el) S.sel.classList.remove('sel')
         S.sel = el.classList.toggle('sel') ? el : null
-        if (S.sel) help('Sekarang ketuk ' + target + '.')
+        if (S.sel) { help(tut ? 'Sekarang ketuk ' + target + ' yang bersinar.' : 'Sekarang ketuk ' + target + '.'); narrate(byId[el.dataset.id].label, true); tutBin(el) }
       })
     })
     Array.prototype.forEach.call(root.querySelectorAll('.tkq-bin'), function (b) {
@@ -1185,14 +1552,101 @@
     })
     return {
       el: root, set: set,
-      state: function () { return { placed: S.placed, n: set.items.length, wrong: S.wrong, done: S.done } },
-      destroy: function () { alive = false; timers.forEach(clearTimeout); if (root.parentNode) root.parentNode.removeChild(root) }
+      state: function () { return { placed: S.placed, n: set.items.length, wrong: S.wrong, done: S.done, tutorial: tut } },
+      destroy: function () { alive = false; unwatch(); timers.forEach(clearTimeout); try { if (W.TKHub && W.TKHub.say) W.TKHub.say('') } catch (e) {} if (root.parentNode) root.parentNode.removeChild(root) }
     }
+  }
+
+  /* ══ challenge: ONE question card over a running game (PRD v2 §13 "Collision → Knowledge Challenge") ══
+     Reuses mount() whole (badge, prompt, scene, choices, hint ladder, explanation, read-aloud), composed
+     as a single card with one "Lanjut Berlayar" button. Resolves when the child continues. */
+  var RECENT = [], RECENT_MAX = 40
+  function remember (id) { if (!id) return; RECENT.push(id); if (RECENT.length > RECENT_MAX) RECENT.shift() }
+  function recentMap () { var m = {}; RECENT.forEach(function (id) { m[id] = 1 }); return m }
+  // a host-given question ("3 + 2" in the flooding scene, "20 − 14" in the lifeboat) -> engine question
+  function fixedQuestion (o, opts) {
+    var prompt = String(o.prompt || ''), answer = String(o.answer)
+    var choices = (o.choices || []).map(String).filter(function (c, i, a) { return a.indexOf(c) === i })
+    if (choices.indexOf(answer) < 0) choices.push(answer)
+    var m = /(\d+)\s*([+\-−])\s*(\d+)/.exec(prompt), a = m ? +m[1] : 0, b = m ? +m[3] : 0, plus = m && m[2] === '+'
+    var dom = o.domain || (m ? 'matematika' : 'umum'), key = o.item || 'game/crate-wood'
+    var scene = o.scene || { mode: 'none', groups: [] }
+    if (!o.scene && m && plus && a + b <= 12) scene = { mode: 'add', groups: [{ key: key, n: a, role: 'base' }, { key: key, n: b, role: 'add' }] }
+    if (!o.scene && m && !plus && a <= 12 && b < a) scene = { mode: 'sub', groups: [{ key: key, n: a - b, role: 'base' }, { key: key, n: b, role: 'leave' }] }
+    if (!scene.groups) scene.groups = []
+    var h = 0; (prompt + answer).split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) | 0 })
+    return { id: o.id || 'fx-' + (h >>> 0).toString(36), domain: dom, level: 1, prompt: prompt, choices: shuffle(choices, rng(h)), answer: answer,
+      explain: o.explain || ('Jawabannya ' + answer + '.'), eq: o.eq || (m ? m[1] + ' ' + m[2] + ' ' + m[3] + ' = ?' : null),
+      hint1: o.hint1 || (m ? (plus ? 'Gabungkan kedua kelompok, lalu hitung.' : 'Yang pergi tidak dihitung lagi.') : 'Baca soalnya pelan-pelan, ya.'),
+      hint2: o.hint2 || (m ? (plus ? 'Mulai dari ' + a + ', hitung maju ' + b + ' lagi.' : 'Mulai dari ' + a + ', hitung mundur ' + b + '.') : 'Pikirkan lagi, pilih yang paling cocok.'),
+      step1: o.step1 || (m ? (plus ? a + ' lalu ' + (a + 1) + ', …' : a + ' lalu ' + (a - 1) + ', …') : 'Coret pilihan yang pasti salah dulu.'),
+      scene: scene, visual: o.visual || [], world: opts.world || null }
+  }
+  function challengeQuestion (opts) {
+    if (opts.question && opts.question.prompt) return fixedQuestion(opts.question, opts)
+    var r = rng(opts.seed != null ? opts.seed : (Date.now() & 0x7fffffff)), ex = recentMap()
+    var d = opts.domain || 'campur'
+    if (d === 'campur') d = chooseDomain(r, { islam: opts.islam, world: opts.world, exclude: ex, domains: opts.domains })
+    if (d === 'islam' && opts.islam === false) d = 'umum'
+    var lv = opts.level || mastery.levelFor(masteryOf(opts.mastery, d), opts.grade)
+    var popts = { islam: opts.islam, world: opts.world, exclude: ex, mixed: true, easy: isEasy(opts.grade, masteryOf(opts.mastery, d), opts.easy) }
+    var q = null
+    // a quick card never serves "arrange the letters" or listen-only Arabic (needs a voice the device may lack)
+    for (var t = 0; t < 12 && (!q || q.letters || q.listen); t++) q = pick(d, lv, r, popts)
+    if (!q || q.letters || q.listen) q = make('matematika', Math.min(lv, 2), r, { world: opts.world, easy: popts.easy })
+    return q
+  }
+  function challenge (host, opts) {
+    opts = opts || {}
+    injectCSS()
+    var q = challengeQuestion(opts)
+    var reduced = isReduced(opts), ctrl = null, ov = null, settled = false, resolveFn = null
+    var p = new Promise(function (resolve) { resolveFn = resolve })
+    function settle (res) {
+      if (settled) return
+      settled = true
+      var o = ov
+      if (o) {
+        o.classList.remove('on')
+        setTimeout(function () { try { if (ctrl) ctrl.destroy() } catch (e) {} if (o.parentNode) o.parentNode.removeChild(o) }, reduced ? 0 : 240)
+      }
+      resolveFn(res)
+    }
+    p.close = function () { settle({ correct: false, tries: 0, hints: 0, closed: true }) }
+    if (!host || !q) { settle({ correct: true, tries: 1, hints: 0, skipped: true }); return p }
+    remember(q.id)
+    ov = document.createElement('div')
+    ov.className = 'tkq-chal' + (reduced ? ' rm' : '')
+    ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', opts.title || 'Tantangan Pengetahuan')
+    var box = document.createElement('div'); box.className = 'tkq-chal-box'
+    ov.appendChild(box); host.appendChild(ov)
+    // a pointer that started the collision must not fall through to the game under the card
+    ;['pointerdown', 'pointerup', 'touchstart', 'keydown'].forEach(function (ev) { ov.addEventListener(ev, function (e) { e.stopPropagation() }) })
+    var mo = {}; for (var k in opts) if (k !== 'question' && k !== 'onDone') mo[k] = opts[k]
+    mo.challenge = true
+    if (opts.question && opts.easy == null) mo.easy = false   // the host's own choices stay as given
+    mo.onDone = function (res) {
+      var tries = (res.wrong || 0) + 1
+      settle({ correct: res.right === 1, tries: tries, hints: res.hints || 0, points: res.points || 0, qid: q.id, domain: q.domain,
+        mastery: res.mastery, masteryDelta: res.masteryDelta })
+    }
+    // a question renderer that throws must never leave the full-screen overlay behind (soft-lock)
+    try { ctrl = mount(box, [q], mo) } catch (err) {
+      try { if (ov && ov.parentNode) ov.parentNode.removeChild(ov) } catch (e) {} ov = null
+      settle({ correct: true, tries: 1, hints: 0, points: 0, qid: q && q.id, domain: q && q.domain, error: true })
+      return p
+    }
+    p.ctrl = ctrl
+    // double rAF so the fade/rise transition runs from the initial state
+    var raf = W.requestAnimationFrame || function (f) { return setTimeout(f, 16) }
+    raf(function () { raf(function () { if (ov) ov.classList.add('on') }) })
+    return p
   }
 
   W.TKQuiz = {
     make: make, pick: pick, build: build, validate: validate, mastery: mastery,
     mount: mount, sortSet: sortSet, mountSort: mountSort, rng: rng, clockLabel: clockLabel,
-    VERSION: '1.0.0'
+    easyify: easyify, isEasy: isEasy, numWord: numWord, challenge: challenge,
+    VERSION: '1.1.0'
   }
 })()

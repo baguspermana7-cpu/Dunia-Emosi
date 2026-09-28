@@ -10,6 +10,10 @@
 //   C) puppeteer (tools/tk-harness-quiz.html, 390x844 + 1024x768): a 5-question set answered right
 //      and wrong through real taps, hint ladder reaches guided completion, sort drag works,
 //      RTL renders (computed direction rtl), arrange letters, targets >= 56 px, no page errors.
+//   D) ease pass (5–8 y): easy mode = 3 choices / numbers <= 10 / picture first; read-aloud via
+//      TKHub.say (question, speaker button, two-tap choices, explanation); tap-to-count number words;
+//      lantern glows after one wrong answer and the answer is shown after two; sort tutorial pulses;
+//      lifeboat seats fill with hijab-girl/boy/men passenger sprites only.
 //      Screenshots -> $TKQ_SHOTS (default: the session scratchpad tk-quiz/).
 // Run: node tools/qa-tk-questions.mjs   (needs the dev server on :8081 for part C; QA_NODE_ONLY=1 skips it)
 import fs from 'node:fs'
@@ -27,6 +31,10 @@ require(path.join(ROOT, 'games/data/tk-questions.js'))
 require(path.join(ROOT, 'games/tk-quiz.js'))
 const TQ = globalThis.TKQuestions, TK = globalThis.TKQuiz
 const exists = k => fs.existsSync(path.join(ROOT, 'assets/db/lib', k + '.webp'))
+// Curated items with a long answer word carry 3 options on purpose (a 4-wide row of "Alhamdulillah"
+// spilled out of its buttons). TKQuiz.validate still expects 4 unless q.easy, so the gate accepts
+// exactly that one message for a 3-option curated item. (tk-quiz.js owner: accept 3–4 for curated.)
+const valid = q => TK.validate(q).filter(m => !(m === 'choices != 4' && q.domain !== 'matematika' && q.choices.length === 3))
 const AR_RE = /[؀-ۿ]/
 
 /* ── A. generated math ─────────────────────────────────────────────────── */
@@ -64,6 +72,26 @@ const AR_RE = /[؀-ۿ]/
   check(M.present(70).key === 'context' && M.present(10).objects && M.present(90).key === 'twostep', 'mastery presentation keys')
   check(M.levelFor(95, 1) === 2 && M.levelFor(0, 2) === 2 && M.levelFor(70, 'adaptif') === 3, 'levelFor respects Kelas 1 (<=10) / Kelas 2 (>=L2)')
   check(M.update(50, { right: true, firstTry: true, streak: 3 }) > 50 && M.update(2, { right: false }) === 0 && M.update(99, { right: true, firstTry: true, streak: 9 }) === 100, 'mastery update clamps 0..100')
+  // easy mode (Kelas 1 / low mastery): 3 choices, picture-first counting, numbers <= 10
+  check(TK.isEasy('kelas1', 90) && TK.isEasy('adaptif', 10) && !TK.isEasy('adaptif', 50) && !TK.isEasy('kelas2', 0) && TK.isEasy('kelas2', 90, true) && !TK.isEasy('kelas1', 0, false), 'isEasy: Kelas 1 always, Adaptif at tier 1, Kelas 2 never, opts.easy overrides')
+  let ebad = [], mid = 0, kinds = {}
+  for (let lv = 1; lv <= 2; lv++) { const r = TK.rng(300 + lv); for (let i = 0; i < 3000; i++) {
+    const q = TK.easyify(TK.make('matematika', lv, r, { easy: true })); kinds[q.kind] = 1
+    const p = TK.validate(q)
+    if (q.choices.length !== 3) p.push('not 3 choices')
+    if (q.choices.some(c => +c > 10) || +q.answer > 10) p.push('number > 10')
+    if (!(q.scene.groups || []).length) p.push('no picture')
+    if (p.length && ebad.length < 3) ebad.push(q.id + ' ' + p.join(';'))
+    const v = q.choices.map(Number).sort((a, b) => a - b); if (v[1] === +q.answer) mid++
+  } }
+  check(ebad.length === 0, 'easy math: 6000 items valid, 3 choices, numbers <= 10, objects on screen ' + ebad.join(' | '))
+  check(Object.keys(kinds).sort().join() === 'add,count,sub', 'easy math kinds are picture-first (count/add/sub): ' + Object.keys(kinds).join())
+  check(mid < 6000 * 0.7, `easy answers are not always the middle value (${mid}/6000)`)
+  const snap = JSON.stringify(TQ.items.map(o => o.choices))
+  const cq = TQ.items.filter(o => !o.letters).map(o => TK.easyify(o))
+  check(cq.every(q => q.choices.length === 3 && q.choices.includes(q.answer) && valid(q).length === 0), 'easyify: every curated item -> 3 choices incl. the answer')
+  check(JSON.stringify(TQ.items.map(o => o.choices)) === snap && TQ.items.every(o => o.choices.length >= 3 && o.choices.length <= 4), 'easyify never mutates the bank (3–4 choices as written)')
+  check([1, 2, 5, 10, 12, 20].map(TK.numWord).join() === 'satu,dua,lima,sepuluh,dua belas,dua puluh', 'number words for tap-to-count')
 }
 
 /* ── B. curated bank ───────────────────────────────────────────────────── */
@@ -78,9 +106,9 @@ const AR_RE = /[؀-ۿ]/
     if (!DOM.has(o.domain)) bad(o, 'domain ' + o.domain)
     if (![1, 2, 3, 4].includes(o.level)) bad(o, 'level ' + o.level)
     for (const f of ['prompt', 'explain', 'hint1', 'hint2', 'answer']) if (typeof o[f] !== 'string' || !o[f].trim()) bad(o, 'missing ' + f)
-    if (!Array.isArray(o.choices) || o.choices.length !== 4) bad(o, 'choices != 4')
+    if (!Array.isArray(o.choices) || o.choices.length < 3 || o.choices.length > 4 || (o.letters && o.choices.length !== 4)) bad(o, 'choices not 3–4')
     else {
-      if (new Set(o.choices).size !== 4) bad(o, 'choices not distinct ' + o.choices.join('|'))
+      if (new Set(o.choices).size !== o.choices.length) bad(o, 'choices not distinct ' + o.choices.join('|'))
       if (o.choices.filter(c => c === o.answer).length !== 1) bad(o, 'answer not in choices once')
       if (o.choices.some(c => typeof c !== 'string' || !c.trim())) bad(o, 'empty choice')
     }
@@ -131,7 +159,7 @@ const AR_RE = /[؀-ۿ]/
   for (const d of ['matematika', 'umum', 'arab', 'logika', 'islam', 'campur']) {
     const set = TK.build({ domain: d, count: 5, seed: 42, world: 'titanic' })
     check(set.length === 5 && new Set(set.map(q => q.id)).size === 5, `build(${d}) gives 5 unique questions`)
-    check(set.every(q => TK.validate(q).length === 0), `build(${d}) questions validate`)
+    check(set.every(q => valid(q).length === 0), `build(${d}) questions validate`)
   }
   // sort sets: every world named in the contract + a fallback for each domain
   const SW = [['matematika', 'titanic'], ['umum', 'britannic'], ['matematika', 'vasa'], ['matematika', 'mayflower'], ['umum', 'calypso'], ['logika', 'victory'], ['logika', 'arizona'], ['logika', 'missouri'], ['matematika', 'queenmary'], ['umum', 'endurance']]
@@ -173,6 +201,94 @@ const AR_RE = /[؀-ۿ]/
   check(!fs.readFileSync(path.join(ROOT, 'games/tk-quiz.js'), 'utf8').includes("'Kapten Pingu'"), 'mascot is "Kapten Pinguin", never "Kapten Pingu"')
 }
 
+/* ── B3. grade fit (Kelas 1–2, fase A) — owner 2026-09-28: "Kapal Endurance berlayar ke benua es
+   yang bernama…" is not a question a 6–8 year old can answer. These checks hold the line. ───── */
+{
+  const items = TQ.items
+  const MAX_Q_WORDS = 12, MAX_Q_CHARS = 72, MAX_OPT_WORDS = 3, MAX_OPT_CHARS = 18, WARN_OPT_CHARS = 14, LONG_WORD = 12
+  const words = s => String(s).trim().split(/\s+/).filter(Boolean).length
+  const lc = s => String(s).toLowerCase()
+  // whole-word, case-insensitive; a term is a word or a phrase
+  const has = (text, term) => new RegExp('(^|[^a-z])' + term.replace(/[-]/g, '\\-') + '($|[^a-z])', 'i').test(text)
+  const BANNED = {
+    geografi: ['benua', 'samudra', 'antarktika', 'antartika', 'afrika', 'asia', 'australia', 'eropa', 'amerika', 'arktik', 'kutub utara', 'kutub selatan',
+      'inggris', 'swedia', 'norwegia', 'prancis', 'jepang', 'tiongkok', 'peru', 'mesir', 'italia', 'brasil', 'belanda', 'polinesia',
+      'stockholm', 'southampton', 'new york', 'portsmouth', 'long beach', 'pearl harbor', 'hawaii', 'kairo', 'roma', 'tokyo', 'sydney', 'london', 'oslo', 'mekah', 'madinah',
+      'indonesia', 'jakarta', 'bali', 'sulawesi', 'spanyol', 'jerman', 'rusia', 'india', 'cina', 'korea', 'kanada', 'yunani', 'turki', 'yerusalem', 'baghdad', 'istanbul', 'paris',
+      'amsterdam', 'greenwich', 'liverpool', 'belfast', 'plymouth', 'massachusetts', 'raroia', 'weddell', 'falkland', 'georgia selatan', 'atlantik', 'pasifik', 'hindia', 'kota', 'negara'],
+    sejarah: ['museum', 'sejarah', 'tahun', 'abad', 'ditemukan', 'perang', 'shackleton', 'heyerdahl', 'cousteau', 'nelson', 'jules verne', 'smith', 'bugis', 'makassar', 'viking'],
+    istilah: ['mamalia', 'amfibi', 'gravitasi', 'insang', 'periskop', 'haluan', 'buritan', 'rasi', 'polaris', 'kepulauan', 'tekanan', 'balsa', 'nakhoda', 'lusa'],
+    fikih: ['rakaat', 'tayamum', 'jibril', 'mikail', 'israfil', 'raqib', 'atid', 'ridwan', 'taurat', 'zabur', 'injil', 'juz', 'ayat', 'qada', 'qadar', 'zakat', 'siku', 'mata kaki', 'malaikat']
+  }
+  // ship proper names: allowed only when the question shows that ship's own picture
+  const SHIPS = [['titanic', 'titanic'], ['britannic', 'britannic'], ['vasa', 'vasa'], ['cutty sark', 'cuttysark'], ['victory', 'victory'], ['mayflower', 'mayflower'],
+    ['endurance', 'endurance'], ['kon-tiki', 'kontiki'], ['calypso', 'calypso'], ['queen mary', 'queenmary'], ['arizona', 'arizona'], ['missouri', 'missouri'], ['nautilus', 'nautilus'], ['pinisi', 'pinisi']]
+  const bad = { len: [], opt: [], n: [], ban: [], ship: [], neg: [], num: [], arpic: [], rukun: [], wide: [], now: [] }, optWarn = []
+  const push = (k, o, m) => { if (bad[k].length < 8) bad[k].push(o.id + ' ' + m) }
+  let short10 = 0, opt2 = 0, optN = 0
+  for (const o of items) {
+    const p = o.prompt, all = [p, o.explain, o.hint1, o.hint2, ...(o.letters ? [] : o.choices)].join(' | ')
+    if (words(p) <= 10) short10++
+    if (words(p) > MAX_Q_WORDS || p.length > MAX_Q_CHARS) push('len', o, `${words(p)} words / ${p.length} chars: "${p}"`)
+    if (!o.letters) for (const c of o.choices) { optN++; if (words(c) <= 2) opt2++; if (words(c) > MAX_OPT_WORDS || c.length > MAX_OPT_CHARS) push('opt', o, `option "${c}"`); else if (c.length > WARN_OPT_CHARS) optWarn.push(o.id + ' "' + c + '"') }
+    // a long answer word never sits in a 4-wide row (owner photo: "Alhamdulillah" spilled out of its button)
+    if (!o.letters && o.choices.length > 3 && o.choices.some(c => c.length > LONG_WORD)) push('wide', o, `4 options with a word > ${LONG_WORD} chars: ${o.choices.join(' / ')}`)
+    // no "where is this ship now / what happened back then" questions
+    if (/\bsekarang\b[^?…]*\b(di|menjadi)\b/i.test(p) || /\b(zaman dulu|dulu|dahulu)\b/i.test(p)) push('now', o, `ship-history framing "${p}"`)
+    if (o.choices.length < 3 || o.choices.length > 4) push('n', o, o.choices.length + ' options')
+    for (const [grp, terms] of Object.entries(BANNED)) for (const t of terms) if (has(all, t)) push('ban', o, `${grp}: "${t}"`)
+    if (/\b\d{4}\b/.test(all.replace(/\d{1,3}(\.\d{3})+/g, ''))) push('ban', o, 'a 4-digit number (year)')
+    for (const [name, id] of SHIPS) if (has(all, name) && !(o.visual || []).some(k => k.includes('ship-' + id))) push('ship', o, `ship name "${name}" without that ship's picture`)
+    // no "which is NOT" questions, no BUKAN anywhere a child has to choose
+    if (/\bbukan\b/i.test([p, ...o.choices].join(' ')) || /\b(mana|apa|siapa|yang)\b[^?]*\b(tidak|bukan)\b[^?]*\?/i.test(p)) push('neg', o, `negative question "${p}"`)
+    // every number a child meets is <= 20 (fase A)
+    const nums = (lc(p) + ' ' + o.choices.join(' ')).match(/\d+/g) || []
+    if (nums.some(x => +x > 20)) push('num', o, 'number > 20: ' + nums.filter(x => +x > 20).join(','))
+    if (o.domain === 'arab' && !((o.visual || []).length || o.pics || o.swatch)) push('arpic', o, 'Arabic item without a picture')
+    if (o.domain === 'islam' && /rukun (islam|iman) yang (pertama|kedua|ketiga|keempat|kelima|keenam)/i.test(p)) push('rukun', o, 'ordinal Rukun question (count only)')
+  }
+  check(bad.len.length === 0, `question length <= ${MAX_Q_WORDS} words / ${MAX_Q_CHARS} chars: ${bad.len.join(' | ')}`)
+  check(bad.opt.length === 0, `option length <= ${MAX_OPT_WORDS} words / ${MAX_OPT_CHARS} chars: ${bad.opt.join(' | ')}`)
+  if (optWarn.length) console.log(`WARN options over ${WARN_OPT_CHARS} chars (proper spelling kept, 3-option rows): ${optWarn.join(', ')}`)
+  check(bad.wide.length === 0, `long answer words get 3 options, not 4: ${bad.wide.join(' | ')}`)
+  check(bad.now.length === 0, `no "where is the ship now" / "back then" questions: ${bad.now.join(' | ')}`)
+  check(bad.n.length === 0, `3–4 options per item: ${bad.n.join(' | ')}`)
+  check(bad.ban.length === 0, `banned terms (continents, countries, years, history names, jargon, fiqh detail): ${bad.ban.join(' | ')}`)
+  check(bad.ship.length === 0, `ship proper names only with the ship's own picture: ${bad.ship.join(' | ')}`)
+  check(bad.neg.length === 0, `no negative ("BUKAN" / which-is-NOT) questions: ${bad.neg.join(' | ')}`)
+  check(bad.num.length === 0, `curated numbers <= 20: ${bad.num.join(' | ')}`)
+  check(bad.arpic.length === 0, `every Arabic item has a picture (visual / picture answers / swatch): ${bad.arpic.join(' | ')}`)
+  check(bad.rukun.length === 0, `Islam: Rukun asked as a count only: ${bad.rukun.join(' | ')}`)
+  check(short10 / items.length >= 0.95, `>= 95% of prompts are <= 10 words (${short10}/${items.length})`)
+  check(opt2 / optN >= 0.9, `>= 90% of options are 1–2 words (${opt2}/${optN})`)
+  // easy (Kelas 1) keeps the answer + the two distractors written right after it
+  check(items.filter(o => !o.letters).every(o => { const e = TK.easyify(o); return e.choices.length === 3 && e.choices.includes(o.answer) }), 'easy mode: 3 options incl. the answer on every item')
+  // every ship world keeps enough own Umum items that a 4–5 question level never runs dry
+  const WORLDS = ['titanic', 'britannic', 'vasa', 'cuttysark', 'victory', 'mayflower', 'endurance', 'kontiki', 'calypso', 'queenmary', 'arizona', 'missouri', 'nautilus', 'pelabuhan']
+  const thin = WORLDS.map(w => [w, items.filter(o => o.domain === 'umum' && o.world === w && o.level <= 2).length]).filter(([, n]) => n < 4)
+  check(thin.length === 0, `each ship world has >= 4 Umum items at level <= 2: ${JSON.stringify(thin)}`)
+  for (const d of ['islam', 'arab', 'umum', 'logika']) for (let lv = 1; lv <= 4; lv++) {
+    const n = items.filter(o => o.domain === d && o.level === lv && !o.letters).length
+    check(n >= 3, `${d} L${lv} has >= 3 non-arrange items (${n}) so a level's quiz does not repeat`)
+  }
+  // generated Matematika (games/tk-quiz.js, not this bank): fase A scope. STRICT by default since the generator
+  // was brought into fase A (2026-09-28); QA_TK_STRICT_MATH=0 downgrades these to warnings.
+  const strict = process.env.QA_TK_STRICT_MATH !== '0'
+  const warn = (ok, msg) => { if (strict) check(ok, msg); else if (!ok) console.log('WARN ' + msg); else passes++ }
+  let over20 = 0, half12 = 0, multdiv = 0, longp = 0, n = 0, ex = null
+  for (let lv = 1; lv <= 4; lv++) { const r = TK.rng(900 + lv); for (let i = 0; i < 3000; i++) {
+    const q = TK.make('matematika', lv, r, {}); n++
+    if (q.choices.some(c => /^\d+$/.test(c) && +c > 20)) { over20++; ex = ex || q.id + ' ' + q.choices.join('/') }
+    if (q.choices.some(c => /setengah/.test(c))) half12++
+    if (/^(groups|groupsplus|share)$/.test(q.kind)) multdiv++
+    if (words(q.prompt) > MAX_Q_WORDS) longp++
+  } }
+  warn(over20 === 0, `math: generated choices <= 20 (${over20}/${n} items offer a number > 20, e.g. ${ex})`)
+  warn(half12 === 0, `math: clocks use whole hours only (${half12}/${n} items show or offer "setengah")`)
+  warn(multdiv === 0, `math: no multiplication / division kinds (groups/share) in fase A (${multdiv}/${n})`)
+  warn(longp === 0, `math: prompts <= ${MAX_Q_WORDS} words (${longp}/${n} longer)`)
+}
+
 /* ── C. puppeteer ──────────────────────────────────────────────────────── */
 if (!process.env.QA_NODE_ONLY) {
   const { default: puppeteer } = await import('puppeteer')
@@ -181,7 +297,7 @@ if (!process.env.QA_NODE_ONLY) {
   const BASE = 'http://localhost:8081/tools/tk-harness-quiz.html'
   const sleep = ms => new Promise(r => setTimeout(r, ms))
   const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] })
-  const SIZES = [[390, 844], [844, 390], [1024, 768]]   // 844x390 = phone on its side (stats panel was clipped there)
+  const SIZES = [[390, 844], [844, 390], [1280, 800], [1024, 768]]   // 844x390 = phone on its side (stats panel was clipped there)
 
   async function open (w, h, qs) {
     const p = await b.newPage()
@@ -205,7 +321,7 @@ if (!process.env.QA_NODE_ONLY) {
   const optSel = c => `.tkq-opt[data-c="${c.replace(/"/g, '\\"')}"]`
   async function wrongChoice (P) { return P.p.evaluate(() => { const s = window.__tk.ctl.state(); const b = [...document.querySelectorAll('.tkq-opt')].find(x => !x.disabled && x.dataset.c !== s.answer); return b && b.dataset.c }) }
   async function targets (P, label) {
-    const small = await P.p.evaluate(() => [...document.querySelectorAll('.tkq-opt,.tkq-next,.tkq-hintbtn,.tkq-item,.tkq-tile,.tkq-say')].filter(e => e.offsetParent).map(e => { const r = e.getBoundingClientRect(); return { c: e.className, w: Math.round(r.width), h: Math.round(r.height) } }).filter(x => x.w < 56 || x.h < 56))
+    const small = await P.p.evaluate(() => [...document.querySelectorAll('.tkq-opt,.tkq-next,.tkq-hintbtn,.tkq-item,.tkq-tile,.tkq-say,.tkq-speak')].filter(e => e.offsetParent).map(e => { const r = e.getBoundingClientRect(); return { c: e.className, w: Math.round(r.width), h: Math.round(r.height) } }).filter(x => x.w < 56 || x.h < 56))
     check(small.length === 0, `${label}: targets >= 56 px ${JSON.stringify(small.slice(0, 3))}`)
   }
   async function inView (P, label) {
@@ -217,7 +333,7 @@ if (!process.env.QA_NODE_ONLY) {
     const tag = w + 'x' + h
     // C1: 5-question set, real taps: right / wrong->right / right / wrong,wrong->right / right
     {
-      const P = await open(w, h, 'set=math5&seed=7')
+      const P = await open(w, h, 'set=math5&seed=7&easy=0')
       await P.p.screenshot({ path: `${SHOTS}/math-q1-${tag}.png` })
       await targets(P, tag + ' math'); await inView(P, tag + ' math')
       const plan = [0, 1, 0, 2, 0]
@@ -231,7 +347,8 @@ if (!process.env.QA_NODE_ONLY) {
           if (i === 3 && k === 1) await P.p.screenshot({ path: `${SHOTS}/math-hint-${tag}.png` })
         }
         s = await state(P)
-        check(s.rung === plan[i], `${tag} q${i + 1}: ladder rung ${s.rung} == wrong taps ${plan[i]}`)
+        // one wrong tap climbs one rung; the second wrong tap shows the answer (guided, rung 5)
+        check(s.rung === (plan[i] >= 2 ? 5 : plan[i]), `${tag} q${i + 1}: ladder rung ${s.rung} after ${plan[i]} wrong taps`)
         await tap(P, optSel(s.answer)); await sleep(900)
         s = await state(P)
         check(s.answered, `${tag} q${i + 1}: right answer accepted`)
@@ -241,7 +358,7 @@ if (!process.env.QA_NODE_ONLY) {
         await tap(P, '.tkq-next'); await sleep(500)
       }
       const done = await P.p.evaluate(() => window.__tkDone)
-      check(done && done.asked === 5 && done.right === 3 && done.hints === 3 && typeof done.masteryDelta === 'number' && done.masteryDelta > 0, `${tag} onDone ${JSON.stringify(done && { right: done.right, asked: done.asked, hints: done.hints, d: done.masteryDelta, pts: done.points })}`)
+      check(done && done.asked === 5 && done.right === 3 && done.hints === 6 && typeof done.masteryDelta === 'number' && done.masteryDelta > 0, `${tag} onDone ${JSON.stringify(done && { right: done.right, asked: done.asked, hints: done.hints, d: done.masteryDelta, pts: done.points })}`)
       const stats = await P.p.evaluate(() => [...document.querySelectorAll('[data-k]')].map(e => e.textContent).join(','))
       check(/^5\/5,\d+,\d+$/.test(stats), `${tag} stats column updates (${stats})`)
       check(P.errs.length === 0, `${tag} math: no page errors ${P.errs.slice(0, 3).join(' | ')}`)
@@ -278,7 +395,7 @@ if (!process.env.QA_NODE_ONLY) {
     }
     // C3: Arabic RTL + arrange letters
     {
-      const P = await open(w, h, 'set=arab&seed=5')
+      const P = await open(w, h, 'set=arab&seed=5&easy=0')
       const dir = await P.p.evaluate(() => [...document.querySelectorAll('.tkq-opt .tkq-ar')].map(e => getComputedStyle(e).direction))
       check(dir.length === 4 && dir.every(d => d === 'rtl'), `${tag} Arabic answers computed direction rtl (${dir.join(',')})`)
       await targets(P, tag + ' arab'); await inView(P, tag + ' arab')
@@ -381,7 +498,7 @@ if (!process.env.QA_NODE_ONLY) {
       check(vis.length === 0, `${tag} stats/plate/tabs/footer all inside the viewport below the HUD ${JSON.stringify(vis)}`)
       await tap(P, '.tkq-back'); check(await P.p.evaluate(() => window.__tkBack === 1), `${tag} Kembali calls opts.onBack`)
       await P.p.close()
-      const N = await open(w, h, 'set=math5&hints=0')
+      const N = await open(w, h, 'set=math5&hints=0&easy=0')
       check(await N.p.evaluate(() => !document.querySelector('.tkq-hintbtn')), `${tag} hints off: no hint button`)
       const c = await wrongChoice(N); await tap(N, optSel(c)); await sleep(450)
       const nh = await N.p.evaluate(() => ({ hl: document.querySelectorAll('.tkq-o.hl').length, help: document.querySelector('.tkq-help').textContent, eq: !document.querySelector('.tkq-eq').hidden, open: [...document.querySelectorAll('.tkq-opt')].filter(b => !b.disabled).length }))
@@ -396,6 +513,100 @@ if (!process.env.QA_NODE_ONLY) {
       const s = await state(P); await tap(P, optSel(s.answer)); await sleep(300)
       check((await state(P)).answered && P.errs.length === 0, `${tag} reduced motion: answer works, no errors`)
       await P.p.close()
+    }
+    // D1: easy mode (Kelas 1): 3 big choices, numbers <= 10, picture first, question read aloud, tap-to-count
+    {
+      const P = await open(w, h, 'set=easy&grade=kelas1&scene=harbor-day')
+      await sleep(500)
+      const e = await P.p.evaluate(() => { const s = window.__tk.ctl.state(), qs = window.__tk.ctl.questions
+        const sc = document.querySelector('.tkq-scene').getBoundingClientRect(), pr = document.querySelector('.tkq-prompt').getBoundingClientRect()
+        return { s, n: document.querySelectorAll('.tkq-opt').length, easy: document.querySelector('.tkq').classList.contains('tkq-easy'),
+          valid: qs.every(q => TKQuiz.validate(q).length === 0 && q.choices.length === 3 && q.choices.every(c => +c <= 10)),
+          pic: document.querySelectorAll('.tkq-scene .tkq-o').length, first: sc.top < pr.top, short: document.querySelector('.tkq').classList.contains('tkq-short'),
+          said: window.__said.slice(), prompt: document.querySelector('.tkq-prompt').textContent,
+          speak: (() => { const b = document.querySelector('.tkq-speak').getBoundingClientRect(); return Math.min(b.width, b.height) })() } })
+      check(e.easy && e.s.easy && e.n === 3 && e.valid, `${tag} easy: 3 choices, all questions valid, numbers <= 10 (${e.n})`)
+      check(e.pic > 0 && (e.first || e.short), `${tag} easy: picture first (${e.pic} objects, scene above the words: ${e.first})`)
+      check(e.said.includes(e.prompt), `${tag} read-aloud: question spoken on show (${JSON.stringify(e.said)})`)
+      check(e.speak >= 56, `${tag} speaker button >= 56 px (${e.speak})`)
+      await targets(P, tag + ' easy'); await inView(P, tag + ' easy')
+      await P.p.screenshot({ path: `${SHOTS}/easy-q1-${tag}.png` })
+      const n0 = await P.p.evaluate(() => window.__said.length)
+      await tap(P, '.tkq-speak')
+      const rep = await P.p.evaluate(() => window.__said.slice(-1)[0] === document.querySelector('.tkq-prompt').textContent)
+      check(rep && (await P.p.evaluate(() => window.__said.length)) > n0, `${tag} speaker button repeats the question`)
+      // tap-to-count: two taps -> badges 1, 2 and the words "satu", "dua"
+      const objs = await P.p.evaluate(() => [...document.querySelectorAll('.tkq-scene.tapcount .tkq-o:not(.leave)')].map(o => o.dataset.o))
+      await tap(P, `.tkq-o[data-o="${objs[0]}"]`); await tap(P, `.tkq-o[data-o="${objs[1]}"]`)
+      const tc = await P.p.evaluate(() => ({ n: [...document.querySelectorAll('.tkq-o .n.on')].map(x => x.textContent).join(), said: window.__said.slice(-2) }))
+      check(objs.length >= 2 && tc.n === '1,2' && tc.said.join() === 'satu,dua', `${tag} tap-to-count: badges ${tc.n}, spoken ${tc.said.join()}`)
+      await P.p.screenshot({ path: `${SHOTS}/easy-count-${tag}.png` })
+      // wrong once: lantern glows; wrong twice: the answer is shown kindly (glows, only it stays open)
+      let c = await wrongChoice(P); await tap(P, optSel(c)); await sleep(450)
+      const g1 = await P.p.evaluate(() => document.querySelector('.tkq-hintbtn').classList.contains('glow'))
+      check(g1, `${tag} lantern glows after one wrong answer`)
+      await P.p.screenshot({ path: `${SHOTS}/easy-glow-${tag}.png` })
+      c = await wrongChoice(P); await tap(P, optSel(c)); await sleep(450)
+      const g2 = await P.p.evaluate(() => { const s = window.__tk.ctl.state(), bs = [...document.querySelectorAll('.tkq-opt')]
+        return { rung: s.rung, guide: bs.filter(b => b.classList.contains('guide')).map(b => b.dataset.c), open: bs.filter(b => !b.disabled).length, answer: s.answer, said: window.__said.slice(-1)[0] || '', red: bs.some(b => /rgb\((2[0-5]\d|1[5-9]\d), ?[0-6]\d?, ?[0-6]\d?\)/.test(getComputedStyle(b).backgroundColor)) } })
+      check(g2.rung === 5 && g2.guide.join() === g2.answer && g2.open === 1 && /Jawabannya/.test(g2.said) && !g2.red, `${tag} two wrong tries -> answer shown kindly ${JSON.stringify(g2)}`)
+      await P.p.screenshot({ path: `${SHOTS}/easy-guided-${tag}.png` })
+      await tap(P, optSel(g2.answer)); await sleep(700)
+      const fin = await P.p.evaluate(() => ({ s: window.__tk.ctl.state(), said: window.__said.slice(-1)[0] || '', ex: document.querySelector('.tkq-explain').textContent, burst: document.querySelectorAll('.tkq-burst').length }))
+      check(fin.s.answered && fin.said.indexOf(fin.ex) >= 0, `${tag} explanation read aloud after the answer (${fin.said})`)
+      check(fin.s.points > 0, `${tag} a guided answer still earns points (never costs progress: ${fin.s.points})`)
+      check(P.errs.length === 0, `${tag} easy: no page errors ${P.errs.slice(0, 3).join(' | ')}`)
+      await P.p.close()
+    }
+    // D2: readAloud two-tap: first tap speaks the choice, second tap chooses
+    {
+      const P = await open(w, h, 'set=easy&grade=kelas1&ra=1')
+      let s = await state(P)
+      await tap(P, optSel(s.answer)); await sleep(200)
+      const a1 = await P.p.evaluate(sel => ({ armed: document.querySelector(sel).classList.contains('armed'), said: window.__said.slice(-1)[0], s: window.__tk.ctl.state() }), optSel(s.answer))
+      check(a1.armed && !a1.s.answered && a1.said === s.answer, `${tag} readAloud: first tap says "${a1.said}" and does not choose`)
+      await P.p.screenshot({ path: `${SHOTS}/easy-readaloud-${tag}.png` })
+      await tap(P, optSel(s.answer)); await sleep(400)
+      check((await state(P)).answered, `${tag} readAloud: second tap chooses`)
+      await P.p.close()
+      const Q = await open(w, h, 'set=easy&grade=kelas1')
+      s = await state(Q); await tap(Q, optSel(s.answer)); await sleep(300)
+      check((await state(Q)).answered, `${tag} without readAloud a single tap chooses`)
+      await Q.p.close()
+    }
+    // D3: sort tutorial (first sort of the game) + narration of the prompt and the picked item
+    {
+      const P = await open(w, h, 'set=sort&world=calypso&domain=umum&seed=2&tut=1')
+      await sleep(300)
+      const t0 = await P.p.evaluate(() => ({ first: (document.querySelector('.tkq-tray .tkq-item') || {}).className || '', said: window.__said.slice(), prompt: window.__tk.ctl.set.prompt }))
+      check(/\btut\b/.test(t0.first), `${tag} sort tutorial: first item pulses`)
+      check(t0.said.includes(t0.prompt), `${tag} sort prompt read aloud`)
+      await P.p.screenshot({ path: `${SHOTS}/sort-tutorial-${tag}.png` })
+      const id = await P.p.evaluate(() => document.querySelector('.tkq-tray .tkq-item').dataset.id)
+      await tap(P, `.tkq-item[data-id="${id}"]`); await sleep(150)
+      const t1 = await P.p.evaluate(id => { const it = window.__tk.ctl.set.items.find(x => x.id === id); return { bins: [...document.querySelectorAll('.tkq-bin.tut')].map(b => b.dataset.bin), want: it.bin, said: window.__said.slice(-1)[0], label: it.label } }, id)
+      check(t1.bins.length === 1 && t1.bins[0] === t1.want && t1.said === t1.label, `${tag} sort tutorial: the right bin pulses once the item is picked, item named aloud ${JSON.stringify(t1)}`)
+      await P.p.screenshot({ path: `${SHOTS}/sort-tutorial-bin-${tag}.png` })
+      await tap(P, `.tkq-bin[data-bin="${t1.want}"]`); await sleep(500)
+      const t2 = await P.p.evaluate(() => ({ tut: window.__tk.ctl.state().tutorial, left: document.querySelectorAll('.tut').length, placed: window.__tk.ctl.state().placed }))
+      check(t2.placed === 1 && !t2.tut && t2.left === 0, `${tag} sort tutorial ends after the first correct placement (tap item, tap bin) ${JSON.stringify(t2)}`)
+      await P.p.close()
+      const N = await open(w, h, 'set=sort&world=calypso&domain=umum&seed=2&tut=0')
+      check(await N.p.evaluate(() => !document.querySelector('.tut')), `${tag} sort tutorial off: nothing pulses`)
+      await N.p.close()
+      // lifeboat seats: one per place, filled with passenger sprites (no lady-hat / maid)
+      const C = await open(w, h, 'set=sort&world=titanic&domain=matematika&seed=4&tut=0')
+      const seat = await C.p.evaluate(() => ({ n: document.querySelectorAll('.tkq-seatp').length, cap: window.__tk.ctl.set.bins.reduce((a, b) => a + b.cap, 0),
+        srcs: [...document.querySelectorAll('.tkq-seatp img, .tkq-item .ppl img')].map(i => i.getAttribute('src')) }))
+      check(seat.n === seat.cap && seat.srcs.length >= seat.n && seat.srcs.every(s => /tk-char\/(hijab-|explorer-kid|officer-boy|chef|mechanic-boy|lantern-boy)/.test(s)) && !seat.srcs.some(s => /lady-hat|maid/.test(s)), `${tag} lifeboat seats: ${seat.n}/${seat.cap}, passengers are hijab girls / boys / men sprites`)
+      const fam = await C.p.evaluate(() => window.__tk.ctl.set.items.map(i => ({ id: i.id, n: i.n })).sort((x, y) => y.n - x.n))
+      const load = { s1: 0, s2: 0 }
+      for (const f of fam) { const bin = load.s1 + f.n <= 5 ? 's1' : 's2'; load[bin] += f.n; await tap(C, `.tkq-item[data-id="${f.id}"]`); await tap(C, `.tkq-bin[data-bin="${bin}"]`); await sleep(420) }
+      const full = await C.p.evaluate(() => ({ full: document.querySelectorAll('.tkq-seatp.full').length, done: window.__tk.ctl.state().done }))
+      check(full.done && full.full === seat.cap, `${tag} lifeboat solved by taps, every seat filled (${full.full}/${seat.cap})`)
+      await C.p.screenshot({ path: `${SHOTS}/sort-seats-${tag}.png` })
+      check(C.errs.length === 0, `${tag} seats: no page errors ${C.errs.slice(0, 3).join(' | ')}`)
+      await C.p.close()
     }
   }
   await b.close()

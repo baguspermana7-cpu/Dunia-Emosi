@@ -10,7 +10,8 @@
   Maju/Kiri/Kanan · pick/drop+repeat); ?s=0..5 mounts TKGrid.SAMPLES[s] instead.
   ?rm=1 forces reduced motion. ?w=<world>&lv=<level id> mounts a real TKWorlds grid level the
   way timmy-kapal.js does (TKArt.src library, scene backdrop, chapter card, footer callbacks);
-  ?chap=1 adds the chapter card + footer to a harness level. The 70 px top bar stands in for the host page's HUD
+  ?chap=1 adds the chapter card + footer to a harness level; ?cc=0 passes chapterCard:false (host card instead). ?coach=1|0 forces the first-time coach hand,
+  ?idle=<ms> / ?cidle=<ms> shorten the idle-help (default 10 s) and coach-repeat (default 8 s) clocks. The 70 px top bar stands in for the host page's HUD
   (TKGrid leaves opts.topInset free for it). window.__h = mount handle,
   window.__done = last onDone payload.
 -->
@@ -50,12 +51,20 @@
       reducedMotion: q.get('rm') === '1' ? true : undefined,
       onDone: function (r) { window.__done = r }
     }
+    // ?coach=1|0 forces the coach hand on/off; ?idle=<ms> / ?cidle=<ms> shorten the idle-help / coach clocks
+    if (q.has('coach')) opts.coach = q.get('coach') === '1'
+    if (q.has('idle')) opts.idleMs = +q.get('idle')
+    if (q.has('cidle')) opts.coachIdleMs = +q.get('cidle')
     window.__nav = []
     var nav = function (k) { return function () { window.__nav.push(k) } }
     if (q.has('w')) {
       // same wiring as timmy-kapal.js runPlayer()
+      // chapter worlds (Titanic): the level is a chapter STEP — TKWorlds.flat(w) lists them; idx = chapter number
       var w = TKWorlds.get(q.get('w')), lv = null, gi = 0
-      w.levels.forEach(function (x, i) { if (x.id === q.get('lv')) { lv = x; gi = i } })
+      w.levels.forEach(function (x, i) {
+        if (x.id === q.get('lv')) { lv = x; gi = i }
+        ;(x.steps || []).forEach(function (s) { if (s.id === q.get('lv')) { lv = s; gi = i } })
+      })
       def = TKWorlds.grid(lv)
       opts.lib = TKArt.src
       opts.title = lv.title; opts.mission = lv.goal
@@ -63,6 +72,7 @@
       opts.art = { boat: w.id === 'kamar' ? 'vehicles/sailboat' : 'ship/' + w.id, timmy: 'char/timmy', tipper: 'char/penguin' }
       opts.chapter = { ship: w.ship || 'ship/titanic', name: w.name, title: w.value, label: 'Bab ' + TKWorlds.WORLDS.indexOf(w) + ' · ' + w.name, idx: gi + 1, total: w.levels.length }
       opts.onBack = nav('back'); opts.onNext = nav('next')
+      if (q.get('cc') === '0') opts.chapterCard = false   // the host shows its own chapter card
     } else if (q.get('chap') === '1') {
       opts.chapter = { ship: 'ship/titanic', name: 'RMS Titanic', title: 'Keberanian & Kebaikan', label: 'Bab 1 · RMS Titanic', idx: 4, total: 13 }
       opts.lib = TKArt.src

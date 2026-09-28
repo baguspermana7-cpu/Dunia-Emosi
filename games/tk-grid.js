@@ -67,7 +67,7 @@
     var sp = pt(def.start) || { x: 0, y: 0 }
     var L = {
       __tkg: true, id: str(def.id), title: str(def.title), mission: str(def.mission), hint: str(def.hint),
-      w: w, h: h,
+      w: w, h: h, easy: !!def.easy, coach: def.coach === 'always' || def.coach === 'first' ? def.coach : '',
       start: { x: sp.x, y: sp.y, dir: dirOf(def.start && def.start.dir) },
       goal: pt(def.goal),
       blocks: arr(def.blocks).map(pt).filter(Boolean),
@@ -102,6 +102,20 @@
     try { sol = search(L, startState(L), SEARCH_LIMIT) } catch (e) { sol = null }
     L.solution = sol
     L.shortest = sol ? sol.length : -1
+    // easy boards (a child's first boards of a world): only the commands the route actually needs.
+    // A subset of the tools cannot make the route shorter, so shortest / solution stay valid.
+    if (L.easy && sol && def.trim !== false && sol.some(function (c) { return REP[c] })) {
+      // a young child plays with arrows: take the plain-arrow route when one exists (it may be a bit longer)
+      var plain = L.tools.filter(function (c) { return !REP[c] }), keep = L.tools
+      L.tools = plain
+      var sol2 = null
+      try { sol2 = search(L, startState(L), SEARCH_LIMIT) } catch (e) { sol2 = null }
+      if (sol2 && sol2.length <= 12) { sol = sol2; L.solution = sol; L.shortest = sol.length } else L.tools = keep
+    }
+    if (L.easy && sol && def.trim !== false) {
+      var need = L.tools.filter(function (c) { return sol.indexOf(c) >= 0 })
+      if (need.length) L.tools = need
+    }
     var ml = int(def.maxLen, 0)
     L.maxLen = ml > 0 ? Math.min(24, ml) : (L.shortest > 0 ? Math.max(8, Math.min(16, L.shortest + 4)) : 12)
     return L
@@ -199,9 +213,11 @@
     return r
   }
 
-  function stars (moves, shortest) {
-    if (!(shortest > 0) || moves <= shortest) return 3
-    return moves <= shortest + 2 ? 2 : 1
+  // forgiving (easy boards): 3 stars up to shortest + 1, 2 up to shortest + 3
+  function stars (moves, shortest, forgiving) {
+    var slack = forgiving ? 1 : 0
+    if (!(shortest > 0) || moves <= shortest + slack) return 3
+    return moves <= shortest + 2 + slack ? 2 : 1
   }
 
   function snap (L, r, c, i, repIdx, k, prev) {
@@ -228,7 +244,7 @@
       var prog = arr(program).map(String)
       out.moves = prog.length
       var s = startState(L)
-      if (isDone(L, s)) { out.ok = true; out.stars = stars(out.moves, L.shortest); return out }
+      if (isDone(L, s)) { out.ok = true; out.stars = stars(out.moves, L.shortest, L.easy); return out }
       var rep = 1, repIdx = null
       for (var i = 0; i < prog.length; i++) {
         var c = prog[i]
@@ -254,7 +270,7 @@
           } else out.steps.push(snap(L, r, c, i, repIdx, k, s))
           if (r.fail) { out.failAt = i; out.reason = r.fail.reason; out.detail = r.fail.detail; return out }
           s = r.s
-          if (r.done) { out.ok = true; out.endAt = i; out.stars = stars(out.moves, L.shortest); return out }
+          if (r.done) { out.ok = true; out.endAt = i; out.stars = stars(out.moves, L.shortest, L.easy); return out }
         }
         rep = 1; repIdx = null
       }
@@ -348,6 +364,33 @@
     } catch (e) { return null }
   }
 
+  // where the child's program WILL take the boat, before JALAN! (the live ghost path).
+  // path = tile centres visited in order (start first); bad = the tile the failing chip bumps into
+  // (edge: the boat's own tile + the direction it tried), ok = the route reaches the goal.
+  function preview (def, program) {
+    var out = { path: [], ok: false, failAt: null, reason: null, bad: null, end: null, stopAt: null }
+    try {
+      var L = create(def), r = run(L, program)
+      out.ok = r.ok; out.failAt = r.failAt; out.reason = r.reason; out.stopAt = r.endAt
+      out.path.push({ x: L.start.x, y: L.start.y, i: -1 })
+      r.steps.forEach(function (s) {
+        if (s.event === 'bump') return
+        if (s.via) out.path.push({ x: s.via.x, y: s.via.y, i: s.idx })
+        var l = out.path[out.path.length - 1]
+        if (l.x !== s.x || l.y !== s.y) out.path.push({ x: s.x, y: s.y, i: s.idx })
+      })
+      var last = out.path[out.path.length - 1]
+      out.end = { x: last.x, y: last.y }
+      if (r.failAt != null) {
+        var b = r.steps[r.steps.length - 1], t = b && b.toward
+        out.bad = { idx: r.failAt, x: b ? b.x : last.x, y: b ? b.y : last.y, reason: r.reason }
+        if (t && inside(L, t.x, t.y) && (t.x !== out.bad.x || t.y !== out.bad.y)) { out.bad.tx = t.x; out.bad.ty = t.y }
+        else if (t && !inside(L, t.x, t.y)) out.bad.edge = b.face || null
+      }
+    } catch (e) { out.reason = 'invalid' }
+    return out
+  }
+
   function validate (def) {
     var P = [], add = function (code, msg) { P.push({ code: code, msg: msg }) }
     var L
@@ -417,7 +460,7 @@
 
   var TKGrid = {
     create: create, run: run, shortest: shortest, solve: solve, validate: validate,
-    nextHint: nextHint, stars: stars, SAMPLES: SAMPLES, CMDS: CMDS.slice(), version: '1.0.0'
+    nextHint: nextHint, stars: stars, preview: preview, SAMPLES: SAMPLES, CMDS: CMDS.slice(), version: '1.1.0'
   }
 
   /* ===================================================================== UI */
@@ -426,7 +469,7 @@
   // library keys (resolved through opts.lib, e.g. TKArt.src). `block` may be a list: obstacles cycle through it.
   var ART = { boat: 'vehicles/sailboat', walker: 'tk-key/timmy', ice: 'tk-prop/ice-floe', flag: 'game/flag-red', crate: 'tk-prop/crate-supplies',
     timmy: 'tk-key/timmy', lighthouse: 'gt-el/lighthouse', lifeboat: 'tk-prop/lifeboat-11', tipper: 'tk-char/penguin-captain',
-    compass: 'tk-prop/compass-3', block: null }
+    compass: 'tk-prop/compass-3', undo: 'gt/undo', sparkle: 'gt-el/star-gold', block: null }
   var THEME_ART = {
     sea: { block: ['tk-prop/iceberg-5', 'tk-world/iceberg-2', 'tk-prop/iceberg-3'] },
     deck: { block: ['tk-prop/crate-plain', 'tk-prop/barrels', 'tk-char/officer-boy'] }
@@ -451,7 +494,10 @@
     tip: 'Pikirkan dulu rutenya. Gunung es bisa menghalangi jalan!',
     hint1: 'Lihat tujuan yang bersinar! Coba perintah {c}.',
     hint2: 'Timmy isi satu perintah. Ayo lanjutkan!',
-    hint3: 'Ikuti titik-titik ini sampai tujuan!'
+    hint3: 'Ikuti titik-titik ini sampai tujuan!',
+    coach: 'Lihat tangan Timmy! Ketuk panah ini, lalu tekan JALAN!',
+    nudgeGo: 'Rutenya sudah bagus! Tekan JALAN!',
+    nudgeFix: 'Ketuk perintah yang berkedip untuk menghapusnya.'
   }
   // deck theme (mockup ui-07): Timmy walks the deck to the lifeboat; obstacles are cargo and crew
   var SAY_DECK = {
@@ -477,6 +523,8 @@
     if (REP[c]) return wrapIc(ic('repeat'))
     return wrapIc('')
   }
+
+  function hasRaster (css) { return /url\(\s*['"]?(?!data:)[^)]*\.(webp|png|jpe?g|avif|gif)/i.test(String(css || '')) }
 
   var WAVE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 20q10-7 20 0t20 0 20 0 20 0' fill='none' stroke='%23bfe3ff' stroke-opacity='.18' stroke-width='2'/%3E%3Cpath d='M-10 36q10-5 20 0t20 0 20 0 20 0 20 0' fill='none' stroke='%23bfe3ff' stroke-opacity='.1' stroke-width='2'/%3E%3C/svg%3E\")"
 
@@ -524,12 +572,16 @@
     /* command panel: arrows, then Hapus + JALAN! inside it */
     '.tkg-cmd{' + PANEL + ';padding:6px 8px 8px;display:flex;flex-direction:column;gap:6px;min-height:0;min-width:0;overflow:hidden;flex:0 0 auto}',
     '.tkg-cact{display:flex;gap:8px;flex:0 0 auto}',
-    '.tkg-cact.stack{flex-direction:column}',
+    '.tkg-cact.stack{display:grid;grid-template-columns:56px minmax(0,1fr)}',
+    '.tkg-cact.stack .tkg-go{grid-column:1 / -1}',
+    '.tkg-cact.tight .tkg-trash>span:not(.tkg-ic){display:none}',
+    '.tkg-cact.tight .tkg-trash{width:56px;padding:0}',
     '.tkg-route{' + PANEL + ';padding:6px 8px 8px;min-width:0;flex:0 0 auto}',
     '.tkg--land .tkg-route{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center}',
     '.tkg-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:900;font-size:16px;line-height:1.1;text-shadow:0 1px 0 rgba(0,0,0,.35);padding:0 2px}',
     '.tkg-cmd .tkg-h{justify-content:center}',
     '.tkg-h small{font-size:13px;font-weight:800;opacity:.85}',
+    '.tkg--nomax .tkg-route .tkg-h small{display:none}',
     '.tkg-count{display:inline-flex;align-items:center;gap:3px;padding:2px 10px 2px 6px;border-radius:999px;background:rgba(0,0,0,.28);font-size:16px;font-weight:900}',
     '.tkg-ic{position:relative;display:inline-grid;place-items:center;flex:0 0 auto}.tkg-ic img{width:100%;height:100%;object-fit:contain;pointer-events:none}',
     '.tkg-arw{display:block;width:70%;height:78%;background:linear-gradient(#fff3a6,#ffc93a);clip-path:polygon(50% 0,100% 48%,68% 48%,68% 100%,32% 100%,32% 48%,0 48%);filter:drop-shadow(0 1px 0 rgba(0,0,0,.35))}',
@@ -543,8 +595,8 @@
     '.tkg-board{position:relative;border-radius:14px;overflow:hidden;background:radial-gradient(120% 90% at 30% 20%,#1f65ad 0%,#154b8a 45%,#0c3068 100%);',
     'box-shadow:0 0 0 2px rgba(150,205,255,.55),0 0 22px rgba(90,170,255,.35),0 8px 20px rgba(0,10,40,.4)}',
     '.tkg--scene .tkg-board{background:rgba(20,60,110,.55)}',
-    '.tkg--deck .tkg-board{background:repeating-linear-gradient(0deg,rgba(40,20,5,.55) 0 2px,transparent 2px calc(var(--t) / 3)),',
-    'repeating-linear-gradient(90deg,transparent 0 calc(var(--t) * .62),rgba(40,20,5,.35) calc(var(--t) * .62) calc(var(--t) * .62 + 2px),transparent calc(var(--t) * .62 + 2px) calc(var(--t) * 1.37)),',
+    // planks: faint horizontal boards at a third of a tile only (vertical seams read as extra grid lines)
+    '.tkg--deck .tkg-board{background:repeating-linear-gradient(0deg,rgba(40,20,5,.22) 0 1px,transparent 1px calc(var(--t) / 3)),',
     'linear-gradient(180deg,#a8764a,#8a5c34 60%,#7a4f2c);box-shadow:0 0 0 3px #4a2c14,0 0 0 5px rgba(255,210,140,.35),0 10px 24px rgba(0,0,0,.5);border-radius:10px}',
     '.tkg--deck .tkg-wv{display:none}',
     '.tkg-wv{position:absolute;top:0;bottom:0;left:-80px;width:calc(100% + 160px);background-image:' + WAVE + ';background-size:80px 40px;animation:tkg-wave 7s linear infinite;pointer-events:none}',
@@ -654,6 +706,48 @@
     '.tkg-chip--bad{box-shadow:0 0 0 3px #fff,0 0 0 6px #ff9f1c;animation:tkg-wig 420ms var(--e) 2}',
     '.tkg-chip--hint:after{content:"";position:absolute;inset:-6px;border-radius:18px;border:4px solid #ffd84a;animation:tkg-ring 1s var(--e) infinite}',
     '.tkg-lift{opacity:.3}',
+    /* ghost preview: where the boat WILL go (dots), the failing step in soft orange, a faint boat at the end */
+    '.tkg-path{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible;transition:opacity 200ms linear}',
+    '.tkg--busy .tkg-path,.tkg--won .tkg-path,.tkg--busy .tkg-gb,.tkg--won .tkg-gb{opacity:0!important}',
+    '.tkg-path .ln{fill:none;stroke:rgba(255,255,255,.92);stroke-width:.14;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:.001 .24;filter:drop-shadow(0 0 .04px rgba(0,20,60,.8))}',
+    '.tkg-path .nd{fill:#fff;stroke:rgba(0,30,70,.45);stroke-width:.025}',
+    '.tkg-path.ok .ln{stroke:#ffe27a}.tkg-path.ok .nd{fill:#ffe27a}',
+    '.tkg--deck .tkg-path .ln{stroke:#fffbe8}',
+    '.tkg-path .bad{fill:rgba(255,159,28,.28);stroke:#ffa53a;stroke-width:.06;stroke-dasharray:.16 .1}',
+    '.tkg-path .bl{fill:none;stroke:#ffa53a;stroke-width:.11;stroke-linecap:round;stroke-dasharray:.001 .2}',
+    '.tkg-gb{z-index:4;opacity:.42;transition:transform 300ms var(--e),opacity 200ms linear}',
+    '.tkg-gb.off{opacity:0}',
+    '.tkg-gb img{width:74%;height:74%;filter:saturate(.6) brightness(1.25)}',
+    '.tkg-gb[data-face=W] img{transform:scaleX(-1)}',
+    '.tkg-chip--pbad{box-shadow:0 0 0 3px #ffa53a,0 4px 0 #123f8f;border-color:#ffd3a0}',
+    /* idle help: the next useful thing breathes (no auto-fill) */
+    '.tkg-chip--nudge,.tkg-btn.tkg-chip--nudge{animation:tkg-nudge 1.2s var(--e) infinite}',
+    '.tkg-chip--nudge:after{content:"";position:absolute;inset:-6px;border-radius:18px;border:3px solid rgba(255,255,255,.9);animation:tkg-ring 1.2s var(--e) infinite;pointer-events:none}',
+    '.tkg-pchip.tkg-chip--nudge:after{border-color:#ffa53a}',
+    /* first-time coach: a pointing hand (CSS shapes) taps the right arrow, then JALAN! */
+    '.tkg-coach{position:absolute;inset:0;z-index:30;pointer-events:none;opacity:0;transition:opacity 220ms linear}',
+    '.tkg-coach.on{opacity:1}',
+    '.tkg-hand{position:absolute;left:0;top:0;width:64px;height:84px;transition:transform 720ms var(--e);will-change:transform}',
+    '.tkg-hand.jump{transition:none}',
+    '.tkg-hin{position:absolute;inset:0;transform-origin:24px 3px;transform:rotate(-14deg);filter:drop-shadow(0 6px 6px rgba(0,10,40,.45))}',
+    '.tkg-hand.dn .tkg-hin{transform:rotate(166deg)}',
+    '.tkg-hand.tap .tkg-hin{animation:tkg-tap 520ms var(--e)}',
+    '.tkg-hand.dn.tap .tkg-hin{animation-name:tkg-tapdn}',
+    '.tkg-hin i{position:absolute;display:block;box-sizing:border-box;background:linear-gradient(180deg,#ffe2c2,#ffc995);border:3px solid #9a5a2c}',
+    '.tkg-hin .f{left:14px;top:0;width:21px;height:48px;border-radius:11px 11px 7px 7px;z-index:3}',
+    '.tkg-hin .f:after{content:"";position:absolute;left:3px;top:3px;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.6)}',
+    '.tkg-hin .k1,.tkg-hin .k2,.tkg-hin .k3{top:30px;width:16px;height:22px;border-radius:8px;z-index:2}',
+    '.tkg-hin .k1{left:30px}.tkg-hin .k2{left:40px;top:33px}.tkg-hin .k3{left:49px;top:37px;height:20px}',
+    '.tkg-hin .p{left:7px;top:36px;width:56px;height:36px;border-radius:12px 16px 22px 22px;z-index:1}',
+    '.tkg-hin .t{left:1px;top:42px;width:26px;height:17px;border-radius:9px;transform:rotate(-28deg);z-index:4}',
+    '.tkg-hin .c{left:12px;top:66px;width:46px;height:17px;border-radius:6px;background:linear-gradient(180deg,#5aa4ff,#2463c9);border-color:#123f8f;z-index:0}',
+    '.tkg-rip{position:absolute;left:0;top:0;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:4px solid #fff;pointer-events:none;animation:tkg-splash 700ms var(--e) forwards}',
+    '.tkg-cpress{transform:scale(.96)!important}',
+    '.tkg-skip{min-width:92px;height:48px;min-height:48px;padding:0 14px;background:rgba(0,12,40,.72);border-color:rgba(255,255,255,.7);font-size:16px;box-shadow:0 4px 0 rgba(0,0,0,.3)}',
+    /* celebrate: sparkle per good step, star burst on success (owner star sprites) */
+    '.tkg-spk{position:absolute;left:50%;top:50%;width:46%;height:46%;margin:-23% 0 0 -23%;pointer-events:none;filter:drop-shadow(0 0 6px rgba(255,236,150,.9))}',
+    '.tkg-spk img,.tkg-conf img{width:100%;height:100%;object-fit:contain}',
+    '.tkg-conf{position:absolute;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;z-index:26;pointer-events:none;filter:drop-shadow(0 0 5px rgba(255,226,120,.85))}',
     '.tkg-ghost{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;opacity:.95;box-shadow:0 10px 20px rgba(0,0,0,.35)}',
     '.tkg-btn{position:relative;flex:0 0 auto;min-width:48px;height:56px;border:2px solid rgba(255,255,255,.5);border-radius:14px;padding:0 12px;display:flex;align-items:center;justify-content:center;gap:6px;',
     'font-family:inherit;font-weight:900;font-size:17px;line-height:1;color:#fff;cursor:pointer;text-shadow:0 1px 0 rgba(0,0,0,.3);transition:transform 160ms var(--e),opacity 160ms linear}',
@@ -662,6 +756,10 @@
     '.tkg-go{flex:1 1 auto;min-width:96px;background:linear-gradient(180deg,#48d465,#1f9a3f);box-shadow:0 5px 0 #146e2d,inset 0 1px 0 rgba(255,255,255,.4);font-size:22px;letter-spacing:.5px}',
     '.tkg-go .tkg-ic{width:28px;height:28px}',
     '.tkg-cact.stack .tkg-btn{width:100%}.tkg-cact.stack .tkg-go{height:62px}',
+    /* Undo = hapus satu (owner sprite gt/undo) */
+    '.tkg-undo{width:56px;min-width:56px;padding:0;background:linear-gradient(180deg,#ffffff,#d9e6f7);border-color:#fff;box-shadow:0 5px 0 #7f98bd,inset 0 1px 0 #fff}',
+    '.tkg-undo .tkg-ic{width:36px;height:36px}',
+    '.tkg-cact.stack .tkg-undo{width:56px}',
     '.tkg-btn span{white-space:nowrap}',
     '.tkg-cact:not(.stack) .tkg-trash{padding:0 10px;font-size:15px;gap:4px}.tkg-cact:not(.stack) .tkg-go{padding:0 8px;font-size:20px;min-width:0}',
     '.tkg--short .tkg-route{padding:4px 8px 6px}.tkg--short .tkg-slots{padding-top:4px}',
@@ -698,11 +796,17 @@
     '@keyframes tkg-wake{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.5);opacity:0}}',
     '@keyframes tkg-splash{0%{transform:scale(.3);opacity:1}100%{transform:scale(2.2);opacity:0}}',
     '@keyframes tkg-pop{0%{transform:scale(.8);opacity:.4}100%{transform:scale(1);opacity:1}}',
+    '@keyframes tkg-nudge{0%,100%{transform:scale(1)}40%{transform:scale(1.07)}}',
+    '@keyframes tkg-tap{0%,100%{transform:rotate(-14deg)}45%{transform:rotate(-14deg) translateY(7px) scale(.9)}}',
+    '@keyframes tkg-tapdn{0%,100%{transform:rotate(166deg)}45%{transform:rotate(166deg) translateY(7px) scale(.9)}}',
     '@keyframes tkg-wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}',
     '.tkg--rm *,.tkg--rm *:before,.tkg--rm *:after{animation:none!important}',
     '.tkg--rm .tkg-mv,.tkg--rm .tkg-boat,.tkg--rm .tkg-hd,.tkg--rm .tkg-boat img,.tkg--rm .tkg-chip,.tkg--rm .tkg-btn{transition:opacity 140ms linear!important}',
     '.tkg--rm .tkg-win{transition:opacity 160ms linear!important;transform:translate(-50%,-50%)}',
-    '.tkg--rm .tkg-run{transform:none}'
+    '.tkg--rm .tkg-run{transform:none}',
+    '.tkg--rm .tkg-hand{transition:none}',
+    '.tkg--rm .tkg-chip--nudge{box-shadow:0 0 0 3px #fff,0 0 0 6px #ffd84a}',
+    '.tkg--rm .tkg-pchip.tkg-chip--nudge{box-shadow:0 0 0 3px #fff,0 0 0 6px #ffa53a}'
   ].join('\n')
 
   function injectCSS () {
@@ -809,8 +913,17 @@
     if (!(opts.art && opts.art.crate) && def.itemArt) art.crate = def.itemArt
     function libSrc (k) { var u = null; try { u = lib(k) } catch (e) { u = null } return u || defLib(k) }
     var bg = opts.bg != null ? opts.bg : def.bg
-    if (bg == null && def.scene && G.TKArt && typeof G.TKArt.scene === 'function') { try { bg = G.TKArt.scene(def.scene) } catch (e) { bg = null } }
+    var TKA = G.TKArt && typeof G.TKArt.scene === 'function' ? G.TKArt : null
+    if (bg == null && TKA) { try { bg = TKA.scene(def.scene || (theme === 'deck' ? 'ship-deck' : 'harbor-day')) } catch (e) { bg = null } }
+    // a backdrop with no painted picture in it (only gradients / the drawn SVG fallback, e.g. 'bedroom-night',
+    // which has no owner backdrop) left the board on plain navy on a real tablet: use a painted harbour/deck
+    if (typeof bg === 'string' && bg && TKA && !hasRaster(bg)) {
+      try { var pb = TKA.scene(theme === 'deck' ? 'ship-deck' : 'harbor-day'); if (hasRaster(pb)) bg = pb } catch (e) {}
+    }
     var chapter = opts.chapter && typeof opts.chapter === 'object' ? opts.chapter : null
+    // chapterCard:false = the host already shows a chapter card beside the module (no duplicate card here;
+    // the plate label + portrait footer still use opts.chapter)
+    var showChap = !!chapter && opts.chapterCard !== false
 
     /* ── DOM ── */
     var root = el('div', 'tkg' + (rm ? ' tkg--rm' : '') + (theme === 'deck' ? ' tkg--deck' : '') +
@@ -838,11 +951,16 @@
     var plateBig = str(opts.title || L.title || 'Latihan Navigasi'), plateSub = str(opts.mission || L.mission || defaultMission())
     if (chapter && chapter.label) { var pl = el('small'); pl.textContent = str(chapter.label); plate.appendChild(pl) }
     var pb = el('b'); pb.textContent = plateBig; plate.appendChild(pb)
-    if (plateSub && plateSub !== plateBig) { var ps = el('span'); ps.textContent = plateSub; plate.appendChild(ps) }
+    if (plateSub && plateSub !== plateBig && opts.chapterCard !== false) { var ps = el('span'); ps.textContent = plateSub; plate.appendChild(ps) }
 
     var sea = el('div', 'tkg-sea'), board = el('div', 'tkg-board')
     board.setAttribute('role', 'img'); board.setAttribute('aria-label', (theme === 'deck' ? 'Papan dek ' : 'Papan laut ') + L.w + ' kali ' + L.h)
     board.appendChild(el('div', 'tkg-wv')); board.appendChild(el('div', 'tkg-wv tkg-wv2')); board.appendChild(el('div', 'tkg-grid'))
+    var SVGNS = 'http://www.w3.org/2000/svg'
+    var pathSvg = document.createElementNS(SVGNS, 'svg')
+    pathSvg.setAttribute('class', 'tkg-path'); pathSvg.setAttribute('aria-hidden', 'true')
+    pathSvg.setAttribute('viewBox', '0 0 ' + L.w + ' ' + L.h); pathSvg.setAttribute('preserveAspectRatio', 'none')
+    board.appendChild(pathSvg)
     sea.appendChild(board)
     var rose = el('div', 'tkg-rose', '<b style="left:50%;top:-15px;margin-left:-5px">U</b><b style="left:50%;bottom:-15px;margin-left:-5px">S</b><b style="left:-13px;top:50%;margin-top:-6px">B</b><b style="right:-12px;top:50%;margin-top:-6px">T</b>')
     rose.insertBefore(img(src('compass')), rose.firstChild)
@@ -854,9 +972,11 @@
     var cmd = el('div', 'tkg-cmd'); cmd.appendChild(el('div', 'tkg-h', 'Perintah'))
     var pal = el('div', 'tkg-pal'); pal.setAttribute('aria-label', 'Pilihan perintah'); cmd.appendChild(pal)
     var cact = el('div', 'tkg-cact')
+    var undoB = el('button', 'tkg-btn tkg-undo', wrapIc('')); undoB.type = 'button'; undoB.setAttribute('aria-label', 'Hapus satu perintah terakhir')
+    undoB.firstChild.appendChild(img(src('undo')))
     var trashB = el('button', 'tkg-btn tkg-trash', wrapIc(ic('trash')) + '<span>Hapus</span>'); trashB.type = 'button'; trashB.setAttribute('aria-label', 'Hapus semua perintah')
     var goB = el('button', 'tkg-btn tkg-go', wrapIc(ic('go')) + '<span>JALAN!</span>'); goB.type = 'button'; goB.setAttribute('aria-label', theme === 'deck' ? 'Jalankan Timmy' : 'Jalankan kapal')
-    cact.appendChild(trashB); cact.appendChild(goB); cmd.appendChild(cact)
+    cact.appendChild(undoB); cact.appendChild(trashB); cact.appendChild(goB); cmd.appendChild(cact)
 
     // bottom band: big Timmy (tap = hint) + his speech bubble · route · penguin tip
     var bot = el('div', 'tkg-bot')
@@ -879,7 +999,11 @@
 
     var tip = el('div', 'tkg-tip')
     var tipTxt = el('div'); tipTxt.innerHTML = '<b>Tips Kapten Pinguin:</b>'
-    var tipSpan = el('span'); tipSpan.textContent = str(opts.tip || say$.tip); tipTxt.appendChild(tipSpan)
+    // the default tip names what actually blocks THIS board (a Vasa board of rock arches said "Gunung es")
+    var bj = blockKeys.join(' '), defTip = !L.blocks.length ? 'Pikirkan dulu rutenya, lalu tekan JALAN!'
+      : /ice|es\b|berg/.test(bj) ? say$.tip : theme === 'deck' ? 'Pikirkan dulu rutenya. Barang di dek menghalangi jalan!'
+        : /rock|arch|cliff|reef|karang|stone/.test(bj) ? 'Pikirkan dulu rutenya. Batu karang menghalangi jalan!' : 'Pikirkan dulu rutenya. Cari jalan yang kosong!'
+    var tipSpan = el('span'); tipSpan.textContent = str(opts.tip || defTip); tipTxt.appendChild(tipSpan)
     tip.appendChild(tipTxt); tip.appendChild(img(src('tipper'), '', 'Kapten Pinguin'))
     bot.appendChild(tim); bot.appendChild(route); bot.appendChild(tip)
 
@@ -896,11 +1020,11 @@
     if (!backB.hidden) backB.addEventListener('click', hostCall(opts.onBack))
     if (!nextB.hidden) nextB.addEventListener('click', hostCall(opts.onNext))
 
-    if (chapter) body.appendChild(chap)
+    if (showChap) body.appendChild(chap)
     body.appendChild(plate); body.appendChild(sea); body.appendChild(cmd); body.appendChild(bot)
     if (hasFoot) body.appendChild(foot)
     root.appendChild(body)
-    if (!chapter) root.classList.add('tkg--nochap')
+    if (!showChap) root.classList.add('tkg--nochap')
     if (!hasFoot) root.classList.add('tkg--nofoot')
 
     function defaultMission () {
@@ -948,6 +1072,16 @@
     var carry = el('div', 'tkg-carry'); carry.appendChild(img(src('crate')))
     bob.appendChild(img(src(theme === 'deck' ? 'walker' : 'boat'), '', theme === 'deck' ? 'Timmy' : 'Kapal')); bob.appendChild(carry); bump.appendChild(hd); bump.appendChild(bob); boat.appendChild(bump)
 
+    var gboat = obj('tkg-gb off', L.start.x, L.start.y)
+    gboat.appendChild(img(src(theme === 'deck' ? 'walker' : 'boat')))
+    gboat.setAttribute('aria-hidden', 'true')
+
+    // coach layer (hand) — above everything, never catches taps
+    var coach = el('div', 'tkg-coach'), hand = el('div', 'tkg-hand jump'), hin = el('div', 'tkg-hin', '<i class="c"></i><i class="p"></i><i class="k1"></i><i class="k2"></i><i class="k3"></i><i class="f"></i><i class="t"></i>')
+    hand.appendChild(hin); coach.appendChild(hand); coach.setAttribute('aria-hidden', 'true')
+    var skipB = el('button', 'tkg-btn tkg-skip', '<span>Lewati</span>'); skipB.type = 'button'; skipB.setAttribute('aria-label', 'Lewati petunjuk tangan')
+    root.appendChild(coach)
+
     function put (e, x, y) { e._x = x; e._y = y; e.style.transform = 'translate3d(' + (x * st.T) + 'px,' + (y * st.T) + 'px,0)' }
     function placeAll () {
       var all = board.querySelectorAll('.tkg-o,.tkg-idot,.tkg-gh')
@@ -969,10 +1103,16 @@
 
     /* ── layout ── */
     var lastKey = ''
-    var MIN_T = 40
+    var MIN_T = 40, MAX_T = 160, FILL = 0.94, ROSE = 84
+    // the board fills ~94 % of the free play area (owner, real tablet 2026-09-28: a 3x3 board sat tiny in
+    // the middle). The compass rose only claims its own strip when that costs the board < 10 %.
+    function fit (w, h) { return Math.floor(Math.min(w * FILL / L.w, h * FILL / L.h, MAX_T)) }
     function tileFor () {
-      var aw = sea.clientWidth - 6, ah = sea.clientHeight - 6
-      return { aw: aw, ah: ah, T: Math.max(20, Math.floor(Math.min(aw / L.w, ah / L.h, 96))) }
+      var aw = sea.clientWidth - 4, ah = sea.clientHeight - 4
+      var t0 = fit(aw, ah), ts = fit(aw - ROSE, ah), tt = fit(aw, ah - ROSE), T = t0, rose = ''
+      if (ts >= t0 * 0.9 && ts >= tt) { T = ts; rose = 'side' }
+      else if (tt >= t0 * 0.9) { T = tt; rose = 'top' }
+      return { aw: aw, ah: ah, T: Math.max(20, T), rose: rose }
     }
     function layout () {
       if (dead) return
@@ -980,17 +1120,22 @@
       if (!W || H <= 0) return
       var land = W > H * 1.15 && W >= 560
       root.classList.toggle('tkg--land', land)
+      // the painted backdrop follows the frame: tk-scene/<name>-land|-port swaps on rotation
+      if (typeof bg === 'string' && /tk-scene\/[\w-]+-(land|port)\./.test(bg)) {
+        var want = H > W ? 'port' : 'land', nb = bg.replace(/(tk-scene\/[\w-]+-)(land|port)(\.)/g, '$1' + want + '$3')
+        if (nb !== bg) { bg = nb; root.style.background = bg }
+      }
       var n = L.tools.length, bw, bh, cols
       if (land) {
         var tall = H >= 540
-        var side = !!chapter && W >= 1000
+        var side = showChap && W >= 1000
         root.classList.toggle('tkg--short', !tall)
         root.classList.toggle('tkg--side', side)
         root.classList.toggle('tkg--noplate', H < 470)
         var botH = tall ? 124 : 98
         root.style.setProperty('--both', botH + 'px')
         root.style.setProperty('--timw', (tall ? 112 : 64) + 'px'); root.style.setProperty('--timh', (tall ? botH : 72) + 'px')
-        bh = tall ? 60 : 54
+        bh = tall ? 68 : 64
         var colH = H - 16 - (tall ? botH + 8 : 0)
         for (cols = 1; cols <= 4; cols++) {
           var rows = Math.ceil(n / cols), actH = cols === 1 ? 56 + 6 + 62 : 56
@@ -998,20 +1143,22 @@
         }
         cols = Math.min(Math.max(cols, 1), 4, n)
         if (cols === 1 && n > 5) cols = 2
-        var cmdw = cols === 1 ? 200 : Math.max(252, cols * 62 + 22)
+        var cmdw = cols === 1 ? 200 : Math.max(284, cols * 70 + 26)
         bw = Math.min(cols === 1 ? 150 : 110, Math.floor((cmdw - 20 - (cols - 1) * 6) / cols))
         root.style.setProperty('--cmdw', cmdw + 'px')
         root.style.setProperty('--sidew', (W >= 1200 ? 220 : 196) + 'px')
         cact.classList.toggle('stack', cols === 1)
+        cact.classList.toggle('tight', cols !== 1 && cmdw < 320)
         // the tip card needs a real route bar beside it
         root.classList.toggle('tkg--notip', !tall || W - Math.max(cmdw, 270) - 380 - 40 < 6 * 58)
       } else {
         root.classList.remove('tkg--short'); root.classList.remove('tkg--side'); cact.classList.remove('stack')
         cols = Math.min(4, n)
-        bh = 50
-        bw = Math.max(52, Math.min(96, Math.floor((W - 20 - 16 - (cols - 1) * 6) / cols)))
+        bh = 64
+        bw = Math.max(64, Math.min(96, Math.floor((W - 40 - (cols - 1) * 6) / cols)))
+        cact.classList.toggle('tight', W < 340)
         root.classList.remove('tkg--noplate'); root.classList.remove('tkg--notip')
-        if (!chapter) root.classList.add('tkg--nochap'); else root.classList.remove('tkg--nochap')
+        if (!showChap) root.classList.add('tkg--nochap'); else root.classList.remove('tkg--nochap')
       }
       root.style.setProperty('--slot', (land ? (H >= 540 ? 52 : 48) : 48) + 'px')
       root.style.setProperty('--cols', String(cols))
@@ -1021,6 +1168,7 @@
         var drop = ['tkg--notip', 'tkg--noplate', 'tkg--nochap']
         for (var di = 0; di < drop.length && tileFor().T < MIN_T + 4; di++) root.classList.add(drop[di])
       }
+      root.classList.toggle('tkg--nomax', route.clientWidth > 0 && route.clientWidth < 330)
       var tf = tileFor(), T = tf.T
       var k = T + ':' + land + ':' + W + ':' + H + ':' + tf.aw + ':' + tf.ah
       if (k === lastKey) return
@@ -1030,15 +1178,22 @@
       board.style.width = (T * L.w) + 'px'; board.style.height = (T * L.h) + 'px'
       root.classList.add('tkg-noanim')
       placeAll()
-      placeRose(tf.aw, tf.ah, T)
+      placeRose(tf.aw, tf.ah, T, tf.rose)
       void root.offsetWidth
       root.classList.remove('tkg-noanim')
     }
-    function placeRose (aw, ah, T) {
-      var bwp = T * L.w, bhp = T * L.h, sx = (aw - bwp) / 2, sy = (ah - bhp) / 2
-      if (sx >= 80) { rose.style.display = 'block'; rose.style.left = (sx + bwp + 18) + 'px'; rose.style.top = (sy + 16) + 'px' }
-      else if (sy >= 80) { rose.style.display = 'block'; rose.style.left = (sx + bwp - 70) + 'px'; rose.style.top = (sy - 74) + 'px' }
-      else rose.style.display = 'none'
+    // the rose gets a strip beside (or above) the board: a margin on the board keeps the pair centred in the sea
+    function placeRose (aw, ah, T, where) {
+      var bwp = T * L.w, bhp = T * L.h, sx, sy
+      board.style.marginRight = where === 'side' ? ROSE + 'px' : ''
+      board.style.marginTop = where === 'top' ? ROSE + 'px' : ''
+      if (where === 'side') {
+        sx = (aw - bwp - ROSE) / 2 + 2; sy = (ah - bhp) / 2 + 2
+        rose.style.display = 'block'; rose.style.left = Math.round(sx + bwp + 16) + 'px'; rose.style.top = Math.round(sy + 16) + 'px'
+      } else if (where === 'top') {
+        sx = (aw - bwp) / 2 + 2; sy = (ah - bhp - ROSE) / 2 + 2 + ROSE
+        rose.style.display = 'block'; rose.style.left = Math.round(sx + bwp - 70) + 'px'; rose.style.top = Math.round(sy - 74) + 'px'
+      } else rose.style.display = 'none'
     }
     var ro = null
     function onResize () { lastKey = ''; layout() }
@@ -1117,6 +1272,7 @@
       // keep the chip in play in view; otherwise the next empty slot (where a new command lands)
       var focus = st.bad != null ? st.bad : (enter != null && enter >= 0 ? enter : Math.min(st.prog.length, n - 1))
       if (focus >= 0) reveal(slots.children[focus])
+      drawPreview()
     }
     function reveal (e) {
       if (!e || slots.scrollWidth <= slots.clientWidth) return
@@ -1130,6 +1286,7 @@
       later(function () { e.classList.remove('wig') }, 400)
     }
     function edited () {
+      poke()
       st.bad = null
       clearHintMarks()
       if (st.dirty) resetBoard(true)
@@ -1273,6 +1430,201 @@
       }
     }
 
+    /* ── ghost preview: the child's own route drawn live, before JALAN! ── */
+    function svgEl (tag, attrs) {
+      var e = document.createElementNS(SVGNS, tag)
+      for (var k in attrs) e.setAttribute(k, attrs[k])
+      pathSvg.appendChild(e); return e
+    }
+    var pv = null
+    function drawPreview () {
+      while (pathSvg.firstChild) pathSvg.removeChild(pathSvg.firstChild)
+      pv = st.prog.length ? preview(L, st.prog) : null
+      pathSvg.setAttribute('class', 'tkg-path' + (pv && pv.ok ? ' ok' : ''))
+      if (!pv) { gboat.classList.add('off'); return }
+      var P = pv.path, c = function (v) { return (v + 0.5).toFixed(2) }
+      if (P.length > 1) {
+        svgEl('polyline', { 'class': 'ln', points: P.map(function (p) { return c(p.x) + ',' + c(p.y) }).join(' ') })
+        for (var i = 1; i < P.length; i++) svgEl('circle', { 'class': 'nd', cx: c(P[i].x), cy: c(P[i].y), r: i === P.length - 1 ? 0.1 : 0.075 })
+      }
+      var b = pv.bad
+      if (b) {
+        var bx = b.tx != null ? b.tx : b.x, by = b.ty != null ? b.ty : b.y
+        svgEl('rect', { 'class': 'bad', x: bx + 0.08, y: by + 0.08, width: 0.84, height: 0.84, rx: 0.16 })
+        var e = b.edge ? DV[b.edge] : (b.tx != null ? [b.tx - b.x, b.ty - b.y] : null)
+        if (e) svgEl('line', { 'class': 'bl', x1: c(b.x), y1: c(b.y), x2: (b.x + 0.5 + e[0] * (b.edge ? 0.46 : 0.62)).toFixed(2), y2: (b.y + 0.5 + e[1] * (b.edge ? 0.46 : 0.62)).toFixed(2) })
+        var chipEl = slots.children[b.idx]
+        if (chipEl && chipEl.classList) chipEl.classList.add('tkg-chip--pbad')
+      }
+      // a faint boat where the route ends (it faces the way it last moved)
+      if (P.length > 1) {
+        var l = P[P.length - 1], k = P[P.length - 2]
+        gboat.setAttribute('data-face', l.x < k.x ? 'W' : 'E')
+        put(gboat, l.x, l.y); gboat.classList.remove('off')
+      } else gboat.classList.add('off')
+    }
+
+    /* ── idle help (10 s: the next useful thing breathes) + first-time coach hand ── */
+    var IDLE_MS = Math.max(200, int(opts.idleMs, 10000)), COACH_IDLE_MS = Math.max(200, int(opts.coachIdleMs, 8000))
+    var coachMode = opts.coach != null ? (opts.coach === true || opts.coach === 'always' ? 'always' : opts.coach === 'first' ? 'first' : '') : L.coach
+    var coachKey = 'tkg-coach:' + (L.id || (L.w + 'x' + L.h))
+    function coachSeen () { try { return G.localStorage.getItem(coachKey) === '1' } catch (e) { return false } }
+    function coachMark () { try { G.localStorage.setItem(coachKey, '1') } catch (e) {} }
+    var coachOn = coachMode === 'always' || (coachMode === 'first' && !coachSeen())
+    var idleT = null, nudged = null, co = { on: false, run: 0, loops: 0 }
+    function clearNudge () {
+      if (nudged) { nudged.classList.remove('tkg-chip--nudge'); nudged = null }
+      var n = root.querySelectorAll('.tkg-chip--nudge'); for (var i = 0; i < n.length; i++) n[i].classList.remove('tkg-chip--nudge')
+    }
+    function poke () {
+      clearNudge()
+      if (idleT) { clearTimeout(idleT); idleT = null }
+      if (dead || st.done) return
+      idleT = later(onIdle, !st.prog.length && coachOn ? COACH_IDLE_MS : IDLE_MS)
+    }
+    function onIdle () {
+      idleT = null
+      if (st.done) return
+      if (st.running || co.on || drag) { poke(); return }
+      if (!st.prog.length && coachOn) { showCoach(); return }
+      idleNudge()
+    }
+    // what a helper would point at: JALAN! when the route already works, the first chip to take out when
+    // it cannot work, else the next command to add. Never fills anything in.
+    function nextTarget () {
+      var p = preview(L, st.prog)
+      if (st.prog.length && p.ok) return goB
+      var h = nextHint(L, st.prog)
+      if (!h) return null
+      if (h.keep < st.prog.length) return slots.children[h.keep] || null
+      for (var i = 0; i < h.next.length; i++) { var e = pal.querySelector('[data-cmd="' + h.next[i] + '"]'); if (e) return e }
+      return null
+    }
+    function idleNudge () {
+      clearNudge()
+      var t = nextTarget()
+      if (!t) return
+      t.classList.add('tkg-chip--nudge'); nudged = t
+      if (t === goB) say(say$.nudgeGo, 'good', 5000)
+      else if (slots.contains(t)) { reveal(t); say(say$.nudgeFix, 'bad', 5000) }
+    }
+    function relRect (e) {
+      var r = e.getBoundingClientRect(), R = root.getBoundingClientRect()
+      return { x: r.left - R.left + r.width / 2, y: r.top - R.top + r.height / 2, w: r.width, h: r.height, rh: R.height }
+    }
+    function handTo (e, jump) {
+      var r = relRect(e), lbl = !!(e.classList && e.classList.contains('tkg-chip') && e.textContent.replace(/\d+/g, '').trim())
+      var dn = r.y + r.h * 0.2 + 84 > r.rh - 4 || (lbl && r.y - r.h * 0.15 - 84 > 4)
+      hand.classList.toggle('dn', dn)
+      hand.classList.toggle('jump', !!jump)
+      hand.style.transform = 'translate3d(' + Math.round(r.x - 24) + 'px,' + Math.round(r.y - 3 + (dn ? -r.h * 0.15 : r.h * 0.15)) + 'px,0)'
+    }
+    function handTap (e) {
+      hand.classList.remove('tap'); void hand.offsetWidth; hand.classList.add('tap')
+      var r = relRect(e), rip = el('div', 'tkg-rip'); rip.style.left = r.x + 'px'; rip.style.top = r.y + 'px'; coach.appendChild(rip)
+      e.classList.add('tkg-cpress')
+      later(function () { e.classList.remove('tkg-cpress') }, 180)
+      later(function () { if (rip.parentNode) rip.parentNode.removeChild(rip) }, 720)
+      sfx('click')
+    }
+    function showCoach () {
+      if (co.on || st.running || st.done) return
+      var first = nextTarget()
+      if (!first || first === goB) return
+      co.on = true; co.loops = 0; var id = ++co.run
+      coachMark()
+      clearNudge()
+      handTo(first, true)
+      coach.classList.add('on')
+      placeSkip()
+      say(say$.coach, 'good')
+      var M = rm ? 1.4 : 1
+      function seq () {
+        if (id !== co.run || dead) return
+        var chipEl = nextTarget()
+        if (!chipEl || chipEl === goB || co.loops >= 3) { hideCoach(); return }
+        co.loops++
+        handTo(chipEl, rm || co.loops === 1)
+        later(function () {
+          if (id !== co.run) return
+          handTap(chipEl)
+          later(function () {
+            if (id !== co.run) return
+            handTo(goB, rm)
+            later(function () {
+              if (id !== co.run) return
+              handTap(goB)
+              later(seq, 1100 * M)
+            }, 820 * M)
+          }, 700 * M)
+        }, (co.loops === 1 ? 500 : 760) * M)
+      }
+      seq()
+    }
+    // "Lewati" sits over the right end of the (still empty) route bar: the coach only runs with an empty route
+    function placeSkip () {
+      var R = root.getBoundingClientRect(), r = route.getBoundingClientRect(), w = 112, h = 48
+      skipB.style.cssText = 'position:absolute;pointer-events:auto;width:' + w + 'px;left:' + Math.round(r.right - R.left - w - 10) + 'px;top:' + Math.round(r.top - R.top - h / 2) + 'px'
+      coach.appendChild(skipB)
+    }
+    function hideCoach () {
+      if (!co.on) return
+      co.on = false; co.run++
+      coach.classList.remove('on')
+      if (skipB.parentNode) skipB.parentNode.removeChild(skipB)
+      if (st.msg === say$.coach) hush()
+      poke()
+    }
+    skipB.addEventListener('click', function (e) { e.stopPropagation(); sfx('click'); hideCoach() })
+    // any real action ends the coach and restarts the idle clock
+    root.addEventListener('pointerdown', function (e) {
+      if (e.target === skipB || (skipB.contains && skipB.contains(e.target))) return
+      if (co.on) hideCoach(); else poke()
+    }, true)
+
+    /* ── celebration: a sparkle + a rising note for every good step, a star burst for the win ── */
+    try { var pre = new G.Image(); pre.src = src('sparkle') } catch (e) {}
+    var NOTES = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51, 1567.98, 1760]
+    function note (i) { if (!muted()) tone(NOTES[Math.min(i, NOTES.length - 1)], NOTES[Math.min(i, NOTES.length - 1)] * 1.01, 0.18, 'triangle', 0.07) }
+    function sparkle (x, y) {
+      var box = fx('tkg-sparkles', x, y, 700)
+      if (!box) return
+      for (var k = 0; k < 3; k++) {
+        var s = el('div', 'tkg-spk'); s.appendChild(img(src('sparkle'))); box.appendChild(s)
+        var a = -Math.PI / 2 + (k - 1) * 0.95, R = st.T * 0.6
+        try { s.animate([{ transform: 'translate(0,0) scale(.3)', opacity: 0 }, { transform: 'translate(' + (Math.cos(a) * R * 0.5) + 'px,' + (Math.sin(a) * R * 0.5) + 'px) scale(1)', opacity: 1, offset: 0.35 },
+          { transform: 'translate(' + (Math.cos(a) * R) + 'px,' + (Math.sin(a) * R) + 'px) scale(.5)', opacity: 0 }], { duration: 620, easing: EASE, fill: 'forwards' }) } catch (e) {}
+      }
+    }
+    function burst (gx, gy) {
+      var br = board.getBoundingClientRect(), R0 = root.getBoundingClientRect()
+      var cx = br.left - R0.left + (gx + 0.5) * st.T, cy = br.top - R0.top + (gy + 0.5) * st.T
+      var n = rm ? 6 : 16
+      for (var k = 0; k < n; k++) {
+        var c = el('div', 'tkg-conf'); c.appendChild(img(src('sparkle'))); root.appendChild(c)
+        c.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)'
+        var sz = 0.55 + ((k * 37) % 10) / 20
+        ;(function (c, k) {
+          later(function () { if (c.parentNode) c.parentNode.removeChild(c) }, 1500)
+          if (!c.animate) { c.style.opacity = '0'; return }
+          try {
+            if (rm) {
+              var ox = Math.cos(k / n * 6.283) * st.T * 0.9, oy = Math.sin(k / n * 6.283) * st.T * 0.9
+              c.style.transform = 'translate3d(' + (cx + ox) + 'px,' + (cy + oy) + 'px,0) scale(' + sz + ')'
+              c.animate([{ opacity: 0 }, { opacity: 1, offset: 0.3 }, { opacity: 0 }], { duration: 1200, easing: 'linear', fill: 'forwards' })
+            } else {
+              var a = -Math.PI / 2 + (k / (n - 1) - 0.5) * 2.6, d = st.T * (1.3 + ((k * 53) % 10) / 8), rot = ((k * 71) % 360) - 180
+              var tx = cx + Math.cos(a) * d, ty = cy + Math.sin(a) * d
+              c.animate([{ transform: 'translate3d(' + cx + 'px,' + cy + 'px,0) scale(.2) rotate(0deg)', opacity: 1 },
+                { transform: 'translate3d(' + tx + 'px,' + ty + 'px,0) scale(' + sz + ') rotate(' + (rot * 0.6) + 'deg)', opacity: 1, offset: 0.55 },
+                { transform: 'translate3d(' + tx + 'px,' + (ty + st.T * 0.7) + 'px,0) scale(' + (sz * 0.8) + ') rotate(' + rot + 'deg)', opacity: 0 }],
+              { duration: 1100 + (k % 4) * 90, easing: EASE, fill: 'forwards' })
+            }
+          } catch (e) {}
+        })(c, k)
+      }
+    }
+
     /* ── running ── */
     function markRun (step) {
       var r = slots.querySelectorAll('.tkg-run'); for (var i = 0; i < r.length; i++) r[i].classList.remove('tkg-run')
@@ -1314,9 +1666,9 @@
       }
       var ev = s.event
       if ((ev === 'move' || ev === 'current' || ev === 'bump') && DV[s.cmd]) { turnTo(s.face || s.cmd); setHeading(true) }
-      if (ev === 'move') { fx('tkg-wake', s.from.x, s.from.y); moveBoat(s.x, s.y); sfx('step') }
+      if (ev === 'move') { fx('tkg-wake', s.from.x, s.from.y); moveBoat(s.x, s.y); note(st.stepN++); later(function () { sparkle(s.x, s.y) }, 220) }
       else if (ev === 'current') {
-        fx('tkg-wake', s.from.x, s.from.y); moveBoat(s.via.x, s.via.y); sfx('step')
+        fx('tkg-wake', s.from.x, s.from.y); moveBoat(s.via.x, s.via.y); note(st.stepN++)
         later(function () { fx('tkg-ring', s.via.x, s.via.y, 700); sfx('current'); moveBoat(s.x, s.y) }, rm ? 300 : 280)
       } else if (ev === 'turn') {
         st.angle += s.cmd === 'L' ? -90 : 90
@@ -1352,7 +1704,8 @@
       st.attempts++
       st.bad = null; renderSlots(-1); clearHintMarks(); hush()
       var res = run(L, st.prog)
-      st.running = true; root.classList.add('tkg--busy')
+      st.running = true; st.stepN = 0; root.classList.add('tkg--busy')
+      clearNudge(); if (co.on) hideCoach()
       var id = ++st.runId, i = 0
       function tick () {
         if (id !== st.runId) return
@@ -1381,6 +1734,8 @@
       st.done = true; root.classList.add('tkg--won')
       var g = L.goal || { x: vis.x, y: vis.y }
       fx('tkg-ring', g.x, g.y, 900)
+      burst(g.x, g.y)
+      clearNudge(); if (idleT) { clearTimeout(idleT); idleT = null }
       if (!rm && board.animate) {
         for (var k = 0; k < 8; k++) {
           var dEl = fx('', g.x, g.y, 800)
@@ -1435,6 +1790,11 @@
 
     /* ── wiring ── */
     if (opts.hintButton !== false) hintB.addEventListener('click', hint)
+    undoB.addEventListener('click', function () {
+      if (st.running || st.done) return
+      if (!st.prog.length) { wiggle(slots); return }
+      removeAt(st.prog.length - 1)
+    })
     trashB.addEventListener('click', function () {
       if (st.running || st.done) return
       if (!st.prog.length) { wiggle(slots); return }
@@ -1448,6 +1808,7 @@
     layout()
     later(layout, 60)
     hush()
+    if (coachOn) later(showCoach, rm ? 300 : 700); else poke()
 
     return {
       el: root,
@@ -1457,6 +1818,7 @@
       destroy: function () {
         if (dead) return
         dead = true
+        co.run++
         timers.forEach(clearTimeout); timers = []
         if (bubbleT) clearTimeout(bubbleT)
         if (ro) { try { ro.disconnect() } catch (e) {} }
@@ -1467,7 +1829,7 @@
         if (dead) return
         st.runId++; st.running = false; st.done = false; st.prog = []; st.bad = null; st.hints = 0
         root.classList.remove('tkg--busy'); root.classList.remove('tkg--won'); win.classList.remove('on')
-        clearHintMarks(); markRun(null); renderSlots(-1); resetBoard(true); hush()
+        clearHintMarks(); markRun(null); renderSlots(-1); resetBoard(true); hush(); poke()
       },
       program: function () { return st.prog.slice() },
       setProgram: function (p) {
@@ -1477,7 +1839,9 @@
       state: function () {
         return { running: st.running, done: st.done, attempts: st.attempts, hints: st.hints, bad: st.bad,
           program: st.prog.slice(), message: st.msg, bubble: bubble.classList.contains('on'), tile: st.T,
-          boat: vis ? { x: vis.x, y: vis.y } : null, maxLen: L.maxLen, shortest: L.shortest, stars: st.earned }
+          boat: vis ? { x: vis.x, y: vis.y } : null, maxLen: L.maxLen, shortest: L.shortest, stars: st.earned,
+          coach: co.on, tools: L.tools.slice(), easy: L.easy, preview: pv ? { ok: pv.ok, bad: pv.bad, path: pv.path.map(function (p) { return { x: p.x, y: p.y } }) } : null,
+          nudge: nudged ? (nudged === goB ? 'go' : slots.contains(nudged) ? 'slot:' + nudged.getAttribute('data-idx') : 'pal:' + nudged.getAttribute('data-cmd')) : null }
       },
       layout: onResize
     }

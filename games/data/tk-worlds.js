@@ -51,9 +51,21 @@
     ]
   }
 
-  /* ── World 1: RMS Titanic (flagship, 13 levels — owner PRD §Titanic) ───── */
+  /* ── World 1: RMS Titanic — ONE continuous 10-chapter journey (owner mockup ui-12, PRD v2 §13) ──
+     Each level is a CHAPTER ({type:'chapter', steps:[…]}); a step is any level type (story · quiz · sort ·
+     grid · lanes · cinema · reflection · fragment) and plays inside the chapter without leaving the play
+     screen. The old t1–t13 levels live on as steps (`from`: the old level id, used by the save migration):
+     t1 → c2 quiz · t2 → c3 quiz · t4 → c4 grid · t5 → c4 quiz · t7 → c5 lanes · t8 → c6 lanes + cinema ·
+     t10 → c7 grid · t11 → c8 sort · t12 → c9 cinema · t13 → c10.
+     The free-steering levels t3 / t6 are replaced by the three-lane navigation (tk-lanes). Child safety
+     (PRD §0): the collision is scripted, Timmy is in the lifeboat before the ship breaks, no people on
+     the sinking ship, the ending is the rescue at dawn and what we learn. */
+  var DECK = ['tk-prop/crate-plain', 'tk-prop/barrels', 'tk-char/officer-boy', 'tk-prop/crate-titanic', 'tk-prop/rope-coil']
+  var CAPTAIN = 'char/captain'
   var TITANIC = {
     id: 'titanic', name: 'RMS Titanic', ship: 'ship/titanic', year: 1912, value: 'Keberanian & Kebaikan', cat: 'tragedi', color: '#1F5FA8', scene: 'harbor-dawn',
+    chapters: true, mapTitle: 'Peta Bab', mapSub: 'Perjalanan Ilmu dan Keberanian',
+    mapFoot: 'Selesaikan tiap bab untuk membuka ilmu, lencana, dan kisah baru!',
     captain: { name: 'Kapten Smith', quote: 'Mari lakukan yang terbaik, dan baik kepada semua orang di kapal.' },
     cards: [
       { id: 'titanic-1', title: 'Kapal Terbesar', text: 'Titanic berlayar pertama kali pada April 1912 dari Southampton, Inggris, menuju New York. Saat itu ia kapal penumpang terbesar di dunia.' },
@@ -61,28 +73,106 @@
       { id: 'titanic-3', title: 'Pelajaran Berharga', text: 'Kisah Titanic mengajarkan kita untuk berhati-hati, saling menolong, dan mendengarkan peringatan.' }
     ],
     levels: [
-      { id: 't1', title: 'Keberangkatan', type: 'quiz', domain: 'matematika', count: 4, scene: 'harbor-dawn', goal: 'Bantu menghitung tiket dan koper penumpang.',
-        story: [P('harbor-dawn', 'Pelabuhan Southampton, 1912. Semua orang bersiap naik kapal!', 'Timmy', [{ k: 'ship/titanic', x: 62, y: 50, s: 72, d: 0.6 }, { k: TIMMY, x: 18, y: 76, s: 38, d: 1 }])] },
-      { id: 't2', title: 'Di Atas Kapal', type: 'quiz', domain: 'umum', count: 4, scene: 'ship-deck', goal: 'Antar barang ke kamar yang benar.' },
-      { id: 't3', title: 'Latihan Navigasi', type: 'steer', mode: 'gates', vessel: 'boat', goal: 'Lewati semua pelampung dengan perahu latihan.' },
-      { id: 't4', title: 'Rute ke Ruang Radio', type: 'grid', goal: 'Bawa pesan ke ruang radio!', scene: 'night-ocean', board: board(['S.#..', '..#.G', '.....'], 'E', null, { blockArt: ICE }) },
-      { id: 't5', title: 'Laut Malam', type: 'quiz', domain: 'arab', count: 4, scene: 'night-ocean', goal: 'Bulan, bintang, dan kompas — dalam Bahasa Arab!' },
-      { id: 't6', title: 'Mengemudikan Titanic', type: 'steer', mode: 'gates', vessel: 'liner', goal: 'Kemudikan Titanic melewati gerbang pelampung.' },
-      { id: 't7', title: 'Ladang Es', type: 'steer', mode: 'ice', vessel: 'liner', goal: 'Hindari gunung es dan capai zona aman.' },
-      { id: 't8', title: 'Malam 14 April', type: 'steer', mode: 'scripted', vessel: 'liner', goal: 'Kemudi dibantu. Tetap tenang.',
-        after: [P('collision-far', 'Meski semua sudah berusaha, kapal menabrak gunung es.', null, [{ k: 'ship/titanic', x: 45, y: 55, s: 50, d: 0.6 }, { k: 'game/crystal-ice', x: 72, y: 60, s: 34, d: 0.7 }]),
-          P('ship-deck', 'Awak kapal bergerak cepat dan tenang. "Semua ke dek sekoci, ya!"', 'Awak kapal', [{ k: 'char/captain', x: 70, y: 70, s: 42, d: 0.9 }, { k: TIMMY, x: 25, y: 74, s: 38, d: 1 }])] },
-      { id: 't9', title: 'Apa yang Terjadi?', type: 'quiz', domain: 'umum', count: 4, scene: 'ship-deck', goal: 'Kenapa benda bisa mengapung atau tenggelam?' },
-      { id: 't10', title: 'Rute Dek Sekoci', type: 'grid', goal: 'Bantu Timmy sampai ke sekoci dengan selamat!', scene: 'night-deck',
-        board: board(['S.#...', '..#.#.', '....#G'], 'E', null, { theme: 'deck', blockArt: ['tk-prop/crate-plain', 'tk-prop/barrels', 'tk-char/officer-boy', 'tk-prop/crate-titanic', 'tk-prop/rope-coil'] }) },
-      { id: 't11', title: 'Logika Sekoci', type: 'sort', domain: 'matematika', count: 4, scene: 'lifeboat', goal: 'Isi sekoci dengan adil — keluarga tetap bersama!' },
-      { id: 't12', title: 'Dari Kejauhan', type: 'cutscene',
-        story: [P('night-ocean', 'Dari sekoci, Timmy melihat kapal besar itu dari jauh. Semua di sekocinya aman dan saling berpegangan.', 'Timmy', [{ k: 'ship/titanic', x: 60, y: 48, s: 36, d: 0.3 }, { k: 'fx/lifeboat', x: 30, y: 78, s: 30, d: 1 }]),
-          P('night-ocean', 'Lampu kapal padam perlahan. Laut menjadi sunyi. Timmy memeluk kompasnya.', null, [{ k: 'fx/lifeboat', x: 40, y: 76, s: 34, d: 1 }, { k: 'nature/moon-stars', x: 78, y: 18, s: 18, d: 0.08 }])] },
-      { id: 't13', title: 'Penyelamatan', type: 'quiz', domain: 'matematika', count: 3, scene: 'rescue-dawn', goal: 'Bagikan selimut dan hitung penumpang yang selamat.', fragment: true,
-        story: [P('rescue-dawn', 'Pagi datang. Kapal penolong tiba! Semua saling berbagi selimut dan minuman hangat.', 'Timmy', [{ k: 'fx/lifeboat', x: 30, y: 74, s: 30, d: 1 }, { k: 'ship/rescue', x: 70, y: 52, s: 44, d: 0.6 }])] }
+      { id: 'c1', no: 1, type: 'chapter', title: 'Mimpi', sub: 'Pengenalan', scene: 'harbor-dawn', pic: 'tk-key/timmy-sleeping', picScene: 'bedroom-night',
+        goal: 'Timmy tiba di kapal Titanic. Dengarkan sambutan Kapten!',
+        steps: [
+          { id: 'c1a', type: 'story', title: 'Mimpi Timmy', goal: 'Timmy bermimpi tentang kapal legendaris.',
+            story: [P('bedroom-night', 'Malam itu Timmy membaca buku tentang kapal Titanic… lalu tertidur.', null,
+              [{ k: 'tk-legend/bedroom', x: 50, y: 96, s: 70, d: 0.6 }, { k: 'char/timmy-sleeping', x: 36, y: 86, s: 46, d: 0.85 }, { k: 'nature/moon-stars', x: 66, y: 26, s: 14, d: 0.1 }]),
+            P('time-tunnel', 'Kompasnya bersinar! Lorong waktu membawa Timmy ke tahun 1912.', null,
+              [{ k: 'char/timmy-flying', x: 50, y: 62, s: 48, d: 1 }, { k: 'game/compass', x: 78, y: 30, s: 16, d: 0.4 }]),
+            P('harbor-dawn', 'Ia tiba di pelabuhan. Di depannya berdiri kapal raksasa: RMS Titanic!', 'Timmy',
+              [{ k: 'ship/titanic', x: 62, y: 52, s: 70, d: 0.6 }, { k: TIMMY, x: 20, y: 76, s: 40, d: 1 }])] },
+          { id: 'c1b', type: 'story', title: 'Sambutan Kapten', goal: 'Dengarkan sambutan Kapten Smith.',
+            story: [P('harbor-dawn', 'Selamat datang di kapal, penjelajah muda! Ini RMS Titanic. Bersama-sama kita akan menjelajah, belajar hal baru, dan menghadapi tantangan seru. Kamu siap?', 'Kapten Smith',
+              [{ k: CAPTAIN, x: 70, y: 72, s: 50, d: 0.9 }, { k: TIMMY, x: 25, y: 76, s: 40, d: 1 }]),
+            P('harbor-dawn', 'Siap, Kapten! Aku akan belajar dan menolong semua orang di kapal.', 'Timmy',
+              [{ k: CAPTAIN, x: 72, y: 72, s: 46, d: 0.9 }, { k: TIMMY, x: 28, y: 76, s: 44, d: 1 }, { k: 'game/compass', x: 50, y: 34, s: 14, d: 1.2 }])] }
+        ] },
+      { id: 'c2', no: 2, type: 'chapter', title: 'Berlayar', sub: 'Dasar & Latihan', scene: 'harbor-dawn', pic: 'tk-prop/titanic-ship', picScene: 'harbor-dawn',
+        goal: 'Bantu penumpang di pelabuhan, lalu naik ke kapal!',
+        steps: [
+          { id: 'c2a', type: 'story', title: 'Pelabuhan Southampton', goal: 'Semua bersiap naik kapal.',
+            story: [P('harbor-dawn', 'Pelabuhan Southampton, 1912. Semua orang bersiap naik kapal!', 'Timmy', [{ k: 'ship/titanic', x: 62, y: 50, s: 72, d: 0.6 }, { k: TIMMY, x: 18, y: 76, s: 38, d: 1 }]),
+              P('harbor-dawn', 'Banyak koper dan tiket yang harus dihitung. Ayo bantu petugas pelabuhan!', 'Kapten Smith', [{ k: 'tk-prop/suitcase-first-class', x: 30, y: 80, s: 26, d: 1 }, { k: 'tk-prop/boarding-pass', x: 55, y: 70, s: 18, d: 1.1 }, { k: CAPTAIN, x: 78, y: 72, s: 44, d: 0.9 }])] },
+          { id: 'c2b', from: 't1', type: 'quiz', title: 'Tiket & Koper', domain: 'matematika', count: 4, scene: 'harbor-dawn', goal: 'Bantu menghitung tiket dan koper penumpang.' },
+          { id: 'c2c', type: 'story', title: 'Naik ke Kapal', goal: 'Titanic mulai berlayar!',
+            story: [P('harbor-dawn', 'Tiket sudah diperiksa. Timmy naik ke Titanic! Tuuut… kapal mulai berlayar.', 'Timmy', [{ k: 'ship/titanic', x: 58, y: 52, s: 74, d: 0.6 }, { k: TIMMY, x: 20, y: 78, s: 36, d: 1 }, { k: 'tk-legend/seagull-3', x: 30, y: 22, s: 10, d: 0.3 }])] }
+        ] },
+      { id: 'c3', no: 3, type: 'chapter', title: 'Kehidupan di Kapal', sub: 'Belajar & Teman', scene: 'ship-deck', pic: 'char/timmy', picScene: 'ship-deck',
+        goal: 'Jelajahi kapal: kenali kamar dan antar barang!',
+        steps: [
+          { id: 'c3a', from: 't2', type: 'quiz', title: 'Nomor Kamar', domain: 'umum', count: 4, scene: 'ship-deck', goal: 'Kenali benda-benda di kapal.' },
+          { id: 'c3b', type: 'grid', title: 'Antar Koper', scene: 'ship-deck', goal: 'Ambil koper, lalu antar ke kamar penumpang!',
+            board: board(['S#..', '.c.#', '...d'], 'S', ['N', 'E', 'S', 'W', 'P', 'D'], { theme: 'deck', blockArt: DECK, itemArt: 'tk-prop/suitcase-4', easy: true }) }
+        ] },
+      { id: 'c4', no: 4, type: 'chapter', title: 'Laut Lepas', sub: 'Navigasi', scene: 'night-ocean', pic: 'tk-prop/ship-wheel', picScene: 'night-ocean',
+        goal: 'Bawa pesan ke ruang radio, lalu kemudikan kapal!',
+        steps: [
+          { id: 'c4a', from: 't4', type: 'grid', title: 'Rute ke Ruang Radio', goal: 'Bawa pesan ke ruang radio!', scene: 'night-ocean', board: board(['S.#..', '..#.G', '.....'], 'E', null, { blockArt: ICE }) },
+          { id: 'c4b', from: 't5', type: 'quiz', title: 'Laut Malam', domain: 'arab', count: 3, scene: 'night-ocean', goal: 'Bulan, bintang, dan kompas — dalam Bahasa Arab!' },
+          { id: 'c4c', type: 'lanes', title: 'Tantangan Navigasi', difficulty: 1, sections: ['open', 'sparse', 'more'], tutorial: true, seed: 41,
+            goal: 'Pindah jalur ke kiri atau kanan. Kumpulkan bintang!' }
+        ] },
+      { id: 'c5', no: 5, type: 'chapter', title: 'Peringatan Es', sub: 'Tantangan', scene: 'night-ocean', pic: 'tk-prop/iceberg-5', picScene: 'night-ocean',
+        goal: 'Hindari gunung es. Kalau menabrak, jawab soal untuk berlayar lagi!',
+        steps: [
+          { id: 'c5a', type: 'story', title: 'Pesan dari Kapal Lain', goal: 'Ada peringatan es!',
+            story: [P('night-ocean', 'Ruang radio menerima pesan dari kapal lain: "Hati-hati, ada banyak gunung es di depan!"', 'Operator radio',
+              [{ k: 'tk-char/officer-boy-binoculars', x: 72, y: 74, s: 44, d: 0.9 }, { k: 'tk-prop/sealed-letter', x: 40, y: 60, s: 16, d: 1.1 }, { k: 'tk-prop/iceberg-5', x: 20, y: 72, s: 26, d: 0.4 }])] },
+          { id: 'c5b', from: 't7', type: 'lanes', title: 'Ladang Es', difficulty: 2, sections: ['sparse', 'more', 'narrow', 'dense'], seed: 57,
+            goal: 'Hindari gunung es. Kalau menabrak, jawab soal lalu berlayar lagi!' }
+        ] },
+      { id: 'c6', no: 6, type: 'chapter', title: 'Tabrakan', sub: 'Peristiwa Besar', scene: 'collision-far', pic: 'tk-key/titanic-bow', picScene: 'collision-far',
+        goal: 'Malam 14 April 1912. Tetap tenang, Kapten membantu.',
+        steps: [
+          { id: 'c6a', from: 't8', type: 'lanes', title: 'Malam 14 April', final: true, difficulty: 2, seed: 1412, goal: 'Kemudi dibantu Kapten. Tetap tenang.' },
+          { id: 'c6b', type: 'cinema', title: 'Tabrakan', scenes: ['IcebergImpact', 'InteriorReaction', 'FloodingCutaway', 'EvacuationTransition'], goal: 'Lihat apa yang terjadi, lalu jawab soalnya.' }
+        ] },
+      { id: 'c7', no: 7, type: 'chapter', title: 'Evakuasi', sub: 'Bertahan & Menolong', scene: 'night-deck', pic: 'tk-prop/life-vest', picScene: 'night-deck',
+        goal: 'Bantu penumpang menuju sekoci!',
+        steps: [
+          { id: 'c7a', from: 't10', type: 'grid', title: 'Cari Dek Sekoci', goal: 'Cari jalan ke dek sekoci!', scene: 'night-deck',
+            board: board(['S.#..', '..#.#', '....G'], 'E', null, { theme: 'deck', blockArt: DECK, easy: true }) },
+          { id: 'c7b', type: 'grid', title: 'Bantu Penumpang', goal: 'Bawakan koper penumpang ke tanda kuning!', scene: 'night-deck',
+            board: board(['Sc.#', '.#..', '...d'], 'E', ['N', 'E', 'S', 'W', 'P', 'D'], { theme: 'deck', blockArt: DECK, itemArt: 'tk-prop/suitcase-2', easy: true }) },
+          { id: 'c7c', type: 'grid', title: 'Ambil Pelampung', goal: 'Ambil pelampung, lalu taruh di tanda kuning!', scene: 'night-deck',
+            board: board(['S.c.', '.#..', '..#d'], 'E', ['N', 'E', 'S', 'W', 'P', 'D'], { theme: 'deck', blockArt: DECK, itemArt: 'tk-prop/life-vest', easy: true }) },
+          { id: 'c7d', type: 'story', title: 'Menuju Sekoci', goal: 'Semua naik sekoci dengan tertib.',
+            story: [P('night-deck', 'Semua memakai pelampung dan antre dengan tertib. Timmy naik ke sekoci bersama sebuah keluarga.', 'Timmy',
+              [{ k: 'fx/lifeboat', x: 62, y: 70, s: 34, d: 0.8 }, { k: 'tk-char/hijab-girl-book', x: 36, y: 78, s: 34, d: 0.95 }, { k: TIMMY, x: 18, y: 78, s: 36, d: 1 }])] }
+        ] },
+      { id: 'c8', no: 8, type: 'chapter', title: 'Sekoci', sub: 'Kerja Sama', scene: 'lifeboat', pic: 'tk-prop/lifeboat', picScene: 'lifeboat',
+        goal: 'Isi sekoci dengan adil dan hitung kursinya!',
+        steps: [
+          { id: 'c8a', from: 't11', type: 'sort', title: 'Logika Sekoci', domain: 'matematika', count: 4, scene: 'lifeboat', goal: 'Isi sekoci dengan adil — keluarga tetap bersama!' },
+          { id: 'c8b', type: 'cinema', title: 'Kursi Sekoci', scenes: ['LifeboatView'], goal: 'Hitung kursi yang masih kosong.' }
+        ] },
+      { id: 'c9', no: 9, type: 'chapter', title: 'Kapal Terbelah', sub: 'Inti Kisah', scene: 'night-ocean', pic: 'tk-prop/porthole-moon', picScene: 'night-ocean',
+        goal: 'Dari sekoci yang aman, Timmy melihat dari kejauhan.',
+        steps: [
+          { id: 'c9a', from: 't12', type: 'cinema', title: 'Dari Kejauhan', scenes: ['ShipBreakSequence', 'FinalDescent'], goal: 'Timmy sudah aman di sekoci.' }
+        ] },
+      { id: 'c10', no: 10, type: 'chapter', title: 'Penyelamatan', sub: 'Harapan & Renungan', scene: 'rescue-dawn', pic: 'tk-prop/blanket-navy', picScene: 'rescue-dawn', fragment: true,
+        goal: 'Kapal penolong datang. Mari belajar dari kisah Titanic.',
+        cheer: 'Kamu berhasil! Kamu menolong banyak orang, belajar hal baru, dan menunjukkan keberanian. Ilmu dan kebaikan membuat dunia lebih cerah.',
+        steps: [
+          { id: 'c10a', type: 'cinema', title: 'Fajar Penyelamatan', scenes: ['RescueDawn'], goal: 'Pagi datang, kapal penolong tiba!' },
+          { id: 'c10b', from: 't13', type: 'quiz', title: 'Berbagi Selimut', domain: 'matematika', count: 3, scene: 'rescue-dawn', goal: 'Bagikan selimut dan hitung penumpang yang selamat.' },
+          { id: 'c10c', type: 'reflection', title: 'Pelajaran dari Titanic', goal: 'Apa yang kita pelajari dari Titanic?',
+            lessons: [
+              { k: 'tk-prop/sealed-letter', t: 'Dengarkan peringatan', s: 'Titanic menerima pesan tentang es. Peringatan penting harus didengarkan.' },
+              { k: 'tk-prop/lifebuoy-5', t: 'Saling menolong', s: 'Banyak orang membantu yang lain naik sekoci dengan tenang dan tertib.' },
+              { k: 'tk-prop/lifeboat', t: 'Aman untuk semua', s: 'Sejak itu, setiap kapal wajib membawa sekoci yang cukup untuk semua orang.' }
+            ],
+            fact: 'Pagi hari 15 April 1912, kapal Carpathia datang menolong dan membawa para penumpang sekoci ke New York.' },
+          { id: 'c10d', type: 'fragment', title: 'Kepingan Kompas', goal: 'Kamu menemukan Kepingan Kompas Waktu!' }
+        ] }
     ]
   }
+  // old level id (t1…t13) -> chapter id, for the save migration (a chapter counts as done when the LAST of
+  // its old levels was done: levels unlocked in order, so the last one done means all were)
+  var TITANIC_LEGACY = { c2: ['t1'], c3: ['t2'], c4: ['t3', 't4', 't5', 't6'], c5: ['t7'], c6: ['t8', 't9'], c7: ['t10'], c8: ['t11'], c9: ['t12'], c10: ['t13'] }
 
   /* ── Worlds 2–14: a complete 6-level arc each, same level types ────────── */
   function arc (o) {
@@ -107,7 +197,7 @@
       captain: { name: 'Perawat Violet', quote: 'Menolong orang lain adalah tugas paling mulia.' },
       intro: 'Britannic adalah saudara Titanic yang menjadi kapal rumah sakit.',
       t: ['Kapal Rumah Sakit', 'Memilah Obat', 'Antar Obat', 'Pintu & Lorong', 'Membantu Pasien', 'Kepingan II'],
-      g: ['Kenali kapal rumah sakit.', 'Hitung dan pilah kotak obat.', 'Ambil kotak obat lalu antar ke dokter!', 'Kelompokkan perlengkapan dengan benar.', 'Bantu pasien dengan jawaban yang tepat.', 'Temukan Kepingan Kompas II!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Hitung dan pilah kotak obat.', 'Ambil kotak obat lalu antar ke dokter!', 'Kelompokkan perlengkapan dengan benar.', 'Jawab soal campuran, lalu lanjut berlayar!', 'Temukan Kepingan Kompas II!'],
       board: board(['S.c.#', '..#..', '...#d'], 'E', ['N', 'E', 'S', 'W', 'P', 'D'], { theme: 'deck', blockArt: ['tk-prop/crate-plain', 'tk-prop/crate-white-star', 'tk-prop/crate-spare-parts'], itemArt: 'tk-prop/suitcase-4' }),
       play: { type: 'sort', domain: 'umum' },
       cards: C(['britannic-1', 'Kapal Rumah Sakit', 'HMHS Britannic dipakai sebagai kapal rumah sakit pada Perang Dunia I untuk merawat orang yang terluka.'],
@@ -117,8 +207,8 @@
       captain: { name: 'Tukang Kayu Henrik', quote: 'Kapal yang indah juga harus seimbang.' },
       intro: 'Kapal Vasa dari Swedia sangat megah — tapi terlalu berat di bagian atas.',
       t: ['Galangan Kapal', 'Pola Hiasan', 'Antar Kayu', 'Seimbang!', 'Angin Bertiup', 'Kepingan III'],
-      g: ['Kenali kapal Vasa.', 'Lanjutkan pola hiasan kapal.', 'Ambil kayu lalu antar ke tukang!', 'Timbang peti dan tong supaya seimbang.', 'Kenapa kapal harus seimbang?', 'Temukan Kepingan Kompas III!'],
-      board: board(['S..c.', '.##..', 'd....'], 'E', ['N', 'E', 'S', 'W', 'P', 'D'], { blockArt: ROCK }),
+      g: ['Jawab soal tentang laut dan kapal.', 'Lanjutkan pola hiasan kapal.', 'Ambil kayu lalu antar ke tukang!', 'Timbang peti dan tong supaya seimbang.', 'Jawab soal campuran, lalu lanjut berlayar!', 'Temukan Kepingan Kompas III!'],
+      board: board(['Sc.#.', '..#..', '..d..'], 'E', ['N', 'E', 'S', 'W', 'P', 'D'], { blockArt: ROCK }),
       play: { type: 'sort', domain: 'matematika' },
       cards: C(['vasa-1', 'Kapal Megah', 'Vasa dibuat untuk raja Swedia dan berlayar pertama kali pada tahun 1628 di Stockholm.'],
         ['vasa-2', 'Terlalu Berat di Atas', 'Vasa terlalu berat di bagian atas sehingga mudah miring saat tertiup angin.'],
@@ -127,7 +217,7 @@
       captain: { name: 'Kapten Woodget', quote: 'Baca angin, atur layar, dan melesatlah!' },
       intro: 'Cutty Sark adalah kapal layar yang sangat cepat, pembawa teh dan wol.',
       t: ['Pelabuhan Teh', 'Arah Angin', 'Rute Pelabuhan', 'Berlayar!', 'Cuaca di Laut', 'Kepingan IV'],
-      g: ['Kenali kapal layar Cutty Sark.', 'Cocokkan panah angin.', 'Keluar dari pelabuhan yang ramai!', 'Atur layar mengikuti angin.', 'Baca simbol cuaca.', 'Temukan Kepingan Kompas IV!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Cocokkan panah angin.', 'Keluar dari pelabuhan yang ramai!', 'Atur layar mengikuti angin.', 'Baca simbol cuaca.', 'Temukan Kepingan Kompas IV!'],
       board: board(['S.#..', '.>...', '...#G'], 'E', null, { blockArt: ROCK }),
       play: { type: 'steer', mode: 'sail', vessel: 'clipper' },
       cards: C(['cuttysark-1', 'Kapal Teh', 'Cutty Sark dibuat pada tahun 1869 untuk membawa teh dari Tiongkok ke Inggris.'],
@@ -137,7 +227,7 @@
       captain: { name: 'Pelaut Tom', quote: 'Pemimpin yang baik mendengarkan kawannya.' },
       intro: 'HMS Victory adalah kapal kayu tua yang kini menjadi museum.',
       t: ['Menjelajah Dek', 'Tugas Awak', 'Antar Pesan', 'Bendera Sinyal', 'Kompas Kuno', 'Kepingan V'],
-      g: ['Kenali HMS Victory.', 'Siapa mengerjakan apa?', 'Bawa pesan ke kapten!', 'Pilah bendera sinyal.', 'Baca arah kompas.', 'Temukan Kepingan Kompas V!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Siapa mengerjakan apa?', 'Bawa pesan ke kapten!', 'Pilah bendera sinyal.', 'Baca arah kompas.', 'Temukan Kepingan Kompas V!'],
       board: board(['S....', '.###.', '....G'], 'E', null, { theme: 'deck', blockArt: BARRELS }),
       play: { type: 'sort', domain: 'logika' },
       cards: C(['victory-1', 'Kapal Kayu Tua', 'HMS Victory diluncurkan pada tahun 1765 dan masih ada sampai sekarang di Portsmouth, Inggris.'],
@@ -157,7 +247,7 @@
       captain: { name: 'Shackleton', quote: 'Bersama-sama, kita pasti bisa pulang.' },
       intro: 'Endurance berlayar ke Antartika yang sangat dingin dan penuh es.',
       t: ['Persiapan', 'Baju Hangat', 'Es Bergerak', 'Menembus Es', 'Hewan Kutub', 'Kepingan VII'],
-      g: ['Kenali kapal Endurance.', 'Pilih pakaian untuk cuaca dingin.', 'Hindari es yang bergerak!', 'Kemudikan kapal di antara es.', 'Kenali hewan kutub.', 'Temukan Kepingan Kompas VII!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Pilih pakaian untuk cuaca dingin.', 'Hindari es yang bergerak!', 'Kemudikan kapal di antara es.', 'Kenali hewan kutub.', 'Temukan Kepingan Kompas VII!'],
       board: board(['S...#', '.#...', '...#G'], 'E', null, { blockArt: ICE, ice: [{ path: [{ x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 2 }, { x: 2, y: 1 }] }] }),
       play: { type: 'steer', mode: 'ice', vessel: 'explorer' },
       cards: C(['endurance-1', 'Ke Antartika', 'Kapal Endurance berangkat pada tahun 1914 menuju Antartika.'],
@@ -167,7 +257,7 @@
       captain: { name: 'Thor', quote: 'Kalau belum dicoba, kita tak pernah tahu.' },
       intro: 'Kon-Tiki adalah rakit kayu yang menyeberangi Samudra Pasifik.',
       t: ['Membuat Rakit', 'Mengapung?', 'Arus Laut', 'Ikuti Arus', 'Bintang Penunjuk', 'Kepingan VIII'],
-      g: ['Kenali rakit Kon-Tiki.', 'Benda apa yang mengapung?', 'Gunakan arus untuk sampai!', 'Kemudikan rakit mengikuti arus.', 'Bintang membantu pelaut.', 'Temukan Kepingan Kompas VIII!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Benda apa yang mengapung?', 'Gunakan arus untuk sampai!', 'Kemudikan rakit mengikuti arus.', 'Bintang membantu pelaut.', 'Temukan Kepingan Kompas VIII!'],
       board: board(['S>>.#', '...v.', '#...G'], 'E', null, { blockArt: ROCK }),
       play: { type: 'steer', mode: 'current', vessel: 'raft' },
       cards: C(['kontiki-1', 'Rakit Kayu', 'Kon-Tiki adalah rakit dari kayu balsa yang berlayar pada tahun 1947.'],
@@ -177,7 +267,7 @@
       captain: { name: 'Peneliti Laut', quote: 'Laut adalah rumah bagi jutaan makhluk.' },
       intro: 'Calypso adalah kapal peneliti yang mempelajari kehidupan laut.',
       t: ['Kapal Peneliti', 'Siapkan Kamera', 'Menyelam', 'Laut Bersih', 'Hewan Laut', 'Kepingan IX'],
-      g: ['Kenali kapal Calypso.', 'Hitung alat penyelam.', 'Temukan jalan di bawah laut!', 'Pilah sampah dan hewan laut.', 'Kenali hewan laut.', 'Temukan Kepingan Kompas IX!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Hitung alat penyelam.', 'Temukan jalan di bawah laut!', 'Pilah sampah dan hewan laut.', 'Kenali hewan laut.', 'Temukan Kepingan Kompas IX!'],
       board: board(['S.#.G', '..#..', '.....'], 'E', null, { blockArt: ROCK }),
       play: { type: 'sort', domain: 'umum' },
       cards: C(['calypso-1', 'Kapal Peneliti', 'Calypso dipakai untuk meneliti laut dan membuat film tentang kehidupan bawah laut.'],
@@ -187,7 +277,7 @@
       captain: { name: 'Pramugara Leo', quote: 'Tepat waktu membuat semua orang senang.' },
       intro: 'Queen Mary adalah kapal penumpang yang mewah dan cepat.',
       t: ['Pelabuhan', 'Membaca Jam', 'Antar Koper', 'Ruang Makan', 'Jadwal Kapal', 'Kepingan X'],
-      g: ['Kenali kapal Queen Mary.', 'Jam berapa kapal berangkat?', 'Ambil koper lalu antar ke kabin!', 'Hitung piring dan gelas.', 'Susun jadwal dengan benar.', 'Temukan Kepingan Kompas X!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Jam berapa kapal berangkat?', 'Ambil koper lalu antar ke kabin!', 'Hitung piring dan gelas.', 'Susun jadwal dengan benar.', 'Temukan Kepingan Kompas X!'],
       board: board(['S.c.#', '..#..', 'd....'], 'E', ['N', 'E', 'S', 'W', 'P', 'D'], { theme: 'deck', blockArt: ['tk-prop/trunk', 'tk-prop/deck-chair', 'tk-prop/rope-coil'] }),
       play: { type: 'sort', domain: 'matematika' },
       cards: C(['queenmary-1', 'Tahun 1936', 'Queen Mary berlayar pertama kali pada tahun 1936 antara Inggris dan Amerika.'],
@@ -197,7 +287,7 @@
       captain: { name: 'Penjaga Monumen', quote: 'Kita mengenang agar kita belajar menjaga perdamaian.' },
       intro: 'Pagi yang tenang di Pearl Harbor. Kapal-kapal berjajar di pelabuhan.',
       t: ['Pagi yang Tenang', 'Pola Sinyal', 'Pesan Pagi', 'Bendera Kapal', 'Mengenang', 'Kepingan XI'],
-      g: ['Kenali kapal USS Arizona.', 'Lanjutkan pola sinyal.', 'Antar pesan pagi!', 'Pilah bendera dan artinya.', 'Mengapa kita mengenang sejarah?', 'Temukan Kepingan Kompas XI!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Lanjutkan pola sinyal.', 'Antar pesan pagi!', 'Pilah bendera dan artinya.', 'Jawab soal campuran, lalu lanjut berlayar!', 'Temukan Kepingan Kompas XI!'],
       board: board(['S....', '.#.#.', '...#G'], 'E', null, { theme: 'deck', blockArt: BARRELS }),
       play: { type: 'sort', domain: 'logika' },
       cards: C(['arizona-1', 'Sebuah Kapal Perang', 'USS Arizona adalah kapal Angkatan Laut Amerika Serikat yang diluncurkan pada tahun 1915.'],
@@ -207,7 +297,7 @@
       captain: { name: 'Pemandu Museum', quote: 'Perdamaian lebih kuat dari apa pun.' },
       intro: 'USS Missouri adalah kapal tempat perjanjian damai ditandatangani.',
       t: ['Menjelajah', 'Sinyal', 'Rute Dek', 'Cocokkan Mesin', 'Hari Damai', 'Kepingan XII'],
-      g: ['Kenali kapal USS Missouri.', 'Arti sinyal kapal.', 'Cari jalan di dek kapal!', 'Cocokkan bagian mesin.', 'Apa arti perdamaian?', 'Temukan Kepingan Kompas XII!'],
+      g: ['Jawab soal tentang laut dan kapal.', 'Arti sinyal kapal.', 'Cari jalan di dek kapal!', 'Cocokkan bagian mesin.', 'Jawab soal campuran, lalu lanjut berlayar!', 'Temukan Kepingan Kompas XII!'],
       board: board(['S.#..', '.....', '#.#.G'], 'E', null, { theme: 'deck', blockArt: BARRELS }),
       play: { type: 'sort', domain: 'logika' },
       cards: C(['missouri-1', 'Kapal Besar', 'USS Missouri adalah kapal besar Angkatan Laut Amerika Serikat yang diluncurkan pada tahun 1944.'],
@@ -228,7 +318,7 @@
       intro: 'Pelabuhan ajaib tempat semua kapal legendaris bertemu.',
       t: ['Pelabuhan Ajaib', 'Ujian Campuran', 'Labirin Waktu', 'Arus & Es', 'Gerbang Terakhir', 'Kompas Utuh'],
       g: ['Selamat datang di Pelabuhan Waktu.', 'Jawab soal dari semua kapal.', 'Pakai semua perintah untuk keluar!', 'Arus dan es sekaligus!', 'Gerbang terakhir menuju rumah.', 'Satukan Kompas Waktu dan pulang!'],
-      board: board(['Sc.#', '..>.', '#...', 'd.#G'], 'E', ['N', 'E', 'S', 'W', 'P', 'D', 'R2'], { blockArt: ICE }),
+      board: board(['Sc..', '..>.', '#...', '.d.G'], 'E', ['N', 'E', 'S', 'W', 'P', 'D', 'R2'], { blockArt: ICE }),
       play: { type: 'steer', mode: 'current', vessel: 'boat' },
       cards: C(['pelabuhan-1', 'Kompas Waktu', 'Semua kepingan kompas sudah terkumpul.'],
         ['pelabuhan-2', 'Pelajaran Kapal', 'Setiap kapal mengajarkan sesuatu: berani, menolong, teliti, dan menjaga perdamaian.'],
@@ -257,6 +347,25 @@
     kamar: ['Kamar Timmy', '—', 'Awal dari semua petualangan', 'Setiap petualangan besar dimulai dari mimpi.']
   }
   WORLDS.forEach(function (w) { var x = SPEC[w.id]; if (x) w.spec = { type: x[0], length: x[1], famous: x[2], quote: x[3], verified: false } })
+  // ease ladder (owner 2026-09-28: "easy to be played, tapi cakep"): the first 3 grid boards of every world
+  // are EASY (only the commands the route needs, forgiving stars, coach on first visit); the very first
+  // grid of the game always shows the coach. The first steer level of every world is the slow, assisted one.
+  var EASY_GRIDS = 3
+  var gameFirstGrid = null
+  // every playable level of a world in play order: a chapter contributes its steps (the chapter itself is
+  // a container, not a level); worlds without chapters return their levels as they are
+  function flat (w) {
+    var out = []
+    ;(w && w.levels || []).forEach(function (lv) { if (lv.type === 'chapter') (lv.steps || []).forEach(function (s) { out.push(s) }); else out.push(lv) })
+    return out
+  }
+  WORLDS.forEach(function (w) {
+    var g = 0, st = 0
+    flat(w).forEach(function (lv) {
+      if (lv.type === 'grid') { lv.gridNo = ++g; if (!gameFirstGrid) gameFirstGrid = lv }
+      if (lv.type === 'steer') lv.steerNo = ++st
+    })
+  })
   var CATS = [['semua', 'Semua Kapal'], ['penjelajahan', 'Penjelajahan'], ['tragedi', 'Tragedi'], ['perang-damai', 'Perang & Damai'], ['sains', 'Sains']]
 
   /* board text -> TKGrid definition */
@@ -281,10 +390,24 @@
     if (b.blockArt) def.blockArt = b.blockArt.slice ? b.blockArt.slice() : b.blockArt
     if (b.itemArt) def.itemArt = b.itemArt
     if (lv.scene) def.scene = lv.scene
+    def.easy = b.easy != null ? !!b.easy : !(lv.gridNo > EASY_GRIDS)
+    def.coach = lv === gameFirstGrid ? 'always' : 'first'
     return def
   }
+  // steer level -> TKSteer level: kid assist on everywhere, the first steer level of a world is the slow one
+  function steer (lv) {
+    return { mode: lv.mode, vessel: lv.vessel, goal: lv.goal, assist: lv.assist !== false, first: lv.steerNo === 1, id: lv.id }
+  }
+  // TKSteer looks a level up by its goal text when the host passes only { mode, vessel, goal }
+  function findSteer (goal, mode) {
+    for (var i = 0; i < WORLDS.length; i++) {
+      var L = flat(WORLDS[i])
+      for (var j = 0; j < L.length; j++) if (L[j].type === 'steer' && L[j].goal === goal && (!mode || L[j].mode === mode)) return steer(L[j])
+    }
+    return null
+  }
 
-  W.TKWorlds = { WORLDS: WORLDS, CATS: CATS, grid: grid,
+  W.TKWorlds = { WORLDS: WORLDS, CATS: CATS, grid: grid, steer: steer, findSteer: findSteer, flat: flat, LEGACY: { titanic: TITANIC_LEGACY },
     get: function (id) { for (var i = 0; i < WORLDS.length; i++) if (WORLDS[i].id === id) return WORLDS[i]; return null } }
   if (typeof module !== 'undefined' && module.exports) module.exports = W.TKWorlds
 })()

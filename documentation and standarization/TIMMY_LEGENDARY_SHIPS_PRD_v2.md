@@ -152,3 +152,43 @@ level, 390x844 / 844x390 / 1024x768, no soft-lock, targets ≥ 56 px), `qa-tk-of
 - **No shop / coins / gems** still holds: tk-ui/btn-shop, anchor-coin, diamond are ingested but never used.
 - Owner assets (2026-09-28): 4 backdrops (tk-scene), 110 props/ships (tk-prop, tk-ship), legend sheet (Timmy,
   bedroom, portal, the 14 legendary ships), 4 more ship sheets, 3 character/UI sheets — all in the shared DB.
+
+## 13. Gap matrix vs latest UI/UX (ui-12 Titanic chapters, 2026-09-28) — before implementing
+Legend: ✔ functional · ◐ partial · ✖ missing. "Where" = current implementation.
+
+| UI/UX feature | Exists | Functional | Where / state | Required action |
+|---|---|---|---|---|
+| World Map | ✔ | ✔ | timmy-kapal.js worldView (islands) | keep |
+| Story intro (comic panels) | ✔ | ✔ | tk-story.js | reuse for captain dialogue scenes |
+| Ship/world selection | ✔ | ✔ | ships()/detail() | keep |
+| **Titanic chapter map** (10 named chapters on parchment map) | ◐ | ◐ | layoutRoute(): 13 numbered levels on a dashed route | restructure Titanic into 10 chapters (steps inside); parchment chapter-map screen |
+| Program the Route + queue | ✔ | ✔ | tk-grid.js | reuse for Evacuation |
+| Forward / Left / Right | ✔ | ✔ | tk-grid F/L/R (+ absolute arrows default) | keep |
+| Pick Up / Drop / Repeat / Clear / GO | ✔ | ✔ | tk-grid P/D/R2/R3, Hapus, JALAN! | keep |
+| **Three-lane top-view navigation** | ✖ | – | tk-steer.js is free steering (wheel), not 3 lanes | NEW tk-lanes.js (LEFT / RIGHT / BOOST, auto-forward, big-ship inertia, lane guides, obstacle director, stars) |
+| **Collision → Knowledge Challenge → Recover** | ✖ | – | steer bumps only slow the ship | NEW TKQuiz.challenge() single-question overlay, called by tk-lanes on impact |
+| Knowledge Challenge (quiz) | ✔ | ✔ | tk-quiz.js mount (separate levels) | expose single-question API |
+| Mathematics / Islamic / Arabic / General / Logic | ✔ | ✔ | tk-questions.js 427 items + generated maths | keep |
+| Hints ladder | ✔ | ✔ | tk-quiz / tk-grid | keep |
+| Adaptive difficulty | ◐ | ◐ | mastery → quiz level; grid/steer not adaptive | lanes difficulty from progress + mastery |
+| In-level collectibles (stars/knowledge tokens) | ◐ | ◐ | stars per level only | lanes collect stars/tokens → reward |
+| Level scoring / Level Complete / rewards | ✔ | ✔ | tk-hub.js reward | feed lanes results (avoided, stars, answers) |
+| Historical facts | ✔ | ✔ | world.cards + reward fact card | add chapter reflection |
+| Achievements / learning progress | ✔ | ✔ | tk-hub room/achievements | keep |
+| Timmy's Room | ◐ | ◐ | tk-hub room (collection hub); not the bedroom-museum view | return-to-room ending shows collected Titanic model |
+| Ship collection / story unlocks / replay | ✔ | ✔ | room, sequential unlocks, replay | keep |
+| Checkpoint / save | ◐ | ◐ | per level only | checkpoints before/after cinematics and between chapter steps |
+| Portrait / mobile layouts | ✔ | ✔ | all screens tested 390x844 / 844x390 / 1280x800 | keep for new parts |
+| **Titanic final unavoidable collision** | ◐ | ◐ | tk-steer mode 'scripted' (free steering) | lanes "no safe corridor": control → assisted → cinematic, captain line, never "failed" |
+| **Titanic cinematic (scenes 01–09)** | ◐ | ◐ | 2–3 static story panels | NEW tk-cinema.js layered canvas engine + TitanicFinalSequence components, skip/replay/resume |
+| Flooding cutaway (educational) | ✖ | – | – | cinema scene with interactive 3+2 question |
+| Evacuation (Program the Route on deck) | ◐ | ◐ | grid t10 deck board | chapter 7 steps: boat deck → passengers → lifejackets → board |
+| Lifeboat logic (seats) | ✔ | ✔ | tk-quiz sort (capacity) | add 20−14 seat-count question + 6 seats light up |
+| Harbor exploration / board / explore ship | ◐ | ◐ | quiz levels t1–t2 | chapter 2–3 as story + quiz + route steps |
+| Rescue + reflection | ◐ | ◐ | t13 quiz + story panel | cinema RescueDawn + reflection card + fragment |
+
+**Cinematic tech choice:** in-engine layered canvas/DOM (`tk-cinema.js`), not Remotion. The game is an offline
+PWA that must pause, skip, resume at checkpoints and branch into questions; a Remotion render would be a large
+pre-rendered video (MBs per minute, no interactivity, no reduced-motion variant). The cinema engine uses the same
+layer model Remotion would (camera, parallax layers, particles, lighting, timed subtitles, audio cues) so the
+composition could still be exported with Remotion later if a trailer is wanted.

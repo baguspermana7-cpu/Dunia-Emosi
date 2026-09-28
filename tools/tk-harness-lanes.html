@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TKLanes harness</title>
+<link rel="icon" href="data:,">
+<!-- &theme=day|sunset|night|polar|deep &ship=<fleet id>|pick &fresh=1 &avatar=… (tk-fleet.js Character Selection)
+     Kept QA harness for games/tk-lanes.js (tools/qa-tk-lanes.mjs). Query:
+     ?final=1 &diff=1..3 &seed=N &rm=1 &muted=0 &scale=<lengthScale> &sections=open,sparse,… &quiz=stub (auto-answer challenges)
+     &manual=1 (do not mount; call window.__mount(level, opts)) &grade=kelas1|kelas2
+     window.__h = handle; window.__done = onDone payloads; window.__chal = onChallenge calls (when quiz=stub).
+     The real TKQuiz.challenge is used unless quiz=stub. TKHub.say is stubbed into window.__said. -->
+<style>
+  @font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}
+  html, body { margin: 0; height: 100%; background: #0b2a4a; overflow: hidden; font-family: 'Fredoka One', system-ui, sans-serif }
+  #host { position: fixed; inset: 0 }
+</style>
+</head>
+<body>
+<div id="host"></div>
+<script src="../games/data/asset-index.js"></script>
+<script src="../games/data/sfx-engine.js"></script>
+<script src="../games/data/tk-art.js"></script>
+<script src="../games/data/tk-questions.js"></script>
+<script src="../games/tk-quiz.js"></script>
+<script src="../games/tk-sea.js"></script>
+<script src="../games/tk-fleet.js"></script>
+<script src="../games/tk-lanes.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search)
+  window.__done = []; window.__chal = []; window.__said = []
+  window.TKHub = window.TKHub || { say: function (t) { window.__said.push(String(t)); return true } }
+  window.__mount = function (level, extra) {
+    if (window.__h) window.__h.destroy()
+    var o = { sfx: { muted: q.get('muted') !== '0' }, reducedMotion: q.get('rm') === '1', world: 'titanic', grade: q.get('grade') || 'kelas2', mastery: 20,
+      onDone: function (r) { window.__done.push(r) } }
+    // fleet (tk-fleet.js): &ship=<id> sails that ship, &ship=pick opens the Character Selection when no ship is
+    // saved for the avatar (&fresh=1 clears it first); no &ship = the legacy drawn hull (ship:false)
+    var sp = q.get('ship')
+    o.ship = sp ? (sp === 'pick' ? undefined : sp) : false
+    o.avatar = q.get('avatar') || 'qa'
+    if (q.get('theme')) o.theme = q.get('theme')
+    if (q.get('fresh') === '1') { try { localStorage.removeItem('tk-fleet-' + o.avatar) } catch (e) {} }
+    if (q.get('quiz') === 'stub') o.onChallenge = function (info) { window.__chal.push(info); return Promise.resolve({ correct: true, tries: 1, hints: 0 }) }
+    if (extra) for (var k in extra) o[k] = extra[k]
+    window.__h = TKLanes.mount(document.getElementById('host'), level, o)
+    return true
+  }
+  var lvl = { seed: +(q.get('seed') || 7), final: q.get('final') === '1' }
+  if (q.get('diff')) lvl.difficulty = +q.get('diff')
+  if (q.get('scale')) lvl.lengthScale = +q.get('scale')
+  if (q.get('sections')) lvl.sections = q.get('sections').split(',')
+  if (lvl.final) { lvl.title = 'Bab 6: Tabrakan'; lvl.goal = 'Ladang es makin rapat…' } else { lvl.title = 'Bab 4: Tantangan Navigasi'; lvl.goal = 'Kemudikan Titanic dan hindari gunung es!' }
+  if (q.get('manual') !== '1') window.__mount(lvl)
+})()
+</script>
+</body>
+</html>

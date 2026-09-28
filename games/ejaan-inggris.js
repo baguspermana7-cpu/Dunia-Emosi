@@ -48,10 +48,27 @@
   }
   var ST = readStore()
   var DEFAULTS = { sfx: true, music: false, voice: true, hint: true }
-  function opt (k) { return (k in ST.opt) ? !!ST.opt[k] : DEFAULTS[k] }
-  function setOpt (k, v) { ST.opt[k] = !!v; writeStore() }
+  /* The Dunia app's Settings > Suara OFF ('dunia-emosi-sound') silences this game too:
+     each sound starts the session off WITHOUT rewriting the child's saved choice, and
+     switching one on here lifts the mute for that sound for the rest of the session. */
+  var GOFF = (function () { try { return localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return false } })()
+    ? { sfx: 1, music: 1, voice: 1 } : {}
+  function opt (k) { if (GOFF[k]) return false; return (k in ST.opt) ? !!ST.opt[k] : DEFAULTS[k] }
+  function setOpt (k, v) { delete GOFF[k]; ST.opt[k] = !!v; writeStore() }
   function starsOf (w) { return ST.stars[w] || 0 }
-  function award (w, n) { if (n > starsOf(w)) { ST.stars[w] = n; writeStore() } }   // best only
+  function award (w, n) { if (n > starsOf(w)) { ST.stars[w] = n; writeStore() } report(w, n) }   // best only
+  /* Mirror each word's stars into the platform progress row ('g27', level = the
+     word's position in the word list) so the world-map node and zone total show
+     them — save-engine keeps the best per level and scopes it to the avatar. */
+  function report (w, n) {
+    try {
+      if (typeof saveLevelProgress !== 'function') return
+      var i = D.WORDS.indexOf(D.find(w)); if (i < 0 || !n) return
+      saveLevelProgress('g27', i + 1, n)
+    } catch (e) {}
+  }
+  // stars earned before the mirror existed: report them once per load (idempotent)
+  for (var sw in ST.stars) if (ST.stars[sw]) report(sw, ST.stars[sw])
   function totalStars () { var t = 0; for (var k in ST.stars) t += ST.stars[k] || 0; return t }
   function earned (pool) { return pool.reduce(function (t, x) { return t + (starsOf(x.w) ? 1 : 0) }, 0) }
 

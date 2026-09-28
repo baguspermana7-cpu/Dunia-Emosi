@@ -1,7 +1,11 @@
 /* ============================================================================
  * tk-story.js — window.TKStory. Cinematic story panels (PRD v2 §2 Story intro, §6 motion).
  *
- * TKStory.play(host, panels, { onDone, title, subtitle, sfx }) -> { destroy }
+ * TKStory.play(host, panels, { onDone, title, subtitle, sfx, say, listen, easy }) -> { destroy }
+ *   say(text)  reads each caption aloud (the app passes TKHub.say, which honours the narration
+ *              setting); the speaker button on the bubble replays it. listen = icon HTML for it.
+ * Easy to play (owner 2026-09-28, players 5–8, many cannot read yet): tap ANYWHERE on the scene
+ * = Lanjut, swipe = next / previous, big caption (>= 20 px), never auto-advances.
  * A panel = { scene, caption, speaker, layers:[{k, x, y, s, d}] } (see tk-worlds.js).
  * Layout follows mockup "STORY INTRO": big scene, speaker bubble, chapter plate, thumbnails
  * strip (landscape) / single card + arrows (portrait), progress dots, Kembali / Lanjut, Lewati.
@@ -35,9 +39,10 @@
     '.tks-dots{display:none;flex:1;justify-content:center;gap:6px}.tks-dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.3)}.tks-dots i.on{background:#5fd0ff;transform:scale(1.25)}' +
     '.tks-btn{min-height:56px;padding:0 22px;border-radius:16px;border:0;font:inherit;font-weight:900;font-size:19px;cursor:pointer;transition:transform .12s ' + EO + '}' +
     '.tks-btn:active{transform:scale(.96)}.tks-next{background:linear-gradient(#FFE15A,#F2B01E);color:#3a2600;box-shadow:0 4px 0 #a86f0a}.tks-back{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35)}' +
-    '.tks-skip{position:absolute;right:10px;top:calc(10px + env(safe-area-inset-top));min-height:44px;padding:0 14px;border-radius:12px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.35);color:#fff;font:inherit;font-weight:800;cursor:pointer;z-index:5}' +
+    '.tks-skip{position:absolute;right:calc(74px + env(safe-area-inset-right));top:calc(10px + env(safe-area-inset-top));min-height:44px;padding:0 14px;border-radius:12px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.35);color:#fff;font:inherit;font-weight:800;cursor:pointer;z-index:5}' +
     '@media (orientation:portrait){.tks-cap{bottom:3%;left:3%;right:3%;max-width:none}}' +
     '@media (prefers-reduced-motion:reduce){.tks *{transition:none!important}}'
+  // Lewati sits left of the host's always-visible sound button (#sndfab, 52 px at the top-right corner)
   CSS += '.tks-logo{position:absolute;left:12px;top:calc(8px + env(safe-area-inset-top));width:clamp(120px,17vw,230px);z-index:4;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))}' +
     '.tks-plate{background:linear-gradient(#f6e3bb,#e2c690);border:0;border-radius:6px;padding:8px 34px 10px;clip-path:polygon(3% 0,97% 4%,100% 50%,97% 96%,3% 100%,0 50%)}' +
     '.tks-plate small{font-size:clamp(12px,1.6vw,16px);font-weight:800}.tks-plate b{font-size:clamp(20px,3.4vw,40px)}.tks-plate i{display:block;font-style:normal;font-size:clamp(11px,1.5vw,16px);opacity:.85}' +
@@ -56,6 +61,18 @@
     '.tks-btn{display:inline-flex;align-items:center;gap:10px}.tks-back{background:rgba(8,12,36,.7)}' +
     '.tks-arr{width:16px;height:16px;border-top:4px solid currentColor;border-right:4px solid currentColor;transform:rotate(45deg);border-radius:2px}.tks-arr.l{transform:rotate(-135deg)}' +
     '@media (orientation:portrait){.tks-dots i{margin:0 5px}.tks-dots i+i::before{width:10px}.tks-btn{padding:0 14px;font-size:17px}.tks-back:not([style*=visible]){display:none}.tks-t{flex:0 0 72%;height:120px}.tks-thumbs{scroll-snap-type:x mandatory}.tks-t{scroll-snap-align:center}.tks-logo{width:118px}.tks-plate{top:calc(104px + env(safe-area-inset-top));max-width:86%}}'
+  CSS += '.tks-cap{font-size:clamp(20px,2.7vw,25px);line-height:1.35;padding-right:70px;min-height:74px}' +
+    '.tks-say{position:absolute;right:8px;top:50%;margin-top:-26px;width:52px;height:52px;border-radius:50%;border:3px solid #fff;background:linear-gradient(#5AA2FF,#1F63D6);box-shadow:0 3px 0 #103A88,0 6px 12px rgba(0,0,0,.3);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .12s ' + EO + '}' +
+    '.tks-say:active{transform:scale(.92)}.tks-say img{width:32px;height:32px;object-fit:contain;pointer-events:none}' +
+    '.tks-say.on{animation:tks-talk .9s ease-in-out infinite}@keyframes tks-talk{50%{box-shadow:0 3px 0 #103A88,0 0 0 8px rgba(95,208,255,.35)}}' +
+    '.tks-stage{cursor:pointer}' +
+    '.tks-next{position:relative;overflow:hidden;isolation:isolate;min-width:150px;justify-content:center;font-size:20px}' +
+    '.tks-next::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.6) 48%,transparent 66%);transform:translateX(-130%);animation:tks-shine 3.4s ' + EO + ' infinite 1.2s}' +
+    '@keyframes tks-shine{0%,60%{transform:translateX(-130%)}100%{transform:translateX(130%)}}' +
+    '@media (orientation:portrait){.tks-cap{padding-right:68px}.tks-next{min-width:140px;font-size:19px}}' +
+    '@media (orientation:landscape) and (max-height:520px){.tks-strip{display:none}.tks-logo{width:104px}.tks-plate{padding:4px 30px 6px}.tks-plate b{font-size:clamp(18px,5.4vh,28px)}.tks-cap{left:auto;right:3%;max-width:min(62%,560px);font-size:20px;padding:12px 66px 10px 16px;min-height:0}.tks-bar{padding-top:6px}}' +
+    '@media (prefers-reduced-motion:reduce){.tks-next::after,.tks-say.on{animation:none}}' +
+    '.rm .tks-next::after,.rm .tks-say.on{animation:none}'
   function injectCss () { if (document.getElementById('tks-css')) return; var s = document.createElement('style'); s.id = 'tks-css'; s.textContent = CSS; document.head.appendChild(s) }
 
   function play (host, panels, opts) {
@@ -78,15 +95,28 @@
     }).join('')
     root.querySelector('.tks-dots').innerHTML = panels.map(function () { return '<i></i>' }).join('')
     function sfx (k) { try { if (opts.sfx && opts.sfx[k]) opts.sfx[k]() } catch (e) {} }
+    function listenIco () { try { return opts.listen || (W.TKIcon ? W.TKIcon('listen') : '') } catch (e) { return '' } }
+    // read the caption aloud; the speaker button glows while the voice is (probably) talking
+    var talkT = 0
+    function speak () {
+      if (!opts.say) return
+      var ok = false; try { ok = opts.say(String(panels[i].caption || '')) } catch (e) {}
+      var b = cap.querySelector('.tks-say'); clearTimeout(talkT)
+      if (b && ok !== false) { b.classList.add('on'); talkT = setTimeout(function () { b.classList.remove('on') }, Math.min(9000, 900 + String(panels[i].caption || '').length * 70)) }
+    }
     function show (n, dir) {
       i = Math.max(0, Math.min(panels.length - 1, n))
       var p = panels[i], rm = reduced()
-      bg.style.background = Art.scene(p.scene)
+      bg.style.background = Art.scene(p.scene); if (W.TKSkel) try { W.TKSkel(bg) } catch (e) {}
       ls.innerHTML = (p.layers || []).map(function (L) {
-        return '<div class="tks-l" data-d="' + (L.d || 1) + '" style="left:' + L.x + '%;top:' + L.y + '%;height:' + L.s + '%;transform:translate(-50%,-100%)"><img src="' + Art.src(L.k) + '" alt="" draggable="false"></div>'
+        return '<div class="tks-l" data-d="' + (L.d || 1) + '" data-x="' + L.x + '" data-s="' + L.s + '" style="left:' + L.x + '%;top:' + L.y + '%;height:' + L.s + '%;transform:translate(-50%,-100%)"><img src="' + Art.src(L.k) + '" alt="" draggable="false"></div>'
       }).join('')
       layers = [].slice.call(ls.children)
-      cap.innerHTML = (p.speaker ? '<i>' + esc(p.speaker) + '</i>' : '') + esc(p.caption)
+      layers.forEach(function (el) { var im = el.firstChild; if (im && !im.complete) im.addEventListener('load', fitLayers) })
+      fitLayers()
+      cap.innerHTML = (p.speaker ? '<i>' + esc(p.speaker) + '</i>' : '') + esc(p.caption) +
+        (opts.say ? '<button class="tks-say" type="button" aria-label="Dengar lagi">' + listenIco() + '</button>' : '')
+      speak()
       if (!rm) {
         A(bg, [{ opacity: 0.4 }, { opacity: 1 }], { duration: 420, easing: EO })
         layers.forEach(function (el) {
@@ -101,6 +131,25 @@
       root.querySelector('.tks-back').style.visibility = i ? 'visible' : 'hidden'; root.querySelector('.tks-back').style.display = i ? '' : (innerHeight > innerWidth ? 'none' : '')
       root.querySelector('.tks-next').textContent = i === panels.length - 1 ? 'Mulai!' : 'Lanjut'
     }
+    // no sprite cropped at the sides (owner, real tablet: the bedroom ran off both edges in portrait): a layer
+    // keeps its height (% of the stage) unless that makes it wider than the stage or pushes it past an edge
+    function fitLayers () {
+      var st = root.querySelector('.tks-stage'), SW = st.clientWidth, SH = st.clientHeight
+      if (!SW || !SH) return
+      // one scale for the whole panel keeps the composition (Timmy stays the right size for his bed)
+      var k = 1
+      layers.forEach(function (el) {
+        var im = el.firstChild, s = +el.getAttribute('data-s') || 0, x = +el.getAttribute('data-x') || 50
+        if (!im || !im.naturalWidth || !im.naturalHeight || !s) return
+        var w = SH * s / 100 * im.naturalWidth / im.naturalHeight
+        var room = Math.min(SW * 0.98, (2 * Math.min(x, 100 - x) / 100 + 0.1) * SW)
+        k = Math.min(k, room / w)
+      })
+      layers.forEach(function (el) { el.style.height = ((+el.getAttribute('data-s') || 0) * k).toFixed(2) + '%' })
+    }
+    function onResize () { if (!dead) fitLayers() }
+    W.addEventListener('resize', onResize)
+    var sro = null; try { if (W.ResizeObserver) { sro = new W.ResizeObserver(onResize); sro.observe(root.querySelector('.tks-stage')) } } catch (e) { sro = null }
     // camera breathing: each layer drifts by its depth (translate property, so it composes with the
     // positioning transform)
     function loop (now) {
@@ -112,17 +161,25 @@
       }
       raf = requestAnimationFrame(loop)
     }
-    function finish () { if (dead) return; dead = true; cancelAnimationFrame(raf); sfx('go'); if (opts.onDone) opts.onDone() }
-    root.querySelector('.tks-next').addEventListener('click', function () { sfx('page'); if (i >= panels.length - 1) finish(); else show(i + 1, 1) })
+    function finish () { if (dead) return; dead = true; W.removeEventListener('resize', onResize); try { if (sro) sro.disconnect() } catch (e) {} cancelAnimationFrame(raf); clearTimeout(talkT); try { opts.say && opts.say('') } catch (e) {} sfx('go'); if (opts.onDone) opts.onDone() }
+    function advance () { sfx('page'); if (i >= panels.length - 1) finish(); else show(i + 1, 1) }
+    root.querySelector('.tks-next').addEventListener('click', advance)
+    cap.addEventListener('click', function (e) { if (e.target.closest('.tks-say')) { e.stopPropagation(); speak() } })
     root.querySelector('.tks-back').addEventListener('click', function () { sfx('page'); show(i - 1, -1) })
     root.querySelector('.tks-skip').addEventListener('click', finish)
     root.querySelector('.tks-thumbs').addEventListener('click', function (e) { var t = e.target.closest('.tks-t'); if (t) { sfx('page'); show(+t.getAttribute('data-i'), 1) } })
     var sx = null
     root.querySelector('.tks-stage').addEventListener('pointerdown', function (e) { sx = e.clientX })
-    root.querySelector('.tks-stage').addEventListener('pointerup', function (e) { if (sx == null) return; var dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 50) { sfx('page'); show(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1) } })
+    // swipe = next / previous; a plain tap anywhere on the scene (not on a button) = Lanjut
+    root.querySelector('.tks-stage').addEventListener('pointerup', function (e) {
+      if (sx == null) return; var dx = e.clientX - sx; sx = null
+      if (Math.abs(dx) > 50) { sfx('page'); show(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); return }
+      if (Math.abs(dx) < 12 && !(e.target.closest && e.target.closest('button'))) advance()
+    })
+    root.querySelector('.tks-stage').addEventListener('pointercancel', function () { sx = null })
     show(0, 1)
     raf = requestAnimationFrame(loop)
-    return { destroy: function () { dead = true; cancelAnimationFrame(raf); host.innerHTML = '' }, index: function () { return i }, next: function () { root.querySelector('.tks-next').click() } }
+    return { destroy: function () { dead = true; W.removeEventListener('resize', onResize); try { if (sro) sro.disconnect() } catch (e) {} cancelAnimationFrame(raf); clearTimeout(talkT); host.innerHTML = '' }, index: function () { return i }, next: function () { root.querySelector('.tks-next').click() } }
   }
   W.TKStory = { play: play }
 })()

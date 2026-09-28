@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TKSteer harness</title>
-<!-- Kept QA harness for games/tk-steer.js (tools/qa-tk-steer.mjs). Query:
+<!-- &theme=day|sunset|night|polar|deep &ship=<fleet id>|pick &fresh=1 &avatar=… (tk-fleet.js Character Selection)
+     Kept QA harness for games/tk-steer.js (tools/qa-tk-steer.mjs). Query:
      ?mode=gates|ice|scripted|sail|current &vessel=… &len=… &seed=… &rm=1 &muted=1 &tl=seconds
+     &cd=0 (no "Siap… Mulai!" countdown) &assist=0 (grown-up steering) &first=1 (slow first level)
      window.__mount(level, opts) re-mounts; window.__h = handle; window.__done = onDone payloads. -->
 <style>
   html, body { margin: 0; height: 100%; background: #0c3656; overflow: hidden; font-family: Nunito, system-ui, sans-serif }
@@ -16,6 +18,9 @@
 <div id="host"></div>
 <script src="../games/data/asset-index.js"></script>
 <script src="../games/data/sfx-engine.js"></script>
+<script src="../games/data/tk-worlds.js"></script>
+<script src="../games/tk-sea.js"></script>
+<script src="../games/tk-fleet.js"></script>
 <script src="../games/tk-steer.js"></script>
 <script>
 (function () {
@@ -24,8 +29,15 @@
   function lib (k) { return window.AssetIndex ? AssetIndex.path(k) : null }
   window.__mount = function (level, extra) {
     if (window.__h) window.__h.destroy()
-    var o = { lib: lib, sfx: { muted: q.get('muted') === '1' }, reducedMotion: q.get('rm') === '1',
+    var o = { lib: lib, sfx: { muted: q.get('muted') === '1' }, reducedMotion: q.get('rm') === '1', countdown: q.get('cd') !== '0',
       onDone: function (r) { window.__done.push(r) } }
+    // fleet (tk-fleet.js): &ship=<id> sails that ship, &ship=pick opens the Character Selection when no ship is
+    // saved for the avatar (&fresh=1 clears it first); no &ship = the legacy drawn hull (ship:false)
+    var sp = q.get('ship')
+    o.ship = sp ? (sp === 'pick' ? undefined : sp) : false
+    o.avatar = q.get('avatar') || 'qa'
+    if (q.get('theme')) o.theme = q.get('theme')
+    if (q.get('fresh') === '1') { try { localStorage.removeItem('tk-fleet-' + o.avatar) } catch (e) {} }
     if (extra) for (var k in extra) o[k] = extra[k]
     window.__h = TKSteer.mount(document.getElementById('host'), level, o)
     return true
@@ -35,6 +47,8 @@
   if (q.get('len')) lvl.length = +q.get('len')
   if (q.get('tl')) lvl.timeLimit = +q.get('tl')
   if (q.get('goal')) lvl.goal = q.get('goal')
+  if (q.get('assist') === '0') lvl.assist = false
+  if (q.get('first') === '1') lvl.first = true
   if (q.get('manual') !== '1') window.__mount(lvl)
 })()
 </script>

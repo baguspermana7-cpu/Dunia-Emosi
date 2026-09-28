@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TKCinema harness</title>
+<link rel="icon" href="data:,">
+<!-- Kept QA harness for games/tk-cinema.js (tools/qa-tk-cinema.mjs). Query:
+     ?part=A|B|full  &speed=3  &rm=1  &muted=1  &startAt=<sceneId>  &stub=0 (built-in chooser instead of the stub)
+     &rs=0.7 (initial render scale)  &manual=1 (do not auto-play; call window.__play(part, extraOpts))
+     window.__h = handle; window.__log = { cp:[], q:[], done:[], say:[] } -->
+<style>
+  html, body { margin: 0; height: 100%; background: #02040c; overflow: hidden; font-family: Nunito, system-ui, sans-serif }
+  #host { position: fixed; inset: 0 }
+</style>
+</head>
+<body>
+<div id="host"></div>
+<script src="../games/data/asset-index.js"></script>
+<script src="../games/data/tk-art.js"></script>
+<script src="../games/tk-cinema.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search)
+  window.__log = { cp: [], q: [], done: [], say: [] }
+  window.__play = function (part, extra) {
+    if (window.__h) window.__h.destroy()
+    var T = TKCinema.TITANIC, seq = part === 'B' ? T.PART_B : part === 'full' ? T.FULL : T.PART_A
+    var o = {
+      speed: +(q.get('speed') || 1), muted: q.get('muted') === '1', reducedMotion: q.get('rm') === '1',
+      startAt: q.get('startAt') || null,
+      renderScale: q.get('rs') ? +q.get('rs') : undefined,
+      adaptive: q.get('adapt') !== '0',
+      onDone: function (r) { window.__log.done.push(r) },
+      onCheckpoint: function (id, info) { window.__log.cp.push(id + ':' + info.phase) },
+      say: function (text, who) { window.__log.say.push((who ? who + ': ' : '') + text) }
+    }
+    if (q.get('stub') !== '0') o.onQuestion = function (qq) {
+      window.__log.q.push(qq.prompt)
+      return new Promise(function (res) { setTimeout(function () { res({ correct: true, choice: qq.answer, stub: true }) }, 250) })
+    }
+    if (extra) for (var k in extra) o[k] = extra[k]
+    window.__h = TKCinema.play(document.getElementById('host'), seq, o)
+    return true
+  }
+  if (q.get('manual') !== '1') window.__play(q.get('part') || 'A')
+})()
+</script>
+</body>
+</html>

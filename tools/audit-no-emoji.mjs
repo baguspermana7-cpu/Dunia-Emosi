@@ -19,7 +19,14 @@ const PAGES = [
   'games/gym-pokemon.html', 'games/mario-pokemon.html', 'games/monster-candy.html',
   'games/pokemon-run.html', 'games/pokemon-birds.html', 'games/pokemon-bawah-laut.html',
   'games/ducky-volley.html', 'games/kuis-matematika.html', 'games/mobil.html',
+  // G27-G30 standalone games (added 2026-09-28; they were never walked)
+  'games/ejaan-inggris.html', 'games/stinky-dirty.html', 'games/garasi-tempur.html',
+  'games/timmy-kapal.html',
 ]
+// STRICT pages were built emoji-free by owner rule: ANY pictographic character in
+// their rendered DOM fails, mapped or not (an unmapped one is not a "gap" there,
+// it is a regression).
+const STRICT = new Set(['games/timmy-kapal.html', 'games/garasi-tempur.html', 'games/stinky-dirty.html', 'games/ejaan-inggris.html'])
 
 // tiny static server
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
@@ -81,10 +88,12 @@ for (const rel of PAGES) {
     if (!gapAgg[ch]) gapAgg[ch] = { count: 0, pages: new Set() }
     gapAgg[ch].count += c; gapAgg[ch].pages.add(rel)
   }
-  const ok = mappedN === 0
-  if (!ok) failPages.push({ rel, mapped: r.mapped })
-  console.log(`${ok ? '✅' : '❌'} ${rel.padEnd(34)} mapped-left=${mappedN}  unmapped(gap)=${unmappedN}`)
-  if (!ok) console.log('     STILL-MAPPED:', JSON.stringify(r.mapped))
+  const strict = STRICT.has(rel)
+  const ok = mappedN === 0 && (!strict || unmappedN === 0)
+  if (!ok) failPages.push({ rel, mapped: r.mapped, unmapped: strict ? r.unmapped : {} })
+  console.log(`${ok ? '✅' : '❌'} ${rel.padEnd(34)} mapped-left=${mappedN}  unmapped(gap)=${unmappedN}${strict ? '  [strict]' : ''}`)
+  if (mappedN) console.log('     STILL-MAPPED:', JSON.stringify(r.mapped))
+  if (strict && unmappedN) console.log('     EMOJI ON AN EMOJI-FREE PAGE:', JSON.stringify(r.unmapped))
   await page.close()
 }
 
@@ -97,5 +106,5 @@ fs.mkdirSync(path.join(ROOT, 'tools/qa-out'), { recursive: true })
 fs.writeFileSync(path.join(ROOT, 'tools/qa-out/emoji-gaps.json'), JSON.stringify({ distinctGaps: gaps.length, gaps }, null, 2))
 
 console.log(`\ngap emoji (unmapped, need art): ${gaps.length} distinct`)
-if (failPages.length) { console.log(`\n❌ FAIL — ${failPages.length} page(s) still show MAPPED emoji (resolver bug)`); process.exit(1) }
+if (failPages.length) { console.log(`\n❌ FAIL — ${failPages.length} page(s) still show MAPPED emoji (resolver bug) or emoji on a strict page`); process.exit(1) }
 console.log('\n✅ zero mapped-emoji remain in rendered DOM (gaps tracked separately)')

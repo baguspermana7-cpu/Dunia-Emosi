@@ -14,6 +14,10 @@
 //      every target >= 44 px; nothing off-screen; no horizontal scroll; Timmy's bubble never
 //      covers the board; Hapus + JALAN! sit inside the "Perintah" panel, JALAN! clear of the
 //      viewport edge, Hapus clear of the Timmy hint avatar; text >= 12 px; no emoji.
+//   D) ease (owner 2026-09-28): chips >= 64 px, slots >= 48, Undo >= 56; live ghost path + orange failing tile +
+//      ghost boat; Undo; idle help pulses the next useful thing (chip / bad route chip / JALAN!) without filling;
+//      coach hand taps the right chip then JALAN!, Lewati, returns after idle, k2 always / others once;
+//      sparkles + star burst; easy boards forgive one extra chip. Shots -> QA_EASE_SHOTS.
 //   C) every TKWorlds grid level mounted like timmy-kapal.js (?w=&lv=): theme class, obstacle
 //      sprites from the level's blockArt, no 404s, layout rules; the deck level t10 is solved
 //      by real taps at every size; chapter card + footer callbacks.
@@ -225,7 +229,7 @@ const worldFails = []
 try {
   const W = require(path.join(ROOT, 'games/data/tk-worlds.js'))
   let n = 0
-  for (const w of W.WORLDS) for (const lv of (w.levels || [])) {
+  for (const w of W.WORLDS) for (const lv of W.flat(w)) {
     if (lv.type !== 'grid') continue
     n++
     const d = W.grid(lv), p = T.validate(d), s = T.shortest(d)
@@ -236,6 +240,39 @@ try {
 } catch (e) { worldFails.push('tk-worlds.js did not load: ' + e.message) }
 if (process.env.QA_SKIP_WORLDS === '1') console.log('(QA_SKIP_WORLDS=1: world boards reported, not gated)')
 else check(!worldFails.length, `TKWorlds grid boards invalid / shortest > 12: ${worldFails.join(' | ')}`)
+
+/* ── A5: ease ladder (owner 2026-09-28 "easy to be played, tapi cakep") ── */
+{
+  check(T.stars(5, 4, true) === 3 && T.stars(7, 4, true) === 2 && T.stars(8, 4, true) === 1 && T.stars(5, 4) === 2, 'forgiving stars: 3 up to shortest+1, 2 up to +3 (strict rule unchanged)')
+  const e = B(['S..', '.#.', '..G'], { tools: ['N', 'E', 'S', 'W', 'P', 'D', 'R2'] }); e.easy = true
+  const Le = T.create(e)
+  check(Le.easy && Le.tools.every(c => Le.solution.includes(c)) && eq(Le.tools, ['E', 'S']) && T.run(e, Le.solution).ok, `easy board keeps only the arrows its route needs, no repeat (${Le.tools})`)
+  check(T.create({ ...e, trim: false }).tools.length === 7, 'easy board with trim:false keeps every tool')
+  check(T.run(e, [...Le.solution, Le.solution[0]]).stars === 3, 'easy board: shortest+1 still earns 3 stars')
+  let pv = T.preview(B(['S#G', '...']), ['S', 'E', 'N'])
+  check(eq(pv.path.map(p => [p.x, p.y]), [[0, 0], [0, 1], [1, 1]]) && pv.bad && pv.bad.idx === 2 && pv.bad.tx === 1 && pv.bad.ty === 0 && !pv.ok, `preview: path + the blocked tile of the failing chip (${JSON.stringify(pv)})`)
+  pv = T.preview(B(['S...G']), ['N'])
+  check(pv.bad && pv.bad.edge === 'N' && pv.bad.x === 0 && pv.path.length === 1, 'preview: edge bump = own tile + direction')
+  pv = T.preview(B(['S>..G']), ['E', 'E', 'E'])
+  check(pv.ok && eq(pv.path.map(p => p.x), [0, 1, 2, 3, 4]), 'preview: a current adds its push tile; ok when the route reaches the goal')
+  check(T.preview(B(['S.G']), []).path.length === 1 && Array.isArray(T.preview(null, ['E', null, 7]).path) && Array.isArray(T.preview({ w: 'x' }, 'no').path), 'preview: empty / garbage never throws')
+  const W = require(path.join(ROOT, 'games/data/tk-worlds.js'))
+  const bad = [], firstIds = []
+  for (const w of W.WORLDS) {
+    let steers = 0
+    for (const lv of W.flat(w)) {
+      if (lv.type === 'steer') { const sl = W.steer(lv); if (sl.assist !== true || sl.first !== (++steers === 1)) bad.push(lv.id + ' steer ' + JSON.stringify(sl)); if (!W.findSteer(lv.goal, lv.mode)) bad.push(lv.id + ' findSteer') }
+      if (lv.type !== 'grid') continue
+      const d = W.grid(lv), L = T.create(d)
+      if (d.coach === 'always') firstIds.push(lv.id)
+      if (lv.gridNo <= 3 && !d.easy) bad.push(lv.id + ' not easy')
+      if (d.easy && !L.tools.every(c => L.solution.includes(c))) bad.push(lv.id + ' has an unneeded tool ' + L.tools)
+      if (d.easy && (L.shortest > 8 || d.w * d.h > 20)) bad.push(`${lv.id} not tiny: ${d.w}x${d.h} shortest ${L.shortest}`)
+    }
+  }
+  check(!bad.length, `worlds ease ladder: ${bad.join(' | ')}`)
+  check(eq(firstIds, ['k2']), `only the very first grid of the game always shows the coach (${firstIds})`)
+}
 
 console.log(`engine: ${passes} checks passed, ${fails.length} failed`)
 
@@ -314,12 +351,17 @@ if (process.env.QA_UI !== '0') {
       if (!inside(sr)) bad.push('slots bar ' + JSON.stringify([sr.left, sr.top, sr.right, sr.bottom].map(Math.round)))
       const hs = document.documentElement.scrollWidth > vw + 1 || document.body.scrollWidth > vw + 1
       const tile = window.__h.state().tile
-      return { bad, small, hs, tile, top: document.querySelector('.tkg-body').getBoundingClientRect().top }
+      // fill the frame (owner, real tablet 2026-09-28): the board uses >= ~85 % of the free play area in its
+      // limiting direction unless the tile hit its 160 px cap
+      const sea = document.querySelector('.tkg-sea').getBoundingClientRect()
+      const fill = board ? Math.max(board.width / sea.width, board.height / sea.height) : 0
+      return { bad, small, hs, tile, fill, top: document.querySelector('.tkg-body').getBoundingClientRect().top }
     })
     check(!r.bad.length, `${tag}: off-screen ${r.bad.slice(0, 4).join(' ; ')}`)
     check(!r.small.length, `${tag}: targets < 44 px ${r.small.slice(0, 4).join(' ; ')}`)
     check(!r.hs, `${tag}: horizontal scroll`)
     check(r.tile >= 36, `${tag}: board tile ${r.tile} px too small`)
+    check(r.tile >= 160 || r.fill >= 0.82, `${tag}: board fills only ${Math.round(r.fill * 100)} % of the play area (tile ${r.tile})`)
     check(Math.round(r.top) >= 70, `${tag}: top inset for host HUD not respected (${r.top})`)
   }
   async function build (p, prog) {
@@ -456,10 +498,10 @@ if (process.env.QA_UI !== '0') {
   {
     const W = require(path.join(ROOT, 'games/data/tk-worlds.js'))
     const levels = []
-    for (const w of W.WORLDS) for (const lv of (w.levels || [])) if (lv.type === 'grid') levels.push([w.id, lv])
+    for (const w of W.WORLDS) for (const lv of W.flat(w)) if (lv.type === 'grid') levels.push([w.id, lv])
     for (const [wid, lv] of levels) {
       const def = W.grid(lv)
-      const sizes = lv.id === 't10' || lv.id === 't4' ? SIZES : [[390, 844]]
+      const sizes = lv.id === 'c7a' || lv.id === 'c4a' ? SIZES : [[390, 844]]
       for (const [w, h] of sizes) {
         const tag = `world ${wid}/${lv.id} ${w}x${h}`
         const p = await open(w, h, `?w=${wid}&lv=${lv.id}`)
@@ -473,13 +515,13 @@ if (process.env.QA_UI !== '0') {
           check(info.scene, `${tag}: no painted scene behind the board`)
           if (def.theme === 'deck' && info.goal) check(info.goal === 'Sekoci', `${tag}: deck goal is ${info.goal}, want the lifeboat`)
           if (SHOTS) await p.screenshot({ path: `${SHOTS}/world-${lv.id}-${w}x${h}.png` })
-          if (lv.id === 't10') {
+          if (lv.id === 'c7a') {
             await build(p, T.solve(def)); await tapSel(p, '.tkg-go')
             const ok = await waitFor(p, () => !!window.__done, 25000)
             check(ok && (await p.evaluate(() => window.__done.stars)) === 3, `${tag}: deck route by taps -> 3 stars`)
           }
-          if (lv.id === 't4' && w === 390) {
-            check(await p.$eval('.tkg-foot > span', e => e.textContent) === 'Level 4 dari 13', `${tag}: footer level text`)
+          if (lv.id === 'c4a' && w === 390) {
+            check(await p.$eval('.tkg-foot > span', e => e.textContent) === 'Level 4 dari 10', `${tag}: footer level text`)
             await tapSel(p, '.tkg-back'); await tapSel(p, '.tkg-next')
             check(eq(await p.evaluate(() => window.__nav), ['back', 'next']), `${tag}: footer callbacks`)
           }
@@ -487,6 +529,180 @@ if (process.env.QA_UI !== '0') {
         } catch (e) { check(false, `${tag}: ${e.message}`) }
         await p.close()
       }
+    }
+  }
+  // chapterCard:false (the host shows its own card in the left column): no duplicate card, no empty side column,
+  // the board grows into the space; a painted backdrop even for a scene with no owner art (kamar = bedroom-night)
+  for (const [w, h] of [[1280, 800], [1340, 800], [1024, 768], [800, 1280], [390, 844]]) {
+    for (const lv of ['k3', 'c4a']) {
+      const tag = `chapterCard:false ${lv} ${w}x${h}`
+      const p = await open(w, h, `?w=${lv[0] === 'k' ? 'kamar' : 'titanic'}&lv=${lv}&cc=0&coach=0`)
+      try {
+        await layoutChecks(p, tag)
+        const r = await p.evaluate(() => ({ chap: !!document.querySelector('.tkg-chap'), side: document.querySelector('.tkg').classList.contains('tkg--side'),
+          bg: getComputedStyle(document.querySelector('.tkg')).backgroundImage, plate: (document.querySelector('.tkg-plate small') || {}).textContent || '' }))
+        check(!r.chap && !r.side, `${tag}: grid chapter card still shown (${JSON.stringify(r)})`)
+        check(/\.(webp|png|jpe?g)/.test(r.bg), `${tag}: no painted scene behind the board (${r.bg.slice(0, 80)})`)
+        check(r.plate.length > 0, `${tag}: plate label (chapter) kept`)
+        if (SHOTS) await p.screenshot({ path: `${SHOTS}/cc0-${lv}-${w}x${h}.png` })
+        // re-layout on resize keeps the program
+        await tapSel(p, '.tkg-pal .tkg-chip')
+        const before = (await state(p)).program
+        await p.setViewport({ width: h, height: w, isMobile: w < 1000, hasTouch: w < 1000 }); await sleep(500)
+        const after = await state(p)
+        check(eq(after.program, before) && after.tile >= 36, `${tag}: rotate keeps the route (${JSON.stringify(after.program)}) + tile ${after.tile}`)
+        await layoutChecks(p, tag + ' rotated')
+        check(!p.__errs.length, `${tag}: errors ${p.__errs.slice(0, 3).join(' | ')}`)
+      } catch (e) { check(false, `${tag}: ${e.message}`) }
+      await p.close()
+    }
+  }
+  // D) ease: big targets, ghost preview, Undo, idle help, coach hand, celebration
+  {
+    const EASE = process.env.QA_EASE_SHOTS || '/tmp/claude-1000/-home-baguspermana7/006f0cec-d381-48ee-882e-83cf434d8153/scratchpad/tk-ease-grid'
+    fs.mkdirSync(EASE, { recursive: true })
+    const relTile = (p, x, y) => p.evaluate((x, y) => { const b = document.querySelector('.tkg-board').getBoundingClientRect(), T = window.__h.state().tile; return { x: b.left + (x + 0.5) * T, y: b.top + (y + 0.5) * T } }, x, y)
+    const inRect = (pt, r, pad = 0) => pt.x >= r.left - pad && pt.x <= r.right + pad && pt.y >= r.top - pad && pt.y <= r.bottom + pad
+    const rectOf = (p, sel) => p.$eval(sel, e => { const b = e.getBoundingClientRect(); return { left: b.left, top: b.top, right: b.right, bottom: b.bottom, w: b.width, h: b.height } })
+    const fingertip = p => p.evaluate(() => { const f = document.querySelector('.tkg-hin .f').getBoundingClientRect(), dn = document.querySelector('.tkg-hand').classList.contains('dn'); return { x: f.left + f.width / 2, y: dn ? f.bottom - 4 : f.top + 4 } })
+    for (const [w, h] of [[390, 844], [844, 390], [1280, 800]]) {
+      const tag = `ease ${w}x${h}`
+      // big targets
+      for (const q of ['?l=0', '?l=2', '?w=kamar&lv=k2&coach=0']) {
+        const p = await open(w, h, q)
+        const sz = await p.evaluate(() => ({ pal: [...document.querySelectorAll('.tkg-pal .tkg-chip')].map(e => Math.min(e.offsetWidth, e.offsetHeight)), slot: [...document.querySelectorAll('.tkg-slot')].map(e => Math.min(e.offsetWidth, e.offsetHeight)), undo: Math.min(document.querySelector('.tkg-undo').offsetWidth, document.querySelector('.tkg-undo').offsetHeight) }))
+        check(Math.min(...sz.pal) >= 64, `${tag} ${q}: palette chips >= 64 px (${Math.min(...sz.pal)})`)
+        check(Math.min(...sz.slot) >= 48, `${tag} ${q}: route slots >= 48 px (${Math.min(...sz.slot)})`)
+        check(sz.undo >= 56, `${tag} ${q}: Undo >= 56 px (${sz.undo})`)
+        await p.close()
+      }
+      // ghost preview + Undo (h1: E,E bumps the ice at (2,0) on chip 2)
+      {
+        const p = await open(w, h, '?l=0')
+        try {
+          const def = await p.evaluate(() => window.__def), sol = T.solve(def)
+          check(!(await state(p)).preview && (await p.$$eval('.tkg-path polyline', e => e.length)) === 0, `${tag}: no ghost path before the first chip`)
+          await build(p, ['E', 'E'])
+          const g = await p.evaluate(() => ({ pts: (document.querySelector('.tkg-path polyline') || { getAttribute: () => '' }).getAttribute('points'), bad: !!document.querySelector('.tkg-path rect.bad'),
+            badXY: document.querySelector('.tkg-path rect.bad') && [+document.querySelector('.tkg-path rect.bad').getAttribute('x'), +document.querySelector('.tkg-path rect.bad').getAttribute('y')],
+            pbad: [...document.querySelectorAll('.tkg-chip--pbad')].map(e => +e.getAttribute('data-idx')), gb: !document.querySelector('.tkg-gb').classList.contains('off') }))
+          check(g.pts === '0.50,0.50 1.50,0.50', `${tag}: ghost path follows the route live (${g.pts})`)
+          check(g.bad && Math.abs(g.badXY[0] - 2.08) < 0.01 && Math.abs(g.badXY[1] - 0.08) < 0.01, `${tag}: failing step tile (2,0) marked soft orange before JALAN! (${g.badXY})`)
+          check(eq(g.pbad, [1]) && g.gb, `${tag}: route chip 2 ringed orange ${JSON.stringify(g.pbad)}, ghost boat shown ${g.gb}`)
+          const gbAt = await p.$eval('.tkg-gb', e => { const b = e.getBoundingClientRect(); return { x: b.left + b.width / 2, y: b.top + b.height / 2 } })
+          const t10 = await relTile(p, 1, 0)
+          check(Math.hypot(gbAt.x - t10.x, gbAt.y - t10.y) < 4, `${tag}: ghost boat waits where the route stops (tile 1,0)`)
+          await tapSel(p, '.tkg-undo')
+          check(eq((await state(p)).program, ['E']), `${tag}: Undo removes only the last chip (${JSON.stringify((await state(p)).program)})`)
+          check((await p.$$eval('.tkg-path rect.bad', e => e.length)) === 0, `${tag}: preview updates after Undo (no orange left)`)
+          await tapSel(p, '.tkg-undo')
+          await build(p, sol)
+          const ok = await p.evaluate(() => ({ ok: document.querySelector('.tkg-path').classList.contains('ok'), last: document.querySelector('.tkg-path polyline').getAttribute('points').split(' ').pop() }))
+          check(ok.ok && ok.last === (def.goal.x + 0.5).toFixed(2) + ',' + (def.goal.y + 0.5).toFixed(2), `${tag}: a working route turns the ghost path gold and ends on the goal (${ok.last})`)
+          await sleep(200)
+          await p.screenshot({ path: `${EASE}/${w}x${h}-ghost-ok.png` })
+          await tapSel(p, '.tkg-undo'); await tapSel(p, '.tkg-undo')
+          await build(p, def.tools.includes('N') ? ['N'] : [])
+          await sleep(200)
+          await p.screenshot({ path: `${EASE}/${w}x${h}-ghost-bad.png` })
+          await layoutChecks(p, tag + ' ghost')
+          check(!p.__errs.length, `${tag} ghost: errors ${p.__errs.slice(0, 3).join(' | ')}`)
+        } catch (e) { check(false, `${tag} ghost: ${e.message}`) }
+        await p.close()
+      }
+      // idle help: pulses the next useful thing, never fills anything in
+      {
+        const p = await open(w, h, '?l=0&idle=900')
+        try {
+          const def = await p.evaluate(() => window.__def), sol = T.solve(def)
+          await sleep(1400)
+          let s = await state(p)
+          check(s.nudge === 'pal:' + sol[0] && s.program.length === 0 && !!(await p.$(`.tkg-pal [data-cmd="${sol[0]}"].tkg-chip--nudge`)), `${tag}: idle 0.9 s -> the next correct chip pulses (${s.nudge}), nothing auto-filled`)
+          await build(p, ['E', 'E'])
+          check((await state(p)).nudge === null, `${tag}: acting clears the pulse`)
+          await sleep(1400)
+          s = await state(p)
+          check(s.nudge === 'slot:1' && eq(s.program, ['E', 'E']), `${tag}: idle with a bad chip -> that route chip pulses to be tapped away (${s.nudge})`)
+          await tapSel(p, '.tkg-trash'); await build(p, sol); await sleep(1400)
+          check((await state(p)).nudge === 'go', `${tag}: idle with a working route -> JALAN! pulses (${(await state(p)).nudge})`)
+          if (w === 390) await p.screenshot({ path: `${EASE}/${w}x${h}-idle-go.png` })
+        } catch (e) { check(false, `${tag} idle: ${e.message}`) }
+        await p.close()
+      }
+      // coach hand: taps the right arrow, then JALAN!; skip-able; back after idle with an empty route
+      {
+        const p = await open(w, h, '?l=0&coach=1&cidle=900')
+        try {
+          const def = await p.evaluate(() => window.__def), sol = T.solve(def)
+          let onChip = false, onGo = false
+          const t0 = Date.now()
+          while (Date.now() - t0 < 6000 && !(onChip && onGo)) {
+            const ft = await fingertip(p), chip = await rectOf(p, `.tkg-pal [data-cmd="${sol[0]}"]`), go = await rectOf(p, '.tkg-go')
+            if (inRect(ft, chip, 4)) { if (!onChip) await p.screenshot({ path: `${EASE}/${w}x${h}-coach-chip.png` }); onChip = true }
+            if (onChip && inRect(ft, go, 4)) { if (!onGo) await p.screenshot({ path: `${EASE}/${w}x${h}-coach-go.png` }); onGo = true }
+            await sleep(120)
+          }
+          check((await state(p)).coach && onChip && onGo, `${tag}: coach hand points at the "${sol[0]}" chip, then at JALAN! (${onChip}, ${onGo})`)
+          check((await state(p)).program.length === 0, `${tag}: the coach demonstrates only (route still empty)`)
+          await layoutChecks(p, tag + ' coach')
+          await tapSel(p, '.tkg-skip'); await sleep(300)
+          check(!(await state(p)).coach && !(await p.$('.tkg-coach.on')), `${tag}: Lewati hides the coach`)
+          await sleep(1400)
+          check((await state(p)).coach, `${tag}: coach returns after idle with an empty route`)
+          await tapSel(p, `.tkg-pal [data-cmd="${sol[0]}"]`)
+          const s = await state(p)
+          check(!s.coach && eq(s.program, [sol[0]]), `${tag}: a real tap ends the coach AND adds the chip (${JSON.stringify(s.program)})`)
+          check(!p.__errs.length, `${tag} coach: errors ${p.__errs.slice(0, 3).join(' | ')}`)
+        } catch (e) { check(false, `${tag} coach: ${e.message}`) }
+        await p.close()
+      }
+      // celebration: sparkle per step, star burst on the win; easy t4 forgives one extra chip
+      {
+        const p = await open(w, h, '?w=titanic&lv=c4a&coach=0')
+        try {
+          const def = await p.evaluate(() => window.__def), sol = T.solve(def)
+          check(eq((await state(p)).tools, T.create(def).tools) && (await state(p)).tools.every(c => sol.includes(c)), `${tag}: easy board palette = only the needed arrows (${(await state(p)).tools})`)
+          await build(p, [...sol, sol[0]]); await tapSel(p, '.tkg-go')
+          let spk = 0, conf = 0, shot = false
+          const t0 = Date.now()
+          while (Date.now() - t0 < 15000 && !(await p.evaluate(() => !!window.__done))) {
+            const c = await p.evaluate(() => [document.querySelectorAll('.tkg-spk').length, document.querySelectorAll('.tkg-conf').length])
+            spk = Math.max(spk, c[0]); conf = Math.max(conf, c[1])
+            if (c[1] && !shot) { await sleep(300); await p.screenshot({ path: `${EASE}/${w}x${h}-win-burst.png` }); shot = true }
+            await sleep(80)
+          }
+          const res = await p.evaluate(() => window.__done)
+          check(spk > 0 && conf >= 10, `${tag}: sparkles on good steps (${spk}) + star burst on the win (${conf})`)
+          check(res && res.stars === 3 && res.moves === sol.length + 1, `${tag}: easy board forgives one extra chip -> 3 stars (${JSON.stringify(res)})`)
+          check(!p.__errs.length, `${tag} celebrate: errors ${p.__errs.slice(0, 3).join(' | ')}`)
+        } catch (e) { check(false, `${tag} celebrate: ${e.message}`) }
+        await p.close()
+      }
+    }
+    // coach modes: k2 always, a 'first' level once per browser; reduced motion = no sparkles, coach still works
+    {
+      const W = require(path.join(ROOT, 'games/data/tk-worlds.js'))
+      for (let i = 0; i < 2; i++) {
+        const p = await open(390, 844, '?w=kamar&lv=k2'); await sleep(900)
+        check((await state(p)).coach, `k2 visit ${i + 1}: the very first grid always shows the coach`)
+        if (i === 0) await p.screenshot({ path: '/tmp/claude-1000/-home-baguspermana7/006f0cec-d381-48ee-882e-83cf434d8153/scratchpad/tk-ease-grid/390x844-k2-coach.png' })
+        await p.close()
+      }
+      { const p = await open(390, 844, '?l=0'); await p.evaluate(() => localStorage.clear()); await p.close() }
+      const seen = []
+      for (let i = 0; i < 2; i++) { const p = await open(390, 844, '?w=titanic&lv=c4a'); await sleep(900); seen.push((await state(p)).coach); await p.close() }
+      check(eq(seen, [true, false]), `t4: coach on the first visit only (${seen})`)
+      const p = await open(390, 844, '?w=kamar&lv=k2&rm=1')
+      await sleep(900)
+      check((await state(p)).coach, 'reduced motion: coach still shown')
+      await tapSel(p, '.tkg-pal [data-cmd="E"]'); await build(p, ['E', 'E', 'E']); await tapSel(p, '.tkg-go')
+      let spk = 0
+      const t0 = Date.now()
+      while (Date.now() - t0 < 12000 && !(await p.evaluate(() => !!window.__done))) { spk = Math.max(spk, await p.$$eval('.tkg-spk', e => e.length)); await sleep(80) }
+      check(spk === 0 && (await p.evaluate(() => window.__done && window.__done.stars)) === 3, `reduced motion: no flying sparkles (${spk}), still 3 stars`)
+      check(!p.__errs.length, `rm ease: errors ${p.__errs.join(' | ')}`)
+      void W
+      await p.close()
     }
   }
   await browser.close()

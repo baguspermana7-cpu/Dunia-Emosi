@@ -1180,6 +1180,9 @@ function showScreen(id) {
     initWelcomeParticles()
     refreshWelcomeBadges()
   }
+  // The landing "PILIH GAME" button opens the map without buildMenuHeader(), so
+  // after returning from a standalone game the node stars would stay blank.
+  if (id === 'screen-menu') renderWorldMapStars()
   // Backsound: play on menu/landing screens, pause during gameplay
   bgMusicToggle(MUSIC_SCREENS.has(id))
 }
@@ -2088,19 +2091,50 @@ function buildMenuHeader() {
   const banner=document.getElementById('total-stars-banner')
   if(state.mode==='duo'){banner.style.display='flex';const total=state.players[0].stars+state.players[1].stars;banner.innerHTML=`<span class="tsb-label">Total Bintang Hari Ini ✨</span><span class="tsb-value">⭐ ${total}</span>`}
   else banner.style.display='none'
-  // Update per-game best stars display on world map nodes
+  renderWorldMapStars()
+}
+
+// World-map star labels + zone totals.
+// Games are ENUMERATED from the map markup (every `gstars-<id>-lbl`), not a hand
+// list: the old hardcoded list silently skipped every standalone game added after
+// it (G21, G25–G30), so their nodes never showed a star however well a child did.
+// Two stores feed it, both avatar-scoped through pkey():
+//   best-stars  — in-app games: best single-session result (showResult)
+//   progress    — standalone games: per-level stars written by save-engine's
+//                 saveLevelProgress() (row 'g<id>'; G28–G30 once wrote a bare
+//                 numeric row '<id>', read too so existing saves still count).
+// Node label = best result (capped 5), zone total = every star earned in the zone.
+function mapGameStars(id, bestStars, prog) {
+  let best = Number(bestStars[id]) || 0, total = best
+  const perLevel = {}
+  for (const row of [prog['g' + id], prog[String(id)]]) {
+    const st = row && row.stars
+    if (!st || typeof st !== 'object') continue
+    for (const lv in st) perLevel[lv] = Math.max(perLevel[lv] || 0, Number(st[lv]) || 0)
+  }
+  let sum = 0
+  for (const lv in perLevel) { sum += perLevel[lv]; best = Math.max(best, perLevel[lv]) }
+  return { best: Math.min(best, 5), total: Math.max(total, sum) }
+}
+function renderWorldMapStars() {
   try {
-    const bestStars=JSON.parse(localStorage.getItem(pkey('best-stars'))||'{}')
-    const gameIds=[1,2,3,4,5,6,7,8,9,10,11,12,13,'13b','13c',14,15,16,17,18,19,20,22,23,24]
-    gameIds.forEach(g=>{
-      const best=bestStars[g]||0
-      const stars=best>0?'⭐'.repeat(Math.min(best,5)):''
-      // Update hidden legacy div
-      const el=document.getElementById('gstars-'+g); if(el) el.textContent=stars
-      // Update visible star label in new world map
-      const lbl=document.getElementById('gstars-'+g+'-lbl'); if(lbl) lbl.textContent=stars
+    const bestStars = JSON.parse(localStorage.getItem(pkey('best-stars')) || '{}')
+    const prog = loadProgress()
+    document.querySelectorAll('[id^="gstars-"][id$="-lbl"]').forEach(lbl => {
+      const id = lbl.id.slice(7, -4)
+      const s = mapGameStars(id, bestStars, prog)
+      const txt = s.best > 0 ? '⭐'.repeat(s.best) : ''
+      lbl.textContent = txt
+      const legacy = document.getElementById('gstars-' + id); if (legacy) legacy.textContent = txt
+      lbl.dataset.total = String(s.total)
     })
-  }catch(e){}
+    document.querySelectorAll('[id^="gstars-zone-"]').forEach(z => {
+      const zone = z.closest('.wmap-zone')
+      let t = 0
+      if (zone) zone.querySelectorAll('[id^="gstars-"][id$="-lbl"]').forEach(l => { t += Number(l.dataset.total) || 0 })
+      z.textContent = t > 0 ? '⭐ ' + t : '⭐'
+    })
+  } catch (e) { console.warn('[map] stars:', e) }
 }
 
 // ================================================================
@@ -7465,6 +7499,15 @@ window.addEventListener('pageshow', function(e) {
       } catch(_) {}
     }
   }
+  // Standalone games that save through save-engine write progress themselves, so
+  // their session result is only a hand-off marker; drop it so it cannot linger
+  // into a later visit and be mistaken for a fresh result.
+  for (const gn of [23, 24, 25, 27, 28, 29, 30]) {
+    try { sessionStorage.removeItem(`g${gn}Result`); sessionStorage.removeItem(`${gn}Result`) } catch (_) {}
+  }
+  // Returning from a standalone game via bfcache restores the OLD map DOM: the
+  // stars a child just earned would not show until the next full load.
+  if (e.persisted) { try { renderWorldMapStars() } catch (_) {} }
   // Refresh level select if returning from bfcache
   if (e.persisted && state.currentGame) {
     try { openLevelSelect(state.currentGame) } catch(_) {}

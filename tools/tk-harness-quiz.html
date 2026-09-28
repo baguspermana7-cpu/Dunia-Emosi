@@ -8,7 +8,10 @@
 <!-- Kept harness for tools/qa-tk-questions.mjs: mounts TKQuiz sets by URL (?set=math5|ladder|arab|arrange|sort|campur)
      over a fake 70 px host HUD, and records onDone results in window.__tkDone.
      Extra params: scene=<TKArt scene key> (backdrop), topic=<goal line>, hints=0 (parent setting off),
-     back=1 (wire a Kembali handler -> window.__tkBack), world=<id> for campur. -->
+     back=1 (wire a Kembali handler -> window.__tkBack), world=<id> for campur,
+     easy=0|1 (force easy mode; default = grade/mastery rule), grade=kelas1|kelas2|adaptif, ra=1 (readAloud two-tap),
+     tut=0|1 (sort tutorial), set=easy (a Kelas-1 spec built by the engine). window.TKHub.say is stubbed:
+     every narrated line lands in window.__said. -->
 <style>
 @font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}
 html,body{margin:0;height:100%;background:#0E3A66}
@@ -26,6 +29,8 @@ body{background:linear-gradient(#7FC4F0 0%,#BFE3F7 38%,#2E7FBF 39%,#11497E 100%)
 <script src="../games/data/tk-questions.js"></script>
 <script src="../games/tk-quiz.js"></script>
 <script>
+window.__said = []
+window.TKHub = window.TKHub || { say: function (t) { window.__said.push(String(t)); return true } };
 (function () {
   var P = new URLSearchParams(location.search), name = P.get('set') || 'math5'
   var host = document.getElementById('host'), r = TKQuiz.rng(+(P.get('seed') || 7))
@@ -35,6 +40,10 @@ body{background:linear-gradient(#7FC4F0 0%,#BFE3F7 38%,#2E7FBF 39%,#11497E 100%)
   if (P.get('topic')) opts.topic = P.get('topic')
   if (P.get('hints') === '0') opts.hints = false
   if (P.get('back') === '1') opts.onBack = function () { window.__tkBack = (window.__tkBack || 0) + 1 }
+  if (P.get('easy') === '1' || P.get('easy') === '0') opts.easy = P.get('easy') === '1'
+  if (P.get('grade')) opts.grade = P.get('grade')
+  if (P.get('ra') === '1') opts.readAloud = true
+  if (P.get('tut') === '1' || P.get('tut') === '0') opts.tutorial = P.get('tut') === '1'
   var byId = function (id) { var q = TKQuestions.items.filter(function (o) { return o.id === id })[0]; return Object.assign({}, q, { choices: q.choices.slice() }) }
   var sets = {
     // 5 math questions, one per presentation idea (objects + ship context, clock, groups, two-step)
@@ -44,6 +53,7 @@ body{background:linear-gradient(#7FC4F0 0%,#BFE3F7 38%,#2E7FBF 39%,#11497E 100%)
     arab: function () { return [byId('ar-pw-14'), byId('ar-wp-21'), byId('ar-ls-01'), byId('ar-wc-2')] },
     arrange: function () { return [byId('ar-ar-01')] },
     curated: function () { return [byId('lg-pt-1'), byId('um-02'), byId('is-40'), byId('lg-od-2')] },
+    easy: function () { return { domain: 'matematika', world: 'titanic', count: 4, seed: +(P.get('seed') || 5), grade: 'kelas1' } },
     campur: function () { return { domain: 'campur', world: P.get('world') || 'titanic', count: 5, seed: +(P.get('seed') || 11), islam: P.get('islam') !== '0' } }
   }
   window.__tk = { opts: opts }

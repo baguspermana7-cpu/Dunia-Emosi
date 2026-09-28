@@ -19,6 +19,10 @@ const PAGES = [
   { pg:'games/lokomotif-pemberani.html',kind:'train'  },
   { pg:'games/selamatkan-kereta.html', kind:'train'   },
   { pg:'games/museum-kereta.html',     kind:'train'   },
+  // standalone games that load the same shared sfx/vfx/save engines (added 2026-09-28)
+  { pg:'games/kuis-matematika.html',   kind:'standalone' },
+  { pg:'games/garasi-tempur.html',     kind:'standalone' },
+  { pg:'games/timmy-kapal.html',       kind:'standalone' },
 ];
 const CHANGED = /sfx-engine\.js|quiz-engine\.js|math-rules\.js|vfx-engine\.js|explosion-fx\.js|assets\/sfx\/crash\.mp3|assets\/vfx\//;
 // noise we ignore (pre-existing, cross-origin, optional assets)
@@ -53,5 +57,5 @@ results.sort((a,b)=>a.pg.localeCompare(b.pg));
 for(const r of results){
   console.log((r.ok?'✅':'❌')+' ['+r.kind+'] '+r.pg.replace('games/','')+(r.ok?'':'  '+ (r.changed404.length?('SHARED-404: '+r.changed404.join(','))+' ':'') + r.errs.join(' | ')));
 }
-console.log('\n'+(bad?bad+' game(s) with problems':'ALL '+results.length+' POKÉMON + TRAIN GAMES CLEAN — 0 console errors, 0 shared-file 404s'));
+console.log('\n'+(bad?bad+' game(s) with problems':'ALL '+results.length+' POKÉMON + TRAIN + STANDALONE GAMES CLEAN — 0 console errors, 0 shared-file 404s'));
 process.exit(bad?1:0);

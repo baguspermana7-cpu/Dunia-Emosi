@@ -35,6 +35,10 @@
   }
   function saveSet () { try { localStorage.setItem(SKEY, JSON.stringify(SET)) } catch (e) {} }
   var P = load(), SET = loadSet()
+  // The Dunia app's Settings > Suara OFF ('dunia-emosi-sound') silences this game too:
+  // the session starts quiet WITHOUT rewriting the saved choices, and turning a sound
+  // on here (speaker button / parent toggle) lifts it for the rest of the session.
+  var GOFF = (function () { try { return localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return false } })()
   function reduced () { return SET.rm || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) }
   function applyRM () { document.documentElement.classList.toggle('rm', !!SET.rm) }
   applyRM()
@@ -47,7 +51,7 @@
   // moment a clip would START, so a queued timer that fires after muting stays silent.
   //   auto: narrate as the story plays; tap: only inside a tap the child made (speaker
   //   replay run); parent/self or narration OFF: never.
-  function voiceActive () { return SET.voice && (SET.mode === 'auto' || SET.mode === 'tap') }
+  function voiceActive () { return !GOFF && SET.voice && (SET.mode === 'auto' || SET.mode === 'tap') }
   function mayNarrate () { return voiceActive() && (SET.mode === 'auto' || tapRun > 0) }
   function say (key) {
     // Resolves when the clip ends, fails, is skipped — or is stopped by muting.
@@ -96,7 +100,7 @@
     g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t0 + dur); o.connect(g); g.connect(c.destination); o.start(c.currentTime + t0); o.stop(c.currentTime + t0 + dur + 0.05)
   }
   function sfx (n) {
-    if (!SET.sfx) return
+    if (!SET.sfx || GOFF) return
     try {
       if (n === 'tap') tone(660, 0, 0.06, 'triangle', 0.07)
       else if (n === 'drop') { tone(520, 0, 0.08, 'triangle', 0.1); tone(780, 0.07, 0.1, 'triangle', 0.08) }
@@ -108,7 +112,7 @@
   // gentle ambient bed (optional, off by default; ducks under narration via low volume)
   var mus = null
   function music (onOff) {
-    if (!onOff || !SET.music) { if (mus) { try { mus.stop() } catch (e) {} mus = null } return }
+    if (!onOff || !SET.music || GOFF) { if (mus) { try { mus.stop() } catch (e) {} mus = null } return }
     if (mus) return
     var c = ctx(); if (!c) return
     var g = c.createGain(); g.gain.value = 0.025; g.connect(c.destination)
@@ -221,7 +225,7 @@
     P.sessions.push({ t: Date.now(), world: w.key, right: SES.right, helped: SES.helped })
     if (P.sessions.length > 60) P.sessions = P.sessions.slice(-60)
     save()
-    try { if (window.saveLevelProgress) saveLevelProgress(28, 1, stars) } catch (e) {}
+    try { if (window.saveLevelProgress) saveLevelProgress('g28', D.WORLDS.indexOf(w) + 1, stars) } catch (e) {}   // one level per world; 'g28' = main-app row name
     $('scr-done').style.backgroundImage = worldBg(w)
     $('d-stars').innerHTML = [0, 1, 2].map(function (k) { return '<img src="' + lib(k < stars ? 'game/star' : 'game/star') + '" alt="" style="' + (k < stars ? '' : 'filter:grayscale(1);opacity:.35') + '">' }).join('')
     $('d-sticker').src = lib(w.icon)
@@ -268,7 +272,7 @@
   }
   document.querySelectorAll('[data-opt]').forEach(function (b) {
     b.addEventListener('click', function () {
-      var k = b.dataset.opt; SET[k] = !SET[k]; saveSet(); b.classList.toggle('on', SET[k]); b.setAttribute('aria-pressed', SET[k])
+      var k = b.dataset.opt; SET[k] = !SET[k]; saveSet(); if (SET[k] && k !== 'rm') GOFF = false; b.classList.toggle('on', SET[k]); b.setAttribute('aria-pressed', SET[k])
       if (k === 'rm') applyRM(); if (k === 'music') music(SET.music); if (k === 'voice') applyVoice()
     })
   })
@@ -303,7 +307,7 @@
     // Turning it on from "Dibacakan Orang Tua"/"Baca Sendiri" switches to Baca Otomatis.
     sfx('tap')
     if (voiceActive()) SET.voice = false
-    else { SET.voice = true; if (SET.mode !== 'auto' && SET.mode !== 'tap') SET.mode = 'auto' }
+    else { GOFF = false; SET.voice = true; if (SET.mode !== 'auto' && SET.mode !== 'tap') SET.mode = 'auto' }
     saveSet(); applyVoice()
   })
   onc('btn-quit', function () { $('ov-quit').classList.add('show') })

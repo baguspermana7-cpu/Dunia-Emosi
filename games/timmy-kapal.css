@@ -74,7 +74,7 @@ body.story-on .play-hud .lvchip,body.story-on .goalbar,body.story-on .journal,bo
 .rw-earn b{display:block;font-size:20px;color:#FFE08A}
 .rw-frag:empty{display:none}
 .rw-frag{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,rgba(255,210,90,.25),transparent);border-radius:12px;padding:8px;font-weight:800;text-align:left}
-.rw-frag .tkc{width:56px;height:56px;animation:spin 6s linear infinite}
+.rw-frag .tkcmp{width:56px;height:56px;animation:spin 6s linear infinite}
 .rw-btns{display:flex;gap:8px;justify-content:center}
 .rw-btns .btn{flex:1;padding:0 12px;font-size:17px;white-space:nowrap}
 
@@ -90,7 +90,7 @@ body.story-on .play-hud .lvchip,body.story-on .goalbar,body.story-on .journal,bo
 .model img{width:100%;height:60px;object-fit:contain;filter:drop-shadow(0 6px 5px rgba(0,0,0,.45))}
 .model b{display:block;font-size:12px}.model.no img{filter:brightness(0) opacity(.35)}
 .compass-big{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px}
-.compass-big .tkc{width:min(70vw,300px);height:min(70vw,300px)}
+.compass-big .tkcmp{width:min(70vw,300px);height:min(70vw,300px)}
 .hcard{background:#f6ecd4;color:#3a2a14;border-radius:12px;padding:10px 12px;border:2px solid #c9a466;margin-bottom:8px}
 .hcard b{display:block;font-size:16px}.hcard.no{background:#5a4c38;color:#b8aa90}
 .prog{display:flex;flex-direction:column;gap:10px}
@@ -117,10 +117,12 @@ body.story-on .play-hud .lvchip,body.story-on .goalbar,body.story-on .journal,bo
 /* play: chapter panel (landscape only, mockups ui-05/07/08) */
 .chapter{display:none}
 @media (orientation:landscape) and (min-width:900px){
-  .chapter{display:flex;flex-direction:column;gap:6px;position:absolute;z-index:18;left:10px;top:calc(76px + var(--sat));width:210px;padding:8px}
-  .play-host.with-chapter{left:230px}
+  .chapter{display:flex;flex-direction:column;gap:6px;position:absolute;z-index:18;left:10px;top:calc(76px + var(--sat));width:188px;padding:8px}
+  .play-host.with-chapter{left:204px}
 }
-.chapter .cimg{height:96px;border-radius:10px;background-size:cover;display:grid;place-items:center;overflow:hidden}.chapter .cimg img{width:96%;height:92%;object-fit:contain}
+.chapter .cimg{position:relative;aspect-ratio:16/10;border-radius:10px;background-size:cover!important;background-position:center bottom!important;overflow:hidden}
+/* the whole sprite is always visible: absolutely placed box + contain, anchored at the bottom (owner 2026-09-28: "Gambar timmy terpotong") */
+.chapter .cimg img{position:absolute;left:6%;right:6%;bottom:4%;top:8%;width:88%;height:88%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}
 .chapter h3{margin:0;font-size:17px}.chapter small{color:var(--ink2);font-weight:800}
 .chapter ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
 .chapter li{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;padding:4px 6px;border-radius:8px;background:rgba(255,255,255,.05)}
@@ -164,9 +166,9 @@ body.story-on .play-hud .lvchip,body.story-on .goalbar,body.story-on .journal,bo
 .rw-stars i .tk-ico--dim{filter:grayscale(1);opacity:.3}
 .rw-list li i{background:rgba(255,255,255,.12)}.rw-list li i .tk-ico{width:17px;height:17px}
 .journal .tk-ico{width:36px;height:36px}
-.tkc{display:inline-grid;place-items:center;flex:none;border-radius:50%;background:conic-gradient(#FFD23F var(--p),rgba(255,255,255,.1) 0);box-shadow:0 0 0 3px #E8B64A,0 6px 14px rgba(0,0,0,.35)}
-.tkc .tk-ico{width:78%;height:78%}
-.tkc.glow{box-shadow:0 0 0 3px #FFE35A,0 0 20px rgba(255,227,90,.75)}
+.tkcmp{display:inline-grid;place-items:center;flex:none;border-radius:50%;background:conic-gradient(#FFD23F var(--p),rgba(255,255,255,.1) 0);box-shadow:0 0 0 3px #E8B64A,0 6px 14px rgba(0,0,0,.35)}
+.tkcmp .tk-ico{width:78%;height:78%}
+.tkcmp.glow{box-shadow:0 0 0 3px #FFE35A,0 0 20px rgba(255,227,90,.75)}
 
 body.story-on .play-host.with-chapter{left:0}
 body.story-on .play-hud{justify-content:flex-end}
@@ -465,3 +467,184 @@ body.story-on #btn-pause{display:none}
 .hcard .tease{display:block;filter:blur(5px);opacity:.75;pointer-events:none}
 .hcard em{display:flex;align-items:center;gap:6px;margin-top:4px;font-style:normal;font-weight:800;font-size:13px;color:#F3E6C8}
 .hcard em .tk-ico{width:18px;height:18px}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * EASY + CAKEP pass (2026-09-28): one-tap flow, guidance hand, "Ayo lanjut!" card,
+ * scene skeletons, primary-button shine, screen entrance, reduced-motion = fades.
+ * ════════════════════════════════════════════════════════════════════════ */
+.scr.active{animation:scrin .24s var(--ease)}
+@keyframes scrin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes scrfade{from{opacity:0}}
+.btn:focus-visible,.ibtn:focus-visible,.tile:focus-visible,.lvchip:focus-visible{outline:3px solid #FFE45A;outline-offset:3px}
+.b-blue:active,.b-gold:active{transform:scale(.96)}
+/* primary: a soft light sweep every few seconds */
+.btn.shine{position:relative;overflow:hidden;isolation:isolate}
+.btn.shine::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.6) 48%,transparent 66%);transform:translateX(-130%);animation:shine 3.8s var(--ease) infinite 1s}
+@keyframes shine{0%,62%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+#btn-start{gap:12px;text-align:left}
+#btn-start .st-l{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;min-width:0}
+#btn-start .st-l small{font-family:'Nunito','Segoe UI',system-ui,sans-serif;font-weight:900;font-size:14px;letter-spacing:0;color:#6b4300;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#btn-start .st-l small:empty{display:none}
+#btn-start>.chev{width:14px;height:14px;border-width:4px;margin-left:4px}
+@media (orientation:landscape) and (max-height:520px){#btn-start .st-l small{font-size:13px}}
+.home-timmy{animation:bob 5.2s ease-in-out infinite}
+/* the level chip is a button: tap = hear the goal again */
+.lvchip{min-height:44px;border:2px solid var(--rim);color:#fff;cursor:pointer;display:inline-flex;align-items:center;transition:transform .12s var(--ease)}
+.lvchip:active{transform:scale(.96)}
+/* scene skeleton (opacity only) + fade-in */
+.tk-ld{background:linear-gradient(160deg,#27498f,#122a62)!important;animation:tkld .9s ease-in-out infinite alternate!important}
+.tk-ld>*{visibility:hidden}
+@keyframes tkld{from{opacity:.55}to{opacity:1}}
+.tk-in{animation:tkin .36s var(--ease)}
+@keyframes tkin{from{opacity:.25}}
+/* guidance hand: drawn in CSS (no emoji / glyph); fingertip sits on the target centre */
+.tk-hand{position:fixed;left:0;top:0;width:0;height:0;z-index:9450;pointer-events:none;transition:opacity .2s var(--ease);animation:scrfade .3s var(--ease)}
+.tk-hand i{position:absolute;display:block;font-style:normal}
+.tk-hand .ring{left:-24px;top:-24px;width:48px;height:48px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 3px rgba(255,197,61,.8);opacity:0;animation:tkring 1.4s var(--ease) infinite}
+.tk-hand .hp{left:0;top:0;width:0;height:0;transform:translate(8px,12px) rotate(-18deg);filter:drop-shadow(0 6px 6px rgba(0,0,0,.45));animation:tkpress 1.4s var(--ease) infinite}
+.tk-hand .fg{left:-10px;top:0;width:20px;height:48px;border-radius:11px 11px 6px 6px;background:#FFD6AE;border:3px solid #5A2D0C;z-index:2}
+.tk-hand .fg::after{content:'';position:absolute;left:3px;top:4px;width:8px;height:9px;border-radius:5px;background:rgba(255,255,255,.7)}
+.tk-hand .palm{left:-14px;top:30px;width:52px;height:42px;border-radius:12px 18px 20px 22px;background:#FFD6AE;border:3px solid #5A2D0C;z-index:1}
+.tk-hand .palm::before{content:'';position:absolute;left:18px;top:-2px;width:10px;height:18px;border-left:3px solid #5A2D0C;border-radius:0}
+.tk-hand .palm::after{content:'';position:absolute;left:30px;top:-2px;width:10px;height:16px;border-left:3px solid #5A2D0C}
+.tk-hand .th{left:-24px;top:40px;width:20px;height:30px;border-radius:12px;background:#FFD6AE;border:3px solid #5A2D0C;transform:rotate(28deg);z-index:0}
+.tk-hand .cuff{left:-12px;top:68px;width:48px;height:18px;border-radius:5px;background:linear-gradient(#5AA2FF,#1F63D6);border:3px solid #0B1A3A;z-index:3}
+.tk-hand.side .hp{rotate:-62deg}.tk-hand.side.flip .hp{rotate:62deg;scale:-1 1}
+@keyframes tkpress{0%,100%{transform:translate(14px,22px) rotate(-18deg)}45%,62%{transform:translate(2px,4px) rotate(-18deg) scale(.94)}}
+@keyframes tkring{0%,40%{opacity:0;transform:scale(.4)}52%{opacity:.95;transform:scale(.55)}100%{opacity:0;transform:scale(1.5)}}
+/* "Ayo lanjut!" card between Home and the next level */
+.gocard{position:fixed;inset:0;z-index:9300;display:grid;place-items:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .24s var(--ease),visibility 0s linear .24s}
+.gocard.show{opacity:1;visibility:visible;pointer-events:auto;cursor:pointer;transition:opacity .24s var(--ease)}
+.gocard .gc-bg{position:absolute;inset:0;background-size:cover}
+.gocard .gc-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(8,16,40,.25),rgba(8,16,40,.78))}
+.gocard .gc-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 32px 20px;min-width:min(86vw,340px);max-width:92vw;text-align:center;border-radius:24px}
+.gocard.show .gc-card{animation:gcin .42s var(--ease) both}
+@keyframes gcin{from{opacity:0;transform:translateY(18px) scale(.94)}}
+.gocard .gc-ship{height:min(22vh,150px);max-width:80%;object-fit:contain;filter:drop-shadow(0 8px 8px rgba(0,0,0,.45));animation:bob 3.2s ease-in-out infinite}
+.gocard b{font-size:clamp(34px,8vw,52px);line-height:1.05;color:#FFE15A;text-shadow:0 3px 0 #7a4a00,0 0 18px rgba(255,210,60,.5)}
+.gocard span{font-size:20px;font-weight:900}
+.gocard small{font-size:16px;font-weight:800;color:#CFE0FF}
+/* reduced motion (OS setting or the in-game switch): everything becomes a fade */
+html.rm *,html.rm *::before,html.rm *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+html.rm .scr.active,html.rm .gocard.show .gc-card{animation:scrfade .24s ease-out!important}
+@media (prefers-reduced-motion:reduce){
+  .scr.active,.gocard.show .gc-card{animation:scrfade .24s ease-out!important}
+  .tk-hand .hp,.tk-hand .ring{animation:none!important}
+}
+html.rm .tk-hand .hp,html.rm .tk-hand .ring{animation:none!important}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * CHAPTERS (Titanic, owner mockup ui-12): parchment chapter map, step chip, immersive
+ * lanes / cinema steps, reflection + fragment cards. transform/opacity motion only.
+ * ══════════════════════════════════════════════════════════════════════════*/
+#scr-map.cmode .route{display:flex;flex-direction:column;padding:2px 10px calc(10px + var(--sab))}
+#scr-map.cmode .map-bg::after{background:linear-gradient(rgba(5,12,30,.55),rgba(5,12,30,.35) 30%,rgba(5,12,30,.6))}
+.cmap{position:relative;flex:1 0 auto;display:flex;flex-direction:column;min-height:100%;border-radius:18px;color:#3a2a14;
+  background:radial-gradient(ellipse 40% 22% at 18% 30%,rgba(120,160,170,.28),transparent 70%),radial-gradient(ellipse 30% 20% at 80% 72%,rgba(120,160,170,.26),transparent 70%),
+    radial-gradient(ellipse 22% 14% at 70% 22%,rgba(150,130,70,.22),transparent 70%),radial-gradient(ellipse 26% 16% at 30% 80%,rgba(150,130,70,.2),transparent 70%),
+    radial-gradient(ellipse at 50% 42%,#f7eac9 0%,#efdcab 55%,#d9b979 100%);
+  border:3px solid #8a6331;box-shadow:inset 0 0 0 2px rgba(255,244,214,.55),inset 0 0 46px rgba(120,78,28,.5),0 10px 26px rgba(0,0,0,.45)}
+.cm-rose{position:absolute;right:10px;bottom:34px;width:clamp(48px,9vw,84px);opacity:.42;pointer-events:none}
+.cm-rose img{width:100%;display:block;filter:sepia(.5)}
+.cm-plate{align-self:center;margin:8px 12px 2px;padding:5px 22px 6px;text-align:center;border-radius:10px;background:linear-gradient(#8a5a2b,#5d3a17);border:2px solid #3f250c;
+  box-shadow:inset 0 1px 0 rgba(255,220,160,.45),0 4px 10px rgba(60,30,0,.4);color:#FFE7B0;max-width:calc(100% - 24px)}
+.cm-plate b{display:block;font-size:clamp(18px,4.2vw,26px);line-height:1.05;letter-spacing:1px;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+.cm-plate small{display:block;font-size:13px;font-weight:800;color:#F6D9A0}
+.cm-board{position:relative;flex:1 0 auto;margin:0 6px}
+.cm-path{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.chap{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;padding:0;cursor:pointer;color:#3a2a14;animation:nodein .45s var(--ease) both;-webkit-tap-highlight-color:transparent}
+.chap .md{position:relative;width:var(--m);height:var(--m);border-radius:50%;background-size:cover!important;background-position:center!important;border:4px solid #C9962F;
+  box-shadow:0 0 0 3px #fff4da,0 0 0 5px #7A5226,0 6px 12px rgba(60,30,0,.45);display:grid;place-items:center;overflow:hidden;transition:transform .14s var(--ease)}
+.chap .md>img{width:84%;height:84%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}
+.chap:active .md{transform:scale(.94)}
+.chap .ct{display:flex;flex-direction:column;align-items:center;max-width:100%;text-align:center;line-height:1.12;padding:1px 4px;border-radius:8px;background:rgba(255,246,222,.72)}
+.chap .ct b{font-size:clamp(13px,1.35vw,16px);color:#2f200c;overflow-wrap:anywhere}
+.chap .ct small{font-size:12px;font-weight:800;color:#6b4a1f}
+.chap .s{position:absolute;top:calc(var(--m) - 12px);left:50%;transform:translateX(-50%);display:flex;gap:1px;padding:1px 5px;border-radius:10px;background:rgba(58,36,12,.85)}
+.chap .s .tk-ico{width:14px;height:14px}
+.chap .lk{position:absolute;inset:0;display:grid;place-items:center;background:rgba(40,40,48,.35)}
+.chap .lk .tk-ico{width:44%;height:44%}
+.chap .pr{position:absolute;right:6%;bottom:6%;min-width:30px;padding:1px 6px;border-radius:10px;background:#1F63D6;color:#fff;font-style:normal;font-size:12px;border:2px solid #fff}
+.chap.locked .md{filter:grayscale(1) brightness(.8);border-color:#8d8d8d;box-shadow:0 0 0 3px #e6e2d8,0 0 0 5px #7b7b7b,0 4px 8px rgba(0,0,0,.3)}
+.chap.locked .ct{opacity:.72}
+.chap.done .md{border-color:#2FB35A}
+.chap.next .md{animation:chglow 1.8s ease-in-out infinite}
+@keyframes chglow{50%{box-shadow:0 0 0 3px #fff4da,0 0 0 5px #7A5226,0 0 0 12px rgba(255,197,61,.55),0 6px 12px rgba(60,30,0,.45)}}
+.cm-ship{position:absolute;left:0;top:0;height:auto;pointer-events:none;z-index:2;filter:drop-shadow(0 3px 3px rgba(60,30,0,.5));will-change:transform}
+.cm-foot{align-self:center;margin:2px 12px 8px;padding:5px 18px;border-radius:12px;background:linear-gradient(#1F3A7A,#0F2150);border:2px solid var(--rim);color:#fff;font-size:clamp(12px,1.6vw,16px);text-align:center;max-width:calc(100% - 24px);box-shadow:0 4px 10px rgba(0,0,0,.35)}
+@media (orientation:landscape) and (max-height:520px){
+  .cm-plate{margin-top:4px;padding:3px 16px 4px}.cm-plate b{font-size:17px}.cm-plate small{font-size:12px}
+  .chap .ct b{font-size:13px}.cm-foot{margin-bottom:5px;padding:3px 14px;font-size:12px}.cm-rose{display:none}
+}
+
+/* step chip: "Bab 4 · Laut Lepas — Langkah 2/3", shown briefly at every step start */
+.stepchip{position:fixed;left:0;right:0;margin:0 auto;width:max-content;top:calc(76px + var(--sat));z-index:9200;display:flex;align-items:center;gap:10px;padding:8px 16px;border-radius:18px;max-width:calc(100vw - 24px);
+  background:linear-gradient(180deg,rgba(24,44,96,.95),rgba(11,24,58,.95));border:2px solid var(--rim);box-shadow:0 8px 22px rgba(0,0,0,.45);pointer-events:none;
+  opacity:0;transform:translateY(-10px);transition:opacity .28s var(--ease),transform .34s var(--ease)}
+.stepchip.show{opacity:1;transform:none}
+.stepchip .sc-t{display:flex;flex-direction:column;min-width:0}
+.stepchip .sc-t small{font-size:12px;font-weight:800;color:#FFE08A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stepchip .sc-t b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stepchip .sc-d{display:flex;gap:5px;flex:none}
+.stepchip .sc-d i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.28)}
+.stepchip .sc-d i.done{background:#2FB35A}.stepchip .sc-d i.now{background:var(--gold);transform:scale(1.25)}
+html.rm .stepchip,html.rm .stepchip.show{transform:none}
+@media (prefers-reduced-motion:reduce){.stepchip,.stepchip.show{transform:none}}
+
+/* immersive steps: the lanes / cinema modules bring their own HUD */
+body.imm .play-host.with-chapter{left:0}
+body.imm .chapter{display:none}
+body.lanes-on .play-hud{display:none}
+body.cine-on .play-hud .lvchip,body.cine-on .goalbar,body.cine-on .journal{display:none}
+body.cine-on .tkc-pause{display:none}
+body.cine-on .play-hud{z-index:60}
+
+/* reflection + fragment steps (chapter 10) */
+.tkx{position:absolute;inset:0;display:grid;place-items:center;overflow:auto;padding:calc(72px + var(--sat)) 12px calc(14px + var(--sab));background-size:cover!important;background-position:center!important}
+.tkx::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(8,16,40,.35),rgba(8,16,40,.78));pointer-events:none}
+.tkx-card{position:relative;width:min(640px,100%);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 16px 16px;border-radius:20px;text-align:center;
+  background:linear-gradient(#f7e7c4,#ead3a2);color:#3a2a14;border:3px solid #8a6331;box-shadow:inset 0 0 30px rgba(120,78,28,.35),0 12px 30px rgba(0,0,0,.5)}
+.tkx-card h2{margin:0;font-size:clamp(22px,5vw,32px);color:#5d3a17}
+.tkx-card>p{margin:0;font-size:17px;font-weight:800;line-height:1.35}
+.tkx-ls{list-style:none;margin:0;padding:0;display:grid;gap:8px;width:100%}
+.tkx-ls li{display:flex;align-items:center;gap:10px;text-align:left;padding:8px 10px;border-radius:14px;background:rgba(255,250,236,.75);border:2px solid rgba(138,99,49,.35)}
+.tkx-ls img{width:54px;height:54px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.tkx-ls b{display:block;font-size:17px;color:#2f200c}.tkx-ls span{display:block;font-size:15px;font-weight:700;line-height:1.3}
+.tkx-fact{display:flex;align-items:center;gap:10px;text-align:left;width:100%;padding:8px 10px;border-radius:14px;background:linear-gradient(#1F3A7A,#0F2150);color:#fff;border:2px solid var(--rim)}
+.tkx-fact img{width:44px;height:44px;object-fit:contain;flex:none}
+.tkx-fact p{margin:0;font-size:15px;font-weight:700;line-height:1.35}.tkx-fact b{display:block;color:#FFE08A;font-size:13px}
+.tkx .tkx-go{min-width:min(320px,100%);min-height:60px}
+.tkx-frag .tkx-card{max-width:440px}
+.tkx-frag .tkcmp{width:clamp(120px,32vw,180px);height:clamp(120px,32vw,180px)}
+.tkx-frag .tkcmp.glow{animation:fraglow 2s ease-in-out infinite}
+@keyframes fraglow{50%{box-shadow:0 0 0 4px #FFE35A,0 0 36px rgba(255,227,90,.95)}}
+@media (orientation:landscape) and (max-height:520px){
+  .tkx{padding-top:calc(64px + var(--sat))}
+  .tkx-card{gap:6px;padding:10px 12px 12px}.tkx-card h2{font-size:21px}
+  .tkx-refl .tkx-ls{grid-template-columns:repeat(3,1fr)}.tkx-refl .tkx-ls li{flex-direction:column;text-align:center;gap:4px;padding:6px}
+  .tkx-ls img{width:40px;height:40px}.tkx-ls b{font-size:15px}.tkx-ls span{font-size:13px}
+  .tkx-frag .tkcmp{width:96px;height:96px}
+}
+@media (min-width:900px){.tkx-refl .tkx-ls{grid-template-columns:repeat(3,1fr)}.tkx-refl .tkx-ls li{flex-direction:column;text-align:center}.tkx-refl .tkx-card{width:min(860px,100%)}}
+
+/* play screen: the step's scene (set by the host, dimmed) shows beside the module */
+#scr-play{background-size:cover;background-position:center}
+
+/* always-visible speaker (owner 2026-09-28 "Pastiin ada icon sound bisa di tap utk mute"): every screen
+   except Home (which has its labelled sound button). One tap = all G30 sound off / on; a red slash when muted. */
+.sndfab{position:fixed;z-index:9150;top:calc(8px + var(--sat));right:calc(10px + env(safe-area-inset-right));width:52px;height:52px;border-radius:14px;border:2px solid var(--rim);
+  background:linear-gradient(#1F3A7A,#0F2150);display:grid;place-items:center;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.4);transition:transform .12s var(--ease);padding:0}
+.sndfab:active{transform:scale(.94)}
+.sndfab .tk-ico{width:34px;height:34px}
+.sndfab.off .tk-ico{filter:grayscale(1);opacity:.55}
+.sndfab.off .ico::after{content:'';position:absolute;left:50%;top:50%;width:40px;height:5px;border-radius:3px;background:#FF5A4E;box-shadow:0 0 0 2px rgba(0,0,0,.4);transform:translate(-50%,-50%) rotate(-45deg)}
+body[data-scr="scr-home"] .sndfab{display:none}
+/* room for it in every top-right corner */
+#scr-ships .topbar,#scr-world .topbar,#scr-map .topbar,#scr-settings .topbar,#scr-room .topbar{padding-right:calc(72px + env(safe-area-inset-right))}
+.play-hud{padding-right:72px}
+body.lanes-on .tkl-tr{right:72px}
+body.cine-on .tkc-ctl{right:calc(72px + env(safe-area-inset-right))}
+.tkh-top{padding-right:78px!important}
+.tkh .tkh-top .tkh-prof{right:78px}
+.tkh.is-port .tkh-top .tkh-prof{margin-right:62px}
+#play-host .tks-skip{right:calc(72px + env(safe-area-inset-right))}
