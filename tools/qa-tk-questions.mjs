@@ -157,6 +157,22 @@ const AR_RE = /[؀-ۿ]/
   check(!TQ.items.some(o => /^ar-wr-/.test(o.id) && o.swatch), 'Arabic colour-word items do not show the swatch')
 }
 
+/* ── B2. goals match content (audit B5/D) ─────────────────────────────── */
+{
+  let letters = 0, offDomain = 0
+  for (let seed = 0; seed < 1500; seed++) {
+    if (TK.build({ domain: 'campur', world: 'victory', count: 5, seed }).some(q => q.letters)) letters++
+    if (TK.build({ domain: 'logika', count: 3, seed, topic: 'Temukan Kepingan Kompas V!' }).some(q => q.domain !== 'logika')) offDomain++
+  }
+  check(letters === 0, `campur never serves arrange-letters (${letters}/1500 sets did)`)
+  check(offDomain === 0, `a Logika level serves Logika only (${offDomain}/1500 sets strayed)`)
+  const kompas = TK.build({ domain: 'campur', world: 'victory', count: 5, seed: 3, topic: 'Baca arah kompas.' })
+  check(kompas.slice(0, 2).every(q => /kompas|arah/i.test(q.prompt + q.explain)), `topic "Baca arah kompas." leads with compass questions: ${kompas.slice(0, 2).map(q => q.prompt).join(' / ')}`)
+  const bagi = TK.build({ domain: 'matematika', world: 'titanic', count: 3, seed: 5, level: 3, topic: 'Bagikan selimut dan hitung penumpang yang selamat.' })
+  check(bagi[0].kind === 'share', `maths topic "Bagikan …" asks a sharing question first (${bagi[0].kind})`)
+  check(!fs.readFileSync(path.join(ROOT, 'games/tk-quiz.js'), 'utf8').includes("'Kapten Pingu'"), 'mascot is "Kapten Pinguin", never "Kapten Pingu"')
+}
+
 /* ── C. puppeteer ──────────────────────────────────────────────────────── */
 if (!process.env.QA_NODE_ONLY) {
   const { default: puppeteer } = await import('puppeteer')
@@ -165,7 +181,7 @@ if (!process.env.QA_NODE_ONLY) {
   const BASE = 'http://localhost:8081/tools/tk-harness-quiz.html'
   const sleep = ms => new Promise(r => setTimeout(r, ms))
   const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] })
-  const SIZES = [[390, 844], [1024, 768]]
+  const SIZES = [[390, 844], [844, 390], [1024, 768]]   // 844x390 = phone on its side (stats panel was clipped there)
 
   async function open (w, h, qs) {
     const p = await b.newPage()
@@ -352,6 +368,27 @@ if (!process.env.QA_NODE_ONLY) {
       const doms = await Q.p.evaluate(() => window.__tk.ctl.questions.map(q => q.domain + (q.islam ? '!' : '')))
       check(doms.length === 5 && !doms.some(d => /islam|!/.test(d)), `${tag} campur with islam off: ${doms.join(',')}`)
       await Q.p.close()
+    }
+    // C7: ui-08 chrome (plate, 5 tabs with the current domain lit, stepper at Kuis, Kembali wired) + hints off
+    {
+      const P = await open(w, h, 'set=math5&back=1&topic=' + encodeURIComponent('Hitung peti di kapal.'))
+      const ui = await P.p.evaluate(() => ({ plate: (document.querySelector('.tkq-plate h2') || {}).textContent, sub: (document.querySelector('.tkq-plate p') || {}).textContent,
+        tabs: document.querySelectorAll('.tkq-tab').length, on: [...document.querySelectorAll('.tkq-tab.on')].map(t => t.dataset.d), step: (document.querySelector('.tkq-step.cur span') || {}).textContent,
+        peng: [...document.querySelectorAll('img')].some(i => i.alt === 'Kapten Pinguin') }))
+      check(ui.plate === 'Tantangan Matematika' && ui.tabs === 5 && ui.on.join() === 'matematika' && ui.step === 'Kuis' && ui.peng, `${tag} ui-08 chrome ${JSON.stringify(ui)}`)
+      check(w < h || ui.sub === 'Hitung peti di kapal.' || h < 540, `${tag} plate subtitle = level goal (${ui.sub})`)
+      const vis = await P.p.evaluate(() => { const vh = innerHeight, vw = innerWidth; return [...document.querySelectorAll('.tkq-stats,.tkq-plate,.tkq-tabs,.tkq-back,.tkq-next,.tkq-card')].filter(e => { const r = e.getBoundingClientRect(); return r.top < 70 || r.bottom > vh + 1 || r.right > vw + 1 || r.left < -1 }).map(e => e.className) })
+      check(vis.length === 0, `${tag} stats/plate/tabs/footer all inside the viewport below the HUD ${JSON.stringify(vis)}`)
+      await tap(P, '.tkq-back'); check(await P.p.evaluate(() => window.__tkBack === 1), `${tag} Kembali calls opts.onBack`)
+      await P.p.close()
+      const N = await open(w, h, 'set=math5&hints=0')
+      check(await N.p.evaluate(() => !document.querySelector('.tkq-hintbtn')), `${tag} hints off: no hint button`)
+      const c = await wrongChoice(N); await tap(N, optSel(c)); await sleep(450)
+      const nh = await N.p.evaluate(() => ({ hl: document.querySelectorAll('.tkq-o.hl').length, help: document.querySelector('.tkq-help').textContent, eq: !document.querySelector('.tkq-eq').hidden, open: [...document.querySelectorAll('.tkq-opt')].filter(b => !b.disabled).length }))
+      check(nh.hl === 0 && !nh.help && nh.open === 3, `${tag} hints off: a wrong tap only fades that choice ${JSON.stringify(nh)}`)
+      const s = await state(N); await tap(N, optSel(s.answer)); await sleep(500)
+      check(await N.p.evaluate(() => !document.querySelector('.tkq-explain').hidden), `${tag} hints off: explanation still follows the answer`)
+      await N.p.close()
     }
     // C6: reduced motion renders and answers
     {

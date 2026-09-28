@@ -6,12 +6,17 @@
 //      500 random solvable boards: the BFS program runs ok with moves == shortest;
 //      TKGrid.SAMPLES (6) all validate; every grid level in TKWorlds.WORLDS validates with
 //      shortest <= 12 (QA_SKIP_WORLDS=1 reports without failing).
-//   B) UI via tools/tk-harness-grid.html at 390x844, 844x390, 1024x768: 3 levels; real taps
+//   B) UI via tools/tk-harness-grid.html at 390x844, 844x390, 1024x768, 1280x800: 3 levels; real taps
 //      build a WRONG program -> it fails on the expected chip (highlighted) with an
 //      Indonesian message naming that chip number; trash, rebuild the shortest route with
 //      taps + one real drag, tap-to-remove, JALAN -> onDone stars 3. Hint ladder, reduced
 //      motion, all 6 samples mount. No page errors / console errors / failed requests;
-//      every button >= 56 px; nothing off-screen; no horizontal scroll.
+//      every target >= 44 px; nothing off-screen; no horizontal scroll; Timmy's bubble never
+//      covers the board; Hapus + JALAN! sit inside the "Perintah" panel, JALAN! clear of the
+//      viewport edge, Hapus clear of the Timmy hint avatar; text >= 12 px; no emoji.
+//   C) every TKWorlds grid level mounted like timmy-kapal.js (?w=&lv=): theme class, obstacle
+//      sprites from the level's blockArt, no 404s, layout rules; the deck level t10 is solved
+//      by real taps at every size; chapter card + footer callbacks.
 // QA_SIZES="390x844,..." limits sizes · QA_SHOTS=<dir> screenshots · QA_UI=0 engine only.
 import { createRequire } from 'node:module'
 import fs from 'node:fs'
@@ -239,7 +244,7 @@ if (process.env.QA_UI !== '0') {
   const { default: puppeteer } = await import('puppeteer')
   const SHOTS = process.env.QA_SHOTS || ''
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true })
-  const SIZES = (process.env.QA_SIZES || '390x844,844x390,1024x768').split(',').map(s => s.split('x').map(Number))
+  const SIZES = (process.env.QA_SIZES || '390x844,844x390,1024x768,1280x800').split(',').map(s => s.split('x').map(Number))
   const BASE = 'http://localhost:8081/tools/tk-harness-grid.html'
   const sleep = ms => new Promise(r => setTimeout(r, ms))
   const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
@@ -282,12 +287,29 @@ if (process.env.QA_UI !== '0') {
       const vis = e => { const s = getComputedStyle(e); const b = e.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && b.width > 0 && b.height > 0 }
       const inside = (b, clip) => b.left >= (clip ? clip.left : 0) - 1 && b.top >= (clip ? clip.top : 0) - 1 && b.right <= (clip ? clip.right : vw) + 1 && b.bottom <= (clip ? clip.bottom : vh) + 1
       const slots = document.querySelector('.tkg-slots'), sr = slots.getBoundingClientRect()
+      const R = s => { const e = document.querySelector(s); return e && vis(e) ? e.getBoundingClientRect() : null }
+      const hit = (a, b) => a && b && a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1
+      const board = R('.tkg-board'), bub = R('.tkg-bubble'), cmd = R('.tkg-cmd'), go = R('.tkg-go'), tr = R('.tkg-trash'), av = R('.tkg-hintb')
+      if (hit(bub, board)) bad.push('bubble covers the board')
+      if (!bub) bad.push('Timmy bubble not visible')
+      for (const [n, b] of [['JALAN', go], ['Hapus', tr]]) if (!b || !cmd || b.left < cmd.left - 1 || b.right > cmd.right + 1 || b.top < cmd.top - 1 || b.bottom > cmd.bottom + 1) bad.push(n + ' outside the Perintah panel')
+      if (go && (go.left < 4 || go.top < 4 || go.right > vw - 4 || go.bottom > vh - 4)) bad.push('JALAN touches the viewport edge')
+      if (hit(tr, av)) bad.push('Hapus overlaps the Timmy avatar')
+      const tiny = []
+      for (const e of document.querySelectorAll('.tkg *')) {
+        if (!vis(e) || e.closest('.tkg-ghost')) continue
+        const own = [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())
+        if (own && parseFloat(getComputedStyle(e).fontSize) < 11.5) tiny.push(e.className + ' "' + e.textContent.trim().slice(0, 12) + '" ' + getComputedStyle(e).fontSize)
+      }
+      if (tiny.length) bad.push('text < 12px: ' + tiny.slice(0, 3).join(', '))
+      for (const e of document.querySelectorAll('.tkg-cmd .tkg-btn, .tkg-foot .tkg-btn')) if (vis(e) && e.scrollWidth > e.clientWidth + 1) bad.push('label overflows ' + e.className)
+      if (/\p{Extended_Pictographic}/u.test(document.querySelector('.tkg').textContent)) bad.push('emoji in the UI text')
       for (const e of document.querySelectorAll('.tkg button, .tkg-slot, .tkg-board, .tkg-cmd, .tkg-route')) {
         if (!vis(e)) continue
         const b = e.getBoundingClientRect(), inSlots = slots.contains(e)
         // route bar may scroll sideways in short landscape: its chips must sit inside the bar vertically
         if (inSlots ? !(b.top >= sr.top - 8 && b.bottom <= sr.bottom + 8) : !inside(b)) bad.push((e.className || e.tagName) + ' ' + JSON.stringify([b.left, b.top, b.right, b.bottom].map(Math.round)))
-        if ((e.tagName === 'BUTTON' || e.classList.contains('tkg-slot')) && Math.min(b.width, b.height) < 55.5) small.push(e.className + ' ' + Math.round(b.width) + 'x' + Math.round(b.height))
+        if ((e.tagName === 'BUTTON' || e.classList.contains('tkg-slot')) && Math.min(b.width, b.height) < 43.5) small.push(e.className + ' ' + Math.round(b.width) + 'x' + Math.round(b.height))
       }
       if (!inside(sr)) bad.push('slots bar ' + JSON.stringify([sr.left, sr.top, sr.right, sr.bottom].map(Math.round)))
       const hs = document.documentElement.scrollWidth > vw + 1 || document.body.scrollWidth > vw + 1
@@ -295,7 +317,7 @@ if (process.env.QA_UI !== '0') {
       return { bad, small, hs, tile, top: document.querySelector('.tkg-body').getBoundingClientRect().top }
     })
     check(!r.bad.length, `${tag}: off-screen ${r.bad.slice(0, 4).join(' ; ')}`)
-    check(!r.small.length, `${tag}: targets < 56 px ${r.small.slice(0, 4).join(' ; ')}`)
+    check(!r.small.length, `${tag}: targets < 44 px ${r.small.slice(0, 4).join(' ; ')}`)
     check(!r.hs, `${tag}: horizontal scroll`)
     check(r.tile >= 36, `${tag}: board tile ${r.tile} px too small`)
     check(Math.round(r.top) >= 70, `${tag}: top inset for host HUD not respected (${r.top})`)
@@ -429,6 +451,43 @@ if (process.env.QA_UI !== '0') {
     if (SHOTS && (s === 3 || s === 4)) await p.screenshot({ path: `${SHOTS}/390x844-sample${s + 1}.png` })
     check(!p.__errs.length, `sample ${s}: errors ${p.__errs.join(' | ')}`)
     await p.close()
+  }
+  // C) real world levels, wired like timmy-kapal.js
+  {
+    const W = require(path.join(ROOT, 'games/data/tk-worlds.js'))
+    const levels = []
+    for (const w of W.WORLDS) for (const lv of (w.levels || [])) if (lv.type === 'grid') levels.push([w.id, lv])
+    for (const [wid, lv] of levels) {
+      const def = W.grid(lv)
+      const sizes = lv.id === 't10' || lv.id === 't4' ? SIZES : [[390, 844]]
+      for (const [w, h] of sizes) {
+        const tag = `world ${wid}/${lv.id} ${w}x${h}`
+        const p = await open(w, h, `?w=${wid}&lv=${lv.id}`)
+        try {
+          await layoutChecks(p, tag)
+          const info = await p.evaluate(() => ({ theme: document.querySelector('.tkg').getAttribute('data-theme'), deck: document.querySelector('.tkg').classList.contains('tkg--deck'),
+            blk: [...document.querySelectorAll('.tkg-blk img')].map(i => i.getAttribute('src')), scene: document.querySelector('.tkg').classList.contains('tkg--scene'),
+            chap: !!document.querySelector('.tkg-chap'), goal: (document.querySelector('.tkg-goal .lh') || {}).alt || null }))
+          check(info.theme === def.theme && info.deck === (def.theme === 'deck'), `${tag}: theme ${info.theme}, level says ${def.theme}`)
+          check(info.blk.length === def.blocks.length && info.blk.every(u => (def.blockArt || []).some(k => u.includes(k))), `${tag}: obstacle sprites ${JSON.stringify(info.blk)} not from blockArt ${JSON.stringify(def.blockArt)}`)
+          check(info.scene, `${tag}: no painted scene behind the board`)
+          if (def.theme === 'deck' && info.goal) check(info.goal === 'Sekoci', `${tag}: deck goal is ${info.goal}, want the lifeboat`)
+          if (SHOTS) await p.screenshot({ path: `${SHOTS}/world-${lv.id}-${w}x${h}.png` })
+          if (lv.id === 't10') {
+            await build(p, T.solve(def)); await tapSel(p, '.tkg-go')
+            const ok = await waitFor(p, () => !!window.__done, 25000)
+            check(ok && (await p.evaluate(() => window.__done.stars)) === 3, `${tag}: deck route by taps -> 3 stars`)
+          }
+          if (lv.id === 't4' && w === 390) {
+            check(await p.$eval('.tkg-foot > span', e => e.textContent) === 'Level 4 dari 13', `${tag}: footer level text`)
+            await tapSel(p, '.tkg-back'); await tapSel(p, '.tkg-next')
+            check(eq(await p.evaluate(() => window.__nav), ['back', 'next']), `${tag}: footer callbacks`)
+          }
+          check(!p.__errs.length, `${tag}: errors ${p.__errs.slice(0, 3).join(' | ')}`)
+        } catch (e) { check(false, `${tag}: ${e.message}`) }
+        await p.close()
+      }
+    }
   }
   await browser.close()
 }

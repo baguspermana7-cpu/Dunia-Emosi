@@ -8,7 +8,9 @@
   Test harness for games/tk-grid.js (Timmy & Kapal Legendaris grid level), used by
   tools/qa-tk-grid.mjs. ?l=0|1|2 picks a sample level (basic · currents+ice with
   Maju/Kiri/Kanan · pick/drop+repeat); ?s=0..5 mounts TKGrid.SAMPLES[s] instead.
-  ?rm=1 forces reduced motion. The 70 px top bar stands in for the host page's HUD
+  ?rm=1 forces reduced motion. ?w=<world>&lv=<level id> mounts a real TKWorlds grid level the
+  way timmy-kapal.js does (TKArt.src library, scene backdrop, chapter card, footer callbacks);
+  ?chap=1 adds the chapter card + footer to a harness level. The 70 px top bar stands in for the host page's HUD
   (TKGrid leaves opts.topInset free for it). window.__h = mount handle,
   window.__done = last onDone payload.
 -->
@@ -24,6 +26,8 @@
   <div id="hud"><div><b id="ttl">Latihan Navigasi</b><br><span id="sub">Harness TKGrid</span></div></div>
   <script src="../games/data/asset-index.js"></script>
   <script src="../games/data/sfx-engine.js"></script>
+  <script src="../games/data/tk-art.js"></script>
+  <script src="../games/data/tk-worlds.js"></script>
   <script src="../games/tk-grid.js"></script>
   <script>
   (function () {
@@ -41,16 +45,35 @@
     ]
     var q = new URLSearchParams(location.search)
     var def = q.has('s') ? TKGrid.SAMPLES[+q.get('s')] : LEVELS[+(q.get('l') || 0)]
+    var opts = {
+      topInset: 70,
+      reducedMotion: q.get('rm') === '1' ? true : undefined,
+      onDone: function (r) { window.__done = r }
+    }
+    window.__nav = []
+    var nav = function (k) { return function () { window.__nav.push(k) } }
+    if (q.has('w')) {
+      // same wiring as timmy-kapal.js runPlayer()
+      var w = TKWorlds.get(q.get('w')), lv = null, gi = 0
+      w.levels.forEach(function (x, i) { if (x.id === q.get('lv')) { lv = x; gi = i } })
+      def = TKWorlds.grid(lv)
+      opts.lib = TKArt.src
+      opts.title = lv.title; opts.mission = lv.goal
+      opts.bg = TKArt.scene(lv.scene || w.scene)
+      opts.art = { boat: w.id === 'kamar' ? 'vehicles/sailboat' : 'ship/' + w.id, timmy: 'char/timmy', tipper: 'char/penguin' }
+      opts.chapter = { ship: w.ship || 'ship/titanic', name: w.name, title: w.value, label: 'Bab ' + TKWorlds.WORLDS.indexOf(w) + ' · ' + w.name, idx: gi + 1, total: w.levels.length }
+      opts.onBack = nav('back'); opts.onNext = nav('next')
+    } else if (q.get('chap') === '1') {
+      opts.chapter = { ship: 'ship/titanic', name: 'RMS Titanic', title: 'Keberanian & Kebaikan', label: 'Bab 1 · RMS Titanic', idx: 4, total: 13 }
+      opts.lib = TKArt.src
+      opts.onBack = nav('back'); opts.onNext = nav('next')
+    }
     document.getElementById('ttl').textContent = def.title || 'Latihan Navigasi'
     document.getElementById('sub').textContent = 'Level ' + def.id
     window.__levels = LEVELS
     window.__def = def
     window.__done = null
-    window.__h = TKGrid.mount(document.getElementById('host'), def, {
-      topInset: 70,
-      reducedMotion: q.get('rm') === '1' ? true : undefined,
-      onDone: function (r) { window.__done = r }
-    })
+    window.__h = TKGrid.mount(document.getElementById('host'), def, opts)
   })()
   </script>
 </body></html>

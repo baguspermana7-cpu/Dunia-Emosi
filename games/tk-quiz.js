@@ -17,7 +17,10 @@
  * set  = [questions] or {domain, world, count, level, grade, islam, seed, type?:'sort'}
  * opts = { domain, grade, mastery (number | {domain:n}), islam, onDone({right, asked, hints,
  *          masteryDelta, mastery, points, byDomain}), sfx (fn(name) | {name:fn}), lib(key)->url,
- *          timmy (url), topInset (px), reducedMotion, seed }
+ *          timmy (url), penguin (url), topInset (px), reducedMotion, seed,
+ *          scene (CSS background, e.g. TKArt.scene(lv.scene)), topic (level goal line: plate subtitle +
+ *          questions about it first), title (plate), hints (false = no hint button/ladder),
+ *          onBack (fn; Kembali is hidden without it), step (0..3 stepper index; quiz 0, sort 2) }
  * Feedback is never a trap and never "SALAH": a wrong tap wiggles gently and climbs the hint
  * ladder (retry → highlight → animated counting → first step → guided completion).
  * Motion: transform/opacity only, ease-out cubic-bezier(.23,1,.32,1), press .96,
@@ -245,11 +248,13 @@
   }
   function pick (domain, level, r, opts) {
     opts = opts || {}; r = r || Math.random; level = Math.max(1, Math.min(4, level | 0 || 1))
-    if (domain === 'campur') domain = chooseDomain(r, opts)
+    if (domain === 'campur') { domain = chooseDomain(r, opts); opts = Object.assign({}, opts, { mixed: true }) }
     if (domain === 'matematika') return make('matematika', level, r, opts)
     if (domain === 'islam' && opts.islam === false) return null
     var ex = opts.exclude || {}
-    var all = bank().filter(function (o) { return o.domain === domain && !(opts.islam === false && o.islam) && !ex[o.id] })
+    // a mixed ("campur") level never serves the arrange-letters archetype: it is an Arabic lesson of
+    // its own, and inside a mixed/Logika level it read as a wrong question for the level's goal
+    var all = bank().filter(function (o) { return o.domain === domain && !(opts.islam === false && o.islam) && !ex[o.id] && !(opts.mixed && o.letters) })
     if (!all.length) return null
     var pool = all.filter(function (o) { return o.level === level })
     if (!pool.length) pool = all.filter(function (o) { return Math.abs(o.level - level) <= 1 })
@@ -270,17 +275,51 @@
     return oneOf(ds, r)
   }
   function masteryOf (ms, d) { return typeof ms === 'number' ? ms : (ms && ms[d]) || 0 }
+  /* topic = the level's goal line ("Baca arah kompas."). Questions should be ABOUT it: curated items
+     whose text shares a content word with the goal come first, and generated maths picks a kind
+     that matches the goal's verb (bagikan -> share, pukul -> clock ...). */
+  var STOP = /^(yang|untuk|dengan|dari|pada|kapal|timmy|temukan|kenali|kepingan|baca|pilih|cocokkan|atur|ayo|bantu|semua|lagi|benar|menjawab|jawab|soal|teka|teki|tiap|agar|bersama)$/
+  function topicWords (topic) {
+    return String(topic || '').toLowerCase().replace(/[^a-z\s-]/g, ' ').split(/[\s-]+/).filter(function (w) { return w.length >= 4 && !STOP.test(w) })
+      .map(function (w) { return w.replace(/^(meng|mem|men|me|ber|di|ter|pe)/, '').replace(/(kan|nya|an|i)$/, '').slice(0, 6) }).filter(function (w) { return w.length >= 4 })
+  }
+  function topicScore (o, words) {
+    if (!words.length) return 0
+    var t = (o.prompt + ' ' + o.explain + ' ' + (o.hint1 || '') + ' ' + (o.hint2 || '') + ' ' + (o.visual || []).join(' ')).toLowerCase()
+    return words.filter(function (w) { return t.indexOf(w) >= 0 }).length
+  }
+  var MATH_TOPIC = [[/bagi/, 'share'], [/pukul|jam\b|waktu|jadwal/, 'clock'], [/muat|kursi|sekoci/, 'capacity'], [/selisih|banding/, 'diff'], [/kelompok|rombongan/, 'groups'],
+    [/turun|kurang|sisa/, 'sub'], [/muatan|dimuat|naik|tambah|kargo/, 'add'], [/hitung|berapa/, 'count']]
+  function mathKindFor (topic, level) {
+    var t = String(topic || '').toLowerCase(), have = (KINDS[level] || []).map(function (k) { return k[0] })
+    for (var i = 0; i < MATH_TOPIC.length; i++) if (MATH_TOPIC[i][0].test(t) && have.indexOf(MATH_TOPIC[i][1]) >= 0) return MATH_TOPIC[i][1]
+    return null
+  }
   function build (spec) {
     spec = spec || {}
     var r = spec.rng || rng(spec.seed != null ? spec.seed : (Date.now() & 0x7fffffff)), n = spec.count || 5, out = [], used = {}
+    var mixed = !spec.domain || spec.domain === 'campur'
+    var words = topicWords(spec.topic), onTopic = Math.ceil(n / 2)
+    var lvOf = function (d) { return spec.level || mastery.levelFor(masteryOf(spec.mastery, d), spec.grade) }
+    // curated items about the goal, best match first (same world breaks ties)
+    var topical = !words.length ? [] : bank().filter(function (o) {
+      return (mixed ? enabledDomains({ islam: spec.islam, domains: spec.domains }).indexOf(o.domain) >= 0 : o.domain === spec.domain) &&
+        !(spec.islam === false && o.islam) && !(mixed && o.letters) && o.level <= lvOf(o.domain) + 1 && topicScore(o, words) > 0
+    }).sort(function (a, b) { return (topicScore(b, words) - topicScore(a, words)) || ((b.world === spec.world) - (a.world === spec.world)) || (r() - 0.5) })
     for (var i = 0; i < n; i++) {
+      if (i < onTopic && topical.length) {
+        var tq = topical.shift()
+        if (!used[tq.id]) { used[tq.id] = 1; out.push(present(tq, r)); continue }
+      }
       var d = spec.domain || 'campur'
       if (d === 'campur') d = chooseDomain(r, { islam: spec.islam, world: spec.world, exclude: used, domains: spec.domains })
       if (d === 'islam' && spec.islam === false) d = 'umum'
-      var lv = spec.level || mastery.levelFor(masteryOf(spec.mastery, d), spec.grade)
+      var lv = lvOf(d)
+      var popts = { islam: spec.islam, world: spec.world, exclude: used, mixed: mixed }
+      if (d === 'matematika' && i < onTopic) { var mk = mathKindFor(spec.topic, lv); if (mk) popts.kind = mk }
       var q = null
-      for (var t = 0; t < 10 && (!q || used[q.id]); t++) q = pick(d, lv, r, { islam: spec.islam, world: spec.world, exclude: used })
-      if (!q) q = pick('umum', lv, r, { islam: spec.islam, world: spec.world, exclude: used })
+      for (var t = 0; t < 10 && (!q || used[q.id]); t++) q = pick(d, lv, r, popts)
+      if (!q) q = pick('umum', lv, r, popts)
       if (!q) continue
       used[q.id] = 1; out.push(q)
     }
@@ -334,15 +373,69 @@
     arab: { label: 'Bahasa Arab', icon: 'school/books' },
     umum: { label: 'Pengetahuan Umum', icon: 'school/globe' }, logika: { label: 'Logika', icon: 'things/light-bulb' }
   }
+  var PENGUIN = 'Kapten Pinguin'   // not "Pingu" (a trademarked character)
   var PRAISE = ['Hebat! Kamu makin pintar!', 'Luar biasa!', 'Tepat sekali!', 'Pintar! Ayo lanjut!', 'Keren, kamu berhasil!']
   var ENCOURAGE = ['Tidak apa-apa, coba lagi ya!', 'Hampir! Lihat petunjuknya.', 'Ayo, kita cari bersama!', 'Pelan-pelan saja, kamu bisa!']
 
   var CSS = [
     '.tkq{position:absolute;inset:0;box-sizing:border-box;display:grid;gap:10px;padding:10px 12px 10px;font-family:"Fredoka One","Fredoka","Baloo 2",system-ui,sans-serif;color:#3A2A10;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;overflow:hidden}',
     '.tkq *{box-sizing:border-box}',
-    '.tkq-tall{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr) auto auto}',
-    '.tkq-wide{grid-template-columns:minmax(150px,20%) minmax(0,1fr) minmax(160px,19%);grid-template-rows:minmax(0,1fr) auto}',
-    '.tkq-wide .tkq-left{grid-column:1;grid-row:1}.tkq-wide .tkq-card{grid-column:2;grid-row:1}.tkq-wide .tkq-right{grid-column:3;grid-row:1}.tkq-wide .tkq-foot{grid-column:1/4;grid-row:2}',
+    // ui-08 layout. tall: stats / plate+tabs / card / characters / footer. wide: Timmy | plate+tabs+card | stats+penguin, footer across.
+    '.tkq-tall{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;grid-template-areas:"stats" "top" "card" "chars" "foot";gap:8px}',
+    '.tkq-wide{grid-template-columns:minmax(130px,19%) minmax(0,1fr) minmax(150px,17%);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"left top right" "left card right" "foot foot foot"}',
+    '.tkq-stats{grid-area:stats}.tkq-top{grid-area:top}.tkq-card{grid-area:card}.tkq-chars{grid-area:chars}.tkq-foot{grid-area:foot}.tkq-left{grid-area:left}.tkq-right{grid-area:right}',
+    '.tkq-wide .tkq-card{justify-self:center;width:min(720px,60vw,100%)}',
+    '.tkq-wide .tkq-right{justify-content:space-between}',
+    // parchment title plate + domain tabs (display only)
+    '.tkq-top{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}',
+    '.tkq-plate{position:relative;max-width:100%;padding:8px 34px 9px;text-align:center;color:#3A2208;background:linear-gradient(175deg,#FBEFD2 0%,#EFD9A8 55%,#E2C184 100%);border:2px solid #B98A4A;border-radius:10px 16px 10px 16px;box-shadow:0 6px 16px rgba(20,20,40,.35),inset 0 0 0 3px rgba(255,248,226,.7),inset 0 -6px 12px rgba(150,100,40,.18);transform:rotate(-1deg)}',
+    '.tkq-plate::before,.tkq-plate::after{content:"";position:absolute;top:10px;bottom:10px;width:14px;border:2px solid #B98A4A;background:linear-gradient(90deg,#E2C184,#F6E6C0);border-radius:8px}.tkq-plate::before{left:-8px}.tkq-plate::after{right:-8px}',
+    '.tkq-plate h2{margin:0;font-weight:normal;font-size:clamp(22px,3vw,36px);line-height:1.05;letter-spacing:.01em}',
+    '.tkq-plate p{margin:3px 0 0;font-family:system-ui,sans-serif;font-size:clamp(12px,1.3vw,15px);font-style:italic;color:#5A3A12}',
+    '.tkq-tabs{display:flex;gap:6px;padding:5px;border-radius:16px;background:rgba(16,34,78,.82);border:2px solid rgba(150,185,240,.45);max-width:100%}',
+    '.tkq-tab{display:flex;align-items:center;gap:6px;min-width:0;padding:4px 12px 4px 4px;border-radius:12px;border:2px solid transparent;color:#DCE8FF;font-size:15px;white-space:nowrap;opacity:.78}',
+    '.tkq-tab i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--c);box-shadow:inset 0 -3px 0 rgba(0,0,0,.2)}.tkq-tab img{width:24px;height:24px;object-fit:contain}',
+    '.tkq-tab.on{opacity:1;color:#fff;background:linear-gradient(#2F63C8,#1D448F);border-color:#9CC3FF;box-shadow:0 0 0 2px rgba(255,255,255,.25),0 4px 10px rgba(0,0,0,.3)}',
+    '.tkq-tall .tkq-tabs{width:100%;justify-content:space-between;gap:2px;padding:4px}.tkq-tall .tkq-tab{flex:1 1 auto;flex-direction:column;gap:2px;padding:3px 1px;font-size:12px}.tkq-tall .tkq-tab span{max-width:100%;overflow:hidden;text-overflow:ellipsis}',
+    '.tkq-tall .tkq-plate{padding:5px 26px 6px}.tkq-tall .tkq-plate h2{font-size:24px}.tkq-tall .tkq-plate p{font-size:12px}',
+    // stepper footer: Kembali | Kuis - Jelajah - Aktivitas - Hadiah | Lanjut
+    '.tkq-steps{flex:1;min-width:0;display:flex;justify-content:center;margin:0;padding:0;list-style:none}',
+    '.tkq-step{position:relative;flex:0 1 120px;display:flex;flex-direction:column;align-items:center;gap:3px;color:#C8D6F0;font-size:14px}',
+    '.tkq-step+.tkq-step::before{content:"";position:absolute;top:17px;right:calc(50% + 22px);width:calc(100% - 44px);border-top:3px dotted rgba(200,214,240,.7)}',
+    '.tkq-step i{position:relative;display:block;width:36px;height:36px;border-radius:50%;background:rgba(18,36,78,.9);border:3px solid #9FB3D6}',
+    '.tkq-step i::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#9FB3D6}',
+    '.tkq-step.cur{color:#fff}.tkq-step.cur i{background:linear-gradient(#3C86F0,#1F55C0);border-color:#fff;box-shadow:0 0 0 4px rgba(90,160,255,.45)}',
+    '.tkq-step.cur i::after{width:0;height:0;border-radius:0;background:none;margin:-8px 0 0 -4px;border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent}',
+    '.tkq-step.done i{border-color:#6FD08A}.tkq-step.done i::after{background:#6FD08A}',
+    '.tkq-back{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;min-width:120px;padding:8px 18px;border-radius:16px;background:rgba(16,34,78,.9);border:2px solid rgba(160,190,240,.6);color:#fff;font-size:21px}',
+    '.tkq-back[hidden]{display:inline-flex;visibility:hidden}',
+    '.tkq-ai{position:relative;display:inline-block;flex:none;width:22px;height:4px;border-radius:2px;background:currentColor}',
+    '.tkq-ai::after{content:"";position:absolute;right:-1px;top:50%;width:10px;height:10px;border-top:4px solid currentColor;border-right:4px solid currentColor;border-radius:1px;transform:translateY(-50%) rotate(45deg)}',
+    '.tkq-ai.l{transform:scaleX(-1)}',
+    '.tkq-tall .tkq-step span{display:none}.tkq-tall .tkq-step.cur span{display:block;font-size:12px}.tkq-tall .tkq-step i{width:22px;height:22px;border-width:2px}.tkq-tall .tkq-step+.tkq-step::before{top:10px;right:calc(50% + 13px);width:calc(100% - 26px)}',
+    '.tkq-tall .tkq-step.cur i::after{margin:-5px 0 0 -2px;border-left-width:8px;border-top-width:5px;border-bottom-width:5px}.tkq-tall .tkq-step i::after{width:6px;height:6px;margin:-3px 0 0 -3px}',
+    '@media (max-width:480px){.tkq-tall .tkq-back .tx{display:none}}.tkq-tall .tkq-step{position:relative}.tkq-tall .tkq-step.cur span{position:absolute;top:24px;white-space:nowrap}.tkq-tall .tkq-steps{align-self:flex-start;padding-top:8px;min-height:44px}',
+    '.tkq-tall .tkq-back{min-width:56px;padding:8px 12px;font-size:17px}.tkq-tall .tkq-next{min-width:108px;padding:8px 14px;font-size:19px}',
+    '.tkq-foot{padding:6px 10px;border-radius:18px;background:rgba(12,28,64,.84);border:2px solid rgba(150,185,240,.35);box-shadow:0 6px 16px rgba(0,0,0,.3)}',
+    '.tkq-wide:not(.tkq-short) .tkq-card{align-self:start;margin-top:4px}',
+    '.tkq-tall .tkq-tab{letter-spacing:-.02em}.tkq-tall .tkq-tab i{width:30px;height:30px}.tkq-tall .tkq-tab img{width:21px;height:21px}',
+    '.tkq-tall .tkq-cimg{height:clamp(72px,11vh,120px)}.tkq-tall .tkq-cimg.peng{height:clamp(62px,9.5vh,104px)}.tkq-tall .tkq-opt{min-height:62px}.tkq-tall .tkq-foot{padding:4px 6px}',
+    '.tkq-tall:not(.tkq-sort) .tkq-help,.tkq-short:not(.tkq-sort) .tkq-help{display:none}.tkq-tall .tkq-help:empty,.tkq-short .tkq-help:empty{display:none}.tkq-tall .tkq-stats{padding:4px 8px}.tkq-tall .tkq-top{gap:4px}.tkq-tall .tkq-tab i{width:28px;height:28px}.tkq-tall .tkq-plate h2{font-size:clamp(18px,5.4vw,22px);white-space:nowrap}',
+    '.tkq-tall .tkq-stat>div{display:flex;align-items:baseline;gap:5px}.tkq-tall .tkq-stat b{display:inline}.tkq-tall .tkq-cimg{height:clamp(64px,10vh,110px)}',
+    '.tkq-tall .tkq-scene{min-height:0;flex:none}.tkq-tall .tkq-grp{max-width:62%}.tkq-tall .tkq-clock{width:104px;height:104px}.tkq-tall .tkq-plate p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tkq-tall .tkq-ship{width:84px}.tkq-tall .tkq-card{padding:10px 12px 12px}',
+    // short landscape (phone on its side): plate and tabs share one row, compact everything
+    '.tkq-short{gap:6px;padding-bottom:6px}.tkq-short .tkq-top{flex-direction:row;justify-content:center;gap:10px}',
+    '.tkq-short .tkq-plate{padding:3px 20px 4px;transform:none}.tkq-short .tkq-plate h2{font-size:18px}.tkq-short .tkq-plate p{display:none}.tkq-short .tkq-plate::before,.tkq-short .tkq-plate::after{top:5px;bottom:5px;width:10px}',
+    '.tkq-short .tkq-tabs{padding:3px;gap:3px}.tkq-short .tkq-tab{padding:2px}.tkq-short .tkq-tab span{display:none}.tkq-short .tkq-tab i{width:30px;height:30px}.tkq-short .tkq-tab img{width:21px;height:21px}',
+    '.tkq-short .tkq-card{padding:8px 12px 10px;gap:6px}.tkq-short .tkq-head{min-height:32px}.tkq-short .tkq-hintbtn{min-height:56px;padding:2px 10px}.tkq-short .tkq-scene{min-height:0;padding:2px}',
+    '.tkq-short .tkq-stats{gap:3px;padding:6px 8px}.tkq-short .tkq-stat img{width:26px;height:26px}.tkq-short .tkq-stat b{font-size:17px}',
+    '.tkq-short{grid-template-columns:minmax(112px,15%) minmax(0,1fr) minmax(128px,16%)}.tkq-short .tkq-card{width:100%}',
+    '.tkq-short:not(.tkq-sort) .tkq-card{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;column-gap:10px;row-gap:4px;grid-template-areas:"prompt head" "eq ans" "scene ans" "help ans" "explain ans"}',
+    '.tkq-short .tkq-head .tkq-badge{display:none}.tkq-short .tkq-head{justify-content:flex-end;align-self:start}.tkq-short .tkq-prompt{text-align:left;align-self:center}',
+    '.tkq-short .tkq-head{grid-area:head}.tkq-short .tkq-prompt{grid-area:prompt}.tkq-short .tkq-eq{grid-area:eq}.tkq-short .tkq-scene{grid-area:scene}.tkq-short .tkq-help{grid-area:help;font-size:14px;min-height:0}.tkq-short .tkq-ans{grid-area:ans;align-self:center}.tkq-short .tkq-explain{grid-area:explain;font-size:14px;padding:4px 8px}',
+    '.tkq-short.tkq-wide .tkq-ans{grid-template-columns:repeat(2,minmax(0,1fr))}.tkq-short .tkq-ship{width:64px}.tkq-short .tkq-clock{width:96px;height:96px}',
+    '.tkq-short .tkq-step{font-size:12px}.tkq-short .tkq-step i{width:28px;height:28px}.tkq-short .tkq-step+.tkq-step::before{top:13px;right:calc(50% + 18px);width:calc(100% - 36px)}',
+    '.tkq-short .tkq-back{min-height:56px;min-width:100px;font-size:18px}.tkq-short .tkq-next{min-height:56px;min-width:120px;font-size:19px}.tkq-short .tkq-foot{padding:3px 8px}',
     '.tkq-card{position:relative;min-height:0;display:flex;flex-direction:column;gap:8px;padding:12px 14px 14px;background:#FBF1DC;border:3px solid #E2C999;border-radius:22px;box-shadow:0 10px 26px rgba(20,30,60,.28),inset 0 0 0 3px #FFF8E8;overflow:auto;overscroll-behavior:contain}',
     '.tkq-head{display:flex;align-items:center;gap:8px;min-height:40px}',
     '.tkq-count{font-size:15px;color:#6B4B1F;flex:1}',
@@ -383,6 +476,8 @@
     '.tkq-opt{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;min-width:56px;padding:8px 6px;border-radius:16px;background:linear-gradient(#EEF6FF,#CFE4FB);border:2px solid #9CC3EA;box-shadow:0 3px 0 #8DB3DD;color:#1F3B73;font-size:clamp(17px,2.4vw,24px);line-height:1.15;text-align:center;opacity:0;transform:translateY(8px)}',
     '.tkq-opt.in{opacity:1;transform:none}',
     '.tkq-opt.num{font-size:clamp(26px,3.6vw,34px)}',
+    '.tkq-wide .tkq-opt{min-height:84px;font-size:clamp(18px,2vw,24px)}.tkq-wide .tkq-opt.num{font-size:34px}.tkq-tall .tkq-opt{min-height:68px}',
+    '.tkq-short .tkq-opt{min-height:58px;padding:4px}.tkq-short .tkq-opt.num{font-size:28px}.tkq-short .tkq-ans{gap:8px}.tkq-short .tkq-prompt{font-size:18px}',
     '.tkq-opt img{width:52px;height:52px;object-fit:contain;pointer-events:none}.tkq-opt .lb{font-size:14px}',
     '.tkq-opt .tkq-ar{font-size:30px}.tkq-opt .tkq-tr{font-size:12px}',
     '.tkq-opt.ok{background:linear-gradient(#3CC460,#1E9A3E);border-color:#15803A;box-shadow:0 3px 0 #11662E;color:#fff}',
@@ -398,18 +493,17 @@
     '.tkq-stat{display:flex;align-items:center;gap:8px}.tkq-stat img{width:36px;height:36px;object-fit:contain}.tkq-stat b{font-size:22px;display:block;line-height:1}.tkq-stat small{font-family:system-ui,sans-serif;font-size:12px;opacity:.85}',
     '.tkq-stat b.bump{animation:tkqBump .45s ' + EASE + '}',
     '.tkq-tall .tkq-stats{flex-direction:row;justify-content:space-around;padding:6px 8px;border-radius:16px}.tkq-tall .tkq-stat img{width:28px;height:28px}.tkq-tall .tkq-stat b{font-size:18px}',
-    '.tkq-char{display:flex;align-items:flex-end;gap:6px}.tkq-char img{height:clamp(84px,17vh,190px);width:auto;max-width:100%;object-fit:contain;transform-origin:50% 100%}',
+    '.tkq-char{display:flex;align-items:flex-end;gap:6px;min-height:0}.tkq-char img{height:clamp(84px,17vh,190px);width:auto;max-width:100%;object-fit:contain;transform-origin:50% 100%;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}',
+    '.tkq-wide .tkq-char.timmy img{height:clamp(120px,44vh,380px)}.tkq-wide .tkq-char.peng img{height:clamp(84px,24vh,230px)}',
+    '.tkq-short .tkq-char.timmy img{height:clamp(96px,40vh,170px)}.tkq-short .tkq-char.peng img{height:clamp(60px,22vh,100px)}.tkq-short .tkq-bub{font-size:13px;padding:6px 8px}',
     '.tkq-char.peng img{height:clamp(70px,14vh,150px)}',
     '.tkq-bub{position:relative;max-width:230px;background:#fff;border-radius:16px;padding:8px 10px 8px;font-family:system-ui,sans-serif;font-size:14px;line-height:1.3;color:#1F2A44;box-shadow:0 4px 12px rgba(0,0,0,.18);transition:opacity .25s ' + EASE + ',transform .3s ' + EASE + '}',
     '.tkq-bub b{display:inline-block;margin:-18px 0 4px;padding:2px 10px;border-radius:10px;background:#1F4FA0;color:#fff;font-family:"Fredoka One",system-ui,sans-serif;font-weight:normal;font-size:13px}',
     '.tkq-bub.pop{animation:tkqPop .38s ' + EASE + '}',
     '.tkq-wide .tkq-left .tkq-char{flex-direction:column;align-items:flex-start}.tkq-wide .tkq-right .tkq-char{flex-direction:column;align-items:flex-end}',
     '.tkq-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}',
-    '.tkq-dots{display:flex;gap:8px;align-items:center;flex-wrap:wrap}',
-    '.tkq-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.55);border:2px solid rgba(20,40,90,.45);transition:transform .3s ' + EASE + '}',
-    '.tkq-dot.cur{transform:scale(1.35);background:#fff;border-color:#1F4FA0}.tkq-dot.right{background:#2EAD4B;border-color:#15803A}.tkq-dot.help{background:#FFB300;border-color:#B07A00}',
     '.tkq-next{display:inline-flex;align-items:center;gap:8px;min-height:60px;min-width:150px;padding:8px 22px;border-radius:18px;background:linear-gradient(#FFE27A,#F5B700);border:2px solid #C98F00;box-shadow:0 4px 0 #A87700;color:#3A2A00;font-size:22px;justify-content:center}',
-    '.tkq-next svg{width:26px;height:26px}.tkq-next:disabled{opacity:.4}',
+    '.tkq-next svg{width:26px;height:26px}.tkq-next:disabled{opacity:.45;filter:saturate(.6)}',
     '.tkq-fly{position:fixed;left:0;top:0;width:38px;height:38px;z-index:9999;pointer-events:none}.tkq-fly img{width:100%;height:100%}',
     // arrange letters
     '.tkq-slots{display:flex;gap:8px;justify-content:center;direction:rtl}',
@@ -431,12 +525,24 @@
     '.tkq-item .ppl{display:flex;align-items:flex-end;padding-left:8px}.tkq-item .ppl img{width:30px;height:38px;object-fit:contain;margin-left:-9px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}',
     '.tkq-op{display:grid;place-items:center}.tkq-opx{font-size:34px;line-height:1;color:#1F4FA0;font-family:inherit}.tkq-seat{display:block;width:100%;height:100%;border:2px dashed #8A6A1E;border-radius:8px}.tkq-o img.tkq-p{object-fit:contain}',
     '.tkq-bin .bh img.tk-ico--lifeboat{width:54px;height:34px}.tkq-say img,.tkq-next img,.tkq-hintbtn img{width:28px;height:28px;object-fit:contain}.tkq-opt .ck img{width:100%;height:100%;object-fit:contain}',
+    // sort layout: tall = plate / card (bins over tray) / footer; wide = bins beside the tray so nothing sits below the fold
+    '.tkq-sort.tkq-tall{grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"top" "card" "foot"}',
+    '.tkq-sort.tkq-wide{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"top" "card" "foot"}',
+    '.tkq-sort.tkq-wide .tkq-card{width:min(1040px,100%);max-height:100%}.tkq-sort.tkq-short{grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"card" "foot"}',
+    '.tkq-sortbody{display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}',
+    '.tkq-wide .tkq-sortbody{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(240px,1fr);align-items:stretch}.tkq-wide .tkq-sortbody .tkq-tray{align-content:flex-start;min-height:0;overflow:auto}',
+    '.tkq-wide .tkq-bin{min-height:120px}.tkq-sort .tkq-help{min-height:20px}.tkq-sort .tkq-count{font-size:17px;color:#1F3B73}',
+    '.tkq-short.tkq-sort .tkq-card{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"h p" "x x" "b b" "e e";column-gap:12px;row-gap:4px;padding:6px 10px 8px}',
+    '.tkq-short.tkq-sort .tkq-head{grid-area:h;min-height:30px}.tkq-short.tkq-sort .tkq-badge{display:none}.tkq-short.tkq-sort .tkq-prompt{grid-area:p;font-size:16px;text-align:left;align-self:center}',
+    '.tkq-short.tkq-sort .tkq-help{grid-area:x}.tkq-short.tkq-sort .tkq-sortbody{grid-area:b;gap:8px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tkq-short.tkq-sort .tkq-explain{grid-area:e}',
+    '.tkq-short .tkq-tray{gap:6px;padding:4px}.tkq-short .tkq-item{min-width:64px;min-height:60px;padding:2px 4px}.tkq-short .tkq-item img{width:36px;height:36px}.tkq-short .tkq-item .ppl img{width:24px;height:32px}.tkq-short .tkq-item .lb{font-size:12px}',
+    '.tkq-short .tkq-bin{min-height:120px;padding:4px}.tkq-short .tkq-bin .bh{font-size:14px}.tkq-short .tkq-bin .bh img{width:28px;height:28px}',
     '.tkq-item.drag{z-index:50;cursor:grabbing;box-shadow:0 10px 22px rgba(0,0,0,.25)}',
     '.tkq-item.sel{border-color:#1F4FA0;transform:translateY(-4px) scale(1.04)}',
     '.tkq-item.placed{min-width:56px;min-height:56px;box-shadow:none;border-color:#2EAD4B}.tkq-item.placed img{width:38px;height:38px}',
     '.tkq-item.no{animation:tkqWiggle .42s ' + EASE + '}',
     '.tkq-item.snap{transition:transform .38s ' + EASE + '}',
-    '.tkq-wide .tkq-card{align-self:center;max-height:100%}',
+    '.tkq-wide .tkq-card{align-self:center;max-height:100%}.tkq-wide .tkq-left{justify-content:flex-end}.tkq-wide .tkq-right .tkq-char{margin-top:auto}',
     '.tkq-opt.guide{border-color:#F5B700;box-shadow:0 0 0 4px rgba(255,213,74,.85),0 3px 0 #8DB3DD}',
     '.tkq-ship{position:relative}.tkq-cargo{position:absolute;left:24%;right:24%;bottom:55%;display:flex;justify-content:center;gap:1px}',
     '.tkq-cargo img{width:24px;height:24px;object-fit:contain;opacity:0;transform:translateY(-12px) scale(.6);transition:opacity .3s ' + EASE + ',transform .45s ' + EASE + '}.tkq-cargo img.in{opacity:1;transform:none}',
@@ -495,6 +601,50 @@
       '<line class="hand-m" x1="50" y1="50" x2="50" y2="14" stroke="#E53935" stroke-width="3.2" stroke-linecap="round" transform="rotate(' + ma + ' 50 50)"/><circle cx="50" cy="50" r="4" fill="#1F3B73"/></svg>'
   }
 
+  /* ══ shared ui-08 chrome: layout mode, plate, tabs, stepper footer, characters ══ */
+  var TAB_ORDER = ['matematika', 'islam', 'arab', 'umum', 'logika']
+  var TAB_COLOR = { matematika: '#2F6FD0', islam: '#2E9E5B', arab: '#7B4FD0', umum: '#1E88A8', logika: '#E0A21E' }
+  var TAB_SHORT = { matematika: 'Matematika', islam: 'Islam', arab: 'Arab', umum: 'Umum', logika: 'Logika' }
+  var STEPS = ['Kuis', 'Jelajah', 'Aktivitas', 'Hadiah']
+  var DEFAULT_SUB = 'Jawab soalnya, bantu Timmy berlayar!'
+  function layoutOf (host) {
+    var w = host.clientWidth, h = host.clientHeight, wide = w > h * 1.15
+    return { wide: wide, short: wide && h < 540 }
+  }
+  function rootFor (host, opts, L, reduced) {
+    var root = document.createElement('div')
+    root.className = 'tkq ' + (L.wide ? 'tkq-wide' : 'tkq-tall') + (L.short ? ' tkq-short' : '') + (reduced ? ' tkq-rm' : '')
+    if (opts.topInset) root.style.paddingTop = (opts.topInset + (L.short ? 4 : 8)) + 'px'
+    if (typeof opts.scene === 'string' && opts.scene) root.style.background = opts.scene
+    return root
+  }
+  function charSrc (opts, lib, who) {
+    if (who === 'timmy') return opts.timmy || (W.TKArt ? W.TKArt.src('char/timmy') : lib('sd/explorer'))
+    return opts.penguin || (W.TKArt ? W.TKArt.src('char/penguin') : lib('animals/penguin'))
+  }
+  function plateHTML (title, sub) {
+    return '<div class="tkq-plate"><h2>' + esc(title) + '</h2>' + (sub ? '<p>' + esc(sub) + '</p>' : '') + '</div>'
+  }
+  function tabsHTML (lib, opts, cur) {
+    return '<div class="tkq-tabs" role="list" aria-label="Bidang soal">' + TAB_ORDER.filter(function (d) { return !(opts.islam === false && d === 'islam') }).map(function (d) {
+      var du = DOMAIN_UI[d]
+      return '<div class="tkq-tab' + (d === cur ? ' on' : '') + '" role="listitem" data-d="' + d + '"' + (d === cur ? ' aria-current="true"' : '') + ' style="--c:' + TAB_COLOR[d] + '">' +
+        '<i><img src="' + lib(du.icon) + '" alt="" draggable="false"></i><span>' + esc(TAB_SHORT[d]) + '</span></div>'
+    }).join('') + '</div>'
+  }
+  function footHTML (opts, step, nextLabel) {
+    var steps = '<ol class="tkq-steps" aria-label="Tahap petualangan">' + STEPS.map(function (s, i) {
+      return '<li class="tkq-step' + (i === step ? ' cur' : i < step ? ' done' : '') + '"' + (i === step ? ' aria-current="step"' : '') + '><i></i><span>' + s + '</span></li>'
+    }).join('') + '</ol>'
+    return '<div class="tkq-foot"><button type="button" class="tkq-btn tkq-back" aria-label="Kembali"' + (typeof opts.onBack === 'function' ? '' : ' hidden') + '><span class="tkq-ai l" aria-hidden="true"></span><span class="tx">Kembali</span></button>' +
+      steps + '<button type="button" class="tkq-btn tkq-next" disabled>' + esc(nextLabel) + ' <span class="tkq-ai" aria-hidden="true"></span></button></div>'
+  }
+  function wireBack (root, opts, sfx) {
+    var b = root.querySelector('.tkq-back')
+    if (b && typeof opts.onBack === 'function') b.addEventListener('click', function () { sfx('click'); try { opts.onBack() } catch (e) { if (W.console) console.error(e) } })
+  }
+  function stepOf (opts, dflt) { var s = opts.step; return typeof s === 'number' && s >= 0 && s < STEPS.length ? s : dflt }
+
   /* ══ mount: question set ═══════════════════════════════════════════ */
   function mount (host, set, opts) {
     opts = opts || {}
@@ -502,7 +652,8 @@
     if (opts.mastery == null && set && !Array.isArray(set) && set.mastery != null) opts = Object.assign({}, opts, { mastery: set.mastery })
     if (set && !Array.isArray(set) && set.type === 'sort') return mountSort(host, sortSet(set.domain, set.world, rng(set.seed || Date.now()), set), opts)
     var qs = Array.isArray(set) ? set : build({ domain: (set && set.domain) || opts.domain, world: set && set.world, count: set && set.count, level: set && set.level,
-      grade: (set && set.grade) || opts.grade, islam: set && set.islam != null ? set.islam : opts.islam, mastery: opts.mastery, seed: (set && set.seed) || opts.seed })
+      grade: (set && set.grade) || opts.grade, islam: set && set.islam != null ? set.islam : opts.islam, mastery: opts.mastery, seed: (set && set.seed) || opts.seed,
+      topic: (set && set.topic) || opts.topic })
     if (opts.islam === false) qs = qs.filter(function (q) { return !q.islam })
     var lib = libFn(opts), sfx = sfxFn(opts), reduced = isReduced(opts)
     var timers = [], alive = true
@@ -510,42 +661,56 @@
     var ms0 = {}, ms = {}
     qs.forEach(function (q) { if (!(q.domain in ms0)) { ms0[q.domain] = masteryOf(opts.mastery, q.domain); ms[q.domain] = ms0[q.domain] } })
     var S = { i: 0, right: 0, asked: 0, hints: 0, points: 0, streak: 0, rung: 0, answered: false, results: [] }
+    var noHints = opts.hints === false
 
-    var wide = host.clientWidth > host.clientHeight * 1.15
-    var root = document.createElement('div')
-    root.className = 'tkq ' + (wide ? 'tkq-wide' : 'tkq-tall') + (reduced ? ' tkq-rm' : '')
-    if (opts.topInset) root.style.paddingTop = (opts.topInset + 8) + 'px'
-    var timmySrc = opts.timmy || lib('sd/explorer')
+    var L = layoutOf(host), wide = L.wide
+    var root = rootFor(host, opts, L, reduced)
+    var timmySrc = charSrc(opts, lib, 'timmy'), pengSrc = charSrc(opts, lib, 'peng')
+    var specDom = (set && !Array.isArray(set) && set.domain) || opts.domain
+    var single = specDom !== 'campur' && qs.length && qs.every(function (q) { return q.domain === qs[0].domain }) ? qs[0].domain : null
+    var title = opts.title || (single && DOMAIN_UI[single] ? 'Tantangan ' + DOMAIN_UI[single].label : 'Tantangan Pengetahuan')
+    var topic = (set && !Array.isArray(set) && set.topic) || opts.topic
     var statsHTML = '<div class="tkq-stats" aria-label="skor">' +
-      '<div class="tkq-stat"><img src="' + lib('game/treasure-chest') + '" alt=""><div><b data-k="soal">0/' + qs.length + '</b><small>Soal</small></div></div>' +
-      '<div class="tkq-stat"><img src="' + lib('game/star') + '" alt=""><div><b data-k="poin">0</b><small>Poin</small></div></div>' +
-      '<div class="tkq-stat"><img src="' + lib('game/trophy-gold') + '" alt=""><div><b data-k="streak">0</b><small>Beruntun</small></div></div></div>'
-    var timmyHTML = '<div class="tkq-char timmy"><div class="tkq-bub" data-b="t"><b>Timmy</b><div class="tx">Ayo kita pecahkan bersama!</div></div><img src="' + esc(timmySrc) + '" alt="Timmy" draggable="false"></div>'
-    var pengHTML = '<div class="tkq-char peng"><div class="tkq-bub" data-b="p"><b>Kapten Pingu</b><div class="tx">Semangat, pelaut kecil!</div></div><img src="' + esc(opts.penguin || lib('animals/penguin')) + '" alt="Kapten Pingu" draggable="false"></div>'
+      '<div class="tkq-stat"><img src="' + lib('tk-prop/crate-plain') + '" alt=""><div><b data-k="soal">0/' + qs.length + '</b><small>Soal</small></div></div>' +
+      '<div class="tkq-stat"><img src="' + lib('tk-ui/star') + '" alt=""><div><b data-k="poin">0</b><small>Poin</small></div></div>' +
+      '<div class="tkq-stat"><img src="' + lib('tk-key/compass') + '" alt=""><div><b data-k="streak">0</b><small>Beruntun</small></div></div></div>'
+    var bubT = '<div class="tkq-bub" data-b="' + (L.short ? 'x' : 't') + '"><b>Timmy</b><div class="tx">Ayo kita pecahkan bersama!</div></div>'
+    var timmyHTML = '<div class="tkq-char timmy">' + bubT + '<img src="' + esc(timmySrc) + '" alt="Timmy" draggable="false"></div>'
+    var pengHTML = '<div class="tkq-char peng">' + (L.short ? '' : '<div class="tkq-bub from-p" data-b="p"><b>' + PENGUIN + '</b><div class="tx">Semangat, pelaut kecil!</div></div>') +
+      '<img src="' + esc(pengSrc) + '" alt="' + PENGUIN + '" draggable="false"></div>'
     var cardHTML = '<section class="tkq-card" aria-live="off"><div class="tkq-head"><span class="tkq-count"></span>' +
-      '<button type="button" class="tkq-btn tkq-hintbtn" aria-label="Petunjuk">' + ICON.lamp + '<span>Petunjuk</span></button><span class="tkq-badge"></span></div>' +
+      (noHints ? '' : '<button type="button" class="tkq-btn tkq-hintbtn" aria-label="Petunjuk">' + ICON.lamp + '<span>Petunjuk</span></button>') + '<span class="tkq-badge"></span></div>' +
       '<div class="tkq-prompt"></div><div class="tkq-eq" hidden></div><div class="tkq-scene"></div><div class="tkq-help" aria-live="polite"></div>' +
       '<div class="tkq-ans" role="group" aria-label="Pilihan jawaban"></div><div class="tkq-explain" hidden aria-live="polite"></div></section>'
-    var dots = qs.map(function (q, i) { return '<i class="tkq-dot" data-i="' + i + '"></i>' }).join('')
-    var footHTML = '<div class="tkq-foot"><div class="tkq-dots" aria-hidden="true">' + dots + '</div><button type="button" class="tkq-btn tkq-next" disabled>Lanjut ' + ICON.arrow + '</button></div>'
+    var topHTML = '<div class="tkq-top">' + plateHTML(title, topic || DEFAULT_SUB) + tabsHTML(lib, opts, qs[0] && qs[0].domain) + '</div>'
+    var foot = footHTML(opts, stepOf(opts, 0), 'Lanjut')
     root.innerHTML = wide
-      ? '<div class="tkq-side tkq-left">' + timmyHTML + '</div>' + cardHTML + '<div class="tkq-side tkq-right">' + statsHTML + pengHTML + '</div>' + footHTML
-      : statsHTML + cardHTML + '<div class="tkq-chars"><img class="tkq-cimg" src="' + esc(timmySrc) + '" alt="Timmy" draggable="false">' +
+      ? topHTML + '<div class="tkq-side tkq-left">' + timmyHTML + '</div>' + cardHTML + '<div class="tkq-side tkq-right">' + statsHTML + pengHTML + '</div>' + foot
+      : statsHTML + topHTML + cardHTML + '<div class="tkq-chars"><img class="tkq-cimg" src="' + esc(timmySrc) + '" alt="Timmy" draggable="false">' +
         '<div class="tkq-bub" data-b="x"><b>Timmy</b><div class="tx">Ayo kita pecahkan bersama!</div></div>' +
-        '<img class="tkq-cimg peng" src="' + esc(opts.penguin || lib('animals/penguin')) + '" alt="Kapten Pingu" draggable="false"></div>' + footHTML
+        '<img class="tkq-cimg peng" src="' + esc(pengSrc) + '" alt="' + PENGUIN + '" draggable="false"></div>' + foot
     host.appendChild(root)
     var $ = function (s) { return root.querySelector(s) }
     var E = { count: $('.tkq-count'), badge: $('.tkq-badge'), prompt: $('.tkq-prompt'), eq: $('.tkq-eq'), scene: $('.tkq-scene'), help: $('.tkq-help'),
       ans: $('.tkq-ans'), explain: $('.tkq-explain'), next: $('.tkq-next'), hint: $('.tkq-hintbtn'), card: $('.tkq-card') }
 
     function say (who, text) {
+      if (helpLock && who === 't') return
       var b = root.querySelector('.tkq-bub[data-b="' + who + '"]')
-      if (!b) { b = root.querySelector('.tkq-bub[data-b="x"]'); if (!b) return; b.querySelector('b').textContent = who === 'p' ? 'Kapten Pingu' : 'Timmy'; b.classList.toggle('from-p', who === 'p') }
+      if (!b) { b = root.querySelector('.tkq-bub[data-b="x"]'); if (!b) return; b.querySelector('b').textContent = who === 'p' ? PENGUIN : 'Timmy'; b.classList.toggle('from-p', who === 'p') }
       b.querySelector('.tx').textContent = text
       b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop')
     }
     function stat (k, v) { var b = root.querySelector('[data-k="' + k + '"]'); if (!b) return; b.textContent = v; b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump') }
-    function help (t) { E.help.textContent = t || ''; E.help.classList.toggle('on', !!t) }
+    // phone layouts have no room for a hint line inside the card (it pushed the answers below the fold):
+    // Timmy says it instead, and holds it until the question changes or is answered
+    var bubbleHelp = !wide || L.short, helpLock = false
+    function help (t) {
+      E.help.textContent = t || ''; E.help.classList.toggle('on', !!t)
+      if (!bubbleHelp) return
+      helpLock = false
+      if (t) { say('t', t); helpLock = true }
+    }
     function tierOf (q) { return mastery.tier(ms[q.domain]) }
 
     /* scene */
@@ -557,7 +722,7 @@
       var sc = q.scene, h = '', idx = 0, size
       if (q.domain === 'matematika') {
         var total = 0; (sc.groups || []).forEach(function (g) { total += g.n })
-        size = wide ? (total <= 6 ? 62 : total <= 10 ? 50 : total <= 16 ? 38 : 32) : (total <= 6 ? 48 : total <= 10 ? 38 : total <= 16 ? 30 : 26)
+        size = L.short ? (total <= 6 ? 38 : total <= 10 ? 30 : total <= 16 ? 24 : 22) : wide ? (total <= 6 ? 62 : total <= 10 ? 50 : total <= 16 ? 38 : 32) : (total <= 6 ? 44 : total <= 10 ? 34 : total <= 16 ? 28 : 24)
         var grp = function (g, extra, tag) {
           var s = '<div class="tkq-grp' + (extra ? ' ' + extra : '') + '" data-role="' + g.role + '">' + (tag ? '<span class="tag">' + tag + '</span>' : '')
           for (var j = 0; j < g.n; j++) s += objHTML(g.key, idx++, g.role === 'leave' ? 'leave' : '', size)
@@ -582,7 +747,7 @@
         if (/^(count|add|sub|twostep|groups)$/.test(sc.mode)) h += '<span class="tkq-ship" aria-hidden="true">' + ICON.ship + '<span class="tkq-cargo"></span></span>'
       } else {
         var nv = (q.visual || []).length + (q.seq ? 1 : 0), avail = (E.scene.clientWidth || 320) - 12
-        size = Math.max(30, Math.min(nv <= 1 ? 110 : nv <= 4 ? 80 : 64, Math.floor((avail - 10 * (nv - 1)) / Math.max(1, nv))))
+        size = Math.max(30, Math.min(nv <= 1 ? (L.short ? 72 : wide ? 110 : 88) : nv <= 4 ? (L.short ? 56 : 80) : 64, Math.floor((avail - 10 * (nv - 1)) / Math.max(1, nv))))
         if (q.swatch) h += '<span class="tkq-swatch" style="background:' + esc(q.swatch) + '" role="img" aria-label="warna"></span>'
         ;(q.visual || []).forEach(function (k) { h += objHTML(k, idx++, '', size) })
         if (q.seq) h += '<span class="tkq-q" style="--s:' + size + 'px">?</span>'
@@ -647,7 +812,7 @@
       if (AR.slots.length === AR.q.letters.length) later(checkArrange, 250)
     }
     function tapSlot (i) {
-      if (S.answered || i >= AR.slots.length || (S.rung >= 4 && i === 0)) return
+      if (S.answered || i >= AR.slots.length || (!noHints && S.rung >= 4 && i === 0)) return
       var removed = AR.slots.splice(i)
       removed.forEach(function (ti) { var t = E.ans.querySelector('.tkq-tile[data-t="' + ti + '"]'); t.classList.remove('used'); t.disabled = false })
       drawSlots()
@@ -669,7 +834,7 @@
       if (word === AR.q.answer) return correct(null)
       var sl = E.ans.querySelector('.tkq-slots'); sl.classList.remove('no'); void sl.offsetWidth; sl.classList.add('no')
       sfx('wrong'); say('p', oneOf(ENCOURAGE, Math.random))
-      later(function () { tapSlot(S.rung >= 3 ? 1 : 0); climb(1) }, 450)
+      later(function () { tapSlot(!noHints && S.rung >= 3 ? 1 : 0); climb(1) }, 450)
     }
 
     /* hint ladder */
@@ -677,6 +842,9 @@
       var q = qs[S.i]
       var before = S.rung
       S.rung = Math.min(5, S.rung + by)
+      // hints off (parent setting): no ladder. A wrong tap only fades that choice; the child retries,
+      // and the explanation still follows the right answer. rung keeps counting tries for scoring.
+      if (noHints) return
       if (!q.letters) {
         var left = E.ans.querySelectorAll('.tkq-opt:not(.tried):not(.ok)')
         var wrongLeft = Array.prototype.filter.call(left, function (b) { return b.dataset.c !== q.answer })
@@ -757,7 +925,6 @@
       help('')
       E.explain.hidden = false; E.explain.textContent = q.explain
       later(function () { E.explain.classList.add('on') }, 30)
-      var dot = root.querySelector('.tkq-dot[data-i="' + S.i + '"]'); if (dot) dot.classList.add(first ? 'right' : 'help')
       E.next.disabled = false
       later(function () { try { E.next.focus({ preventScroll: true }) } catch (e) {} }, 700)
     }
@@ -822,12 +989,11 @@
       var t = tierOf(q)
       E.eq.hidden = !(q.eq && q.domain === 'matematika' && t === 2)
       E.eq.textContent = q.eq || ''
-      E.hint.style.visibility = ''
-      help(q.domain === 'matematika' && t >= 3 ? 'Butuh bantuan? Ketuk Petunjuk.' : '')
+      help(!noHints && q.domain === 'matematika' && t >= 3 ? 'Butuh bantuan? Ketuk Petunjuk.' : '')
+      Array.prototype.forEach.call(root.querySelectorAll('.tkq-tab'), function (tb) { var on = tb.dataset.d === q.domain; tb.classList.toggle('on', on); if (on) tb.setAttribute('aria-current', 'true'); else tb.removeAttribute('aria-current') })
       E.explain.hidden = true; E.explain.classList.remove('on')
       E.next.disabled = true
-      E.next.innerHTML = (i === qs.length - 1 ? 'Selesai ' : 'Lanjut ') + ICON.arrow
-      Array.prototype.forEach.call(root.querySelectorAll('.tkq-dot'), function (d, k) { d.classList.toggle('cur', k === i) })
+      E.next.innerHTML = (i === qs.length - 1 ? 'Selesai ' : 'Lanjut ') + '<span class="tkq-ai" aria-hidden="true"></span>'
       renderScene(q)
       renderAnswers(q)
       E.card.scrollTop = 0
@@ -848,7 +1014,8 @@
       if (S.i + 1 >= qs.length) return finish()
       S.i++; show(S.i)
     })
-    E.hint.addEventListener('click', function () { if (S.answered || S.done) return; sfx('click'); climb(1) })
+    if (E.hint) E.hint.addEventListener('click', function () { if (S.answered || S.done) return; sfx('click'); climb(1) })
+    wireBack(root, opts, sfx)
     if (!qs.length) { E.prompt.textContent = 'Belum ada soal.'; return { el: root, state: function () { return S }, destroy: function () { root.remove() } } }
     show(0)
     return {
@@ -868,11 +1035,14 @@
     function later (fn, ms) { var t = setTimeout(function () { if (alive) fn() }, reduced ? Math.min(ms, 100) : ms); timers.push(t) }
     var m0 = masteryOf(opts.mastery, set.domain)
     var S = { placed: 0, wrong: 0, firstOK: 0, tried: {}, sel: null, done: false }
-    var wide = host.clientWidth > host.clientHeight * 1.15
-    var root = document.createElement('div')
-    root.className = 'tkq ' + (wide ? 'tkq-wide' : 'tkq-tall') + (reduced ? ' tkq-rm' : '')
-    if (opts.topInset) root.style.paddingTop = (opts.topInset + 8) + 'px'
+    var L = layoutOf(host)
+    var root = rootFor(host, opts, L, reduced)
+    root.classList.add('tkq-sort')
     var du = DOMAIN_UI[set.domain] || DOMAIN_UI.umum
+    // wording follows the set: families into lifeboats, words, numbers, or things into groups
+    var noun = set.capacity ? 'keluarga' : set.items.some(function (x) { return x.rtl }) ? 'kata' : set.items.every(function (x) { return !x.sprite && !x.people }) ? 'angka' : 'barang'
+    var target = set.capacity ? 'sekocinya' : 'kelompoknya'
+    var startHint = 'Ketuk satu ' + noun + ', lalu ketuk ' + target + '.'
     var binHTML = set.bins.map(function (b) {
       return '<div class="tkq-bin" data-bin="' + esc(b.id) + '" role="group" aria-label="' + esc(b.label) + '"><div class="bh">' +
         (b.sprite ? '<img src="' + lib(b.sprite) + '" alt="">' : b.color ? '<span class="sw" style="background:' + esc(b.color) + '"></span>' : set.capacity ? '<span style="width:54px">' + ICON.boat + '</span>' : '') +
@@ -884,21 +1054,22 @@
       var lb = it.sprite || it.people ? '<span class="lb' + (it.rtl ? ' tkq-ar" dir="rtl" lang="ar' : '') + '">' + esc(it.label) + '</span>' : ''
       return '<button type="button" class="tkq-item" data-id="' + esc(it.id) + '" aria-label="' + esc(it.label) + '">' + pic + lb + '</button>'
     }).join('')
-    root.innerHTML = '<section class="tkq-card" style="grid-column:1/-1"><div class="tkq-head"><span class="tkq-count">Kelompokkan</span>' +
+    var topic = set.topic || opts.topic
+    root.innerHTML = (L.short ? '' : '<div class="tkq-top">' + plateHTML(opts.title || 'Tantangan ' + du.label, topic || '') + '</div>') +
+      '<section class="tkq-card"><div class="tkq-head"><span class="tkq-count" data-k="left"></span>' +
       '<span class="tkq-badge">' + (du.svg || '<img src="' + lib(du.icon) + '" alt="">') + '<span>' + esc(du.label) + '</span></span></div>' +
-      '<div class="tkq-prompt">' + esc(set.prompt) + '</div><div class="tkq-bins">' + binHTML + '</div><div class="tkq-help" aria-live="polite"></div>' +
-      '<div class="tkq-tray">' + itemHTML + '</div><div class="tkq-explain" hidden></div></section>' +
-      '<div class="tkq-foot" style="grid-column:1/-1"><div class="tkq-dots"><span style="color:#fff;font-size:16px" data-k="left"></span></div><button type="button" class="tkq-btn tkq-next" disabled>Selesai ' + ICON.arrow + '</button></div>'
-    root.style.gridTemplateColumns = '1fr'
-    root.style.gridTemplateRows = 'minmax(0,1fr) auto'
+      '<div class="tkq-prompt">' + esc(set.prompt) + '</div><div class="tkq-help" aria-live="polite"></div>' +
+      '<div class="tkq-sortbody"><div class="tkq-bins">' + binHTML + '</div><div class="tkq-tray" aria-label="Barang yang belum dipilah">' + itemHTML + '</div></div>' +
+      '<div class="tkq-explain" hidden></div></section>' + footHTML(opts, stepOf(opts, 2), 'Selesai')
     host.appendChild(root)
     var $ = function (s) { return root.querySelector(s) }
     var tray = $('.tkq-tray'), helpEl = $('.tkq-help'), next = $('.tkq-next')
     var byId = {}; set.items.forEach(function (it) { byId[it.id] = it })
     var load = {}; set.bins.forEach(function (b) { load[b.id] = 0 })
     function help (t) { helpEl.textContent = t || ''; helpEl.classList.toggle('on', !!t) }
-    function left () { $('[data-k="left"]').textContent = (set.items.length - S.placed) + ' lagi' }
-    left()
+    function left () { var n = set.items.length - S.placed; $('[data-k="left"]').textContent = n ? n + ' ' + noun + ' lagi' : 'Selesai!' }
+    left(); help(startHint)
+    wireBack(root, opts, sfx)
     function binOf (id) { for (var i = 0; i < set.bins.length; i++) if (set.bins[i].id === id) return set.bins[i] }
     function fits (it, b) {
       if (set.capacity) return load[b.id] + it.n <= b.cap
@@ -1006,7 +1177,7 @@
         sfx('click')
         if (S.sel && S.sel !== el) S.sel.classList.remove('sel')
         S.sel = el.classList.toggle('sel') ? el : null
-        if (S.sel) help('Sekarang ketuk kelompoknya.')
+        if (S.sel) help('Sekarang ketuk ' + target + '.')
       })
     })
     Array.prototype.forEach.call(root.querySelectorAll('.tkq-bin'), function (b) {

@@ -111,7 +111,7 @@
     o = o || {}
     var st = o.settings || {}
     return { xp: o.xp || 0, stars: o.stars || {}, fragments: o.fragments || [], cards: o.cards || [], badges: o.badges || [], mastery: o.mastery || {},
-      settings: { grade: st.grade || 'adaptif', islam: st.islam !== false, sound: st.sound !== false, music: st.music !== false, narration: st.narration !== false, reducedMotion: !!st.reducedMotion, timer: !!st.timer, hints: st.hints !== false, effects: st.effects !== false, confirmExit: st.confirmExit !== false },
+      settings: { grade: st.grade || 'adaptif', islam: st.islam !== false, sound: st.sound !== false, music: st.music !== false, narration: st.narration !== false, reducedMotion: !!st.reducedMotion, timer: !!st.timer, musicVol: st.musicVol, sfxVol: st.sfxVol, voiceVol: st.voiceVol, hints: st.hints !== false, effects: st.effects !== false, confirmExit: st.confirmExit !== false },
       seenIntro: !!o.seenIntro, last: o.last || null, fav: o.fav || [] }
   }
   function load () {
@@ -152,6 +152,7 @@
   var toastT = 0
   function toast (m) { var t = $('toast'); t.textContent = m; t.className = 'toast show'; clearTimeout(toastT); toastT = setTimeout(function () { t.className = 'toast' }, 2200) }
   function show (id) {
+    if (HUB && document.body.getAttribute('data-scr') !== id) { try { HUB.destroy() } catch (e) {} HUB = null }
     document.querySelectorAll('.scr').forEach(function (s) { s.classList.toggle('active', s.id === id) })
     document.body.setAttribute('data-scr', id)
     if (id !== 'scr-play') { clearTimeout(goalT); document.body.classList.remove('goal-on') }
@@ -180,7 +181,8 @@
   function levelOpen (w, k) { return k === 0 || starsOf(w.id, w.levels[k - 1].id) > 0 }
   function xpLevel () { var lv = Math.floor(S.xp / 300) + 1; return { lv: lv, cur: S.xp % 300 } }
   function paintChip () {
-    var x = xpLevel(); $('pchip-lv').textContent = 'Level ' + x.lv + ' · ' + x.cur + '/300'
+    var x = xpLevel(); $('pchip-lv').textContent = 'Level ' + x.lv
+    var n = $('pchip-n'); if (n) n.textContent = x.cur + ' / 300'
     $('pchip-xp').style.transform = 'scaleX(' + (x.cur / 300) + ')'; $('pchip-av').src = Art.src('char/timmy')
   }
 
@@ -198,129 +200,256 @@
       homeRaf = requestAnimationFrame(f)
     })(performance.now())
   }
-  var CATS = [['matematika', 'Matematika', 'game/coin-star', '#2E7DE0'], ['islam', 'Studi Islam', 'things/light-bulb', '#1FA54E'], ['arab', 'Bahasa Arab', 'school/books', '#7A4FD6'],
-    ['umum', 'Pengetahuan Umum', 'school/globe', '#1E88A8'], ['logika', 'Logika', 'things/light-bulb', '#E0A21E']]
+  // learning categories (home row, room progress, practice): [domain, label, owner sprite, disc colour] — five DISTINCT sprites
+  var CATS = [['matematika', 'Matematika', 'sd/cat-math', '#2E7DE0'], ['islam', 'Studi Islam', 'gt/q-islamic', '#1FA54E'], ['arab', 'Bahasa Arab', 'school/books', '#7A4FD6'],
+    ['umum', 'Pengetahuan Umum', 'school/globe', '#1E88A8'], ['logika', 'Logika', 'tk-prop/sextant-4', '#E0A21E']]
+  // the ship worlds (the bedroom tutorial is not a ship: it is reached from Start the first time and from Kamar Timmy)
+  function shipWorlds () { return WD.WORLDS.filter(function (w) { return w.id !== 'kamar' }) }
+  function wIndex (w) { return WD.WORLDS.indexOf(w) }
+  function lockBadge () { return '<span class="lockb">' + IC('lock', '', 'terkunci') + '</span>' }
+  // a ship standing on its own painted scene (Art.scene is a CSS background; esc() keeps it safe inside style="")
+  function shipScene (w, cls) {
+    return '<span class="' + cls + '" style="background:' + esc(Art.scene(w.scene)) + '"><img src="' + esc(Art.src(w.ship || 'char/timmy')) + '" alt="" draggable="false"></span>'
+  }
   function home () {
     show('scr-home')
     $('home-sky').style.background = Art.scene('harbor-dawn')
-    $('home-ship').src = Art.src('ship/titanic'); $('home-timmy').src = Art.src('char/timmy')
+    $('home-timmy').src = Art.src('char/timmy')
+    document.querySelectorAll('#home-px .gull').forEach(function (g) { if (!g.getAttribute('src')) g.src = Art.lib('tk-legend/seagull-3') })
     // owner logo sprite replaces the drawn logo once it exists (tk-key/logo)
     var li = $('logo-img'); if (li && !li.dataset.tried && W.AssetIndex && AssetIndex.path('tk-key/logo')) { li.dataset.tried = 1; li.onload = function () { li.classList.remove('hide'); var d = document.querySelector('#scr-home .logo'); if (d) d.classList.add('hide') }; li.src = Art.src('ui/logo') }
     paintChip()
     $('start-t').textContent = S.seenIntro ? 'Lanjutkan Petualangan' : 'Mulai Petualangan'
-    $('carousel').innerHTML = WD.WORLDS.slice(1).map(function (w, i) {
-      return '<button class="sc' + (worldOpen(i + 1) ? '' : ' locked') + '" type="button" data-w="' + w.id + '"><img src="' + Art.src(w.ship) + '" alt=""><b>' + esc(w.name) + '</b><small>' + esc(w.value) + '</small></button>'
+    var list = shipWorlds()
+    $('carousel').innerHTML = list.map(function (w) {
+      var open = worldOpen(wIndex(w))
+      return '<button class="sc' + (open ? '' : ' locked') + '" type="button" data-w="' + w.id + '" aria-label="' + esc(w.name + (open ? '' : ' (terkunci)')) + '">' + shipScene(w, 'sc-img') + (open ? '' : lockBadge()) +
+        '<span class="sc-t"><b>' + esc(w.name) + '</b><small>' + esc(w.value) + '</small></span></button>'
     }).join('')
+    $('car-dots').innerHTML = list.map(function (w, i) { return '<i' + (i ? '' : ' class="on"') + '></i>' }).join('')
     $('cats').innerHTML = CATS.filter(function (c) { return c[0] !== 'islam' || S.settings.islam }).map(function (c) {
-      return '<button class="cat" type="button" data-d="' + c[0] + '"><i style="background:' + c[3] + '"><img src="' + Art.lib(c[2]) + '" alt=""></i>' + c[1] + '</button>'
+      return '<button class="cat" type="button" data-d="' + c[0] + '"><i style="background:' + c[3] + '"><img src="' + esc(Art.lib(c[2])) + '" alt=""></i><span>' + c[1].replace('Pengetahuan', 'Penge\u00ADtahuan') + '</span></button>'
     }).join('')
     paintSound()
+    carouselWire(); requestAnimationFrame(paintCar)
+  }
+  // carousel arrows (CSS chevrons) + dots; landscape pages by a screenful, portrait by one card
+  var carWired = false
+  function carouselWire () {
+    if (carWired) return
+    carWired = true
+    var tr = $('carousel')
+    var step = function (dir) {
+      var c = tr.querySelector('.sc'); if (!c) return
+      var w = c.offsetWidth + 8, page = Math.max(w, Math.floor(tr.clientWidth / w) * w)
+      tr.scrollBy({ left: dir * page, behavior: reduced() ? 'auto' : 'smooth' })
+    }
+    tap('car-prev', function () { step(-1) }); tap('car-next', function () { step(1) })
+    var raf = 0
+    tr.addEventListener('scroll', function () { cancelAnimationFrame(raf); raf = requestAnimationFrame(paintCar) }, { passive: true })
+    addEventListener('resize', function () { if (document.body.getAttribute('data-scr') === 'scr-home') paintCar() })
+  }
+  function paintCar () {
+    var tr = $('carousel'), c = tr && tr.querySelector('.sc'); if (!c) return
+    var i = Math.round(tr.scrollLeft / (c.offsetWidth + 8)), max = tr.scrollWidth - tr.clientWidth
+    $('car-dots').querySelectorAll('i').forEach(function (d, k) { d.classList.toggle('on', k === i) })
+    $('car-prev').disabled = tr.scrollLeft < 4; $('car-next').disabled = tr.scrollLeft > max - 4
   }
 
-  /* ── SHIP SELECT ────────────────────────────────────────────────────── */
-  var FILTER = 'semua', SEL_SHIP = 'titanic'
+  /* ── SHIP SELECT (mockup ui-04) ─────────────────────────────────────── */
+  // detail-panel thumbnails: the ship's scene, its World-Map island and one prop from its story
+  var THUMB = { titanic: 'tk-prop/iceberg-5', britannic: 'tk-prop/lifebuoy-5', vasa: 'tk-prop/cannon', cuttysark: 'tk-prop/tea-set', victory: 'tk-prop/spyglass-4',
+    mayflower: 'tk-prop/nautical-chart', endurance: 'tk-prop/ice-floe', kontiki: 'tk-prop/message-bottle', calypso: 'tk-prop/diving-helmet', queenmary: 'tk-prop/pocket-watch',
+    arizona: 'tk-prop/ship-bell-3', missouri: 'tk-prop/sealed-letter', nautilus: 'tk-prop/porthole-underwater', pelabuhan: 'tk-legend/hourglass' }
+  var FILTER = 'semua', SEL_SHIP = 'titanic', shipsWired = false
   function ships () {
     show('scr-ships')
+    $('ships-bg').style.background = Art.scene('harbor-dawn')
+    var tm = $('ships-timmy'); if (!tm.getAttribute('src')) tm.src = Art.src('char/timmy')
+    var lg = $('ships-logo'); if (!lg.getAttribute('src') && W.AssetIndex && AssetIndex.path('tk-key/logo')) lg.src = Art.src('ui/logo')
     $('ships-stars').innerHTML = IC('star') + '<span>' + totalStars() + '/' + maxStars() + '</span>'
     var cats = WD.CATS.concat([['favorit', 'Favorit']])
-    $('ship-filter').innerHTML = cats.map(function (c) { return '<button class="chip' + (c[0] === FILTER ? ' on' : '') + '" type="button" data-c="' + c[0] + '">' + c[1] + '</button>' }).join('')
+    $('ship-filter').innerHTML = cats.map(function (c) { return '<button class="chip' + (c[0] === FILTER ? ' on' : '') + '" type="button" data-c="' + c[0] + '" aria-pressed="' + (c[0] === FILTER) + '">' + c[1] + '</button>' }).join('')
     var shown = 0
-    $('ship-list').innerHTML = WD.WORLDS.map(function (w, i) {
+    $('ship-list').innerHTML = shipWorlds().map(function (w) {
       if (FILTER === 'favorit' ? S.fav.indexOf(w.id) < 0 : (FILTER !== 'semua' && w.cat !== FILTER)) return ''
-      var open = worldOpen(i), got = S.fragments.indexOf(w.id) >= 0, fav = S.fav.indexOf(w.id) >= 0
-      return '<div class="shipcard' + (open ? '' : ' locked') + (w.id === SEL_SHIP ? ' sel' : '') + '" role="button" tabindex="0" data-w="' + w.id + '" style="animation-delay:' + (shown++ * 35) + 'ms">' +
-        '<div class="img" style="background:' + Art.scene(w.scene) + '"><img src="' + Art.src(w.ship || 'char/timmy') + '" alt=""></div>' +
-        '<b>' + esc(w.name) + '</b><small>' + esc(w.value) + '</small><span class="st">' + IC('star') + worldStars(w) + '/' + w.levels.length * 3 + '</span>' +
-        '<button class="fav' + (fav ? ' on' : '') + '" type="button" data-fav="' + w.id + '" aria-label="Favorit">' + IC('star') + '</button>' +
+      var open = worldOpen(wIndex(w)), got = S.fragments.indexOf(w.id) >= 0, fav = S.fav.indexOf(w.id) >= 0
+      return '<div class="shipcard' + (open ? '' : ' locked') + (w.id === SEL_SHIP ? ' sel' : '') + '" role="button" tabindex="0" data-w="' + w.id + '" aria-label="' + esc(w.name + (open ? '' : ' (terkunci)')) + '" style="animation-delay:' + (shown++ * 35) + 'ms">' +
+        shipScene(w, 'img') + (open ? '' : lockBadge()) +
+        '<span class="sc-t"><b>' + esc(w.name) + '</b><small>' + esc(w.value) + '</small></span><span class="st">' + IC('star') + worldStars(w) + '/' + w.levels.length * 3 + '</span>' +
+        '<button class="fav' + (fav ? ' on' : '') + '" type="button" data-fav="' + w.id + '" aria-label="Favorit" aria-pressed="' + fav + '">' + IC('star') + '</button>' +
         (got ? IC('compass', 'frag', 'kepingan') : '') + '</div>'
     }).join('') || '<p class="paper-note">Belum ada kapal favorit. Ketuk bintang di kartu kapal!</p>'
     detail(SEL_SHIP)
+    bnav('', 'bnav-ships')
+    if (!shipsWired) {
+      shipsWired = true
+      $('bnav-ships').addEventListener('click', bnavForward)
+      // the favourite star in the panel; a star tapped on a card (wired in wire()) is mirrored here
+      $('ship-detail').addEventListener('click', function (e) {
+        var f = e.target.closest('.fav'); if (!f) return
+        var id = f.getAttribute('data-fav'), at = S.fav.indexOf(id); if (at >= 0) S.fav.splice(at, 1); else S.fav.push(id)
+        save(); SND.chime(); syncFav(id); A(f, [{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 300, easing: EO })
+      })
+      $('ship-list').addEventListener('click', function (e) { var f = e.target.closest('.fav'); if (f) setTimeout(function () { syncFav(f.getAttribute('data-fav')) }, 0) })
+    }
+  }
+  function syncFav (id) {
+    var on = S.fav.indexOf(id) >= 0
+    document.querySelectorAll('#scr-ships .fav[data-fav="' + id + '"]').forEach(function (b) { b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)) })
   }
   function detail (id) {
-    var w = WD.get(id) || WD.get('titanic'), sp = w.spec || {}, i = WD.WORLDS.indexOf(w), open = worldOpen(i)
+    var w = WD.get(id); if (!w || w.id === 'kamar') w = WD.get('titanic')
+    var sp = w.spec || {}, open = worldOpen(wIndex(w)), fav = S.fav.indexOf(w.id) >= 0, isl = isleArt(w.id)
     SEL_SHIP = w.id
     document.querySelectorAll('.shipcard').forEach(function (c) { c.classList.toggle('sel', c.getAttribute('data-w') === w.id) })
     var d = $('ship-detail')
-    d.innerHTML = '<div class="dimg" style="background:' + Art.scene(w.scene) + '"><img src="' + Art.src(w.ship || 'char/timmy') + '" alt=""></div>' +
-      '<div><h3 class="fk">' + esc(w.name) + '</h3><small>' + esc(w.value) + '</small></div>' +
+    d.innerHTML = shipScene(w, 'dimg') + (open ? '' : lockBadge()) +
+      '<div class="dh"><h3 class="fk">' + esc(w.name) + '</h3><small>' + esc(w.value) + '</small></div>' +
+      '<button class="fav dfav' + (fav ? ' on' : '') + '" type="button" data-fav="' + w.id + '" aria-label="Favorit" aria-pressed="' + fav + '">' + IC('star') + '</button>' +
       '<q>' + esc(sp.quote || '') + '</q>' +
-      '<dl><dt>Tahun</dt><dd>' + (w.year || '—') + '</dd><dt>Jenis</dt><dd>' + esc(sp.type || '') + '</dd><dt>Panjang</dt><dd>' + esc(sp.length || '') + '</dd><dt>Terkenal karena</dt><dd>' + esc(sp.famous || '') + '</dd></dl>' +
-      '<button class="btn b-gold fk sail" type="button" id="btn-sail">' + (open ? 'Berlayar!' : 'Terkunci') + '</button>'
+      '<div class="thumbs" aria-hidden="true"><span style="background:' + esc(Art.scene(w.scene)) + '"></span>' +
+        (isl ? '<span><img src="' + esc(Art.lib(isl)) + '" alt=""></span>' : '') + '<span><img src="' + esc(Art.lib(THUMB[w.id] || 'tk-prop/compass-3')) + '" alt=""></span></div>' +
+      '<dl><dt>Tahun</dt><dd>' + (w.year || '-') + '</dd><dt>Jenis</dt><dd>' + esc(sp.type || '') + '</dd><dt>Panjang</dt><dd>' + esc(sp.length || '') + '</dd><dt>Terkenal karena</dt><dd>' + esc(sp.famous || '') + '</dd></dl>' +
+      '<button class="btn b-gold fk sail" type="button" id="btn-sail">' + IC('start') + '<span>' + (open ? 'Berlayar!' : 'Terkunci') + '</span><i class="chev" aria-hidden="true"></i></button>'
     A(d, [{ opacity: 0.4, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: EO })
     var b = $('btn-sail'); b.disabled = !open
     b.onclick = function () { SND.click(); openWorld(w.id) }
   }
 
-  /* ── WORLD MAP (islands) ────────────────────────────────────────────── */
-  // owner island sprites under each ship on the World Map (mockup ui-06); falls back to the drawn island
-  var ISLE = { kamar: 'tk-world/lighthouse-island', titanic: 'tk-world/harbor-station', britannic: 'tk-world/lighthouse-island', vasa: 'tk-world/arch-island',
-    cuttysark: 'tk-world/palm-island', victory: 'tk-world/arch-rock', mayflower: 'tk-world/palm-island', endurance: 'tk-world/snow-island',
-    kontiki: 'tk-world/cave-island', calypso: 'tk-world/palm-island', queenmary: 'tk-world/harbor-station', arizona: 'tk-world/lighthouse-island',
-    missouri: 'tk-world/arch-rock', nautilus: 'tk-world/whirlpool', pelabuhan: 'tk-world/ruins' }
+  /* ── WORLD MAP (mockup ui-06: numbered islands) ─────────────────────── */
+  // owner island sprites under each ship. Island-shaped sprites only (the framed picture cards —
+  // arch-beach, sunset-sea — read as photos); no ship on the lighthouse (it is scenery).
+  var ISLE = { kamar: 'tk-world/lighthouse-island', titanic: 'tk-world/harbor-station', britannic: 'tk-world/arch-island', vasa: 'tk-world/arch-rock',
+    cuttysark: 'tk-world/palm-island', victory: 'tk-world/cave-island', mayflower: 'tk-world/arch-island', endurance: 'tk-world/snow-island',
+    kontiki: 'tk-world/palm-island', calypso: 'tk-world/cave-island', queenmary: 'tk-world/harbor-station', arizona: 'tk-world/arch-rock',
+    missouri: 'tk-world/arch-island', nautilus: 'tk-world/whirlpool', pelabuhan: 'tk-world/ruins' }
   function isleArt (id) { var k = ISLE[id]; return k && W.AssetIndex && AssetIndex.path(k) ? k : null }
+  // one dashed route through snake-ordered points: a curve between neighbours in a row; a row change
+  // runs down the outer gutter (beside the labels, never across a star row)
+  function snakePath (pts, half, midX) {
+    var r = 14, d = 'M' + pts[0].x.toFixed(0) + ' ' + pts[0].y.toFixed(0)
+    for (var k = 1; k < pts.length; k++) {
+      var a = pts[k - 1], b = pts[k]
+      if (a.row === b.row) { d += ' Q' + ((a.x + b.x) / 2).toFixed(0) + ' ' + (a.y + 20).toFixed(0) + ' ' + b.x.toFixed(0) + ' ' + b.y.toFixed(0); continue }
+      var s = a.x >= midX ? 1 : -1, e = a.x + s * half
+      d += ' L' + (e - s * r).toFixed(0) + ' ' + a.y.toFixed(0) + ' Q' + e.toFixed(0) + ' ' + a.y.toFixed(0) + ' ' + e.toFixed(0) + ' ' + (a.y + r).toFixed(0) +
+        ' L' + e.toFixed(0) + ' ' + (b.y - r).toFixed(0) + ' Q' + e.toFixed(0) + ' ' + b.y.toFixed(0) + ' ' + (e - s * r).toFixed(0) + ' ' + b.y.toFixed(0) + ' L' + b.x.toFixed(0) + ' ' + b.y.toFixed(0)
+    }
+    return d
+  }
+  function pathSvg (w, h, d, sw) {
+    return '<svg class="path" width="' + Math.round(w) + '" height="' + Math.round(h) + '" aria-hidden="true"><path d="' + d + '" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="' + (sw + 3) + '" stroke-dasharray="10 12" stroke-linecap="round" transform="translate(0 2)"/>' +
+      '<path d="' + d + '" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="' + sw + '" stroke-dasharray="10 12" stroke-linecap="round"/></svg>'
+  }
+  var wResize = false
   function worldView () {
     show('scr-world')
+    $('sea-bg').style.background = Art.scene('harbor-day')
+    var cp = $('w-compass'); if (!cp.getAttribute('src')) cp.src = Art.lib('tk-prop/compass')
+    var tm = $('w-timmy'); if (!tm.getAttribute('src')) tm.src = Art.lib('tk-char/timmy-map')
     $('world-stars').innerHTML = IC('star') + '<span>' + totalStars() + '/' + maxStars() + '</span>'
-    var host = $('islands'), Wd = host.clientWidth || innerWidth, cols = Wd > 900 ? 4 : Wd > 560 ? 3 : 2
-    var gx = (Wd - 16) / cols, gy = 212, pts = [], list = WD.WORLDS
-    list.forEach(function (w, k) { var row = Math.floor(k / cols), c = k % cols; if (row % 2) c = cols - 1 - c; pts.push({ x: 8 + gx * (c + 0.5), y: 110 + row * gy + ((k % 2) ? 14 : 0) }) })
-    var H = pts[pts.length - 1].y + 130, d = pts.map(function (p, k) { return (k ? 'L' : 'M') + p.x.toFixed(0) + ' ' + p.y.toFixed(0) }).join(' ')
-    var nextI = -1; list.forEach(function (w, i) { if (nextI < 0 && worldOpen(i) && !worldDone(w)) nextI = i })
-    host.innerHTML = '<svg class="path" width="' + Wd + '" height="' + H + '"><path d="' + d + '" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="4" stroke-dasharray="9 12" stroke-linecap="round"/></svg>' +
-      list.map(function (w, i) {
-        var got = worldStars(w), max = w.levels.length * 3, st = '', n = Math.round(got / max * 3)
-        for (var k = 0; k < 3; k++) st += IC('star', k < n ? '' : 'tk-ico--dim')
-        return '<button class="isle' + (worldOpen(i) ? '' : ' locked') + (i === nextI ? ' next' : '') + '" type="button" data-w="' + w.id + '" style="left:' + pts[i].x + 'px;top:' + pts[i].y + 'px;animation-delay:' + i * 50 + 'ms">' +
-          '<span class="land' + (isleArt(w.id) ? ' art' : '') + '">' + (isleArt(w.id) ? '<img class="isl" src="' + Art.lib(isleArt(w.id)) + '" alt="">' : '') +
-          '<img class="shp" src="' + Art.src(w.ship || 'char/timmy') + '" alt=""><b class="no fk">' + i + '</b></span>' +
+    layoutWorld()
+    bnav('peta')
+    if (!wResize) {
+      wResize = true; var rt = 0
+      addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (document.body.getAttribute('data-scr') === 'scr-world') layoutWorld() }, 150) })
+    }
+    var nx = $('islands').querySelector('.isle.next'); if (nx) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }) } catch (e) {} }, 80)
+  }
+  function layoutWorld () {
+    var host = $('islands'), cs = getComputedStyle(host), list = shipWorlds()
+    var x0 = parseFloat(cs.paddingLeft) || 0, Wd = host.clientWidth - x0 - (parseFloat(cs.paddingRight) || 0)
+    var cols = 3, gx = Wd / cols, short = innerHeight < 520
+    var aw = Math.round(Math.min(gx * 0.84, short ? 124 : 230)), ah = Math.round(aw * 0.72)
+    var lw = Math.round(Math.min(gx - 14, 210)), rowH = ah + (gx < 150 ? 92 : 78) + (short ? 10 : 24), pts = []
+    list.forEach(function (w, k) { var row = Math.floor(k / cols), c = k % cols; if (row % 2) c = cols - 1 - c; pts.push({ x: x0 + gx * (c + 0.5), y: 22 + row * rowH + ah / 2, row: row }) })
+    var H = pts[pts.length - 1].y + ah / 2 + rowH - ah + 8
+    var nextI = -1; list.forEach(function (w, k) { if (nextI < 0 && worldOpen(wIndex(w)) && !worldDone(w)) nextI = k })
+    host.innerHTML = pathSvg(host.clientWidth, H, snakePath(pts, gx / 2 - 3, x0 + Wd / 2), 4) +
+      list.map(function (w, k) {
+        var open = worldOpen(wIndex(w)), got = worldStars(w), max = w.levels.length * 3, st = '', n = Math.round(got / max * 3), isl = isleArt(w.id)
+        for (var q = 0; q < 3; q++) st += IC('star', q < n ? '' : 'tk-ico--dim')
+        return '<button class="isle' + (open ? '' : ' locked') + (k === nextI ? ' next' : '') + '" type="button" data-w="' + w.id + '" aria-label="' + esc((k + 1) + '. ' + w.name + (open ? '' : ' (terkunci)')) + '" style="left:' + (pts[k].x - gx / 2).toFixed(0) + 'px;top:' + (pts[k].y - ah / 2).toFixed(0) + 'px;width:' + gx.toFixed(0) + 'px;--aw:' + aw + 'px;--ah:' + ah + 'px;--lw:' + lw + 'px;animation-delay:' + k * 50 + 'ms">' +
+          '<span class="land">' + (isl ? '<img class="isl" src="' + esc(Art.lib(isl)) + '" alt="">' : '<i class="isl-d"></i>') +
+          '<img class="shp" src="' + esc(Art.src(w.ship || 'char/timmy')) + '" alt=""><b class="no fk">' + (k + 1) + '</b>' + (open ? '' : lockBadge()) + '</span>' +
           '<span class="lab">' + esc(w.name) + '<small>' + esc(w.value) + '</small></span><span class="s">' + st + '</span></button>'
       }).join('')
     var sp = document.createElement('div'); sp.style.height = H + 'px'; host.appendChild(sp)
-    var nx = host.querySelector('.isle.next'); if (nx) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }) } catch (e) {} }, 80)
-    bnav('peta')
   }
-  function bnav (on) {
-    var items = [['peta', 'Peta Dunia', 'game/treasure-map'], ['cerita', 'Cerita', 'school/books'], ['tantangan', 'Tantangan', 'game/target-board'], ['belajar', 'Belajar', 'school/globe'], ['koleksi', 'Koleksi', 'game/treasure-chest']]
-    $('bnav').innerHTML = items.map(function (x) { return '<button type="button" class="' + (x[0] === on ? 'on' : '') + '" data-n="' + x[0] + '"><img src="' + Art.lib(x[2]) + '" alt="">' + x[1] + '</button>' }).join('')
+  var BNAV = [['peta', 'Peta Dunia', 'tk-legend/world-map-scroll'], ['cerita', 'Cerita', 'tk-prop/adventure-log'], ['tantangan', 'Tantangan', 'game/target-board'],
+    ['belajar', 'Belajar', 'tk-prop/globe-2'], ['koleksi', 'Koleksi', 'game/treasure-chest']]
+  function bnav (on, hostId) {
+    $(hostId || 'bnav').innerHTML = BNAV.map(function (x) { return '<button type="button" class="' + (x[0] === on ? 'on' : '') + '" data-n="' + x[0] + '"' + (x[0] === on ? ' aria-current="page"' : '') + '><img src="' + esc(Art.lib(x[2])) + '" alt="">' + x[1] + '</button>' }).join('')
+  }
+  // a second tab bar (ship select) hands its tap to the World Map bar, whose handler is wired once in wire()
+  function bnavForward (e) {
+    var b = e.target.closest('button[data-n]'); if (!b) return
+    var n = b.getAttribute('data-n'), t = $('bnav').querySelector('[data-n="' + n + '"]')
+    if (!t) { bnav('peta'); t = $('bnav').querySelector('[data-n="' + n + '"]') }
+    if (t) t.click()
   }
 
-  /* ── LEVEL MAP ──────────────────────────────────────────────────────── */
+  /* ── LEVEL MAP (mockup ui-02 #4) ────────────────────────────────────── */
   var CUR = { w: null, k: 0 }
+  // each world's own captain portrait (owner rule: no woman without hijab)
+  var CAPT = { kamar: 'char/timmy', britannic: 'tk-char/hijab-officer-pointing', calypso: 'tk-char/diver', endurance: 'tk-char/captain-binoculars',
+    nautilus: 'tk-char/captain-old', kontiki: 'tk-char/explorer-kid', victory: 'tk-char/officer-boy-salute', vasa: 'tk-char/mechanic-boy-wrench', queenmary: 'tk-char/officer-boy' }
   function worldMap (wid) {
     var w = WD.get(wid); if (!w) return
     CUR.w = w; show('scr-map')
     $('map-bg').style.background = Art.scene(w.scene)
     $('map-name').textContent = w.name + (w.year ? ' (' + w.year + ')' : ''); $('map-value').textContent = w.value
-    $('map-stars').innerHTML = IC('star') + '<span>' + worldStars(w) + '/' + w.levels.length * 3 + '</span>'
-    $('captain').innerHTML = '<img src="' + Art.src('char/captain') + '" alt=""><div><b>' + esc(w.captain.name) + '</b><span>“' + esc(w.captain.quote) + '”</span></div>'
+    $('map-stars').innerHTML = IC('star') + '<span>Bintang ' + worldStars(w) + '/' + w.levels.length * 3 + '</span>'
+    var cap = w.captain || {}
+    $('captain').innerHTML = '<img src="' + esc(Art.src(CAPT[w.id] || 'char/captain')) + '" alt=""><div><b>' + esc(cap.name) + '</b><span>“' + esc(cap.quote) + '”</span></div>'
+    $('captain').classList.toggle('hide', !cap.quote)
     layoutRoute(w)
   }
   function layoutRoute (w) {
-    var host = $('route'), Wd = host.clientWidth || innerWidth, n = w.levels.length
-    var cols = Wd > 700 ? 5 : 3, gx = (Wd - 24) / cols, gy = 128, pts = []
+    var host = $('route'), cs = getComputedStyle(host), n = w.levels.length
+    var x0 = parseFloat(cs.paddingLeft) || 0, Wd = host.clientWidth - x0 - (parseFloat(cs.paddingRight) || 0)
+    var land = innerWidth > innerHeight && Wd >= 560
+    var cols = land ? Math.max(2, Math.ceil(n / 2)) : (Wd > 520 ? 4 : 3)
+    var gx = Wd / cols, rowH = land ? 150 : 138, tw = Math.round(Math.min(gx - 4, 132)), pts = []
     for (var k = 0; k < n; k++) {
-      var row = Math.floor(k / cols), c = k % cols; if (row % 2) c = cols - 1 - c     // snake path
-      pts.push({ x: 12 + gx * (c + 0.5), y: 60 + row * gy + (c % 2 ? 18 : 0) })
+      var row = Math.floor(k / cols), c = k % cols; if (!land && row % 2) c = cols - 1 - c     // portrait: snake
+      pts.push({ x: x0 + gx * (c + 0.5), y: 34 + row * rowH, row: row })
     }
-    var H = pts[pts.length - 1].y + 110, d = pts.map(function (p, k) { return (k ? 'L' : 'M') + p.x.toFixed(0) + ' ' + p.y.toFixed(0) }).join(' ')
-    var nextK = -1; for (var q = 0; q < n; q++) if (!starsOf(w.id, w.levels[q].id) && levelOpen(w, q)) { nextK = q; break }
-    host.innerHTML = '<svg class="path" width="' + Wd + '" height="' + H + '"><path d="' + d + '" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="5" stroke-dasharray="10 12" stroke-linecap="round"/></svg>' +
+    var H = pts[n - 1].y + 100
+    if (land) {   // lower the two rows into the open sea under the title, like the mockup
+      var avail = host.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0), off = Math.max(0, Math.round((avail - H) * 0.55))
+      pts.forEach(function (p) { p.y += off }); H += off
+    }
+    var d
+    if (land) {   // one route: row 1 left→right, down the right gutter, back along the gap under row 1's titles, down, row 2 left→right
+      d = 'M' + pts[0].x.toFixed(0) + ' ' + pts[0].y
+      for (var q = 1; q < n; q++) {
+        var a = pts[q - 1], b = pts[q]
+        if (a.row === b.row) { d += ' L' + b.x.toFixed(0) + ' ' + b.y; continue }
+        var e1 = a.x + gx / 2 - 3, gy = a.y + Math.round(rowH * 0.64), e2 = b.x - gx / 2 + 3, r = 14
+        d += ' L' + (e1 - r).toFixed(0) + ' ' + a.y + ' Q' + e1.toFixed(0) + ' ' + a.y + ' ' + e1.toFixed(0) + ' ' + (a.y + r) + ' L' + e1.toFixed(0) + ' ' + (gy - r) + ' Q' + e1.toFixed(0) + ' ' + gy + ' ' + (e1 - r).toFixed(0) + ' ' + gy +
+          ' L' + (e2 + r).toFixed(0) + ' ' + gy + ' Q' + e2.toFixed(0) + ' ' + gy + ' ' + e2.toFixed(0) + ' ' + (gy + r) + ' L' + e2.toFixed(0) + ' ' + (b.y - r) + ' Q' + e2.toFixed(0) + ' ' + b.y + ' ' + (e2 + r).toFixed(0) + ' ' + b.y + ' L' + b.x.toFixed(0) + ' ' + b.y
+      }
+    } else d = snakePath(pts, gx / 2 - 3, x0 + Wd / 2)
+    var nextK = -1; for (var z = 0; z < n; z++) if (!starsOf(w.id, w.levels[z].id) && levelOpen(w, z)) { nextK = z; break }
+    host.innerHTML = pathSvg(host.clientWidth, H, d, 4) +
       w.levels.map(function (l, k) {
         var s = starsOf(w.id, l.id), open = levelOpen(w, k), st = ''
         for (var i = 0; i < 3; i++) st += IC('star', i < s ? '' : 'tk-ico--dim')
-        return '<button class="node' + (open ? '' : ' locked') + (s ? ' done' : '') + (k === nextK ? ' next' : '') + '" type="button" data-k="' + k + '" style="left:' + pts[k].x + 'px;top:' + pts[k].y + 'px;animation-delay:' + k * 60 + 'ms">' +
-          '<span class="n fk">' + (open ? k + 1 : '') + (open ? '' : IC('lock', '', 'terkunci')) + '</span>' +
+        return '<button class="node' + (open ? '' : ' locked') + (s ? ' done' : '') + (k === nextK ? ' next' : '') + '" type="button" data-k="' + k + '" aria-label="' + esc('Level ' + (k + 1) + ': ' + l.title + (open ? '' : ' (terkunci)')) + '" style="left:' + pts[k].x.toFixed(0) + 'px;top:' + pts[k].y + 'px;width:' + tw + 'px;animation-delay:' + k * 60 + 'ms">' +
+          '<span class="n fk">' + (open ? k + 1 : IC('lock', '', 'terkunci')) + '</span>' +
           '<span class="s">' + st + '</span><span class="t">' + esc(l.title) + '</span></button>'
       }).join('')
-    host.firstChild.style.height = H + 'px'
     var spacer = document.createElement('div'); spacer.style.height = H + 'px'; host.appendChild(spacer)
-    var nx = host.querySelector('.node.next'); if (nx) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }) } catch (e) {} }, 80)
+    var nx = host.querySelector('.node.next'); if (nx && !land) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }) } catch (e) {} }, 80)
   }
   function historyCards (w) {
     var ov = $('cards')
     ov.innerHTML = '<div class="panel glass"><h2 class="fk">Kartu Sejarah: ' + esc(w.name) + '</h2>' + (w.cards || []).map(function (c) {
       var got = S.cards.indexOf(c.id) >= 0
-      return '<div class="hcard' + (got ? '' : ' no') + '"><b>' + (got ? esc(c.title) : 'Kartu terkunci') + '</b>' + (got ? esc(c.text) : 'Selesaikan kapal ini untuk membukanya.') + '</div>'
+      return '<div class="hcard' + (got ? '' : ' no') + '"><b>' + esc(c.title) + '</b>' +
+        (got ? esc(c.text) : '<span class="tease" aria-hidden="true">' + esc(c.text) + '</span><em>' + IC('lock', '', '') + ' Selesaikan kapal ini untuk membacanya.</em>') + '</div>'
     }).join('') + '<button class="btn b-gold fk" type="button" id="cards-x">Tutup</button></div>'
     ov.className = 'overlay show'
     tap('cards-x', function () { ov.className = 'overlay' })
@@ -362,6 +491,7 @@
   // module's card header on a phone; fades out after 3.5 s (owner screenshot 2026-09-28)
   var goalT = 0
   function goal (text) {
+    if (text && W.TKHub) TKHub.say(text)
     var g = $('goalbar'); clearTimeout(goalT)
     g.textContent = text || ''; g.className = 'goalbar' + (text ? ' show' : ''); document.body.classList.toggle('goal-on', !!text)
     if (text) goalT = setTimeout(function () { g.className = 'goalbar'; goalT = setTimeout(function () { document.body.classList.remove('goal-on') }, 320) }, 3500)
@@ -386,9 +516,12 @@
     try {
       if (lv.type === 'story' || lv.type === 'cutscene') return story(host, lv.story || [], lv.title, function () { finish({ stars: 3, story: true }) })
       if (lv.type === 'grid') {
-        PLAYING.handle = TKGrid.mount(host, WD.grid(lv), Object.assign({}, common, { title: lv.goal, mission: lv.goal, lib: Art.src,
+        var gwi = WD.WORLDS.indexOf(w)
+        PLAYING.handle = TKGrid.mount(host, WD.grid(lv), Object.assign({}, common, { title: lv.title, mission: lv.goal, lib: Art.src, bg: Art.scene(lv.scene || w.scene || 'harbor-day'),
+          chapter: { ship: w.ship, name: w.name, title: w.value, label: (gwi > 0 ? 'Bab ' + gwi + ' · ' : '') + w.name, idx: CUR.k + 1, total: w.levels.length },
+          onBack: function () { try { PLAYING && PLAYING.handle && PLAYING.handle.destroy() } catch (e) {} PLAYING = null; $('play-host').innerHTML = ''; worldMap(w.id) },
           art: { boat: CUR.w.id === 'kamar' ? 'vehicles/sailboat' : 'ship/' + CUR.w.id, timmy: 'char/timmy', tipper: charKey('char/penguin', 'animals/penguin') },
-          onDone: function (res) { finish({ stars: res.stars, moves: res.moves }) } }))
+          onDone: function (res) { finish({ stars: res.stars, moves: res.moves, shortest: res.shortest }) } }))
         return
       }
       if (lv.type === 'steer') {
@@ -400,7 +533,8 @@
           } }, common))
         return
       }
-      var opts = Object.assign({ domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0,
+      var quit = function () { try { PLAYING && PLAYING.handle && PLAYING.handle.destroy && PLAYING.handle.destroy() } catch (e) {} var virt = PLAYING && PLAYING.virtual; PLAYING = null; $('play-host').innerHTML = ''; if (virt) home(); else worldMap(w.id) }
+      var opts = Object.assign({ scene: Art.scene(lv.scene || w.scene || 'harbor-day'), topic: lv.goal, onBack: quit, penguin: Art.src('char/penguin'), domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0,
         onDone: function (res) {
           if (res && res.masteryDelta && lv.domain) S.mastery[lv.domain] = Math.max(0, Math.min(100, (S.mastery[lv.domain] || 0) + res.masteryDelta))
           var pct = res && res.asked ? res.right / res.asked : 1
@@ -418,7 +552,7 @@
   /* ── REWARD ─────────────────────────────────────────────────────────── */
   function finish (res) {
     if (!PLAYING) return
-    var w = PLAYING.w, lv = PLAYING.lv, k = PLAYING.k
+    var w = PLAYING.w, lv = PLAYING.lv, k = PLAYING.k, t0 = PLAYING.t0
     try { if (PLAYING.handle && PLAYING.handle.destroy) PLAYING.handle.destroy() } catch (e) {}
     PLAYING = null; document.body.classList.remove('story-on')
     var stars = Math.max(1, Math.min(3, res.stars || 1)), prev = starsOf(w.id, lv.id)
@@ -431,31 +565,28 @@
     if (newFrag && S.badges.indexOf('frag-' + w.id) < 0) S.badges.push('frag-' + w.id)
     save()
     try { if (W.saveLevelProgress) saveLevelProgress(GAME_ID, WD.WORLDS.indexOf(w) * 20 + k + 1, stars) } catch (e) {}
-    // screen
+    // screen (TKHub.reward — mockup ui-10)
     show('scr-reward')
-    document.querySelector('.reward-bg').style.background = w.scene ? Art.scene(w.scene) : ''
-    var sh = ''; for (var i = 0; i < 3; i++) sh += '<i class="' + (i < stars ? 'on' : '') + '" style="--d:' + (i * 200 + 150) + 'ms">' + IC('star', i < stars ? '' : 'tk-ico--dim') + '</i>'
-    $('rw-stars').innerHTML = sh
-    $('rw-title').textContent = res.scripted ? 'Kamu tetap tenang!' : (stars === 3 ? 'Luar biasa!' : 'Level Selesai!')
-    var items = [res.story ? 'Kisah sudah disimak' : 'Sampai tujuan']
-    if (res.asked) items.push(res.right + ' dari ' + res.asked + ' soal benar')
-    if (res.moves) items.push('Rute dalam ' + res.moves + ' perintah')
-    if (res.hits !== undefined && !res.scripted) items.push(res.hits ? 'Menabrak ' + res.hits + ' kali — tetap berhasil!' : 'Tanpa menabrak!')
-    $('rw-list').innerHTML = items.map(function (t, j) { return '<li style="--d:' + (500 + j * 140) + 'ms"><i>' + IC('ok') + '</i>' + esc(t) + '</li>' }).join('')
-    $('rw-earn').innerHTML = '<div>Pengetahuan<b>+' + xp + '</b></div><div>Bintang<b>' + stars + '/3</b></div>' + (newCards.length ? '<div>Kartu Sejarah<b>+' + newCards.length + '</b></div>' : '')
-    $('rw-frag').innerHTML = newFrag ? compassSvg(S.fragments.length, true) + '<span>Kepingan Kompas Waktu ' + S.fragments.length + ' ditemukan!' + (w.levels[k].finale ? ' Kompas utuh — Timmy bisa pulang!' : '') + '</span>' : ''
-    var fact = (w.cards || [])[Math.min((w.cards || []).length - 1, Math.floor(k / Math.max(1, w.levels.length / 3)))]
-    $('rw-fact').innerHTML = fact ? '<img src="' + Art.src(w.ship || 'char/timmy') + '" alt=""><div><b>Fakta Sejarah · ' + esc(fact.title) + '</b>' + esc(fact.text) + '</div>' : ''
-    $('rw-strip').innerHTML = w.levels ? w.levels.map(function (l, j) { return '<i class="' + (j === k ? 'now' : starsOf(w.id, l.id) ? 'done' : '') + '">' + (j + 1) + '</i>' }).join('') : ''
-    $('rw-map').onclick = function () { SND.click(); if (PLAYING) return; if (w.id === 'latihan') home(); else worldMap(w.id) }
-    var nextK = k + 1 < w.levels.length ? k + 1 : -1
-    $('rw-next').textContent = nextK >= 0 ? 'Lanjut' : 'Peta Dunia'
-    $('rw-next').onclick = function () { SND.click(); if (nextK >= 0) startLevel(nextK); else worldView() }
-    $('rw-again').onclick = function () { SND.click(); startLevel(k) }
-    SND.cue(stars === 3 ? 'levelup' : 'star')
-    if (W.VFX && !reduced()) setTimeout(function () { var b = $('rw-stars').getBoundingClientRect(); VFX.dom(b.left + b.width / 2, b.top + b.height / 2, { fx: 'sparks', size: 220, blend: 'screen' }) }, 700)
-    if (newFrag) setTimeout(function () { SND.bell(); if (W.VFX && !reduced()) { var f = $('rw-frag').getBoundingClientRect(); VFX.dom(f.left + 40, f.top + f.height / 2, { fx: 'holy-light', size: 160, blend: 'screen' }) } }, 900)
-    if (newCards.length) setTimeout(function () { toast(newCards.length + ' Kartu Sejarah baru ada di Kamar Timmy!') }, 1400)
+    var wi = WD.WORLDS.indexOf(w), nextK = k + 1 < (w.levels || []).length ? k + 1 : -1
+    var fact = (w.cards || [])[Math.min((w.cards || []).length - 1, Math.floor(k / Math.max(1, (w.levels || []).length / 3)))]
+    if (HUB) { try { HUB.destroy() } catch (e) {} }
+    HUB = TKHub.reward($('scr-reward'), {
+      world: w, k: k, stars: stars, scene: lv.scene || w.scene,
+      chapter: (wi > 0 ? 'Bab ' + wi + ' · ' : '') + w.name,
+      title: res.scripted ? 'Kamu tetap tenang!' : (stars === 3 ? 'Luar biasa!' : 'Level Selesai!'),
+      subtitle: 'Hebat, Timmy! ' + (lv.goal || ''), banner: false,
+      result: { moves: res.moves, shortest: res.shortest, timeMs: Date.now() - (t0 || Date.now()), right: res.right, asked: res.asked, hits: res.hits, scripted: res.scripted, story: res.story },
+      xp: xp, newCards: newCards,
+      badge: newFrag ? { title: 'Lencana ' + w.name, sub: 'Kepingan kompas ditemukan' } : null,
+      fragment: newFrag ? { n: S.fragments.length, total: 14, finale: !!(w.levels[k] && w.levels[k].finale) } : null,
+      fact: fact || null, levelStars: (w.levels || []).map(function (l) { return starsOf(w.id, l.id) }), hasNext: nextK >= 0
+    }, {
+      onReplay: function () { if (w.id === 'latihan') practice(lv.domain); else startLevel(k) },
+      onNext: function () { startLevel(nextK) },
+      onMap: function () { if (w.id === 'latihan') home(); else worldMap(w.id) },
+      sfx: { click: SND.click, chime: SND.chime, bell: SND.bell }
+    })
+    SND.cue(stars === 3 ? 'levelup' : 'star'); TKHub.say('Level selesai! ' + stars + ' bintang.')
   }
   // Time-Compass progress: the owner's compass sprite inside a conic ring filled n/14 (no drawn pictogram)
   function compassSvg (n, glow) {
@@ -463,42 +594,24 @@
   }
 
   /* ── TIMMY'S ROOM (collection hub) ──────────────────────────────────── */
-  var ROOM_TAB = 'kapal'
+  var ROOM_TAB = 'kapal', HUB = null
   function room (tab) {
-    ROOM_TAB = tab || ROOM_TAB; show('scr-room')
-    var tabs = [['kapal', 'Kapalku'], ['kompas', 'Kompas Waktu'], ['kartu', 'Kartu Sejarah'], ['capaian', 'Pencapaian'], ['belajar', 'Kemajuan Belajar']]
-    $('room-tabs').innerHTML = tabs.map(function (t) { return '<button type="button" class="' + (t[0] === ROOM_TAB ? 'on' : '') + '" data-t="' + t[0] + '">' + t[1] + '</button>' }).join('')
-    var body = $('room-body'), html = ''
-    if (ROOM_TAB === 'kapal') html = '<div class="shelf">' + WD.WORLDS.slice(1).map(function (w) { var got = worldDone(w); return '<div class="model' + (got ? '' : ' no') + '"><img src="' + Art.src(w.ship) + '" alt=""><b>' + (got ? esc(w.name) : '???') + '</b></div>' }).join('') + '</div>'
-    if (ROOM_TAB === 'kompas') html = '<div class="compass-big">' + compassSvg(S.fragments.length) + '<b class="fk">' + S.fragments.length + ' / 14 kepingan</b><span>Kumpulkan semua kepingan untuk pulang ke rumah.</span></div>'
-    if (ROOM_TAB === 'kartu') html = WD.WORLDS.map(function (w) { return (w.cards || []).map(function (c) { var got = S.cards.indexOf(c.id) >= 0; return '<div class="hcard' + (got ? '' : ' no') + '"><b>' + (got ? esc(w.name) + ' · ' + esc(c.title) : '???') + '</b>' + (got ? esc(c.text) : 'Selesaikan ' + esc(w.name) + '.') + '</div>' }).join('') }).join('')
-    if (ROOM_TAB === 'capaian') {
-      var ach = [['Penjelajah Pertama', S.xp > 0], ['Bintang 10', totalStars() >= 10], ['Bintang 50', totalStars() >= 50], ['Kepingan Pertama', S.fragments.length >= 1],
-        ['Setengah Kompas', S.fragments.length >= 7], ['Kompas Utuh', S.fragments.length >= 14], ['Pembaca Sejarah', S.cards.length >= 9]]
-      html = '<div class="shelf">' + ach.map(function (a) { return '<div class="model' + (a[1] ? '' : ' no') + '"><img src="' + Art.lib('game/trophy-gold') + '" alt=""><b>' + a[0] + '</b></div>' }).join('') + '</div>'
-    }
-    if (ROOM_TAB === 'belajar') html = '<div class="prog">' + CATS.filter(function (c) { return c[0] !== 'islam' || S.settings.islam }).map(function (c) { var m = S.mastery[c[0]] || 0; return '<div><span style="width:150px">' + c[1] + '</span><i><s style="width:' + m + '%"></s></i><b>' + m + '</b></div>' }).join('') + '</div>'
-    body.innerHTML = html
+    ROOM_TAB = tab || ROOM_TAB; show('scr-room'); if (HUB) { try { HUB.destroy() } catch (e) {} }
+    HUB = TKHub.room($('scr-room'), { save: S, worlds: WD.WORLDS, tab: ROOM_TAB, learn: CATS.filter(function (c) { return c[0] !== 'islam' || S.settings.islam }) },
+      { onBack: home,
+        onFav: function (id) { var on = S.fav.indexOf(id) < 0; S.fav = on ? S.fav.concat([id]) : S.fav.filter(function (x) { return x !== id }); save(); return on },
+        sfx: { click: SND.click } })
   }
 
-  /* ── settings (mockup ui-11): kid-safe switches; parent area is behind the hold gate ── */
+  /* ── settings (TKHub.settings — mockup ui-11); parent area stays behind the hold gate ── */
   function settings () {
-    show('scr-settings')
-    var tg = function (k, label) { return '<div class="srow">' + label + '<button type="button" class="tog' + (S.settings[k] ? ' on' : '') + '" data-k="' + k + '" aria-pressed="' + !!S.settings[k] + '" aria-label="' + label + '"></button></div>' }
-    var badges = [['Layar Pertama', S.xp > 0], ['Penjelajah', S.fragments.length >= 1], ['Pencari Ilmu', totalStars() >= 20], ['Pahlawan Baik', S.fragments.length >= 7]]
-    var wheel = IC('wheel')
-    var x = xpLevel()
-    $('settings').innerHTML =
-      '<div class="scard"><h3>Suara</h3>' + tg('music', 'Musik latar') + tg('sound', 'Efek suara') + tg('narration', 'Narasi') + '</div>' +
-      '<div class="scard"><h3>Tampilan</h3>' + tg('effects', 'Efek visual') + tg('reducedMotion', 'Gerakan dikurangi') + '</div>' +
-      '<div class="scard"><h3>Permainan</h3>' + tg('hints', 'Petunjuk') + tg('confirmExit', 'Konfirmasi sebelum keluar') + '</div>' +
-      '<div class="scard"><h3>Profil</h3><div class="srow"><span>Timmy · Level ' + x.lv + '</span><span>' + x.cur + '/300</span></div>' +
-        '<div class="badges">' + badges.map(function (b) { return '<div class="badge' + (b[1] ? '' : ' no') + '">' + wheel + b[0] + '</div>' }).join('') + '</div></div>' +
-      '<div class="scard"><h3>Orang Tua</h3><div class="srow">Tingkat soal, Studi Islam, kemajuan<button class="btn b-blue fk" type="button" id="set-parent" style="min-height:48px;font-size:16px">Buka</button></div></div>'
-    $('settings').querySelectorAll('.tog').forEach(function (t) {
-      t.addEventListener('click', function () { var k = t.getAttribute('data-k'); S.settings[k] = !S.settings[k]; save(); SND.click(); t.classList.toggle('on', S.settings[k]); t.setAttribute('aria-pressed', String(S.settings[k])); paintSound(); document.documentElement.classList.toggle('rm', !!S.settings.reducedMotion) })
-    })
-    tap('set-parent', parentGate)
+    show('scr-settings'); if (HUB) { try { HUB.destroy() } catch (e) {} }
+    HUB = TKHub.settings($('scr-settings'), { save: S, worlds: WD.WORLDS, version: 'v63' }, {
+      get: function () { return S.settings },
+      set: function (p) { S.settings = Object.assign({}, S.settings, p); save(); TKHub.config(S.settings); paintSound(); TKHub.music(!!S.settings.music)
+        document.documentElement.classList.toggle('rm', !!S.settings.reducedMotion) },
+      onSave: function () { toast('Pengaturan disimpan!'); home() },
+      onBack: home, onParent: parentGate, sfx: { click: SND.click } })
   }
 
   /* ── parent area (hold 3 s) ─────────────────────────────────────────── */
@@ -562,7 +675,7 @@
     if (IC.hydrate) IC.hydrate()
     tap('btn-map', function () { location.href = '../index.html' })
     tap('btn-start', function () {
-      SND.horn()
+      SND.horn(); if (W.TKHub) TKHub.music(!!S.settings.music)
       if (!S.seenIntro) { CUR.w = WD.WORLDS[0]; S.seenIntro = true; save(); return startLevel(0) }
       worldView()
     })
@@ -622,6 +735,7 @@
   }
   document.addEventListener('visibilitychange', function () { if (document.hidden) save() })
 
+  if (W.TKHub) TKHub.config(S.settings)
   wire(); home()
 
   /* test seam for the QA gates */

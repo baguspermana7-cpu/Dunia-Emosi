@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TK Hub harness</title>
+<link rel="icon" href="data:,">
+<!-- Kept harness for games/tk-hub.js: mounts one hub screen by URL
+     ?s=reward|room|settings [&frag=1] [&rm=1] [&tab=kapal|kompas|kartu|capaian|belajar] [&empty=1]
+     with a sample save, and records handler calls in window.__hub.calls. -->
+<style>
+@font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}
+html,body{margin:0;height:100%;background:#0B1A3A;overflow:hidden}
+#host{position:fixed;inset:0}
+</style>
+</head>
+<body>
+<div id="host"></div>
+<script src="../games/data/asset-index.js"></script>
+<script src="../games/data/tk-art.js"></script>
+<script src="../games/data/tk-worlds.js"></script>
+<script src="../games/tk-hub.js"></script>
+<script>
+(function () {
+  var P = new URLSearchParams(location.search), which = P.get('s') || 'reward', WD = TKWorlds
+  var calls = []; var rec = function (n) { return function (a) { calls.push([n, a]); return n === 'onFav' ? true : undefined } }
+  var S = { xp: 480, stars: {}, fragments: [], cards: [], badges: [], mastery: { matematika: 72, umum: 45, arab: 30, logika: 88, islam: 55 },
+    settings: { sound: true, music: true, narration: true, musicVol: 70, sfxVol: 80, voiceVol: 100, reducedMotion: P.get('rm') === '1', effects: true, hints: true, confirmExit: true, timer: false }, fav: ['titanic'] }
+  if (P.get('empty') !== '1') {
+    // Titanic done + 3 more ships, 4 fragments, their cards
+    ;['kamar', 'titanic', 'britannic', 'vasa', 'cuttysark'].forEach(function (id, i) { var w = WD.get(id); if (!w) return; S.stars[id] = {}
+      w.levels.forEach(function (l, j) { S.stars[id][l.id] = (j + i) % 3 + 1 }); if (id !== 'kamar') { S.fragments.push(id); (w.cards || []).forEach(function (c) { S.cards.push(c.id) }) } })
+    S.stars.victory = { }; WD.get('victory').levels.slice(0, 2).forEach(function (l) { S.stars.victory[l.id] = 2 })
+  }
+  TKHub.config(S.settings)
+  var host = document.getElementById('host'), h
+  window.__hub = { calls: calls, S: S }
+  if (which === 'reward') {
+    var w = WD.get('titanic'), k = 2
+    var ls = w.levels.map(function (l, j) { return j < k ? [3, 3, 2][j % 3] : 0 })
+    h = TKHub.reward(host, {
+      world: w, k: k, stars: 3, chapter: 'Bab 1 · RMS Titanic', title: 'Level Selesai!', subtitle: 'Hebat, Timmy! Kamu sampai ke tujuan dengan selamat.',
+      result: { moves: 8, shortest: 7, timeMs: 84000, items: { got: 3, total: 3 }, right: 5, asked: 5 },
+      xp: 35, badge: { title: 'Lencana Titanic', sub: 'Bab 1 selesai' }, newCards: [{ title: 'Kapal Terbesar' }],
+      fragment: P.get('frag') === '0' ? null : { n: 1, total: 14 }, fact: w.cards[0], levelStars: ls, hasNext: true
+    }, { onReplay: rec('onReplay'), onNext: rec('onNext'), onMap: rec('onMap') })
+  } else if (which === 'room') {
+    h = TKHub.room(host, { save: S, worlds: WD.WORLDS, tab: P.get('tab') || 'kapal',
+      learn: [['matematika', 'Matematika'], ['umum', 'Pengetahuan Umum'], ['arab', 'Bahasa Arab'], ['logika', 'Logika'], ['islam', 'Studi Islam']] },
+      { onBack: rec('onBack'), onFav: function (id) { var on = S.fav.indexOf(id) < 0; S.fav = on ? S.fav.concat([id]) : S.fav.filter(function (x) { return x !== id }); calls.push(['onFav', id, on]); return on } })
+  } else {
+    h = TKHub.settings(host, { save: S, worlds: WD.WORLDS, version: 'v63.9' }, {
+      get: function () { return S.settings }, set: function (p) { S.settings = Object.assign({}, S.settings, p); calls.push(['set', p]); TKHub.config(S.settings) },
+      onSave: rec('onSave'), onBack: rec('onBack'), onParent: rec('onParent') })
+  }
+  window.__hub.h = h
+})()
+</script>
+</body>
+</html>

@@ -6,7 +6,9 @@
 <title>TK Quiz harness</title>
 <link rel="icon" href="data:,">
 <!-- Kept harness for tools/qa-tk-questions.mjs: mounts TKQuiz sets by URL (?set=math5|ladder|arab|arrange|sort|campur)
-     over a fake 70 px host HUD, and records onDone results in window.__tkDone. -->
+     over a fake 70 px host HUD, and records onDone results in window.__tkDone.
+     Extra params: scene=<TKArt scene key> (backdrop), topic=<goal line>, hints=0 (parent setting off),
+     back=1 (wire a Kembali handler -> window.__tkBack), world=<id> for campur. -->
 <style>
 @font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}
 html,body{margin:0;height:100%;background:#0E3A66}
@@ -20,6 +22,7 @@ body{background:linear-gradient(#7FC4F0 0%,#BFE3F7 38%,#2E7FBF 39%,#11497E 100%)
 <div id="hud">HUD host (70 px)</div>
 <script src="../games/data/asset-index.js"></script>
 <script src="../games/data/sfx-engine.js"></script>
+<script src="../games/data/tk-art.js"></script>
 <script src="../games/data/tk-questions.js"></script>
 <script src="../games/tk-quiz.js"></script>
 <script>
@@ -28,6 +31,10 @@ body{background:linear-gradient(#7FC4F0 0%,#BFE3F7 38%,#2E7FBF 39%,#11497E 100%)
   var host = document.getElementById('host'), r = TKQuiz.rng(+(P.get('seed') || 7))
   var opts = { topInset: 70, reducedMotion: P.get('rm') === '1', sound: false, mastery: +(P.get('m') || 0),
     onDone: function (res) { window.__tkDone = res } }
+  if (P.get('scene') && window.TKArt) opts.scene = TKArt.scene(P.get('scene'))
+  if (P.get('topic')) opts.topic = P.get('topic')
+  if (P.get('hints') === '0') opts.hints = false
+  if (P.get('back') === '1') opts.onBack = function () { window.__tkBack = (window.__tkBack || 0) + 1 }
   var byId = function (id) { var q = TKQuestions.items.filter(function (o) { return o.id === id })[0]; return Object.assign({}, q, { choices: q.choices.slice() }) }
   var sets = {
     // 5 math questions, one per presentation idea (objects + ship context, clock, groups, two-step)
@@ -37,7 +44,7 @@ body{background:linear-gradient(#7FC4F0 0%,#BFE3F7 38%,#2E7FBF 39%,#11497E 100%)
     arab: function () { return [byId('ar-pw-14'), byId('ar-wp-21'), byId('ar-ls-01'), byId('ar-wc-2')] },
     arrange: function () { return [byId('ar-ar-01')] },
     curated: function () { return [byId('lg-pt-1'), byId('um-02'), byId('is-40'), byId('lg-od-2')] },
-    campur: function () { return { domain: 'campur', world: 'titanic', count: 5, seed: 11, islam: P.get('islam') !== '0' } }
+    campur: function () { return { domain: 'campur', world: P.get('world') || 'titanic', count: 5, seed: +(P.get('seed') || 11), islam: P.get('islam') !== '0' } }
   }
   window.__tk = { opts: opts }
   if (name === 'sort') {

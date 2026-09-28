@@ -23,13 +23,19 @@
  *
  * UI: TKGrid.mount(host, def, opts) -> { el, level, destroy, reset, hint, go, program, setProgram, state, layout }
  *   opts: { onDone({stars, moves, attempts, hints, shortest}), sfx:{click,good,bad,win}, lib(key)->url,
- *           art:{boat, ice, flag, crate, timmy, lighthouse, tipper} (library keys), mission, hint,
- *           topInset (px left free for the host HUD, default 70), bg (false = transparent),
- *           hintButton (false = host drives handle.hint()), starTarget (element stars fly to),
- *           starBase, reducedMotion, muted }
- *   Layout (owner mockups ui-05 / ui-07): landscape = board centre, "Perintah" panel right,
- *   "Rutemu" route bar under the board, Hapus + JALAN! beside it; portrait = board, command
- *   panel, route bar, action row. Stars = 3 at the shortest route, 2 within +2, else 1.
+ *           art:{boat, walker, ice, flag, crate, timmy, lighthouse, lifeboat, tipper, compass, block} (library keys;
+ *             `block` = one key or a list the obstacles cycle through), theme:'sea'|'deck', bg (CSS background
+ *             string painted behind the board, e.g. TKArt.scene(k); false = transparent), title, mission, hint, tip,
+ *           chapter:{ship, name, title, label, idx, total} (mini-card + "Level X dari Y"), onBack(), onNext()
+ *             (footer buttons, hidden when absent), topInset (px left free for the host HUD, default 70),
+ *           hintButton (false = host drives handle.hint()), starTarget (element stars fly to), starBase, reducedMotion, muted }
+ *   The level definition may carry theme / blockArt / itemArt / scene (TKWorlds.grid puts them there); opts win.
+ *   Layout (owner mockups ui-05 / ui-07): landscape = chapter card left (>= 1000 px), parchment title plate over
+ *   the board, "Perintah" panel right with Hapus + JALAN! inside it, bottom band = big Timmy (tap = hint) with his
+ *   speech bubble, "Rutemu" route bar, penguin tip card. Portrait = chapter card, plate, board, command panel,
+ *   Timmy row, route, tip, footer (tip, plate, chapter card drop out in that order when the board gets small).
+ *   Timmy's bubble has its own row: it never covers the board. Deck theme = wooden planks, Timmy walks to the
+ *   lifeboat, obstacles are cargo / crew sprites. Stars = 3 at the shortest route, 2 within +2, else 1.
  * CSS is injected once (scoped .tkg-*); the host page only includes this script.
  * ZERO emoji / glyphs / drawn pictograms: every icon is an owner sprite (window.TKIcon) or the CSS arrow.
  * ==========================================================================*/
@@ -417,8 +423,14 @@
   /* ===================================================================== UI */
   var EASE = 'cubic-bezier(.23,1,.32,1)'
   var STEP_MS = 450
-  var ART = { boat: 'vehicles/sailboat', ice: 'game/crystal-ice', flag: 'game/flag-red', crate: 'game/crate-wood',
-    timmy: 'sd/explorer', lighthouse: 'gt-el/lighthouse', tipper: 'animals/penguin' }
+  // library keys (resolved through opts.lib, e.g. TKArt.src). `block` may be a list: obstacles cycle through it.
+  var ART = { boat: 'vehicles/sailboat', walker: 'tk-key/timmy', ice: 'tk-prop/ice-floe', flag: 'game/flag-red', crate: 'tk-prop/crate-supplies',
+    timmy: 'tk-key/timmy', lighthouse: 'gt-el/lighthouse', lifeboat: 'tk-prop/lifeboat-11', tipper: 'tk-char/penguin-captain',
+    compass: 'tk-prop/compass-3', block: null }
+  var THEME_ART = {
+    sea: { block: ['tk-prop/iceberg-5', 'tk-world/iceberg-2', 'tk-prop/iceberg-3'] },
+    deck: { block: ['tk-prop/crate-plain', 'tk-prop/barrels', 'tk-char/officer-boy'] }
+  }
   var LABEL = { N: 'Ke atas', E: 'Ke kanan', S: 'Ke bawah', W: 'Ke kiri', F: 'Maju', L: 'Belok kiri', R: 'Belok kanan',
     P: 'Ambil', D: 'Taruh', R2: 'Ulangi 2 kali', R3: 'Ulangi 3 kali' }
   var SHORT = { F: 'Maju', L: 'Kiri', R: 'Kanan', P: 'Ambil', D: 'Taruh', R2: 'Ulangi', R3: 'Ulangi' }
@@ -435,9 +447,21 @@
     noProg: 'Pilih perintah dulu, lalu tekan JALAN!',
     full: 'Rutenya sudah penuh. Ketuk perintah untuk menghapus.',
     win: 'Hebat! Kapal sampai tujuan!',
+    intro: 'Ayo rencanakan rutenya! Ketuk panah untuk menggerakkan kapal.',
+    tip: 'Pikirkan dulu rutenya. Gunung es bisa menghalangi jalan!',
     hint1: 'Lihat tujuan yang bersinar! Coba perintah {c}.',
     hint2: 'Timmy isi satu perintah. Ayo lanjutkan!',
     hint3: 'Ikuti titik-titik ini sampai tujuan!'
+  }
+  // deck theme (mockup ui-07): Timmy walks the deck to the lifeboat; obstacles are cargo and crew
+  var SAY_DECK = {
+    block: 'Ups, ada barang di depan! Ubah perintah nomor {n}.',
+    edge: 'Ups, itu ujung dek! Ubah perintah nomor {n}.',
+    empty: 'Timmy belum membawa peti. Ubah perintah nomor {n}.',
+    far: 'Timmy belum sampai di sekoci. Tambah atau ubah perintahnya!',
+    win: 'Hebat! Timmy sampai di sekoci!',
+    intro: 'Ayo rencanakan rutenya! Ketuk panah untuk menggerakkan Timmy.',
+    tip: 'Rencanakan rutemu dulu, baru tekan JALAN!'
   }
 
   // Icons: owner sprites via window.TKIcon (ICONS table in timmy-kapal.js); direction commands are a
@@ -457,19 +481,52 @@
   var WAVE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 20q10-7 20 0t20 0 20 0 20 0' fill='none' stroke='%23bfe3ff' stroke-opacity='.18' stroke-width='2'/%3E%3Cpath d='M-10 36q10-5 20 0t20 0 20 0 20 0 20 0' fill='none' stroke='%23bfe3ff' stroke-opacity='.1' stroke-width='2'/%3E%3C/svg%3E\")"
 
   var PANEL = 'background:linear-gradient(180deg,rgba(24,60,120,.94),rgba(11,34,78,.94));border:2px solid rgba(120,180,255,.42);border-radius:18px;box-shadow:0 6px 18px rgba(0,10,40,.35),inset 0 1px 0 rgba(255,255,255,.12)'
+  var PARCH = 'background:linear-gradient(180deg,#f8ead0,#ecd3a0);color:#3d2810;border-radius:12px;box-shadow:inset 0 0 0 2px rgba(140,95,30,.35),inset 0 0 18px rgba(160,110,40,.25),0 4px 10px rgba(0,10,40,.35);text-shadow:none'
   var CSS = [
-    '.tkg{--e:' + EASE + ';--t:56px;--bw:72px;--bh:58px;--slot:56px;--top:70px;position:relative;width:100%;height:100%;min-height:0;overflow:hidden;box-sizing:border-box;',
+    '.tkg{--e:' + EASE + ';--t:56px;--bw:72px;--bh:58px;--slot:52px;--top:70px;--cmdw:240px;--sidew:210px;--both:124px;position:relative;width:100%;height:100%;min-height:0;overflow:hidden;box-sizing:border-box;',
     'font-family:"Nunito","Baloo 2",system-ui,-apple-system,"Segoe UI",sans-serif;color:#fff;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}',
     '.tkg--bg{background:radial-gradient(120% 70% at 50% 0%,#1d4f8f 0%,#0f2f63 55%,#0a1f45 100%)}',
     '.tkg *,.tkg *:before,.tkg *:after{box-sizing:border-box}',
-    '.tkg-body{position:absolute;left:0;right:0;bottom:0;top:var(--top);display:grid;gap:8px;padding:8px;padding-bottom:max(8px,env(safe-area-inset-bottom));',
-    'grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto auto;grid-template-areas:"sea" "cmd" "route" "act"}',
-    '.tkg--land .tkg-body{grid-template-columns:minmax(0,1fr) var(--cmdw);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"sea cmd" "route act"}',
-    '.tkg-sea{grid-area:sea;position:relative;min-height:0;min-width:0;display:flex;align-items:center;justify-content:center}',
-    '.tkg-cmd{grid-area:cmd;' + PANEL + ';padding:6px 8px 8px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden}',
-    '.tkg-route{grid-area:route;' + PANEL + ';padding:6px 8px 8px;min-width:0}',
-    '.tkg-act{grid-area:act;display:flex;gap:8px;align-items:center}',
-    '.tkg--land .tkg-act{align-self:end}',
+    /* portrait: one column, top to bottom (mockup ui-05 / ui-07 mobile) */
+    '.tkg-body{position:absolute;left:0;right:0;bottom:0;top:var(--top);display:flex;flex-direction:column;gap:6px;padding:6px 10px;padding-bottom:max(8px,env(safe-area-inset-bottom))}',
+    '.tkg-chap{order:1}.tkg-plate{order:2}.tkg-sea{order:3}.tkg-cmd{order:4}.tkg-tim{order:5}.tkg-route{order:6}.tkg-tip{order:7}.tkg-foot{order:8}',
+    '.tkg-bot{display:contents}',
+    '.tkg-sea{flex:1 1 0;position:relative;min-height:0;min-width:0;display:flex;align-items:center;justify-content:center}',
+    '.tkg--nochap .tkg-chap,.tkg--noplate .tkg-plate,.tkg--notip .tkg-tip,.tkg--nofoot .tkg-foot{display:none!important}',
+    /* landscape: chapter card | title plate + board | command panel; Timmy + route + tip along the bottom */
+    '.tkg--land .tkg-body{display:grid;gap:8px;padding:8px 12px;grid-template-columns:minmax(0,1fr) var(--cmdw);grid-template-rows:auto minmax(0,1fr) var(--both);grid-template-areas:"plate cmd" "sea cmd" "bot bot"}',
+    '.tkg--land.tkg--short .tkg-body{grid-template-areas:"plate cmd" "sea cmd" "bot cmd"}',
+    '.tkg--land.tkg--side .tkg-body{grid-template-columns:var(--sidew) minmax(0,1fr) var(--cmdw);grid-template-areas:"chap plate cmd" "chap sea cmd" "bot bot bot"}',
+    '.tkg--land.tkg--side.tkg--short .tkg-body{grid-template-areas:"chap plate cmd" "chap sea cmd" "bot bot cmd"}',
+    '.tkg--land .tkg-chap{grid-area:chap}.tkg--land .tkg-plate{grid-area:plate}.tkg--land .tkg-sea{grid-area:sea}.tkg--land .tkg-cmd{grid-area:cmd}',
+    '.tkg--land .tkg-bot{grid-area:bot;display:flex;gap:8px;align-items:stretch;min-width:0;min-height:0}',
+    '.tkg--land .tkg-foot{display:none}',
+    '.tkg--land:not(.tkg--side) .tkg-chap{display:none}',
+    /* chapter mini-card */
+    '.tkg-chap{' + PANEL + ';display:flex;align-items:center;gap:10px;padding:6px 10px 6px 6px;flex:0 0 auto;min-width:0}',
+    '.tkg-chap img{width:76px;height:46px;object-fit:contain;flex:0 0 auto;border-radius:8px;background:rgba(0,0,0,.2)}',
+    '.tkg-chap .ct{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}',
+    '.tkg-chap b{font-size:15px;font-weight:900;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.tkg-chap span{font-size:12px;font-weight:800;opacity:.85;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.tkg-chap .bar{height:6px;border-radius:4px;background:rgba(0,0,0,.35);overflow:hidden;margin-top:2px}.tkg-chap .bar i{display:block;height:100%;background:linear-gradient(90deg,#3fa2ff,#7fd0ff);border-radius:4px}',
+    '.tkg-chap em{flex:0 0 auto;font-style:normal;font-size:14px;font-weight:900;padding:3px 9px;border-radius:9px;background:rgba(0,0,0,.3);border:1px solid rgba(160,200,255,.4)}',
+    '.tkg--land .tkg-chap{flex-direction:column;align-items:stretch;padding:8px;gap:8px;align-self:start}',
+    '.tkg--land .tkg-chap img{width:100%;height:110px}',
+    '.tkg--land .tkg-chap b{font-size:18px;white-space:normal}.tkg--land .tkg-chap span{font-size:13px;white-space:normal}',
+    '.tkg--land .tkg-chap em{align-self:flex-start}',
+    /* parchment title plate */
+    '.tkg-plate{' + PARCH + ';flex:0 0 auto;text-align:center;padding:5px 14px 6px;min-width:0}',
+    '.tkg-plate small{display:block;font-size:12px;font-weight:900;opacity:.8;line-height:1.2}',
+    '.tkg-plate b{display:block;font-size:19px;font-weight:900;line-height:1.15;color:#2c1b08}',
+    '.tkg-plate span{display:block;font-size:12px;font-weight:800;line-height:1.25;margin-top:1px}',
+    '.tkg--land .tkg-plate{justify-self:center;width:min(100%,560px);padding:6px 22px 8px;border-radius:14px}',
+    '.tkg--land .tkg-plate b{font-size:26px}.tkg--land .tkg-plate span{font-size:14px}.tkg--land .tkg-plate small{font-size:13px}',
+    /* command panel: arrows, then Hapus + JALAN! inside it */
+    '.tkg-cmd{' + PANEL + ';padding:6px 8px 8px;display:flex;flex-direction:column;gap:6px;min-height:0;min-width:0;overflow:hidden;flex:0 0 auto}',
+    '.tkg-cact{display:flex;gap:8px;flex:0 0 auto}',
+    '.tkg-cact.stack{flex-direction:column}',
+    '.tkg-route{' + PANEL + ';padding:6px 8px 8px;min-width:0;flex:0 0 auto}',
+    '.tkg--land .tkg-route{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center}',
     '.tkg-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:900;font-size:16px;line-height:1.1;text-shadow:0 1px 0 rgba(0,0,0,.35);padding:0 2px}',
     '.tkg-cmd .tkg-h{justify-content:center}',
     '.tkg-h small{font-size:13px;font-weight:800;opacity:.85}',
@@ -482,20 +539,29 @@
     '.tkg-bars{width:84%;height:84%;border-radius:4px;background:repeating-linear-gradient(90deg,#c08a4b 0 5px,transparent 5px 11px),linear-gradient(transparent 30%,#c08a4b 30% 38%,transparent 38% 62%,#c08a4b 62% 70%,transparent 70%)}',
     '.tkg-sw.on .tkg-ic img{filter:drop-shadow(0 0 6px #35c26b) drop-shadow(0 0 2px #35c26b)}',
     '.tkg-count .tkg-ic{width:20px;height:20px;color:#ffc93a;stroke:#b67a00;stroke-width:1.2}',
+    /* board: sea = translucent water over the painted scene; deck = wooden planks */
     '.tkg-board{position:relative;border-radius:14px;overflow:hidden;background:radial-gradient(120% 90% at 30% 20%,#1f65ad 0%,#154b8a 45%,#0c3068 100%);',
     'box-shadow:0 0 0 2px rgba(150,205,255,.55),0 0 22px rgba(90,170,255,.35),0 8px 20px rgba(0,10,40,.4)}',
+    '.tkg--scene .tkg-board{background:rgba(20,60,110,.55)}',
+    '.tkg--deck .tkg-board{background:repeating-linear-gradient(0deg,rgba(40,20,5,.55) 0 2px,transparent 2px calc(var(--t) / 3)),',
+    'repeating-linear-gradient(90deg,transparent 0 calc(var(--t) * .62),rgba(40,20,5,.35) calc(var(--t) * .62) calc(var(--t) * .62 + 2px),transparent calc(var(--t) * .62 + 2px) calc(var(--t) * 1.37)),',
+    'linear-gradient(180deg,#a8764a,#8a5c34 60%,#7a4f2c);box-shadow:0 0 0 3px #4a2c14,0 0 0 5px rgba(255,210,140,.35),0 10px 24px rgba(0,0,0,.5);border-radius:10px}',
+    '.tkg--deck .tkg-wv{display:none}',
     '.tkg-wv{position:absolute;top:0;bottom:0;left:-80px;width:calc(100% + 160px);background-image:' + WAVE + ';background-size:80px 40px;animation:tkg-wave 7s linear infinite;pointer-events:none}',
     '.tkg-wv2{opacity:.7;background-size:80px 34px;animation-duration:11s;animation-direction:reverse;top:12px}',
     '.tkg-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(200,230,255,.3) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(200,230,255,.3) 1.5px,transparent 1.5px);background-size:var(--t) var(--t);background-position:-.75px -.75px}',
-    '.tkg-rose{position:absolute;width:56px;height:56px;color:#e8f4ff;opacity:.8;pointer-events:none;display:none}',
-    '.tkg-rose .tkg-ic{width:100%;height:100%}',
-    '.tkg-rose b{position:absolute;font-size:11px;font-weight:900;line-height:1;color:#e8f4ff}',
+    '.tkg--deck .tkg-grid{background-image:linear-gradient(rgba(255,236,200,.42) 2px,transparent 2px),linear-gradient(90deg,rgba(255,236,200,.42) 2px,transparent 2px);background-position:-1px -1px}',
+    '.tkg-rose{position:absolute;width:56px;height:56px;pointer-events:none;display:none;z-index:2}',
+    '.tkg-rose img{width:100%;height:100%;object-fit:contain;opacity:.92}',
+    '.tkg-rose b{position:absolute;font-size:13px;font-weight:900;line-height:1;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7)}',
     '.tkg-o{position:absolute;left:0;top:0;width:var(--t);height:var(--t);display:flex;align-items:center;justify-content:center;pointer-events:none}',
     '.tkg-o img{width:86%;height:86%;object-fit:contain;-webkit-user-drag:none;pointer-events:none}',
     '.tkg-mv{transition:transform 380ms var(--e),opacity 200ms linear}',
     '.tkg-noanim,.tkg-noanim *{transition:none!important}',
     '.tkg-blk img{width:94%;height:94%;filter:drop-shadow(0 3px 2px rgba(0,20,60,.45))}',
+    '.tkg--deck .tkg-blk img{filter:drop-shadow(0 4px 3px rgba(30,12,0,.55))}',
     '.tkg-start:before{content:"";position:absolute;inset:5%;border-radius:8px;border:3px solid #ffc93a;box-shadow:0 0 10px rgba(255,201,58,.55)}',
+    '.tkg--deck .tkg-start:before{border-color:#4fb4ff;background:rgba(60,160,255,.28);box-shadow:0 0 12px rgba(80,170,255,.8)}',
     '.tkg-imv img{width:82%;height:82%;filter:saturate(1.3) brightness(1.1) drop-shadow(0 3px 2px rgba(0,20,60,.45))}',
     '.tkg-imv:before{content:"";position:absolute;inset:8%;border-radius:50%;border:3px dashed rgba(220,240,255,.8);animation:tkg-spin 6s linear infinite}',
     '.tkg-idot{position:absolute;left:0;top:0;width:var(--t);height:var(--t);pointer-events:none}',
@@ -508,6 +574,8 @@
     '.tkg-goal:before{content:"";position:absolute;inset:4%;border-radius:8px;background:rgba(70,210,110,.38);border:3px solid #6dff95;box-shadow:0 0 14px rgba(90,255,140,.7),inset 0 0 12px rgba(90,255,140,.45)}',
     '.tkg-goal .lh{position:absolute;left:4%;bottom:10%;width:52%;height:78%;object-fit:contain}',
     '.tkg-goal .fl{position:absolute;right:4%;bottom:12%;width:52%;height:62%;object-fit:contain}',
+    '.tkg--deck .tkg-goal .lh{left:2%;right:2%;bottom:14%;width:96%;height:70%}',
+    '.tkg--deck .tkg-goal .fl{right:2%;top:2%;bottom:auto;width:40%;height:44%}',
     '.tkg-glow:after{content:"";position:absolute;inset:-6%;border-radius:12px;border:4px solid #ffd84a;animation:tkg-ring 1s var(--e) infinite}',
     '.tkg-sw .tkg-ic{width:62%;height:62%;color:#ffb020;stroke:#8a5a00;stroke-width:1.2}',
     '.tkg-sw.on .tkg-ic{color:#35c26b}',
@@ -520,7 +588,9 @@
     '.tkg-boat{z-index:5;transition:transform 400ms var(--e),opacity 140ms linear}',
     '.tkg-bump,.tkg-bob{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}',
     '.tkg-bob{animation:tkg-bob 2.6s ease-in-out infinite}',
+    '.tkg--deck .tkg-bob{animation:none}',
     '.tkg-boat img{width:84%;height:84%;transition:transform 260ms var(--e);filter:drop-shadow(0 3px 2px rgba(0,20,60,.5))}',
+    '.tkg--deck .tkg-boat .tkg-bob>img{width:92%;height:96%}',
     '.tkg-boat[data-face=W] img{transform:scaleX(-1)}',
     '.tkg-hd{position:absolute;inset:-16%;transition:transform 300ms var(--e)}',
     '.tkg-hd .tkg-ic{position:absolute;left:50%;top:0;width:30%;height:30%;margin-left:-15%}',
@@ -534,15 +604,21 @@
     '.tkg-drop-fx{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:#eafaff}',
     '.tkg-gh{position:absolute;left:0;top:0;width:var(--t);height:var(--t);display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2;opacity:0;transition:opacity 260ms linear}',
     '.tkg-gh.on{opacity:1}',
-    '.tkg-gh b{width:40%;height:40%;min-width:22px;min-height:22px;border-radius:50%;background:#ffd84a;color:#0b2a55;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.85)}',
-    '.tkg-bubble{position:absolute;left:6px;right:6px;bottom:6px;margin:0 auto;max-width:440px;display:flex;align-items:center;gap:10px;background:#fff;color:#12314f;border-radius:18px;padding:8px 14px 8px 8px;',
-    'box-shadow:0 8px 22px rgba(0,10,40,.4);font-size:16px;line-height:1.25;font-weight:800;opacity:0;transform:translateY(10px);transition:opacity 180ms linear,transform 260ms var(--e);pointer-events:none;z-index:20}',
-    '.tkg-bubble.top{top:6px;bottom:auto;transform:translateY(-10px)}',
-    '.tkg-bubble.on{opacity:1;transform:none}',
-    '.tkg-bubble.bad{box-shadow:0 8px 22px rgba(0,10,40,.4),inset 5px 0 0 #ff9f1c}',
-    '.tkg-bubble.good{box-shadow:0 8px 22px rgba(0,10,40,.4),inset 5px 0 0 #2fbf71}',
-    '.tkg-bubble img{width:46px;height:46px;flex:0 0 auto;border-radius:50%;object-fit:cover;object-position:50% 6%;background:#dff1ff}',
-    '.tkg-bubble em{display:block;font-style:normal;font-size:12px;font-weight:900;color:#1d5fc0}',
+    '.tkg-gh b{width:40%;height:40%;min-width:24px;min-height:24px;border-radius:50%;background:#ffd84a;color:#0b2a55;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.85)}',
+    /* Timmy + speech bubble: its own row, never over the board */
+    '.tkg-tim{display:flex;align-items:center;gap:8px;min-width:0;flex:0 0 auto}',
+    '.tkg--land .tkg-tim{align-items:flex-end;flex:0 1 380px;min-width:250px}',
+    '.tkg-bubble{position:relative;flex:1 1 auto;min-width:0;background:#fff;color:#12314f;border-radius:16px;padding:6px 12px 7px;box-shadow:0 6px 16px rgba(0,10,40,.35);',
+    'font-size:14px;line-height:1.25;font-weight:800;transition:box-shadow 200ms linear;pointer-events:none}',
+    '.tkg-bubble:before{content:"";position:absolute;left:-8px;top:50%;margin-top:-8px;border:8px solid transparent;border-left:0;border-right-color:#fff}',
+    '.tkg--land .tkg-bubble{align-self:center;margin-bottom:6px}',
+    '.tkg--short .tkg-bubble{font-size:13px;padding:5px 10px 6px}',
+    '.tkg--short .tkg-tim{flex-basis:330px}',
+    '.tkg-bubble.bad{box-shadow:0 6px 16px rgba(0,10,40,.35),inset 5px 0 0 #ff9f1c}',
+    '.tkg-bubble.good{box-shadow:0 6px 16px rgba(0,10,40,.35),inset 5px 0 0 #2fbf71}',
+    '.tkg-bubble.on{animation:tkg-pop 240ms var(--e)}',
+    '.tkg-bubble em{display:inline-block;font-style:normal;font-size:12px;font-weight:900;color:#fff;background:#1d5fc0;border-radius:8px;padding:1px 8px;margin-bottom:2px}',
+    '.tkg-bubble span{display:block}',
     '.tkg-win{position:absolute;left:50%;top:50%;z-index:25;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 22px;border-radius:22px;background:#fff;color:#12314f;',
     'box-shadow:0 12px 30px rgba(0,10,40,.45);opacity:0;transform:translate(-50%,-50%) scale(.92);transition:opacity 200ms linear,transform 320ms var(--e);pointer-events:none}',
     '.tkg-win.on{opacity:1;transform:translate(-50%,-50%) scale(1)}',
@@ -553,11 +629,10 @@
     '.tkg-fly{position:absolute;left:0;top:0;width:36px;height:36px;z-index:40;pointer-events:none;color:#ffc93a}',
     '.tkg-fly .tkg-ic{width:100%;height:100%;stroke:#e59a00;stroke-width:1.2}',
     '.tkg-pal{display:grid;gap:6px;grid-template-columns:repeat(var(--cols),var(--bw));justify-content:center;align-content:start}',
-    '.tkg-slots{display:flex;flex-wrap:wrap;gap:6px;padding-top:6px}',
-    '.tkg--land .tkg-slots{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding-bottom:2px;-webkit-overflow-scrolling:touch}',
+    '.tkg-slots{display:flex;flex-wrap:nowrap;gap:6px;padding-top:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding-bottom:2px;-webkit-overflow-scrolling:touch}',
     '.tkg-slots.wig{animation:tkg-wig 360ms var(--e)}',
-    '.tkg-chip{position:relative;width:var(--bw);height:var(--bh);min-width:56px;min-height:56px;padding:0;border:2px solid rgba(170,210,255,.75);border-radius:14px;color:#fff;cursor:grab;',
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font:900 12px/1 inherit;letter-spacing:.2px;',
+    '.tkg-chip{position:relative;width:var(--bw);height:var(--bh);min-width:44px;min-height:44px;padding:0;border:2px solid rgba(170,210,255,.75);border-radius:14px;color:#fff;cursor:grab;',
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:inherit;font-weight:900;font-size:12px;line-height:1;letter-spacing:.2px;',
     'background:linear-gradient(180deg,#3f8ef3,#1f5fd0);box-shadow:0 4px 0 #123f8f,inset 0 1px 0 rgba(255,255,255,.35);text-shadow:0 1px 0 rgba(0,0,0,.3);',
     'transition:transform 160ms var(--e),opacity 160ms linear;touch-action:none;-webkit-user-select:none;user-select:none}',
     '.tkg-chip .tkg-ic{width:30px;height:30px;flex:0 0 auto;filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}',
@@ -570,8 +645,8 @@
     '.tkg-pchip .tkg-ic{width:26px;height:26px}',
     '.tkg-pchip.abs .tkg-ic{width:30px;height:30px}',
     '.tkg-pchip small{font-size:12px;font-weight:900}',
-    '.tkg-num{position:absolute;left:-4px;top:-4px;min-width:19px;height:19px;padding:0 4px;border-radius:10px;background:#fff;color:#12314f;font-size:11px;line-height:19px;text-shadow:none;box-shadow:0 1px 0 rgba(0,0,0,.25)}',
-    '.tkg-slot{width:var(--slot);height:var(--slot);flex:0 0 auto;border-radius:12px;background:rgba(0,12,40,.35);border:2px solid rgba(140,190,255,.3);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:rgba(200,225,255,.35)}',
+    '.tkg-num{position:absolute;left:-4px;top:-4px;min-width:20px;height:20px;padding:0 4px;border-radius:10px;background:#fff;color:#12314f;font-size:12px;line-height:20px;text-shadow:none;box-shadow:0 1px 0 rgba(0,0,0,.25)}',
+    '.tkg-slot{width:var(--slot);height:var(--slot);flex:0 0 auto;border-radius:12px;background:rgba(0,12,40,.35);border:2px solid rgba(140,190,255,.3);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:rgba(200,225,255,.45)}',
     '.tkg-ins{box-shadow:-6px 0 0 -1px #ffd84a,0 4px 0 #123f8f}',
     '.tkg-slot.tkg-ins{border-color:#ffd84a;color:#ffd84a}',
     '.tkg-pop{animation:tkg-pop 260ms var(--e)}',
@@ -580,23 +655,40 @@
     '.tkg-chip--hint:after{content:"";position:absolute;inset:-6px;border-radius:18px;border:4px solid #ffd84a;animation:tkg-ring 1s var(--e) infinite}',
     '.tkg-lift{opacity:.3}',
     '.tkg-ghost{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;opacity:.95;box-shadow:0 10px 20px rgba(0,0,0,.35)}',
-    '.tkg-btn{position:relative;flex:0 0 auto;min-width:56px;height:62px;border:2px solid rgba(255,255,255,.5);border-radius:16px;padding:0 12px;display:flex;align-items:center;justify-content:center;gap:6px;',
-    'font:900 17px/1 inherit;color:#fff;cursor:pointer;text-shadow:0 1px 0 rgba(0,0,0,.3);transition:transform 160ms var(--e),opacity 160ms linear}',
+    '.tkg-btn{position:relative;flex:0 0 auto;min-width:48px;height:56px;border:2px solid rgba(255,255,255,.5);border-radius:14px;padding:0 12px;display:flex;align-items:center;justify-content:center;gap:6px;',
+    'font-family:inherit;font-weight:900;font-size:17px;line-height:1;color:#fff;cursor:pointer;text-shadow:0 1px 0 rgba(0,0,0,.3);transition:transform 160ms var(--e),opacity 160ms linear}',
     '.tkg-btn:active{transform:scale(.96)}',
-    '.tkg-btn .tkg-ic{width:26px;height:26px;flex:0 0 auto}',
-    '.tkg-go{flex:1 1 auto;min-width:104px;background:linear-gradient(180deg,#48d465,#1f9a3f);box-shadow:0 5px 0 #146e2d,inset 0 1px 0 rgba(255,255,255,.4);font-size:24px;letter-spacing:.5px}',
-    '.tkg-go .tkg-ic{width:30px;height:30px}',
+    '.tkg-btn .tkg-ic{width:24px;height:24px;flex:0 0 auto}',
+    '.tkg-go{flex:1 1 auto;min-width:96px;background:linear-gradient(180deg,#48d465,#1f9a3f);box-shadow:0 5px 0 #146e2d,inset 0 1px 0 rgba(255,255,255,.4);font-size:22px;letter-spacing:.5px}',
+    '.tkg-go .tkg-ic{width:28px;height:28px}',
+    '.tkg-cact.stack .tkg-btn{width:100%}.tkg-cact.stack .tkg-go{height:62px}',
+    '.tkg-btn span{white-space:nowrap}',
+    '.tkg-cact:not(.stack) .tkg-trash{padding:0 10px;font-size:15px;gap:4px}.tkg-cact:not(.stack) .tkg-go{padding:0 8px;font-size:20px;min-width:0}',
+    '.tkg--short .tkg-route{padding:4px 8px 6px}.tkg--short .tkg-slots{padding-top:4px}',
     '.tkg-trash{background:linear-gradient(180deg,#ef5a5f,#b92b31);box-shadow:0 5px 0 #7d1a1f,inset 0 1px 0 rgba(255,255,255,.35)}',
-    '.tkg-hintb{width:62px;height:62px;border-radius:50%;padding:0;background:#fff;border-color:#ffd84a;overflow:visible;box-shadow:0 5px 0 rgba(0,10,40,.35)}',
-    '.tkg-hintb img{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:50% 6%;background:#dff1ff}',
-    '.tkg-hintb i{position:absolute;right:-5px;top:-5px;width:26px;height:26px;border-radius:50%;background:#ffd84a;color:#6b4a00;display:flex;align-items:center;justify-content:center}',
+    /* big Timmy = the hint button */
+    '.tkg-hintb{width:64px;height:64px;min-width:64px;padding:0;border:0;border-radius:18px;background:none;overflow:visible;box-shadow:none}',
+    '.tkg-hintb img{position:absolute;left:50%;bottom:0;width:120%;height:118%;margin-left:-60%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 4px 4px rgba(0,10,40,.45))}',
+    '.tkg--land .tkg-hintb{width:var(--timw,64px);height:var(--timh,64px);align-self:flex-end}',
+    '.tkg--land .tkg-hintb img{width:100%;height:100%;margin-left:-50%}',
+    '.tkg-hintb i{position:absolute;right:-6px;top:-4px;width:28px;height:28px;border-radius:50%;background:#ffd84a;color:#6b4a00;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(0,0,0,.3);z-index:1}',
     '.tkg-hintb i .tkg-ic{width:18px;height:18px}',
-    '.tkg-tip{display:none;margin-top:auto;align-items:flex-end;gap:6px;padding:8px 8px 6px 10px;border-radius:12px;color:#4a3210;',
-    'background:linear-gradient(180deg,#f7e7bf,#e8cf94);box-shadow:inset 0 0 0 2px rgba(140,95,30,.35),0 3px 0 rgba(0,0,0,.25);font-size:13px;line-height:1.25;font-weight:800;text-shadow:none}',
-    '.tkg-tip.on{display:flex}',
+    /* penguin tip card */
+    '.tkg-tip{' + PARCH + ';display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;font-size:13px;line-height:1.25;font-weight:800;flex:0 0 auto;min-width:0}',
+    '.tkg-tip div{flex:1 1 auto;min-width:0}',
     '.tkg-tip b{display:block;font-size:14px;font-weight:900}',
-    '.tkg-tip img{width:48px;height:52px;object-fit:contain;flex:0 0 auto}',
-    '.tkg--busy .tkg-pal .tkg-chip,.tkg--busy .tkg-act .tkg-btn,.tkg--won .tkg-pal .tkg-chip,.tkg--won .tkg-slots .tkg-chip,.tkg--won .tkg-act .tkg-btn{opacity:.55;pointer-events:none}',
+    '.tkg-tip img{width:52px;height:56px;object-fit:contain;flex:0 0 auto}',
+    '.tkg--land .tkg-tip{flex:0 0 max(var(--cmdw),270px);align-self:stretch}',
+    '.tkg--land .tkg-tip img{width:70px;height:88px}',
+    /* portrait footer */
+    '.tkg-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}',
+    '.tkg-foot .tkg-btn{height:48px;min-width:96px;padding:0 10px;font-size:15px;background:linear-gradient(180deg,#2c5aa0,#173a78);border-color:rgba(150,200,255,.55);box-shadow:0 4px 0 #0d2552}',
+    '.tkg-foot .tkg-next{background:linear-gradient(180deg,#ffe07a,#f5b82e);color:#3b2600;text-shadow:none;border-color:#fff3c0;box-shadow:0 4px 0 #b07a0c}',
+    '.tkg-foot>span{flex:0 1 auto;min-width:0;padding:6px 10px;border-radius:10px;background:rgba(0,12,40,.6);font-size:14px;line-height:1.15;font-weight:900;text-shadow:0 1px 0 rgba(0,0,0,.4);text-align:center}',
+    '.tkg-foot .tkg-btn i{display:block;width:18px;height:16px;background:currentColor;clip-path:polygon(0 50%,50% 0,50% 32%,100% 32%,100% 68%,50% 68%,50% 100%)}',
+    '.tkg-foot .tkg-next i{transform:scaleX(-1)}',
+    '.tkg-foot .tkg-btn[hidden]{visibility:hidden;display:flex}',
+    '.tkg--busy .tkg-pal .tkg-chip,.tkg--busy .tkg-cact .tkg-btn,.tkg--busy .tkg-hintb,.tkg--won .tkg-pal .tkg-chip,.tkg--won .tkg-slots .tkg-chip,.tkg--won .tkg-cact .tkg-btn,.tkg--won .tkg-hintb{opacity:.55;pointer-events:none}',
     '.tkg--busy .tkg-slots .tkg-chip{pointer-events:none}',
     '@keyframes tkg-wave{from{transform:translate3d(0,0,0)}to{transform:translate3d(80px,0,0)}}',
     '@keyframes tkg-bob{0%,100%{transform:translateY(-3%) rotate(-2deg)}50%{transform:translateY(3%) rotate(2deg)}}',
@@ -609,7 +701,6 @@
     '@keyframes tkg-wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}',
     '.tkg--rm *,.tkg--rm *:before,.tkg--rm *:after{animation:none!important}',
     '.tkg--rm .tkg-mv,.tkg--rm .tkg-boat,.tkg--rm .tkg-hd,.tkg--rm .tkg-boat img,.tkg--rm .tkg-chip,.tkg--rm .tkg-btn{transition:opacity 140ms linear!important}',
-    '.tkg--rm .tkg-bubble{transition:opacity 160ms linear!important;transform:none}',
     '.tkg--rm .tkg-win{transition:opacity 160ms linear!important;transform:translate(-50%,-50%)}',
     '.tkg--rm .tkg-run{transform:none}'
   ].join('\n')
@@ -675,6 +766,7 @@
     var lib = typeof opts.lib === 'function' ? opts.lib : defLib
     var art = {}
     for (var ak in ART) art[ak] = (opts.art && opts.art[ak]) || ART[ak]
+    if (!(opts.art && opts.art.walker) && opts.art && opts.art.timmy) art.walker = opts.art.timmy
     function src (slot) { var u = null; try { u = lib(art[slot]) } catch (e) { u = null } return u || defLib(art[slot]) }
     var rm = opts.reducedMotion != null ? !!opts.reducedMotion : mq('(prefers-reduced-motion: reduce)')
     var topInset = opts.topInset != null ? Math.max(0, int(opts.topInset, 70)) : 70
@@ -707,33 +799,75 @@
       } catch (e) {}
     }
     var hasAbs = L.tools.some(function (c) { return !!DV[c] })
+    // theme + per-board art: opts win, then the level definition (TKWorlds puts theme/blockArt/scene on it)
+    var theme = (opts.theme || def.theme) === 'deck' ? 'deck' : 'sea'
+    var say$ = {}
+    for (var sk in SAY) say$[sk] = (theme === 'deck' && SAY_DECK[sk]) || SAY[sk]
+    function keyList (v) { return (Object.prototype.toString.call(v) === '[object Array]' ? v : [v]).filter(function (k) { return typeof k === 'string' && k }) }
+    var blockKeys = keyList((opts.art && opts.art.block) || def.blockArt)
+    if (!blockKeys.length) blockKeys = THEME_ART[theme].block
+    if (!(opts.art && opts.art.crate) && def.itemArt) art.crate = def.itemArt
+    function libSrc (k) { var u = null; try { u = lib(k) } catch (e) { u = null } return u || defLib(k) }
+    var bg = opts.bg != null ? opts.bg : def.bg
+    if (bg == null && def.scene && G.TKArt && typeof G.TKArt.scene === 'function') { try { bg = G.TKArt.scene(def.scene) } catch (e) { bg = null } }
+    var chapter = opts.chapter && typeof opts.chapter === 'object' ? opts.chapter : null
 
     /* ── DOM ── */
-    var root = el('div', 'tkg' + (rm ? ' tkg--rm' : '') + (opts.bg === false ? '' : ' tkg--bg'))
+    var root = el('div', 'tkg' + (rm ? ' tkg--rm' : '') + (theme === 'deck' ? ' tkg--deck' : '') +
+      (typeof bg === 'string' && bg ? ' tkg--scene' : (bg === false ? '' : ' tkg--bg')))
+    if (typeof bg === 'string' && bg) root.style.background = bg
     root.setAttribute('data-level', L.id || '')
+    root.setAttribute('data-theme', theme)
     root.style.setProperty('--top', topInset + 'px')
     var body = el('div', 'tkg-body')
+
+    // chapter mini-card (portrait: a row at the top · wide landscape: the left column)
+    var chap = el('div', 'tkg-chap')
+    if (chapter) {
+      var cIdx = Math.max(0, int(chapter.idx, 0)), cTot = Math.max(0, int(chapter.total, 0))
+      if (chapter.ship) chap.appendChild(img(String(chapter.ship).indexOf('/') >= 0 && !/^(data:|https?:|\/)/.test(chapter.ship) ? libSrc(chapter.ship) : chapter.ship, '', ''))
+      var ct = el('div', 'ct'), cb = el('b'), cs = el('span')
+      cb.textContent = str(chapter.name || chapter.title); cs.textContent = str(chapter.name ? chapter.title : chapter.value)
+      ct.appendChild(cb); if (cs.textContent) ct.appendChild(cs)
+      if (cTot) { var bar = el('div', 'bar'), bi = el('i'); bi.style.width = Math.round(100 * Math.min(cIdx, cTot) / cTot) + '%'; bar.appendChild(bi); ct.appendChild(bar) }
+      chap.appendChild(ct)
+      if (cTot) { var ce = el('em'); ce.textContent = cIdx + '/' + cTot; chap.appendChild(ce) }
+    }
+    // parchment title plate
+    var plate = el('div', 'tkg-plate')
+    var plateBig = str(opts.title || L.title || 'Latihan Navigasi'), plateSub = str(opts.mission || L.mission || defaultMission())
+    if (chapter && chapter.label) { var pl = el('small'); pl.textContent = str(chapter.label); plate.appendChild(pl) }
+    var pb = el('b'); pb.textContent = plateBig; plate.appendChild(pb)
+    if (plateSub && plateSub !== plateBig) { var ps = el('span'); ps.textContent = plateSub; plate.appendChild(ps) }
+
     var sea = el('div', 'tkg-sea'), board = el('div', 'tkg-board')
-    board.setAttribute('role', 'img'); board.setAttribute('aria-label', 'Papan laut ' + L.w + ' kali ' + L.h)
+    board.setAttribute('role', 'img'); board.setAttribute('aria-label', (theme === 'deck' ? 'Papan dek ' : 'Papan laut ') + L.w + ' kali ' + L.h)
     board.appendChild(el('div', 'tkg-wv')); board.appendChild(el('div', 'tkg-wv tkg-wv2')); board.appendChild(el('div', 'tkg-grid'))
     sea.appendChild(board)
-    var rose = el('div', 'tkg-rose', wrapIc(ic('compass')) + '<b style="left:50%;top:-13px;margin-left:-4px">U</b><b style="left:50%;bottom:-13px;margin-left:-4px">S</b><b style="left:-11px;top:50%;margin-top:-5px">B</b><b style="right:-10px;top:50%;margin-top:-5px">T</b>')
+    var rose = el('div', 'tkg-rose', '<b style="left:50%;top:-15px;margin-left:-5px">U</b><b style="left:50%;bottom:-15px;margin-left:-5px">S</b><b style="left:-13px;top:50%;margin-top:-6px">B</b><b style="right:-12px;top:50%;margin-top:-6px">T</b>')
+    rose.insertBefore(img(src('compass')), rose.firstChild)
     rose.setAttribute('aria-hidden', 'true')
     sea.appendChild(rose)
-    var bubble = el('div', 'tkg-bubble'); bubble.setAttribute('role', 'status'); bubble.setAttribute('aria-live', 'polite')
-    var bTxt = el('span')
-    bubble.appendChild(img(src('timmy'))); bubble.appendChild(bTxt)
-    sea.appendChild(bubble)
     var win = el('div', 'tkg-win'); win.appendChild(el('b', '', 'Hebat!'))
     var winStars = el('div'); win.appendChild(winStars); sea.appendChild(win)
 
     var cmd = el('div', 'tkg-cmd'); cmd.appendChild(el('div', 'tkg-h', 'Perintah'))
     var pal = el('div', 'tkg-pal'); pal.setAttribute('aria-label', 'Pilihan perintah'); cmd.appendChild(pal)
-    var tip = el('div', 'tkg-tip')
-    var tipTxt = el('div'); tipTxt.innerHTML = '<b>Tips:</b>'
-    var tipSpan = el('span'); tipSpan.textContent = opts.mission || L.mission || defaultMission(); tipTxt.appendChild(tipSpan)
-    tip.appendChild(tipTxt); tip.appendChild(img(src('tipper')))
-    cmd.appendChild(tip)
+    var cact = el('div', 'tkg-cact')
+    var trashB = el('button', 'tkg-btn tkg-trash', wrapIc(ic('trash')) + '<span>Hapus</span>'); trashB.type = 'button'; trashB.setAttribute('aria-label', 'Hapus semua perintah')
+    var goB = el('button', 'tkg-btn tkg-go', wrapIc(ic('go')) + '<span>JALAN!</span>'); goB.type = 'button'; goB.setAttribute('aria-label', theme === 'deck' ? 'Jalankan Timmy' : 'Jalankan kapal')
+    cact.appendChild(trashB); cact.appendChild(goB); cmd.appendChild(cact)
+
+    // bottom band: big Timmy (tap = hint) + his speech bubble · route · penguin tip
+    var bot = el('div', 'tkg-bot')
+    var tim = el('div', 'tkg-tim')
+    var hintB = el(opts.hintButton === false ? 'div' : 'button', 'tkg-btn tkg-hintb')
+    if (opts.hintButton !== false) { hintB.type = 'button'; hintB.setAttribute('aria-label', 'Petunjuk dari Timmy') }
+    hintB.appendChild(img(src('timmy'), '', 'Timmy'))
+    if (opts.hintButton !== false) hintB.appendChild(el('i', '', wrapIc(ic('hint'))))
+    var bubble = el('div', 'tkg-bubble'); bubble.setAttribute('role', 'status'); bubble.setAttribute('aria-live', 'polite')
+    var bTxt = el('span'); bubble.appendChild(el('em', '', 'Timmy')); bubble.appendChild(bTxt)
+    tim.appendChild(hintB); tim.appendChild(bubble)
 
     var route = el('div', 'tkg-route')
     var rh = el('div', 'tkg-h')
@@ -741,21 +875,37 @@
     var count = el('span', 'tkg-count', '<i class="tkg-ic" aria-hidden="true">' + ic('star') + '</i>'); count.setAttribute('aria-label', 'Bintang')
     var countN = el('span'); countN.textContent = String(int(opts.starBase, 0)); count.appendChild(countN)
     rh.appendChild(rTitle); rh.appendChild(count); route.appendChild(rh)
-    var slots = el('div', 'tkg-slots'); slots.setAttribute('aria-label', 'Rute kapal'); route.appendChild(slots)
+    var slots = el('div', 'tkg-slots'); slots.setAttribute('aria-label', theme === 'deck' ? 'Rute Timmy' : 'Rute kapal'); route.appendChild(slots)
 
-    var act = el('div', 'tkg-act')
-    var hintB = el('button', 'tkg-btn tkg-hintb'); hintB.type = 'button'; hintB.setAttribute('aria-label', 'Petunjuk dari Timmy')
-    hintB.appendChild(img(src('timmy'))); hintB.appendChild(el('i', '', wrapIc(ic('hint'))))
-    var trashB = el('button', 'tkg-btn tkg-trash', wrapIc(ic('trash')) + '<span>Hapus</span>'); trashB.type = 'button'; trashB.setAttribute('aria-label', 'Hapus semua perintah')
-    var goB = el('button', 'tkg-btn tkg-go', wrapIc(ic('go')) + '<span>JALAN!</span>'); goB.type = 'button'; goB.setAttribute('aria-label', 'Jalankan kapal')
-    if (opts.hintButton !== false) act.appendChild(hintB)
-    act.appendChild(trashB); act.appendChild(goB)
-    body.appendChild(sea); body.appendChild(cmd); body.appendChild(route); body.appendChild(act)
+    var tip = el('div', 'tkg-tip')
+    var tipTxt = el('div'); tipTxt.innerHTML = '<b>Tips Kapten Pinguin:</b>'
+    var tipSpan = el('span'); tipSpan.textContent = str(opts.tip || say$.tip); tipTxt.appendChild(tipSpan)
+    tip.appendChild(tipTxt); tip.appendChild(img(src('tipper'), '', 'Kapten Pinguin'))
+    bot.appendChild(tim); bot.appendChild(route); bot.appendChild(tip)
+
+    // footer (portrait): Kembali · Level X dari Y · Lanjut — each part only when the host gives it
+    var foot = el('div', 'tkg-foot')
+    var backB = el('button', 'tkg-btn tkg-back', '<i></i><span>Kembali</span>'); backB.type = 'button'
+    var lvTxt = el('span'); lvTxt.textContent = chapter && int(chapter.total, 0) ? 'Level ' + Math.max(1, int(chapter.idx, 1)) + ' dari ' + int(chapter.total, 0) : ''
+    var nextB = el('button', 'tkg-btn tkg-next', '<span>Lanjut</span><i></i>'); nextB.type = 'button'
+    if (typeof opts.onBack !== 'function') backB.hidden = true
+    if (typeof opts.onNext !== 'function') nextB.hidden = true
+    foot.appendChild(backB); foot.appendChild(lvTxt); foot.appendChild(nextB)
+    var hasFoot = !backB.hidden || !nextB.hidden || !!lvTxt.textContent
+    function hostCall (fn) { return function () { if (dead) return; sfx('click'); try { fn() } catch (e) { if (G.console) console.error('[TKGrid] footer', e) } } }
+    if (!backB.hidden) backB.addEventListener('click', hostCall(opts.onBack))
+    if (!nextB.hidden) nextB.addEventListener('click', hostCall(opts.onNext))
+
+    if (chapter) body.appendChild(chap)
+    body.appendChild(plate); body.appendChild(sea); body.appendChild(cmd); body.appendChild(bot)
+    if (hasFoot) body.appendChild(foot)
     root.appendChild(body)
+    if (!chapter) root.classList.add('tkg--nochap')
+    if (!hasFoot) root.classList.add('tkg--nofoot')
 
     function defaultMission () {
       if (L.items.length) return L.drop ? 'Ambil peti, lalu antar ke tanda kuning!' : 'Ambil semua peti, lalu ke bendera!'
-      return 'Bawa kapal ke bendera. Hati-hati, gunung es menghalangi!'
+      return theme === 'deck' ? 'Bantu Timmy sampai ke sekoci dengan selamat!' : 'Bawa kapal ke bendera. Hati-hati, gunung es menghalangi!'
     }
 
     /* board objects */
@@ -770,7 +920,8 @@
     if (L.drop) O.drop = obj('tkg-drop', L.drop.x, L.drop.y, wrapIc(ic('drop')))
     if (L.goal && !(L.drop && L.drop.x === L.goal.x && L.drop.y === L.goal.y)) {
       O.goal = obj('tkg-goal', L.goal.x, L.goal.y)
-      O.goal.appendChild(img(src('lighthouse'), 'lh')); O.goal.appendChild(img(src('flag'), 'fl'))
+      O.goal.appendChild(img(src(theme === 'deck' ? 'lifeboat' : 'lighthouse'), 'lh', theme === 'deck' ? 'Sekoci' : 'Mercusuar'))
+      O.goal.appendChild(img(src('flag'), 'fl'))
     }
     var goalEl = O.goal || O.drop
     L.switches.forEach(function (s) { O.sw.push(obj('tkg-sw', s.x, s.y, wrapIc(ic('switch')))) })
@@ -782,7 +933,11 @@
         var e = obj('tkg-gate', g.x, g.y, wrapIc('', 'tkg-bars')); gateKeys[k] = e; O.gate.push(e)
       })
     })
-    L.blocks.forEach(function (b) { if (!gateKeys[b.y * L.w + b.x]) spriteObj('tkg-blk', 'ice', b.x, b.y) })
+    var nb = 0
+    L.blocks.forEach(function (b) {
+      if (gateKeys[b.y * L.w + b.x]) return
+      var e = obj('tkg-blk', b.x, b.y); e.appendChild(img(libSrc(blockKeys[(b.x * 7 + b.y * 3 + nb++) % blockKeys.length])))
+    })
     L.ice.forEach(function (o) {
       o.path.forEach(function (p) { var d = el('div', 'tkg-idot'); d._x = p.x; d._y = p.y; board.appendChild(d) })
     })
@@ -791,7 +946,7 @@
     var boat = obj('tkg-boat', L.start.x, L.start.y)
     var bump = el('div', 'tkg-bump'), bob = el('div', 'tkg-bob'), hd = el('div', 'tkg-hd', wrapIc(arw('N', 'tkg-hdarw')))
     var carry = el('div', 'tkg-carry'); carry.appendChild(img(src('crate')))
-    bob.appendChild(img(src('boat'), '', 'Kapal')); bob.appendChild(carry); bump.appendChild(hd); bump.appendChild(bob); boat.appendChild(bump)
+    bob.appendChild(img(src(theme === 'deck' ? 'walker' : 'boat'), '', theme === 'deck' ? 'Timmy' : 'Kapal')); bob.appendChild(carry); bump.appendChild(hd); bump.appendChild(bob); boat.appendChild(bump)
 
     function put (e, x, y) { e._x = x; e._y = y; e.style.transform = 'translate3d(' + (x * st.T) + 'px,' + (y * st.T) + 'px,0)' }
     function placeAll () {
@@ -814,6 +969,11 @@
 
     /* ── layout ── */
     var lastKey = ''
+    var MIN_T = 40
+    function tileFor () {
+      var aw = sea.clientWidth - 6, ah = sea.clientHeight - 6
+      return { aw: aw, ah: ah, T: Math.max(20, Math.floor(Math.min(aw / L.w, ah / L.h, 96))) }
+    }
     function layout () {
       if (dead) return
       var W = root.clientWidth, H = root.clientHeight - topInset
@@ -822,27 +982,47 @@
       root.classList.toggle('tkg--land', land)
       var n = L.tools.length, bw, bh, cols
       if (land) {
-        bh = H < 460 ? 56 : 62
-        var colH = H - 16 - 96 - 8           // sea/cmd row = body minus route row
-        var rows = Math.max(1, Math.floor((colH - 12 - 26 + 6) / (bh + 6)))
-        cols = Math.max(1, Math.ceil(n / rows))
-        if (cols === 1 && n > 4) cols = 2
-        bw = cols === 1 ? 104 : (cols === 2 ? 84 : 68)
-        var cmdw = Math.max(opts.hintButton === false ? 240 : 300, cols * (bw + 6) + 14)
+        var tall = H >= 540
+        var side = !!chapter && W >= 1000
+        root.classList.toggle('tkg--short', !tall)
+        root.classList.toggle('tkg--side', side)
+        root.classList.toggle('tkg--noplate', H < 470)
+        var botH = tall ? 124 : 98
+        root.style.setProperty('--both', botH + 'px')
+        root.style.setProperty('--timw', (tall ? 112 : 64) + 'px'); root.style.setProperty('--timh', (tall ? botH : 72) + 'px')
+        bh = tall ? 60 : 54
+        var colH = H - 16 - (tall ? botH + 8 : 0)
+        for (cols = 1; cols <= 4; cols++) {
+          var rows = Math.ceil(n / cols), actH = cols === 1 ? 56 + 6 + 62 : 56
+          if (30 + 16 + rows * (bh + 6) + actH <= colH) break
+        }
+        cols = Math.min(Math.max(cols, 1), 4, n)
+        if (cols === 1 && n > 5) cols = 2
+        var cmdw = cols === 1 ? 200 : Math.max(252, cols * 62 + 22)
+        bw = Math.min(cols === 1 ? 150 : 110, Math.floor((cmdw - 20 - (cols - 1) * 6) / cols))
         root.style.setProperty('--cmdw', cmdw + 'px')
-        var usedH = 26 + Math.ceil(n / cols) * (bh + 6) + 12
-        tip.classList.toggle('on', colH - usedH >= 120)
+        root.style.setProperty('--sidew', (W >= 1200 ? 220 : 196) + 'px')
+        cact.classList.toggle('stack', cols === 1)
+        // the tip card needs a real route bar beside it
+        root.classList.toggle('tkg--notip', !tall || W - Math.max(cmdw, 270) - 380 - 40 < 6 * 58)
       } else {
+        root.classList.remove('tkg--short'); root.classList.remove('tkg--side'); cact.classList.remove('stack')
         cols = Math.min(4, n)
-        bh = 58
-        bw = Math.max(56, Math.min(96, Math.floor((W - 16 - 16 - (cols - 1) * 6) / cols)))
-        tip.classList.remove('on')
+        bh = 50
+        bw = Math.max(52, Math.min(96, Math.floor((W - 20 - 16 - (cols - 1) * 6) / cols)))
+        root.classList.remove('tkg--noplate'); root.classList.remove('tkg--notip')
+        if (!chapter) root.classList.add('tkg--nochap'); else root.classList.remove('tkg--nochap')
       }
+      root.style.setProperty('--slot', (land ? (H >= 540 ? 52 : 48) : 48) + 'px')
       root.style.setProperty('--cols', String(cols))
       root.style.setProperty('--bw', bw + 'px'); root.style.setProperty('--bh', bh + 'px')
-      var aw = sea.clientWidth - 6, ah = sea.clientHeight - 6
-      var T = Math.max(20, Math.floor(Math.min(aw / L.w, ah / L.h, 96)))
-      var k = T + ':' + land + ':' + W + ':' + H
+      if (!land) {
+        // portrait: give the board room first — drop the tip, then the plate, then the chapter card
+        var drop = ['tkg--notip', 'tkg--noplate', 'tkg--nochap']
+        for (var di = 0; di < drop.length && tileFor().T < MIN_T + 4; di++) root.classList.add(drop[di])
+      }
+      var tf = tileFor(), T = tf.T
+      var k = T + ':' + land + ':' + W + ':' + H + ':' + tf.aw + ':' + tf.ah
       if (k === lastKey) return
       lastKey = k
       st.T = T
@@ -850,14 +1030,14 @@
       board.style.width = (T * L.w) + 'px'; board.style.height = (T * L.h) + 'px'
       root.classList.add('tkg-noanim')
       placeAll()
-      placeRose(aw, ah, T)
+      placeRose(tf.aw, tf.ah, T)
       void root.offsetWidth
       root.classList.remove('tkg-noanim')
     }
     function placeRose (aw, ah, T) {
       var bwp = T * L.w, bhp = T * L.h, sx = (aw - bwp) / 2, sy = (ah - bhp) / 2
-      if (sx >= 76) { rose.style.display = 'block'; rose.style.left = (sx + bwp + 14) + 'px'; rose.style.top = (sy + 14) + 'px' }
-      else if (sy >= 76) { rose.style.display = 'block'; rose.style.left = (sx + bwp - 70) + 'px'; rose.style.top = (sy - 70) + 'px' }
+      if (sx >= 80) { rose.style.display = 'block'; rose.style.left = (sx + bwp + 18) + 'px'; rose.style.top = (sy + 16) + 'px' }
+      else if (sy >= 80) { rose.style.display = 'block'; rose.style.left = (sx + bwp - 70) + 'px'; rose.style.top = (sy - 74) + 'px' }
       else rose.style.display = 'none'
     }
     var ro = null
@@ -886,18 +1066,20 @@
       if (animate) { boat.style.opacity = '0'; later(doIt, 160) } else doIt()
     }
 
-    /* ── bubble ── */
+    /* ── bubble: Timmy's own row, so it never covers the board. A timed message falls back to the idle line. ── */
     var bubbleT = null
+    var idleMsg = str(opts.hint || L.hint || (hasAbs ? say$.intro : defaultMission()))
+    function setBubble (text, cls) {
+      bTxt.textContent = text
+      bubble.className = 'tkg-bubble' + (cls ? ' ' + cls : '')
+    }
     function say (text, kind, ms) {
       st.msg = text
-      bTxt.innerHTML = '<em>Timmy</em>'
-      bTxt.appendChild(document.createTextNode(text))
-      var low = vis && vis.y >= L.h / 2 && L.h > 1
-      bubble.className = 'tkg-bubble on' + (kind ? ' ' + kind : '') + (low ? ' top' : '')
+      setBubble(text, 'on' + (kind ? ' ' + kind : ''))
       if (bubbleT) { clearTimeout(bubbleT); bubbleT = null }
-      if (ms) bubbleT = setTimeout(function () { if (!dead) bubble.classList.remove('on') }, ms)
+      if (ms) bubbleT = setTimeout(function () { if (!dead) hush() }, ms)
     }
-    function hush () { bubble.classList.remove('on') }
+    function hush () { if (bubbleT) { clearTimeout(bubbleT); bubbleT = null } setBubble(idleMsg, '') }
 
     /* ── palette + route ── */
     function chip (c, where, i) {
@@ -932,7 +1114,8 @@
           var d = el('div', 'tkg-slot'); d.textContent = String(i + 1); slots.appendChild(d)
         }
       }
-      var focus = st.bad != null ? st.bad : (enter != null && enter >= 0 ? enter : -1)
+      // keep the chip in play in view; otherwise the next empty slot (where a new command lands)
+      var focus = st.bad != null ? st.bad : (enter != null && enter >= 0 ? enter : Math.min(st.prog.length, n - 1))
       if (focus >= 0) reveal(slots.children[focus])
     }
     function reveal (e) {
@@ -954,7 +1137,7 @@
     }
     function addCmd (c, at) {
       if (st.running || st.done) return false
-      if (st.prog.length >= L.maxLen) { say(SAY.full, 'bad', 2600); wiggle(slots); sfx('bad'); return false }
+      if (st.prog.length >= L.maxLen) { say(say$.full, 'bad', 2600); wiggle(slots); sfx('bad'); return false }
       at = at == null ? st.prog.length : Math.max(0, Math.min(st.prog.length, at))
       st.prog = st.prog.slice(0, at).concat([c], st.prog.slice(at))
       edited(); sfx('click'); renderSlots(at)
@@ -1066,13 +1249,13 @@
       if (lvl === 1) {
         if (goalEl) goalEl.classList.add('tkg-glow')
         h.next.forEach(function (c) { var p = pal.querySelector('[data-cmd="' + c + '"]'); if (p) p.classList.add('tkg-chip--hint') })
-        say(SAY.hint1.replace('{c}', h.next.map(function (c) { return LABEL[c] }).join(' + ')), 'good', 4500)
+        say(say$.hint1.replace('{c}', h.next.map(function (c) { return LABEL[c] }).join(' + ')), 'good', 4500)
       } else if (lvl === 2) {
         st.prog = h.full.slice(0, h.keep + h.next.length)
         st.bad = null
         if (st.dirty) resetBoard(true)
         renderSlots(st.prog.length - 1)
-        say(SAY.hint2, 'good', 3600)
+        say(say$.hint2, 'good', 3600)
       } else {
         var r = run(L, h.full), seen = {}, n = 0
         var pts = [{ x: L.start.x, y: L.start.y }]
@@ -1086,7 +1269,7 @@
           later(function () { g.classList.add('on') }, rm ? 0 : 60 * n)
         })
         if (goalEl) goalEl.classList.add('tkg-glow')
-        say(SAY.hint3, 'good', 4500)
+        say(say$.hint3, 'good', 4500)
       }
     }
 
@@ -1164,7 +1347,7 @@
     function stepMs (s) { return s.event === 'current' ? STEP_MS + 260 : s.event === 'bump' ? STEP_MS + 150 : STEP_MS }
     function go () {
       if (st.running || st.done) return
-      if (!st.prog.length) { say(SAY.noProg, 'bad', 2600); wiggle(slots); sfx('click'); return }
+      if (!st.prog.length) { say(say$.noProg, 'bad', 2600); wiggle(slots); sfx('click'); return }
       sfx('click')
       st.attempts++
       st.bad = null; renderSlots(-1); clearHintMarks(); hush()
@@ -1188,9 +1371,9 @@
         st.bad = res.failAt
         renderSlots(-1)
         var key = res.reason === 'noItem' ? (res.detail || 'none') : res.reason
-        say((SAY[key] || SAY.block).replace('{n}', String(res.failAt + 1)), 'bad', 6500)
+        say((say$[key] || say$.block).replace('{n}', String(res.failAt + 1)), 'bad', 6500)
       } else {
-        say(SAY[res.detail] || SAY.far, 'bad', 6500)
+        say(say$[res.detail] || say$.far, 'bad', 6500)
         sfx('bad')
       }
     }
@@ -1208,7 +1391,7 @@
         }
       }
       sfx('win')
-      say(SAY.win, 'good')
+      say(say$.win, 'good')
       winStars.innerHTML = ''
       var starEls = []
       for (var i = 0; i < 3; i++) { var s = el('span', '', wrapIc(ic('star', i < res.stars ? '' : 'tk-ico--dim'), i < res.stars ? 'got' : '')); winStars.appendChild(s); starEls.push(s) }
@@ -1251,7 +1434,7 @@
     }
 
     /* ── wiring ── */
-    hintB.addEventListener('click', hint)
+    if (opts.hintButton !== false) hintB.addEventListener('click', hint)
     trashB.addEventListener('click', function () {
       if (st.running || st.done) return
       if (!st.prog.length) { wiggle(slots); return }
@@ -1264,7 +1447,7 @@
     resetBoard(false)
     layout()
     later(layout, 60)
-    say(opts.hint || L.hint || (hasAbs ? 'Ayo rencanakan rutenya! Ketuk panah untuk menggerakkan kapal.' : defaultMission()), '', 4500)
+    hush()
 
     return {
       el: root,
