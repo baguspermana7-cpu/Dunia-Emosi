@@ -418,6 +418,17 @@ SHEETS = {
     + g('tk-prop', 'pocket-watch-7 scroll-sealed-2 sign-adventure-awaits captain-hat-4 porthole-moon adventure-log'),
     {'src': os.path.expanduser('~/Documents/temporary/game asset/timmy-ships'), 'grid': True, 'art_over_grid': True,
      'hole_rim': 1.5, 'grid_ys': (209, 414, 602, 795), 'line_sat': 42, 'drop_slivers': True}),
+  # world-b (2026-09-28): pale grey gutters, mostly hidden under full-cell pictures, so the
+  # lines are named. cannon is ingested but not used (owner: no weapons).
+  'world-b-30': (6, 5,
+    g('tk-world', 'arch-beach lighthouse-sunset') + g('tk-prop', 'ship-wheel-6 spyglass-8 treasure-map-3 treasure-chest-4')
+    + g('tk-prop', 'ship-bell-5 seagull-6 lantern-7 lifebuoy-10 bollard-rope crate-plain')
+    + g('tk-prop', 'barrels rope-coil-4 anchor-5') + g('tk-world', 'iceberg-2 arch-rock palm-island')
+    + g('tk-prop', 'cannon cargo-net compass-4 signpost-blank flag-compass') + g('tk-world', 'snow-mountain')
+    + g('tk-world', 'waterfall ruins') + g('tk-char', 'penguins') + g('tk-world', 'whale-tail aurora titanic-funnels'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/timmy-ships'), 'grid': True, 'art_over_grid': True,
+     'hole_rim': 1.5, 'grid_ys': (189, 387, 594, 793), 'grid_xs': (255, 511, 767, 1022, 1279), 'line_sat': 12,
+     'drop_slivers': True, 'blank_border': 5, 'rect_cell': {'arch-beach', 'lighthouse-sunset', 'waterfall', 'aurora', 'titanic-funnels'}}),
 }
 
 # Sprites whose enclosed flat-white pockets are real see-through GAPS -- decided by
@@ -460,6 +471,8 @@ HOLES |= set(_TK_SHIPS) | set('''tk-prop/ship-wheel-4 tk-prop/lifebuoy-6 tk-prop
   tk-prop/lifebuoy-5 tk-prop/violin-2 tk-prop/pocket-watch-4 tk-prop/binoculars-6 tk-prop/tea-set tk-prop/lantern-5
   tk-prop/compass-3 tk-prop/open-compass tk-prop/treasure-chest-open'''.split())
 HOLE_MIN_PX_FOR.update({k: 150 for k in _TK_SHIPS})
+HOLES |= set('''tk-prop/ship-wheel-6 tk-prop/lifebuoy-10 tk-prop/anchor-5 tk-world/arch-rock tk-prop/cargo-net
+  tk-prop/lantern-7 tk-prop/ship-bell-5'''.split())
 # ships-c/d/e: every labelled ship is rigged or railed; reviewed on magenta after the run
 _TK_SHIPS3 = [f'tk-ship3/{n}' for sh in ('ships-c-25', 'ships-d-30', 'ships-e-30') for _, n in SHEETS[sh][2]]
 # only rigged / sailing ships: a flat-white hull or superstructure (hospital ships, ferries,
@@ -505,7 +518,7 @@ def page_mask(rgb):
     return np.isin(lbl, list(edge)), cand, d
 
 
-def detect_grid(im, cols, rows, ys_inner=None):
+def detect_grid(im, cols, rows, ys_inner=None, xs_inner=None):
     """Cell boxes from the grid lines actually drawn on a sheet (lines are not evenly spaced:
     one row of the owner's icon sheet is 278 px, the others ~235)."""
     a = im.astype(np.int32); g = a.mean(2); sat = a.max(2) - a.min(2)
@@ -521,6 +534,8 @@ def detect_grid(im, cols, rows, ys_inner=None):
     ys, xs = lines(line.mean(1), rows), lines(line.mean(0), cols)
     if ys_inner:   # a sheet whose button frames read as extra lines names its rows
         ys = [0] + list(ys_inner) + [im.shape[0] - 1]
+    if xs_inner:
+        xs = [0] + list(xs_inner) + [im.shape[1] - 1]
     if not ys or not xs:
         return None
     return [(xs[c], ys[r], xs[c + 1], ys[r + 1]) for r in range(rows) for c in range(cols)]
@@ -790,7 +805,8 @@ def write_js(index):
 
 def drop_slivers(spr):
     """Grid-line residue: a detached piece at most 4 px thick in one direction (a leftover
-    run of a faint ruled line) is cleared; any real detached part (a clove, a star) is thicker."""
+    run of a faint ruled line: <= 9 px thick, < 3% of the sprite) is cleared; a real detached
+    part (a clove, a star) is thicker or bigger."""
     l, n = ndimage.label(spr[..., 3] > 8)
     if n < 2:
         return spr
@@ -798,7 +814,7 @@ def drop_slivers(spr):
     main_ = int(np.argmax(sizes)) + 1
     out = spr.copy()
     for k, sl in enumerate(ndimage.find_objects(l), 1):
-        if k != main_ and min(sl[0].stop - sl[0].start, sl[1].stop - sl[1].start) <= 4:
+        if k != main_ and min(sl[0].stop - sl[0].start, sl[1].stop - sl[1].start) <= 9 and sizes[k - 1] < 0.03 * sizes[main_ - 1]:
             out[sl][l[sl] == k] = 0
     return out
 
@@ -1006,7 +1022,10 @@ def main():
         im = np.asarray(Image.open(os.path.join(opts.get('src', SRC), sheet + '.png')).convert('RGB')).copy()
         H, W = im.shape[:2]
         cw, ch = W / cols, H / rows
-        boxes = detect_grid(im, cols, rows, opts.get('grid_ys')) if opts.get('grid') else None
+        boxes = detect_grid(im, cols, rows, opts.get('grid_ys'), opts.get('grid_xs')) if opts.get('grid') else None
+        im_orig = im.copy()
+        if opts.get('blank_border'):   # a pale frame drawn at the sheet edge itself
+            bb = int(opts['blank_border']); im[:bb] = 255; im[-bb:] = 255; im[:, :bb] = 255; im[:, -bb:] = 255
         if opts.get('grid') and not boxes:
             bad.append(f'{sheet}: grid lines not found'); continue
         if boxes:
@@ -1112,7 +1131,7 @@ def main():
                 # a picture that fills its ruled cell: the watershed split it, so take the cell box
                 bx0, by0, bx1, by1 = boxes[i]
                 cb = np.zeros(im.shape[:2], bool); cb[by0 + 4:by1 - 3, bx0 + 4:bx1 - 3] = True
-                spr = rect_sprite(im[by0:by1, bx0:bx1], cb[by0:by1, bx0:bx1])
+                spr = rect_sprite(im_orig[by0:by1, bx0:bx1], cb[by0:by1, bx0:bx1])
             elif name in opts.get('rect', ()):
                 spr = rect_sprite(im[Y0:Y1, X0:X1], lab[Y0:Y1, X0:X1])
             else:

@@ -252,11 +252,17 @@
   }
 
   /* ── WORLD MAP (islands) ────────────────────────────────────────────── */
+  // owner island sprites under each ship on the World Map (mockup ui-06); falls back to the drawn island
+  var ISLE = { kamar: 'tk-world/lighthouse-island', titanic: 'tk-world/harbor-station', britannic: 'tk-world/lighthouse-island', vasa: 'tk-world/arch-island',
+    cuttysark: 'tk-world/palm-island', victory: 'tk-world/arch-rock', mayflower: 'tk-world/palm-island', endurance: 'tk-world/snow-island',
+    kontiki: 'tk-world/cave-island', calypso: 'tk-world/palm-island', queenmary: 'tk-world/harbor-station', arizona: 'tk-world/lighthouse-island',
+    missouri: 'tk-world/arch-rock', nautilus: 'tk-world/whirlpool', pelabuhan: 'tk-world/ruins' }
+  function isleArt (id) { var k = ISLE[id]; return k && W.AssetIndex && AssetIndex.path(k) ? k : null }
   function worldView () {
     show('scr-world')
     $('world-stars').innerHTML = IC('star') + '<span>' + totalStars() + '/' + maxStars() + '</span>'
     var host = $('islands'), Wd = host.clientWidth || innerWidth, cols = Wd > 900 ? 4 : Wd > 560 ? 3 : 2
-    var gx = (Wd - 16) / cols, gy = 190, pts = [], list = WD.WORLDS
+    var gx = (Wd - 16) / cols, gy = 212, pts = [], list = WD.WORLDS
     list.forEach(function (w, k) { var row = Math.floor(k / cols), c = k % cols; if (row % 2) c = cols - 1 - c; pts.push({ x: 8 + gx * (c + 0.5), y: 110 + row * gy + ((k % 2) ? 14 : 0) }) })
     var H = pts[pts.length - 1].y + 130, d = pts.map(function (p, k) { return (k ? 'L' : 'M') + p.x.toFixed(0) + ' ' + p.y.toFixed(0) }).join(' ')
     var nextI = -1; list.forEach(function (w, i) { if (nextI < 0 && worldOpen(i) && !worldDone(w)) nextI = i })
@@ -265,7 +271,8 @@
         var got = worldStars(w), max = w.levels.length * 3, st = '', n = Math.round(got / max * 3)
         for (var k = 0; k < 3; k++) st += IC('star', k < n ? '' : 'tk-ico--dim')
         return '<button class="isle' + (worldOpen(i) ? '' : ' locked') + (i === nextI ? ' next' : '') + '" type="button" data-w="' + w.id + '" style="left:' + pts[i].x + 'px;top:' + pts[i].y + 'px;animation-delay:' + i * 50 + 'ms">' +
-          '<span class="land"><img src="' + Art.src(w.ship || 'char/timmy') + '" alt=""><b class="no fk">' + i + '</b></span>' +
+          '<span class="land' + (isleArt(w.id) ? ' art' : '') + '">' + (isleArt(w.id) ? '<img class="isl" src="' + Art.lib(isleArt(w.id)) + '" alt="">' : '') +
+          '<img class="shp" src="' + Art.src(w.ship || 'char/timmy') + '" alt=""><b class="no fk">' + i + '</b></span>' +
           '<span class="lab">' + esc(w.name) + '<small>' + esc(w.value) + '</small></span><span class="s">' + st + '</span></button>'
       }).join('')
     var sp = document.createElement('div'); sp.style.height = H + 'px'; host.appendChild(sp)

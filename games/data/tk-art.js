@@ -43,7 +43,7 @@
     sextant: 'tk-prop/sextant-4', map: 'tk-legend/world-map-scroll', hourglass: 'tk-legend/hourglass', seagull: 'tk-legend/seagull-3',
     bottle: 'tk-prop/message-bottle', journal: 'tk-legend/journal-book'
   }
-  // Owner rule: no woman without hijab in this game -- tk-char/lady-hat and tk-char/maid are in
+  // Owner rule: no woman without hijab in this game -- the lady and maid busts of chars-ui-30 are in
   // the shared DB but must never be referenced here.
   var CHARS = {
     timmy: 'tk-key/timmy', captain: 'tk-char/captain-pointing', captain2: 'tk-char/captain-map',
