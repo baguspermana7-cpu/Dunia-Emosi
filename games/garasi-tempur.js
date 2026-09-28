@@ -19,7 +19,7 @@
   'use strict'
   var E = window.GTEngine, C = window.GTCards, TR = window.GTTrucks, Card = window.GTCard, FX = window.GTFx, Q = window.GTQuiz
   var lib = Card.lib
-  var KEY = 'dunia-gt-v1', GAME_ID = 29
+  var KEY = 'dunia-gt-v1', GAME_ID = 'g29'   // main-app progress row name (game.js getLevelProgress reads 'g'+n)
   function $ (id) { return document.getElementById(id) }
   function esc (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;') }
 
@@ -83,6 +83,12 @@
   var toastT = 0
   function toast (msg, kind) {
     var t = $('toast'); t.textContent = msg; t.className = 'toast show ' + (kind || '')
+    t.style.top = ''
+    if (S && M && M.mode === 'pvp' && document.body.getAttribute('data-scr') === 'scr-battle') {
+      // 2 players: the note sits in the live seat's half, turned to face that seat
+      var h = $('half-p' + S.active)
+      if (h) { var r = h.getBoundingClientRect(); t.style.top = (r.top + r.height * (S.active === 1 ? 0.65 : 0.35)) + 'px'   /* over the truck row, clear of that seat's hand */; t.className += ' pv-t' + (S.active === 1 ? ' flip' : '') }
+    }
     clearTimeout(toastT); toastT = setTimeout(function () { t.className = 'toast' }, 2200)
   }
   function tap (el, fn) {
@@ -182,6 +188,56 @@
   var S = null, M = null, BUSY = false, SEL = null, CID = 0, AI_RUN = false, ENDARM = false
   function human (pi) { return M.mode === 'pvp' || pi === 0 }
   function view () { return M.mode === 'pvp' ? (S.phase === 'over' ? 0 : S.active) : 0 }
+  /* 2 PLAYERS = a FIXED split screen (owner: "P1 selalu bawah, P2 selalu atas, seperti
+     Pokémon PvP"): the players sit facing each other across the tablet, so each one owns a
+     half that never moves — P1's half at the bottom, upright; P2's half at the top, turned
+     180° to face P2. Only the turn (which half is lit and live) changes, never the layout.
+     Every per-player control exists once per half with a -p0/-p1 id; U(key, pi) finds it.
+     In the 1-player modes U() returns the classic #table ids, so that screen is untouched. */
+  function PV () { return !!(M && M.mode === 'pvp') }
+  var UID = { hand: 'hand', fuel: 'fuel', fuelSegs: 'fuel-segs', fuelN: 'fuel-n', deck: 'deck', deckN: 'deck-n', end: 'btn-end', coach: 'coach',
+    actbar: 'actbar', actName: 'act-name', actWhy: 'act-why', actGo: 'act-go', atkbar: 'atkbar', chal: 'chal', field: 'field', panel: 'panel' }
+  function U (k, pi) {
+    if (pi == null) pi = S ? S.active : 0
+    if (PV()) return $(UID[k] + '-p' + pi)
+    if (k === 'field') return $(pi === view() ? 'me-field' : 'op-field')
+    if (k === 'panel') return $(pi === view() ? 'me-panel' : 'op-panel')
+    return $(UID[k])
+  }
+  function own (pi) { return PV() || pi === view() }          // this seat's own controls are on screen
+  function halfHtml (pi) {
+    var s = '-p' + pi
+    return '<div class="pv-half ' + (pi ? 'pv-top' : 'pv-bot') + '" id="half' + s + '" data-p="' + pi + '"' + (pi ? ' data-flip' : '') + '><div class="pv-in">' +
+      '<div class="ppanel glass u-panel" id="panel' + s + '"></div>' +
+      '<div class="fieldslot u-field" id="field' + s + '"></div>' +
+      '<div class="u-side"><div class="u-coach" id="coach' + s + '" aria-live="polite"></div></div>' +
+      '<div class="u-bottom">' +
+        '<div class="u-stock"><div class="tile-sm u-deck" id="deck' + s + '"><img src="' + lib('gt/card-back') + '" alt=""><div><b class="fk">DEK</b><span class="fk" id="deck-n' + s + '"></span></div></div>' +
+        '<div class="tile-sm glass u-fuel" id="fuel' + s + '"><img src="' + lib('gt/fuel-can') + '" alt=""><div class="fuel-t"><b class="fk">BENSIN</b><div class="fsegs" id="fuel-segs' + s + '"></div></div><b class="fk u-fuel-n" id="fuel-n' + s + '"></b></div></div>' +
+        '<div class="u-tray"><div class="u-hand" id="hand' + s + '" data-p="' + pi + '"></div></div>' +
+        '<button class="btn b-green fk u-end" id="btn-end' + s + '" type="button"><span>SELESAI</span><span class="chev">›</span></button>' +
+      '</div>' +
+      '<div class="pop-bar u-actbar" id="actbar' + s + '"><div class="act-t"><b class="fk u-act-name" id="act-name' + s + '"></b><span class="u-act-why" id="act-why' + s + '"></span></div>' +
+        '<button class="btn b-gold fk u-act-go" id="act-go' + s + '" type="button"></button><button class="u-act-x" id="act-x' + s + '" type="button" aria-label="Batal">✕</button></div>' +
+      '<div class="pop-bar u-atkbar" id="atkbar' + s + '"></div>' +
+      '<div class="chal" id="chal' + s + '"></div>' +
+    '</div></div>'
+  }
+  function buildPv () {
+    var root = document.createElement('div'); root.id = 'pvp'
+    root.innerHTML = halfHtml(1) +
+      '<div class="pv-mid" id="pv-mid"><div class="pv-arena" id="pv-arena-0"></div>' +
+      '<div class="pv-turn"><div class="pv-who flip" id="pv-who-1"></div>' +
+      '<button class="ibtn pv-pause" id="btn-pause-pv" type="button" aria-label="Jeda">' + $('btn-pause').innerHTML + '</button>' +
+      '<div class="pv-who" id="pv-who-0"></div></div>' +
+      '<div class="pv-arena flip" id="pv-arena-1"></div></div>' +
+      halfHtml(0)
+    $('table').insertAdjacentElement('afterend', root)
+  }
+  function clearPops () {
+    document.querySelectorAll('#scr-battle .pop-bar, #atkbar, #actbar').forEach(function (b) { b.classList.remove('show') })
+    document.querySelectorAll('#chal, #scr-battle .chal').forEach(function (c) { c.className = 'chal' })
+  }
   function startBattle () {
     var seed = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0
     var opp, arena, oppName, mon, level = 'rookie', stageI = -1
@@ -205,8 +261,9 @@
     openBattle()
   }
   function openBattle () {
-    $('chal').className = 'chal'; QR = null; lastQ = null
+    clearPops(); QR = null; lastQ = null
     SEL = null; BUSY = false; AI_RUN = false; ENDARM = false
+    $('scr-battle').classList.toggle('pv', PV())
     show('scr-battle')
     FX.mountScene($('bt-scene'), M.bg, lib)
     render()
@@ -217,7 +274,7 @@
   /* ── render (state -> DOM), layout = mockup ui-1 / ui-5 ──────────────── */
   var SLOT_IC = { tire: 'gt/part-tire', body: 'gt/part-bumper', engine: 'gt/part-engine' }
   function truckHtml (tr, pi) {
-    var d = C.get(S.cards[tr.inst]), mine = pi === view()
+    var d = C.get(S.cards[tr.inst]), mine = own(pi)
     var pv = [0, 1].map(function (i) { var p = S.active === pi ? E.preview(S, i) : null; return p ? p.total : d.attacks[i].dmg })
     var need = d.attacks.map(function (a, i) { var p = S.active === pi ? E.preview(S, i) : null; return p ? p.fuelNeed : a.fuel })
     var html = Card.truck(d, { inst: tr.inst, hp: tr.hp, maxHp: tr.maxHp, fuel: tr.fuel, fuelNeed: need, preview: pv, cls: 'on-field' + (mine ? ' mine' : ' theirs') })
@@ -228,7 +285,7 @@
     return '<div class="field-card" data-inst="' + tr.inst + '">' + html + '<div class="kit">' + slots + '</div></div>'
   }
   function fieldHtml (pi) {
-    var Pl = S.players[pi], mine = pi === view()
+    var Pl = S.players[pi], mine = own(pi)
     var cans = ''
     if (!mine && Pl.active) { cans = '<div class="opcans">'; for (var i = 0; i < E.RULES.FUEL_MAX; i++) cans += '<i class="' + (i < Pl.active.fuel ? 'full' : '') + '"></i>'; cans += '</div>' }
     return '<div class="active-slot' + (Pl.active ? '' : ' empty') + '" data-drop="active">' +
@@ -269,7 +326,52 @@
     return '<div class="tp-turn fk">Giliran ' + S.turn + '</div><div class="tp-who fk' + (mine ? '' : ' op') + '">' + (mine ? (M.mode === 'pvp' ? esc(Pl.name) : 'Giliranmu') : 'Giliran Lawan') + '</div>' +
       '<ul class="tp-steps">' + li + '</ul>'
   }
+  function handHtml (pi) {
+    var Pl = S.players[pi], O = S.players[1 - pi]
+    return Pl.hand.map(function (inst, k) {
+      var d = C.get(S.cards[inst])
+      var strong = d.cat === 'truck' && O.active && d.strongVs === C.get(S.cards[O.active.inst]).type
+      return '<div class="hc' + (strong ? ' strong' : '') + '" data-inst="' + inst + '" style="--i:' + k + ';--n:' + Pl.hand.length + '">' + Card.any(d, { inst: inst, cls: 'in-hand' }) + '</div>'
+    }).join('')
+  }
+  // 2 players: both halves drawn every time, each bound to its own seat; only .on moves
+  function renderPv () {
+    var over = S.phase === 'over'
+    $('scr-battle').classList.toggle('my-turn', !over)
+    ;[0, 1].forEach(function (pi) {
+      var Pl = S.players[pi]
+      $('half-p' + pi).classList.toggle('on', !over && S.active === pi)
+      U('panel', pi).innerHTML = panelHtml(pi)
+      U('field', pi).innerHTML = fieldHtml(pi)
+      U('hand', pi).innerHTML = handHtml(pi)
+      U('deckN', pi).textContent = Pl.deck.length
+      var f = Pl.active ? Pl.active.fuel : 0
+      U('fuelSegs', pi).innerHTML = dots(E.RULES.FUEL_MAX, f).replace(/class="on"/g, 'class="full"')
+      U('fuelN', pi).textContent = f + '/' + E.RULES.FUEL_MAX
+      U('atkbar', pi).classList.remove('show')
+      if (over || S.active !== pi) U('actbar', pi).classList.remove('show')   // a bar left open when the turn passed
+    })
+    if (SEL && S.players[S.active].hand.indexOf(SEL) < 0) SEL = null
+    ;[0, 1].forEach(function (pi) { layoutHand(U('hand', pi)) })
+    pvMid()
+    guide()
+  }
+  // the shared middle band: arena rule + whose turn, printed twice — once upright for P1,
+  // once turned for P2 — so the player across the table never reads upside down
+  function pvMid () {
+    var st = STAGES.filter(function (x) { return x.arena === M.bg })[0], ar = C.ARENAS.filter(function (a) { return a.id === S.arena })[0]
+    var arena = '<img src="' + lib('gt-arena/' + M.bg + '-land') + '" alt=""><span><b class="fk">' + esc(st.name) + '</b><small>' + esc(ar.rule) + '</small></span>'
+    $('pv-arena-0').innerHTML = arena; $('pv-arena-1').innerHTML = arena
+    $('pv-mid').setAttribute('data-a', S.phase === 'over' ? '' : S.active)
+    ;[0, 1].forEach(function (seat) {
+      var mineNow = S.active === seat
+      $('pv-who-' + seat).innerHTML = S.phase === 'over' ? '<b class="fk">Selesai!</b>'
+        : '<small>Giliran ' + S.turn + '</small><b class="fk">' + (mineNow ? 'Giliranmu!' : 'Giliran ' + esc(S.players[S.active].name)) + '</b>'
+      $('pv-who-' + seat).classList.toggle('me', mineNow && S.phase !== 'over')
+    })
+  }
   function render () {
+    if (PV()) return renderPv()
     var me = view(), op = 1 - me, O = S.players[op], Pl = S.players[me]
     $('op-panel').innerHTML = panelHtml(op)
     $('me-panel').innerHTML = panelHtml(me)
@@ -282,11 +384,7 @@
     $('me-count').innerHTML = '<span><img src="' + lib('gt/card-back') + '" alt=""> ' + Pl.hand.length + ' Kartu</span>'
     $('arena-card').innerHTML = arenaHtml()
     $('scr-battle').classList.toggle('my-turn', S.active === me && human(S.active))
-    $('hand').innerHTML = Pl.hand.map(function (inst, k) {
-      var d = C.get(S.cards[inst])
-      var strong = d.cat === 'truck' && O.active && d.strongVs === C.get(S.cards[O.active.inst]).type
-      return '<div class="hc' + (strong ? ' strong' : '') + '" data-inst="' + inst + '" style="--i:' + k + ';--n:' + Pl.hand.length + '">' + Card.any(d, { inst: inst, cls: 'in-hand' }) + '</div>'
-    }).join('')
+    $('hand').innerHTML = handHtml(me)
     $('deck-n').textContent = Pl.deck.length
     var f = Pl.active ? Pl.active.fuel : 0
     $('fuel-segs').innerHTML = dots(E.RULES.FUEL_MAX, f).replace(/class="on"/g, 'class="full"')
@@ -295,8 +393,9 @@
     $('atkbar').classList.remove('show')
     guide()
   }
-  function layoutHand () {                          // fan: rotate/offset each card around the centre
-    var hand = $('hand'), cards = hand.children, n = cards.length
+  function layoutHand (hand) {                      // fan: rotate/offset each card around the centre
+    hand = hand || $('hand')
+    var cards = hand.children, n = cards.length
     hand.style.fontSize = ''
     var W0 = hand.clientWidth || innerWidth, cw = cards[0] ? cards[0].offsetWidth : 90
     // every card keeps >= 48 px of itself uncovered for a child's finger: shrink the cards if needed
@@ -317,17 +416,22 @@
   /* ── GUIDE: the next useful step, in words + a glow on exactly that thing ── */
   function guide () {
     document.querySelectorAll('.guide').forEach(function (e) { e.classList.remove('guide') })
-    var coach = $('coach'), me = view()
+    var coach = U('coach'), me = view()
+    if (PV()) {                                          // the waiting seat: its own calm line, face-up
+      var idle = U('coach', 1 - S.active)
+      idle.classList.add('wait'); idle.setAttribute('data-step', S.phase === 'over' ? '' : 'wait')
+      idle.innerHTML = S.phase === 'over' ? '' : '<img src="' + lib('gt/timer') + '" alt=""><span>Tunggu ya — giliran <b>' + esc(S.players[S.active].name) + '</b>. Siapkan rencanamu!</span>'
+    }
     if (S.phase === 'over') { coach.innerHTML = ''; coach.setAttribute('data-step', ''); return }
     if (S.active !== me || !human(S.active)) {
-      coach.className = 'wait'; coach.setAttribute('data-step', 'wait')
+      coach.classList.add('wait'); coach.setAttribute('data-step', 'wait')
       coach.innerHTML = '<img src="' + lib('gt/timer') + '" alt=""><span>Giliran <b>' + esc(S.players[S.active].name) + '</b>… perhatikan serangannya!</span>'
       $('turn-panel').innerHTML = turnHtml('draw'); return
     }
-    coach.className = ''
-    var L = E.legal(S), Pl = S.players[me]
+    coach.classList.remove('wait')
+    var L = E.legal(S), Pl = S.players[me], hand = U('hand'), endB = U('end')
     var has = function (t) { return L.filter(function (c) { return c.type === t }) }
-    var glowCards = function (list) { list.forEach(function (c) { var el = document.querySelector('#hand .hc[data-inst="' + c.card + '"]'); if (el) el.classList.add('guide') }) }
+    var glowCards = function (list) { list.forEach(function (c) { var el = hand.querySelector('.hc[data-inst="' + c.card + '"]'); if (el) el.classList.add('guide') }) }
     var step, msg
     if (Pl.hand.length > E.RULES.HAND_LIMIT) { step = 'discard'; msg = 'Tanganmu penuh (maks 7). Ketuk 1 kartu lalu <b>Buang</b>.'; glowCards(has('discard')) }
     else if (!Pl.active) { step = 'truck'; msg = 'Ketuk kartu <b>TRUK</b> di tanganmu, lalu <b>Taruh di Arena</b>.'; glowCards(has('playTruck')) }
@@ -348,7 +452,7 @@
       var weakNow = oStrong && C.get(S.cards[Pl.active.inst]).type === oStrong
       if (!swaps.length && weakNow && !Pl.swapped) swaps = has('playTruck').filter(function (c) { return C.get(S.cards[c.card]).type !== oStrong })
       if (!O.active) {
-        step = 'end'; msg = 'Lawan belum punya truk. Tekan <b>SELESAI</b> — giliran depan kamu bisa menyerang!'; $('btn-end').classList.add('guide')
+        step = 'end'; msg = 'Lawan belum punya truk. Tekan <b>SELESAI</b> — giliran depan kamu bisa menyerang!'; endB.classList.add('guide')
       } else if (swaps.length) {
         step = 'swap'; msg = strongNow || !weakNow || C.get(S.cards[swaps[0].card]).strongVs === oType ? 'Truk ini <b>KUAT</b> melawan truk lawan! Ketuk, lalu <b>Ganti</b>.' : 'Trukmu <b>LEMAH</b> melawan lawan ini. Ganti dengan truk ini!'; glowCards(swaps.slice(0, 1))
       } else if (parts.length) {
@@ -357,16 +461,16 @@
         step = 'part'; msg = 'Pakai kartu <b>BANTUAN</b> ini dulu' + (atk.length ? ', lalu serang!' : '.'); glowCards(acts.slice(0, 1))
       } else if (atk.length) {
         step = 'attack'; msg = 'Ketuk <b>TRUKMU</b> di arena, lalu pilih <b>SERANGAN</b>!'
-        var fc = document.querySelector('#me-field .field-card'); if (fc) fc.classList.add('can-atk', 'guide')
+        var fc = U('field', me).querySelector('.field-card'); if (fc) fc.classList.add('can-atk', 'guide')
       } else {
         var need = Math.min(E.preview(S, 0).fuelNeed, E.preview(S, 1).fuelNeed)
         step = 'end'; msg = 'Bensin ' + Pl.active.fuel + '/' + need + ' — belum cukup untuk menyerang. Tekan <b>SELESAI</b>, nanti isi lagi.'
-        $('btn-end').classList.add('guide')
+        endB.classList.add('guide')
       }
     }
     coach.setAttribute('data-step', step)
     coach.innerHTML = '<img src="' + lib('gt/direction-sign') + '" alt=""><span>' + msg + '</span>'
-    $('turn-panel').innerHTML = turnHtml(step)
+    if (!PV()) $('turn-panel').innerHTML = turnHtml(step)
   }
 
   /* ── input: select / drag hand cards, tap attacks, end turn ─────────── */
@@ -385,19 +489,19 @@
   }
   function select (inst) {
     SEL = inst
-    if (inst) $('atkbar').classList.remove('show')
-    document.querySelectorAll('#hand .hc').forEach(function (h) { h.classList.toggle('sel', h.getAttribute('data-inst') === inst) })
-    var bar = $('actbar')
+    if (inst) U('atkbar').classList.remove('show')
+    U('hand').querySelectorAll('.hc').forEach(function (h) { h.classList.toggle('sel', h.getAttribute('data-inst') === inst) })
+    var bar = U('actbar')
     if (!inst) { bar.classList.remove('show'); document.querySelectorAll('.drop-ok').forEach(function (e) { e.classList.remove('drop-ok') }); return }
     var a = actionFor(inst), reason = why({ type: a.type, card: inst })
     var d = C.get(S.cards[inst])
-    $('act-name').textContent = d.name
-    $('act-go').textContent = a.label
-    $('act-go').disabled = !!reason
-    $('act-why').textContent = reason ? (REASON[reason] || '') : hintFor(d)
+    U('actName').textContent = d.name
+    U('actGo').textContent = a.label
+    U('actGo').disabled = !!reason
+    U('actWhy').textContent = reason ? (REASON[reason] || '') : hintFor(d)
     bar.classList.add('show')
     document.querySelectorAll('.drop-ok').forEach(function (e) { e.classList.remove('drop-ok') })
-    if (!reason) { var z = document.querySelector('#me-field .active-slot'); if (z && a.type !== 'discard') z.classList.add('drop-ok') }
+    if (!reason) { var z = U('field', S.active).querySelector('.active-slot'); if (z && a.type !== 'discard') z.classList.add('drop-ok') }
   }
   function hintFor (d) {
     if (d.cat === 'truck') return 'HP ' + d.hp + ' · ' + C.TYPES[d.type].id + ' · kuat melawan ' + d.strongVs + (S.players[S.active].active ? ' · trukmu sekarang kembali ke tumpukan' : '')
@@ -412,11 +516,11 @@
     send({ type: a.type, card: inst })
   }
   function atkBar (open) {
-    var bar = $('atkbar')
+    var bar = U('atkbar')
     if (!open || !myTurn() || !S.players[S.active].active) { bar.classList.remove('show'); return }
     select(null)
     var Pl = S.players[S.active], d = C.get(S.cards[Pl.active.inst])
-    bar.innerHTML = '<div class="atk-h"><b class="fk">Pilih serangan ' + esc(d.name) + '</b><button type="button" id="atk-x" aria-label="Tutup">✕</button></div>' +
+    bar.innerHTML = '<div class="atk-h"><b class="fk">Pilih serangan ' + esc(d.name) + '</b><button type="button" class="atk-x"' + (PV() ? '' : ' id="atk-x"') + ' aria-label="Tutup">✕</button></div>' +
       d.attacks.map(function (a, i) {
         var pv = E.preview(S, i), r = why({ type: 'attack', attack: i })
         var cans = ''; for (var k = 0; k < pv.fuelNeed; k++) cans += '<img src="' + lib('gt/fuel-can') + '" alt="">'
@@ -426,12 +530,12 @@
           '<b class="ad">' + pv.total + '</b></button>'
       }).join('')
     bar.classList.add('show')
-    tap('atk-x', function () { atkBar(false) })
+    tap(bar.querySelector('.atk-x'), function () { atkBar(false) })
   }
   function attackTap (i) {
     if (!myTurn()) return
     var r = why({ type: 'attack', attack: i })
-    if (r) { toast(REASON[r] || 'Belum bisa menyerang.', 'warn'); if (r === 'needFuel') FX.pulse($('fuel'), 'nudge'); return }
+    if (r) { toast(REASON[r] || 'Belum bisa menyerang.', 'warn'); if (r === 'needFuel') FX.pulse(U('fuel'), 'nudge'); return }
     select(null); atkBar(false)
     send({ type: 'attack', attack: i })
   }
@@ -444,10 +548,12 @@
   }
   // drag with light physics: the card follows the finger, tilts with velocity, springs home
   var DRAG = null
-  function bindHand () {
-    var hand = $('hand')
+  function bindHand (hand) {
+    // a hand in the turned P2 half: screen motion maps to its own axes reversed
+    var fl = hand.closest('[data-flip]') ? -1 : 1
     hand.addEventListener('pointerdown', function (e) {
       var hc = e.target.closest('.hc'); if (!hc || !myTurn() || DRAG) return
+      if (PV() !== !!hand.getAttribute('data-p') || (PV() && +hand.getAttribute('data-p') !== S.active)) return   // only the live seat's own hand
       DRAG = { el: hc, inst: hc.getAttribute('data-inst'), x0: e.clientX, y0: e.clientY, lx: e.clientX, lt: performance.now(), vx: 0, moved: false, id: e.pointerId }
       try { hc.setPointerCapture(e.pointerId) } catch (err) {}
     })
@@ -458,8 +564,8 @@
       if (!DRAG.moved) { DRAG.moved = true; DRAG.el.classList.add('dragging'); select(DRAG.inst) }
       var now = performance.now(), dt = Math.max(1, now - DRAG.lt)
       DRAG.vx = DRAG.vx * 0.6 + ((e.clientX - DRAG.lx) / dt) * 0.4; DRAG.lx = e.clientX; DRAG.lt = now
-      var rot = Math.max(-18, Math.min(18, DRAG.vx * 14))
-      DRAG.el.style.transform = 'translate(calc(-50% + ' + dx + 'px),' + dy + 'px) rotate(' + rot.toFixed(1) + 'deg) scale(1.08)'
+      var rot = Math.max(-18, Math.min(18, DRAG.vx * 14 * fl))
+      DRAG.el.style.transform = 'translate(calc(-50% + ' + dx * fl + 'px),' + dy * fl + 'px) rotate(' + rot.toFixed(1) + 'deg) scale(1.08)'
       var over = overDrop(e.clientX, e.clientY)
       document.querySelectorAll('.drop-hover').forEach(function (z) { if (z !== over) z.classList.remove('drop-hover') })
       if (over) over.classList.add('drop-hover')
@@ -474,12 +580,12 @@
       if (over && over.classList.contains('drop-ok')) { d.el.style.transform = ''; doSelected(); return }
       // spring home (the fan transform comes back through CSS transition)
       d.el.style.transform = ''
-      if (over) toast($('act-why').textContent || 'Kartu itu tidak bisa ditaruh di situ.', 'warn')
+      if (over) toast(U('actWhy').textContent || 'Kartu itu tidak bisa ditaruh di situ.', 'warn')
     }
     hand.addEventListener('pointerup', up); hand.addEventListener('pointercancel', up)
   }
   function overDrop (x, y) {
-    var zs = document.querySelectorAll('#me-field [data-drop]')
+    var zs = U('field', S.active).querySelectorAll('[data-drop]')
     for (var i = 0; i < zs.length; i++) { var r = zs[i].getBoundingClientRect(); if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return zs[i] }
     return null
   }
@@ -506,11 +612,12 @@
   }
   function persist () { P.battle = S.phase === 'over' ? null : { S: S, M: M }; save() }
   function playEvents (before, r) {
-    var ev = r.events, froms = {}, meSide = view() === before.active
+    var ev = r.events, froms = {}, meSide = own(before.active)
     // where cards come FROM (before the DOM changes)
     ev.forEach(function (e) {
       if (e.card && (e.t === 'playTruck' || e.t === 'fuel' || e.t === 'part' || e.t === 'action')) {
-        froms[e.card] = meSide ? rectOf('#hand .hc[data-inst="' + e.card + '"]') : rectOf('#op-hand')
+        var hc = meSide ? U('hand', before.active).querySelector('.hc[data-inst="' + e.card + '"]') : null
+        froms[e.card] = meSide ? (hc ? hc.getBoundingClientRect() : null) : rectOf('#op-hand')
       }
     })
     var chain = Promise.resolve()
@@ -527,7 +634,7 @@
   function flyAll (ev, froms, before) {
     var jobs = []
     ev.forEach(function (e) {
-      if (e.t === 'autoFuel' && e.p === view() && human(e.p)) { var fb = $('fuel'); FX.pulse(fb, 'nudge'); FX.SND.fuel(); if (fb) { var fc = FX.center(fb); FX.floatText(fc.x, fc.y - 20, '+1 bensin', 'heal') } }
+      if (e.t === 'autoFuel' && own(e.p) && human(e.p)) { var fb = U('fuel', e.p); FX.pulse(fb, 'nudge'); FX.SND.fuel(); if (fb) { var fc = FX.center(fb); FX.floatText(fc.x, fc.y - 20, '+1 bensin', 'heal') } }
       if (e.t === 'playTruck' && e.swap) toast('Truk diganti!', 'good')
       if (e.t === 'playTruck') {
         var el = document.querySelector('.field-card[data-inst="' + e.card + '"]')
@@ -535,7 +642,7 @@
         if (e.to === 'active' && el) setTimeout(function () { var c = FX.center(el); if (window.VFX) VFX.dom(c.x, c.y + c.h * 0.35, { fx: 'smoke', size: c.w * 1.1 }) }, 380)
       }
       if (e.t === 'fuel' && e.card) {
-        var cans = e.p === view() ? $('fuel') : document.querySelector('#op-field .opcans')
+        var cans = own(e.p) ? U('fuel', e.p) : document.querySelector('#op-field .opcans')
         if (cans) { jobs.push(FX.flyIn(cans, froms[e.card], { ms: 380 })); FX.pulse(cans, 'nudge') }
         FX.SND.fuel()
       }
@@ -553,22 +660,31 @@
       if (e.t === 'promote') toast(C.get(S.cards[e.card]).name + ' maju ke arena!', '')
       if (e.t === 'reshuffle') toast('Tumpukan dikocok ulang.', '')
     })
-    var drew = ev.filter(function (e) { return e.t === 'draw' && e.p === view() })
+    var drew = ev.filter(function (e) { return e.t === 'draw' && own(e.p) })
     return Promise.all(jobs).then(function () {
       var ts = ev.filter(function (e) { return e.t === 'turnStart' })[0]
       if (!ts) return
       return banner(ts).then(function () {
-        drew.forEach(function (e) { var el = document.querySelector('#hand .hc[data-inst="' + e.card + '"]'); FX.flyIn(el, rectOf('#deck'), { rot: 12, ms: 460 }) })
+        drew.forEach(function (e) { var el = U('hand', e.p).querySelector('.hc[data-inst="' + e.card + '"]'); FX.flyIn(el, U('deck', e.p).getBoundingClientRect(), { rot: 12, ms: 460 }) })
       })
     })
   }
   function banner (ts) {
+    if (PV()) return pvSwitch(ts)
     var el = $('banner'), mine = human(ts.p)
     el.innerHTML = '<span class="fk">' + (M.mode === 'pvp' ? 'Giliran ' + esc(S.players[ts.p].name) : (ts.p === 0 ? 'Giliranmu!' : 'Giliran Lawan')) + '</span>' +
       (M.mode === 'pvp' ? '<small>Berikan tabletnya ke ' + esc(S.players[ts.p].name) + '</small>' : '')
     el.className = 'banner show' + (mine ? ' me' : ' op')
     if (mine) FX.SND.go()
     return FX.wait(M.mode === 'pvp' ? 1300 : 850).then(function () { el.className = 'banner' })
+  }
+  // 2 players: no hand-over — nobody moves the tablet. The middle band says whose turn it
+  // is (both ways up) with a short pulse, and the new seat's half lights up.
+  function pvSwitch (ts) {
+    var mid = $('pv-mid')
+    mid.classList.remove('switch'); void mid.offsetWidth; mid.classList.add('switch')
+    FX.SND.go()
+    return FX.wait(FX.reduced() ? 150 : 650).then(function () { mid.classList.remove('switch') })
   }
   function playAttack (before, att, ev) {
     var from = document.querySelector('.field-card[data-inst="' + att.card + '"] .gc')
@@ -609,7 +725,7 @@
     if (pv.boost) parts.push('boost +' + pv.boost)
     if (pv.nitro) parts.push('NITRO +' + pv.nitro)
     if (pv.armor) parts.push('baja lawan −' + pv.armor)
-    var ov = $('chal')
+    var ov = U('chal', pi)                                // 2 players: in the attacker's own half, facing them
     ov.innerHTML = '<div class="chal-card">' +
       '<div class="chal-h"><img src="' + lib('gt/q-math') + '" alt=""><b class="fk">TANTANGAN MATEMATIKA!</b><span>' + (human(pi) ? 'Soal penambah serangan' : esc(Pl.name) + ' menjawab…') + '</span></div>' +
       '<div class="chal-body"><div class="chal-l">' +
@@ -619,15 +735,16 @@
         '<div class="chal-sum">' + (parts.length > 1 ? parts.join(' · ') + ' = ' + pv.total : 'Serangan ' + pv.total) + '</div></div>' +
       '<div class="chal-r"><div><span>Kalau benar:</span><b><i class="y">✓</i>' + (pv.total + 2) + ' kerusakan</b></div>' +
         '<div><span>Kalau salah:</span><b><i class="n">✕</i>' + pv.total + ' kerusakan</b></div></div></div>' +
-      '<div class="chal-fb" id="chal-fb"></div></div>'
+      '<div class="chal-fb"' + (PV() ? '' : ' id="chal-fb"') + '></div></div>'
     ov.className = 'chal show'
     return new Promise(function (res) {
       function answer (v, btn) {
         var ok = v === q.answer
         ov.querySelectorAll('.chal-b').forEach(function (b) { b.disabled = true; if (+b.getAttribute('data-v') === q.answer) b.classList.add('ok') })
         if (!ok && btn) btn.classList.add('no')
-        $('chal-fb').innerHTML = ok ? 'Benar! <b>+2 kerusakan</b> dan Nitro bertambah.' : 'Hampir! Jawabannya <b>' + q.answer + '</b>. Serangan tetap jalan.'
-        $('chal-fb').className = 'chal-fb ' + (ok ? 'ok' : 'no')
+        var fb = ov.querySelector('.chal-fb')
+        fb.innerHTML = ok ? 'Benar! <b>+2 kerusakan</b> dan Nitro bertambah.' : 'Hampir! Jawabannya <b>' + q.answer + '</b>. Serangan tetap jalan.'
+        fb.className = 'chal-fb ' + (ok ? 'ok' : 'no')
         FX.SND.cue(ok ? 'correct' : 'wrong')
         setTimeout(function () {
           ov.className = 'chal'
@@ -688,16 +805,17 @@
     var w = S.winner
     var el = $('banner')
     el.innerHTML = '<span class="fk">' + (S.draw ? 'Seri!' : esc(S.players[w].name) + ' menang!') + '</span><small>Tunggu… ada yang datang!</small>'
-    el.className = 'banner show big'
+    if (PV()) el.innerHTML = '<div class="bn-flip">' + el.innerHTML + '</div>' + el.innerHTML   // readable from both seats
+    el.className = 'banner show big' + (PV() ? ' pv' : '')
     if (w === 0 || M.mode === 'pvp') FX.SND.cue('levelup')
     FX.wait(1800).then(function () {
       el.className = 'banner'
       // the monster lands ON the arena (owner: "muncul di tengah besar … mengacaukan"): the battle
       // screen stays visible underneath; data-scr says rush for the gates
       document.body.setAttribute('data-scr', 'scr-rush')
-      $('atkbar').classList.remove('show'); $('actbar').classList.remove('show')
+      clearPops()
       $('rush-host').classList.add('on')
-      Q.rush({ host: $('rush-host'), scene: $('bt-scene'), table: $('table'), trucks: [document.querySelector('#me-field .field-card'), document.querySelector('#op-field .field-card')], monster: { key: M.mon[0], name: M.mon[1] }, level: P.level, seed: M.qseed ^ 77, lib: lib,
+      Q.rush({ host: $('rush-host'), scene: $('bt-scene'), table: PV() ? $('pvp') : $('table'), trucks: [U('field', 0).querySelector('.field-card'), U('field', 1).querySelector('.field-card')], monster: { key: M.mon[0], name: M.mon[1] }, level: P.level, seed: M.qseed ^ 77, lib: lib,
         players: [{ name: S.players[0].name, human: true }, { name: S.players[1].name, human: M.mode === 'pvp' }],
         aiPace: M.ai === 'racer' ? [2600, 0.8] : [3400, 0.65],
         sfx: { right: function () { FX.SND.cue('correct') }, wrong: function () { FX.SND.cue('wrong') }, tick: FX.SND.tick, go: FX.SND.go },
@@ -743,9 +861,30 @@
     }).join('')
     $('res-reward').innerHTML = reward ? '<div class="res-rw-t fk">Truk baru bergabung ke garasimu!</div><div class="res-rw">' + reward + '</div>' : ''
     $('res-next').classList.toggle('hide', !(M.mode === 'adv' && S.winner === 0 && M.stage + 1 < STAGES.length))
+    var pv = M.mode === 'pvp'
+    $('scr-result').classList.toggle('pv', pv)
+    $('res-pv').innerHTML = pv ? resultHalf(1, rows, tot) + resultHalf(0, rows, tot) : ''
     show('scr-result')
-    document.querySelectorAll('#res-table .res-total b').forEach(function (b) { countUp(b, +b.getAttribute('data-n')) })
+    document.querySelectorAll(pv ? '#res-pv .res-total b' : '#res-table .res-total b').forEach(function (b) { countUp(b, +b.getAttribute('data-n')) })
     if (stars) setTimeout(function () { FX.SND.cue('star') }, 700)
+  }
+  // 2 players: the result is split like the battle — P2's half on top turned to face P2,
+  // P1's half at the bottom; each seat reads its OWN outcome, KO pips, score and prize,
+  // and each half carries its own Main Lagi / Kembali so nobody has to reach across.
+  function resultHalf (pi, rows, tot) {
+    var Pl = S.players[pi], won = !S.draw && S.winner === pi
+    var head = S.draw ? 'Seri!' : won ? 'Kamu Menang!' : 'Hampir! Ayo main lagi'
+    var prize = won ? ['gt/trophy', 'Piala Juara!'] : ['gt/star-collectible', S.draw ? 'Bintang Seri!' : 'Bintang Semangat!']
+    return '<div class="rp-half ' + (pi ? 'rp-top' : 'rp-bot') + (won ? ' won' : '') + '" id="res-half-p' + pi + '"' + (pi ? ' data-flip' : '') + '><div class="rp-in">' +
+      '<div class="rp-head"><b class="fk rp-title">' + head + '</b><span class="rp-name">' + esc(Pl.name) + '</span>' +
+        '<div class="rp-ko" aria-label="KO ' + Pl.ko + ' dari ' + E.RULES.KO_TO_WIN + '"><span>KO</span><span class="kodots">' + dots(E.RULES.KO_TO_WIN, Pl.ko) + '</span></div>' +
+        '<div class="rp-prize"><img src="' + lib(prize[0]) + '" alt=""><span class="fk">' + prize[1] + '</span></div></div>' +
+      '<div class="res-col' + (won ? ' lead' : '') + '">' +
+        rows[pi].map(function (x, j) { return '<div class="res-row" style="--d:' + (j * 160) + 'ms"><span>' + x[0] + '</span><b>' + x[1] + '</b></div>' }).join('') +
+        '<div class="res-total fk"><span>Total</span><b data-n="' + tot[pi] + '">0</b></div></div>' +
+      '<div class="rp-btns"><button class="btn b-green fk" type="button" id="res-again-p' + pi + '" data-act="again">Main Lagi</button>' +
+        '<button class="btn b-soft fk" type="button" id="res-home-p' + pi + '" data-act="home">Kembali</button></div>' +
+    '</div></div>'
   }
   function countUp (el, n) {
     if (FX.reduced()) { el.textContent = n; return }
@@ -799,11 +938,17 @@
   }
 
   /* ── pause menu ─────────────────────────────────────────────────────── */
-  function pause () { if (BUSY && S && S.phase !== 'challenge') return; $('pause').className = 'pause show'; $('snd-t').textContent = P.sound ? 'Suara: Nyala' : 'Suara: Mati' }
-  function setSound (on) {
-    P.sound = !!on; FX.mute(!P.sound); save()
-    ;['btn-sound', 'p-sound'].forEach(function (id) { var b = $(id); if (!b) return; b.classList.toggle('off', !P.sound); b.setAttribute('aria-pressed', P.sound ? 'true' : 'false'); b.setAttribute('aria-label', P.sound ? 'Suara: nyala' : 'Suara: mati') })
-    $('snd-t').textContent = P.sound ? 'Suara: Nyala' : 'Suara: Mati'
+  function pause () { if (BUSY && S && S.phase !== 'challenge') return; $('pause').className = 'pause show'; $('snd-t').textContent = SOUND_ON ? 'Suara: Nyala' : 'Suara: Mati' }
+  /* The Dunia app's own Settings > Suara OFF ('dunia-emosi-sound') silences this
+     game too: the session starts muted WITHOUT overwriting the child's saved
+     choice, and the in-game button still turns sound back on for the session. */
+  var SOUND_ON = true
+  function globalSoundOff () { try { return localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return false } }
+  function setSound (on, sessionOnly) {
+    SOUND_ON = !!on; FX.mute(!SOUND_ON)
+    if (!sessionOnly) { P.sound = SOUND_ON; save() }
+    ;['btn-sound', 'p-sound'].forEach(function (id) { var b = $(id); if (!b) return; b.classList.toggle('off', !SOUND_ON); b.setAttribute('aria-pressed', SOUND_ON ? 'true' : 'false'); b.setAttribute('aria-label', SOUND_ON ? 'Suara: nyala' : 'Suara: mati') })
+    $('snd-t').textContent = SOUND_ON ? 'Suara: Nyala' : 'Suara: Mati'
   }
   function unpause () { $('pause').className = 'pause' }
 
@@ -823,7 +968,7 @@
     tap('btn-feat', function () { zoom($('btn-feat').getAttribute('data-id')) })
     tap('lvl-mudah', function () { P.level = 'mudah'; save(); home() })
     tap('lvl-sedang', function () { P.level = 'sedang'; save(); home() })
-    tap('btn-sound', function () { setSound(!P.sound) })
+    tap('btn-sound', function () { setSound(!SOUND_ON) })
     document.querySelectorAll('[data-back]').forEach(function (b) { tap(b, function () { var t = b.getAttribute('data-back'); if (t === 'map') adventure(); else if (t === 'team' && MODE) teamPicker(PICK.seat); else home() }) })
     $('map-list').addEventListener('click', function (e) { var b = e.target.closest('.stage'); if (!b) return; FX.SND.cue('click'); var i = +b.getAttribute('data-i'); if (i > P.stage) return toast('Menangkan arena ' + i + ' dulu untuk membuka arena ini.', 'warn'); stageIntro(i) })
     tap('si-go', function () { PICK.teams = [null, null]; teamPicker(0) })
@@ -844,7 +989,22 @@
     tap('custom-ok', function () { P.team = CUSTOM.slice(); save(); if (!MODE) { toast('Tim Saya tersimpan!', 'good'); return home() } chooseTeam(P.team.slice()) })
     $('col-filter').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (b) { CF = b.getAttribute('data-t'); collection() } })
     $('col-list').addEventListener('click', function (e) { var m = e.target.closest('.mini'); if (!m) return; if (m.classList.contains('locked')) return toast('Menangkan pertandingan untuk menemukan truk ini!', 'warn'); zoom(m.getAttribute('data-id')) })
-    bindHand()
+    bindHand($('hand'))
+    buildPv()
+    ;[0, 1].forEach(function (pi) {                      // each half's controls answer only on that seat's turn
+      var live = function () { return S && PV() && S.active === pi }
+      bindHand($('hand-p' + pi))
+      tap('act-go-p' + pi, function () { if (live()) doSelected() })
+      tap('act-x-p' + pi, function () { if (live()) select(null) })
+      tap('btn-end-p' + pi, function () { if (live()) endTap() })
+      $('field-p' + pi).addEventListener('click', function (e) {
+        if (!live()) return
+        var z = e.target.closest('[data-drop]'); if (z && SEL && z.classList.contains('drop-ok')) return doSelected()
+        if (e.target.closest('.field-card')) { FX.SND.cue('click'); atkBar(true) }
+      })
+      $('atkbar-p' + pi).addEventListener('click', function (e) { var b = e.target.closest('.atk-b'); if (!b || !live()) return; FX.SND.cue('click'); attackTap(+b.getAttribute('data-atk')) })
+    })
+    tap('btn-pause-pv', pause)
     tap('act-go', doSelected)
     tap('act-x', function () { select(null) })
     tap('btn-end', endTap)
@@ -856,13 +1016,21 @@
     tap('btn-pause', pause)
     tap('p-resume', unpause)
     tap('p-help', function () { unpause(); tutorial(null) })
-    tap('p-sound', function () { setSound(!P.sound) })
-    tap('p-quit', function () { unpause(); $('chal').className = 'chal'; $('atkbar').classList.remove('show'); $('actbar').classList.remove('show'); P.battle = S && S.phase !== 'over' ? { S: S, M: M } : null; save(); S = null; home() })
+    tap('p-sound', function () { setSound(!SOUND_ON) })
+    tap('p-quit', function () { unpause(); clearPops(); P.battle = S && S.phase !== 'over' ? { S: S, M: M } : null; save(); S = null; home() })
     tap('res-again', function () { if (M.mode === 'adv') stageIntro(M.stage); else { MODE = { kind: M.mode }; PICK.teams = [null, null]; teamPicker(0) } })
     tap('res-next', function () { stageIntro(M.stage + 1) })
     tap('res-home', home)
-    addEventListener('resize', function () { if (S && document.body.getAttribute('data-scr') === 'scr-battle') { layoutHand(); FX.setArena($('bt-scene'), M.bg, lib) } })
-    setSound(P.sound)
+    ;(function () {
+      var box = document.createElement('div'); box.id = 'res-pv'; $('scr-result').appendChild(box)
+      box.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-act]'); if (!b) return; FX.SND.cue('click')
+        if (b.getAttribute('data-act') === 'home') return home()
+        MODE = { kind: 'pvp' }; PICK.teams = [null, null]; teamPicker(0)
+      })
+    })()
+    addEventListener('resize', function () { if (S && document.body.getAttribute('data-scr') === 'scr-battle') { if (PV()) { layoutHand(U('hand', 0)); layoutHand(U('hand', 1)) } else layoutHand(); FX.setArena($('bt-scene'), M.bg, lib) } })
+    setSound(P.sound && !globalSoundOff(), true)
   }
 
   /* ── offline warm-up (same approach as G27/G28) ──────────────────────── */
@@ -901,7 +1069,7 @@
 
   /* test seam — the QA gates drive real screens through this */
   window.__gt = {
-    state: function () { return S ? { phase: S.phase, active: S.active, turn: S.turn, winner: S.winner, hand: S.players[view()].hand.length, busy: BUSY, screen: document.body.getAttribute('data-scr'), coach: ($('coach').getAttribute('data-step') || ''), ko: [S.players[0].ko, S.players[1].ko] } : { screen: document.body.getAttribute('data-scr') } },
+    state: function () { return S ? { phase: S.phase, active: S.active, turn: S.turn, winner: S.winner, hand: S.players[view()].hand.length, busy: BUSY, screen: document.body.getAttribute('data-scr'), coach: (U('coach').getAttribute('data-step') || ''), ko: [S.players[0].ko, S.players[1].ko] } : { screen: document.body.getAttribute('data-scr') } },
     engine: function () { return S },
     start: function (kind, stage, teams) { MODE = { kind: kind, stage: stage || 0 }; PICK.teams = teams || [C.STARTERS.api.trucks.slice(), C.STARTERS.baja.trucks.slice()]; startBattle(); return 'ok' },
     legal: function () { return S ? E.legal(S) : [] },

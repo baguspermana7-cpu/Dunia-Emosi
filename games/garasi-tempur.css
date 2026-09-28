@@ -614,3 +614,156 @@ body[data-scr=scr-battle] .toast{top:auto;bottom:calc(var(--hf) * 14 + 110px + v
 .atk-tag.weak{background:rgba(255,255,255,.18);color:#fff}
 
 .fx-flash{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:9;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.95),rgba(255,255,255,.35) 60%,transparent 80%)}
+
+/* ═══════════ 2 PLAYERS: a FIXED split screen (owner: "P1 selalu bawah, P2 selalu atas") ═══════════
+   The players sit facing each other across the tablet (the Pokémon gym PvP feel): P1's half is
+   the bottom one, upright; P2's half is the top one, turned 180° so it faces P2. Each half holds
+   that seat's own panel, truck, coach, hand, DEK/BENSIN/SELESAI, action bar, attack chooser and
+   math challenge. The turn only moves the light (.on) — never a card, never the orientation.
+   The middle band is shared: arena rule + whose turn, printed once for each seat. */
+#pvp{display:none}
+#scr-battle.pv #table{display:none}
+#scr-battle.pv #pvp{position:relative;z-index:2;flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr) auto minmax(0,1fr);padding:var(--sat) 0 var(--sab)}
+.pv-half{position:relative;min-height:0;min-width:0;container:pvh / size}
+.pv-in{position:absolute;inset:0;display:grid;gap:4px 8px;padding:6px 8px;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"panel field side" "bottom bottom bottom";
+  --cf:clamp(7px,min(2.6cqw,3.4cqh),15px);--hf:clamp(6px,min(2.2cqw,2.9cqh),12px)}
+.pv-top .pv-in{transform:rotate(180deg)}
+/* the live seat: a gold rim round its half; the waiting seat: its hand + buttons dimmed, face-up */
+.pv-half::after{content:'';position:absolute;inset:3px;border-radius:18px;pointer-events:none;z-index:1;
+  box-shadow:inset 0 0 0 3px rgba(255,197,61,.85),inset 0 0 38px rgba(255,197,61,.26);opacity:0;transition:opacity .35s var(--ease-out)}
+.pv-half.on::after{opacity:1}
+.pv-half:not(.on) .u-bottom{opacity:.5;filter:saturate(.55);transition:opacity .3s var(--ease-out)}
+.pv-half:not(.on) .u-bottom,.pv-half:not(.on) .u-field{pointer-events:none}
+.u-panel{grid-area:panel;align-self:start;justify-self:start;max-width:100%}
+.pv-top .u-panel .av{border-color:#FFB3A8;background:linear-gradient(#FF8A7A,#C8352A)}
+.u-field{grid-area:field;align-self:center}
+.u-side{grid-area:side;display:flex;align-items:flex-start;justify-content:flex-end;min-width:0}
+.u-coach{display:flex;align-items:center;gap:8px;max-width:min(100%,380px);background:rgba(255,248,225,.97);color:#2b2112;border-radius:14px;padding:6px 10px;font-size:14px;line-height:1.22;
+  box-shadow:0 6px 18px rgba(0,0,0,.45);min-height:46px;border:2px solid #F3C451}
+.u-coach img{width:28px;height:28px;flex:none}
+.u-coach:empty{visibility:hidden}
+.u-coach.wait{background:rgba(16,26,51,.92);color:#DDE6F7;border-color:var(--line)}
+.u-bottom{grid-area:bottom;position:relative;z-index:2;display:flex;gap:6px;align-items:flex-end;min-width:0}
+.u-stock{display:flex;flex-direction:column;gap:6px;flex:none;width:clamp(150px,17cqw,210px)}
+.u-tray{flex:1;min-width:0;position:relative;border-radius:18px;background:linear-gradient(rgba(20,30,58,.92),rgba(8,12,26,.95));border:2px solid #2E4476;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 -6px 20px rgba(0,0,0,.35);padding:6px 4px 4px}
+.u-hand{position:relative;height:calc(var(--hf) * 14 + 8px);font-size:var(--hf)}
+.u-deck{background:linear-gradient(#2F7FE0,#1A4FA8);border:2px solid #8EC1FF;border-radius:14px;box-shadow:0 4px 0 #0F2F66;min-height:48px;padding:4px 10px}
+.u-deck img{width:26px;height:36px;border-radius:4px;box-shadow:3px -3px 0 rgba(255,255,255,.4)}
+.u-deck b{display:block;font-size:12px;line-height:1}
+.u-deck span{font-size:18px;line-height:1}
+.u-fuel{min-width:0;min-height:48px;padding:4px 10px}
+.u-fuel img{width:28px;height:28px}
+.u-fuel-n{font-size:17px}
+.u-end{flex:none;position:relative;min-height:58px;padding:0 30px 0 16px;font-size:19px;border-radius:16px;clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%)}
+.u-end .chev{font-size:24px}
+.u-end.guide::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:rgba(255,255,255,.28);opacity:0;animation:glowop 1.3s ease-in-out infinite;will-change:opacity}
+.u-field .field-card{cursor:pointer}
+.pv-half.on .u-field .field-card.can-atk .gc{box-shadow:inset 0 0 0 .08em rgba(255,255,255,.7),0 0 0 .22em rgba(255,210,70,.95)}
+.pv-half.on .u-field .field-card.can-atk .gc::before{content:'';position:absolute;inset:-.1em;border-radius:.8em;pointer-events:none;z-index:-1;
+  box-shadow:0 0 0 .34em rgba(255,210,70,1),0 0 1.6em .3em rgba(255,210,70,.9);animation:glowop 1.3s ease-in-out infinite;will-change:opacity}
+.pv-half.on .u-field .gc-atk:not(.off):active{transform:scale(.96)}
+/* action bar + attack chooser: inside the half, so they turn with it */
+.u-actbar,.u-atkbar{position:absolute;left:50%;z-index:60;transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:10px;background:rgba(16,21,33,.97);border:2px solid var(--gold);border-radius:18px;padding:8px 8px 8px 14px;width:min(96%,520px);
+  transition:opacity .18s var(--ease-out),transform .18s var(--ease-out);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.u-actbar{bottom:calc(var(--hf) * 14 + 30px)}
+.u-atkbar{top:4px;flex-direction:column;align-items:stretch;padding:8px;gap:6px;transform:translate(-50%,-12px)}
+.u-actbar.show,.u-atkbar.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.u-atkbar .atk-b{min-height:52px}
+.u-act-name{font-size:17px;display:block}
+.u-act-why{font-size:13px;color:var(--ink2);display:block;line-height:1.2}
+.u-act-go{min-height:52px;font-size:17px;padding:0 16px}
+.u-act-x{width:44px;height:44px;border-radius:12px;border:0;background:rgba(255,255,255,.1);font-size:20px;cursor:pointer;flex:none}
+/* the math challenge covers only the attacker's half, facing the attacker */
+.pv-in .chal{position:absolute;inset:0;z-index:70;padding:4px;align-items:center;border-radius:14px}
+.pv-in .chal-card{max-height:100%;overflow:auto;width:min(100%,640px)}
+.pv-in .chal-q{font-size:clamp(30px,min(11cqw,11cqh),56px);margin:0 0 6px}
+.pv-in .chal-h{padding:5px 12px}
+/* the shared middle band */
+.pv-mid{position:relative;z-index:3;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding:4px 8px;
+  background:linear-gradient(90deg,rgba(8,12,24,.35),rgba(8,12,24,.9) 28%,rgba(8,12,24,.9) 72%,rgba(8,12,24,.35));border-block:1px solid rgba(255,255,255,.14)}
+.pv-arena{display:flex;align-items:center;gap:8px;min-width:0}
+.pv-arena img{width:48px;height:32px;border-radius:7px;object-fit:cover;flex:none;border:1px solid #D6BBFF}
+.pv-arena span{min-width:0}
+.pv-arena b{display:block;font-size:13px;color:#E4D4FF;line-height:1.1}
+.pv-arena small{display:block;font-size:11px;font-weight:800;line-height:1.15;color:#F4F1FB}
+.pv-arena.flip{transform:rotate(180deg)}
+.pv-turn{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;align-items:center;gap:3px 8px}
+.pv-turn .pv-who.flip{grid-area:1/1}.pv-turn .pv-who:not(.flip){grid-area:2/1}.pv-pause{grid-area:1/2/3/3;width:44px;height:44px}
+.pv-who{display:flex;align-items:baseline;justify-content:center;gap:6px;padding:2px 12px;border-radius:12px;background:rgba(255,255,255,.08);color:#C9D3E6;
+  min-width:150px;transition:background .25s var(--ease-out),color .25s var(--ease-out)}
+.pv-who.flip{transform:rotate(180deg)}
+.pv-who small{font-size:11px;font-weight:800;opacity:.85}
+.pv-who b{font-size:16px;white-space:nowrap}
+.pv-who.me{background:linear-gradient(#FFE15A,#F0A417);color:#3A2300;box-shadow:0 3px 0 #9A5C00}
+.pv-mid.switch .pv-who.me{animation:pvpop .6s var(--ease-out)}
+@keyframes pvpop{0%{scale:.82}55%{scale:1.1}100%{scale:1}}
+/* a toast + the winner banner, readable from the seat they speak to */
+body[data-scr] .toast.pv-t{bottom:auto;transform:translate(-50%,-50%) scale(.96)}
+body[data-scr] .toast.pv-t.show{transform:translate(-50%,-50%)}
+body[data-scr] .toast.pv-t.flip{transform:translate(-50%,-50%) rotate(180deg) scale(.96)}
+body[data-scr] .toast.pv-t.flip.show{transform:translate(-50%,-50%) rotate(180deg)}
+.banner.pv{top:50%}
+.banner .bn-flip{display:flex;flex-direction:column;align-items:center;gap:4px;transform:rotate(180deg);margin-bottom:10px}
+/* a narrow half (phone, portrait tablet): hand on its own row, DEK/BENSIN/SELESAI under it */
+@container pvh (max-width:640px){
+  .u-bottom{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"tray tray" "stock end";align-items:stretch}
+  .u-tray{grid-area:tray}
+  .u-stock{grid-area:stock;flex-direction:row;width:auto;min-width:0}
+  .u-end{grid-area:end;min-height:48px;font-size:17px;padding:0 26px 0 12px}
+  .u-deck{flex:none}.u-fuel{flex:1}
+  .u-actbar{bottom:calc(var(--hf) * 14 + 76px)}
+  .ppanel.u-panel{flex-direction:column;align-items:flex-start;gap:2px;padding:4px 6px;position:relative}
+  .u-panel .av{width:32px;height:32px;position:absolute}
+  .u-panel .ppanel-t{padding-left:38px;min-height:32px}
+  .u-panel .ppanel-n{font-size:14px;white-space:normal;overflow-wrap:anywhere}
+  .u-panel .ppanel-s{display:none}
+  .u-panel .ppanel-k{font-size:11px;flex-wrap:wrap}
+  .u-coach{font-size:12.5px;padding:5px 8px;gap:6px}
+  .u-coach img{width:22px;height:22px}
+}
+@container pvh (max-width:420px){
+  .u-fuel .fuel-t b{display:none}
+  .u-coach{font-size:12px}
+}
+@media (max-width:560px){
+  .pv-arena img{display:none}
+  .pv-arena small{font-size:10px}
+  .pv-who{min-width:112px;padding:2px 8px}
+  .pv-who b{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){ .pv-half.on .u-field .field-card.can-atk .gc::before{animation:none;opacity:1} }
+
+/* ═══════════ 2 PLAYERS: split RESULT (P2 half on top, turned; P1 half at the bottom) ═══════════ */
+#res-pv{display:none}
+#scr-result.pv .res-body{display:none}
+#scr-result.pv #res-pv{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:6px;padding:calc(4px + var(--sat)) 0 calc(4px + var(--sab))}
+.rp-half{position:relative;min-height:0;container:rph / size}
+.rp-in{position:absolute;inset:0;display:grid;gap:6px 14px;padding:8px 14px;align-items:center;overflow:auto;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;grid-template-areas:"head col btns"}
+.rp-top .rp-in{transform:rotate(180deg)}
+.rp-top{border-bottom:2px solid rgba(255,255,255,.12)}
+.rp-half.won .rp-in{background:radial-gradient(ellipse at 30% 50%,rgba(255,197,61,.18),transparent 70%)}
+.rp-head{grid-area:head;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.rp-title{font-size:clamp(22px,min(7cqw,11cqh),44px);color:#FFE08A;line-height:1.05}
+.rp-half:not(.won) .rp-title{color:#A9D2FF}
+.rp-name{font-size:14px;color:var(--ink2);font-weight:800}
+.rp-ko{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;color:#FFE08A}
+.rp-prize{display:flex;align-items:center;gap:6px;font-size:15px;color:#fff}
+.rp-prize img{width:34px;height:34px;object-fit:contain}
+.rp-in .res-col{grid-area:col;padding:6px 10px}
+.rp-in .res-row{font-size:13px;padding:2px}
+.rp-in .res-total{font-size:19px;margin-top:3px}
+.rp-btns{grid-area:btns;display:flex;flex-direction:column;gap:8px}
+.rp-btns .btn{min-height:52px;padding:0 20px}
+@container rph (max-width:640px){
+  .rp-in{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);grid-template-areas:"head col" "btns btns";gap:6px 8px;padding:6px 8px}
+  .rp-btns{flex-direction:row;justify-content:center}
+  .rp-btns .btn{min-height:48px;flex:1;max-width:200px;font-size:17px}
+  .rp-in .res-row{font-size:11.5px;gap:4px}
+  .rp-in .res-row span{overflow-wrap:anywhere}
+  .rp-prize{font-size:13px}.rp-prize img{width:28px;height:28px}
+}

@@ -13,8 +13,13 @@
 //      the glowing target actually tappable (it is the topmost element somewhere on it)
 //      and >= 44 px;
 //   D) one run with the 4-card tutorial ON (tapped through #tut-next), one run with
-//      prefers-reduced-motion, one 2-player run where BOTH seats are driven by taps.
-// QA_SIZES="390x844,..." limits the size matrix · QA_EXTRA=0 skips D · QA_SHOTS=<dir>
+//      prefers-reduced-motion, one 2-player run where BOTH seats are driven by taps;
+//   E) 2 players = a FIXED split screen: every control of seat p lives in #half-p<p>
+//      (P1 = bottom half, upright; P2 = top half, turned 180°). On every human turn: each
+//      seat's hand / SELESAI / DEK / BENSIN / panel / truck / coach stays in ITS half of the
+//      screen, the top half really is rotated, only the live half is lit, and across >= 3
+//      turn switches nothing moves (same rects as the first turn — no swap, no hand-over).
+// QA_SIZES="390x844,..." limits the size matrix ("none" = no 1-player runs) · QA_PVP_SIZES the 2-player runs (QA_SIZES=none QA_EXTRA=pvp QA_PAR=1 = only those, one at a time) · QA_EXTRA=0 skips D · QA_SHOTS=<dir>
 // writes screenshots · QA_FAULT=1 injects an engine fault (the gate MUST then fail).
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
@@ -24,7 +29,10 @@ const fails = []
 let passes = 0
 const check = (ok, msg) => { if (ok) passes++; else { fails.push(msg); console.log('❌ ' + msg) } }
 const URL = 'http://localhost:8081/games/garasi-tempur.html'
-const SIZES = (process.env.QA_SIZES || '390x844,844x390,360x740,768x1024,1024x768,1280x800').split(',').map(s => s.split('x').map(Number))
+const sizes = v => v === 'none' ? [] : v.split(',').map(s => s.split('x').map(Number))
+const SIZES = sizes(process.env.QA_SIZES || '390x844,844x390,360x740,768x1024,1024x768,1280x800')
+// 2-player runs: a landscape tablet (the usual way two kids share one) and a phone in portrait
+const PVP_SIZES = sizes(process.env.QA_PVP_SIZES || '1024x768,390x844')
 const EXTRA = process.env.QA_EXTRA !== '0'
 const SHOTS = process.env.QA_SHOTS || ''
 const FAULT = !!process.env.QA_FAULT
@@ -131,6 +139,11 @@ const solve = (p, sel) => p.evaluate(s => {
   const a = +m[1], c = +m[3]
   return { '+': a + c, '-': a - c, '−': a - c, '–': a - c, x: a * c, '×': a * c, ':': a / c, '÷': a / c }[m[2]]
 }, sel)
+// the control a coached step taps: the classic #table ids (1 player) or the live seat's
+// own half (2 players: -p0 bottom, -p1 top)
+const K = (ctx, k, a) => ctx.pvp
+  ? ({ hand: `#hand-p${a}`, actgo: `#act-go-p${a}`, actbar: `#actbar-p${a}`, actwhy: `#act-why-p${a}`, field: `#field-p${a}`, atkbar: `#atkbar-p${a}`, end: `#btn-end-p${a}`, chal: `#chal-p${a}`, coach: `#coach-p${a}` })[k]
+  : ({ hand: '#hand', actgo: '#act-go', actbar: '#actbar', actwhy: '#act-why', field: '#me-field', atkbar: '#atkbar', end: '#btn-end', chal: '#chal', coach: '#coach' })[k]
 const shot = async (ctx, name) => { if (SHOTS) await ctx.p.screenshot({ path: `${SHOTS}/${ctx.tag}-${name}.png` }) }
 
 async function checkHome (ctx) {
@@ -222,44 +235,111 @@ async function checkTable (ctx, seen) {
   if (L.endH < 44 && !seen.has('endh')) { seen.add('endh'); check(false, `${ctx.tag}: Selesai >= 44 px (${L.endH})`) }
 }
 
+// 2 players: the fixed split screen (E)
+async function checkPv (ctx, seen, stats, s) {
+  const L = await ctx.p.evaluate(() => {
+    const R = e => { if (!e) return null; const b = e.getBoundingClientRect(); return b.width > 1 && b.height > 1 ? { l: b.left, t: b.top, r: b.right, b: b.bottom, cy: b.top + b.height / 2 } : null }
+    const parts = ['hand', 'btn-end', 'deck', 'fuel', 'panel', 'coach']
+    const seats = [0, 1].map(p => {
+      const o = {}
+      for (const k of parts) o[k] = R(document.getElementById(k + '-p' + p))
+      o.truck = R(document.querySelector('#field-p' + p + ' .field-card, #field-p' + p + ' .active-slot'))
+      return o
+    })
+    const tf = p => getComputedStyle(document.querySelector('#half-p' + p + ' .pv-in')).transform
+    const vis = e => { const cs = getComputedStyle(e); return cs.display !== 'none' && cs.visibility !== 'hidden' && +cs.opacity > 0.05 }
+    const name = e => e.id ? '#' + e.id : e.tagName.toLowerCase() + '.' + [...e.classList].slice(0, 2).join('.')
+    const offscreen = [], clipped = [], overlaps = []
+    for (const e of document.querySelectorAll('#pvp *')) {
+      if (e.closest('.u-hand, .hc, .pop-bar, .chal') || !vis(e)) continue
+      const b = e.getBoundingClientRect(); if (b.width < 2 || b.height < 2) continue
+      if (b.left < -2 || b.top < -2 || b.right > innerWidth + 2 || b.bottom > innerHeight + 2) offscreen.push(name(e) + ` [${Math.round(b.left)},${Math.round(b.top)},${Math.round(b.right)},${Math.round(b.bottom)}]`)
+      const cs = getComputedStyle(e)
+      if (/hidden|clip/.test(cs.overflowX + cs.overflowY) && e.textContent.trim() && !e.querySelector('img') &&
+          (e.scrollWidth > e.clientWidth + 2 || e.scrollHeight > e.clientHeight + 2) && cs.textOverflow !== 'ellipsis') clipped.push(name(e) + ' "' + e.textContent.trim().slice(0, 24) + '"')
+    }
+    const ov = (a, c) => a && c ? Math.max(0, Math.min(a.r, c.r) - Math.max(a.l, c.l)) * Math.max(0, Math.min(a.b, c.b) - Math.max(a.t, c.t)) : 0
+    for (const [p, S] of seats.entries()) for (const [x, y] of [['deck', 'fuel'], ['fuel', 'btn-end'], ['deck', 'btn-end'], ['coach', 'truck'], ['panel', 'truck'], ['panel', 'coach'], ['hand', 'truck'], ['hand', 'panel'], ['hand', 'coach']]) {
+      const a = ov(S[x], S[y]); if (a > 40) overlaps.push(`P${p + 1} ${x} x ${y} (${Math.round(a)} px²)`)
+    }
+    // the middle band's two turn labels and arena chips: nothing in it sits on top of each other
+    const mids = ['#pv-who-0', '#pv-who-1', '#pv-arena-0', '#pv-arena-1', '#btn-pause-pv'].map(q => [q, R(document.querySelector(q))])
+    for (let i = 0; i < mids.length; i++) for (let j = i + 1; j < mids.length; j++) { const a = ov(mids[i][1], mids[j][1]); if (a > 40) overlaps.push(`${mids[i][0]} x ${mids[j][0]} (${Math.round(a)} px²)`) }
+    return { seats, tf: [tf(0), tf(1)], on: [0, 1].map(p => document.getElementById('half-p' + p).classList.contains('on')),
+      coach: [0, 1].map(p => ({ txt: document.getElementById('coach-p' + p).textContent.trim(), step: document.getElementById('coach-p' + p).getAttribute('data-step') })),
+      offscreen: offscreen.slice(0, 6), nOff: offscreen.length, clipped: clipped.slice(0, 6), nClip: clipped.length, overlaps,
+      hscroll: document.scrollingElement.scrollWidth > innerWidth, oldTable: getComputedStyle(document.getElementById('table')).display, H: innerHeight }
+  })
+  const once = (k, ok, msg) => { if (!ok && !seen.has(k)) { seen.add(k); check(false, `${ctx.tag}: ${msg}`) } else if (ok && !seen.has('ok' + k)) { seen.add('ok' + k); check(true, msg) } }
+  const a = s.active
+  once('oldtable', L.oldTable === 'none', 'the 1-player table is not drawn in 2-player mode')
+  once('rot0', L.tf[0] === 'none', `P1's half (bottom) is upright (${L.tf[0]})`)
+  once('rot1', /^matrix\(-1, 0, 0, -1/.test(L.tf[1]), `P2's half (top) is turned 180° to face P2 (${L.tf[1]})`)
+  once('lit', L.on[a] && !L.on[1 - a], `only the live seat's half is lit (active P${a + 1}, on=${L.on})`)
+  once('coachlive', !!L.coach[a].txt && L.coach[a].step !== 'wait', `the live seat's coach names a step ("${L.coach[a].txt.slice(0, 30)}")`)
+  once('coachwait', L.coach[1 - a].step === 'wait' && !!L.coach[1 - a].txt, `the waiting seat's coach says wait ("${L.coach[1 - a].txt.slice(0, 30)}")`)
+  for (const [p, S] of L.seats.entries()) for (const [k, r] of Object.entries(S)) {
+    const inHalf = r && (p === 0 ? r.cy > L.H / 2 : r.cy < L.H / 2)
+    once(`half${p}${k}`, inHalf, `P${p + 1}'s ${k} stays in the ${p === 0 ? 'BOTTOM' : 'TOP'} half (centre y ${r ? Math.round(r.cy) : 'missing'} of ${L.H})`)
+  }
+  // nothing swaps: every seat part keeps the rect it had on the first human turn
+  if (!stats.pvRef) stats.pvRef = L.seats
+  else if (stats.lastActive !== a) {
+    stats.switches = (stats.switches || 0) + 1
+    const moved = []
+    for (const p of [0, 1]) for (const k of ['hand', 'btn-end', 'deck', 'fuel', 'panel']) {
+      const A = stats.pvRef[p][k], B = L.seats[p][k]
+      if (!A || !B || Math.abs(A.l - B.l) > 2 || Math.abs(A.t - B.t) > 2 || Math.abs(A.r - B.r) > 2 || Math.abs(A.b - B.b) > 2) moved.push(`P${p + 1} ${k}`)
+    }
+    if (moved.length && !seen.has('moved')) { seen.add('moved'); await shot(ctx, 'FAIL-swap'); check(false, `${ctx.tag}: nothing moves when the turn passes (switch ${stats.switches}: ${moved.join(', ')})`) }
+    if (stats.switches <= 3 && !moved.length) check(true, `${ctx.tag}: turn switch ${stats.switches} (to P${a + 1}): both halves stayed put`)
+    if (stats.switches === 1) await shot(ctx, 'pvp-switch1')
+  }
+  stats.lastActive = a
+  for (const o of L.overlaps) if (!seen.has('ov' + o.split(' (')[0])) { seen.add('ov' + o.split(' (')[0]); await shot(ctx, 'FAIL-overlap'); check(false, `${ctx.tag}: split-screen pieces do not overlap — ${o}`) }
+  if (L.nOff && !seen.has('offall')) { seen.add('offall'); await shot(ctx, 'FAIL-offscreen'); check(false, `${ctx.tag}: nothing on the split screen sticks out (${L.nOff}: ${L.offscreen.join(', ')})`) }
+  if (L.nClip && !seen.has('clip')) { seen.add('clip'); check(false, `${ctx.tag}: no text cut off by its box on the split screen (${L.nClip}: ${L.clipped.join(' | ')})`) }
+  if (L.hscroll && !seen.has('hs')) { seen.add('hs'); check(false, `${ctx.tag}: no horizontal scroll in battle`) }
+}
+
 const dump = ctx => ctx.p.evaluate(() => {
-  const s = __gt.state(), E = __gt.engine()
-  return JSON.stringify({ s, chal: document.getElementById('chal').className, actbar: document.getElementById('actbar').className,
-    coach: document.getElementById('coach').textContent, guides: [...document.querySelectorAll('.guide')].map(e => e.id || e.className),
+  const s = __gt.state(), E = __gt.engine(), g = id => document.getElementById(id) || document.getElementById(id + '-p' + s.active) || { className: '', textContent: '' }
+  return JSON.stringify({ s, chal: g('chal').className, actbar: g('actbar').className,
+    coach: g('coach').textContent, guides: [...document.querySelectorAll('.guide')].map(e => e.id || e.className),
     legal: __gt.legal().map(c => c.type), pending: E && E.pending, tut: document.getElementById('tut').className })
 })
 
 // one human step following the coach. returns a label for the log, or null when it could not act
 async function humanStep (ctx, seen, stats) {
   const s = await st(ctx.p)
-  const step = s.coach
+  const step = s.coach, a = s.active, k = n => K(ctx, n, a)
   if (step === 'truck' || step === 'fuel' || step === 'part' || step === 'swap' || step === 'discard') {
-    const t = await tap(ctx, '#hand .hc.guide')
+    const t = await tap(ctx, `${k('hand')} .hc.guide`)
     if (!t.ok) { if (!seen.has('g' + step)) { seen.add('g' + step); await shot(ctx, 'FAIL-glow-' + step); check(false, `${ctx.tag}: coach says "${step}" but the glowing hand card can't be tapped (${t.why})`) } return null }
     if (t.r.exposedW < 44 && !seen.has('exp' + step)) { seen.add('exp' + step); await shot(ctx, 'FAIL-exposed-' + step); check(false, `${ctx.tag}: the glowing "${step}" hand card shows >= 44 px a finger can hit (${t.r.exposedW} px of ${Math.round(t.r.w)})`) }
-    const bar = await ctx.p.evaluate(() => ({ show: document.getElementById('actbar').classList.contains('show'), dis: document.getElementById('act-go').disabled, why: document.getElementById('act-why').textContent }))
+    const bar = await ctx.p.evaluate(q => ({ show: document.querySelector(q[0]).classList.contains('show'), dis: document.querySelector(q[1]).disabled, why: document.querySelector(q[2]).textContent }), [k('actbar'), k('actgo'), k('actwhy')])
     if (!bar.show || bar.dis) { if (!seen.has('bar' + step)) { seen.add('bar' + step); await shot(ctx, 'FAIL-bar-' + step); if (process.env.QA_DEBUG) console.log((await ctx.p.evaluate(() => __trace.slice(-25))).join('\n'), '\n tapped at', JSON.stringify(t.r)); check(false, `${ctx.tag}: a glowing "${step}" card opens an enabled action button (show=${bar.show} disabled=${bar.dis} ${bar.why})`) } return null }
     if (!stats.shotMid && step !== 'truck') { stats.shotMid = true; await shot(ctx, 'battle-select') }
-    const g = await tap(ctx, '#act-go')
+    const g = await tap(ctx, k('actgo'))
     if (g.ok && g.r.h < 44 && !seen.has('acth')) { seen.add('acth'); check(false, `${ctx.tag}: action button >= 44 px (${Math.round(g.r.h)})`) }
     if (!g.ok) { check(false, `${ctx.tag}: action button tappable (${g.why})`); return null }
     return step
   }
   if (step === 'attack') {
     // tap the glowing truck on my field -> the attack chooser opens -> tap an enabled attack
-    const fc = await tap(ctx, '#me-field .field-card.guide, #me-field .field-card')
+    const fc = await tap(ctx, `${k('field')} .field-card.guide, ${k('field')} .field-card`)
     if (!fc.ok) { if (!seen.has('gfc')) { seen.add('gfc'); await shot(ctx, 'FAIL-truck-tap'); check(false, `${ctx.tag}: my truck card on the field is tappable to attack (${fc.why})`) } return null }
-    await ctx.p.waitForFunction(() => document.querySelector('#atkbar.show .atk-b'), { timeout: 3000 }).catch(() => {})
+    await ctx.p.waitForFunction(q => document.querySelector(q + '.show .atk-b'), { timeout: 3000 }, k('atkbar')).catch(() => {})
     if (!stats.shotAtk) { stats.shotAtk = true; await shot(ctx, 'battle-mid') }
-    const t = await tap(ctx, '#atkbar .atk-b.guide:not(.off)', '#atkbar')
+    const t = await tap(ctx, `${k('atkbar')} .atk-b.guide:not(.off)`, k('atkbar'))
     if (!t.ok) { if (!seen.has('gatk')) { seen.add('gatk'); await shot(ctx, 'FAIL-attack-chooser'); check(false, `${ctx.tag}: the attack chooser shows a glowing, tappable attack (${t.why})`) } return null }
     if (t.r.h < 44 && !seen.has('atkh')) { seen.add('atkh'); await shot(ctx, 'FAIL-attack-size'); check(false, `${ctx.tag}: attack button >= 44 px tall (${Math.round(t.r.w)}x${Math.round(t.r.h)})`) }
-    const on = await ctx.p.evaluate(() => { const b = document.querySelector('#atkbar').getBoundingClientRect(); return b.left >= -1 && b.right <= innerWidth + 1 && b.top >= -1 && b.bottom <= innerHeight + 1 })
+    const on = await ctx.p.evaluate(q => { const b = document.querySelector(q).getBoundingClientRect(); return b.left >= -1 && b.right <= innerWidth + 1 && b.top >= -1 && b.bottom <= innerHeight + 1 }, k('atkbar'))
     if (!on && !seen.has('atkon')) { seen.add('atkon'); check(false, `${ctx.tag}: the attack chooser is fully on screen`) }
     return step
   }
   if (step === 'end') {
-    const t = await tap(ctx, '#btn-end')
+    const t = await tap(ctx, k('end'))
     if (!t.ok) { check(false, `${ctx.tag}: Selesai tappable (${t.why})`); return null }
     return step
   }
@@ -284,14 +364,20 @@ async function battle (ctx, o = {}) {
       await sleep(250); continue
     }
     // challenge overlay (human seat): answer with a tap
-    const chal = await p.evaluate(() => { const c = document.getElementById('chal'); return c.classList.contains('show') ? c.querySelectorAll('.chal-b:not([disabled])').length : -1 })
-    if (chal > 0) {
+    // (2 players: the challenge opens in the attacker's own half — #chal-p0 bottom, #chal-p1 top)
+    const chal = await p.evaluate(() => { const c = document.querySelector('#chal.show, #scr-battle .chal.show'); return c ? { n: c.querySelectorAll('.chal-b:not([disabled])').length, id: c.id } : { n: -1 } })
+    if (chal.n > 0) {
       stats.chal++
       if (stats.chal === 1) await shot(ctx, 'challenge')
+      if (o.pvp) {
+        const a = (await st(p)).active
+        if (chal.id !== `chal-p${a}` && !seen.has('chalhalf')) { seen.add('chalhalf'); check(false, `${ctx.tag}: the challenge opens in the attacker's half (#chal-p${a}, got #${chal.id})`) }
+        if (a === 1 && !stats.shotChal2) { stats.shotChal2 = true; await shot(ctx, 'challenge-p2') }
+      }
       // a child who knows the sums: right on 2 of every 3 questions, wrong on the 3rd
-      const ans = await solve(p, '#chal .chal-q')
+      const ans = await solve(p, `#${chal.id} .chal-q`)
       const wrong = stats.chal % 3 === 0 || ans == null
-      const t = await tap(ctx, ans == null ? '.chal-b:not([disabled])' : wrong ? `.chal-b:not([disabled]):not([data-v="${ans}"])` : `.chal-b[data-v="${ans}"]`, '#chal')
+      const t = await tap(ctx, ans == null ? '.chal-b:not([disabled])' : wrong ? `.chal-b:not([disabled]):not([data-v="${ans}"])` : `.chal-b[data-v="${ans}"]`, '#' + chal.id)
       if (t.ok && t.r.h < 44 && !seen.has('chalh')) { seen.add('chalh'); check(false, `${ctx.tag}: challenge answer >= 44 px (${Math.round(t.r.h)})`) }
       if (!t.ok) { check(false, `${ctx.tag}: challenge answer tappable (${t.why})`); ok = false; break }
       await sleep(300); continue
@@ -302,16 +388,16 @@ async function battle (ctx, o = {}) {
     if (sig !== lastSig) { lastSig = sig; lastMove = Date.now() }
     if (Date.now() - lastMove > 25000) { await shot(ctx, 'FAIL-stuck'); check(false, `${ctx.tag}: battle keeps moving (stuck 25 s) — ${await dump(ctx)}`); ok = false; break }
     if (busy || !mine || s.phase === 'over' || s.phase === 'challenge') { await sleep(120); continue }
-    // a human turn, settled
-    if (!stats.turnsSeen.has(s.turn)) {
-      stats.turnsSeen.add(s.turn); stats.humanTurns++
+    // a human turn, settled (2 players: P1 and P2 share a turn number)
+    if (!stats.turnsSeen.has(s.turn + ':' + s.active)) {
+      stats.turnsSeen.add(s.turn + ':' + s.active); stats.humanTurns++
       if (stats.humanTurns > MAX_TURNS) { check(false, `${ctx.tag}: battle ends within ${MAX_TURNS} human turns — ${await dump(ctx)}`); ok = false; break }
     }
     await sleep(60)
-    await checkTable(ctx, seen)
+    if (ctx.pvp) await checkPv(ctx, seen, stats, s); else await checkTable(ctx, seen)
     const did = await humanStep(ctx, seen, stats)
     if (!did) {                                     // could not follow the coach: try ending the turn so the run goes on
-      await tap(ctx, '#btn-end'); await sleep(200); await tap(ctx, '#btn-end')
+      await tap(ctx, K(ctx, 'end', s.active)); await sleep(200); await tap(ctx, K(ctx, 'end', s.active))
     } else stats.steps++
     await sleep(150)
   }
@@ -333,13 +419,25 @@ async function battle (ctx, o = {}) {
     await sleep(250)
   }
   check(rushTaps >= 3, `${ctx.tag}: Monster Rush answers can be tapped (${rushTaps} taps)`)
+  if (o.pvp) check((stats.switches || 0) >= 3, `${ctx.tag}: the 2-player run saw >= 3 turn switches with nothing moving (${stats.switches || 0})`)
   await p.waitForFunction(() => __gt.state().screen === 'scr-result', { timeout: 15000 }).catch(() => {})
   await sleep(1500)                                 // count-up
-  const res = await p.evaluate(() => ({ scr: __gt.state().screen, cols: document.querySelectorAll('#res-table .res-col').length,
-    tot: [...document.querySelectorAll('#res-table .res-total b')].map(b => ({ shown: b.textContent, n: b.getAttribute('data-n') })),
-    title: document.getElementById('res-title').textContent,
-    btns: ['res-again', 'res-home'].map(id => { const b = document.getElementById(id).getBoundingClientRect(); return b.height >= 44 && b.bottom <= innerHeight + 1 && b.top >= -1 }),
-    hscroll: document.scrollingElement.scrollWidth > innerWidth }))
+  // (2 players: the result is split too — #res-half-p1 on top turned to face P2, #res-half-p0
+  // upright at the bottom, each with its own outcome and its own Main Lagi / Kembali)
+  const res = await p.evaluate(pv => { const R = pv ? '#res-pv' : '#res-table'; return { scr: __gt.state().screen, cols: document.querySelectorAll(R + ' .res-col').length,
+    tot: [...document.querySelectorAll(R + ' .res-total b')].map(b => ({ shown: b.textContent, n: b.getAttribute('data-n') })),
+    title: pv ? [1, 0].map(i => document.querySelector('#res-half-p' + i + ' .rp-title').textContent).join(' / ') : document.getElementById('res-title').textContent,
+    btns: (pv ? ['res-again-p0', 'res-home-p0', 'res-again-p1', 'res-home-p1'] : ['res-again', 'res-home']).map(id => { const b = document.getElementById(id).getBoundingClientRect(); return b.height >= 44 && b.bottom <= innerHeight + 1 && b.top >= -1 && b.left >= -1 && b.right <= innerWidth + 1 }),
+    pvHalf: pv ? [0, 1].map(i => { const el = document.getElementById('res-half-p' + i), r = el.getBoundingClientRect(), cy = r.top + r.height / 2
+      const bt = document.getElementById('res-again-p' + i).getBoundingClientRect(), by = bt.top + bt.height / 2
+      return { rot: getComputedStyle(el.querySelector('.rp-in')).transform, inHalf: i === 0 ? cy > innerHeight / 2 && by > innerHeight / 2 : cy < innerHeight / 2 && by < innerHeight / 2,
+        title: el.querySelector('.rp-title').textContent, ko: el.querySelectorAll('.rp-ko .kodots i').length, prize: !!el.querySelector('.rp-prize img') } }) : null,
+    hscroll: document.scrollingElement.scrollWidth > innerWidth } }, !!o.pvp)
+  if (o.pvp) {
+    const [h0, h1] = res.pvHalf, w = await p.evaluate(() => __gt.engine().winner), draw = await p.evaluate(() => __gt.engine().draw)
+    check(h0.rot === 'none' && /^matrix\(-1, 0, 0, -1/.test(h1.rot) && h0.inHalf && h1.inHalf, `${ctx.tag}: split result — P1 half upright at the bottom, P2 half turned 180° on top (${h0.rot} / ${h1.rot})`)
+    check([h0, h1].every((h, i) => h.title === (draw ? 'Seri!' : w === i ? 'Kamu Menang!' : 'Hampir! Ayo main lagi') && h.ko === 3 && h.prize), `${ctx.tag}: each seat reads its own outcome + KO pips + prize ("${h0.title}" / "${h1.title}", winner P${w + 1})`)
+  }
   check(res.scr === 'scr-result' && res.cols === 2 && res.tot.length === 2 && res.tot.every(t => t.n !== null && /^\d+$/.test(t.shown) && t.shown === t.n),
     `${ctx.tag}: result shows #res-table with two totals (${JSON.stringify(res.tot)} "${res.title}")`)
   check(res.btns.every(Boolean), `${ctx.tag}: result buttons (Main Lagi / Menu) on screen WITHOUT scrolling and >= 44 px (a child will not look for them below the fold)`)
@@ -352,7 +450,7 @@ async function battle (ctx, o = {}) {
 async function run (w, h, o = {}) {
   const tag = `${w}x${h}${o.label ? '-' + o.label : ''}`
   let ctx
-  try { ctx = { ...(await open(w, h, o)), tag } } catch (e) { check(false, `${tag}: the page loads and exposes __gt — ${e.message}`); return }
+  try { ctx = { ...(await open(w, h, o)), tag, pvp: !!o.pvp } } catch (e) { check(false, `${tag}: the page loads and exposes __gt — ${e.message}`); return }
   try {
     await checkHome(ctx)
     // home -> team picker -> battle, by taps
@@ -375,9 +473,11 @@ async function run (w, h, o = {}) {
 {
   const jobs = SIZES.map(([w, h]) => () => run(w, h))
   if (EXTRA) {
-    jobs.push(() => run(390, 844, { tutorial: true, label: 'tutorial' }))
-    jobs.push(() => run(844, 390, { reduced: true, label: 'reduced-motion' }))
-    jobs.push(() => run(1024, 768, { pvp: true, label: 'pvp' }))
+    if (process.env.QA_EXTRA !== 'pvp') {         // QA_EXTRA=pvp: only the 2-player runs
+      jobs.push(() => run(390, 844, { tutorial: true, label: 'tutorial' }))
+      jobs.push(() => run(844, 390, { reduced: true, label: 'reduced-motion' }))
+    }
+    for (const [w, h] of PVP_SIZES) jobs.push(() => run(w, h, { pvp: true, label: 'pvp' }))
   }
   // three pages at a time: a battle is mostly waiting on the computer's paced turns
   const PAR = +(process.env.QA_PAR || 3)

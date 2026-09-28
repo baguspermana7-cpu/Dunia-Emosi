@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v63.10-20260928a'
+const CACHE_VERSION = 'v63.11-20260928a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -126,12 +126,12 @@ const SHELL = [
   // shared sfx/vfx/save engines it loads. Truck sprites, arena backdrops and FX
   // frames are warmed by the page itself when it is idle (games/garasi-tempur.js).
   './games/garasi-tempur.html',
-  './games/garasi-tempur.css?v=v63.10-20260928a',
+  './games/garasi-tempur.css?v=v63.11-20260928a',
   './games/gt-rush.css?v=v63.10-20260928a',
-  './games/garasi-tempur.js?v=v63.10-20260928a',
+  './games/garasi-tempur.js?v=v63.11-20260928a',
   './games/gt-engine.js?v=v63.10-20260928a',
   './games/gt-card.js?v=v63.10-20260928a',
-  './games/gt-fx.js?v=v63.10-20260928a',
+  './games/gt-fx.js?v=v63.11-20260928a',
   './games/gt-quiz.js?v=v63.10-20260928a',
   './games/data/gt-trucks.js?v=v63.10-20260928a',
   './games/data/gt-cards.js?v=v63.10-20260928a',

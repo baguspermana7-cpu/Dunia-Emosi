@@ -147,12 +147,15 @@
       { transform: 'translate(' + (px * 0.4) + 'px,0)' }, { transform: 'translate(0,0)' }], { duration: 260, easing: 'linear' })
   }
   // ev: engine 'attack' event. a/b: attacker / target card elements. setHp(v): redraws the target HP.
+  // an element inside the 2-player top half ([data-flip], turned 180°) moves in its own
+  // axes: a screen-space offset must be negated before it goes into its transform
+  function flipOf (el) { return el && el.closest && el.closest('[data-flip]') ? -1 : 1 }
   function attack (o) {
     var a = o.from, b = o.to, T = TYPE_FX[o.type] || TYPE_FX.POWER, rm = reduced()
-    var art = a && a.querySelector('.gc-l1'), dir = 1
+    var art = a && a.querySelector('.gc-l1'), dir = 1, fl = flipOf(a)
     var ca = center(a), cb = center(b)
-    dir = cb.x >= ca.x ? 1 : -1
-    var dy = cb.y - ca.y, dx = cb.x - ca.x
+    dir = (cb.x >= ca.x ? 1 : -1) * fl
+    var dy = (cb.y - ca.y) * fl, dx = (cb.x - ca.x) * fl
     var aura = { stop: function () {} }
     SND.rev()
     // 1 wind-up
@@ -161,7 +164,7 @@
     var p1 = rm ? Promise.resolve() : anim(art, [{ transform: 'translate(0,0) rotate(0) scale(1)' }, { transform: 'translate(' + (-dir * 6) + '%,4%) rotate(' + (-dir * 7) + 'deg) scale(1.05)' }], { duration: 260, easing: EO, fill: 'forwards' })
     return p1.then(function () {
       // 2 launch: art breaks the frame toward the target, projectile flies, camera pans
-      SND.whoosh(); pan(-dir * 18)
+      SND.whoosh(); pan(-dir * fl * 18)
       var p2 = rm ? Promise.resolve() : anim(art, [{ transform: 'translate(' + (-dir * 6) + '%,4%) rotate(' + (-dir * 7) + 'deg) scale(1.05)' },
         { transform: 'translate(' + (dx * 0.35) + 'px,' + (dy * 0.35) + 'px) rotate(' + (dir * 8) + 'deg) scale(1.35)' }], { duration: 300, easing: EIO, fill: 'forwards' })
       var hit = new Promise(function (res) {
@@ -222,8 +225,8 @@
     if (!el || !fromRect) return Promise.resolve()
     SND.card()
     if (reduced()) return anim(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 180 })
-    var r = el.getBoundingClientRect()
-    var dx = fromRect.left + fromRect.width / 2 - (r.left + r.width / 2), dy = fromRect.top + fromRect.height / 2 - (r.top + r.height / 2)
+    var r = el.getBoundingClientRect(), fl = flipOf(el)
+    var dx = (fromRect.left + fromRect.width / 2 - (r.left + r.width / 2)) * fl, dy = (fromRect.top + fromRect.height / 2 - (r.top + r.height / 2)) * fl
     var s = fromRect.width / Math.max(1, r.width)
     return anim(el, [{ transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + s + ') rotate(' + ((o && o.rot) || -6) + 'deg)', opacity: 0.9 },
       { transform: 'translate(' + dx * 0.4 + 'px,' + (dy * 0.4 - 30) + 'px) scale(' + (s + 1) / 2 * 1.08 + ') rotate(3deg)', opacity: 1, offset: 0.55 },
