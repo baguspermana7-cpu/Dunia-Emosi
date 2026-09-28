@@ -23,9 +23,9 @@
   /* ── World 0: Timmy's bedroom (tutorial + time corridor) ───────────────── */
   var INTRO = [
     P('bedroom-night', 'Timmy tertidur saat membaca buku tentang kapal-kapal legendaris…', null,
-      [{ k: 'char/timmy-sleeping', x: 36, y: 82, s: 52, d: 0.85 }, { k: 'school/books', x: 60, y: 78, s: 16, d: 1 }, { k: 'nature/moon-stars', x: 80, y: 20, s: 20, d: 0.1 }]),
+      [{ k: 'tk-legend/bedroom', x: 50, y: 96, s: 70, d: 0.6 }, { k: 'char/timmy-sleeping', x: 36, y: 86, s: 46, d: 0.85 }, { k: 'nature/moon-stars', x: 66, y: 26, s: 14, d: 0.1 }]),
     P('bedroom-portal', 'Tengah malam… sebuah pusaran cahaya muncul di kamarnya!', 'Timmy',
-      [{ k: 'fx/portal', x: 68, y: 45, s: 70, d: 0.4 }, { k: TIMMY, x: 25, y: 72, s: 44, d: 0.9 }]),
+      [{ k: 'tk-legend/bedroom', x: 34, y: 98, s: 58, d: 0.6 }, { k: 'fx/portal', x: 70, y: 62, s: 62, d: 0.4 }, { k: TIMMY, x: 25, y: 90, s: 46, d: 0.9 }]),
     P('bedroom-portal', 'Kompas Timmy menyala. "Wah… apa itu? Pintu waktu di kamarku!"', 'Timmy',
       [{ k: 'fx/portal', x: 68, y: 45, s: 76, d: 0.4 }, { k: 'game/compass', x: 40, y: 55, s: 18, d: 1.2 }, { k: TIMMY, x: 22, y: 72, s: 44, d: 0.9 }]),
     P('time-tunnel', 'Timmy tertarik masuk ke lorong waktu yang berputar-putar!', null,

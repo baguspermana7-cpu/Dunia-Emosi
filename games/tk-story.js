@@ -36,21 +36,45 @@
     '.tks-btn{min-height:56px;padding:0 22px;border-radius:16px;border:0;font:inherit;font-weight:900;font-size:19px;cursor:pointer;transition:transform .12s ' + EO + '}' +
     '.tks-btn:active{transform:scale(.96)}.tks-next{background:linear-gradient(#FFE15A,#F2B01E);color:#3a2600;box-shadow:0 4px 0 #a86f0a}.tks-back{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.35)}' +
     '.tks-skip{position:absolute;right:10px;top:calc(10px + env(safe-area-inset-top));min-height:44px;padding:0 14px;border-radius:12px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.35);color:#fff;font:inherit;font-weight:800;cursor:pointer;z-index:5}' +
-    '@media (orientation:portrait){.tks-thumbs{display:none}.tks-dots{display:flex}.tks-cap{bottom:3%;left:3%;right:3%;max-width:none}}' +
+    '@media (orientation:portrait){.tks-cap{bottom:3%;left:3%;right:3%;max-width:none}}' +
     '@media (prefers-reduced-motion:reduce){.tks *{transition:none!important}}'
+  CSS += '.tks-logo{position:absolute;left:12px;top:calc(8px + env(safe-area-inset-top));width:clamp(120px,17vw,230px);z-index:4;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))}' +
+    '.tks-plate{background:linear-gradient(#f6e3bb,#e2c690);border:0;border-radius:6px;padding:8px 34px 10px;clip-path:polygon(3% 0,97% 4%,100% 50%,97% 96%,3% 100%,0 50%)}' +
+    '.tks-plate small{font-size:clamp(12px,1.6vw,16px);font-weight:800}.tks-plate b{font-size:clamp(20px,3.4vw,40px)}.tks-plate i{display:block;font-style:normal;font-size:clamp(11px,1.5vw,16px);opacity:.85}' +
+    '.tks-cap{border-radius:18px;padding:16px 20px 14px;box-shadow:0 10px 26px rgba(0,0,0,.4)}.tks-cap i{top:-16px;left:16px;padding:3px 14px;font-size:15px;background:#1F63D6}' +
+    '.tks-bar{flex-direction:column;align-items:stretch;gap:8px;background:linear-gradient(rgba(8,12,36,0),rgba(8,12,36,.92) 30%)}' +
+    '.tks-strip{min-width:0}.tks-thumbs{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 2px}' +
+    '.tks-t{flex:1 0 190px;height:112px;border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,.35);background:#10183a}' +
+    '.tks-t .tks-tbg{position:absolute;inset:0;background-size:cover!important;background-position:center!important;opacity:.9}' +
+    '.tks-t img{position:absolute;left:50%;top:6%;height:62%;transform:translateX(-50%);filter:drop-shadow(0 4px 4px rgba(0,0,0,.4))}' +
+    '.tks-tc{position:absolute;left:0;right:0;bottom:0;display:flex;gap:8px;align-items:center;padding:6px 8px;background:linear-gradient(transparent,rgba(8,12,36,.92) 30%);font-size:12.5px;font-weight:800;line-height:1.15;text-align:left}' +
+    '.tks-tc b{position:static;flex:none;width:28px;height:28px;font-size:14px;background:#0b1030;border:2px solid #fff}' +
+    '.tks-t.on{border-color:#5fd0ff;box-shadow:0 0 0 3px rgba(95,208,255,.45),0 0 18px rgba(95,208,255,.6)}' +
+    '.tks-nav{display:flex;align-items:center;gap:12px}.tks-nav .tks-dots{display:flex;flex:1;justify-content:center;align-items:center;gap:0}' +
+    '.tks-dots i{position:relative;width:10px;height:10px;margin:0 12px;border:2px solid #fff;background:transparent}.tks-dots i+i::before{content:"";position:absolute;right:100%;top:50%;width:24px;height:2px;background:rgba(255,255,255,.5)}' +
+    '.tks-dots i.on{background:#5fd0ff;border-color:#5fd0ff;transform:scale(1.35)}' +
+    '.tks-btn{display:inline-flex;align-items:center;gap:10px}.tks-back{background:rgba(8,12,36,.7)}' +
+    '.tks-arr{width:16px;height:16px;border-top:4px solid currentColor;border-right:4px solid currentColor;transform:rotate(45deg);border-radius:2px}.tks-arr.l{transform:rotate(-135deg)}' +
+    '@media (orientation:portrait){.tks-dots i{margin:0 5px}.tks-dots i+i::before{width:10px}.tks-btn{padding:0 14px;font-size:17px}.tks-back:not([style*=visible]){display:none}.tks-t{flex:0 0 72%;height:120px}.tks-thumbs{scroll-snap-type:x mandatory}.tks-t{scroll-snap-align:center}.tks-logo{width:118px}.tks-plate{top:calc(104px + env(safe-area-inset-top));max-width:86%}}'
   function injectCss () { if (document.getElementById('tks-css')) return; var s = document.createElement('style'); s.id = 'tks-css'; s.textContent = CSS; document.head.appendChild(s) }
 
   function play (host, panels, opts) {
     opts = opts || {}; injectCss()
     var Art = W.TKArt, i = 0, raf = 0, dead = false, t0 = performance.now(), layers = []
     host.innerHTML = '<div class="tks"><div class="tks-stage"><div class="tks-bg"></div><div class="tks-ls"></div>' +
-      (opts.title ? '<div class="tks-plate"><small>' + esc(opts.subtitle || '') + '</small><b>' + esc(opts.title) + '</b></div>' : '') +
+      (opts.logo ? '<img class="tks-logo" src="' + opts.logo + '" alt="">' : '') +
+      (opts.title ? '<div class="tks-plate">' + (opts.chapter ? '<small>' + esc(opts.chapter) + '</small>' : '') + '<b>' + esc(opts.title) + '</b>' +
+        (opts.subtitle ? '<i>' + esc(opts.subtitle) + '</i>' : '') + '</div>' : '') +
       '<div class="tks-cap"></div><button class="tks-skip" type="button">Lewati</button></div>' +
-      '<div class="tks-bar"><button class="tks-btn tks-back" type="button">Kembali</button><div class="tks-thumbs"></div><div class="tks-dots"></div>' +
-      '<button class="tks-btn tks-next" type="button">Lanjut</button></div></div>'
+      '<div class="tks-bar"><div class="tks-strip"><div class="tks-thumbs"></div></div>' +
+      '<div class="tks-nav"><button class="tks-btn tks-back" type="button"><span class="tks-arr l"></span>Kembali</button><div class="tks-dots"></div>' +
+      '<button class="tks-btn tks-next" type="button"><span class="tks-nt">Lanjut</span><span class="tks-arr"></span></button></div></div></div>'
     var root = host.firstChild, bg = root.querySelector('.tks-bg'), ls = root.querySelector('.tks-ls'), cap = root.querySelector('.tks-cap')
     root.querySelector('.tks-thumbs').innerHTML = panels.map(function (p, k) {
-      return '<div class="tks-t" data-i="' + k + '" style="background:' + Art.scene(p.scene) + '"><b>' + (k + 1) + '</b></div>'
+      var main = (p.layers || []).slice().sort(function (a, b) { return (b.s || 0) - (a.s || 0) })[0]
+      var txt = String(p.caption || ''); if (txt.length > 58) txt = txt.slice(0, 55).replace(/\s+\S*$/, '') + '…'
+      return '<div class="tks-t" data-i="' + k + '"><span class="tks-tbg" style="background:' + Art.scene(p.scene) + '"></span>' +
+        (main ? '<img src="' + Art.src(main.k) + '" alt="">' : '') + '<span class="tks-tc"><b>' + (k + 1) + '</b>' + esc(txt) + '</span></div>'
     }).join('')
     root.querySelector('.tks-dots').innerHTML = panels.map(function () { return '<i></i>' }).join('')
     function sfx (k) { try { if (opts.sfx && opts.sfx[k]) opts.sfx[k]() } catch (e) {} }
@@ -74,7 +98,7 @@
       root.querySelectorAll('.tks-t').forEach(function (t, k) { t.classList.toggle('on', k === i) })
       root.querySelectorAll('.tks-dots i').forEach(function (t, k) { t.classList.toggle('on', k === i) })
       var th = root.querySelector('.tks-t.on'); if (th && th.scrollIntoView) try { th.scrollIntoView({ block: 'nearest', inline: 'center' }) } catch (e) {}
-      root.querySelector('.tks-back').style.visibility = i ? 'visible' : 'hidden'
+      root.querySelector('.tks-back').style.visibility = i ? 'visible' : 'hidden'; root.querySelector('.tks-back').style.display = i ? '' : (innerHeight > innerWidth ? 'none' : '')
       root.querySelector('.tks-next').textContent = i === panels.length - 1 ? 'Mulai!' : 'Lanjut'
     }
     // camera breathing: each layer drifts by its depth (translate property, so it composes with the

@@ -368,7 +368,9 @@
   }
   function story (host, panels, title, done) {
     document.body.classList.add('story-on')
-    PLAYING && (PLAYING.handle = TKStory.play(host, panels, { title: title, subtitle: CUR.w ? CUR.w.name : '', sfx: { page: SND.page, go: SND.chime },
+    var wi = CUR.w ? WD.WORLDS.indexOf(CUR.w) : -1
+    PLAYING && (PLAYING.handle = TKStory.play(host, panels, { title: title, chapter: CUR.w ? (wi > 0 ? 'Bab ' + wi + ' · ' : '') + CUR.w.name : '', subtitle: CUR.w && CUR.w.value,
+      logo: W.AssetIndex && AssetIndex.path('tk-key/logo') ? Art.src('ui/logo') : '', sfx: { page: SND.page, go: SND.chime },
       onDone: function () { document.body.classList.remove('story-on'); host.innerHTML = ''; done() } }))
   }
   function sfxBag () { return { click: SND.click, good: function () { SND.cue('correct') }, bad: function () { SND.cue('wrong') }, win: function () { SND.cue('levelup') }, splash: SND.splash, muted: !S.settings.sound } }

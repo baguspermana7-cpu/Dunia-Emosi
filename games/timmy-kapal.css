@@ -325,3 +325,7 @@ body.story-on .play-hud .lvchip,body.story-on .goalbar,body.story-on .journal,bo
 .isle .land.art .shp{margin-top:-58px;width:104px;height:60px}
 .isle.locked .land.art{filter:grayscale(.8) brightness(.8)}
 .isle .land.art + .lab{margin-top:4px}
+
+body.story-on .play-host.with-chapter{left:0}
+body.story-on .play-hud{justify-content:flex-end}
+body.story-on #btn-pause{display:none}
