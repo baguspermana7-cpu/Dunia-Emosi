@@ -36,7 +36,15 @@
   navigator.serviceWorker.addEventListener('message', function (e) {
     if (e.data && e.data.type === 'SW_UPDATED') reloadOnce(e.data.version)
   })
+  // A page opened directly (bookmark, shared link, home-screen shortcut) may never have seen index.html,
+  // so the root SW was never registered and Chrome refuses to install the PWA from here
+  // ("Aplikasi ini tidak dapat diinstal"). Register the same root SW; the first take-over is not a deploy.
+  var hadCtl = !!navigator.serviceWorker.controller
+  if (!hadCtl) {
+    try { navigator.serviceWorker.register('../sw.js', { scope: '../' }).catch(function () {}) } catch (e) {}
+  }
   navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (!hadCtl) { hadCtl = true; return }   // first registration claimed the page: nothing new to load
     // A new SW took control of this page — pick up the fresh assets.
     reloadOnce('cc')
   })

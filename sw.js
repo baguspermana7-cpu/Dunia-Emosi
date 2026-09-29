@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v63.15-20260930a'
+const CACHE_VERSION = 'v63.16-20260930a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -91,7 +91,7 @@ const SHELL = [
   './games/quiz-engine.js?v=v63.15-20260930a',
   './games/motion.js?v=v63.15-20260930a',
   './games/scenery-engine.js?v=v63.15-20260930a',
-  './games/sw-reload.js?v=v63.15-20260930a',
+  './games/sw-reload.js?v=v63.16-20260930a',
   './games/g14-hud.css?v=v63.15-20260930a',
   './games/du-hud.css?v=v63.15-20260930a',
   // G27 Spelling Adventure: page, logic, data, its self-hosted font and the
