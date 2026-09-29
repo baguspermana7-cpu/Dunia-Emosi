@@ -52,6 +52,72 @@
   function laneX (l) { return (l - 1) * LANE }
   function easeIO (p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2 }
 
+  /* ── embedded questions (owner 2026-09-29: action first, a question only on certain moments) ──
+     level.questions { on: 'collide'|'buoy'|'gate' or an array of them, topic (a TKQuiz domain override),
+     count (max collision questions per level), buoys (glowing Soal buoys / treasure chests), gates (lighthouse
+     chain gates) }. Absent: lanes = collide only (the old behaviour); questions:false = none at all. */
+  var Q_DEF = { on: ['collide'], count: 4 }
+  var Q_COOL = 8                     // at most one collision question per 8 s of sailing
+  var Q_WRONG = 'Tidak apa-apa, coba lagi nanti!'
+  function qconf (level) {
+    level = level || {}
+    var q = level.questions
+    if (q === false) return { on: {}, topic: null, count: 0, buoys: 0, gates: 0 }
+    if (typeof q === 'string' || Array.isArray(q)) q = { on: q }
+    q = q && typeof q === 'object' ? q : {}
+    var list = q.on == null ? Q_DEF.on : [].concat(q.on), on = {}
+    for (var i = 0; i < list.length; i++) if (list[i] === 'collide' || list[i] === 'buoy' || list[i] === 'gate') on[list[i]] = true
+    return { on: on, topic: q.topic || null, count: clamp(Math.round(num(q.count, Q_DEF.count)), 0, 20),
+      buoys: on.buoy ? clamp(Math.round(num(q.buoys, 2)), 0, 6) : 0, gates: on.gate ? clamp(Math.round(num(q.gates, 1)), 0, 4) : 0 }
+  }
+  // Soal buoys + lighthouse gates are placed in open water: never on ice, a gate, or the finish
+  function placeQ (w, QC) {
+    function spanOf (o) { return o.type === 'wall' ? [o.z, o.z + o.len] : [o.z - (o.r || 0), o.z + (o.r || 0)] }
+    function laneOpen (l, z, margin) {
+      var x = laneX(l)
+      for (var i = 0; i < w.objs.length; i++) {
+        var o = w.objs[i]
+        if (o.off) continue
+        if (o.type === 'lgate' || o.type === 'qbuoy') { if (Math.abs(o.z - z) < 260) return false; continue }
+        if (!o.ice && o.type !== 'debris') continue
+        var sp = spanOf(o), hw = o.type === 'wall' ? o.hw : (o.r || 30) * 0.85
+        if (sp[1] + margin < z || sp[0] - margin > z) continue
+        if (Math.abs(o.x - x) < hw + SHIP_HW + 60 || o.type === 'big') return false
+      }
+      return true
+    }
+    // gates: on section starts (the checkpoint arch turns into the lighthouse gate), else evenly spaced
+    var cps = w.objs.filter(function (o) { return o.type === 'gate' })
+    for (var g = 0; g < QC.gates; g++) {
+      var gz
+      if (cps.length >= QC.gates) { var cp = cps[Math.floor((g + 0.5) * cps.length / QC.gates)]; cp.off = true; gz = cp.z + 40 }
+      else gz = Math.round(w.zEnd * (g + 1) / (QC.gates + 1))
+      // clear the water around the chain (ice there would pin the waiting ship)
+      for (var i = 0; i < w.objs.length; i++) {
+        var o = w.objs[i], sp = spanOf(o)
+        if ((o.ice || o.type === 'debris') && !o.off && sp[1] > gz - 320 && sp[0] < gz + 220) { o.off = true; if (o.ice && o.type !== 'floe') w.iceTotal-- }
+      }
+      w.objs.push({ id: 900 + g, type: 'lgate', x: 0, z: gz, r: 0, drop: 0, asked: false, open: false, hit: false, passed: false, taken: false })
+    }
+    for (var b = 0; b < QC.buoys; b++) {
+      var zt = w.zEnd * (b + 1) / (QC.buoys + 1), best = null
+      for (var dz = 0; dz <= 900 && !best; dz += 40) {
+        for (var sgn = -1; sgn <= 1 && !best; sgn += 2) {
+          var z = zt + sgn * dz
+          if (z < 420 || z > w.zEnd - 320) continue
+          // the lane the next obstacle row keeps open first (one move for the child), then the others
+          var nextL = 1
+          for (var ri = 0; ri < w.rows.length; ri++) if (w.rows[ri].z > z) { nextL = w.rows[ri].lane; break }
+          var order = [nextL, 1, 0, 2]
+          for (var k = 0; k < order.length; k++) if (laneOpen(order[k], z, 170)) { best = { l: order[k], z: z }; break }
+        }
+      }
+      if (!best) continue
+      for (var si = 0; si < w.objs.length; si++) { var so = w.objs[si]; if ((so.type === 'star' || so.type === 'token') && !so.off && Math.abs(so.z - best.z) < 110 && Math.abs(so.x - laneX(best.l)) < 60) { so.off = true; if (so.type === 'star') w.starsTotal-- } }
+      w.objs.push({ id: 950 + b, type: 'qbuoy', kind: b % 2 ? 'chest' : 'buoy', x: laneX(best.l), z: best.z, r: 30, bob: b * 1.7, hit: false, passed: false, taken: false })
+    }
+  }
+
   /* ── sections ─────────────────────────────────────────────────────────── */
   var SEC = {
     open:     { len: 800,  title: 'Laut Terbuka',      sub: 'Kumpulkan bintang di jalurmu!' },
@@ -74,7 +140,7 @@
     var list = level.sections && level.sections.length ? level.sections : fin ? ['sparse', 'dense', 'extreme', 'corridor'] : ['open', 'sparse', 'more', 'narrow', 'dense']
     var scaleLen = num(level.lengthScale, 1)
     var w = { objs: [], sections: [], iceTotal: 0, starsTotal: 0, final: fin, corridor: null, fated: null, diff: di + 1, rows: [] }
-    var z = 0, p = 1, id = 0
+    var z = 0, p = 1, id = 0, lastEnd = -1e9   // lastEnd: where the previous row's ice ends (rows carry over sections)
     function add (o) { o.id = id++; o.hit = false; o.passed = false; o.taken = false; w.objs.push(o); if (o.ice && o.type !== 'floe') w.iceTotal++; if (o.type === 'star') w.starsTotal++; return o }
     function ice (type, x, z0, extra) {
       var r = ICE[type] || 40
@@ -120,6 +186,10 @@
         p = 1
       } else {
         var gap = def.gap[di], zz = z + Math.max(gap * 0.75, si === 0 ? 620 : 320)   // a calm lead-in before the first ice
+        // a long ridge that ends past the section line must still leave a full row gap before the next row:
+        // without this the first row after a 'narrow' section came only ~200 units after the ridge (0.09 s of
+        // reaction margin at difficulty 3 -> the QA autopilot, and a child, could not reach the open lane)
+        zz = Math.max(zz, lastEnd + gap * 0.85)
         var tokenAt = kind !== 'sparse' ? z + len * (0.35 + R() * 0.3) : -1
         var prevZ = z
         while (zz < sec.z1 - 140) {
@@ -153,6 +223,7 @@
           if (tokenAt > 0 && zz > tokenAt) { token(np, zz - Math.min(gap * 0.45, 200) - 40); tokenAt = -1 }
           w.rows.push({ z: zz, lane: np, end: zz + span })
           prevZ = zz + span
+          lastEnd = prevZ
           p = np
           zz = prevZ + gap * (0.85 + R() * 0.3)
         }
@@ -168,8 +239,10 @@
       else if (o.type === 'debris') debris(lx, o.z)
       else ice(ICE[o.type] ? o.type : 'berg', o.type === 'big' ? lx + (o.lane === 2 ? -LANE / 2 : LANE / 2) : lx, o.z)
     }
-    w.objs.sort(function (a, b) { return a.z - b.z })
     w.zEnd = z
+    var QC = qconf(level)
+    if (!fin && (QC.buoys || QC.gates)) placeQ(w, QC)
+    w.objs.sort(function (a, b) { return a.z - b.z })
     return w
   }
 
@@ -262,6 +335,14 @@
     '.tkl-short .tkl-boost{margin-left:auto;margin-right:10px}',
     '.tkl-port .tkl-boost.is-up,.tkl-wide .tkl-boost.is-up{position:absolute;right:14px;bottom:calc(var(--tkl-turn,88px) + 10px)}',
     '.tkl-wide .tkl-lever{right:auto;left:12px}',
+    /* playtest 2026-09-29, phone upright: the section banner duplicated the route-bar label and sat on the bow
+       (hidden there); the hint and the captain move to the free column above LEFT (beside the wheel), never over
+       the ship; the chips keep icon, label and value, and the objective keeps its title line (chip labels stay, ellipsised) */
+    '.tkl-port .tkl-banner{display:none}',
+    '.tkl-upw .tkl-hint{left:12px;right:auto;margin:0;width:auto;max-width:calc(100% - var(--tkl-boost,104px) - 44px);bottom:calc(var(--tkl-turn,88px) + 24px + env(safe-area-inset-bottom,0px))!important;text-align:left;font-size:15px}',
+    '.tkl-upw .tkl-cap{left:12px;bottom:calc(var(--tkl-turn,88px) + 24px + env(safe-area-inset-bottom,0px));max-width:calc(100% - var(--tkl-boost,104px) - 40px)}',
+    '.tkl-upw .tkl-cap img{width:58px;height:58px}.tkl-upw .tkl-bub span{font-size:15px}',
+    '.tkl-sea.tkl-narrow .tkl-obj span{display:none}',
     // wide landscape: the hint sits at the bottom between the thumbs (under the ship), the captain above the wheel
     '.tkl-wide .tkl-hint{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;max-width:min(52%,560px)}',
     '.tkl-wide .tkl-cap{left:auto;right:14px;bottom:calc(var(--tkl-turn,88px) + var(--tkl-boost,104px) + 30px);max-width:min(40%,470px)}',
@@ -468,7 +549,7 @@
       if (P.inner.state().waiting) return            // a question card is open: finish it first
       P.inner.pause(true)
       var av = W.TKFleet.avatar(opts)
-      P.picker = W.TKFleet.open(host, { lib: opts.lib, reducedMotion: opts.reducedMotion, sfx: opts.sfx, current: P.ship, title: 'Ganti Kapal',
+      P.picker = W.TKFleet.open(host, { lib: opts.lib, reducedMotion: opts.reducedMotion, sfx: opts.sfx, current: P.ship, title: 'Ganti Kapal', worldShip: opts.world, topInset: opts.topInset,
         onClose: function () { P.picker = null; if (P.inner) P.inner.resume() },
         onPick: function (id) {
           P.picker = null
@@ -570,7 +651,8 @@
     ctrl.appendChild(bL); ctrl.appendChild(bB); ctrl.appendChild(bR)
     root.appendChild(ctrl)
     var lever = el('div', 'tkl-lever tkl-panel', '<small>Kecepatan</small>')
-    var LV = [['Penuh', 1], ['Setengah', 0.78], ['Pelan', 0.6]], lvBtns = []
+    // "Normal", not "Penuh": the wheel's "Cepat" boost goes faster than the lever's top speed (playtest 2026-09-29)
+    var LV = [['Normal', 1], ['Sedang', 0.78], ['Pelan', 0.6]], lvBtns = []
     LV.forEach(function (d, i) { var b = el('button', 'tkl-btn tkl-lv' + (i === 0 ? ' is-on' : '')); b.type = 'button'; b.textContent = d[0]; lever.appendChild(b); lvBtns.push(b) })
     root.appendChild(lever)
     var banner = el('div', 'tkl-banner tkl-panel', '<b></b><span></span>')
@@ -600,7 +682,9 @@
     // sprites
     function loadImg (url) { if (!url) return null; var im = new Image(); im.decoding = 'async'; im.onerror = function () { im._bad = true }; im.src = url; return im }
     function ready (im) { return im && !im._bad && im.complete && im.naturalWidth > 0 }
+    var QC = qconf(level)
     var IMG = { star: loadImg(lib('tk-ui/star')), token: loadImg(lib('tk-key/compass')), buoy: loadImg(lib('tk-prop/buoy-light')),
+      chest: loadImg(lib('game/treasure-chest')), house: loadImg(lib('gt-el/lighthouse')),
       'tk-prop/barrel': loadImg(lib('tk-prop/barrel')), 'tk-prop/crate-titanic': loadImg(lib('tk-prop/crate-titanic')) }
     var shipImg = null
     try {
@@ -627,7 +711,9 @@
       d: -40, x: 0, lane: 1, lx0: 0, lt: 9, ldur: LANE_DUR, vx: 0, head: 0, v: V0 * 0.7, throttle: 1, boostT: 0, boostCd: 0,
       t: 0, score: 0, avoided: 0, collisions: 0, correct: 0, tries: 0, hints: 0, tokens: 0, stars: 0, pen: 0,
       phase: 'player', impact: null, waiting: false, inv: 0, shake: 0, shakeT: 0, zoom: 1, sec: -1, done: false, finishing: 0,
-      firstMove: false, hintT: 0, tut: 0, tutGap: 1.2, boosted: false, ease: 0, nudge: 0, lastIn: 0, frames: 0, warn: false, capT: -1, cine: 0, impactT: 0, bumpT: 0, rollS: 0
+      firstMove: false, hintT: 0, tut: 0, tutGap: 1.2, boosted: false, ease: 0, nudge: 0, lastIn: 0, frames: 0, warn: false, capT: -1, cine: 0, impactT: 0, bumpT: 0, rollS: 0,
+      // embedded questions: which one is open, how many of each were asked, cooldown, rewards
+      qOpen: null, qn: { collide: 0, buoy: 0, gate: 0 }, qAsked: 0, qRight: 0, qLog: [], lastColQ: -99, shield: false, easeT: 1, qCombo: 0, bonus: 0, bumps: 0, rewardBoost: 0
     }
     var trail = [], parts = [], pending = null
     var vw = 0, vh = 0, dpr = 1, pr = 1, rq = 1, scale = 1, shipY = 0, camX = 0, bgGrad = null, hazeGrad = null, ema = 1 / 60, slowT = 0
@@ -657,7 +743,7 @@
       shipY = vh * (short ? 0.68 : port ? 0.72 : wideMode ? 0.66 : 0.7)
       scale = computeScale(short)
       layoutControls(port, short)
-      if (seaP) { var kk = scale * dpr; seaP.prewarm(ctx, [kk, kk * 0.8, kk * 0.6, kk * 0.5, kk * 0.86 * 0.5, kk * 0.86 * 0.6, kk * 0.86]) }
+      if (seaP) { var kk = scale * dpr; seaP.prewarm(ctx, [kk, kk * 0.8, kk * 0.6, kk * 0.4, kk * 0.86 * 0.4, kk * 0.86 * 0.6, kk * 0.86]) }   // the quality steps 1 / 0.8 / 0.6 / 0.4
       if (route) route.size()
       bgGrad = ctx.createLinearGradient(0, 0, 0, vh)
       if (SEA) {
@@ -673,10 +759,24 @@
       }
       var showLever = opts.lever != null ? !!opts.lever : (!port && vh >= 560)
       lever.style.display = showLever ? '' : 'none'
+      leverOn = showLever
+      if (showLever) { placeLever(); later(placeLever, 400); later(placeLever, 1500) }
       var rs = radar.getBoundingClientRect().width || 100
       radar.width = Math.round(rs * dpr); radar.height = Math.round(rs * dpr)
       radarT = 0
       if (!raf) render()
+    }
+    // the speed lever sits under the HUD column (it covered the "Gunung es dihindari" chip on a tablet, playtest
+    // 2026-09-29) and above the LEFT button; where it does not fit between them it stays hidden
+    var leverOn = false
+    function placeLever () {
+      if (dead || !leverOn) return
+      lever.style.display = ''
+      if (!wideMode) { lever.style.top = ''; lever.style.transform = ''; return }
+      var rr = root.getBoundingClientRect(), tb = tl.getBoundingClientRect().bottom - rr.top + 10
+      var lb = bL.getBoundingClientRect().top - rr.top - 10, h = lever.offsetHeight
+      if (tb + h > lb) { lever.style.display = 'none'; return }
+      lever.style.top = Math.round(Math.max(tb, Math.min((vh - h) / 2, lb - h))) + 'px'; lever.style.transform = 'none'
     }
     /* controls: owner 2026-09-28 — the LEFT / RIGHT buttons and the wheel (Cepat) are 2x their old size
        (turn 88 px, 80 on a short screen; wheel 104, 88 short), in the bottom corners for two thumbs. When the
@@ -691,6 +791,7 @@
       var turn = OLD.turn * 2, boost = OLD.boost * 2
       var row = turn * 2 + boost + 28 + 24
       bB.classList.toggle('is-up', (port && row > vw) || wideMode)
+      root.classList.toggle('tkl-upw', port && row > vw)
       if (short) {
         // side-on phone: LEFT ... [wheel][RIGHT] — the wheel must end before the ship's lanes
         var band = shipBand()
@@ -745,8 +846,11 @@
     function backing () { pr = dpr * rq; cv.width = Math.max(1, Math.round(vw * pr)); cv.height = Math.max(1, Math.round(vh * pr)) }
     function adapt (dt) {
       ema += (dt - ema) * 0.1
-      slowT = clamp(slowT + (ema > 1 / 34 ? dt : -dt * 0.5), 0, 3)
-      if (slowT > 1 && rq > 0.5) { rq = Math.max(0.5, rq - 0.2); slowT = 0; backing() }
+      slowT = clamp(slowT + (ema > 1 / 38 ? dt : -dt * 0.5), 0, 3)   // < ~38 fps average = slow (a 30 fps device steps down)
+      // a slow device settles within ~2 s (each step re-allocates the canvas once); a device still slower than
+      // ~38 fps at 0.6 goes to 0.4: at 4x CPU the canvas flush (ProduceCanvasResource in the commit)
+      // was ~20-33 ms per frame and its spikes crossed the 50 ms long-task line (perf gate, 2026-09-30)
+      if (slowT > 0.6 && rq > 0.41) { rq = Math.max(0.4, rq - 0.2); slowT = 0; backing() }
     }
     var ro = null
     if (W.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(host) } else W.addEventListener('resize', resize)
@@ -919,6 +1023,9 @@
       if (S.impact || S.phase === 'impact') vt = 0
       else if (S.finishing) vt = V0 * 0.7
       if (S.bumpT > 0) { S.bumpT -= dt; vt *= 0.55 }
+      // after a question the ship eases back up to speed (never a jump)
+      if (S.easeT < 1) { S.easeT = Math.min(1, S.easeT + dt / 1.2); vt *= 0.2 + 0.8 * easeIO(S.easeT) }
+      if (S.rewardBoost > 0) S.rewardBoost = Math.max(0, S.rewardBoost - dt)
       var acc = S.impact ? 420 : S.boostT > 0 ? 260 : 110
       if (S.phase === 'impact') acc = 190
       S.v += clamp(vt - S.v, -acc * dt, acc * dt)
@@ -957,7 +1064,7 @@
       objectsTick(dt)
       if (S.impact) {
         S.impact.t += dt
-        if (S.impact.t > (reduced ? 0.5 : 0.85) && !S.waiting) askChallenge()
+        if (S.impact.t > (reduced ? 0.5 : 0.85) && !S.waiting) ask('collide', S.impact.obj)
       }
       if (!fin && !S.finishing && S.d >= w.zEnd - 60) beginFinish()
       if (S.finishing && !S.impact && !S.waiting) { S.finishing += dt; if (S.finishing > 1.6) send() }
@@ -993,6 +1100,8 @@
         var o = w.objs[i]
         if (o.z - 200 > S.d + SHIP_L) break
         if (o.off) continue
+        if (o.type === 'qbuoy') { if (qbuoyTick(o, dt)) return; continue }
+        if (o.type === 'lgate') { if (lgateTick(o, dt)) return; continue }
         var endZ = o.type === 'wall' ? o.z + o.len : o.z + (o.r || 0)
         if (o.hit) { o.fade = Math.min(1, (o.fade || 0) + dt * 1.2); o.x += (o.x >= 0 ? 1 : -1) * dt * 30; continue }
         if (o.type === 'gate') { if (!o.passed && S.d > o.z) { o.passed = true; S.score += 5; pop('Pos aman +5', 0, o.z + 60) } continue }
@@ -1033,7 +1142,42 @@
       spray(o.x, o.z, 10, 70, 'water'); audio.splash(0.8)
       if (!reduced) S.shake = Math.max(S.shake, 2.5)
     }
+    // a Soal buoy / treasure chest: drifts toward a ship sailing close by; touching it asks a bonus question
+    function qbuoyTick (o, dt) {
+      if (o.taken || S.impact || S.phase !== 'player') return false
+      var ahead = o.z - S.d
+      if (ahead > -20 && ahead < 260 && Math.abs(o.x - S.x) < 150) o.x += (S.x - o.x) * Math.min(1, dt * (ahead < 120 ? 5 : 2))
+      if (Math.abs(o.x - S.x) < 50 && Math.abs(ahead) < SHIP_L / 2 + 20) { o.taken = true; ask('buoy', o); return true }
+      if (ahead < -SHIP_L) o.taken = o.passed = true
+      return false
+    }
+    // a lighthouse gate: its chain stops the ship; a question drops the chain (a wrong answer drops it too)
+    function lgateTick (o, dt) {
+      var stopAt = o.z - SHIP_L / 2 - 26   // close: the chain sits right at the bow, clear of the HUD on a phone
+      if (o.dropping && o.drop < 1) { o.drop = Math.min(1, o.drop + dt / (reduced ? 0.25 : 0.75)); if (o.drop >= 1) { o.open = true; o.passed = true } }
+      if (!o.asked && !S.impact && S.d >= stopAt - 1) {
+        o.asked = true; S.d = stopAt; S.v = 0
+        ask('gate', o); return true
+      }
+      if (o.asked && o.drop < 0.55 && S.d > stopAt) { S.d = stopAt; S.v = 0 }
+      return false
+    }
+    function sayBrief (text, ms) {
+      say(text)
+      var tok = S.capTok = (S.capTok || 0) + 1
+      later(function () { if (S.capTok === tok && S.phase !== 'assisted' && S.phase !== 'cinematic') cap.classList.remove('is-on') }, ms || 2600)
+    }
+    function canAskCollide () { return !!QC.on.collide && S.qn.collide < QC.count && S.t - S.lastColQ >= Q_COOL }
     function collide (o) {
+      if (S.shield) {
+        // the shield bubble takes this bump: no slow-down, no question
+        S.shield = false; o.hit = true; o.passed = true; S.inv = 1.2
+        spray(o.x, o.z, 16, 90, 'ice'); sparkleAt(S.x, S.d, 16); audio.chime(false)
+        pop('Perisai melindungi!', S.x, S.d + SHIP_L * 0.6)
+        return
+      }
+      if (!canAskCollide()) { S.bumps++; softBump(o); pop('Pelan-pelan', S.x, S.d + SHIP_L * 0.6); return }
+      S.qn.collide++; S.lastColQ = S.t
       o.hit = true; o.passed = true
       S.impact = { t: 0, obj: o }
       S.lastHit = o
@@ -1042,23 +1186,72 @@
       audio.rumble(1.0, 0.9); audio.splash(1.2)
       if (!reduced) S.shake = 6
     }
-    function askChallenge () {
-      S.waiting = true
+    var INTRO = { collide: 'Kapal membentur es! Jawab soal ini, lalu kapal berlayar lagi.',
+      buoy: 'Pelampung Soal! Jawab dengan benar untuk bintang bonus.', chest: 'Peti Harta! Jawab dengan benar untuk harta bonus.',
+      gate: 'Gerbang Mercusuar! Jawab soalnya, lalu rantai diturunkan.' }
+    // the ONE question contract (collide / buoy / gate): the simulation freezes (rAF stopped, ship where it is),
+    // opts.onQuestion({reason, topic, …}) -> Promise<{correct}>, then answered() resumes with an ease-in
+    function ask (reason, obj) {
+      S.waiting = true; S.qOpen = reason; S.qObj = obj || null
+      banner.classList.remove('is-on'); bannerT = 0
+      if (reason !== 'collide') S.qn[reason]++
+      S.qAsked++
       render(); stop()
-      var info = { reason: 'collision', collisions: S.collisions, world: world, grade: opts.grade, mastery: opts.mastery }
+      var info = { reason: reason, topic: QC.topic, index: S.qAsked, collisions: S.collisions, world: world, grade: opts.grade, mastery: opts.mastery,
+        kind: obj && obj.kind, intro: INTRO[obj && obj.kind === 'chest' ? 'chest' : reason] }
       var pr0
-      try { pr0 = typeof opts.onChallenge === 'function' ? opts.onChallenge(info) : defaultChallenge(info) } catch (e) { pr0 = null; if (W.console) console.error(e) }
+      try {
+        if (typeof opts.onQuestion === 'function') pr0 = opts.onQuestion(info)
+        else if (typeof opts.onChallenge === 'function') {
+          var legacy = {}; for (var k in info) legacy[k] = info[k]
+          legacy.reason = reason === 'collide' ? 'collision' : reason
+          pr0 = opts.onChallenge(legacy)
+        } else pr0 = defaultChallenge(info)
+      } catch (e) { pr0 = null; if (W.console) console.error(e) }
       pending = pr0
-      var fin0 = function (res) { if (pending !== pr0) return; pending = null; recover(res || { correct: true, tries: 1, hints: 0 }) }
+      var fin0 = function (res) { if (pending !== pr0) return; pending = null; answered(reason, obj, res || { correct: true, tries: 1, hints: 0 }) }
       if (pr0 && typeof pr0.then === 'function') pr0.then(fin0, function () { fin0(null) })
       else fin0(pr0)
+    }
+    function answered (reason, obj, res) {
+      if (dead) return
+      var ok = !!res.correct
+      S.qOpen = null; S.qObj = null
+      S.qLog.push({ reason: reason, correct: ok, t: Math.round(S.t * 10) / 10 })
+      if (ok) S.qRight++
+      S.qCombo = ok ? S.qCombo + 1 : 0
+      if (ok && S.qCombo >= 2) { S.score += 10 * S.qCombo; later(function () { pop('Kombo Pintar x' + S.qCombo + '!', S.x, S.d + SHIP_L) }, 500) }
+      if (!ok) sayBrief(Q_WRONG)
+      if (reason === 'collide') {
+        recover(res)
+        // reward: a shield bubble that takes the next bump
+        if (ok) { S.shield = true; sparkleAt(S.x, S.d, 22) }
+        S.easeT = 0
+        return
+      }
+      S.waiting = false
+      S.easeT = 0
+      if (reason === 'buoy') {
+        if (ok) {
+          S.bonus++; S.score += 30
+          S.boostT = 3; S.rewardBoost = 3; S.boosted = true
+          sparkleAt(obj.x, obj.z, 30); if (confetti && !reduced) confetti.burst(vw / 2, vh * 0.45, 40)
+          pop(obj.kind === 'chest' ? 'Harta bonus! Melaju cepat!' : 'Bintang bonus! Melaju cepat!', 0, 0, true)
+        } else pop('Tetap semangat!', 0, 0, true)
+        audio.chime(ok)
+      } else if (reason === 'gate') {
+        var drop = function () { obj.dropping = true; audio.splash(1) }
+        if (ok) { drop(); S.score += 20; S.boostT = 2; S.rewardBoost = 2; sparkleAt(0, obj.z, 26); pop('Gerbang terbuka!', 0, 0, true) } else { pop('Gerbang tetap dibuka!', 0, 0, true); later(drop, 900) }
+        audio.chime(ok)
+      }
+      if (!paused && !D.hidden) start()
     }
     function defaultChallenge (info) {
       if (!W.TKQuiz || typeof W.TKQuiz.challenge !== 'function') return { correct: true, tries: 1, hints: 0 }
       return W.TKQuiz.challenge(root, {
-        domain: opts.domain || 'campur', world: world, grade: opts.grade, mastery: opts.mastery, islam: opts.islam, lib: opts.lib,
+        domain: info.topic || opts.domain || 'campur', world: world, grade: opts.grade, mastery: opts.mastery, islam: opts.islam, lib: opts.lib,
         sfx: opts.quizSfx, sound: opts.sfx && opts.sfx.muted ? false : undefined, reducedMotion: reduced, seed: num(level.seed, 7) * 97 + info.collisions * 13 + Math.floor(S.t),
-        title: 'Tantangan Pengetahuan', intro: 'Kapal membentur es! Jawab soal ini, lalu kapal berlayar lagi.', nextLabel: 'Lanjut Berlayar'
+        title: 'Tantangan Pengetahuan', intro: info.intro || INTRO.collide, nextLabel: 'Lanjut Berlayar'
       })
     }
     function recover (res) {
@@ -1093,7 +1286,8 @@
     }
     function result () {
       return { stars: stars(), time: Math.round(S.t * 10) / 10, avoided: S.avoided, iceTotal: w.iceTotal, collisions: S.collisions, correct: S.correct,
-        tries: S.tries, hints: S.hints, tokens: S.tokens, starsCollected: S.stars, starsTotal: w.starsTotal, score: S.score, final: fin, difficulty: diff }
+        tries: S.tries, hints: S.hints, tokens: S.tokens, starsCollected: S.stars, starsTotal: w.starsTotal, score: S.score, final: fin, difficulty: diff,
+        qAsked: S.qAsked, qRight: S.qRight, bonus: S.bonus, bumps: S.bumps }
     }
     function send () {
       if (doneSent) return
@@ -1188,7 +1382,7 @@
       // glints + foam flecks, mapped the same (flat) way
       ctx.setTransform(pr * s0, 0, 0, pr * s0, pr * (vw / 2 - camX * s0), pr * (shipY + S.d * s0))
       var x0 = camX - vw / 2 / s0, x1 = camX + vw / 2 / s0, v0 = -S.d - shipY / s0, v1 = -S.d + (vh - shipY) / s0
-      SEA.sparkles(ctx, themeName, x0, v0, x1, v1, S.t, reduced, null)
+      if (rq > 0.41) SEA.sparkles(ctx, themeName, x0, v0, x1, v1, S.t, reduced, null)   // lowest quality step: no glints (canvas flush budget)
       ctx.setTransform(pr, 0, 0, pr, 0, 0)
     }
     function drawDressing (z0, z1) {
@@ -1357,6 +1551,8 @@
         var al = o.hit ? 1 - (o.fade || 0) * 0.7 : 1
         var bob = reduced ? 0 : Math.sin(S.t * 1.6 + (o.bob || 0))
         if (o.type === 'gate') { drawGate(o); continue }
+        if (o.type === 'qbuoy') { if (!o.taken || o === S.qObj) drawQBuoy(o); continue }
+        if (o.type === 'lgate') { drawLGate(o); continue }
         if (o.type === 'wall') {
           var n = Math.max(2, Math.round(o.len / 70))
           for (var k = n - 1; k >= 0; k--) drawIceSpr(SPR.berg[(o.shape + k) % 6], o.x + (k % 2 ? 6 : -6), o.z + 20 + k * (o.len - 40) / (n - 1), o.hw * 1.05, al)
@@ -1392,6 +1588,68 @@
             ctx.restore()
           }
         }
+      }
+    }
+    // a glowing Soal buoy (or treasure chest): pulsing gold ring, owner sprite, a turning sparkle, "SOAL" tag
+    function drawQBuoy (o) {
+      proj(o.x, o.z)
+      var s = 62 * PS, pulse = reduced ? 0.5 : 0.5 + 0.5 * Math.sin(S.t * 3.2 + o.bob), bob = reduced ? 0 : Math.sin(S.t * 1.8 + o.bob) * 3 * PS
+      var ring = reduced ? 0.55 : (S.t * 0.8 + o.bob) % 1
+      ctx.fillStyle = 'rgba(255,214,90,' + (0.18 + 0.14 * pulse).toFixed(3) + ')'
+      ctx.beginPath(); ctx.ellipse(PX, PY, s * 0.78, s * 0.36, 0, 0, TAU); ctx.fill()
+      ctx.strokeStyle = 'rgba(255,236,150,' + (0.9 * (1 - ring)).toFixed(3) + ')'; ctx.lineWidth = Math.max(1.5, 3 * PS)
+      ctx.beginPath(); ctx.ellipse(PX, PY, s * (0.55 + ring * 0.6), s * (0.26 + ring * 0.28), 0, 0, TAU); ctx.stroke()
+      var im = o.kind === 'chest' ? IMG.chest : IMG.buoy
+      if (ready(im)) { var ih = s * im.naturalHeight / im.naturalWidth; ctx.drawImage(im, PX - s / 2, PY - ih * 0.82 + bob, s, ih) }
+      var tw = 0.5 + 0.5 * pulse, gl = s * (0.22 + tw * 0.2)
+      ctx.save(); ctx.translate(PX + s * 0.34, PY - s * 0.7 + bob); ctx.rotate(reduced ? 0 : S.t * 1.5)
+      ctx.fillStyle = 'rgba(255,255,235,' + (0.6 + tw * 0.4).toFixed(3) + ')'
+      ctx.beginPath(); ctx.moveTo(0, -gl); ctx.lineTo(gl * 0.2, 0); ctx.lineTo(0, gl); ctx.lineTo(-gl * 0.2, 0); ctx.closePath(); ctx.fill()
+      ctx.beginPath(); ctx.moveTo(-gl, 0); ctx.lineTo(0, gl * 0.2); ctx.lineTo(gl, 0); ctx.lineTo(0, -gl * 0.2); ctx.closePath(); ctx.fill()
+      ctx.restore()
+      var fs = Math.max(10, Math.round(15 * PS))
+      ctx.font = fs + 'px "Fredoka One", Fredoka, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+      var tw2 = ctx.measureText('SOAL').width + fs
+      ctx.fillStyle = 'rgba(74,44,16,.92)'; ctx.fillRect(PX - tw2 / 2, PY + s * 0.2, tw2, fs * 1.4)
+      ctx.fillStyle = '#ffe066'; ctx.fillText('SOAL', PX, PY + s * 0.2 + fs * 0.72)
+      ctx.textBaseline = 'alphabetic'
+    }
+    // a lighthouse on each side and a chain across all lanes; the chain drops into the sea when it opens
+    function drawLGate (o) {
+      var xs = LANE * 1.5 + 60
+      proj(-xs, o.z); var ax = PX, ay = PY, k = PS; proj(xs, o.z); var bx = PX
+      var im = IMG.house, hs = 118 * k
+      if (!reduced && !o.open) {
+        // the lamps sweep a soft beam across the chain
+        var sw = Math.sin(S.t * 1.6) * 0.5 + 0.5
+        ctx.fillStyle = 'rgba(255,240,170,.13)'
+        ctx.beginPath(); ctx.moveTo(ax, ay - hs * 0.78); ctx.lineTo(ax + (bx - ax) * (0.3 + sw * 0.5), ay - 26 * k); ctx.lineTo(ax + (bx - ax) * (0.45 + sw * 0.5), ay + 10 * k); ctx.closePath(); ctx.fill()
+      }
+      if (o.drop < 1) {
+        var fall = o.drop, a = reduced ? 1 - fall : 1 - Math.max(0, fall - 0.5) * 2, sag = (12 + (reduced ? 0 : fall * 70)) * k
+        ctx.globalAlpha = Math.max(0, a)
+        var n = 18, lw = Math.max(2, 5 * k)
+        for (var i = 0; i <= n; i++) {
+          var u = i / n, x = ax + (bx - ax) * u, y = ay - 30 * k + Math.sin(u * Math.PI) * sag + (reduced ? 0 : fall * 40 * k)
+          ctx.strokeStyle = i % 2 ? '#7d8791' : '#c9d2da'; ctx.lineWidth = lw
+          ctx.beginPath(); ctx.ellipse(x, y, (i % 2 ? 4 : 9) * k + 1, (i % 2 ? 9 : 5) * k + 1, 0, 0, TAU); ctx.stroke()
+        }
+        if (!o.asked || !o.dropping) {
+          // the brass lock plate in the middle
+          var mx = (ax + bx) / 2, my = ay - 30 * k + sag, r = 20 * k + 4
+          ctx.fillStyle = '#d9a441'; ctx.strokeStyle = '#6b4412'; ctx.lineWidth = Math.max(2, 3 * k)
+          ctx.beginPath(); ctx.arc(mx, my, r, 0, TAU); ctx.fill(); ctx.stroke()
+          ctx.fillStyle = '#3b2400'; ctx.font = Math.round(r * 1.3) + 'px "Fredoka One", Fredoka, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+          ctx.fillText('?', mx, my + 1); ctx.textBaseline = 'alphabetic'
+        }
+        ctx.globalAlpha = 1
+      } else if (!reduced && (o.ripple = (o.ripple || 0) + 0.02) < 1) {
+        ctx.strokeStyle = 'rgba(235,250,255,' + (0.6 * (1 - o.ripple)).toFixed(3) + ')'; ctx.lineWidth = 2
+        ctx.beginPath(); ctx.ellipse((ax + bx) / 2, ay, (bx - ax) * (0.3 + o.ripple * 0.3), 14 * k * (1 + o.ripple), 0, 0, TAU); ctx.stroke()
+      }
+      if (ready(im)) {
+        var iw = hs * im.naturalWidth / im.naturalHeight
+        ctx.drawImage(im, ax - iw / 2, ay - hs * 0.9, iw, hs); ctx.drawImage(im, bx - iw / 2, ay - hs * 0.9, iw, hs)
       }
     }
     function drawGate (o) {
@@ -1430,6 +1688,7 @@
         }
       }
       if (S.inv > 0) { ctx.strokeStyle = 'rgba(255,230,120,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, SHIP_B * 1.3 * k, SHIP_L * 0.62 * k, 0, 0, TAU); ctx.stroke() }
+      if (S.shield) drawShield(k)
       ctx.globalAlpha = blink
       // hull roll: a slight squash across the beam toward the turn
       ctx.scale(1 - Math.abs(S.rollS) * 0.14, 1)
@@ -1442,6 +1701,17 @@
       }
       ctx.globalAlpha = 1
       ctx.restore()
+    }
+    // the shield bubble (reward for a right answer after a bump): a soft blue dome with a turning glint
+    function drawShield (k) {
+      var rx = Math.max(SHIP_B * 1.9, ART_L * 0.34) * k, ry = ART_L * 0.62 * k, pl = reduced ? 0 : Math.sin(S.t * 3) * 0.04
+      var g = ctx.createRadialGradient(0, 0, ry * 0.3, 0, 0, ry)
+      g.addColorStop(0, 'rgba(140,220,255,0)'); g.addColorStop(0.8, 'rgba(140,220,255,.16)'); g.addColorStop(1, 'rgba(190,240,255,.42)')
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, 0, rx * (1 + pl), ry * (1 + pl), 0, 0, TAU); ctx.fill()
+      ctx.strokeStyle = 'rgba(210,245,255,.85)'; ctx.lineWidth = Math.max(1.5, 3 * k); ctx.stroke()
+      var a0 = reduced ? -2.2 : S.t * 2
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = Math.max(2, 4 * k)
+      ctx.beginPath(); ctx.ellipse(0, 0, rx * 0.86, ry * 0.86, 0, a0, a0 + 0.7); ctx.stroke()
     }
     function drawParts () {
       if (!parts.length) return
@@ -1504,6 +1774,8 @@
         var px = r + (o.x - S.x) * q, py = r - dz * q
         if (o.ice) { c.fillStyle = S.warn ? '#ffc070' : '#bff3ff'; var rr = Math.max(1.6 * dpr, (o.type === 'wall' ? o.hw : o.r) * q * 1.1); c.beginPath(); c.arc(px, o.type === 'wall' ? py - o.len * q / 2 : py, rr, 0, TAU); c.fill() }
         else if (o.type === 'star' || o.type === 'token') { c.fillStyle = '#ffd166'; c.beginPath(); c.arc(px, py, 1.6 * dpr, 0, TAU); c.fill() }
+        else if (o.type === 'qbuoy') { c.fillStyle = '#7ff0ff'; c.beginPath(); c.arc(px, py, 3 * dpr, 0, TAU); c.fill() }
+        else if (o.type === 'lgate' && !o.open) { c.fillStyle = '#ffb347'; c.fillRect(px - r, py - 1.5 * dpr, 2 * r, 3 * dpr) }
       }
       c.fillStyle = '#fff'; c.font = 'bold ' + Math.round(9 * dpr) + 'px system-ui'; c.textAlign = 'center'; c.fillText('U', r, 11 * dpr)
       c.translate(r, r); c.rotate(S.head)
@@ -1542,8 +1814,10 @@
       S.d = cur.d; S.x = cur.x; S.head = cur.h; camX = cur.c
       if (confetti && confetti.n) confetti.step(dt)
       hudT -= dt; radarT -= dt
-      if (hudT <= 0) { hudT = 0.12; hud() }
-      if (radarT <= 0) { radarT = 0.1; drawRadar() }
+      // the DOM HUD and the radar canvas never repaint in the same frame: each is a layer repaint + upload in the
+      // commit, and at 4x CPU the two together pushed a frame over 50 ms (perf gate, 2026-09-30); a radar due in a
+      // HUD frame draws on the next one
+      if (hudT <= 0) { hudT = 0.12; hud() } else if (radarT <= 0) { radarT = 0.1; drawRadar() }
       S.frames++
       TKLanes._frames++
       if (!S.done) raf = W.requestAnimationFrame(frame)
@@ -1584,6 +1858,10 @@
           seen: (S.seen || []).slice(), theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh,
           ship: shipId || null, art: shipImg ? shipImg.src : null, artReady: ready(shipImg), shipY: shipY, timers: timers.length,
           ctrl: { turn: ctrlSz.turn, boost: ctrlSz.boost, k: ctrlSz.k, old: OLD }, shipRect: shipRect(),
+          q: { open: S.qOpen, n: { collide: S.qn.collide, buoy: S.qn.buoy, gate: S.qn.gate }, asked: S.qAsked, right: S.qRight, log: S.qLog.slice(), lastCollideT: S.lastColQ,
+            cool: Q_COOL, count: QC.count, on: Object.keys(QC.on), topic: QC.topic, shield: S.shield, boost: S.rewardBoost, bonus: S.bonus, combo: S.qCombo, ease: S.easeT, bumps: S.bumps,
+            buoys: w.objs.filter(function (o) { return o.type === 'qbuoy' }).map(function (o) { return { x: Math.round(o.x), z: Math.round(o.z), kind: o.kind, taken: o.taken } }),
+            gates: w.objs.filter(function (o) { return o.type === 'lgate' }).map(function (o) { return { z: Math.round(o.z), asked: o.asked, drop: o.drop, open: o.open } }) },
           wall: w.corridor ? w.corridor.wall : null, lastHit: S.lastHit ? { type: S.lastHit.type, x: Math.round(S.lastHit.x), z: Math.round(S.lastHit.z), extra: !!S.lastHit.extra } : null }
       }
     }

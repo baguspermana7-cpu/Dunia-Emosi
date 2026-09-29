@@ -96,6 +96,188 @@ async function fps (p, ms) {
 
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
 
+// ── Q. embedded questions (owner 2026-09-29: action first; questions on a bump, a Soal buoy, a lighthouse gate) ──
+//   stub opts.onQuestion (harness &q=stub): each trigger opens exactly ONE question, the sim is frozen while it is
+//   open (rAF stopped, x/y unchanged), resumes with an ease-in; right = bonus + boost / shield / chain drops, wrong =
+//   the captain's "Tidak apa-apa…" and the chain STILL drops; collision questions obey the 8 s cooldown + per-level
+//   cap (the rest are plain bumps), the shield takes one bump; no handler = no questions (old behaviour); reduced
+//   motion; real TKQuiz card screenshots. QA_ONLY=action runs just this section.
+const QSHOTS = process.env.QA_ACTION_SHOTS || '/tmp/claude-1000/-home-baguspermana7/006f0cec-d381-48ee-882e-83cf434d8153/scratchpad/tk-action/'
+fs.mkdirSync(QSHOTS, { recursive: true })
+const qst = p => p.evaluate(() => window.__h.state())
+async function qWait (p, fn, ms, arg) { const t0 = Date.now(); while (Date.now() - t0 < ms) { const v = await p.evaluate(fn, arg); if (v) return v; await sleep(80) } return null }
+const nextQ = (p, ms) => qWait(p, () => { const s = window.__h.state(); return s.waiting || s.sent ? { open: s.q.open, x: s.x, y: s.y, sent: s.sent, calls: window.__q.length } : null }, ms)
+{
+  // 0) no question handler = no Soal buoys / gates / collision questions (every older steer gate keeps its behaviour)
+  {
+    const { p, errs } = await open(b, 390, 844, 'mode=gates&cd=0&muted=1')
+    await sleep(800)
+    const s = await qst(p)
+    check(s.q.buoys.length === 0 && s.q.gates.length === 0 && s.q.on.length === 0, `Q steer: no onQuestion handler -> no questions placed (${JSON.stringify(s.q.on)})`)
+    check(errs.length === 0, `Q steer: no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
+  // 0b) default with a handler and no level.questions: collide + 2 buoys
+  {
+    const { p } = await open(b, 390, 844, 'mode=ice&vessel=explorer&cd=0&muted=1&q=stub')
+    await sleep(500)
+    const s = await qst(p)
+    check(s.q.on.join(',') === 'collide,buoy' && s.q.buoys.length === 2 && s.q.gates.length === 0, `Q steer: no level.questions -> collide + 2 buoys (${s.q.on.join(',')}, ${s.q.buoys.length} buoys)`)
+    await p.close()
+  }
+  // 1) buoy + gate + buoy along a gates run, real button autopilot
+  for (const [w, h, rm] of [[1280, 800, false], [390, 844, true]]) {
+    const tag = `Q steer ${w}x${h}${rm ? ' reduced' : ''}`
+    const { p, errs } = await open(b, w, h, `mode=gates&cd=0&muted=1&seed=7&q=stub&qon=collide,buoy,gate&qgates=1&qbuoys=2${rm ? '&rm=1' : ''}`)
+    const s0 = await qst(p)
+    check(s0.q.buoys.length === 2 && s0.q.gates.length === 1, `${tag}: level.questions placed 2 Soal buoys + 1 lighthouse gate (${s0.q.buoys.length}/${s0.q.gates.length})`)
+    await p.evaluate(AUTOPILOT)
+    const seen = []
+    for (let k = 0; k < 8; k++) {
+      const o = await nextQ(p, 90000)
+      if (!o || o.sent) break
+      seen.push(o.open)
+      check(o.calls === k + 1, `${tag}: ${o.open} opens exactly one question (onQuestion calls ${o.calls})`)
+      const info = await p.evaluate(i => window.__q[i], k)
+      check(info.reason === o.open && typeof info.intro === 'string' && info.intro.length > 10, `${tag}: onQuestion({reason:'${info.reason}', topic, intro}) — "${info.intro}"`)
+      await sleep(700)
+      const fr = await qst(p)
+      check(fr.waiting && !fr.running && Math.abs(fr.x - o.x) < 0.01 && Math.abs(fr.y - o.y) < 0.01, `${tag}: ${o.open} question freezes the ship (y ${o.y.toFixed(1)} -> ${fr.y.toFixed(1)}, loop ${fr.running ? 'running' : 'stopped'})`)
+      if (o.open !== 'collide' && !seen.slice(0, -1).includes(o.open)) await p.screenshot({ path: `${QSHOTS}steer-stub-${o.open}-${w}x${h}.png` })
+      const right = o.open !== 'gate'
+      const bonus0 = fr.q.bonus
+      await p.evaluate(ok => window.__qAnswer(ok), right)
+      const af = await qWait(p, () => { const s = window.__h.state(); return !s.waiting && s.running ? s : null }, 3000)
+      check(!!af && af.q.ease < 1, `${tag}: ${o.open} answered -> the loop resumes with an ease-in (ease ${af && af.q.ease.toFixed(2)})`)
+      if (o.open === 'collide') check(af && af.q.shield, `${tag}: right answer after a bump = a shield bubble`)
+      if (o.open === 'buoy') check(af && af.q.bonus === bonus0 + 1 && af.q.boost > 2.5, `${tag}: right buoy answer = bonus star + 3 s speed boost (bonus ${af && af.q.bonus}, boost ${af && af.q.boost.toFixed(1)})`)
+      if (o.open === 'gate') {
+        const cap = await p.evaluate(() => { const c = document.querySelector('.tks-cap'); return c && c.classList.contains('is-on') ? c.innerText : '' })
+        check(/Tidak apa-apa, coba lagi nanti!/.test(cap) && /Kapten/.test(cap), `${tag}: wrong answer -> the captain says "Tidak apa-apa, coba lagi nanti!" (${cap.replace(/\n/g, ' ')})`)
+        const g = await qWait(p, () => { const s = window.__h.state(); return s.q.gates[0].open ? s : null }, 5000)
+        check(!!g && g.q.gates[0].drop === 1, `${tag}: after a wrong answer the chain still drops and the gate opens`)
+        const past = await qWait(p, y => window.__h.state().y < y - 60 ? true : null, 15000, g ? g.q.gates[0].y : 0)
+        check(!!past, `${tag}: the ship sails through the opened gate`)
+        if (rm) { const s2 = await qst(p); check(s2.parts === 0 && s2.shake === 0, `${tag}: reduced motion: no particles / shake around the gate (${s2.parts}/${s2.shake})`) }
+      }
+    }
+    const trig = seen.filter(r => r !== 'collide')
+    check(trig.join(',') === 'buoy,gate,buoy', `${tag}: each buoy / gate fired exactly once, in course order (${seen.join(',')})`)
+    const d = await waitDone(p, 90000)
+    check(!!d && d.qAsked === seen.length && d.qRight === seen.length - 1 && d.bonus === 2 && d.stars >= 1, `${tag}: onDone carries the questions (asked ${d && d.qAsked}, right ${d && d.qRight}, bonus ${d && d.bonus}, stars ${d && d.stars})`)
+    const x = await p.evaluate(() => ({ calls: window.__q.length, bad: window.__bad }))
+    check(x.calls === seen.length, `${tag}: one onQuestion call per trigger (${x.calls} calls, ${seen.length} triggers)`)
+    check(x.bad.length === 0, `${tag}: no failure words`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => window.__autoStop && window.__autoStop())
+    await p.close()
+  }
+  // 2) collisions: a berg dead on the course every 275 units; <= 1 collision question per 8 s game time, <= count
+  //    per level, the rest are plain bumps; the shield (right answer) takes the next bump without a hit
+  {
+    const tag = 'Q steer collide'
+    const { p, errs } = await open(b, 390, 844, 'manual=1&muted=1&q=stub')
+    await p.evaluate(() => {
+      const gates = [], ice = []
+      for (let y = 700; y < 5400; y += 550) gates.push({ x: 0, y, w: 260 })
+      for (let y = 420; y < 5400; y += 275) if (y % 550 !== 150) ice.push({ x: 0, y, r: 40 })
+      // count 2 (final gate 2026-09-30): a bumped boat drifts off the berg line, so a third question >= 8 s after
+      // the second was not guaranteed on this course (7 hits, 2 questions 11.4 s apart); 2 still proves the cap
+      // because bumps keep coming after the second question
+      __mount({ mode: 'gates', vessel: 'boat', seed: 2, length: 5600, assist: false, gates, ice, questions: { on: ['collide'], count: 2 } }, { countdown: false })
+      window.__ev = []
+      let prevShield = false, prevHits = 0
+      const rec = () => { const s = window.__h.state()
+        if (prevShield && !s.q.shield) window.__ev.push({ shieldUsed: true, t: s.t, hitsBefore: prevHits, hitsAfter: s.hits })
+        prevShield = s.q.shield; prevHits = s.hits
+        if (s.q.n.collide >= 2 && window.__hitsAtCap == null) window.__hitsAtCap = s.hits
+        if (!s.sent) requestAnimationFrame(rec) }
+      requestAnimationFrame(rec)
+    })
+    await p.evaluate(AUTOPILOT)
+    const times = [], answers = [true, false]
+    for (let k = 0; k < 6; k++) {
+      const o = await nextQ(p, 60000)
+      if (!o || o.sent) break
+      times.push((await qst(p)).t)
+      await sleep(250)
+      await p.evaluate(ok => window.__qAnswer(ok), answers[k] !== false)
+      await qWait(p, () => !window.__h.state().waiting, 3000)
+    }
+    const d = await waitDone(p, 150000)
+    const s = await qst(p)
+    const gaps = times.slice(1).map((t, i) => +(t - times[i]).toFixed(1))
+    const hitsAtCap = await p.evaluate(() => window.__hitsAtCap)
+    check(times.length === 2 && s.q.n.collide === 2 && s.hits > hitsAtCap, `${tag}: per-level cap: exactly 2 collision questions, later bumps ask nothing (${times.length}, n ${s.q.n.collide}; hits ${hitsAtCap} at the cap -> ${s.hits})`)
+    check(gaps.every(g => g >= 8), `${tag}: >= 8 s game time between collision questions (${gaps.join(', ')} s)`)
+    check(s.hits > 3, `${tag}: the other bumps ask nothing (${s.hits} hits, ${times.length} questions)`)
+    const ev = await p.evaluate(() => window.__ev)
+    check(ev.length >= 1 && ev.every(e => e.hitsAfter === e.hitsBefore), `${tag}: the shield takes one bump without a hit (${JSON.stringify(ev)})`)
+    check(!!d && d.qAsked === 2, `${tag}: the level still finishes (onDone asked ${d && d.qAsked}, stars ${d && d.stars})`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => window.__autoStop && window.__autoStop())
+    await p.close()
+  }
+  // 3) the real TKQuiz.challenge card over each trigger (screenshots): collide, buoy, gate at two sizes
+  for (const [w, h] of [[1280, 800], [390, 844]]) {
+    const tag = `Q steer real ${w}x${h}`
+    const { p, errs } = await open(b, w, h, 'manual=1&muted=1&q=real')
+    await p.evaluate(() => __mount({ mode: 'gates', vessel: 'boat', seed: 5, length: 2600, gates: [{ x: 0, y: 1400, w: 300 }], ice: [{ x: 0, y: 380, r: 40 }],
+      questions: { on: ['collide', 'buoy', 'gate'], buoys: 1, gates: 1 } }, { countdown: false }))
+    await p.evaluate(AUTOPILOT)
+    const got = {}
+    for (let k = 0; k < 4; k++) {
+      const o = await nextQ(p, 60000)
+      if (!o || o.sent) break
+      const card = await qWait(p, () => { const c = document.querySelector('.tkq-chal.on'); return c ? c.innerText.slice(0, 160) : null }, 4000)
+      await sleep(500)
+      if (!got[o.open]) await p.screenshot({ path: `${QSHOTS}steer-${o.open}-${w}x${h}.png` })
+      got[o.open] = !!card
+      await p.evaluate(() => window.__qp && window.__qp.close())
+      await qWait(p, () => !window.__h.state().waiting, 3000)
+    }
+    const dbg = await p.evaluate(() => { const s = window.__h.state(); return { y: Math.round(s.y), n: s.q.n, sent: s.sent } })
+    check(got.collide && got.buoy && got.gate, `${tag}: the real Knowledge Challenge card opens for collide / buoy / gate (${JSON.stringify(got)} ${JSON.stringify(dbg)})`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => window.__autoStop && window.__autoStop())
+    await p.close()
+  }
+  // 4) playtest 2026-09-29: the host's top bar stays over a steer step -> opts.topInset pushes the whole HUD below it
+  {
+    const { p, errs } = await open(b, 1280, 800, 'manual=1&muted=1')
+    await p.evaluate(() => __mount({ mode: 'sail', vessel: 'clipper', seed: 3 }, { countdown: false, topInset: 70 }))
+    await sleep(600)
+    const r = await p.evaluate(() => [...document.querySelectorAll('.tks-goals, .tks-pausebtn, .tks-stats > *')].map(e => Math.round(e.getBoundingClientRect().top)))
+    check(r.length >= 3 && r.every(t => t >= 70), `Q steer HUD: topInset 70 keeps the mission card, pause button and chips below the host bar (tops ${r.join(',')})`)
+    const s = await qst(p)
+    const sr = s.shipRect, hud = await p.evaluate(() => { const b = document.querySelector('.tks-goals').getBoundingClientRect(); return { bottom: b.bottom } })
+    check(sr.top > hud.bottom, `Q steer HUD: the ship stays clear of the offset HUD (ship top ${Math.round(sr.top)} > HUD ${Math.round(hud.bottom)})`)
+    check(errs.length === 0, `Q steer HUD: no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
+  // 5) playtest 2026-09-29 (a wobbling kid circled 208 s): after netAfter s the level shortens to the next gate and the
+  //    course heading is eased in; at capAfter s the ship arrives. Seam: opts.netAfter / capAfter (default 90 / 150 s).
+  {
+    const tag = 'Q steer safety net'
+    const { p, errs } = await open(b, 390, 844, 'manual=1&muted=1')
+    await p.evaluate(() => __mount({ mode: 'gates', vessel: 'liner', seed: 4, length: 3600, gateCount: 6 }, { countdown: false, netAfter: 5, capAfter: 11 }))
+    // wobble: hold LEFT and RIGHT in turns, never aiming
+    await p.evaluate(() => { const L = document.querySelector('.tks-left-btn'), R = document.querySelector('.tks-right-btn'); let k = 0
+      const ev = (btn, type) => btn.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 9, pointerType: 'touch', isPrimary: true }))
+      window.__wob = setInterval(() => { const a = k % 2 ? L : R, o = k % 2 ? R : L; ev(o, 'pointerup'); ev(a, 'pointerdown'); k++ }, 900) })
+    const g0 = (await qst(p)).gates
+    const n1 = await qWait(p, () => { const s = window.__h.state(); return s.q.net ? s : null }, 20000)
+    check(!!n1 && n1.gates <= n1.gate + 1 && n1.gates < g0, `${tag}: after netAfter the remaining gates shrink to the next one (${g0} -> ${n1 && n1.gates}, at gate ${n1 && n1.gate})`)
+    const d = await waitDone(p, 30000)
+    check(!!d && d.time <= 12.5 && d.stars >= 1, `${tag}: at capAfter the ship arrives, calm (onDone ${JSON.stringify(d)})`)
+    const bad = await p.evaluate(() => window.__bad)
+    check(bad.length === 0 && errs.length === 0, `${tag}: no failure words, no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => clearInterval(window.__wob))
+    await p.close()
+  }
+}
+if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n${fails} FAILED` : '\nALL PASS'); process.exit(fails ? 1 : 0) }
+
 for (const [w, h] of SIZES) {
   const tag = `${w}x${h}`
   // ── gates (Titanic) + ice (Titanic) + sail (Cutty Sark) + current (Kon-Tiki), driven to the finish ──
@@ -367,7 +549,10 @@ for (const rm of [0, 1]) {
   const OLDW = (w, h) => Math.min(w, h) >= 640 ? 156 : h < 480 ? 124 : 136
   const OLDH = (w, h) => h < 480 ? 80 : 84
   const EMOJI = /\p{Extended_Pictographic}/u
-  // catalogue: 25 ships, every side AND top view resolves and loads
+  // catalogue: 50 ships in two groups (Kapal Modern 25 + Kapal Legenda 25), every side AND top view resolves
+  // and loads, plus any alt side art the legend ships point at. CHILD SAFETY ban list on every name/real/fact.
+  const TKIDS = { legend: [] }
+  const BAN = /tenggelam|karam|tewas|meninggal|korban|perang|tempur|torpedo|senjata|\bbom\b|meriam|bencana|celaka|hancur|menabrak|rudal|tembak/i
   {
     const { p, errs } = await open(b, 390, 844, 'manual=1&muted=1')
     const cat = await p.evaluate(async () => {
@@ -375,14 +560,20 @@ for (const rm of [0, 1]) {
       for (const s of TKFleet.ships) {
         const side = AssetIndex.path(s.side), top = AssetIndex.path(s.top)
         const ok = async u => { if (!u) return false; const r = await fetch(u); return r.ok && (await r.blob()).size > 2000 }
-        out.push({ id: s.id, side: await ok(side), top: await ok(top), text: s.name + ' ' + s.fact, stats: [s.stats.cepat, s.stats.lincah, s.stats.kuat] })
+        let alt = true
+        for (const k of s.alt || []) alt = alt && await ok(AssetIndex.path(k))
+        out.push({ id: s.id, group: s.group, side: await ok(side), top: await ok(top), alt, legendArt: s.group !== 'legend' || (/^tk-legend-side\//.test(s.side) && /^tk-legend-top\//.test(s.top)),
+          text: s.name + ' ' + (s.real || '') + ' ' + s.fact, stats: [s.stats.cepat, s.stats.lincah, s.stats.kuat], hand: TKFleet.handling(s.id) })
       }
-      return { out, rec: TKFleet.recommended }
+      return { out, rec: TKFleet.recommended, groups: TKFleet.groups.map(g => [g.id, g.label, g.ids.length]) }
     })
-    const bad = cat.out.filter(x => !x.side || !x.top)
-    check(cat.out.length === 25 && bad.length === 0, `fleet catalogue: 25 ships, each with a side view AND a top view that load (${bad.map(x => x.id).join(',') || 'all ok'})`)
-    check(cat.out.every(x => !EMOJI.test(x.text) && x.stats.every(v => v >= 1 && v <= 3)), 'fleet catalogue: no emoji in names/facts, stats 1..3')
-    check(!cat.out.some(x => /senjata|meriam|rudal|tembak|perang/i.test(x.text)), 'fleet catalogue: no weapons talk')
+    const bad = cat.out.filter(x => !x.side || !x.top || !x.alt || !x.legendArt)
+    check(cat.out.length === 50 && bad.length === 0, `fleet catalogue: 50 ships, each with a side view AND a top view that load (${bad.map(x => x.id).join(',') || 'all ok'})`)
+    check(JSON.stringify(cat.groups) === JSON.stringify([['modern', 'Kapal Modern', 25], ['legend', 'Kapal Legenda', 25]]) && new Set(cat.out.map(x => x.id)).size === 50, `fleet catalogue: two groups of 25, unique ids (${JSON.stringify(cat.groups)})`)
+    check(cat.out.every(x => !EMOJI.test(x.text) && x.stats.every(v => v >= 1 && v <= 3) && x.hand && x.hand.len > 0 && x.hand.beam > 0), 'fleet catalogue: no emoji in names/facts, stats 1..3, a handling profile each')
+    TKIDS.legend = cat.out.filter(x => x.group === 'legend').map(x => x.id)
+    const banned = cat.out.filter(x => BAN.test(x.text)).map(x => x.id + ': ' + x.text.match(BAN)[0])
+    check(banned.length === 0, `fleet catalogue: no disaster / war / weapons words in any name or fact (${banned.join(' | ') || 'clean'})`)
     check(errs.length === 0, `fleet catalogue: no page errors (${errs.join(' | ')})`)
     await p.close()
   }
@@ -470,6 +661,97 @@ for (const rm of [0, 1]) {
       check(!again.picker && again.ship === 'hovercraft', `${tag}: saved pick is reused on the next level (no picker, ${again.ship})`)
     }
     check(bad.length === 0 && errs.length === 0, `${tag}: no failure words, no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
+  // two groups (owner 2026-09-29): tabs switch Kapal Modern / Kapal Legenda, thumbnails load lazily, the strip
+  // scrolls smoothly, a legend pick sails its TOP view and persists per avatar, the picker reopens on its tab
+  for (const [w, h] of [[1280, 800], [390, 844], [844, 390]]) {
+    const tag = `fleet tabs ${w}x${h}`
+    const p = await b.newPage(); const errs = []
+    p.on('pageerror', e => errs.push(e.message))
+    await p.setViewport({ width: w, height: h, deviceScaleFactor: 1, isMobile: w < 900, hasTouch: true })
+    await p.goto(BASE + '?ship=pick&fresh=1&avatar=lg' + w + '&mode=gates&seed=7&muted=1', { waitUntil: 'networkidle2', timeout: 90000 })
+    await p.evaluate(WATCH)
+    await sleep(700)
+    const t0 = await p.evaluate(() => {
+      const r = document.querySelector('.tkf-root'), tabs = [...r.querySelectorAll('.tkf-tab')]
+      const inb = e => { const b = e.getBoundingClientRect(); return b.left >= -1 && b.right <= innerWidth + 1 && b.top >= -1 && b.bottom <= innerHeight + 1 && b.height >= 44 }
+      return { labels: tabs.map(t => t.textContent), sel: tabs.map(t => t.getAttribute('aria-selected')), inb: tabs.every(inb), font: Math.min(...tabs.map(t => parseFloat(getComputedStyle(t).fontSize))),
+        n: r.querySelectorAll('.tkf-card').length, withSrc: r.querySelectorAll('.tkf-card img[src]').length }
+    })
+    check(t0.labels.join('|') === 'Kapal Modern|Kapal Legenda' && t0.sel.join() === 'true,false' && t0.inb && t0.font >= 14, `${tag}: segmented control "Kapal Modern | Kapal Legenda" on screen, >= 44 px high, text ${t0.font} px, Modern open first`)
+    check(t0.n === 25 && t0.withSrc < 25, `${tag}: only the open tab's 25 cards exist, thumbnails lazy (${t0.withSrc}/25 requested before scrolling)`)
+    await p.click('.tkf-tab[data-group="legend"]'); await sleep(450)
+    const t1 = await p.evaluate(() => {
+      const r = document.querySelector('.tkf-root')
+      return { sel: [...r.querySelectorAll('.tkf-tab')].map(t => t.getAttribute('aria-selected')).join(), ids: [...r.querySelectorAll('.tkf-card')].map(c => c.dataset.id),
+        name: r.querySelector('.tkf-name').textContent, real: r.querySelector('.tkf-real').textContent, realOn: !r.querySelector('.tkf-real').hidden,
+        hero: r.querySelector('.tkf-hero').getAttribute('src') || '' }
+    })
+    check(t1.sel === 'false,true' && t1.ids.length === 25 && t1.ids.every(id => TKIDS.legend.includes(id)) && t1.ids[0] === 'mary-rose', `${tag}: "Kapal Legenda" tab shows the 25 legend ships (${t1.ids[0]} .. ${t1.ids[24]})`)
+    check(/tk-legend-side\/mary-rose/.test(t1.hero) && t1.realOn && t1.real === 'Mary Rose', `${tag}: big preview switches to the legend SIDE view, real name shown ("${t1.name}" / ${t1.real})`)
+    // smooth scroll across the whole strip: every thumbnail ends up loaded, no long frames while scrolling
+    const sc = await p.evaluate(async () => {
+      const strip = document.querySelector('.tkf-strip'), gaps = []
+      let last = performance.now(), run = true
+      const tick = t => { gaps.push(t - last); last = t; if (run) requestAnimationFrame(tick) }
+      requestAnimationFrame(tick)
+      for (let x = 0; x <= strip.scrollWidth; x += 60) { strip.scrollLeft = x; await new Promise(r => requestAnimationFrame(r)) }
+      await new Promise(r => setTimeout(r, 900))
+      run = false
+      const imgs = [...strip.querySelectorAll('.tkf-card img')]
+      return { loaded: imgs.filter(i => i.complete && i.naturalWidth > 0).length, n: imgs.length, long: gaps.filter(g => g > 50).length, frames: gaps.length, worst: Math.round(Math.max(...gaps)) }
+    })
+    check(sc.loaded === 25 && sc.long <= 2, `${tag}: scrolling the strip loads every legend thumbnail (${sc.loaded}/25), frames smooth (${sc.long} over 50 ms of ${sc.frames}, worst ${sc.worst} ms)`)
+    // keyboard on the tabs: ArrowLeft goes back to Modern
+    await p.focus('.tkf-tab[data-group="legend"]'); await p.keyboard.press('ArrowLeft'); await sleep(300)
+    const k = await p.evaluate(() => ({ g: document.querySelector('.tkf-tab[aria-selected="true"]').dataset.group, first: document.querySelector('.tkf-card').dataset.id }))
+    check(k.g === 'modern' && k.first === 'titanic', `${tag}: ArrowLeft on the tabs returns to Kapal Modern (${k.g})`)
+    await p.click('.tkf-tab[data-group="legend"]'); await sleep(350)
+    await p.evaluate(() => document.querySelector('.tkf-card[data-id="endurance"]').scrollIntoView({ inline: 'center' }))
+    await p.click('.tkf-card[data-id="endurance"]'); await sleep(300)
+    await p.screenshot({ path: `${FLEET}steer-legend-${w}x${h}.png` })
+    const fit = await p.evaluate(() => { const r = document.querySelector('.tkf-root'); const inb = e => { const b = e.getBoundingClientRect(); return b.left >= -1 && b.right <= innerWidth + 1 && b.top >= -1 && b.bottom <= innerHeight + 1 }; const m = r.querySelector('.tkf-main').getBoundingClientRect(); const clip = [...r.querySelectorAll('.tkf-info > *')].filter(e => !e.hidden).some(e => { const q = e.getBoundingClientRect(); return q.top < m.top - 1 || q.bottom > m.bottom + 1 }); return [...r.children].every(inb) && inb(r.querySelector('.tkf-cta')) && !clip })
+    check(fit, `${tag}: picker with tabs still fits the frame, CTA on screen, real name / fact / stats / CTA not clipped`)
+    await p.click('.tkf-cta'); await sleep(1300)
+    const g = await p.evaluate(() => ({ s: __h.state(), saved: localStorage.getItem('tk-fleet-lg' + innerWidth) }))
+    check(g.s.ship === 'endurance' && g.saved === 'endurance' && /tk-legend-top\/endurance\.webp/.test(g.s.art || '') && g.s.artReady, `${tag}: legend pick -> Endurance sails its TOP view, saved per avatar (${(g.s.art || '').split('/').slice(-2).join('/')})`)
+    if (w === 1280) {
+      await p.evaluate(() => window.__autoStop && window.__autoStop())
+      await p.click('.tks-shipbtn'); await sleep(500)
+      const re = await p.evaluate(() => ({ g: document.querySelector('.tkf-tab[aria-selected="true"]').dataset.group, on: document.querySelector('.tkf-card.is-on').dataset.id }))
+      check(re.g === 'legend' && re.on === 'endurance', `${tag}: "Ganti Kapal" reopens on the Kapal Legenda tab with Endurance selected`)
+      await p.goto(BASE + '?ship=pick&avatar=lg1280&mode=gates&seed=7&muted=1', { waitUntil: 'load', timeout: 60000 })
+      await sleep(1200)
+      const again = await p.evaluate(() => ({ picker: !!document.querySelector('.tkf-root'), ship: __h.state().ship }))
+      check(!again.picker && again.ship === 'endurance', `${tag}: the legend pick persists on the next level (${again.ship})`)
+    }
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
+  // story ship (playtest 2026-09-29): a world whose own ship is in the catalogue preselects it once per world,
+  // badge "Kapal di cerita ini!", picker clears the host chip row (topInset); a world without one keeps the pick
+  {
+    const { p, errs } = await open(b, 1280, 800, 'manual=1&muted=1')
+    const r = await p.evaluate(async () => {
+      const host = document.createElement('div'); host.style.cssText = 'position:fixed;inset:0;z-index:999'; document.body.appendChild(host)
+      localStorage.setItem('tk-fleet-st', 'lifeboat'); localStorage.removeItem('tk-fleet-world-st')
+      const out = {}; let started = null; const wait = () => new Promise(r => setTimeout(r, 400))
+      TKFleet.resolve(host, { avatar: 'st', world: 'cuttysark', topInset: 70 }, id => { started = id }); await wait()
+      let root = host.querySelector('.tkf-root')
+      out.first = root ? [root.querySelector('.tkf-card.is-on').dataset.id, root.querySelector('.tkf-rec').hidden ? '' : root.querySelector('.tkf-rec').textContent, Math.round(root.getBoundingClientRect().top)] : null
+      root && root.querySelector('.tkf-cta').click(); out.started = started
+      started = null; TKFleet.resolve(host, { avatar: 'st', world: 'cuttysark', topInset: 70 }, id => { started = id }); out.again = [started, !!host.querySelector('.tkf-root')]
+      TKFleet.resolve(host, { avatar: 'st', world: 'endurance' }, () => {}); await wait()
+      root = host.querySelector('.tkf-root'); out.legend = root ? [root.querySelector('.tkf-tab[aria-selected="true"]').dataset.group, root.querySelector('.tkf-card.is-on').dataset.id] : null
+      root && root.remove()
+      started = null; TKFleet.resolve(host, { avatar: 'st', world: 'nautilus' }, id => { started = id }); out.none = started
+      return out
+    })
+    check(JSON.stringify(r.first) === JSON.stringify(['tallship', 'Kapal di cerita ini!', 70]) && r.started === 'tallship', `fleet story ship: Cutty Sark world preselects its own ship over the saved pick, badge "Kapal di cerita ini!", overlay starts below the 70 px chip row (${JSON.stringify(r.first)})`)
+    check(r.again[0] === 'tallship' && !r.again[1], 'fleet story ship: the picker opens ONCE per world, then the saved pick applies')
+    check(JSON.stringify(r.legend) === JSON.stringify(['legend', 'endurance']) && r.none === 'tallship', `fleet story ship: Endurance opens on the Kapal Legenda tab; a world without its own ship keeps the pick (${JSON.stringify(r.legend)}, ${r.none})`)
+    check(errs.length === 0, `fleet story ship: no page errors (${errs.join(' | ')})`)
     await p.close()
   }
   // a fleet ship finishes levels with real button input: offset gates (every gate credited), ice, sail

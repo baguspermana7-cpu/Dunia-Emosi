@@ -220,7 +220,12 @@
     var st = 0, mx = 0, done = 0
     worlds.forEach(function (w) { var o = (s.stars || {})[w.id] || {}, all = true
       w.levels.forEach(function (l) { st += o[l.id] || 0; mx += 3; if (!o[l.id]) all = false }); if (all && w.levels.length) done++ })
-    return { xp: s.xp || 0, stars: st, maxStars: mx, fragments: (s.fragments || []).length, cards: (s.cards || []).length, worldsDone: done }
+    // the Time Compass counts only its own 14 fragments; legend worlds (series 'legenda') keep a separate tally
+    var byId = {}; worlds.forEach(function (w) { byId[w.id] = w })
+    var isLeg = function (id) { return !!(byId[id] && byId[id].series === 'legenda') }
+    var fr = s.fragments || [], legTotal = worlds.filter(function (w) { return w.series === 'legenda' && w.levels.some(function (l) { return l.fragment || l.type === 'fragment' }) }).length
+    return { xp: s.xp || 0, stars: st, maxStars: mx, fragments: fr.filter(function (id) { return !isLeg(id) }).length, legendFragments: fr.filter(isLeg).length, legendTotal: legTotal,
+      cards: (s.cards || []).length, worldsDone: done }
   }
   function achievements (x) {
     return [
@@ -426,11 +431,12 @@
           '<div class="cnt">' + ico('tk-prop/ship-wheel') + '<span>Terkumpul<b class="fk">' + owned + ' / ' + ships.length + '</b></span></div></div><div class="tkh-grid"></div>'
       }
       if (st.tab === 'kompas') {
-        var fw = all.filter(function (w) { return w.levels.some(function (l) { return l.fragment }) })
+        var fw = all.filter(function (w) { return w.series !== 'legenda' && w.levels.some(function (l) { return l.fragment || l.type === 'fragment' }) })
         html = '<div class="tkh-panel"><div class="tkh-cbig"><span class="tkh-cmp xl" style="--p:' + (clamp(x.fragments, 0, 14) / 14 * 100).toFixed(1) + '%">' + ico('tk-key/compass') + '</span>' +
           '<div><b class="fk">' + x.fragments + ' / 14 kepingan</b><p>Setiap kapal menyimpan satu kepingan Kompas Waktu. Kumpulkan semuanya agar Timmy bisa pulang!</p></div></div>' +
           '<div class="tkh-frags">' + fw.map(function (w, i) { var g = (S.fragments || []).indexOf(w.id) >= 0
-            return '<div class="' + (g ? 'got' : 'no') + '">' + ico('tk-key/compass') + '<b>' + (i + 1) + '</b><small>' + esc(g ? w.name : 'Belum') + '</small></div>' }).join('') + '</div></div>'
+            return '<div class="' + (g ? 'got' : 'no') + '">' + ico('tk-key/compass') + '<b>' + (i + 1) + '</b><small>' + esc(g ? w.name : 'Belum') + '</small></div>' }).join('') + '</div>' +
+          (x.legendTotal ? '<p class="tkh-note">Kepingan Legenda ' + x.legendFragments + ' / ' + x.legendTotal + '</p>' : '') + '</div>'
       }
       if (st.tab === 'kartu') {
         html = '<div class="tkh-cards">' + all.map(function (w) { return (w.cards || []).map(function (c) { var g = (S.cards || []).indexOf(c.id) >= 0
@@ -460,7 +466,7 @@
     on(R, '[data-fav]', 'click', function (b, e) { e.stopPropagation(); sfx(h, 'click'); var id = b.getAttribute('data-fav'), v = h.onFav ? h.onFav(id) : !fav(id)
       if (!h.onFav) { S.fav = (S.fav || []).filter(function (x) { return x !== id }).concat(v ? [id] : []) } paintGrid(); paintDet() })
     on(R, '[data-sel]', 'click', function (b, e) { if (e.target.closest('[data-fav]')) return; sfx(h, 'click'); st.sel = b.getAttribute('data-sel'); paintGrid(); paintDet()
-      var w = ships.filter(function (x) { return x.id === st.sel })[0]; if (R.classList.contains('is-port')) det.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); if (w) say(w.name) })
+      var w = ships.filter(function (x) { return x.id === st.sel })[0]; if (R.classList.contains('is-port')) scrollIn(det, R); if (w) say(w.name) })
     on(R, '[data-sel]', 'keydown', function (b, e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click() } })
     on(R, '[data-story]', 'click', function (b) { sfx(h, 'click'); story(b.getAttribute('data-story')) })
     on(R, '[data-close]', 'click', function () { sfx(h, 'click'); modal.hidden = true; say('') })
@@ -477,7 +483,7 @@
    * data = { save: S, worlds: WD.WORLDS, version? }
    * handlers = { get() -> settings, set(patch) (merge + save), onSave, onBack, onParent, sfx? }
    * ══════════════════════════════════════════════════════════════════════ */
-  var SET_TABS = [['profil', 'Profil', 'tk-key/timmy'], ['audio', 'Audio', 'tk-prop/ship-bell'], ['tampilan', 'Tampilan', 'tk-prop/spyglass'], ['permainan', 'Permainan', 'tk-prop/ship-wheel'],
+  var SET_TABS = [['profil', 'Profil', 'tk-key/timmy'], ['audio', 'Audio', 'tk-prop/ships-bell'], ['tampilan', 'Tampilan', 'tk-prop/spyglass'], ['permainan', 'Permainan', 'tk-prop/ship-wheel'],
     ['bahasa', 'Bahasa', 'tk-prop/globe'], ['ortu', 'Orang Tua', 'tk-char/captain-old'], ['bantuan', 'Bantuan', 'tk-prop/lantern'], ['tentang', 'Tentang', 'tk-legend/journal-book']]
   function settings (host, data, h) {
     data = data || {}; h = h || {}
@@ -501,8 +507,8 @@
     function paint () {
       var s = get(), q = quality(), mute = SFX_ONLY ? !s.sound : (!s.sound && !s.music && !s.narration)
       grid.innerHTML =
-        '<section class="tkh-card pa" id="tkh-s-audio" data-sec="audio"><h2 class="tkh-tab fk">' + ico('tk-prop/ship-bell') + 'Audio</h2>' +
-          (SFX_ONLY ? '' : slider('musicVol', 'music', 'Musik', 'tk-prop/violin')) + slider('sfxVol', 'sound', 'Efek suara', 'tk-prop/ship-bell') + (SFX_ONLY ? tog('narrate', 'Narasi (suara membaca)', 'tk-prop/ship-horn') : slider('voiceVol', 'narration', 'Narasi', 'tk-prop/ship-horn')) +
+        '<section class="tkh-card pa" id="tkh-s-audio" data-sec="audio"><h2 class="tkh-tab fk">' + ico('tk-prop/ships-bell') + 'Audio</h2>' +
+          (SFX_ONLY ? '' : slider('musicVol', 'music', 'Musik', 'tk-prop/violin')) + slider('sfxVol', 'sound', 'Efek suara', 'tk-prop/ships-bell') + (SFX_ONLY ? tog('narrate', 'Narasi (suara membaca)', 'tk-prop/ship-horn') : slider('voiceVol', 'narration', 'Narasi', 'tk-prop/ship-horn')) +
           '<div class="srow"><i class="tkh-mute"></i><span>Bisukan semua</span><button type="button" class="tkh-tog' + (mute ? ' on' : '') + '" data-mute="1" role="switch" aria-checked="' + mute + '" aria-label="Bisukan semua"></button></div></section>' +
         '<section class="tkh-card pa" data-sec="tampilan"><h2 class="tkh-tab fk">' + ico('tk-prop/spyglass') + 'Tampilan</h2><div class="lbl">Kualitas grafis</div>' +
           '<div class="tkh-seg">' + [['rendah', 'Rendah'], ['sedang', 'Sedang'], ['tinggi', 'Tinggi']].map(function (o) { return '<button type="button" data-q="' + o[0] + '" class="' + (q === o[0] ? 'on' : '') + '" aria-pressed="' + (q === o[0]) + '">' + o[1] + '</button>' }).join('') + '</div>' +
@@ -510,7 +516,8 @@
         '<section class="tkh-card pa" data-sec="permainan"><h2 class="tkh-tab fk">' + ico('tk-prop/ship-wheel') + 'Permainan</h2>' +
           // Tingkat Soal (owner 2026-09-29): Mudah = Kelas 1–2 (default), Sulit = Kelas 3–4
           '<div class="lbl">Tingkat Soal</div><div class="tkh-seg tkh-lvl">' + [['mudah', 'Mudah (Kelas 1–2)'], ['sulit', 'Sulit (Kelas 3–4)']].map(function (o) { var on = (s.level === 'sulit' ? 'sulit' : 'mudah') === o[0]; return '<button type="button" data-lvl="' + o[0] + '" class="' + (on ? 'on' : '') + '" aria-pressed="' + on + '">' + o[1] + '</button>' }).join('') + '</div>' +
-          tog('easy', 'Mode Mudah', 'tk-prop/lifebuoy-5') + '<p class="tkh-p sub">Soal lebih sedikit, pilihan lebih besar, dan petunjuk lebih cepat.</p>' +
+          // one clear control (playtest 2026-09-29: "Sulit" and "Mode Mudah" could both be on): the answer help only exists under Mudah
+          (s.level === 'sulit' ? '' : tog('easy', 'Bantuan jawaban (3 pilihan)', 'tk-prop/lifebuoy-5') + '<p class="tkh-p sub">Hanya untuk Mudah: 3 pilihan jawaban yang lebih besar dan petunjuk lebih cepat.</p>') +
           tog('hints', 'Petunjuk', 'tk-prop/lantern') + tog('confirmExit', 'Konfirmasi sebelum keluar', 'tk-prop/signpost-harbor') + tog('timer', 'Tampilkan waktu', 'tk-prop/pocket-watch-2') + '</section>' +
         '<section class="tkh-card pa" data-sec="bahasa"><h2 class="tkh-tab fk">' + ico('tk-prop/globe') + 'Bahasa</h2>' +
           '<button type="button" class="tkh-lang on" aria-pressed="true">' + ico('tk-prop/flag-compass') + '<span>Bahasa Indonesia</span><i class="tkh-check"></i></button>' +
@@ -527,11 +534,11 @@
     var cur = 'audio'
     function mark (k) { cur = k; R.querySelectorAll('[data-go]').forEach(function (b) { var o = b.getAttribute('data-go') === k; b.classList.toggle('on', o); b.setAttribute('aria-pressed', String(o)) }) }
     on(R, '[data-go]', 'click', function (b) { sfx(h, 'click'); var k = b.getAttribute('data-go'), sec = grid.querySelector('[data-sec="' + k + '"]'); mark(k)
-      if (sec) { sec.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); anim(sec, [{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 360, fill: 'none', delay: 250 }) } })
+      if (sec) { scrollIn(sec, R); anim(sec, [{ transform: 'scale(1)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 360, fill: 'none', delay: 250 }) } })
     on(R, '[data-tog]', 'click', function (b) { sfx(h, 'click'); var k = b.getAttribute('data-tog'), p = {}; p[k] = !get()[k]
       if (k === 'reducedMotion' && p[k]) p.effects = false
       set(p) })
-    on(R, '[data-lvl]', 'click', function (b) { sfx(h, 'click'); set({ level: b.getAttribute('data-lvl') === 'sulit' ? 'sulit' : 'mudah' }) })
+    on(R, '[data-lvl]', 'click', function (b) { sfx(h, 'click'); var sul = b.getAttribute('data-lvl') === 'sulit'; set(sul ? { level: 'sulit', easy: false } : { level: 'mudah' }) })
     on(R, '[data-q]', 'click', function (b) { sfx(h, 'click'); var q = b.getAttribute('data-q')
       set(q === 'rendah' ? { reducedMotion: true, effects: false } : q === 'sedang' ? { reducedMotion: false, effects: false } : { reducedMotion: false, effects: true }) })
     on(R, '[data-mute]', 'click', function () {
@@ -738,8 +745,31 @@
     '@media (prefers-reduced-motion:reduce){.tkh-primary.glow,.tkh-primary.glow::after{animation:none}}',
     '.rm .tkh-primary.glow,.rm .tkh-primary.glow::after{animation:none}'
   ].join('\n')
+  /* tablet type floor (owner tablet 1280x800, 2026-09-29 "tulisan kecil"): no text under 14 px when the short side
+     is >= 600 px — qa-tk-ui-audit enforces it; the XP bar grows so its 14 px number still fits inside */
+  CSS += '@media (min-width:600px) and (min-height:600px){' +
+    '.tkh-prof span,.chip,.gift small,.tkh-card.fact .ft p,.tkh-strip small,.cnt span,.tags span,.spec,.tkh-frags small,.tkh-hc small,.tkh-badge b,.tkh-note,.tkh-p.sub,.tkh-primary .bl small,.tkh-room.is-port .tkh-ship b,.tkh.is-port .tkh-side button,.tkh-plate p,.tkh .tkh-plate p{font-size:14px}.tkh-strip small{white-space:normal;text-overflow:clip;overflow:visible}' +
+    '.bar{height:18px;width:132px}.bar em{font:800 14px/18px Nunito,sans-serif}.tkh-badges{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}}' +
+    // portrait: the scroll pane stops above the fixed Kembali / Simpan buttons, so no toggle or row ever sits half under
+    // them (a tap on its lower half went to Kembali) — qa-tk-ui-audit overlap
+    '.tkh-room.is-port,.tkh-set.is-port{bottom:calc(78px + env(safe-area-inset-bottom))}' +
+    // reward (playtest 2026-09-29): ONE Asisten Pinguin — the one beside the cheer; the hero one overlapped Timmy.
+    // The "Hebat!" chip sits centred in its cell.
+    '.tkh-rw .tkh-hero .peng,.tkh-rw .tkh-herop .peng{display:none}' +
+    // the next-level name under Lanjut wraps to a second line instead of an ellipsis (phone: "Level 2 · Lorong Rumah Sakit")
+    '.tkh-primary .bl small{white-space:normal;text-overflow:clip;overflow:visible;line-height:1.1;text-align:center}' +
+    '.tkh-rw td .chip{display:inline-flex;align-items:center;justify-content:center;line-height:1.15;vertical-align:middle;padding:5px 12px}.tkh-rw td:has(.chip){text-align:center;vertical-align:middle}'
   // SFX-only mode: every "listen / read again" button in the game is hidden (no voice exists)
   if (SFX_ONLY) CSS += 'html:not(.tk-narr) .tkq-speak,html:not(.tk-narr) .tkq-say,html:not(.tk-narr) .tks-say,html:not(.tk-narr) .tkl-say,html:not(.tk-narr) .tkg-say{display:none!important}'
+  // scroll a section into view inside its OWN scroll pane only: scrollIntoView also scrolled the screen itself, which put
+  // the pane's top under the fixed speaker button on phones (qa-tk-ui-audit overlap, settings > Bahasa)
+  function scrollIn (el, root) {
+    var sc = el.parentElement
+    while (sc && sc !== root && !(sc.scrollHeight > sc.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(sc).overflowY))) sc = sc.parentElement
+    if (!sc || sc === root) { el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' }); return }
+    var top = el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 8
+    if (sc.scrollTo) sc.scrollTo({ top: top, behavior: reduced() ? 'auto' : 'smooth' }); else sc.scrollTop = top
+  }
   function injectCss () { if (D.getElementById('tkh-css')) return; var s = D.createElement('style'); s.id = 'tkh-css'; s.textContent = CSS; (D.head || D.documentElement).appendChild(s) }
   injectCss()
 

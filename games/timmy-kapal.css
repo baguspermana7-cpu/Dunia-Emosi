@@ -427,6 +427,88 @@ body.story-on #btn-pause{display:none}
   .w-foot .bnav button{min-height:48px;font-size:12px}
   .w-foot .bnav button img{width:24px;height:24px}
 }
+/* ── WORLD SELECT sea chart (tk-atlas.js): one transformed chart layer in CHART UNITS (a 22-unit label is
+   >= 14.5 px at the smallest zoom), regions painted with their scene + tint, dotted sea routes (open = bright,
+   travelled = rope, locked = faded), fog over locked regions, signposts at branches, Timmy's boat, mini-map.
+   Motion: transform / opacity only; reduced motion stops the loops. ── */
+#scr-world.atl-on .w-timmy,#scr-world.atl-on .w-compass{display:none}
+#scr-world.atl-on .islands{position:absolute;inset:0;z-index:1;padding:0;overflow:hidden}
+#scr-world.atl-on .w-foot{margin-top:auto;background:linear-gradient(rgba(5,12,30,0),rgba(5,12,30,.62) 45%);pointer-events:none}
+#scr-world.atl-on .w-foot>*{pointer-events:auto}
+#scr-world.atl-on .topbar{background:linear-gradient(rgba(5,12,30,.6),rgba(5,12,30,0));pointer-events:none}
+#scr-world.atl-on .topbar>*{pointer-events:auto}
+.atl-vp{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab}
+.atl-host.sailing .atl-vp{cursor:default}
+.atl-world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;
+  background:radial-gradient(ellipse at 50% 45%,#4bb8e4 0%,#2a86c4 55%,#1a5a97 100%)}
+.atl-world::after{content:'';position:absolute;inset:0;z-index:6;pointer-events:none;border:16px solid #8a6331;
+  border-image:repeating-linear-gradient(45deg,#c99a55 0 12px,#7a5226 12px 24px) 16;box-shadow:inset 0 0 0 4px #f3dfae,inset 0 0 90px rgba(10,30,70,.5)}
+.atl-reg{position:absolute;pointer-events:none;border-radius:50%;border:5px dashed rgba(255,255,255,.4);
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--tint) 55%,transparent) 0%,color-mix(in srgb,var(--tint) 34%,transparent) 72%,color-mix(in srgb,var(--tint) 10%,transparent) 100%)}
+.atl-reg.fogged{border-color:rgba(255,255,255,.18)}
+.atl-dec{position:absolute;z-index:1;height:auto;opacity:.9;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(0,20,50,.3))}
+.atl-svg{position:absolute;left:0;top:0;pointer-events:none}
+.atl-svg .rt path{fill:none;stroke-linecap:round}
+.atl-svg .rt .rb{stroke:rgba(10,30,60,.3);stroke-width:14}
+.atl-svg .rt .rd{stroke:rgba(255,255,255,.34);stroke-width:8;stroke-dasharray:2 18}
+.atl-svg .rt.open .rb{stroke:rgba(70,40,10,.5);stroke-width:18}
+.atl-svg .rt.open .rd{stroke:#FFE9A6;stroke-width:10;stroke-dasharray:2 16}
+.atl-svg .rt.trav .rb{stroke:rgba(255,244,218,.75);stroke-width:16}
+.atl-svg .rt.trav .rd{stroke:#7A5226;stroke-width:8;stroke-dasharray:16 10}
+.atl-svg .rt.shut .rb{stroke:rgba(10,30,60,.16)}
+.atl-node{position:absolute;z-index:2;width:236px;margin:-72px 0 0 -118px;display:flex;flex-direction:column;align-items:center;border:0;background:none;padding:0;color:#fff;cursor:pointer;font:inherit;animation:nodein .45s var(--ease) both}
+.atl-node:focus-visible{outline:none}.atl-node:focus-visible .lab{outline:5px solid #FFE15A;outline-offset:3px}
+.atl-node .land{position:relative;display:block;width:190px;height:144px;transition:transform .15s var(--ease)}
+.atl-node:active .land{transform:scale(.95)}
+.atl-node .isl{position:absolute;left:0;bottom:0;width:100%;height:86%;object-fit:contain;filter:drop-shadow(0 10px 10px rgba(0,20,50,.4))}
+.atl-node .shp{position:absolute;z-index:1;left:13%;width:74%;bottom:8%;height:60%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 6px 5px rgba(0,0,0,.5));animation:bob 4.6s ease-in-out infinite}
+.atl-node .lab{position:relative;z-index:2;margin-top:-10px;max-width:236px;padding:4px 12px 5px;border-radius:14px;background:linear-gradient(#1F3A7A,#0F2150);border:3px solid rgba(150,205,255,.7);box-shadow:0 5px 10px rgba(0,0,0,.35);text-align:center;line-height:1.08}
+.atl-node .lab b{display:block;font-size:23px}
+.atl-node .s{display:flex;justify-content:center;align-items:center;gap:2px;margin-top:3px}
+.atl-node .s .tk-ico{width:27px;height:27px}
+.atl-node .s .frag{width:31px;height:31px;margin-left:6px}
+.atl-node .need{font-style:normal;font-size:23px;color:#FFE08A;margin:0 4px 0 8px}
+.atl-node.done .lab{border-color:#4FD97F}
+.atl-node.locked .land img{filter:grayscale(.85) brightness(.82)}
+.atl-node.locked .lab{background:linear-gradient(#566079,#2f3549);border-color:rgba(210,220,240,.4)}
+.atl-node .lk{position:absolute;z-index:2;right:16px;top:16px;width:54px;height:54px;border-radius:50%;background:rgba(20,24,40,.82);display:grid;place-items:center;border:3px solid #fff;font-style:normal}
+.atl-node .lk .tk-ico{width:32px;height:32px}
+.atl-node .ring{position:absolute;left:50%;top:54%;width:204px;height:150px;margin:-75px 0 0 -102px;border-radius:50%;border:7px solid #FFC53D;box-shadow:0 0 28px 8px rgba(255,197,61,.7);animation:lmring 1.6s ease-out infinite;pointer-events:none;font-style:normal}
+.atl-node .flag{position:absolute;z-index:3;top:-26px;left:50%;transform:translateX(-50%);padding:2px 16px 4px;border-radius:12px;background:linear-gradient(#FF6B4A,#D63B1F);border:3px solid #fff4da;font-style:normal;font-size:24px;white-space:nowrap;box-shadow:0 4px 8px rgba(0,0,0,.35)}
+.atl-node.next .lab{border-color:#FFC53D}
+.atl-node.finale .lab{background:linear-gradient(#7A4FD6,#4B2A99)}
+.atl-ban{position:absolute;z-index:3;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;padding:6px 28px 8px 8px;border-radius:12px;background:linear-gradient(#f7e7c4,#e6cf9e);color:#4a2e0e;border:3px solid #8a6331;
+  box-shadow:inset 0 0 0 2px rgba(255,244,214,.6),inset 0 -8px 14px rgba(150,100,40,.25),0 8px 16px rgba(0,0,0,.35);pointer-events:none;white-space:nowrap}
+.atl-ban b{font-size:30px;letter-spacing:.5px}
+.atl-ban .th{flex:none;width:54px;height:54px;border-radius:50%;background-size:cover!important;background-position:center!important;border:3px solid #8a6331;font-style:normal}
+.atl-ban.shut{filter:saturate(.35) brightness(.88)}
+.atl-sign{position:absolute;z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;transform:translate(-50%,-50%);pointer-events:none}
+.atl-sign .post{position:absolute;left:50%;top:-18px;bottom:-40px;width:16px;margin-left:-8px;border-radius:6px;background:linear-gradient(90deg,#5d3a17,#a8733a,#5d3a17);font-style:normal}
+.atl-sign .pl{position:relative;display:block;padding:5px 16px 6px;background:linear-gradient(#e3b06b,#b88040);border:3px solid #5d3a17;border-radius:8px;color:#2f1a05;box-shadow:0 4px 8px rgba(0,0,0,.35);max-width:220px;text-align:center}
+.atl-sign .pl b{display:block;font-size:22px;line-height:1.1;font-weight:900}
+.atl-sign .pl::after{content:'';position:absolute;top:50%;margin-top:-17px;border:17px solid transparent}
+.atl-sign .pl.r{margin-left:26px}.atl-sign .pl.r::after{right:-36px;border-left:19px solid #5d3a17;border-right:0}
+.atl-sign .pl.l{margin-right:26px}.atl-sign .pl.l::after{left:-36px;border-right:19px solid #5d3a17;border-left:0}
+.atl-sign .pl.been{opacity:.62}
+.atl-fog{position:absolute;z-index:4;width:480px;height:250px;border-radius:50%;pointer-events:none;font-style:normal;
+  background:radial-gradient(closest-side,rgba(236,243,252,.9),rgba(236,243,252,.62) 55%,rgba(236,243,252,0));animation:atlfog 17s ease-in-out infinite alternate}
+.atl-fog.f1{animation-duration:22s;animation-delay:-7s}.atl-fog.f2{animation-duration:19s;animation-delay:-12s}
+@keyframes atlfog{from{transform:translateX(-46px) scale(1)}to{transform:translateX(46px) scale(1.08)}}
+.atl-rose{position:absolute;z-index:1;left:2190px;top:1270px;width:160px;opacity:.5;pointer-events:none;filter:sepia(.4)}
+.atl-boat{position:absolute;z-index:5;left:0;top:0;width:120px;height:104px;pointer-events:none;will-change:transform}
+.atl-boat .bt{position:absolute;left:0;bottom:0;width:120px;height:92px;object-fit:contain;filter:drop-shadow(0 6px 5px rgba(0,0,0,.45));animation:bob 3.2s ease-in-out infinite}
+.atl-boat .tm{position:absolute;left:34px;top:-26px;width:56px;height:56px;border-radius:50%;background:#EAF2FF;object-fit:cover;object-position:50% 12%;border:4px solid #FFD25A;box-shadow:0 3px 6px rgba(0,0,0,.4)}
+.atl-ctl{position:absolute;left:10px;z-index:5;display:flex;flex-direction:column;gap:8px}
+.atl-ctl .ibtn{width:56px;height:56px}
+.atl-ctl .atl-me{height:auto;min-height:66px}
+.atl-ctl .atl-me img{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:50% 12%;background:#EAF2FF}
+.atl-plus,.atl-minus{position:relative;display:block;width:24px;height:24px}
+.atl-plus::before,.atl-plus::after,.atl-minus::before{content:'';position:absolute;left:0;top:9px;width:24px;height:6px;border-radius:3px;background:#fff}
+.atl-plus::after{transform:rotate(90deg)}
+.atl-mini{position:absolute;right:10px;z-index:5;padding:0;border-radius:12px;border:3px solid #8a6331;background:#2a86c4;box-shadow:0 6px 14px rgba(0,0,0,.4);overflow:hidden;cursor:pointer}
+.atl-mini svg{display:block;width:100%;height:100%}
+html.rm .atl-fog,html.rm .atl-node .shp,html.rm .atl-boat .bt,html.rm .atl-node .ring,html.rm .atl-node{animation:none}
+@media (prefers-reduced-motion:reduce){.atl-fog,.atl-node .shp,.atl-boat .bt,.atl-node .ring,.atl-node{animation:none}}
 
 /* ── LEVEL MAP (ui-02 #4) ── */
 .map-bg{position:absolute;inset:0;background-size:cover}
@@ -692,3 +774,45 @@ body.cine-on .tkc-ctl{right:calc(72px + env(safe-area-inset-right))}
 .tkh .tkh-top .tkh-prof{right:78px}
 .tkh.is-port .tkh-top .tkh-prof{margin-right:62px}
 #play-host .tks-skip{right:calc(72px + env(safe-area-inset-right))}
+
+/* tablet type floor (owner tablet 1280x800, 2026-09-29 "tulisan kecil"): when the short side is >= 600 px no text is
+   under 14 px — qa-tk-ui-audit enforces it on every screen */
+@media (min-width:600px) and (min-height:600px){
+  .ibtn.lbl>span,.pchip small,.logo-rib span,.tile,.tile span,.sc-t b,.sc-t small,.shipcard .st,.bnav button,.isle .lab small,
+  .cm-plate small,.chap .ct small,.chapter small,.chapter li,.chapter li i,.hcard em,.captain span,.rw-earn div,.rw-list li i,.rw-strip i,
+  .badge,.model b,.dh small,.detail q,.detail dl,.goalbar,.cat,.node .t,.chap .pr,.cm-foot,.cm-guide b,.cm-guide q,.stepchip .sc-t small,
+  .tkx-fact b,.tkx-ls span,#btn-start .st-l small,#scr-ships .plate small,.w-foot .bnav button{font-size:14px}
+  .chap .ct b{font-size:clamp(14px,1.35vw,16px)}
+  .lmode .chap .ct small{font-size:clamp(14px,calc(var(--m) * .075),15px)}
+  /* the carousel card is wide enough for its 14 px value line ("Kecepatan & Kerja Keras") without an ellipsis */
+}
+@media (min-width:600px) and (min-height:600px) and (orientation:landscape){.home-ui .sc{width:180px}}
+
+/* phones (qa-tk-ui-audit 2026-09-29) */
+@media (max-width:480px){
+  .goalbar{-webkit-line-clamp:3;font-size:13px}
+  .pchip b{font-size:14px}
+}
+/* phone portrait: the ship-select / world plate had ~80 px between the back button, the star pill and the speaker —
+   the title broke over 7 lines. The star pill moves to its own centred row under the plate. */
+@media (max-width:520px) and (orientation:portrait){
+  #scr-ships .topbar,#scr-world .topbar{flex-wrap:wrap;row-gap:6px}
+  #scr-ships .topbar .starpill,#scr-world .topbar .starpill{order:5;margin:0 auto;font-size:15px;padding:3px 12px}
+  #scr-ships .topbar .plate,#scr-world .topbar .plate{flex:1 1 calc(100% - 80px)}
+  /* phone portrait: the title stays one line (the subtitle wrapped the plate to 5 lines) */
+  #scr-ships .topbar .plate small,#scr-world .topbar .plate small{display:none}
+  #scr-ships .topbar .plate b,#scr-world .topbar .plate b{white-space:nowrap;font-size:clamp(18px,5.4vw,24px)}
+}
+/* one Indonesian tagline (playtest 2026-09-29): the ribbon carries it; the footer copy is not repeated */
+.tagline{display:none!important}
+@media (orientation:portrait){.logo-rib span{display:block}}
+/* ship select (playtest 2026-09-29): the filter chips use the game font; the picture fills the card (no empty band) */
+#ship-filter .chip,#ship-filter button{font-family:'Fredoka One','Nunito',sans-serif;font-weight:400;letter-spacing:.3px;font-size:16px}
+.shipcard{display:flex;flex-direction:column}
+.shipcard .img{flex:1 1 auto;min-height:104px}
+.shipcard .img img{height:90%;margin-top:6px}
+.shipcard .sc-t{flex:none}
+/* phone portrait home (playtest): Timmy stands whole in the gap between the logo and Start, not a head behind the buttons */
+@media (orientation:portrait) and (max-width:520px){.home-timmy{top:21%;height:min(19vh,170px);left:-1%}}
+/* very small phones (360 px): the profile chip keeps only its avatar; its name / level had 19 px to live in */
+@media (max-width:370px){.pchip .pchip-t{display:none}.pchip{padding-right:4px}}

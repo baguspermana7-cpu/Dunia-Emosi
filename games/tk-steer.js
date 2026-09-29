@@ -237,6 +237,61 @@
     return w
   }
 
+  /* ── embedded questions (owner 2026-09-29: action first, a question only on certain moments) ──
+     level.questions { on: 'collide'|'buoy'|'gate' or an array, topic (TKQuiz domain override), count (max
+     collision questions), buoys (Soal buoys / treasure chests on the course), gates (lighthouse chain gates) }.
+     Absent: collide + 2 buoys (every action level carries questions); questions:false = none. Active only when
+     the host gives opts.onQuestion; the Titanic 'scripted' run never asks. */
+  var Q_DEF = { on: ['collide', 'buoy'], count: 3, buoys: 2 }
+  var Q_COOL = 8                     // at most one collision question per 8 s of sailing
+  var Q_WRONG = 'Tidak apa-apa, coba lagi nanti!'
+  function qconf (level) {
+    level = level || {}
+    var q = level.questions
+    if (q === false) return { on: {}, topic: null, count: 0, buoys: 0, gates: 0 }
+    if (typeof q === 'string' || Array.isArray(q)) q = { on: q }
+    q = q && typeof q === 'object' ? q : {}
+    var list = q.on == null ? Q_DEF.on : [].concat(q.on), on = {}
+    for (var i = 0; i < list.length; i++) if (list[i] === 'collide' || list[i] === 'buoy' || list[i] === 'gate') on[list[i]] = true
+    return { on: on, topic: q.topic || null, count: clamp(Math.round(num(q.count, Q_DEF.count)), 0, 20),
+      buoys: on.buoy ? clamp(Math.round(num(q.buoys, Q_DEF.buoys)), 0, 6) : 0, gates: on.gate ? clamp(Math.round(num(q.gates, 1)), 0, 4) : 0 }
+  }
+  // buoys on the safe course line, gates across the corridor; the water around each is cleared of ice
+  function placeQ (w, QC) {
+    var qb = [], lg = [], y0 = -520, y1 = w.zoneY + 380
+    if (y1 > y0 - 200) return { buoys: qb, gates: lg }
+    function clearAt (y, x, ry, rx) {
+      for (var i = w.ice.length - 1; i >= 0; i--) {
+        var b = w.ice[i]
+        if (b.wall) continue
+        if (Math.abs(b.y - y) < ry + b.r && (rx == null || Math.abs(b.x - x) < rx + b.r)) w.ice.splice(i, 1)
+      }
+    }
+    function busy (y, list, gap) { for (var i = 0; i < list.length; i++) if (Math.abs(list[i].y - y) < gap) return true; return false }
+    function nudge (y, avoid) {
+      for (var d = 0; d < 800; d += 40) {
+        var c = [y - d, y + d]
+        for (var k = 0; k < 2; k++) if (c[k] <= y0 && c[k] >= y1 && !avoid(c[k])) return c[k]
+      }
+      return null
+    }
+    var arches = w.gates
+    for (var g = 0; g < QC.gates; g++) {
+      var gy = nudge(y0 + (y1 - y0) * (g + 1) / (QC.gates + 1), function (y) { return busy(y, arches, 180) || busy(y, lg, 400) })
+      if (gy == null) continue
+      clearAt(gy, 0, 230, null)
+      lg.push({ y: gy, x: pathX(w, gy), drop: 0, asked: false, open: false, dropping: false })
+    }
+    for (var b = 0; b < QC.buoys; b++) {
+      var by = nudge(y0 + (y1 - y0) * (b + 0.6) / (QC.buoys + 0.2), function (y) { return busy(y, arches, 150) || busy(y, lg, 240) || busy(y, qb, 300) })
+      if (by == null) continue
+      var bx = pathX(w, by)
+      clearAt(by, bx, 120, 140)
+      qb.push({ x: bx, y: by, x0: bx, kind: b % 2 ? 'chest' : 'buoy', taken: false, ph: b * 1.7 })
+    }
+    return { buoys: qb, gates: lg }
+  }
+
   function berg (R, x, y, r, extra) {
     var n = 7 + Math.floor(R() * 4), pts = []
     for (var i = 0; i < n; i++) {
@@ -268,7 +323,7 @@
   var CSS = [
     '.tks-root{position:absolute;inset:0;overflow:hidden;background:#0c3656;color:#fff;font-family:var(--font,"Nunito",system-ui,sans-serif);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:none}',
     '.tks-cv{position:absolute;inset:0;width:100%;height:100%;display:block}',
-    '.tks-top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 0;pointer-events:none}',
+    '.tks-top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:calc(10px + var(--tks-inset,0px) + env(safe-area-inset-top,0px)) 12px 0;pointer-events:none}',
     '.tks-panel{background:rgba(6,26,46,.74);border:1.5px solid rgba(150,215,255,.32);border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.25)}',
     /* polish (owner 2026-09-28): wood & brass nautical HUD when tk-sea.js is loaded (.tks-sea) */
     '.tks-sea .tks-panel{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.12)),repeating-linear-gradient(92deg,#7a4a24 0 7px,#6d4120 7px 9px,#835029 9px 17px,#70431f 17px 20px);border:3px solid #d9a441;border-radius:16px;box-shadow:inset 0 0 0 2px #7a5314,0 4px 0 #4a2c10,0 8px 16px rgba(0,0,0,.3);color:#fff4d6;text-shadow:0 1px 0 rgba(40,20,0,.8)}',
@@ -382,7 +437,15 @@
     '.tks-rm .tks-cd b{animation:none}.tks-rm .tks-demo{transition:opacity .2s linear}',
     '.tks-root:not(.tks-portrait) .tks-caption{bottom:calc(18px + env(safe-area-inset-bottom,0px));max-width:min(54%,520px)}',
     '.tks-short .tks-caption{font-size:16px;padding:12px 16px}',
-    '.tks-rm .tks-btn,.tks-rm .tks-caption,.tks-rm .tks-wind .tks-windarw{transition:none}'
+    '.tks-rm .tks-btn,.tks-rm .tks-caption,.tks-rm .tks-wind .tks-windarw{transition:none}',
+    /* embedded questions: the old captain's bubble (a wrong answer is always "Tidak apa-apa") */
+    '.tks-cap{position:absolute;left:50%;top:calc(30% + env(safe-area-inset-top,0px));display:flex;align-items:flex-end;gap:8px;max-width:min(92%,460px);opacity:0;transform:translate(-50%,10px);transition:opacity .3s ease-out,transform .4s cubic-bezier(.23,1,.32,1);pointer-events:none;z-index:5}',
+    '.tks-cap.is-on{opacity:1;transform:translate(-50%,0)}',
+    '.tks-cap img{width:78px;height:78px;flex:none;border-radius:50%;object-fit:cover;object-position:50% 10%;background:#dbe9f7;border:3px solid #ffd166;box-shadow:0 4px 12px rgba(0,0,0,.35)}',
+    '.tks-bub{background:#fff;color:#12314f;border-radius:16px;padding:8px 14px 10px;box-shadow:0 6px 14px rgba(0,0,0,.3);margin-bottom:8px}',
+    '.tks-bub b{display:inline-block;margin:-20px 0 4px;padding:2px 10px;border-radius:10px;background:#1F4FA0;color:#fff;font-weight:400;font-size:14px;font-family:var(--font-display,"Fredoka One","Nunito",sans-serif)}',
+    '.tks-bub span{display:block;font-weight:800;font-size:17px;line-height:1.3}',
+    '.tks-rm .tks-cap,.tks-rm .tks-cap.is-on{transform:translate(-50%,0);transition:opacity .3s linear}'
   ].join('\n')
 
   function injectCss () {
@@ -679,7 +742,7 @@
       if (P.dead || P.picker || !P.inner) return
       P.inner.pause(true)
       var av = W.TKFleet.avatar(opts)
-      P.picker = W.TKFleet.open(host, { lib: opts.lib, reducedMotion: opts.reducedMotion, sfx: opts.sfx, current: P.ship, title: 'Ganti Kapal',
+      P.picker = W.TKFleet.open(host, { lib: opts.lib, reducedMotion: opts.reducedMotion, sfx: opts.sfx, current: P.ship, title: 'Ganti Kapal', worldShip: opts.world, topInset: opts.topInset,
         onClose: function () { P.picker = null; if (P.inner) P.inner.resume() },
         onPick: function (id) {
           P.picker = null
@@ -719,6 +782,9 @@
     if (fleet) lvl.hull = W.TKFleet.handling(shipId)
     var w = build(lvl)
     var V = w.V
+    // embedded questions: only with a host question handler, never on the scripted Titanic run
+    var QC = qconf(typeof opts.onQuestion === 'function' && w.mode !== 'scripted' ? lvl : { questions: false })
+    var QP = placeQ(w, QC), qBuoys = QP.buoys, qGates = QP.gates
     var SEA = W.TKSea || null
     // sea theme: opts > level > derived (deep sea, night Titanic, polar ice, day harbour)
     function libUrl (k) {
@@ -734,6 +800,8 @@
     if (getComputedStyle(host).position === 'static') host.style.position = 'relative'
     var root = el('div', 'tks-root' + (reduced ? ' tks-rm' : '') + (w.assist ? ' tks-kid' : '') + (SEA ? ' tks-sea' : ''))
     root.setAttribute('data-mode', w.mode)
+    // the host's top bar stays visible over a steer step: the HUD starts below it (opts.topInset px, default 0)
+    root.style.setProperty('--tks-inset', Math.max(0, Math.round(num(opts.topInset, 0))) + 'px')
     var cv = el('canvas', 'tks-cv')
     var ctx = cv.getContext('2d')
     root.appendChild(cv)
@@ -834,6 +902,11 @@
     var caption = el('div', 'tks-caption tks-panel')
     caption.setAttribute('role', 'status')
     root.appendChild(caption)
+    var capEl = el('div', 'tks-cap', '<img alt="Kapten" draggable="false"><div class="tks-bub"><b>Kapten</b><span></span></div>')
+    // owner rule: the captain is the old human captain (the penguin is only his assistant)
+    capEl.querySelector('img').src = libUrl('tk-char/captain-old') || ''
+    capEl.setAttribute('role', 'status')
+    root.appendChild(capEl)
     var cdEl = el('div', 'tks-cd', '<b></b><span>Siap…</span>'), cdNum = cdEl.querySelector('b'), cdTxt = cdEl.querySelector('span')
     root.appendChild(cdEl)
     var pauseOv = el('div', 'tks-pause', '<div class="tks-pause-card tks-panel"><h3>Jeda</h3><button class="tks-btn tks-resume" type="button">Lanjut</button></div>')
@@ -869,7 +942,10 @@
       x: 0, y: 0, a: 0, v: V.vmax * 0.45, yaw: 0, rud: 0, wheel: 0, throttle: 1, sailDeg: 45, sailSide: 1, sailEff: 1,
       t: 0, hits: 0, near: 0, missed: 0, gateIdx: 0, done: false, finishing: 0, impact: null, bumpCd: 0,
       camX: 0, camY: -60, zoom: 1, shake: 0, shakeT: 0, frames: 0, lastTickStep: 0, prevY: 0, over: false,
-      cd: useCd ? 3 : 0, cdShown: -1, idleT: 0, sailTouchT: 0, guide: null, touched: false, playerWork: 0, assistWork: 0, unsteered: 0
+      cd: useCd ? 3 : 0, cdShown: -1, idleT: 0, sailTouchT: 0, guide: null, touched: false, playerWork: 0, assistWork: 0, unsteered: 0,
+      // embedded questions: which one is open, how many of each, cooldown, rewards (shield, boost, bonus stars)
+      waiting: false, qOpen: null, qObj: null, qPend: null, qn: { collide: 0, buoy: 0, gate: 0 }, qAsked: 0, qRight: 0, qLog: [], lastColQ: -99,
+      shield: false, boostT: 0, easeT: 1, qCombo: 0, bonus: 0
     }
     var input = { hold: 0, btnL: false, btnR: false, keyL: false, keyR: false, drag: false, dragVal: 0 }
     var trail = []
@@ -897,7 +973,7 @@
       root.classList.toggle('tkx-compact', vh < 480 || vw < 600)
       layoutControls()
       if (route) route.size()
-      if (seaP) { var kk = scale * dpr; seaP.prewarm(ctx, [kk, kk * 0.8, kk * 0.6, kk * 0.5, kk * 0.8 * 0.5, kk * 0.8 * 0.6]) }
+      if (seaP) { var kk = scale * dpr; seaP.prewarm(ctx, [kk, kk * 0.8, kk * 0.6, kk * 0.4, kk * 0.8 * 0.4, kk * 0.8 * 0.6]) }   // the quality steps 1 / 0.8 / 0.6 / 0.4
       var rs = radar.getBoundingClientRect().width || 108
       radar.width = Math.round(rs * dpr); radar.height = Math.round(rs * dpr)
       radarT = 0
@@ -965,8 +1041,11 @@
     }
     function adapt (dt) {
       ema += (dt - ema) * 0.1
-      slowT = clamp(slowT + (ema > 1 / 34 ? dt : -dt * 0.5), 0, 3)
-      if (slowT > 1 && rq > 0.5) { rq = Math.max(0.5, rq - 0.2); slowT = 0; backing() }
+      slowT = clamp(slowT + (ema > 1 / 38 ? dt : -dt * 0.5), 0, 3)   // < ~38 fps average = slow (a 30 fps device steps down)
+      // a slow device settles within ~2 s (each step re-allocates the canvas once); a device still slower than
+      // ~38 fps at 0.6 goes to 0.4: at 4x CPU the canvas flush (ProduceCanvasResource in the commit)
+      // was ~20-33 ms per frame and its spikes crossed the 50 ms long-task line (perf gate, 2026-09-30)
+      if (slowT > 0.6 && rq > 0.41) { rq = Math.max(0.4, rq - 0.2); slowT = 0; backing() }
     }
     var ro = null
     if (W.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(host) } else W.addEventListener('resize', resize)
@@ -1080,7 +1159,7 @@
 
     /* visibility */
     function onVis () {
-      if (D.hidden) { stop(); audio.suspend() } else if (!paused) { audio.ensure(); start() }
+      if (D.hidden) { stop(); audio.suspend() } else if (!paused && !S.waiting) { audio.ensure(); start() }
     }
     D.addEventListener('visibilitychange', onVis)
 
@@ -1205,6 +1284,12 @@
         assistRud = clamp(err * 1.8, -0.55, 0.55) * clamp((S.idleT - 0.35) / 0.8, 0, 1)
         S.assistWork += Math.abs(assistRud) * dt
       }
+      if (S.net && w.mode !== 'scripted' && !S.done) {
+        // safety net: a gentle current eases the bow toward the course heading, even under input (weak)
+        var ny0 = S.y - 60, ny1 = S.y - 260, cw = Math.atan2(pathX(w, ny1) - pathX(w, ny0), 200)
+        var cerr = angNorm(cw - S.a - S.yaw * 0.6)
+        assistRud += clamp(cerr * 0.9, -0.3, 0.3)
+      }
       if (w.assist && w.mode === 'sail' && S.sailOpt != null && !S.done) {
         S.sailTouchT += dt
         if (S.sailTouchT > 3) { S.sailDeg = approach(S.sailDeg, S.sailOpt, 12 * dt); if (sailRange) sailRange.value = String(Math.round(S.sailDeg)) }
@@ -1234,7 +1319,10 @@
       }
       if (w.mode === 'scripted') vt = vmax * 0.85
       if (S.impact || S.finishing) vt = 0
-      var acc = S.impact ? 1.4 : S.finishing ? 0.9 : V.acc
+      // rewards + resume: a 3 s speed boost after a right answer; after any question the ship eases back up
+      if (S.boostT > 0) { S.boostT = Math.max(0, S.boostT - dt); if (!S.impact && !S.finishing) vt *= 1.35 }
+      if (S.easeT < 1) { S.easeT = Math.min(1, S.easeT + dt / 1.2); var ez = S.easeT; vt *= 0.2 + 0.8 * ez * ez * (3 - 2 * ez) }
+      var acc = S.impact ? 1.4 : S.finishing ? 0.9 : S.boostT > 0 ? Math.max(V.acc, 1.2) : V.acc
       S.v += (vt - S.v) * damp(acc, dt)
       var f = fwd()
       var vx = f.x * S.v, vy = f.y * S.v
@@ -1253,6 +1341,7 @@
       if (S.y > 320) S.y = 320
       if (S.bumpCd > 0) S.bumpCd -= dt
       collide(dt)
+      if (qTick(dt)) return
       progress()
       // wake trail (stern), foam, particles
       var sx = S.x - f.x * V.L * 0.5, sy = S.y - f.y * V.L * 0.5
@@ -1290,6 +1379,7 @@
         parts.push({ x: bxs + bf.y * V.B * 0.3 * side, y: bys - bf.x * V.B * 0.3 * side, vx: -bf.y * 45 * side + bf.x * 20, vy: bf.x * 45 * side + bf.y * 20, life: 0, max: 0.4 + Math.random() * 0.3, r: 1.5 + Math.random() * 2 })
       }
       if (w.mode === 'scripted' && !S.impact && S.t > 150) startImpact(S.x, S.y - V.L / 2)
+      safetyNet()
       audio.sync()
     }
 
@@ -1319,6 +1409,23 @@
         }
       }
     }
+    /* safety net (playtest 2026-09-29: a wobbling kid circled for 208 s): after 90 s of sailing the level quietly
+       shortens (only the next gate is left, or the harbour comes closer) and the sea's current eases the bow
+       toward the course HEADING (never toward a gate's position: the route is not revealed); at 150 s the ship
+       arrives, calm, like any finish. Question time does not count (S.t only runs while sailing). */
+    var NET_T = num(opts.netAfter, 90), CAP_T = num(opts.capAfter, 150)   // QA seam: opts.netAfter / capAfter (s)
+    function safetyNet () {
+      if (S.done || w.mode === 'scripted') return
+      if (!S.net && S.t > NET_T) {
+        S.net = true
+        if (w.goal === 'gates' && w.gates.length > S.gateIdx + 1) { w.gates.length = S.gateIdx + 1; w.zoneY = w.gates[S.gateIdx].y - 200; hudT = 0 }
+        else if (w.goal === 'zone') { w.zoneY = Math.max(w.zoneY, S.y - 900) }
+        for (var i = qGates.length - 1; i >= 0; i--) if (!qGates[i].asked && qGates[i].y < w.zoneY + 100) qGates.splice(i, 1)
+        for (var j = qBuoys.length - 1; j >= 0; j--) if (!qBuoys[j].taken && qBuoys[j].y < w.zoneY + 100) qBuoys.splice(j, 1)
+        pop('Hampir sampai!', S.x, S.y - V.L * 0.8, true)
+      }
+      if (S.t > CAP_T && !S.finishing) beginFinish()
+    }
     function awardNear (b) {
       b.nearArm = false
       if (b.bumped || b.nearDone || S.done) return
@@ -1330,6 +1437,14 @@
       audio.splash(0.6)
     }
     function bump (b, nx, ny) {
+      if (S.shield) {
+        // the shield bubble takes this bump: no slow-down, no question
+        S.shield = false; b.bumped = true; S.bumpCd = 1.3
+        spray(b.x + nx * b.r, b.y + ny * b.r, 16, 80, nx, ny); sparkle(S.x, S.y, 18)
+        pop('Perisai melindungi!', S.x, S.y - V.L * 0.7, true); audio.chime(false)
+        return
+      }
+      if (canAskCollide()) { S.qn.collide++; S.lastColQ = S.t; S.qPend = { obj: b, t: reduced ? 0.35 : 0.6 } }
       b.bumped = true
       S.bumpCd = 1.3
       if (!S.done) S.hits++
@@ -1347,6 +1462,87 @@
       pop('Pelan-pelan', S.x, S.y - V.L * 0.7, false)
       hudT = 0
     }
+    /* ── embedded questions: ONE contract for collide / buoy / gate ──
+       the simulation freezes (rAF stopped, ship exactly where it is), opts.onQuestion({reason, topic, …}) ->
+       Promise<{correct}>, then answered() resumes with a gentle ease-in. Nothing is ever lost: a wrong answer
+       only misses the bonus, and a gate's chain always drops. */
+    function canAskCollide () { return !!QC.on.collide && S.qn.collide < QC.count && S.t - S.lastColQ >= Q_COOL }
+    function bowY () { return S.y + fwd().y * V.L / 2 }
+    function qTick (dt) {
+      if (S.waiting || S.done || S.cd > 0) return false
+      if (S.qPend) { S.qPend.t -= dt; if (S.qPend.t <= 0) { var qp = S.qPend; S.qPend = null; ask('collide', qp.obj); return true } }
+      var by = bowY(), cs = null
+      for (var g = 0; g < qGates.length; g++) {
+        var G = qGates[g]
+        if (G.dropping && G.drop < 1) { G.drop = Math.min(1, G.drop + dt / (reduced ? 0.25 : 0.75)); if (G.drop >= 1) G.open = true }
+        if (G.open) continue
+        if (!G.asked && by <= G.y + 70) { G.asked = true; S.y += G.y + 70 - by; S.v = 0; ask('gate', G); return true }
+        // the chain is still up: the ship waits in front of it
+        if (G.asked && G.drop < 0.55 && by < G.y + 60) { S.y += G.y + 60 - by; S.v = Math.min(S.v, 4) }
+      }
+      for (var i = 0; i < qBuoys.length; i++) {
+        var B = qBuoys[i]
+        if (B.taken) continue
+        var ahead = S.y - B.y
+        if (ahead > -20 && ahead < 300 && Math.abs(B.x - S.x) < 180) B.x += (S.x - B.x) * Math.min(1, dt * (ahead < 150 ? 3.5 : 1.6))
+        if (ahead < -V.L) { B.taken = true; continue }
+        cs = cs || circles()
+        for (var j = 0; j < cs.length; j++) if (Math.hypot(cs[j].x - B.x, cs[j].y - B.y) < cs[j].r + 36) { B.taken = true; ask('buoy', B); return true }
+      }
+      return false
+    }
+    function introFor (reason, obj) {
+      if (reason === 'collide') return w.obstacle === 'rock' ? 'Kapal menyentuh karang! Jawab soal ini, lalu kapal berlayar lagi.' : 'Kapal membentur es! Jawab soal ini, lalu kapal berlayar lagi.'
+      if (reason === 'buoy') return obj && obj.kind === 'chest' ? 'Peti Harta! Jawab dengan benar untuk harta bonus.' : 'Pelampung Soal! Jawab dengan benar untuk bintang bonus.'
+      return 'Gerbang Mercusuar! Jawab soalnya, lalu rantai diturunkan.'
+    }
+    function ask (reason, obj) {
+      S.waiting = true; S.qOpen = reason; S.qObj = obj || null
+      if (reason !== 'collide') S.qn[reason]++
+      S.qAsked++
+      releaseHolds(); input.keyL = input.keyR = false; input.drag = false; drag = null
+      render(); stop()
+      var info = { reason: reason, topic: QC.topic, index: S.qAsked, hits: S.hits, mode: w.mode, obstacle: w.obstacle, kind: obj && obj.kind, intro: introFor(reason, obj) }
+      var pr0
+      try { pr0 = opts.onQuestion(info) } catch (e) { pr0 = null; if (W.console) console.error(e) }
+      pending = pr0
+      var fin0 = function (res) { if (pending !== pr0) return; pending = null; answered(reason, obj, res || { correct: true, tries: 1, hints: 0 }) }
+      if (pr0 && typeof pr0.then === 'function') pr0.then(fin0, function () { fin0(null) })
+      else fin0(pr0)
+    }
+    var capTok = 0
+    function sayBrief (text) {
+      capEl.querySelector('span').textContent = text; capEl.classList.add('is-on')
+      var tok = ++capTok
+      setTimeout(function () { if (!dead && tok === capTok) capEl.classList.remove('is-on') }, 2600)
+    }
+    function answered (reason, obj, res) {
+      if (dead) return
+      var ok = !!res.correct
+      S.qOpen = null; S.qObj = null; S.waiting = false
+      S.qLog.push({ reason: reason, correct: ok, t: Math.round(S.t * 10) / 10 })
+      if (ok) S.qRight++
+      S.qCombo = ok ? S.qCombo + 1 : 0
+      S.easeT = 0
+      if (!ok) sayBrief(Q_WRONG)
+      if (reason === 'collide') {
+        if (ok) { S.shield = true; sparkle(S.x, S.y, 22); pop('Perisai aktif!', S.x, S.y - V.L * 0.7, true) } else pop('Tetap semangat!', S.x, S.y - V.L * 0.7, true)
+      } else if (reason === 'buoy') {
+        if (ok) {
+          S.bonus++; S.boostT = 3
+          sparkle(obj.x, obj.y, 30); if (confetti && !reduced) confetti.burst(vw / 2, vh * 0.45, 40)
+          pop(obj.kind === 'chest' ? 'Harta bonus! Melaju cepat!' : 'Bintang bonus! Melaju cepat!', S.x, S.y - V.L * 0.8, true)
+        } else pop('Tetap semangat!', S.x, S.y - V.L * 0.7, true)
+      } else if (reason === 'gate') {
+        var drop = function () { if (!dead) { obj.dropping = true; audio.splash(1) } }
+        if (ok) { drop(); S.boostT = 2; sparkle(obj.x, obj.y, 26); pop('Gerbang terbuka!', S.x, S.y - V.L * 0.8, true) } else { pop('Gerbang tetap dibuka!', S.x, S.y - V.L * 0.7, true); setTimeout(drop, 900) }
+      }
+      if (ok && S.qCombo >= 2) setTimeout(function () { if (!dead) pop('Kombo Pintar x' + S.qCombo + '!', S.x, S.y - V.L, true) }, 500)
+      audio.chime(ok)
+      hudT = 0
+      if (!paused && !D.hidden) start()
+    }
+    var pending = null
     function startImpact (x, y) {
       S.impact = { t: 0, x: x, y: y, cap: false }
       S.done = true
@@ -1416,7 +1612,8 @@
       hudT = 0
     }
     function stars () {
-      var faults = S.hits + S.missed
+      // a right bonus question (buoy / chest) makes up for one bump or missed gate
+      var faults = Math.max(0, S.hits + S.missed - S.bonus)
       var inTime = !w.timeLimit || S.t <= w.timeLimit
       if (!S.touched) return 1          // hands off the whole way: the assist sailed it, the child earns 1 star
       // kids (assist): a couple of bumps still earn 3 stars
@@ -1427,7 +1624,8 @@
     function send (extra) {
       doneSent = true
       // missed includes `unsteered`: gates the ship sailed through before the child had steered at all
-      var out = { stars: extra.stars, time: Math.round(S.t * 10) / 10, hits: S.hits, nearMiss: S.near, missed: S.missed, unsteered: S.unsteered, mode: w.mode }
+      var out = { stars: extra.stars, time: Math.round(S.t * 10) / 10, hits: S.hits, nearMiss: S.near, missed: S.missed, unsteered: S.unsteered, mode: w.mode,
+        qAsked: S.qAsked, qRight: S.qRight, bonus: S.bonus }
       if (extra.scripted) out.scripted = true
       try { if (typeof opts.onDone === 'function') opts.onDone(out) } catch (e) { if (W.console) console.error('TKSteer onDone', e) }
     }
@@ -1488,6 +1686,7 @@
       if (SEA) drawWake2(); else drawWake()
       if (SEA) drawArches(vy0, vy1); else drawGates(vy0, vy1)
       if (SEA) drawBergs(vx0, vx1, vy0, vy1); else drawIce(vx0, vx1, vy0, vy1)
+      drawQ(vy0, vy1)
       drawShip()
       drawGuide()
       drawParts()
@@ -1496,6 +1695,7 @@
         if (themeName === 'deep') SEA.rays(ctx, vw, vh, S.t, reduced)
         if (vigGrad) vigGrad.draw(ctx, vw, vh)
       }
+      if (S.boostT > 0 && !reduced) drawSpeedLines()
       if (confetti && confetti.n) confetti.draw(ctx)
       drawPointer()
     }
@@ -1505,7 +1705,7 @@
     var confetti = SEA ? SEA.Confetti() : null, vigGrad = null
     var seaP = SEA ? SEA.Sea(themeName) : null
     function drawSea (x0, x1, y0, y1) {
-      SEA.sparkles(ctx, themeName, x0, y0, x1, y1, S.t, reduced, { x: S.camX, y: S.camY })
+      if (rq > 0.41) SEA.sparkles(ctx, themeName, x0, y0, x1, y1, S.t, reduced, { x: S.camX, y: S.camY })
     }
     function drawDressing (x0, x1, y0, y1) {
       var C = 420, k = 1
@@ -1600,7 +1800,7 @@
       if (n < 3) return
       var pts = []
       for (var i = 0; i < n; i++) { var p = trail[i]; pts.push({ x: p.x, y: p.y, nx: Math.cos(p.a), ny: Math.sin(p.a), age: p.age }) }
-      SEA.wake(ctx, pts, { w0: V.B * 0.42, spread: V.B * 0.75 + 10, fade: 2.6, scale: 1 })
+      SEA.wake(ctx, pts, { w0: V.B * 0.42, spread: V.B * 0.75 + 10, fade: 2.6, scale: 1, boost: S.boostT > 0 ? 1 : 0 })
     }
     // youngest kids (assist): a glowing dashed course from the bow to the next gate
     function drawTrailLine () {
@@ -1859,8 +2059,87 @@
       } else {
         (DRAW[w.vessel] || DRAW.liner)(ctx, V.L, V.B, S)
       }
+      if (S.shield) drawShield()
       ctx.restore()
       return f
+    }
+    /* embedded-question props: Soal buoys / treasure chests (pulsing ring + sparkle) and lighthouse chain gates */
+    var QIMG = { buoy: loadImg(libUrl('tk-prop/buoy-light')), chest: loadImg(libUrl('game/treasure-chest')), house: loadImg(libUrl('gt-el/lighthouse')) }
+    function drawQ (y0, y1) {
+      for (var i = 0; i < qBuoys.length; i++) {
+        var B = qBuoys[i]
+        if ((B.taken && B !== S.qObj) || B.y < y0 - 80 || B.y > y1 + 80) continue
+        var s = 70, pulse = reduced ? 0.5 : 0.5 + 0.5 * Math.sin(S.t * 3.2 + B.ph), ring = reduced ? 0.55 : (S.t * 0.8 + B.ph) % 1
+        var bob = reduced ? 0 : Math.sin(S.t * 1.8 + B.ph) * 3
+        ctx.fillStyle = 'rgba(255,214,90,' + (0.2 + 0.14 * pulse).toFixed(3) + ')'; ell(ctx, B.x, B.y, s * 0.7, s * 0.7); ctx.fill()
+        ctx.strokeStyle = 'rgba(255,236,150,' + (0.9 * (1 - ring)).toFixed(3) + ')'; ctx.lineWidth = 4
+        ell(ctx, B.x, B.y, s * (0.5 + ring * 0.6), s * (0.5 + ring * 0.6)); ctx.stroke()
+        var im = B.kind === 'chest' ? QIMG.chest : QIMG.buoy
+        if (ready(im)) { var ih = s * im.naturalHeight / im.naturalWidth; ctx.drawImage(im, B.x - s / 2, B.y - ih * 0.6 + bob, s, ih) }
+        var gl = s * (0.2 + pulse * 0.16)
+        ctx.save(); ctx.translate(B.x + s * 0.36, B.y - s * 0.5 + bob); ctx.rotate(reduced ? 0 : S.t * 1.5)
+        ctx.fillStyle = 'rgba(255,255,235,' + (0.6 + pulse * 0.4).toFixed(3) + ')'
+        ctx.beginPath(); ctx.moveTo(0, -gl); ctx.lineTo(gl * 0.2, 0); ctx.lineTo(0, gl); ctx.lineTo(-gl * 0.2, 0); ctx.closePath(); ctx.fill()
+        ctx.beginPath(); ctx.moveTo(-gl, 0); ctx.lineTo(0, gl * 0.2); ctx.lineTo(gl, 0); ctx.lineTo(0, -gl * 0.2); ctx.closePath(); ctx.fill()
+        ctx.restore()
+        ctx.font = '18px "Fredoka One", Fredoka, Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+        var tw = ctx.measureText('SOAL').width + 16
+        ctx.fillStyle = 'rgba(74,44,16,.92)'; rrect(ctx, B.x - tw / 2, B.y + s * 0.42, tw, 25, 7); ctx.fill()
+        ctx.fillStyle = '#ffe066'; ctx.fillText('SOAL', B.x, B.y + s * 0.42 + 13); ctx.textBaseline = 'alphabetic'
+      }
+      for (var g = 0; g < qGates.length; g++) {
+        var G = qGates[g]
+        if (G.y < y0 - 200 || G.y > y1 + 120) continue
+        var x0 = -w.half - 10, x1 = w.half + 10, hs = 170
+        if (G.drop < 1) {
+          var fall = G.drop, a = reduced ? 1 - fall : 1 - Math.max(0, fall - 0.5) * 2, sag = 10 + (reduced ? 0 : fall * 30)
+          ctx.globalAlpha = Math.max(0, a)
+          var n = Math.round((x1 - x0) / 22)
+          for (var k = 0; k <= n; k++) {
+            var u = k / n, x = x0 + (x1 - x0) * u, y = G.y + Math.sin(u * Math.PI) * sag + (reduced ? 0 : fall * 26)
+            ctx.strokeStyle = k % 2 ? '#7d8791' : '#d3dbe2'; ctx.lineWidth = 5
+            ell(ctx, x, y, k % 2 ? 5 : 11, k % 2 ? 11 : 6); ctx.stroke()
+          }
+          if (!G.dropping) {
+            var mx = G.x, my = G.y + Math.sin(clamp((mx - x0) / (x1 - x0), 0, 1) * Math.PI) * sag
+            ctx.fillStyle = '#d9a441'; ctx.strokeStyle = '#6b4412'; ctx.lineWidth = 4
+            ctx.beginPath(); ctx.arc(mx, my, 24, 0, TAU); ctx.fill(); ctx.stroke()
+            ctx.fillStyle = '#3b2400'; ctx.font = '32px "Fredoka One", Fredoka, Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+            ctx.fillText('?', mx, my + 1); ctx.textBaseline = 'alphabetic'
+          }
+          ctx.globalAlpha = 1
+        }
+        if (!reduced && !G.open) {
+          var sw = Math.sin(S.t * 1.4) * 0.5 + 0.5
+          ctx.fillStyle = 'rgba(255,240,170,.12)'
+          ctx.beginPath(); ctx.moveTo(x0, G.y - hs * 0.75); ctx.lineTo(x0 + (x1 - x0) * (0.3 + sw * 0.5), G.y - 20); ctx.lineTo(x0 + (x1 - x0) * (0.42 + sw * 0.5), G.y + 16); ctx.closePath(); ctx.fill()
+        }
+        var H = QIMG.house
+        if (ready(H)) { var hw2 = hs * H.naturalWidth / H.naturalHeight; ctx.drawImage(H, x0 - hw2 / 2, G.y - hs * 0.85, hw2, hs); ctx.drawImage(H, x1 - hw2 / 2, G.y - hs * 0.85, hw2, hs) }
+      }
+    }
+    // the shield bubble (reward for a right answer after a bump): a soft blue dome with a turning glint
+    function drawShield () {
+      var rx = Math.max(V.B * 1.5, 34), ry = V.L * 0.66, pl = reduced ? 0 : Math.sin(S.t * 3) * 0.04
+      var g = ctx.createRadialGradient(0, 0, ry * 0.3, 0, 0, ry)
+      g.addColorStop(0, 'rgba(140,220,255,0)'); g.addColorStop(0.8, 'rgba(140,220,255,.16)'); g.addColorStop(1, 'rgba(190,240,255,.42)')
+      ctx.fillStyle = g; ell(ctx, 0, 0, rx * (1 + pl), ry * (1 + pl)); ctx.fill()
+      ctx.strokeStyle = 'rgba(210,245,255,.85)'; ctx.lineWidth = 3; ctx.stroke()
+      var a0 = reduced ? -2.2 : S.t * 2
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 4
+      ctx.beginPath(); ctx.ellipse(0, 0, rx * 0.86, ry * 0.86, 0, a0, a0 + 0.7); ctx.stroke()
+    }
+    // speed lines for the boost reward (screen space)
+    function drawSpeedLines () {
+      var cx = vw / 2, cy = midY * 0.6, n = 22, ph = S.t * 3
+      ctx.strokeStyle = 'rgba(255,255,255,' + (0.2 * Math.min(1, S.boostT * 2)).toFixed(3) + ')'; ctx.lineWidth = 2; ctx.lineCap = 'round'
+      ctx.beginPath()
+      for (var i = 0; i < n; i++) {
+        var a = i / n * TAU + 0.3, u = (ph + i * 0.37) % 1
+        var r0 = Math.max(vw, vh) * (0.25 + u * 0.55), r1 = r0 + 40 + u * 60
+        ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0 * 0.8); ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1 * 0.8)
+      }
+      ctx.stroke()
     }
     // big friendly arrow just ahead of the ship, pointing at the next gate (or the course / safe zone)
     function guideTarget () {
@@ -1958,7 +2237,7 @@
     /* loop */
     function frame (now) {
       raf = 0
-      if (dead || paused || D.hidden) return
+      if (dead || paused || D.hidden || S.waiting) return
       var dt = last ? (now - last) / 1000 : 1 / 60
       last = now
       dt = clamp(dt, 0, 0.1)
@@ -1966,8 +2245,10 @@
       // smooth motion whatever the display refresh
       acc += dt
       var n = 0
-      while (acc >= STEP && n < 6) { prev.x = S.x; prev.y = S.y; prev.a = S.a; prev.cx = S.camX; prev.cy = S.camY; step(STEP); acc -= STEP; n++ }
-      if (n === 6) acc = 0
+      while (acc >= STEP && n < 6 && !S.waiting) { prev.x = S.x; prev.y = S.y; prev.a = S.a; prev.cx = S.camX; prev.cy = S.camY; step(STEP); acc -= STEP; n++ }
+      if (n === 6 || S.waiting) acc = 0
+      // a question just opened: the frame shows the frozen sea and the loop stops until it is answered
+      if (S.waiting) { render(); return }
       if (S.frames > 20) adapt(dt)
       var al = acc / STEP, cur = { x: S.x, y: S.y, a: S.a, cx: S.camX, cy: S.camY }
       if (n > 0 && al > 0) {
@@ -1979,8 +2260,10 @@
       if (confetti && confetti.n) confetti.step(dt)
       spinWheel()
       hudT -= dt; radarT -= dt
-      if (hudT <= 0) { hudT = 0.12; hud() }
-      if (radarT <= 0) { radarT = 0.1; drawRadar() }
+      // the DOM HUD and the radar canvas never repaint in the same frame: each is a layer repaint + upload in the
+      // commit, and at 4x CPU the two together pushed a frame over 50 ms (perf gate, 2026-09-30); a radar due in a
+      // HUD frame draws on the next one
+      if (hudT <= 0) { hudT = 0.12; hud() } else if (radarT <= 0) { radarT = 0.1; drawRadar() }
       S.frames++
       TKSteer._frames++
       raf = W.requestAnimationFrame(frame)
@@ -1992,12 +2275,12 @@
       if (d !== wheelDeg) { wheelDeg = d; wheelSvgEl.style.transform = 'rotate(' + d + 'deg)' }
     }
     var STEP = 1 / 60, acc = 0, prev = { x: 0, y: 0, a: 0, cx: 0, cy: -60 }
-    function start () { if (!raf && !dead && !paused && !D.hidden) { last = 0; acc = 0; raf = W.requestAnimationFrame(frame) } }
+    function start () { if (!raf && !dead && !paused && !D.hidden && !S.waiting) { last = 0; acc = 0; raf = W.requestAnimationFrame(frame) } }
     function stop () { if (raf) W.cancelAnimationFrame(raf); raf = 0 }
 
     var handle = {
       pause: function (quiet) {
-        if (dead || paused) return
+        if (dead || paused || S.waiting) return          // the open question card already holds the game
         paused = true; stop(); audio.suspend()
         releaseHolds(); input.keyL = input.keyR = false; input.drag = false; drag = null
         if (opts.pauseOverlay !== false && !quiet) pauseOv.classList.add('is-on')
@@ -2009,6 +2292,7 @@
       destroy: function () {
         if (dead) return
         dead = true; stop(); audio.close()
+        if (pending && typeof pending.close === 'function') { var pd = pending; pending = null; try { pd.close() } catch (e) {} }
         if (ro) ro.disconnect(); else W.removeEventListener('resize', resize)
         W.removeEventListener('keydown', onKey); W.removeEventListener('keyup', onKey); W.removeEventListener('blur', onBlur)
         D.removeEventListener('visibilitychange', onVis)
@@ -2025,7 +2309,12 @@
           assist: w.assist, first: w.first, speedK: w.speedK, countdown: S.cd, guide: S.guide, gateW: w.gates.length ? w.gates[0].w : 0,
           ship: shipId || null, art: artImg ? artImg.src : null, artReady: ready(artImg), touched: S.touched, bank: S.bank || 0,
           ctrl: { wheel: ctrl.wheel, hold: ctrl.hold, k: ctrl.k, old: OLD }, shipRect: shipRect(), midY: midY,
-          theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh }
+          theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh,
+          waiting: S.waiting,
+          q: { open: S.qOpen, n: { collide: S.qn.collide, buoy: S.qn.buoy, gate: S.qn.gate }, asked: S.qAsked, right: S.qRight, log: S.qLog.slice(), lastCollideT: S.lastColQ,
+            net: !!S.net, cool: Q_COOL, count: QC.count, on: Object.keys(QC.on), topic: QC.topic, pend: !!S.qPend, shield: S.shield, boost: S.boostT, bonus: S.bonus, combo: S.qCombo, ease: S.easeT,
+            buoys: qBuoys.map(function (b) { return { x: Math.round(b.x), y: Math.round(b.y), kind: b.kind, taken: b.taken } }),
+            gates: qGates.map(function (g) { return { x: Math.round(g.x), y: Math.round(g.y), asked: g.asked, drop: g.drop, open: g.open } }) } }
       }
     }
 

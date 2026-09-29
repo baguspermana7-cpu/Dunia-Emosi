@@ -16,6 +16,7 @@
 // Everywhere: no page errors, no failed requests, nothing off-screen, no horizontal scroll, tap targets
 // >= 40 px (main actions >= 56 px), no failure words.
 // QA_SIZES="390x844,…"  QA_OTHERS=all (other worlds at every size; default: the first size only)
+// QA_FULL=1: play EVERY other world level by level (default: a 4-world sample; every world still gets its level-map checks)
 // Level-map checks (every world without chapters, every size): level-mode board, medallions + taps >= 56 px, no overlap,
 // titles >= 14 px + stars >= 18 px, the current level has the ring + "Main!" flag + ship beside it, locked = grey + lock and
 // a locked tap shakes with the hint toast, chest fragment node, "Peta <kapal>" plate + guide bubble, board fills >= 85%, and
@@ -101,7 +102,9 @@ async function playSort (p, tag) {
     const h = __tk.handle(); const el = document.querySelector('.tkq-tray .tkq-item'); if (!el || !h.set) return null
     const set = h.set, it = set.items.filter(i => i.id === el.dataset.id)[0]; if (!it) return null
     if (it.bin !== '*') return { id: it.id, bin: it.bin }
-    if (!window.__qaPlan) {   // capacity set: solve the whole partition once (backtracking), then follow it
+    const key = (__tk.level() || {}).id + ':' + set.items.map(i => i.id + i.n).join()
+    if (!window.__qaPlan || window.__qaPlanKey !== key) {   // capacity set: solve the whole partition once per set (backtracking), then follow it
+      window.__qaPlanKey = key
       const bins = set.bins.map(b => ({ id: b.id, left: b.cap })), items = set.items.slice().sort((a, b) => b.n - a.n), out = {}
       const go = i => { if (i === items.length) return true; for (const b of bins) if (b.left >= items[i].n) { b.left -= items[i].n; out[items[i].id] = b.id; if (go(i + 1)) return true; b.left += items[i].n } return false }
       go(0); window.__qaPlan = out
@@ -240,7 +243,7 @@ async function checkChapterMap (p, tag, expectNext) {
 async function checkLevelMap (p, tag, wid, rotate) {
   await p.evaluate(id => {
     const all = {}; TKWorlds.WORLDS.forEach(x => { all[x.id] = {}; x.levels.forEach(l => { all[x.id][l.id] = 3 }) })
-    const lv = TKWorlds.get(id).levels; all[id] = {}; lv.slice(0, lv.length > 4 ? 3 : 2).forEach(l => { all[id][l.id] = 2 })
+    const lv = TKWorlds.get(id).levels; all[id] = {}; lv.slice(0, id === 'kamar' ? 2 : 3).forEach(l => { all[id][l.id] = 2 })
     const g = __tk.save().guide
     __tk.load({ stars: all, fragments: [], guide: Object.assign({}, g, { map: 1 }) }); __tk.map(id)
   }, wid)
@@ -271,7 +274,8 @@ async function checkLevelMap (p, tag, wid, rotate) {
   })
   const m = await probe()
   const name = await p.evaluate(id => TKWorlds.get(id).name, wid)
-  check(m.lmode && m.n === 6 || (wid === 'kamar' && m.n === 4), `${tag}: level-mode board with every level (${m.n})`)
+  const nLv = await p.evaluate(id => TKWorlds.get(id).levels.length, wid)   // worlds grow (added levels): count from data
+  check(m.lmode && m.n === nLv, `${tag}: level-mode board with every level (${m.n}/${nLv})`)
   check(!m.small.length && !m.tap, `${tag}: medallions + tap targets >= 56 px (${m.small.join(',')})`)
   check(!m.ov.length && !m.off, `${tag}: medallions / labels / stars do not overlap or leave the screen (${m.ov.slice(0, 5).join(' ')})`)
   check(m.font >= 14 && m.star >= 18, `${tag}: titles >= 14 px, stars >= 18 px (${m.font} / ${m.star})`)
@@ -296,8 +300,10 @@ async function checkLevelMap (p, tag, wid, rotate) {
   return m
 }
 
-const SEQ = { c1: ['story', 'story'], c2: ['story', 'quiz', 'story'], c3: ['quiz', 'grid'], c4: ['grid', 'quiz', 'lanes'], c5: ['story', 'lanes'], c6: ['lanes', 'cinema'],
-  c7: ['grid', 'grid', 'grid', 'story'], c8: ['sort', 'cinema'], c9: ['cinema'], c10: ['cinema', 'quiz', 'reflection', 'fragment'] }
+// the step types of every Titanic chapter, straight from the data (chapters change: never hardcode them)
+const SEQ = await (async () => { const { createRequire } = await import('node:module')
+  const T = createRequire(import.meta.url)('../games/data/tk-worlds.js').get('titanic'), o = {}
+  T.levels.forEach(c => { o[c.id] = (c.steps || []).map(st => st.type) }); return o })()
 
 // every quiz goal is a line about the questions, never a place / year / ship history (it steers question
 // picking and shows in the goal bar; owner photo: "Bantu pasien…" above a salam question)
@@ -390,7 +396,7 @@ for (const [w, h] of SIZES) {
         globalThis.__resumed4 = true
         await tapSel(p, '#btn-pause'); await sleep(400); await tapSel(p, '#p-map'); await sleep(1200)
         const pr = await p.evaluate(() => ({ s: __tk.state().screen, pr: (document.querySelector('#route .chap.next .pr') || {}).textContent, prog: __tk.progress().progress.titanic }))
-        check(pr.s === 'scr-map' && pr.pr === '1/3' && pr.prog.c4 === 1, `${tag}: leaving mid-chapter keeps the checkpoint, the medallion shows 1/3 (${JSON.stringify(pr)})`)
+        check(pr.s === 'scr-map' && pr.pr === '1/' + SEQ.c4.length && pr.prog.c4 === 1, `${tag}: leaving mid-chapter keeps the checkpoint, the medallion shows 1/${SEQ.c4.length} (${JSON.stringify(pr)})`)
         await tapSel(p, '#route .chap.next .md'); await sleep(900)
         const st = await p.evaluate(() => __tk.step())
         check(st && st.chapter === 'c4' && st.i === 1, `${tag}: tapping it again resumes at step 2 (${JSON.stringify(st)})`)
@@ -413,6 +419,13 @@ for (const [w, h] of SIZES) {
         if (lv.id === 'c5b' && first && s.collisions >= 1 && !globalThis.__hitChecked) {
           globalThis.__hitChecked = true
           check(true, `${tag}: collision in chapter 5 (${s.collisions})`)
+          globalThis.__hitD = s.d
+        }
+        // host wiring (embedded questions): the bump went through opts.onQuestion -> the real TKQuiz.challenge
+        // (answered by the play loop), then the ship sails on
+        if (lv.id === 'c5b' && first && globalThis.__hitD != null && !globalThis.__hitOn && !s.waiting && s.q && s.q.asked >= 1 && s.d > globalThis.__hitD + 40) {
+          globalThis.__hitOn = true
+          check(s.q.n.collide >= 1 && s.running, `${tag}: chapter 5 bump opened the real Knowledge Challenge via onQuestion and the ship sailed on (${JSON.stringify(s.q.n)})`)
         }
       },
       cinema: async lv => {
@@ -490,6 +503,10 @@ for (const [w, h] of SIZES) {
 
   // ── the other ship worlds, level by level (unchanged) ──
   const others = (process.env.QA_WORLDS ? process.env.QA_WORLDS.split(',') : await p.evaluate(() => TKWorlds.WORLDS.map(w => w.id))).filter(x => x !== 'kamar' && x !== 'titanic')
+  // worlds now have up to 9 levels: PLAY a sample of 4 worlds level by level (one per engine mix + a legend world);
+  // every world still gets the level-map checks. QA_FULL=1 (or QA_WORLDS=…) plays every listed world.
+  const SAMPLE = ['britannic', 'endurance', 'pelabuhan', 'carpathia']
+  const playList = process.env.QA_FULL || process.env.QA_WORLDS ? others : others.filter(x => SAMPLE.includes(x))
   // ── the level map of every world without chapters (every size) ──
   {
     const saved = await p.evaluate(() => JSON.parse(JSON.stringify(__tk.save())))
@@ -499,7 +516,7 @@ for (const [w, h] of SIZES) {
     }
     await p.evaluate(s => { __tk.load(s); __tk.unlockAll() }, saved)
   }
-  if (first || process.env.QA_OTHERS === 'all') for (const wid of others) {
+  if (first || process.env.QA_OTHERS === 'all') for (const wid of playList) {
     const n = await p.evaluate(id => TKWorlds.get(id).levels.length, wid)
     await p.evaluate(id => __tk.map(id), wid); await sleep(700)
     check(await p.evaluate(() => !!document.querySelector('#route .cmap.lmode .chap') && !document.querySelector('#route .node')), `${tag0} ${wid}: level map in level mode`)

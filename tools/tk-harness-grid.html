@@ -12,7 +12,8 @@
   way timmy-kapal.js does (TKArt.src library, scene backdrop, chapter card, footer callbacks);
   ?chap=1 adds the chapter card + footer to a harness level; ?cc=0 passes chapterCard:false (host card instead). ?coach=1|0 forces the first-time coach hand,
   ?idle=<ms> / ?cidle=<ms> shorten the idle-help (default 10 s) and coach-repeat (default 8 s) clocks. The 70 px top bar stands in for the host page's HUD
-  (TKGrid leaves opts.topInset free for it). window.__h = mount handle,
+  (TKGrid leaves opts.topInset free for it). ?m=<id> mounts a design mechanics board (MECH, e.g. K1, X2);
+  ?q=1|0|r stubs opts.onQuestion (correct / wrong / rejected) for question tiles. window.__h = mount handle,
   window.__done = last onDone payload.
 -->
 <style>
@@ -44,13 +45,55 @@
         w: 6, h: 3, start: { x: 0, y: 0, dir: 'E' }, items: [{ x: 3, y: 0, id: 'peti' }], drop: { x: 5, y: 2 },
         blocks: [{ x: 1, y: 1 }, { x: 4, y: 1 }], tools: ['N', 'E', 'S', 'W', 'P', 'D', 'R2', 'R3'] }
     ]
+    // design boards (grid-mechanics-design.md): ?m=<id> mounts one, e.g. ?m=K1
+    var MECH = [
+      {"tools":["N","E","S","W","R2","R3"],"id":"m-R1","title":"Ulangi R1","rows":["S......G"]},
+      {"tools":["N","E","S","W","R2","R3"],"id":"m-R2","title":"Ulangi R2","rows":["S....","####.","####G"]},
+      {"tools":["N","E","S","W","R2","R3"],"id":"m-R3","title":"Ulangi R3","rows":["S......","######.","G......"]},
+      {"id":"m-A1","title":"Arus A1","rows":["S>..G"]},
+      {"id":"m-A2","title":"Arus A2","rows":["Sv...",".>>>G"]},
+      {"id":"m-A3","title":"Arus A3","rows":["S.<.G","....."]},
+      {"id":"m-K1","title":"Kunci & Pintu K1","rows":["m.S","#M#","..G"]},
+      {"id":"m-K2","title":"Kunci & Pintu K2","rows":["S.b","#B#","m..","#M#","..G"]},
+      {"id":"m-K3","title":"Kunci & Pintu K3","rows":["S.#.G","..M..","m.#.."]},
+      {"id":"m-D1","title":"Antar Berurutan D1","rows":["1.S.2"]},
+      {"id":"m-D2","title":"Antar Berurutan D2","rows":["S.2","...","1.3"]},
+      {"id":"m-D3","title":"Antar Berurutan D3","rows":["1#3",".S.","2.G"]},
+      {"id":"m-L1","title":"Licin L1","rows":["S~~~G"]},
+      {"id":"m-L2","title":"Licin L2","rows":["S~~~~","#...G"]},
+      {"id":"m-L3b","title":"Licin L3b","rows":["S~~~#","#.#..","~~~~G"]},
+      {"ice":[{"path":[{"x":2,"y":0},{"x":2,"y":1},{"x":2,"y":2},{"x":2,"y":1}],"kind":"whale"}],"id":"m-M1","title":"Penjaga Bergerak M1","rows":["S...G",".....","....."]},
+      {"ice":[{"path":[{"x":2,"y":0},{"x":2,"y":1},{"x":2,"y":2},{"x":2,"y":1}],"kind":"patrol"}],"id":"m-M2","title":"Penjaga Bergerak M2","rows":[".S...",".#.#.","....G"]},
+      {"ice":[{"path":[{"x":4,"y":0},{"x":4,"y":1},{"x":4,"y":2},{"x":4,"y":1}],"kind":"tug"}],"id":"m-M3","title":"Penjaga Bergerak M3","rows":["S....","..#..","....G"]},
+      {"id":"m-W1","title":"Pusaran W1","rows":["So#O.G"]},
+      {"id":"m-W2","title":"Pusaran W2","rows":["S.o","###","G.O"]},
+      {"id":"m-W3","title":"Pusaran W3","rows":["So#Ou#U~G"]},
+      {"id":"m-F1","title":"Kabut F1","rows":["S.L..",".##..","...#G"],"fog":true},
+      {"id":"m-F2","title":"Kabut F2","rows":["S#...","..#L.","#...G"],"fog":true},
+      {"id":"m-F3","title":"Kabut F3","rows":["S..#.","##.#.","L...G"],"fog":true},
+      {"id":"m-Q1","title":"Peti Tanya Q1","rows":["S.P.G"]},
+      {"id":"m-Q2","title":"Peti Tanya Q2","rows":["S.#..","..T#.","#...G"]},
+      {"id":"m-Q3","title":"Peti Tanya Q3","rows":["S.m#G","##.#.","..MP."]},
+      {"tools":["F","L","R"],"id":"m-X1","title":"Sulit X1","rows":["S#.",".#G","..."],"dir":"E"},
+      {"tools":["F","L","R","R2","R3","F1"],"id":"m-X2","title":"Sulit X2","rows":["S.###","#..##","##..#","###..","####G"],"dir":"E"},
+      {"tools":["F","L","R"],"id":"m-X3","title":"Sulit X3","rows":["S.m","#M#","..G"],"dir":"E"},
+      {"tools":["F","L","R","R2","F1"],"id":"m-X3f","title":"Sulit X3f","rows":["S.#","#..","##G"],"dir":"E"},
+      {"tools":["N","E","S","W","R2","R3","F1"],"id":"m-X4a","title":"Sulit X4a","rows":["S.###","#..##","##..#","###..","####G"]}
+    ]
     var q = new URLSearchParams(location.search)
-    var def = q.has('s') ? TKGrid.SAMPLES[+q.get('s')] : LEVELS[+(q.get('l') || 0)]
+    var def = q.has('s') ? TKGrid.SAMPLES[+q.get('s')] : q.has('m') ? MECH.filter(function (b) { return b.id === 'm-' + q.get('m') })[0] : LEVELS[+(q.get('l') || 0)]
     var opts = {
       topInset: 70,
       reducedMotion: q.get('rm') === '1' ? true : undefined,
       onDone: function (r) { window.__done = r }
     }
+    // ?q=1|0|r stubs opts.onQuestion (correct · wrong · rejected promise); ?qd=<ms> answers after a delay. window.__asked = calls.
+    window.__asked = []
+    if (q.has('q')) opts.onQuestion = function (a) {
+      window.__asked.push(a)
+      return new Promise(function (res, rej) { setTimeout(function () { if (q.get('q') === 'r') rej(new Error('x')); else res({ correct: q.get('q') === '1' }) }, +(q.get('qd') || 300)) })
+    }
+    if (q.has('kb')) opts.keyboard = q.get('kb') !== '0'
     // ?coach=1|0 forces the coach hand on/off; ?idle=<ms> / ?cidle=<ms> shorten the idle-help / coach clocks
     if (q.has('coach')) opts.coach = q.get('coach') === '1'
     if (q.has('idle')) opts.idleMs = +q.get('idle')
@@ -81,6 +124,7 @@
     document.getElementById('ttl').textContent = def.title || 'Latihan Navigasi'
     document.getElementById('sub').textContent = 'Level ' + def.id
     window.__levels = LEVELS
+    window.__mech = MECH
     window.__def = def
     window.__done = null
     window.__h = TKGrid.mount(document.getElementById('host'), def, opts)

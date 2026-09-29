@@ -8,7 +8,11 @@
      Kept QA harness for games/tk-steer.js (tools/qa-tk-steer.mjs). Query:
      ?mode=gates|ice|scripted|sail|current &vessel=… &len=… &seed=… &rm=1 &muted=1 &tl=seconds
      &cd=0 (no "Siap… Mulai!" countdown) &assist=0 (grown-up steering) &first=1 (slow first level)
-     window.__mount(level, opts) re-mounts; window.__h = handle; window.__done = onDone payloads. -->
+     window.__mount(level, opts) re-mounts; window.__h = handle; window.__done = onDone payloads.
+     Embedded questions: &q=stub installs opts.onQuestion recording into window.__q and waiting for the test:
+     window.__qAnswer(correct) settles the open one (&q=auto answers right at once, &q=wrong answers wrong,
+     &q=real = the real TKQuiz.challenge card); &qon=collide,buoy,gate &qbuoys=N &qgates=N &qcount=N set
+     level.questions. Without &q the steer level has no question handler, so no questions (as before). -->
 <style>
   html, body { margin: 0; height: 100%; background: #0c3656; overflow: hidden; font-family: Nunito, system-ui, sans-serif }
   #host { position: fixed; inset: 0 }
@@ -21,6 +25,12 @@
 <script src="../games/data/tk-worlds.js"></script>
 <script src="../games/tk-sea.js"></script>
 <script src="../games/tk-fleet.js"></script>
+<script src="../games/data/tk-art.js"></script>
+<script src="../games/data/tk-questions.js"></script>
+<script src="../games/data/soal-engine.js"></script>
+<script src="../games/data/soal-gen-matematika.js"></script>
+<script src="../games/data/soal-pack-kapal.js"></script>
+<script src="../games/tk-quiz.js"></script>
 <script src="../games/tk-steer.js"></script>
 <script>
 (function () {
@@ -38,6 +48,20 @@
     o.avatar = q.get('avatar') || 'qa'
     if (q.get('theme')) o.theme = q.get('theme')
     if (q.get('fresh') === '1') { try { localStorage.removeItem('tk-fleet-' + o.avatar) } catch (e) {} }
+    var qm = q.get('q')
+    if (qm === 'stub' || qm === 'auto' || qm === 'wrong') {
+      window.__q = []; window.__qPending = []
+      window.__qAnswer = function (ok) { var r = window.__qPending.shift(); if (r) r({ correct: !!ok, tries: ok ? 1 : 2, hints: 0 }); return !!r }
+      o.onQuestion = function (info) {
+        window.__q.push(info)
+        if (qm === 'auto') return Promise.resolve({ correct: true, tries: 1, hints: 0 })
+        if (qm === 'wrong') return Promise.resolve({ correct: false, tries: 2, hints: 1 })
+        return new Promise(function (res) { window.__qPending.push(res) })
+      }
+    } else if (qm === 'real') {
+      window.__q = []
+      o.onQuestion = function (info) { window.__q.push(info); return window.__qp = TKQuiz.challenge(document.getElementById('host'), { domain: info.topic || 'campur', world: 'titanic', grade: 'kelas2', intro: info.intro, nextLabel: 'Lanjut Berlayar', title: 'Tantangan Pengetahuan', seed: 11 + info.index }) }
+    }
     if (extra) for (var k in extra) o[k] = extra[k]
     window.__h = TKSteer.mount(document.getElementById('host'), level, o)
     return true
@@ -49,6 +73,7 @@
   if (q.get('goal')) lvl.goal = q.get('goal')
   if (q.get('assist') === '0') lvl.assist = false
   if (q.get('first') === '1') lvl.first = true
+  if (q.get('qon')) lvl.questions = { on: q.get('qon').split(','), buoys: q.get('qbuoys') ? +q.get('qbuoys') : undefined, gates: q.get('qgates') ? +q.get('qgates') : undefined, count: q.get('qcount') ? +q.get('qcount') : undefined }
   if (q.get('manual') !== '1') window.__mount(lvl)
 })()
 </script>

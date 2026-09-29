@@ -41,13 +41,13 @@
  *   worldmap   tk-prop/treasure-map                             leave G30 to the Dunia map
  *   settings   game/gear                                        settings button
  *   parent     tk-char/captain-old > tk-prop/captain-hat        parent area
- *   sound      tk-prop/ship-bell (CSS cross when muted)         sound toggle
+ *   sound      tk-prop/ships-bell (CSS cross when muted)         sound toggle
  *   start      tk-prop/ship-wheel                               "Mulai Petualangan"
  *   go         gt/play-confirm                                  grid "JALAN!"
  *   pause      tk-ui/hourglass > tk-legend/hourglass > game/hourglass   pause button
  *   lock       gt/lock                                          locked level
  *   hint       tk-prop/lantern                                  hint buttons
- *   listen     tk-prop/ship-bell                                "Dengar" (listen) button
+ *   listen     tk-prop/ships-bell                               "Dengar" (listen) button
  *   trash      things/trash-can                                 grid "Hapus"
  *   repeat     tk-prop/rope-coil                                grid "Ulangi"
  *   turn       tk-prop/ship-wheel                               grid "Belok kiri / kanan"
@@ -73,8 +73,8 @@
   var ICONS = {
     star: ['tk-ui/star', 'game/star'], ok: ['tk-prop/flag-white-star'], back: ['gt-el/signpost-arrow'], next: ['gt-el/signpost-arrow'],
     worldmap: ['tk-prop/treasure-map'], settings: ['game/gear'], parent: ['tk-char/captain-old', 'tk-prop/captain-hat'],
-    sound: ['tk-prop/ship-bell'], start: ['tk-prop/ship-wheel'], go: ['gt/play-confirm'],
-    pause: ['tk-ui/hourglass', 'tk-legend/hourglass', 'game/hourglass'], lock: ['gt/lock'], hint: ['tk-prop/lantern'], listen: ['tk-prop/ship-bell'],
+    sound: ['tk-prop/ships-bell'], start: ['tk-prop/ship-wheel'], go: ['gt/play-confirm'],
+    pause: ['tk-ui/hourglass', 'tk-legend/hourglass', 'game/hourglass'], lock: ['gt/lock'], hint: ['tk-prop/lantern'], listen: ['tk-prop/ships-bell'],
     trash: ['things/trash-can'], repeat: ['tk-prop/rope-coil'], turn: ['tk-prop/ship-wheel'], crate: ['tk-prop/crate-supplies'], drop: ['tk-prop/crate-white-star'],
     'switch': ['tk-prop/engine-telegraph'], compass: ['tk-prop/compass'], wheel: ['tk-prop/ship-wheel'], journal: ['tk-legend/journal-book', 'school/notebook'],
     book: ['tk-prop/books-passenger-list'], ice: ['tk-prop/ice-crystal'], lifeboat: ['tk-prop/lifeboat'], ship: ['tk-prop/titanic-ship'],
@@ -124,7 +124,8 @@
         // Tingkat Soal (owner 2026-09-29): 'mudah' = Kelas 1–2 (default), 'sulit' = Kelas 3–4
         level: st.level === 'sulit' ? 'sulit' : 'mudah' },
       seenIntro: !!o.seenIntro, last: o.last || null, fav: o.fav || [], guide: o.guide || {}, seenSortTut: !!o.seenSortTut,
-      progress: o.progress || {}, cine: o.cine || {}, legacy: o.legacy || {}, migrated: o.migrated || {} }
+      progress: o.progress || {}, cine: o.cine || {}, legacy: o.legacy || {}, migrated: o.migrated || {},
+      atlas: o.atlas && o.atlas.open ? { v: 1, open: o.atlas.open.slice() } : null }   // world-select sea chart: worlds ever unlocked (tk-atlas.js)
   }
   /* save migration: a world that became chapters (Titanic t1..t13 -> c1..c10) keeps its progress. A chapter
      is done when the LAST of its old levels was done (old levels unlocked in order, so all of them were),
@@ -283,9 +284,37 @@
   function worldStars (w) { var o = S.stars[w.id] || {}; return w.levels.reduce(function (n, l) { return n + (o[l.id] || 0) }, 0) }
   function totalStars () { return WD.WORLDS.reduce(function (n, w) { return n + worldStars(w) }, 0) }
   function maxStars () { return WD.WORLDS.reduce(function (n, w) { return n + w.levels.length * 3 }, 0) }
-  function worldDone (w) { return w.levels.every(function (l) { return starsOf(w.id, l.id) > 0 }) }
-  function worldOpen (i) { return i === 0 || worldDone(WD.WORLDS[i - 1]) || (S.fragments.length >= i - 1 && i <= 1) }
-  function levelOpen (w, k) { return k === 0 || starsOf(w.id, w.levels[k - 1].id) > 0 }
+  // levels inserted later (lv.added) are optional: a finished world stays finished, reached levels stay open (TKAtlas rules)
+  function sfOf (w) { return function (id) { return starsOf(w.id, id) } }
+  function worldDone (w) { return W.TKAtlas ? TKAtlas.worldDone(w, sfOf(w)) : w.levels.every(function (l) { return starsOf(w.id, l.id) > 0 }) }
+  function levelOpen (w, k) { return W.TKAtlas ? TKAtlas.levelOpen(w, k, sfOf(w)) : k === 0 || starsOf(w.id, w.levels[k - 1].id) > 0 }
+  /* WORLD UNLOCK (branching sea chart, tk-atlas.js): S.atlas.open only grows. The first run on an old linear save
+     migrates it (old linear rule + every world with stars + the graph rules). A world the atlas does not know
+     keeps the old linear rule. */
+  var AG = null, AGK = ''
+  function atlasG () {
+    if (!W.TKAtlas) return null
+    var ids = WD.WORLDS.map(function (w) { return w.id }), k = ids.join(',')
+    if (k !== AGK) { AGK = k; AG = TKAtlas.graph(ids) }
+    return AG
+  }
+  function atlasNow () {
+    var G = atlasG(); if (!G) return null
+    var done = {}, started = {}
+    WD.WORLDS.forEach(function (w) { if (worldDone(w)) done[w.id] = 1; if (worldStars(w) > 0) started[w.id] = 1 })
+    if (S.last && S.last.w) started[S.last.w] = 1
+    if (!S.atlas) { S.atlas = { v: 1, open: TKAtlas.migrate(G, { done: done, fragments: S.fragments.length, started: started }) }; save() }
+    var kept = {}; S.atlas.open.forEach(function (id) { kept[id] = 1 })
+    var r = TKAtlas.compute(G, { done: done, fragments: S.fragments.length, open: kept })
+    if (r.newly.length) { S.atlas = { v: 1, open: S.atlas.open.concat(r.newly).sort() }; save() }
+    return r
+  }
+  function worldOpenLinear (i) { return i === 0 || worldDone(WD.WORLDS[i - 1]) || (S.fragments.length >= i - 1 && i <= 1) }
+  function worldOpen (i) {
+    var w = WD.WORLDS[i], r = w && atlasNow()
+    if (r && TKAtlas.NODES[w.id]) return !!r.open[w.id]
+    return (r && r.open[w && w.id]) || worldOpenLinear(i)
+  }
   function xpLevel () { var lv = Math.floor(S.xp / 300) + 1; return { lv: lv, cur: S.xp % 300 } }
   function paintChip () {
     var x = xpLevel(); $('pchip-lv').textContent = 'Level ' + x.lv
@@ -324,7 +353,9 @@
     $('home-timmy').src = Art.src('char/timmy')
     document.querySelectorAll('#home-px .gull').forEach(function (g) { if (!g.getAttribute('src')) g.src = Art.lib('tk-legend/seagull-3') })
     // owner logo sprite replaces the drawn logo once it exists (tk-key/logo)
-    var li = $('logo-img'); if (li && !li.dataset.tried && W.AssetIndex && AssetIndex.path('tk-key/logo')) { li.dataset.tried = 1; li.onload = function () { li.classList.remove('hide'); var d = document.querySelector('#scr-home .logo'); if (d) d.classList.add('hide') }; li.src = Art.src('ui/logo') }
+    // playtest 2026-09-29: the logo sprite is lettered in English ("& THE LEGENDARY SHIPS · EXPLORE…"): the game shows
+    // the drawn Indonesian logo instead, with ONE tagline (the ribbon). Flip LOGO_ART once an Indonesian sprite exists.
+    var li = $('logo-img'); if (LOGO_ART && li && !li.dataset.tried && W.AssetIndex && AssetIndex.path('tk-key/logo')) { li.dataset.tried = 1; li.onload = function () { li.classList.remove('hide'); var d = document.querySelector('#scr-home .logo'); if (d) d.classList.add('hide') }; li.src = Art.src('ui/logo') }
     paintChip()
     $('start-t').textContent = S.seenIntro ? 'Lanjutkan Petualangan' : 'Mulai Petualangan'
     // the one big button goes straight into the next unplayed level; its small line says which
@@ -344,7 +375,7 @@
     paintSound()
     carouselWire(); requestAnimationFrame(paintCar)
     skel($('carousel'))
-    hand('home', function () { return $('btn-start').querySelector('.tk-ico') || $('btn-start') }, S.seenIntro ? 'Ketuk tombol kuning untuk lanjut berlayar!' : 'Halo! Ketuk tombol kuning untuk mulai berlayar!')
+    hand('home', function () { return $('btn-start').querySelector('.chev') || $('btn-start') }, S.seenIntro ? 'Ketuk tombol kuning untuk lanjut berlayar!' : 'Halo! Ketuk tombol kuning untuk mulai berlayar!', true)   // side hand: it pointed down over the Kamar Timmy tile (playtest)
   }
   // carousel arrows (CSS chevrons) + dots; landscape pages by a screenful, portrait by one card
   var carWired = false
@@ -379,7 +410,7 @@
     show('scr-ships')
     $('ships-bg').style.background = Art.scene('harbor-dawn')
     var tm = $('ships-timmy'); if (!tm.getAttribute('src')) tm.src = Art.src('char/timmy')
-    var lg = $('ships-logo'); if (!lg.getAttribute('src') && W.AssetIndex && AssetIndex.path('tk-key/logo')) lg.src = Art.src('ui/logo')
+    var lg = $('ships-logo'); if (LOGO_ART && !lg.getAttribute('src') && W.AssetIndex && AssetIndex.path('tk-key/logo')) lg.src = Art.src('ui/logo')
     $('ships-stars').innerHTML = IC('star') + '<span>' + totalStars() + '/' + maxStars() + '</span>'
     var cats = WD.CATS.concat([['favorit', 'Favorit']])
     $('ship-filter').innerHTML = cats.map(function (c) { return '<button class="chip' + (c[0] === FILTER ? ' on' : '') + '" type="button" data-c="' + c[0] + '" aria-pressed="' + (c[0] === FILTER) + '">' + c[1] + '</button>' }).join('')
@@ -423,7 +454,7 @@
       '<button class="fav dfav' + (fav ? ' on' : '') + '" type="button" data-fav="' + w.id + '" aria-label="Favorit" aria-pressed="' + fav + '">' + IC('star') + '</button>' +
       '<q>' + esc(sp.quote || '') + '</q>' +
       '<div class="thumbs" aria-hidden="true"><span style="background:' + esc(Art.scene(w.scene)) + '"></span>' +
-        (isl ? '<span><img src="' + esc(Art.lib(isl)) + '" alt=""></span>' : '') + '<span><img src="' + esc(Art.lib(THUMB[w.id] || 'tk-prop/compass-3')) + '" alt=""></span></div>' +
+        (isl ? '<span><img src="' + esc(Art.lib(isl)) + '" alt=""></span>' : '') + '<span><img src="' + esc(Art.lib(THUMB[w.id] || w.thumb || 'tk-prop/compass-3')) + '" alt=""></span></div>' +
       '<dl><dt>Tahun</dt><dd>' + (w.year || '-') + '</dd><dt>Jenis</dt><dd>' + esc(sp.type || '') + '</dd><dt>Panjang</dt><dd>' + esc(sp.length || '') + '</dd><dt>Terkenal karena</dt><dd>' + esc(sp.famous || '') + '</dd></dl>' +
       '<button class="btn b-gold fk sail" type="button" id="btn-sail">' + IC('start') + '<span>' + (open ? 'Berlayar!' : 'Terkunci') + '</span><i class="chev" aria-hidden="true"></i></button>'
     A(d, [{ opacity: 0.4, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: EO })
@@ -439,60 +470,51 @@
     cuttysark: 'tk-world/palm-island', victory: 'tk-world/cave-island', mayflower: 'tk-world/arch-island', endurance: 'tk-world/snow-island',
     kontiki: 'tk-world/palm-island', calypso: 'tk-world/cave-island', queenmary: 'tk-world/harbor-station', arizona: 'tk-world/arch-rock',
     missouri: 'tk-world/arch-island', nautilus: 'tk-world/whirlpool', pelabuhan: 'tk-world/ruins' }
-  function isleArt (id) { var k = ISLE[id]; return k && W.AssetIndex && AssetIndex.path(k) ? k : null }
-  // one dashed route through snake-ordered points: a curve between neighbours in a row; a row change
-  // runs down the outer gutter (beside the labels, never across a star row)
-  function snakePath (pts, half, midX) {
-    var r = 14, d = 'M' + pts[0].x.toFixed(0) + ' ' + pts[0].y.toFixed(0)
-    for (var k = 1; k < pts.length; k++) {
-      var a = pts[k - 1], b = pts[k]
-      if (a.row === b.row) { d += ' Q' + ((a.x + b.x) / 2).toFixed(0) + ' ' + (a.y + 20).toFixed(0) + ' ' + b.x.toFixed(0) + ' ' + b.y.toFixed(0); continue }
-      var s = a.x >= midX ? 1 : -1, e = a.x + s * half
-      d += ' L' + (e - s * r).toFixed(0) + ' ' + a.y.toFixed(0) + ' Q' + e.toFixed(0) + ' ' + a.y.toFixed(0) + ' ' + e.toFixed(0) + ' ' + (a.y + r).toFixed(0) +
-        ' L' + e.toFixed(0) + ' ' + (b.y - r).toFixed(0) + ' Q' + e.toFixed(0) + ' ' + b.y.toFixed(0) + ' ' + (e - s * r).toFixed(0) + ' ' + b.y.toFixed(0) + ' L' + b.x.toFixed(0) + ' ' + b.y.toFixed(0)
-    }
-    return d
+  function isleArt (id) { var k = ISLE[id] || (W.TKAtlas && TKAtlas.NODES[id] && TKAtlas.NODES[id].isle) || (WD.get(id) || {}).isle; return k && W.AssetIndex && AssetIndex.path(k) ? k : null }
+  /* the WORLD SELECT sea chart (tk-atlas.js: regions, branching routes, sea gates, pan / zoom, mini-map). */
+  var ATL = null
+  function atlasHere (G, r) {
+    var l = S.last && S.last.w
+    if (l && G.has[l] && r.open[l]) return l
+    var best = 'kamar'; G.order.forEach(function (id) { if (r.done[id]) best = id })
+    return best
   }
-  function pathSvg (w, h, d, sw) {
-    return '<svg class="path" width="' + Math.round(w) + '" height="' + Math.round(h) + '" aria-hidden="true"><path d="' + d + '" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="' + (sw + 3) + '" stroke-dasharray="10 12" stroke-linecap="round" transform="translate(0 2)"/>' +
-      '<path d="' + d + '" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="' + sw + '" stroke-dasharray="10 12" stroke-linecap="round"/></svg>'
-  }
-  var wResize = false
   function worldView () {
     show('scr-world')
+    document.getElementById('scr-world').classList.toggle('atl-on', !!W.TKAtlas)
     $('sea-bg').style.background = Art.scene('harbor-day')
-    var cp = $('w-compass'); if (!cp.getAttribute('src')) cp.src = Art.lib('tk-prop/compass')
-    var tm = $('w-timmy'); if (!tm.getAttribute('src')) tm.src = Art.lib('tk-char/timmy-map')
     $('world-stars').innerHTML = IC('star') + '<span>' + totalStars() + '/' + maxStars() + '</span>'
-    layoutWorld()
     bnav('peta')
-    if (!wResize) {
-      wResize = true; var rt = 0
-      addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (document.body.getAttribute('data-scr') === 'scr-world') layoutWorld() }, 150) })
-    }
-    var nx = $('islands').querySelector('.isle.next'); if (nx) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }) } catch (e) {} }, 80)
+    layoutWorld()
     skel($('sea-bg'))
-    if (nx) hand('world', function () { return $('islands').querySelector('.isle.next .land') }, 'Ketuk pulau yang bersinar untuk berlayar!', true)
+    if ($('islands').querySelector('.atl-node.next')) hand('world', function () { return $('islands').querySelector('.atl-node.next .land') }, 'Ketuk pulau yang bersinar untuk berlayar!', true)
   }
   function layoutWorld () {
-    var host = $('islands'), cs = getComputedStyle(host), list = shipWorlds()
-    var x0 = parseFloat(cs.paddingLeft) || 0, Wd = host.clientWidth - x0 - (parseFloat(cs.paddingRight) || 0)
-    var cols = 3, gx = Wd / cols, short = innerHeight < 520
-    var aw = Math.round(Math.min(gx * 0.84, short ? 124 : 230)), ah = Math.round(aw * 0.72)
-    var lw = Math.round(Math.min(gx - 14, 210)), rowH = ah + (gx < 150 ? 92 : 78) + (short ? 10 : 24), pts = []
-    list.forEach(function (w, k) { var row = Math.floor(k / cols), c = k % cols; if (row % 2) c = cols - 1 - c; pts.push({ x: x0 + gx * (c + 0.5), y: 22 + row * rowH + ah / 2, row: row }) })
-    var H = pts[pts.length - 1].y + ah / 2 + rowH - ah + 8
-    var nextI = -1; list.forEach(function (w, k) { if (nextI < 0 && worldOpen(wIndex(w)) && !worldDone(w)) nextI = k })
-    host.innerHTML = pathSvg(host.clientWidth, H, snakePath(pts, gx / 2 - 3, x0 + Wd / 2), 4) +
-      list.map(function (w, k) {
-        var open = worldOpen(wIndex(w)), got = worldStars(w), max = w.levels.length * 3, st = '', n = Math.round(got / max * 3), isl = isleArt(w.id)
-        for (var q = 0; q < 3; q++) st += IC('star', q < n ? '' : 'tk-ico--dim')
-        return '<button class="isle' + (open ? '' : ' locked') + (k === nextI ? ' next' : '') + '" type="button" data-w="' + w.id + '" aria-label="' + esc((k + 1) + '. ' + w.name + (open ? '' : ' (terkunci)')) + '" style="left:' + (pts[k].x - gx / 2).toFixed(0) + 'px;top:' + (pts[k].y - ah / 2).toFixed(0) + 'px;width:' + gx.toFixed(0) + 'px;--aw:' + aw + 'px;--ah:' + ah + 'px;--lw:' + lw + 'px;animation-delay:' + k * 50 + 'ms">' +
-          '<span class="land">' + (isl ? '<img class="isl" src="' + esc(Art.lib(isl)) + '" alt="">' : '<i class="isl-d"></i>') +
-          '<img class="shp" src="' + esc(Art.src(w.ship || 'char/timmy')) + '" alt=""><b class="no fk">' + (k + 1) + '</b>' + (open ? '' : lockBadge()) + '</span>' +
-          '<span class="lab">' + esc(w.name) + '<small>' + esc(w.value) + '</small></span><span class="s">' + st + '</span></button>'
-      }).join('')
-    var sp = document.createElement('div'); sp.style.height = H + 'px'; host.appendChild(sp)
+    var G = atlasG(), r = atlasNow(); if (!G || !r) return
+    var here = atlasHere(G, r)
+    ATL = TKAtlas.mount($('islands'), {
+      G: G, status: r, here: here, next: TKAtlas.next(G, r, S.last && S.last.w),
+      world: function (id) { var w = WD.get(id) || { name: id }; return { name: id === 'kamar' ? 'Kamar Timmy' : w.name, shipSrc: w.ship ? Art.src(w.ship) : (TKAtlas.NODES[id].ship && W.AssetIndex && AssetIndex.path(TKAtlas.NODES[id].ship) ? Art.lib(TKAtlas.NODES[id].ship) : '') } },
+      stars: function (id) { var w = WD.get(id); if (!w || !w.levels.length) return 0; return worldDone(w) ? Math.max(1, Math.round(worldStars(w) / (w.levels.length * 3) * 3)) : Math.min(2, Math.round(worldStars(w) / (w.levels.length * 3) * 3)) },
+      frag: function (id) { return S.fragments.indexOf(id) >= 0 },
+      lib: function (k) { return k && W.AssetIndex && AssetIndex.path(k) ? Art.lib(k) : '' },
+      icon: IC, scene: Art.scene, reduced: reduced, click: function () { SND.click() },
+      boat: Art.lib('vehicles/sailboat'), timmy: Art.src('char/timmy'),
+      pick: atlasPick
+    })
+    skel($('islands'))
+  }
+  // an open world: Timmy's boat sails the route there, then the world opens; a locked one shakes + says why
+  function atlasPick (id, el) {
+    var G = atlasG(), r = atlasNow(); if (!G || !r) return
+    if (!r.open[id]) {
+      var land = el && el.querySelector('.land')
+      if (land) A(land, [{ translate: '0 0' }, { translate: '-8px 0' }, { translate: '7px 0' }, { translate: '-4px 0' }, { translate: '0 0' }], { duration: 240, easing: 'ease-out' })
+      toast(TKAtlas.hint(G, id, r, function (x) { var w = WD.get(x); return x === 'kamar' ? 'Kamar Timmy' : w ? w.name : x }))
+      return
+    }
+    SND.click(); unhand()
+    if (ATL) ATL.sail(id, function () { openWorld(id) }); else openWorld(id)
   }
   var BNAV = [['peta', 'Peta Dunia', 'tk-legend/world-map-scroll'], ['cerita', 'Cerita', 'tk-prop/adventure-log'], ['tantangan', 'Tantangan', 'game/target-board'],
     ['belajar', 'Belajar', 'tk-prop/globe-2'], ['koleksi', 'Koleksi', 'game/treasure-chest']]
@@ -519,7 +541,7 @@
     $('map-name').textContent = w.name + (w.year ? ' (' + w.year + ')' : ''); $('map-value').textContent = w.value
     $('map-stars').innerHTML = IC('star') + '<span>Bintang ' + worldStars(w) + '/' + w.levels.length * 3 + '</span>'
     var cap = w.captain || {}
-    $('captain').innerHTML = '<img src="' + esc(Art.src(CAPT[w.id] || 'char/captain')) + '" alt=""><div><b>' + esc(cap.name) + '</b><span>“' + esc(cap.quote) + '”</span></div>'
+    $('captain').innerHTML = '<img src="' + esc(Art.src(CAPT[w.id] || w.guideArt || 'char/captain')) + '" alt=""><div><b>' + esc(cap.name) + '</b><span>“' + esc(cap.quote) + '”</span></div>'
     $('captain').classList.add('hide')   // every world: the guide speaks from the board's footer bubble
     $('scr-map').classList.add('cmode')
     layoutRoute(w)
@@ -576,7 +598,7 @@
   function layoutChapters (w, still) {
     var host = $('route'), L = w.levels, n = L.length, lm = !w.chapters, cap = w.captain || {}
     cancelAnimationFrame(SHIP_RAF)
-    var foot = lm ? (cap.quote ? '<footer class="cm-foot cm-guide"><img src="' + esc(Art.src(CAPT[w.id] || 'char/captain')) + '" alt=""><span><b class="fk">' + esc(cap.name) + '</b><q>' + esc(cap.quote) + '</q></span></footer>' : '')
+    var foot = lm ? (cap.quote ? '<footer class="cm-foot cm-guide"><img src="' + esc(Art.src(CAPT[w.id] || w.guideArt || 'char/captain')) + '" alt=""><span><b class="fk">' + esc(cap.name) + '</b><q>' + esc(cap.quote) + '</q></span></footer>' : '')
       : '<footer class="cm-foot fk">' + esc(w.mapFoot || '') + '</footer>'
     host.innerHTML = '<div class="cmap' + (lm ? ' lmode' : '') + (still ? ' still' : '') + '"><i class="cm-rose" aria-hidden="true"><img src="' + esc(Art.lib('tk-prop/compass-3')) + '" alt=""></i>' +
       '<header class="cm-plate"><b class="fk">' + esc(lm ? 'Peta ' + w.name : (w.mapTitle || 'Peta Bab')) + '</b><small>' + esc(w.mapSub || w.value) + '</small></header>' +
@@ -642,14 +664,15 @@
     if (!ship) { scrollNext(); return }
     ship.style.width = sw + 'px'
     var bob = function () { if (lm) ship.classList.add('bob') }
-    var place = function (x, y, flip) { if (lm) x = Math.max(sw / 2, Math.min(bw - sw / 2, x)); ship.style.transform = 'translate3d(' + Math.round(x - sw / 2) + 'px,' + Math.round(y - sw * 0.62) + 'px,0)' + (flip ? ' scaleX(-1)' : '') }
+    var place = function (x, y, flip) { x = Math.max(sw / 2 + 2, Math.min(bw - sw / 2 - 2, x));   // never cut by the board edge (chapter map too, playtest)
+      ship.style.transform = 'translate3d(' + Math.round(x - sw / 2) + 'px,' + Math.round(y - sw * 0.62) + 'px,0)' + (flip ? ' scaleX(-1)' : '') }
     var P0 = pts[shipK]
     if (!seg || !seg.getTotalLength) {
-      if (lm && P0.x - m / 2 - sw < 0) place(P0.x + m / 2 + sw / 2 + 4, P0.y, false); else place(P0.x - m / 2 - sw / 2 - 4, P0.y, false)
+      if (P0.x - m / 2 - sw - 6 < 0) place(P0.x + m / 2 + sw / 2 + 4, P0.y, false); else place(P0.x - m / 2 - sw / 2 - 4, P0.y, false)
       bob(); if (lm) scrollNext(); return
     }
     var len = seg.getTotalLength(), stop = Math.max(0, len - (m / 2 + sw / 2 + 8)), at = function (u) { return seg.getPointAtLength(u) }
-    if (lm) {   // back the ship off along the rope until it clears the current medallion and its "Main!" flag
+    {   // back the ship off along the rope until it clears the current medallion (and, on level maps, its "Main!" flag)
       var clear = function (u) { var q = at(u), x = Math.max(sw / 2, Math.min(bw - sw / 2, q.x)); return x + sw / 2 < P0.x - m / 2 - 6 || x - sw / 2 > P0.x + m / 2 + 6 || q.y + sw * 0.2 < P0.y - m / 2 - 34 || q.y - sw * 0.62 > P0.y + m / 2 }
       while (stop > 0 && !clear(stop)) stop -= 4
     }
@@ -692,7 +715,13 @@
   function nextUp () {
     var last = S.last && WD.get(S.last.w), li = last ? wIndex(last) : -1
     if (li >= 0 && worldOpen(li)) { var lk = firstUnplayed(last); if (lk >= 0) return { w: last, k: lk } }
-    for (var i = 0; i < WD.WORLDS.length; i++) {
+    // then the sea chart's glowing "next" world, then the chart's order (closest to home first)
+    var G = atlasG(), an = G && TKAtlas.next(G, atlasNow(), S.last && S.last.w), aw = an && WD.get(an)
+    if (aw && worldOpen(wIndex(aw))) { var ak = firstUnplayed(aw); if (ak >= 0) return { w: aw, k: ak } }
+    var ord = WD.WORLDS.map(function (w, i) { return i })
+    if (G) ord.sort(function (a, b) { var x = G.order.indexOf(WD.WORLDS[a].id), y = G.order.indexOf(WD.WORLDS[b].id); return (x < 0 ? 999 + a : x) - (y < 0 ? 999 + b : y) })
+    for (var q = 0; q < ord.length; q++) {
+      var i = ord[q]
       if (!worldOpen(i)) continue
       var k = firstUnplayed(WD.WORLDS[i]); if (k >= 0) return { w: WD.WORLDS[i], k: k }
     }
@@ -714,6 +743,7 @@
     goT = setTimeout(go, 1300)
   }
   /* ── chapters: helpers ──────────────────────────────────────────────── */
+  var LOGO_ART = false   // the owner logo sprite is lettered in English; see home()
   var FAST = false   // QA seam (__tk.fast): shorter lanes runs, faster cinema — never set by the game itself
   function isChap (lv) { return !!lv && lv.type === 'chapter' }
   function unitLabel (w, k) { return (w && w.chapters ? 'Bab ' : 'Level ') + (k + 1) }
@@ -757,6 +787,8 @@
     var w = CUR.w, lv = w.levels[k]; if (!lv) return
     if (!levelOpen(w, k)) { toast(w.chapters ? 'Selesaikan bab sebelumnya dulu, ya!' : 'Selesaikan level sebelumnya dulu, ya!'); return }
     CUR.k = k; S.last = { w: w.id, k: k }; save()
+    // the counting-scene ship in questions is the Titanic only in the Titanic world (playtest: a Titanic in Britannic)
+    IC.ICONS.ship = w.id === 'titanic' ? ['tk-prop/titanic-ship'] : ['tk-ship/sailboat']
     var miss = isChap(lv) ? null : modsMissing(lv); if (miss) { toast('Bagian permainan ini sedang dimuat… coba lagi.'); return }
     if (PLAYING && PLAYING.handle && PLAYING.handle.destroy) { try { PLAYING.handle.destroy() } catch (e) {} }
     show('scr-play')
@@ -843,6 +875,8 @@
   // level goal: shown IN the play HUD row (in place of the level chip) so it can never cover the
   // module's card header on a phone; fades out after 3.5 s (owner screenshot 2026-09-28)
   var goalT = 0
+  // answer help (3 choices) only under Tingkat Soal = Mudah: an old save may carry easy:true next to level:'sulit'
+  function easyOn () { return !!S.settings.easy && S.settings.level !== 'sulit' }
   function goal (text) {
     if (text && W.TKHub) TKHub.say(text)
     var g = $('goalbar'); clearTimeout(goalT)
@@ -853,15 +887,15 @@
     var P0 = PLAYING
     if (P0 && P0.chap) return 'Bab ' + P0.lv.no + ' · ' + P0.lv.title + ' · ' + stepLabel(P0.lv, P0.chap.i)
     var wi = CUR.w ? WD.WORLDS.indexOf(CUR.w) : -1
-    return CUR.w ? (wi > 0 ? 'Bab ' + wi + ' · ' : '') + CUR.w.name : ''
+    return CUR.w ? CUR.w.name : ''
   }
   // keep: leave the last panel on screen when it ends (a chapter cross-fades it into the next step)
   function story (host, panels, title, done, keep) {
     document.body.classList.add('story-on')
     var P0 = PLAYING
     P0 && (P0.handle = TKStory.play(host, panels, { title: title, chapter: chapLabel(), subtitle: P0 && P0.chap ? CUR.w.name : CUR.w && CUR.w.value,
-      logo: W.AssetIndex && AssetIndex.path('tk-key/logo') ? Art.src('ui/logo') : '', sfx: { page: SND.page, go: SND.chime },
-      say: say, listen: IC('listen', '', ''), easy: !!S.settings.easy,
+      logo: LOGO_ART && W.AssetIndex && AssetIndex.path('tk-key/logo') ? Art.src('ui/logo') : '', sfx: { page: SND.page, go: SND.chime },
+      say: say, listen: IC('listen', '', ''), easy: easyOn(),
       onDone: function () { if (PLAYING !== P0) return; document.body.classList.remove('story-on'); if (!keep) host.innerHTML = ''; done() } }))
   }
   function sfxBag () { return { click: SND.click, good: function () { SND.cue('correct') }, bad: function () { SND.cue('wrong') }, win: function () { SND.cue('levelup') }, splash: SND.splash, muted: !soundOn() } }
@@ -881,7 +915,7 @@
   }
   // the quiz plate subtitle: what kind of questions these are (never another step's mission)
   var QUIZ_SUB = { matematika: 'Soal matematika: hitung dengan teliti!', islam: 'Soal Studi Islam: pilih jawaban yang benar.', arab: 'Soal Bahasa Arab: kenali katanya!',
-    umum: 'Soal pengetahuan umum: kapal, laut, dan dunia.', logika: 'Teka-teki logika: pikirkan baik-baik!', campur: 'Soal campuran: matematika, bahasa, dan pengetahuan.' }
+    umum: 'Soal pengetahuan umum: kapal, laut, dan dunia.', logika: 'Teka-teki logika: pikirkan baik-baik!', campur: 'Soal campuran — jawab dan lanjut berlayar!' }
   function quizSub (d) { return QUIZ_SUB[d] || QUIZ_SUB.campur }
   // a scene that has a painted owner backdrop (else the sea harbour: never a plain gradient behind a board)
   function painted (sc) { return Art.SCENE_ART && Art.SCENE_ART[sc] ? sc : 'harbor-day' }
@@ -893,27 +927,37 @@
     try { $('scr-play').style.background = 'linear-gradient(rgba(6,12,32,.62),rgba(6,12,32,.62)),' + Art.scene(painted(lv.scene || (P0 && P0.chap && P0.lv.scene) || w.scene)) } catch (e) {}
     var common = { sfx: sfxBag(), lib: Art.lib, reducedMotion: reduced(), timmy: Art.src('char/timmy'), penguin: Art.src(charKey('char/penguin', 'animals/penguin')), topInset: 70, hints: S.settings.hints,
       // Mode Mudah + read-aloud: modules that know them use them; the rest ignore unknown opts
-      easy: !!S.settings.easy, readAloud: !!S.settings.narrate, say: say, tutorial: !S.seenSortTut }
+      easy: easyOn(), readAloud: !!S.settings.narrate, say: say, tutorial: !S.seenSortTut,
+      // the Arabic listening speaker: shown muted while G30 sound is off; its tap turns sound back on
+      muted: function () { return !soundOn() }, onUnmute: function () { if (!soundOn()) toggleSound() } }
     var chN = P0 && P0.chap ? P0.lv : null
     if (lv.type !== 'lanes' && lv.type !== 'cinema') goal(lv.goal)
     var toMap = function () { try { PLAYING && PLAYING.handle && PLAYING.handle.destroy() } catch (e) {} PLAYING = null; $('play-host').innerHTML = ''; worldMap(w.id) }
     try {
       if (lv.type === 'story' || lv.type === 'cutscene') return story(host, lv.story || [], lv.title, function () { end({ stars: 3, story: true }) }, !!(P0 && P0.chap))
       if (lv.type === 'grid') {
-        var gwi = WD.WORLDS.indexOf(w)
         P0.handle = TKGrid.mount(host, WD.grid(lv), Object.assign({}, common, { title: lv.title, mission: lv.goal, lib: Art.src, bg: Art.scene(painted(lv.scene || (chN && chN.scene) || w.scene)), chapterCard: false,
           chapter: chN ? { ship: w.ship, name: w.name, title: chN.title, label: 'Bab ' + chN.no + ' · ' + chN.title, idx: chN.no, total: w.levels.length }
-            : { ship: w.ship, name: w.name, title: w.value, label: (gwi > 0 ? 'Bab ' + gwi + ' · ' : '') + w.name, idx: CUR.k + 1, total: w.levels.length },
+            : { ship: w.ship, name: w.name, title: w.value, label: w.name, idx: CUR.k + 1, total: w.levels.length },
           onBack: toMap,
+          onQuestion: function (q) { return challenge(host, { domain: q.topic || lv.domain || 'campur', seed: ((lv.seed || 7) * 97 + q.index * 13 + (Date.now() & 1023)) >>> 0, intro: q.reason === 'door' ? 'Jawab soal ini untuk membuka pintu.' : 'Jawab soal ini untuk membuka peti.', nextLabel: 'Lanjut' }) },
           art: { boat: CUR.w.id === 'kamar' ? 'vehicles/sailboat' : 'ship/' + CUR.w.id, timmy: 'char/timmy', tipper: charKey('char/penguin', 'animals/penguin') },
           onDone: function (res) { end({ stars: res.stars, moves: res.moves, shortest: res.shortest }) } }))
         return
       }
+      // action steps (steer / lanes): questions slipped into the sailing — a bump, a Soal buoy, a lighthouse gate —
+      // each one Knowledge Challenge card (Mudah/Sulit, the step's topic, else the world's campur mix)
+      var askAction = function (info) {
+        info = info || {}
+        return challenge(host, { domain: info.topic || lv.domain || 'campur', seed: ((lv.seed || 7) * 97 + (info.index || 0) * 13 + (Date.now() & 1023)) >>> 0,
+          intro: info.intro || 'Jawab soal ini, lalu kapal berlayar lagi.', nextLabel: 'Lanjut Berlayar' })
+      }
       if (lv.type === 'steer') {
-        P0.handle = TKSteer.mount(host, Object.assign(WD.steer ? WD.steer(lv) : { mode: lv.mode, vessel: lv.vessel, goal: lv.goal }, { seed: (Date.now() >>> 0) }), Object.assign({ sfx: { muted: !soundOn() }, lib: Art.lib,
+        P0.handle = TKSteer.mount(host, Object.assign(WD.steer ? WD.steer(lv) : { mode: lv.mode, vessel: lv.vessel, goal: lv.goal }, { seed: (Date.now() >>> 0), questions: lv.questions }), Object.assign({ sfx: { muted: !soundOn() }, lib: Art.lib, world: w.id,
           // TKSteer sails the child's TKFleet ship (top-down art; the "Pilih Kapalmu" screen opens when none is saved)
+          onQuestion: askAction,
           onDone: function (res) {
-            var after = function () { end({ stars: res.stars || 1, scripted: res.scripted, hits: res.hits }) }
+            var after = function () { end({ stars: res.stars || 1, scripted: res.scripted, hits: res.hits, right: res.qAsked ? res.qRight : undefined, asked: res.qAsked || undefined }) }
             if (lv.after) { host.innerHTML = ''; story(host, lv.after, lv.title, after) } else after()
           } }, common))
         return
@@ -922,19 +966,16 @@
         // three-lane navigation (tk-lanes): a collision asks one Knowledge Challenge; the Titanic's final run
         // (final:true) ends in the scripted impact that the next step's cinema continues
         P0.handle = TKLanes.mount(host, { seed: lv.seed || (Date.now() >>> 0), difficulty: lv.difficulty, final: !!lv.final, title: chN ? stepLabel(chN, P0.chap.i) + ' · ' + lv.title : lv.title, goal: lv.goal, sections: lv.sections,
-          night: lv.night, lengthScale: FAST ? 0.6 : lv.lengthScale, tutorial: lv.tutorial, world: w.id }, {
-          world: w.id, grade: S.settings.grade, mastery: S.mastery, islam: S.settings.islam, lib: Art.lib, sfx: { muted: !soundOn() }, reducedMotion: reduced(),
+          night: lv.night, lengthScale: FAST ? 0.6 : lv.lengthScale, tutorial: lv.tutorial, world: w.id, questions: lv.questions }, {
+          world: w.id, grade: S.settings.grade, mastery: S.mastery, islam: S.settings.islam, lib: Art.lib, sfx: { muted: !soundOn() }, reducedMotion: reduced(), topInset: 70,
           // the Titanic's chapters are the Titanic's own story: the child sails the Titanic (no ship picker there);
           // lanes in other worlds keep the TKFleet choice (saved pick, or the "Pilih Kapalmu" screen first)
           ship: w.chapters ? w.id : undefined,
           tutorial: !!lv.tutorial, narrate: !!S.settings.narrate, pauseOverlay: false,
-          onChallenge: function (info) {
-            return challenge(host, { domain: lv.domain || 'campur', seed: ((lv.seed || 7) * 97 + info.collisions * 13 + (Date.now() & 1023)) >>> 0,
-              intro: 'Kapal membentur es! Jawab soal ini, lalu kapal berlayar lagi.', nextLabel: 'Lanjut Berlayar' })
-          },
+          onQuestion: askAction,
           onDone: function (res) {
             if (res.final) { end({ stars: 3, scripted: true }); return }
-            end({ stars: res.stars, hits: res.collisions, right: res.collisions ? res.correct : undefined, asked: res.collisions || undefined })
+            end({ stars: res.stars, hits: res.collisions, right: res.qAsked ? res.qRight : undefined, asked: res.qAsked || undefined })
           } })
         return
       }
@@ -942,7 +983,9 @@
       if (lv.type === 'reflection') return reflection(lv, host, end)
       if (lv.type === 'fragment') return fragmentStep(lv, host, end)
       var quit = function () { try { PLAYING && PLAYING.handle && PLAYING.handle.destroy && PLAYING.handle.destroy() } catch (e) {} var virt = PLAYING && PLAYING.virtual; PLAYING = null; $('play-host').innerHTML = ''; if (virt) home(); else worldMap(w.id) }
-      var opts = Object.assign({ scene: Art.scene(lv.scene || w.scene || 'harbor-day'), topic: lv.goal, onBack: quit, penguin: Art.src('char/penguin'), domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0,
+      // Kembali mid-quiz (playtest: a child left by accident) opens the pause menu: Lanjut Main / Peta / Beranda
+      var askQuit = function () { var pb = $('btn-pause'); if (pb) pb.click(); else quit() }
+      var opts = Object.assign({ scene: Art.scene(lv.scene || w.scene || 'harbor-day'), topic: lv.goal, onBack: askQuit, penguin: Art.src('char/penguin'), domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0,
         onDone: function (res) {
           if (res && res.masteryDelta && lv.domain) S.mastery[lv.domain] = Math.max(0, Math.min(100, (S.mastery[lv.domain] || 0) + res.masteryDelta))
           var pct = res && res.asked ? res.right / res.asked : 1
@@ -955,7 +998,9 @@
         // QUIZ itself: a mission line ("Antar barang…", "Bantu pasien…") never sits above an unrelated question
         // mix: about half Matematika, the step's own topic fills the rest (owner 2026-09-29); hard = Tingkat Soal Sulit
         var qs = TKQuiz.build({ mix: true, hard: S.settings.level === 'sulit', domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0, topic: lv.goal, easy: common.easy, seed: (Date.now() ^ (CUR.k * 7919)) >>> 0 })
-        P0.handle = TKQuiz.mount(host, qs, Object.assign({}, opts, { topic: quizSub(lv.domain) }))
+        // the subtitle follows the CURRENT question's topic (a mixed step keeps the neutral line)
+        var subFor = function (d) { return lv.domain === 'campur' || !lv.domain ? QUIZ_SUB.campur : quizSub(d) }
+        P0.handle = TKQuiz.mount(host, qs, Object.assign({}, opts, { topic: subFor(qs[0] && qs[0].domain), subFor: subFor }))
       }
     } catch (e) {
       try { console.warn('[tk] level failed to start', e) } catch (x) {}
@@ -1006,15 +1051,23 @@
     P0.handle = { destroy: function () { el.remove() } }
   }
   // Time Compass fragment moment: the glowing piece, then it flies into Timmy's journal
+  // fragments count per series: the Time Compass (14 worlds) and the Legend Ships (w.series 'legenda', PRD §14)
+  function fragSeries (w) { return (w && w.series) || 'kompas' }
+  function fragTally (w) {
+    var se = fragSeries(w), has = function (x) { return WD.flat(x).some(function (l) { return l.fragment || l.type === 'fragment' }) }
+    var total = WD.WORLDS.filter(function (x) { return fragSeries(x) === se && has(x) }).length
+    var n = S.fragments.filter(function (id) { var x = WD.get(id); return x && fragSeries(x) === se }).length
+    return { n: n, total: total || 14, legend: se === 'legenda' }
+  }
   function fragmentStep (lv, host, end) {
-    var w = CUR.w, P0 = PLAYING, n = S.fragments.length + (S.fragments.indexOf(w.id) >= 0 ? 0 : 1)
+    var w = CUR.w, P0 = PLAYING, ft = fragTally(w), n = ft.n + (S.fragments.indexOf(w.id) >= 0 ? 0 : 1)
     var el = document.createElement('div'); el.className = 'tkx tkx-frag'; el.style.background = Art.scene((P0.chap && P0.lv.scene) || w.scene)
-    el.innerHTML = '<div class="tkx-card">' + compassSvg(n, true) + '<h2 class="fk">Kepingan Kompas Waktu!</h2><p>Kamu menemukan kepingan ke-' + n + ' dari 14. Kompas Waktu makin lengkap!</p>' +
+    el.innerHTML = '<div class="tkx-card">' + compassSvg(n, true) + '<h2 class="fk">Kepingan Kompas Waktu!</h2><p>Kamu menemukan kepingan ke-' + n + ' dari ' + ft.total + '. Kompas Waktu makin lengkap!</p>' +
       '<button class="btn b-gold fk tkx-go" type="button">' + IC('compass') + '<span>Ambil Kepingan</span></button></div>'
     host.appendChild(el)
     var cmp = el.querySelector('.tkcmp')
     if (reduced()) { cmp.animate && cmp.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400 }) } else A(cmp, [{ opacity: 0, transform: 'scale(.2) rotate(-120deg)' }, { opacity: 1, transform: 'scale(1.12) rotate(8deg)', offset: 0.6 }, { opacity: 1, transform: 'none' }], { duration: 900, easing: EO })
-    SND.bell(); say('Kepingan Kompas Waktu! Kamu menemukan kepingan ke ' + n + ' dari 14.')
+    SND.bell(); say('Kepingan Kompas Waktu! Kamu menemukan kepingan ke ' + n + ' dari ' + ft.total + '.')
     var b = el.querySelector('.tkx-go'), fired = false
     tap(b, function () {
       if (fired) return; fired = true
@@ -1030,6 +1083,13 @@
   function finish (res) {
     if (!PLAYING) return
     var w = PLAYING.w, lv = PLAYING.lv, k = PLAYING.k, t0 = PLAYING.t0
+    // a world's way home (w.outro panels, Legend Ships PRD §14): played once, right after its fragment level
+    if (!res.outro && lv.fragment && w.outro && w.outro.length && S.fragments.indexOf(w.id) < 0) {
+      try { if (PLAYING.handle && PLAYING.handle.destroy) PLAYING.handle.destroy() } catch (e) {}
+      var oh = $('play-host'); oh.innerHTML = ''; mode('story')
+      story(oh, w.outro, 'Pulang ke Kamar', function () { finish(Object.assign({}, res, { outro: true })) })
+      return
+    }
     try { if (PLAYING.handle && PLAYING.handle.destroy) PLAYING.handle.destroy() } catch (e) {}
     PLAYING = null; document.body.classList.remove('story-on'); mode(null); stepChipHide()
     var host = $('play-host'); host.innerHTML = ''; host.style.opacity = ''
@@ -1054,13 +1114,13 @@
     if (HUB) { try { HUB.destroy() } catch (e) {} }
     HUB = TKHub.reward($('scr-reward'), {
       world: w, k: k, stars: stars, scene: lv.scene || w.scene,
-      chapter: chap ? w.name + ' · Bab ' + lv.no + ' · ' + lv.title : (wi > 0 ? 'Bab ' + wi + ' · ' : '') + w.name,
+      chapter: chap ? w.name + ' · Bab ' + lv.no + ' · ' + lv.title : w.name,
       title: title,
       subtitle: 'Hebat, Timmy! ' + (lv.goal || ''), banner: false, cheer: lv.cheer,
       result: { moves: res.moves, shortest: res.shortest, timeMs: Date.now() - (t0 || Date.now()), right: res.right, asked: res.asked, hits: res.hits, scripted: res.scripted, story: res.story },
       xp: xp, newCards: newCards,
-      badge: newFrag ? { title: 'Lencana ' + w.name, sub: 'Kepingan kompas ditemukan' } : null,
-      fragment: newFrag ? { n: S.fragments.length, total: 14, finale: !!(w.levels[k] && w.levels[k].finale) } : null,
+      badge: newFrag ? { title: 'Lencana ' + w.name, sub: w.fragmentName ? 'Kepingan Legenda: ' + w.fragmentName : 'Kepingan kompas ditemukan' } : null,
+      fragment: newFrag ? { n: fragTally(w).n, total: fragTally(w).total, finale: !!(w.levels[k] && w.levels[k].finale) } : null,
       fact: fact || null, levelStars: (w.levels || []).map(function (l) { return starsOf(w.id, l.id) }), hasNext: nextK >= 0 || !!more || home2,
       nextLabel: home2 ? 'Kembali ke Kamar Timmy' : nextK >= 0 ? (chap ? 'Bab Berikutnya' : 'Lanjut') : 'Kapal Berikutnya',
       nextSub: home2 ? 'Lihat model ' + w.name + ' di koleksimu' : nextK >= 0 ? unitLabel(w, nextK) + ' · ' + w.levels[nextK].title : more ? (more.w.id === 'kamar' ? 'Kamar Timmy' : more.w.name) : ''
@@ -1214,7 +1274,11 @@
   function openWorld (id) {
     var i = -1; WD.WORLDS.forEach(function (w, k) { if (w.id === id) i = k })
     if (i < 0) return
-    if (!worldOpen(i)) { toast('Selesaikan ' + WD.WORLDS[i - 1].name + ' dulu untuk membuka kapal ini!'); return }
+    if (!worldOpen(i)) {
+      var G = atlasG(), r = G && atlasNow()
+      toast(G && TKAtlas.NODES[id] ? TKAtlas.hint(G, id, r, function (x) { var w = WD.get(x); return x === 'kamar' ? 'Kamar Timmy' : w ? w.name : x }) : 'Selesaikan ' + WD.WORLDS[i - 1].name + ' dulu untuk membuka kapal ini!')
+      return
+    }
     SND.horn(); worldMap(id)
   }
 
@@ -1279,6 +1343,9 @@
     // save migration check: load(raw save object) runs the same fill + migrate as a real start
     load: function (raw) { S = migrate(fill(JSON.parse(JSON.stringify(raw)))); save(); return JSON.parse(JSON.stringify(S)) },
     map: function (wid) { worldMap(wid || 'titanic'); return 'ok' },
-    room: function (tab, sel) { room(tab || 'kapal', sel); return 'ok' }
+    room: function (tab, sel) { room(tab || 'kapal', sel); return 'ok' },
+    // world-select sea chart: unlock status (open / done / next / Timmy's spot) and the view controller
+    atlas: function () { var G = atlasG(), r = atlasNow(); return r && { open: Object.keys(r.open).sort(), done: Object.keys(r.done).sort(), need: r.need, fragments: r.fragments, saved: S.atlas && S.atlas.open.slice(), here: atlasHere(G, r), next: TKAtlas.next(G, r, S.last && S.last.w) } },
+    world: function () { worldView(); return 'ok' }
   }
 })()

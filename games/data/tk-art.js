@@ -51,7 +51,7 @@
     lantern: 'tk-char/lantern-boy', mechanic: 'tk-char/mechanic-boy', girl: 'tk-char/hijab-girl-book',
     girl2: 'tk-char/hijab-girl-blueprint', girl3: 'tk-char/hijab-girl-camera', officerGirl: 'tk-char/hijab-officer-tablet',
     officerGirl2: 'tk-char/hijab-officer-pointing', chef: 'tk-char/chef', diver: 'tk-char/diver',
-    penguin: 'tk-char/penguin-captain', penguin2: 'tk-char/penguin-sailor'
+    penguin: 'tk-char/penguin-sailor', penguin2: 'tk-char/penguin-sailor'
   }
   // owner backdrops (2026-09-28, tools/tk_scenes.py): scene key -> shared-DB pair tk-scene/<name>-{land,port}
   var SCENE_ART = {
@@ -61,13 +61,12 @@
     'deep-sea': 'underwater', 'antarctic': 'aurora-ice',
     'night-ocean': 'ice-night', 'night-deck': 'titanic-night-deck', 'lifeboat': 'ice-night', 'collision-far': 'ice-night',
     'time-harbor': 'sky-plaza',
-    // Timmy's room has no owner backdrop: the bedroom sprite stands on a moonlit sea (his dream of the ships), the
-    // portal and the time corridor on the aurora — never the plain navy gradient (owner tablet 2026-09-28)
-    'bedroom-night': 'ice-night', 'bedroom-portal': 'aurora-ice', 'time-tunnel': 'aurora-ice'
+    // Timmy's room (bedroom-night / bedroom-portal / time-tunnel) has no owner backdrop: an iceberg or aurora sea
+    // read wrong for a bedroom (playtest 2026-09-29), so these draw the cozy room / time corridor below (SCN + sceneSvg)
   }
   var PLACEHOLDER = {
     'char/timmy': 'tk-key/timmy', 'char/timmy-sleeping': 'tk-key/timmy-sleeping', 'char/timmy-flying': 'tk-key/timmy-flying',
-    'char/captain': 'tk-key/captain-arms', 'char/penguin': 'tk-char/penguin-captain', 'char/guide': 'sd/adventurer'
+    'char/captain': 'tk-key/captain-arms', 'char/penguin': 'tk-char/penguin-sailor', 'char/guide': 'sd/adventurer'
   }
 
   /* ── ships (side view, facing right, viewBox 0 0 400 200) ─────────────── */
@@ -137,7 +136,7 @@
 
   /* ── scenes: layered gradients (sky, sea) + silhouettes ───────────────── */
   var SCN = {
-    'bedroom-night': ['linear-gradient(#1a1f4a,#2b2f6b 55%,#3a2f5c)', 'room'], 'bedroom-portal': ['radial-gradient(circle at 68% 42%,#6a5cff,#2a1a7a 30%,#161a44 65%)', 'room'],
+    'bedroom-night': ['linear-gradient(#3a3a78,#4b4583 62%,#6e4a2e 62%,#4e321e)', 'room'], 'bedroom-portal': ['radial-gradient(circle at 70% 38%,#8c7bff,#4b3fa0 26%,#3a3a78 50%),linear-gradient(#3a3a78,#4b4583 62%,#6e4a2e 62%,#4e321e)', 'room'],
     'time-tunnel': ['radial-gradient(circle at 50% 50%,#b9a8ff,#6a5cff 20%,#2a1a7a 45%,#0a0520 80%)', 'tunnel'], 'harbor-dawn': ['linear-gradient(#f6b36a,#f7d7a0 35%,#8fb4d6 60%,#2d5f8a)', 'harbor'],
     'harbor-day': ['linear-gradient(#8fd0ff,#cfeaff 45%,#4a9ad0 60%,#1f5f95)', 'harbor'], 'harbor-morning': ['linear-gradient(#ffd9a8,#e8f0ff 45%,#5aa0d0 60%,#23608f)', 'harbor'],
     'ship-deck': ['linear-gradient(#9cc9ec,#dcefff 50%,#b08858 51%,#7a5a36)', 'deck'], 'old-deck': ['linear-gradient(#bcd6e8,#e7f0f6 50%,#8a6238 51%,#5e4024)', 'deck'],
@@ -156,7 +155,20 @@
     if (kind === 'harbor') s += '<path d="M0 150 L0 110 L30 110 L30 90 L55 90 L55 120 L80 120 L80 100 L100 100 L100 150 Z" fill="#2c3550" opacity=".55"/><rect x="340" y="80" width="16" height="70" fill="#e9e2d0" opacity=".8"/><path d="M332 80 L364 80 L348 60 Z" fill="#c8412d" opacity=".8"/>'
     if (kind === 'night') { for (var st = 0; st < 30; st++) s += '<circle cx="' + ((st * 67) % 400) + '" cy="' + ((st * 37) % 120) + '" r="' + (st % 3 ? 1 : 1.8) + '" fill="#fff" opacity=".8"/>' ; s += '<circle cx="330" cy="40" r="16" fill="#fff6d0"/>' }
     if (kind === 'ice') s += '<path d="M20 150 L60 110 L90 150 Z M260 150 L310 96 L360 150 Z" fill="#fff" opacity=".9"/><path d="M60 110 L72 150 L90 150 Z M310 96 L322 150 L360 150 Z" fill="#cfeefa"/>'
-    if (kind === 'room') s += '' // the owner's bedroom sprite is the room now
+    // a cozy night bedroom: window with the moon, curtains, a ship picture, a shelf of books, a lamp glow, wooden floor
+    if (kind === 'room') s += '<rect x="0" y="0" width="400" height="149" fill="#4a4486" opacity=".35"/>' +
+      '<rect x="36" y="22" width="92" height="84" rx="6" fill="#16204f" stroke="#c9a46a" stroke-width="5"/><circle cx="100" cy="46" r="12" fill="#fff4c4"/><circle cx="106" cy="42" r="10" fill="#16204f"/>' +
+      [[52, 40], [70, 70], [112, 86], [58, 92]].map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="1.6" fill="#fff"/>' }).join('') +
+      '<line x1="82" y1="22" x2="82" y2="106" stroke="#c9a46a" stroke-width="3"/><line x1="36" y1="64" x2="128" y2="64" stroke="#c9a46a" stroke-width="3"/>' +
+      '<path d="M26 16 Q44 60 30 118 L20 118 L20 16 Z M138 16 Q120 60 134 118 L144 118 L144 16 Z" fill="#b8443c"/><rect x="18" y="12" width="128" height="6" rx="3" fill="#8a5a2c"/>' +
+      '<rect x="176" y="34" width="54" height="40" rx="3" fill="#f3e2b8" stroke="#8a5a2c" stroke-width="4"/><path d="M186 62 L220 62 L214 68 L192 68 Z" fill="#3a2a1a"/><path d="M203 40 L203 62 M203 42 L214 58 L203 58 Z" stroke="#3a2a1a" stroke-width="1.5" fill="#fff"/>' +
+      '<rect x="286" y="60" width="92" height="7" fill="#8a5a2c"/><rect x="286" y="100" width="92" height="7" fill="#8a5a2c"/>' +
+      [['#d9534f', 290, 14], ['#4a90d9', 305, 12], ['#f0ad4e', 318, 16], ['#5cb85c', 335, 12], ['#9b6bd6', 348, 14]].map(function (b) { return '<rect x="' + b[1] + '" y="' + (60 - (22 + b[2] % 5)) + '" width="' + b[2] + '" height="' + (22 + b[2] % 5) + '" fill="' + b[0] + '"/>' }).join('') +
+      '<circle cx="360" cy="86" r="9" fill="#3d8bd0"/><rect x="358" y="94" width="4" height="6" fill="#8a5a2c"/>' +
+      '<circle cx="250" cy="120" r="46" fill="#ffd98a" opacity=".16"/><path d="M240 112 L260 112 L266 126 L234 126 Z" fill="#ffcf6a"/><rect x="248" y="126" width="4" height="20" fill="#6b4a2a"/>' +
+      '<rect x="0" y="146" width="400" height="5" fill="#3a2414" opacity=".6"/>' +
+      [0, 1, 2, 3, 4, 5].map(function (i) { return '<line x1="0" y1="' + (164 + i * 14) + '" x2="400" y2="' + (164 + i * 14) + '" stroke="#3a2414" stroke-opacity=".35" stroke-width="1.5"/>' }).join('') +
+      '<ellipse cx="200" cy="206" rx="120" ry="20" fill="#2f6aa8" opacity=".55"/>'
     if (kind === 'room-old') s += '<rect x="20" y="30" width="80" height="100" rx="4" fill="#0f1440" stroke="#6b72c8" stroke-width="3"/><circle cx="80" cy="55" r="10" fill="#fff6d0"/><rect x="0" y="180" width="400" height="60" fill="#241c44"/><rect x="250" y="150" width="140" height="40" rx="8" fill="#3a3a8a"/>'
     if (kind === 'deck') s += '<rect x="0" y="118" width="400" height="8" fill="#e9e2d0"/>' + [40, 110, 180, 250, 320, 390].map(function (x) { return '<rect x="' + x + '" y="92" width="4" height="30" fill="#e9e2d0"/>' }).join('')
     if (kind === 'yard') s += '<path d="M40 160 L360 160 L330 110 L70 110 Z" fill="#8a5a2c" opacity=".7"/><line x1="200" y1="20" x2="200" y2="110" stroke="#6b4a2a" stroke-width="5"/>'

@@ -6,10 +6,14 @@
  * answers (a row in landscape, 2x2 in portrait), stats column (Soal / Poin / Beruntun),
  * penguin captain + Timmy speech bubbles, progress dots, "Lanjut".
  *
- *   TKQuiz.make(domain, level, rng, opts?)  -> generated Matematika question (always valid)
- *   TKQuiz.pick(domain, level, rng, opts)    -> curated question (opts.islam, opts.world, opts.exclude)
- *   TKQuiz.build(spec)                       -> [questions] for spec {domain, world, count, level, grade, islam, mastery, seed}
- *   TKQuiz.validate(q)                       -> [] or a list of problems (used by the gate)
+ * QUESTIONS: every question comes from window.SoalEngine, profile 'g30' (games/data/soal-pack-kapal.js):
+ * weights, grade filter (Mudah / Sulit), per-avatar no-repeat history across levels and worlds, sprites.
+ *   TKQuiz.make(domain, level, rng, opts?)  -> generated Matematika question (SoalEngine 'mat-a', stateless)
+ *   TKQuiz.makeHard(rng, opts?)              -> generated Sulit question (SoalEngine 'mat-sulit', stateless)
+ *   TKQuiz.pick(domain, level, rng, opts)    -> one question (opts.islam, opts.world, opts.exclude, opts.hard), stateless
+ *   TKQuiz.build(spec)                       -> [questions] for spec {domain, world, count, level, grade, hard, islam, mastery,
+ *                                               topic, easy, seed, mix, avatar?, history?} (avatar history on)
+ *   TKQuiz.validate(q)                       -> SoalEngine.validate (used by the gate)
  *   TKQuiz.mastery                           -> { tier, present, levelFor, update }
  *   TKQuiz.mount(host, set, opts)            -> controller { el, state(), hint(), destroy() }
  *   TKQuiz.sortSet(domain, world, rng, opts) -> {prompt, bins, items}
@@ -27,7 +31,8 @@
  *          timmy (url), penguin (url), topInset (px), reducedMotion, seed,
  *          scene (CSS background, e.g. TKArt.scene(lv.scene)), topic (level goal line: plate subtitle +
  *          questions about it first), title (plate), hints (false = no hint button/ladder),
- *          onBack (fn; Kembali is hidden without it), step (0..3 stepper index; quiz 0, sort 2) }
+ *          onBack (fn; Kembali is hidden without it), step (0..3 stepper index; quiz 0, sort 2),
+ *          subFor (fn(domain) -> plate subtitle, re-set for every question: it always names the CURRENT topic) }
  * Feedback is never a trap and never "SALAH": a wrong tap wiggles gently and climbs the hint
  * ladder (retry → highlight → animated counting → first step → guided completion).
  * Motion: transform/opacity only, ease-out cubic-bezier(.23,1,.32,1), press .96,
@@ -39,210 +44,21 @@
   var EASE = 'cubic-bezier(.23,1,.32,1)'
   var BASE = (function () { try { return location.pathname.indexOf('/Dunia-Emosi/') === 0 ? '/Dunia-Emosi/' : '/' } catch (e) { return '/' } })()
 
-  /* ── rng ──────────────────────────────────────────────────────────────── */
-  function rng (seed) {
-    var s = seed | 0
-    return function () {
-      var t = (s = (s + 0x6D2B79F5) | 0)
-      t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-    }
-  }
-  function ri (r, lo, hi) { return lo + Math.floor(r() * (hi - lo + 1)) }
-  function shuffle (a, r) { var b = a.slice(); for (var i = b.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = b[i]; b[i] = b[j]; b[j] = t } return b }
-  function oneOf (a, r) { return a[Math.floor(r() * a.length)] }
-  function wpick (pairs, r) { var tot = 0, i; for (i = 0; i < pairs.length; i++) tot += pairs[i][1]; var x = r() * tot; for (i = 0; i < pairs.length; i++) { x -= pairs[i][1]; if (x < 0) return pairs[i][0] } return pairs[pairs.length - 1][0] }
+  /* ── questions come from window.SoalEngine (games/data/soal-engine.js, profile 'g30' in
+     games/data/soal-pack-kapal.js). No generator, picker, weight table or grade filter lives here:
+     documentation and standarization/SOAL_ENGINE_STANDARD.md. Load order: soal-engine.js,
+     soal-gen-matematika.js, soal-pack-kapal.js, then this file. ─────────────────────────────── */
+  var SE = W.SoalEngine
+  if (!SE) throw new Error('tk-quiz.js needs games/data/soal-engine.js (+ soal-gen-matematika.js, soal-pack-kapal.js) loaded first')
+  var GAME = 'g30'
+  var rng = SE.rng, ri = SE.ri, oneOf = SE.oneOf
+  function shuffle (a, r) { return SE.shuffle(a, r) }
   function esc (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';' }) }
-  function bank () { return (W.TKQuestions && W.TKQuestions.items) || [] }
-
-  /* ══ MATEMATIKA GENERATOR ═════════════════════════════════════════════ */
-  var THEME = {
-    _: [['game/crate-wood', 'peti'], ['game/barrel', 'tong'], ['animals/clownfish', 'ikan'], ['game/star', 'bintang']],
-    kamar: [['toys/rubber-duck', 'bebek karet'], ['game/star', 'bintang']],
-    titanic: [['game/crate-wood', 'peti'], ['school/backpack-brown', 'tas'], ['game/lifebuoy', 'pelampung']],
-    britannic: [['things/first-aid-kit', 'kotak obat'], ['food/water-bottle', 'botol air']],
-    vasa: [['game/barrel', 'tong'], ['game/crate-wood', 'peti']],
-    cuttysark: [['food/mug', 'cangkir teh'], ['game/crate-wood', 'peti']],
-    victory: [['game/flag-red', 'bendera'], ['game/barrel', 'tong']],
-    mayflower: [['food/apple', 'apel'], ['food/bread', 'roti'], ['game/barrel', 'tong']],
-    endurance: [['animals/penguin', 'penguin'], ['game/crystal-ice', 'bongkah es']],
-    kontiki: [['food/coconut', 'kelapa'], ['animals/clownfish', 'ikan']],
-    calypso: [['animals/clownfish', 'ikan'], ['animals/starfish', 'bintang laut'], ['animals/sea-turtle', 'penyu']],
-    queenmary: [['school/backpack-brown', 'tas'], ['game/crate-wood', 'peti']],
-    arizona: [['game/flag-red', 'bendera'], ['game/crate-wood', 'peti']],
-    missouri: [['game/flag-red', 'bendera'], ['game/crate-wood', 'peti']],
-    nautilus: [['animals/clownfish', 'ikan'], ['animals/pufferfish', 'ikan buntal']]
-  }
-  // fase A (Kelas 1–2, owner 2026-09-28): numbers <= 20, whole-hour clocks, no multiplication / division.
-  // groups / share / groupsplus stay in the generator (TKQuiz.make(..., { kind })) but are never scheduled.
-  var KINDS = {
-    1: [['count', 40], ['add', 25], ['sub', 20], ['biggest', 15]],
-    2: [['add', 25], ['sub', 25], ['count', 15], ['clock', 15], ['diff', 10], ['capacity', 10]],
-    3: [['add', 25], ['sub', 25], ['capacity', 15], ['clock', 15], ['diff', 20]],
-    4: [['twostep', 35], ['add', 15], ['sub', 15], ['diff', 15], ['clock', 10], ['capacity', 10]]
-  }
-  var MAXN = 20
-  var EASY_KINDS = [['count', 45], ['add', 30], ['sub', 25]]
-  function cap (level) { return level <= 2 ? 10 : 20 }
-  function clockLabel (h, m) { return m === 30 ? 'Pukul setengah ' + (h % 12 + 1) : 'Pukul ' + h }
-  function numChoices (ans, near, r, max) {
-    var seen = {}, out = [ans]; seen[ans] = 1
-    var pool = shuffle(near.concat([ans + 1, ans - 1, ans + 2, ans - 2]), r)
-    var top = Math.min(max + 3, MAXN)
-    for (var i = 0; i < pool.length && out.length < 4; i++) { var v = pool[i]; if (v >= 0 && v <= top && !seen[v] && v === Math.round(v)) { seen[v] = 1; out.push(v) } }
-    for (var d = 3; out.length < 4 && d < 40; d++) { [ans + d, ans - d].forEach(function (v) { if (out.length < 4 && v >= 0 && v <= MAXN && !seen[v]) { seen[v] = 1; out.push(v) } }) }
-    return shuffle(out, r).map(String)
-  }
-
-  function make (domain, level, r, opts) {
-    opts = opts || {}; r = r || Math.random
-    level = Math.max(1, Math.min(4, level | 0 || 1))
-    var th = THEME[opts.world] || THEME._, it = oneOf(th, r), key = it[0], noun = it[1]
-    var kinds = KINDS[level]
-    if (opts.world === 'queenmary') kinds = kinds.concat([['clock', 60]])
-    // easy (Kelas 1 / low mastery): picture-first counting only — every number is an object on screen
-    if (opts.easy && level <= 2) kinds = EASY_KINDS
-    if (opts.kind) kinds = [[opts.kind, 1]]
-    var kind = wpick(kinds, r), M = cap(level), q
-    var G = function (k, n, role) { return { key: k, n: n, role: role || 'base' } }
-    switch (kind) {
-      case 'count': {
-        var n = level === 1 ? ri(r, 2, 10) : ri(r, 6, 10)
-        q = { prompt: 'Ada berapa ' + noun + '?', eq: null, ans: n, near: [n + 1, n - 1, n + 2],
-          scene: { mode: 'count', groups: [G(key, n)] }, hint1: 'Hitung pelan-pelan, satu per satu.', hint2: 'Sentuh setiap ' + noun + ' sambil menghitung.',
-          step1: 'Mulai dari yang paling kiri: 1, 2, 3, …', explain: 'Ada ' + n + ' ' + noun + '.', calc: { op: 'count', n: n } }
-        break
-      }
-      case 'add': {
-        var a = ri(r, 1, M - 1), b = ri(r, 1, Math.min(M - a, level <= 2 ? 5 : 9)), s = a + b
-        q = { prompt: 'Ada ' + a + ' ' + noun + ' di kapal. ' + b + ' lagi dimuat. Jadi berapa?', eq: a + ' + ' + b + ' = ?', ans: s,
-          near: [a, b, Math.abs(a - b), s + 1, s - 1], scene: { mode: 'add', groups: [G(key, a), G(key, b, 'add')] },
-          hint1: 'Gabungkan dua kelompok ' + noun + '.', hint2: 'Mulai dari ' + a + ', lalu hitung maju ' + b + ' lagi.',
-          step1: 'Mulai dari ' + a + ': ' + seqStr(a + 1, Math.min(s, a + 2)) + (b > 2 ? ', …' : ''), explain: a + ' + ' + b + ' = ' + s + '. Semua ' + noun + ' naik ke kapal!', calc: { op: '+', a: a, b: b } }
-        break
-      }
-      case 'sub': {
-        var a2 = ri(r, 3, M), b2 = ri(r, 1, Math.min(a2 - 1, level <= 2 ? 5 : 9)), d2 = a2 - b2
-        q = { prompt: 'Ada ' + a2 + ' ' + noun + ' di dek. ' + b2 + ' diturunkan. Sisa berapa?', eq: a2 + ' − ' + b2 + ' = ?', ans: d2,
-          near: [a2 + b2 <= M + 3 ? a2 + b2 : d2 + 3, b2, a2, d2 + 1, d2 - 1], scene: { mode: 'sub', groups: [G(key, d2), G(key, b2, 'leave')] },
-          hint1: 'Yang diturunkan tidak dihitung lagi.', hint2: 'Tutup ' + b2 + ' ' + noun + ' yang pergi, hitung sisanya.',
-          step1: 'Mulai dari ' + a2 + ', hitung mundur ' + b2 + ': ' + seqStr(a2 - 1, Math.max(d2, a2 - 2), -1) + (b2 > 2 ? ', …' : ''), explain: a2 + ' − ' + b2 + ' = ' + d2 + '.', calc: { op: '-', a: a2, b: b2 } }
-        break
-      }
-      case 'biggest': {
-        var vals = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], r).slice(0, 4), mx = Math.max.apply(null, vals)
-        q = { prompt: 'Angka mana yang paling besar?', eq: null, ans: mx, fixed: vals.map(String),
-          scene: { mode: 'none', groups: [] }, hint1: 'Angka besar artinya lebih banyak.', hint2: 'Bayangkan urutan 1 sampai 10. Mana yang paling akhir?',
-          step1: 'Bandingkan dua angka dulu, simpan yang lebih besar.', explain: mx + ' adalah angka paling besar.', calc: { op: 'max', list: vals } }
-        break
-      }
-      case 'groups': case 'groupsplus': {
-        var g = ri(r, 2, 3), k = ri(r, 2, kind === 'groupsplus' ? Math.min(5, Math.floor(17 / g)) : Math.floor(10 / g))
-        var e = kind === 'groupsplus' ? ri(r, 1, Math.min(3, 20 - g * k)) : 0, tot = g * k + e
-        var grp = []; for (var gi = 0; gi < g; gi++) grp.push(G(key, k, 'group'))
-        if (e) grp.push(G(key, e, 'add'))
-        q = { prompt: 'Ada ' + g + ' sekoci. Tiap sekoci ' + k + ' ' + noun + '.' + (e ? ' ' + e + ' lagi datang.' : '') + ' Semuanya berapa?',
-          eq: new Array(g + 1).join(k + ' + ').slice(0, -3) + (e ? ' + ' + e : '') + ' = ?', ans: tot, near: [g + k, g * k + (e ? 0 : k), tot + k, tot - 1, tot + 1],
-          scene: { mode: 'groups', groups: grp }, hint1: 'Hitung isi setiap sekoci.', hint2: 'Tiap sekoci ' + k + '. Hitung loncat: ' + seqStr(k, k * Math.min(g, 3), k) + (g > 3 ? ', …' : ''),
-          step1: k + ' + ' + k + ' = ' + (2 * k) + (g > 2 || e ? ', lalu tambah lagi.' : '.'), explain: 'Semuanya ' + tot + ' ' + noun + '.', calc: { op: 'groups', g: g, k: k, e: e } }
-        break
-      }
-      case 'share': {
-        var g3 = ri(r, 2, 3), k3 = ri(r, 2, Math.floor(10 / g3)), t3 = g3 * k3
-        q = { prompt: t3 + ' ' + noun + ' dibagi ke ' + g3 + ' sekoci. Tiap sekoci dapat berapa?', eq: t3 + ' : ' + g3 + ' = ?', ans: k3,
-          near: [k3 + 1, k3 - 1, g3, k3 + 2], scene: { mode: 'share', groups: [G(key, t3)], boats: g3 },
-          hint1: 'Bagikan satu per satu ke tiap sekoci, bergiliran.', hint2: 'Tiap sekoci harus dapat sama banyak.',
-          step1: 'Beri 1 ' + noun + ' ke tiap sekoci: sudah ' + g3 + ' terbagi. Ulangi sampai habis.', explain: t3 + ' dibagi ' + g3 + ' = ' + k3 + '. Tiap sekoci dapat ' + k3 + '.', calc: { op: 'share', t: t3, g: g3 } }
-        break
-      }
-      case 'capacity': {
-        var c = ri(r, 5, level <= 3 ? 10 : 12), x = ri(r, 1, c - 1), room = c - x
-        q = { prompt: 'Sekoci muat ' + c + ' orang. Sudah ada ' + x + '. Berapa lagi bisa naik?', eq: c + ' − ' + x + ' = ?', ans: room,
-          near: [c, x, room + 1, room - 1, c + x <= 20 ? c + x : room + 2], scene: { mode: 'capacity', cap: c, fill: x, groups: [] },
-          hint1: 'Hitung kursi yang masih kosong.', hint2: 'Kursi kosong = kursi semua dikurangi yang sudah terisi.',
-          step1: 'Mulai dari ' + x + ', hitung maju sampai ' + c + '.', explain: c + ' − ' + x + ' = ' + room + '. Masih ada ' + room + ' kursi kosong.', calc: { op: '-', a: c, b: x } }
-        break
-      }
-      case 'diff': {
-        var p = ri(r, 3, M), o = ri(r, 1, p - 1), df = p - o
-        var red = r() < 0.5
-        q = { prompt: 'Kapal Merah bawa ' + (red ? p : o) + ' ' + noun + '. Kapal Biru bawa ' + (red ? o : p) + '. Selisihnya berapa?', eq: p + ' − ' + o + ' = ?', ans: df,
-          near: [p + o <= M + 3 ? p + o : df + 3, df + 1, df - 1, o], scene: { mode: 'diff', groups: [G(key, red ? p : o, 'red'), G(key, red ? o : p, 'blue')] },
-          hint1: 'Selisih artinya berapa lebih banyak.', hint2: 'Pasangkan satu-satu. Hitung yang tidak punya pasangan.',
-          step1: 'Yang banyak ' + p + ', yang sedikit ' + o + '. Hitung dari ' + o + ' sampai ' + p + '.', explain: p + ' − ' + o + ' = ' + df + '.', calc: { op: '-', a: p, b: o } }
-        break
-      }
-      case 'twostep': {
-        var a4 = ri(r, 3, 12), b4 = ri(r, 2, Math.min(8, 20 - a4)), c4 = ri(r, 1, Math.min(9, a4 + b4 - 1)), res = a4 + b4 - c4
-        q = { prompt: 'Ada ' + a4 + ' ' + noun + '. ' + b4 + ' dimuat, ' + c4 + ' diturunkan. Sekarang berapa?', eq: a4 + ' + ' + b4 + ' − ' + c4 + ' = ?', ans: res,
-          near: [a4 + b4, a4 - c4 >= 0 ? a4 - c4 : res + 2, res + 1, res - 1, res + 2], scene: { mode: 'twostep', groups: [G(key, a4), G(key, b4, 'add')], leave: c4 },
-          hint1: 'Kerjakan satu langkah dulu.', hint2: 'Langkah 1: tambah yang dimuat. Langkah 2: kurangi yang diturunkan.',
-          step1: 'Langkah 1: ' + a4 + ' + ' + b4 + ' = ' + (a4 + b4) + '. Sekarang kurangi ' + c4 + '.', explain: a4 + ' + ' + b4 + ' = ' + (a4 + b4) + ', lalu ' + (a4 + b4) + ' − ' + c4 + ' = ' + res + '.',
-          calc: { op: 'two', a: a4, b: b4, c: c4 } }
-        break
-      }
-      case 'clock': {
-        // fase A: whole hours only, in the answer AND the wrong choices
-        var h = ri(r, 1, 12), half = false, m = 0, lab = clockLabel(h, m)
-        var alt = [clockLabel(h % 12 + 1, 0), clockLabel((h + 10) % 12 + 1, 0), clockLabel((h + 1) % 12 + 1, 0), clockLabel((h + 9) % 12 + 1, 0)]
-        var ch = [lab]; alt.forEach(function (v) { if (ch.length < 4 && ch.indexOf(v) < 0) ch.push(v) })
-        q = { prompt: 'Lihat jamnya. Pukul berapa sekarang?', eq: null, ans: lab, fixed: ch,
-          scene: { mode: 'clock', h: h, m: m, groups: [] }, hint1: 'Lihat jarum pendek dulu.', hint2: half ? 'Jarum panjang di angka 6 artinya setengah.' : 'Jarum panjang di angka 12 artinya tepat.',
-          step1: 'Jarum pendek ' + (half ? 'di antara ' + h + ' dan ' + (h % 12 + 1) : 'menunjuk angka ' + h) + '.',
-          explain: half ? 'Jarum panjang di 6 dan jarum pendek lewat angka ' + h + ': ' + lab.toLowerCase() + '.' : 'Jarum pendek di ' + h + ' dan jarum panjang di 12: ' + lab.toLowerCase() + '.',
-          calc: { op: 'clock', h: h, m: m } }
-        break
-      }
-    }
-    var choices = q.fixed ? shuffle(q.fixed, r) : numChoices(q.ans, q.near, r, M)
-    var visual = []; (q.scene.groups || []).forEach(function (g) { if (visual.indexOf(g.key) < 0) visual.push(g.key) })
-    var id = 'm' + level + '-' + kind + '-' + JSON.stringify(q.calc).replace(/[^0-9a-z,]/gi, '')
-    return { id: id, domain: 'matematika', level: level, kind: kind, prompt: q.prompt, eq: q.eq, visual: visual, scene: q.scene,
-      choices: choices, answer: String(q.ans), explain: q.explain, hint1: q.hint1, hint2: q.hint2, step1: q.step1, calc: q.calc, world: opts.world || null }
-  }
-  function seqStr (from, to, step) { step = step || 1; var o = []; for (var v = from; step > 0 ? v <= to : v >= to; v += step) o.push(v); return o.join(', ') }
-
-  /* validation: the gate runs this on every generated item */
-  function validate (q) {
-    var p = []
-    if (!q || !q.choices) return ['missing']
-    if (q.domain === 'matematika' || q.letters) { if (q.choices.length !== (q.easy ? 3 : 4)) p.push('choices != ' + (q.easy ? 3 : 4)) }
-    else if (q.choices.length < 3 || q.choices.length > 4) p.push('choices not 3–4')
-    var seen = {}; q.choices.forEach(function (c) { if (seen[c]) p.push('duplicate choice ' + c); seen[c] = 1 })
-    var hits = q.choices.filter(function (c) { return c === q.answer }).length
-    if (hits !== 1) p.push('answer present ' + hits + 'x')
-    if (q.domain === 'matematika' && q.hard) {
-      var hc = q.calc || {}, ht = hardTruth(hc)
-      if (ht !== q.answer) p.push('answer ' + q.answer + ' != ' + ht)
-      ;['a', 'b', 'c'].forEach(function (k) { if (hc[k] != null && (hc[k] < 0 || hc[k] > 10000)) p.push('operand out of range') })
-      if ((hc.op === '+' || hc.op === '-') && (+ht < 0 || +ht > 1000)) p.push('result outside 0..1000')
-      if (hc.op === '*' && (hc.a > 10 || hc.b > 10)) p.push('times table beyond 10x10')
-      if (hc.op === 'clock5' && hc.m % 5) p.push('clock not on 5 minutes')
-      if (hc.op === 'money' && (hc.a < 1000 || hc.a > 10000)) p.push('money outside Rp1.000–Rp10.000')
-      if (String(q.prompt).trim().split(/\s+/).length > 18) p.push('story over 18 words')
-      return p
-    }
-    if (q.domain === 'matematika') {
-      var c = q.calc || {}, M = cap(q.level), truth
-      if (c.op !== 'clock') {
-        q.choices.forEach(function (x) { if (!/^\d+$/.test(x)) p.push('non-integer/negative choice ' + x) })
-        if (c.op === 'count') truth = c.n
-        else if (c.op === '+') truth = c.a + c.b
-        else if (c.op === '-') truth = c.a - c.b
-        else if (c.op === 'max') truth = Math.max.apply(null, c.list)
-        else if (c.op === 'groups') truth = c.g * c.k + c.e
-        else if (c.op === 'share') truth = c.t % c.g === 0 ? c.t / c.g : NaN
-        else if (c.op === 'two') { truth = c.a + c.b - c.c; if (c.a + c.b > M) p.push('intermediate > ' + M) }
-        if (String(truth) !== q.answer) p.push('answer ' + q.answer + ' != ' + truth)
-        if (!(truth >= 0)) p.push('negative/invalid truth')
-        ;['a', 'b', 'c', 'n', 't'].forEach(function (k) { if (c[k] != null && (c[k] < 0 || c[k] > M)) p.push('operand ' + k + '=' + c[k] + ' outside 0..' + M) })
-        if (truth > M) p.push('answer above ' + M)
-        q.choices.forEach(function (x) { if (+x > MAXN) p.push('choice ' + x + ' above ' + MAXN) })
-        if (c.op === 'max' && q.choices.filter(function (x) { return +x === truth }).length !== 1) p.push('max not unique')
-      } else if (clockLabel(c.h, c.m) !== q.answer) p.push('clock label mismatch')
-    }
-    return p
-  }
+  var DOMAINS = ['matematika', 'umum', 'arab', 'logika', 'islam']
+  var MIX = SE.profile(GAME).weights
+  function clockLabel (h, m) { return SE.math.clockLabel(h, m) }
+  function validate (q) { return SE.validate(q) }
+  function easyify (q) { return SE.reduceChoices(q, 3) }
 
   /* ══ MASTERY (0–100 per domain; the caller persists it) ═══════════════ */
   var mastery = {
@@ -270,263 +86,71 @@
     var g = normGrade(grade)
     return g === 1 || (g !== 2 && mastery.tier(m) === 1)
   }
-  /* 3 choices instead of 4: a NEW question object (the bank item is never mutated). The answer and the
-     two nearest distractors stay (numbers: closest value; words: the first two in presented order). */
-  function easyify (q) {
-    if (!q || q.letters || !q.choices || q.choices.length <= 3) return q
-    var o = {}; for (var k in q) o[k] = q[k]
-    var h = 0; String(q.id).split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) | 0 })
-    var wrong = q.choices.filter(function (c) { return c !== q.answer })
-    if (/^\d+$/.test(q.answer) && !(q.calc && q.calc.op === 'max') && wrong.every(function (c) { return /^\d+$/.test(c) })) {
-      // numbers: the three nearest values inside 0..10 (the easy range), one dropped (by the id) so the
-      // answer is not always the middle value; order shuffled deterministically
-      var a = +q.answer, top = Math.max(10, a), seen = {}, pool = []
-      seen[a] = 1
-      wrong.map(Number).concat([a - 1, a + 1, a - 2, a + 2, a - 3, a + 3]).forEach(function (v) { if (v >= 0 && v <= top && !seen[v]) { seen[v] = 1; pool.push(v) } })
-      pool.sort(function (x, y) { return Math.abs(x - a) - Math.abs(y - a) })
-      pool = pool.slice(0, 3); if (pool.length === 3) pool.splice(Math.abs(h) % 3, 1)
-      o.choices = shuffle([a].concat(pool.slice(0, 2)), rng(h)).map(String)
-    } else {
-      var keep = wrong.slice(0, 2)
-      o.choices = q.choices.filter(function (c) { return c === q.answer || keep.indexOf(c) >= 0 })
-    }
-    if (q.calc && q.calc.op === 'max') o.calc = { op: 'max', list: o.choices.map(Number) }
-    o.easy = true
+  function masteryOf (ms, d) { return typeof ms === 'number' ? ms : (ms && ms[d]) || 0 }
+
+  /* the SoalEngine options every G30 request shares: Tingkat Soal, level + easy mode per topic (from
+     mastery), the world as the preferred theme, the Islamic toggle, the avatar history (profile: 'auto') */
+  function seOpts (spec, extra) {
+    var lv = {}, ez = {}
+    DOMAINS.forEach(function (d) {
+      lv[d] = spec.level || mastery.levelFor(masteryOf(spec.mastery, d), spec.grade)
+      ez[d] = !spec.hard && isEasy(spec.grade, masteryOf(spec.mastery, d), spec.easy)
+    })
+    var o = { game: GAME, grade: spec.hard ? 'sulit' : 'mudah', level: lv, easy: ez, theme: spec.world || undefined,
+      without: spec.islam === false ? ['islam'] : [], exclude: spec.exclude, history: spec.history, avatar: spec.avatar,
+      rng: spec.rng || rng(spec.seed != null ? spec.seed : (Date.now() & 0x7fffffff)) }
+    for (var k in extra || {}) o[k] = extra[k]
     return o
+  }
+  function topicOf (d, spec) { return d === 'islam' && spec.islam === false ? 'umum' : d }
+
+  /* TKQuiz.make / makeHard: one generated Matematika question (fase A / Sulit), stateless */
+  function make (domain, level, r, opts) {
+    opts = opts || {}
+    return SE.generate('matematika', { game: GAME, grade: 2, level: Math.max(1, Math.min(4, level | 0 || 1)), rng: r || Math.random,
+      theme: opts.world || undefined, kind: opts.kind, easy: !!opts.easy, about: opts.about })
+  }
+  function makeHard (r, opts) {
+    opts = opts || {}
+    return SE.generate('matematika', { game: GAME, grade: 'sulit', rng: r || Math.random, theme: opts.world || undefined, kind: opts.kind })
+  }
+  /* TKQuiz.pick: one question of a domain, stateless (no avatar history; tests + tooling) */
+  function pick (domain, level, r, opts) {
+    opts = opts || {}
+    if (domain === 'islam' && opts.islam === false) return null
+    var spec = { level: Math.max(1, Math.min(4, level | 0 || 1)), hard: !!opts.hard, easy: false, islam: opts.islam, world: opts.world, exclude: opts.exclude, rng: r || Math.random, history: false }
+    var mixed = domain === 'campur'
+    return SE.one(seOpts(spec, mixed ? { context: 'quiz', easy: false } : { topic: domain, easy: false }))
   }
 
-  /* ══ CURATED PICK ════════════════════════════════════════════════════ */
-  function present (item, r) {
-    var o = {}; for (var k in item) o[k] = item[k]
-    o.choices = shuffle(item.choices, r)
-    return o
-  }
-  function enabledDomains (opts) {
-    var d = (opts && opts.domains) || ['matematika', 'umum', 'arab', 'logika', 'islam']
-    return d.filter(function (x) { return !(opts && opts.islam === false && x === 'islam') })
-  }
-  function pick (domain, level, r, opts) {
-    opts = opts || {}; r = r || Math.random; level = Math.max(1, Math.min(4, level | 0 || 1))
-    if (domain === 'campur') { domain = chooseDomain(r, opts); opts = Object.assign({}, opts, { mixed: true }) }
-    if (domain === 'matematika') return opts.hard ? makeHard(r, opts) : make('matematika', level, r, opts)
-    if (domain === 'islam' && opts.islam === false) return null
-    var ex = opts.exclude || {}
-    // a mixed ("campur") level never serves the arrange-letters archetype: it is an Arabic lesson of
-    // its own, and inside a mixed/Logika level it read as a wrong question for the level's goal
-    var all = bank().filter(function (o) { return o.domain === domain && !(opts.islam === false && o.islam) && !ex[o.id] && !(opts.mixed && o.letters) })
-    // Tingkat Soal: Mudah = Kelas 1–2 only (untagged items count as 1–2); Sulit = mostly Kelas 3–4, some 1–2 mixed in
-    var hi = function (o) { return +o.grade >= 3 || /^[34]/.test(String(o.grade || '')) }
-    if (!opts.hard) all = all.filter(function (o) { return !hi(o) })
-    else { var hard = all.filter(hi); if (hard.length && r() < 0.7) all = hard }
-    if (!all.length) return null
-    var pool = all.filter(function (o) { return o.level === level })
-    if (!pool.length) pool = all.filter(function (o) { return Math.abs(o.level - level) <= 1 })
-    if (!pool.length) pool = all
-    if (opts.world) {
-      var wp = all.filter(function (o) { return o.world === opts.world && o.level <= level + 1 })
-      if (wp.length && (r() < 0.8 || !pool.length)) pool = wp
-    }
-    return present(oneOf(pool, r), r)
-  }
-  /* topic mix (owner 2026-09-29: "jangan banyak soal kata Arab, matematika 50%"): a mixed pick is weighted,
-     math about half; inside a domain, pick() still prefers the world's own items */
-  var MIX = { matematika: 50, umum: 15, logika: 15, islam: 12, arab: 8 }
-  function chooseDomain (r, opts) {
-    var ds = enabledDomains(opts)
-    if (opts && opts.noArab) ds = ds.filter(function (d) { return d !== 'arab' })
-    if (opts && opts.noMath) ds = ds.filter(function (d) { return d !== 'matematika' })
-    return wpick(ds.map(function (d) { return [d, MIX[d] || 10] }), r)
-  }
-  function masteryOf (ms, d) { return typeof ms === 'number' ? ms : (ms && ms[d]) || 0 }
-  /* topic = the level's goal line ("Baca arah kompas."). Questions should be ABOUT it: curated items
-     whose text shares a content word with the goal come first, and generated maths picks a kind
-     that matches the goal's verb (bagikan -> share, pukul -> clock ...). */
-  var STOP = /^(yang|untuk|dengan|dari|pada|kapal|timmy|temukan|kenali|kepingan|baca|pilih|cocokkan|atur|ayo|bantu|semua|lagi|benar|menjawab|jawab|soal|teka|teki|tiap|agar|bersama)$/
-  function topicWords (topic) {
-    return String(topic || '').toLowerCase().replace(/[^a-z\s-]/g, ' ').split(/[\s-]+/).filter(function (w) { return w.length >= 4 && !STOP.test(w) })
-      .map(function (w) { return w.replace(/^(meng|mem|men|me|ber|di|ter|pe)/, '').replace(/(kan|nya|an|i)$/, '').slice(0, 6) }).filter(function (w) { return w.length >= 4 })
-  }
-  function topicScore (o, words) {
-    if (!words.length) return 0
-    var t = (o.prompt + ' ' + o.explain + ' ' + (o.hint1 || '') + ' ' + (o.hint2 || '') + ' ' + (o.visual || []).join(' ')).toLowerCase()
-    return words.filter(function (w) { return t.indexOf(w) >= 0 }).length
-  }
-  var MATH_TOPIC = [[/bagi/, 'share'], [/pukul|jam\b|waktu|jadwal/, 'clock'], [/muat|kursi|sekoci/, 'capacity'], [/selisih|banding/, 'diff'], [/kelompok|rombongan/, 'groups'],
-    [/turun|kurang|sisa/, 'sub'], [/muatan|dimuat|naik|tambah|kargo/, 'add'], [/hitung|berapa/, 'count']]
-  function mathKindFor (topic, level) {
-    // share / groups are topic-only in fase A ("Bagikan selimut…"): fair sharing / equal groups within 10, with pictures
-    var t = String(topic || '').toLowerCase(), have = (KINDS[level] || []).map(function (k) { return k[0] }).concat(['share', 'groups'])
-    for (var i = 0; i < MATH_TOPIC.length; i++) if (MATH_TOPIC[i][0].test(t) && have.indexOf(MATH_TOPIC[i][1]) >= 0) return MATH_TOPIC[i][1]
-    return null
-  }
+  /* a set of questions. spec: {domain ('campur' | a topic), world, count, level, grade, hard, islam, mastery,
+     topic (the level goal: questions ABOUT it first), easy, seed, mix} */
   function build (spec) {
     spec = spec || {}
     if (spec.mix) return buildMix(spec)
-    var r = spec.rng || rng(spec.seed != null ? spec.seed : (Date.now() & 0x7fffffff)), n = spec.count || 5, out = [], used = {}
     var mixed = !spec.domain || spec.domain === 'campur'
-    var words = topicWords(spec.topic), onTopic = Math.ceil(n / 2)
-    var lvOf = function (d) { return spec.level || mastery.levelFor(masteryOf(spec.mastery, d), spec.grade) }
-    // curated items about the goal, best match first (same world breaks ties)
-    var topical = !words.length ? [] : bank().filter(function (o) {
-      return (mixed ? enabledDomains({ islam: spec.islam, domains: spec.domains }).indexOf(o.domain) >= 0 : o.domain === spec.domain) &&
-        !(spec.islam === false && o.islam) && !(mixed && o.letters) && o.level <= lvOf(o.domain) + 1 && topicScore(o, words) > 0
-    }).sort(function (a, b) { return (topicScore(b, words) - topicScore(a, words)) || ((b.world === spec.world) - (a.world === spec.world)) || (r() - 0.5) })
-    for (var i = 0; i < n; i++) {
-      if (i < onTopic && topical.length) {
-        var tq = topical.shift()
-        if (!used[tq.id]) { used[tq.id] = 1; out.push(present(tq, r)); continue }
-      }
-      var d = spec.domain || 'campur'
-      if (d === 'campur') d = chooseDomain(r, { islam: spec.islam, world: spec.world, exclude: used, domains: spec.domains })
-      if (d === 'islam' && spec.islam === false) d = 'umum'
-      var lv = lvOf(d)
-      var popts = { islam: spec.islam, world: spec.world, exclude: used, mixed: mixed, hard: !!spec.hard, easy: !spec.hard && isEasy(spec.grade, masteryOf(spec.mastery, d), spec.easy) }
-      if (d === 'matematika' && i < onTopic) { var mk = mathKindFor(spec.topic, lv); if (mk) popts.kind = mk }
-      var q = null
-      for (var t = 0; t < 10 && (!q || used[q.id]); t++) q = pick(d, lv, r, popts)
-      if (!q) q = pick('umum', lv, r, popts)
-      if (!q) continue
-      used[q.id] = 1; out.push(q)
-    }
-    return out
+    var o = seOpts(spec, { count: spec.count || 5, about: spec.topic || null })
+    if (mixed) o.context = 'quiz'
+    else o.topic = topicOf(spec.domain, spec)
+    return SE.pick(o)
   }
 
   /* a world quiz step (spec.mix, set by the game): about half the questions are Matematika, the step's own topic
-     (spec.domain, its goal line) fills the rest; a mixed / Arab / math-led step fills the rest by the MIX weights.
-     Never more than one Arabic question per 4 and never an all-Arabic step. Order: the lead topic first. */
+     (spec.domain, its goal line) fills the rest; a mixed / Arab / math-led step fills the rest by the profile
+     weights. Never more than one Arabic question per 4 and never an all-Arabic step. Order: the lead topic first. */
   function buildMix (spec) {
     var r = spec.rng || rng(spec.seed != null ? spec.seed : (Date.now() & 0x7fffffff)), n = spec.count || 4
-    var lead = spec.domain && spec.domain !== 'campur' && spec.domain !== 'matematika' && spec.domain !== 'arab' ? spec.domain : null
-    if (lead === 'islam' && spec.islam === false) lead = 'umum'
-    var nMath = Math.floor(n / 2) + (n % 2 && r() < 0.5 ? 1 : 0), arabCap = Math.max(1, Math.floor(n / 4)), arab = 0
-    var slots = [], i
-    for (i = 0; i < n - nMath; i++) {
-      var d = lead || chooseDomain(r, { islam: spec.islam, domains: spec.domains, noMath: true, noArab: arab >= arabCap })
-      if (d === 'arab') arab++
-      slots.push(d)
-    }
+    var s2 = {}; for (var k in spec) s2[k] = spec[k]; s2.rng = r
+    var lead = spec.domain && spec.domain !== 'campur' && spec.domain !== 'matematika' && spec.domain !== 'arab' ? topicOf(spec.domain, spec) : null
+    var nMath = Math.floor(n / 2) + (n % 2 && r() < 0.5 ? 1 : 0), arabCap = Math.max(1, Math.floor(n / 4))
+    var noMath = {}; for (k in MIX) if (k !== 'matematika') noMath[k] = MIX[k]
+    var others = SE.pick(seOpts(s2, lead ? { context: 'quiz', count: n - nMath, topic: lead, about: spec.topic || null, aboutCount: 1 }
+      : { context: 'quiz', count: n - nMath, weights: noMath, maxPer: { arab: arabCap } }))
+    var maths = SE.pick(seOpts(s2, { context: 'quiz', topic: 'matematika', count: n - others.length, about: spec.hard ? null : (spec.topic || null), aboutCount: 1 }))
     // interleave: lead topic first, then math / other alternating
-    var others = slots.slice(), maths = []; for (i = 0; i < nMath; i++) maths.push('matematika')
-    var order = []; while (others.length || maths.length) { if (others.length) order.push(others.shift()); if (maths.length) order.push(maths.shift()) }
-    var out = [], used = {}, words = topicWords(spec.topic)
-    order.forEach(function (d, k) {
-      var lv = spec.level || mastery.levelFor(masteryOf(spec.mastery, d), spec.grade)
-      var popts = { islam: spec.islam, world: spec.world, exclude: used, mixed: true, hard: !!spec.hard, easy: !spec.hard && isEasy(spec.grade, masteryOf(spec.mastery, d), spec.easy) }
-      if (d === 'matematika' && k < 2 && !spec.hard) { var mk = mathKindFor(spec.topic, lv); if (mk) popts.kind = mk }
-      var q = null
-      // the lead topic's first question follows the step's goal when a curated item matches it
-      if (k === 0 && lead && words.length) {
-        var tp = bank().filter(function (o) { return o.domain === d && !used[o.id] && !o.letters && !(spec.islam === false && o.islam) && (spec.hard || !(+o.grade >= 3)) && topicScore(o, words) > 0 })
-          .sort(function (a, b) { return topicScore(b, words) - topicScore(a, words) })
-        if (tp.length) q = present(tp[0], r)
-      }
-      for (var t = 0; t < 10 && (!q || used[q.id]); t++) q = pick(d, lv, r, popts)
-      if (!q) q = pick('matematika', lv, r, popts)
-      if (!q) return
-      used[q.id] = 1; out.push(q)
-    })
+    var out = []
+    while (others.length || maths.length) { if (others.length) out.push(others.shift()); if (maths.length) out.push(maths.shift()) }
     return out
-  }
-
-  /* ══ SULIT (Kelas 3–4, setting "Tingkat Soal") ══════════════════════════ */
-  var HARD_KINDS = [['add3', 14], ['sub3', 14], ['times', 16], ['div', 10], ['frac', 10], ['clock5', 10], ['money', 10], ['measure', 8], ['story', 8]]
-  function rp (v) { return 'Rp' + String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.') }
-  function clock5Label (h, m) { return 'Pukul ' + h + '.' + (m < 10 ? '0' : '') + m }
-  function uniq4 (ans, alts, r) {
-    var out = [ans], seen = {}; seen[ans] = 1
-    alts.forEach(function (v) { if (out.length < 4 && v != null && !seen[v]) { seen[v] = 1; out.push(v) } })
-    return shuffle(out, r)
-  }
-  function numAlts (a, steps) { var o = []; steps.forEach(function (d) { if (a + d >= 0) o.push(String(a + d)) }); return o }
-  function makeHard (r, opts) {
-    opts = opts || {}
-    var th = THEME[opts.world] || THEME._, it = oneOf(th, r), key = it[0], noun = it[1]
-    var kind = opts.kind && /^(add3|sub3|times|div|frac|clock5|money|measure|story)$/.test(opts.kind) ? opts.kind : wpick(HARD_KINDS, r), q
-    switch (kind) {
-      case 'add3': {   // within 1000, the ones regroup
-        var a = ri(r, 105, 780), b = ri(r, 17, Math.min(219, 999 - a)); if ((a % 10) + (b % 10) < 10) b = Math.min(999 - a, b + (10 - (a % 10)))
-        var s = a + b
-        q = { prompt: 'Kapal membawa ' + a + ' ' + noun + '. Lalu dimuat ' + b + ' lagi. Jumlahnya?', eq: a + ' + ' + b + ' = ?', ans: String(s),
-          alts: numAlts(s, [10, -10, 1, -1, 100]), calc: { op: '+', a: a, b: b }, explain: a + ' + ' + b + ' = ' + s + '.', hint1: 'Jumlahkan satuan dulu, lalu puluhan, lalu ratusan.', hint2: 'Kalau satuan lebih dari 9, simpan 1 ke puluhan.' }
-        break
-      }
-      case 'sub3': {
-        var a2 = ri(r, 210, 990), b2 = ri(r, 18, Math.min(199, a2 - 10)); if ((a2 % 10) >= (b2 % 10)) b2 = Math.min(a2 - 10, b2 + ((a2 % 10) - (b2 % 10)) + 1)
-        var d2 = a2 - b2
-        q = { prompt: 'Ada ' + a2 + ' ' + noun + '. Sebanyak ' + b2 + ' diturunkan. Sisanya?', eq: a2 + ' − ' + b2 + ' = ?', ans: String(d2),
-          alts: numAlts(d2, [10, -10, 1, -1, 100]), calc: { op: '-', a: a2, b: b2 }, explain: a2 + ' − ' + b2 + ' = ' + d2 + '.', hint1: 'Kurangi satuan dulu. Kalau kurang, pinjam 1 dari puluhan.', hint2: 'Periksa: jawaban + ' + b2 + ' harus sama dengan ' + a2 + '.' }
-        break
-      }
-      case 'times': {
-        var x = ri(r, 2, 10), y = ri(r, 2, 10), p = x * y
-        q = { prompt: 'Ada ' + x + ' peti. Tiap peti berisi ' + y + ' ' + noun + '. Semuanya berapa?', eq: x + ' × ' + y + ' = ?', ans: String(p),
-          alts: numAlts(p, [x, -x, y, -y, 1, -1]), calc: { op: '*', a: x, b: y }, explain: x + ' × ' + y + ' = ' + p + '.', hint1: 'Perkalian = penjumlahan berulang.', hint2: 'Hitung loncat ' + y + ' sebanyak ' + x + ' kali.' }
-        break
-      }
-      case 'div': {
-        var g = ri(r, 2, 9), k = ri(r, 2, 10), t = g * k
-        q = { prompt: t + ' ' + noun + ' dibagi rata ke ' + g + ' sekoci. Tiap sekoci dapat berapa?', eq: t + ' : ' + g + ' = ?', ans: String(k),
-          alts: numAlts(k, [1, -1, 2, -2, g - k]), calc: { op: '/', a: t, b: g }, explain: t + ' : ' + g + ' = ' + k + ', karena ' + g + ' × ' + k + ' = ' + t + '.', hint1: 'Pembagian adalah kebalikan perkalian.', hint2: 'Berapa kali ' + g + ' supaya jadi ' + t + '?' }
-        break
-      }
-      case 'frac': {
-        var den = oneOf([2, 3, 4], r), num = den === 4 && r() < 0.4 ? 3 : 1, lab = num + '/' + den
-        q = { prompt: 'Berapa bagian kue yang berwarna?', eq: null, ans: lab, alts: ['1/2', '1/3', '1/4', '3/4', '2/3'].filter(function (v) { return v !== lab }),
-          scene: { mode: 'frac', den: den, num: num, groups: [] }, calc: { op: 'frac', num: num, den: den }, explain: 'Kue dibagi ' + den + ' sama besar, ' + num + ' bagian berwarna: ' + lab + '.', hint1: 'Hitung semua potongan kue.', hint2: 'Pecahan = bagian berwarna / semua bagian.' }
-        break
-      }
-      case 'clock5': {
-        var h = ri(r, 1, 12), m = 5 * ri(r, 1, 11), lab2 = clock5Label(h, m)
-        q = { prompt: 'Lihat jamnya. Pukul berapa sekarang?', eq: null, ans: lab2,
-          alts: [clock5Label(h, (m + 30) % 60 || 5), clock5Label(h % 12 + 1, m), clock5Label(h, m >= 10 ? m - 5 : m + 5), clock5Label(m / 5 > 12 ? h : (m / 5) || 12, h * 5 % 60 || 5)],
-          scene: { mode: 'clock', h: h, m: m, groups: [] }, calc: { op: 'clock5', h: h, m: m }, explain: 'Jarum pendek dekat angka ' + h + ', jarum panjang di menit ' + m + ': ' + lab2.toLowerCase() + '.', hint1: 'Jarum panjang: tiap angka = 5 menit.', hint2: 'Jarum pendek menunjuk jamnya.' }
-        break
-      }
-      case 'money': {
-        var price = 500 * ri(r, 2, 16), pay = [2000, 5000, 10000].filter(function (v) { return v > price })[0] || 10000, ch = pay - price
-        if (ch <= 0) { price = 3000; pay = 5000; ch = 2000 }
-        q = { prompt: 'Harga roti ' + rp(price) + '. Kamu bayar ' + rp(pay) + '. Kembaliannya berapa?', eq: rp(pay) + ' − ' + rp(price) + ' = ?', ans: rp(ch),
-          alts: [rp(ch + 500), rp(Math.max(500, ch - 500)), rp(ch + 1000), rp(price), rp(ch + 1500), rp(ch + 2000)], calc: { op: 'money', a: pay, b: price }, explain: rp(pay) + ' − ' + rp(price) + ' = ' + rp(ch) + '.', hint1: 'Kembalian = uang dibayar dikurangi harga.', hint2: 'Hitung dalam ribuan dulu.' }
-        break
-      }
-      case 'measure': {
-        if (r() < 0.5) {
-          var mm = ri(r, 2, 9), cm = mm * 100
-          q = { prompt: 'Tali jangkar panjangnya ' + mm + ' meter. Berapa sentimeter?', eq: mm + ' m = ? cm', ans: cm + ' cm', alts: [mm * 10 + ' cm', mm * 1000 + ' cm', (mm + 1) * 100 + ' cm'],
-            calc: { op: 'm2cm', a: mm }, explain: '1 meter = 100 cm, jadi ' + mm + ' m = ' + cm + ' cm.', hint1: '1 meter sama dengan 100 sentimeter.', hint2: 'Kalikan dengan 100.' }
-        } else {
-          var k1 = ri(r, 2, 15), k2 = ri(r, 2, 15), kt = k1 + k2
-          q = { prompt: 'Satu koper ' + k1 + ' kg, satu lagi ' + k2 + ' kg. Berat semuanya?', eq: k1 + ' kg + ' + k2 + ' kg = ?', ans: kt + ' kg', alts: [(kt + 1) + ' kg', (kt - 1) + ' kg', (kt + 10) + ' kg'],
-            calc: { op: 'kg', a: k1, b: k2 }, explain: k1 + ' + ' + k2 + ' = ' + kt + ' kg.', hint1: 'Jumlahkan kedua berat.', hint2: 'Satuannya tetap kg.' }
-        }
-        break
-      }
-      default: {   // story: two steps, <= 18 words
-        var s1 = ri(r, 3, 9), s2 = ri(r, 3, 9), gv = ri(r, 5, Math.min(40, s1 * s2 - 1)), res = s1 * s2 - gv
-        q = { prompt: 'Ada ' + s1 + ' kotak, tiap kotak ' + s2 + ' ' + noun + '. ' + gv + ' dibagikan. Sisa berapa?', eq: s1 + ' × ' + s2 + ' − ' + gv + ' = ?', ans: String(res),
-          alts: numAlts(res, [gv > 10 ? 10 : 2, -1, 1, s2]), calc: { op: 'story', a: s1, b: s2, c: gv }, explain: s1 + ' × ' + s2 + ' = ' + (s1 * s2) + ', lalu ' + (s1 * s2) + ' − ' + gv + ' = ' + res + '.', hint1: 'Langkah 1: kalikan. Langkah 2: kurangi.', hint2: 'Semua ' + noun + ': ' + s1 + ' × ' + s2 + '.' }
-        kind = 'story'
-      }
-    }
-    var id = 'h-' + kind + '-' + JSON.stringify(q.calc).replace(/[^0-9a-z,]/gi, '')
-    return { id: id, domain: 'matematika', level: 4, hard: true, kind: kind, prompt: q.prompt, eq: q.eq, visual: [], scene: q.scene || { mode: 'none', groups: [] },
-      choices: uniq4(q.ans, q.alts, r), answer: q.ans, explain: q.explain, hint1: q.hint1, hint2: q.hint2, step1: q.hint1, calc: q.calc, world: opts.world || null }
-  }
-  // answer check for a Sulit question, recomputed from its calc (the gate runs this)
-  function hardTruth (c) {
-    switch (c.op) {
-      case '+': return String(c.a + c.b)
-      case '-': return String(c.a - c.b)
-      case '*': return String(c.a * c.b)
-      case '/': return c.a % c.b === 0 ? String(c.a / c.b) : null
-      case 'frac': return c.num + '/' + c.den
-      case 'clock5': return clock5Label(c.h, c.m)
-      case 'money': return rp(c.a - c.b)
-      case 'm2cm': return (c.a * 100) + ' cm'
-      case 'kg': return (c.a + c.b) + ' kg'
-      case 'story': return String(c.a * c.b - c.c)
-    }
-    return null
   }
 
   /* ══ SORT SETS ═══════════════════════════════════════════════════════ */
@@ -953,6 +577,34 @@
     '.tkq-sfill .tkq-seats{gap:5px;flex-wrap:nowrap;width:100%;justify-content:center}.tkq-sfill .tkq-seatp{flex:0 1 48px;min-width:22px;width:auto;height:auto;aspect-ratio:3/4}.tkq-sfill .tkq-seatp img{width:100%;height:95%}.tkq-sfill .tkq-seats:has(.tkq-seatp:nth-child(9)){flex-wrap:wrap}.tkq-sfill .tkq-seats:has(.tkq-seatp:nth-child(9)) .tkq-seatp{flex:0 0 30px}',
     '.tkq.tkq-mt.tkq-short{grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"chars card" "foot foot"}.tkq-mt.tkq-short .tkq-stats,.tkq-mt.tkq-short .tkq-top{display:none}'
   ].join('\n')
+  // the clock / fraction cake scales down to its scene instead of spilling over the question above it (qa-tk-ui-audit V);
+  // the clock numerals are drawn at 15 viewBox units so a 94 px face still reads 14 px, a 80 px face 12 px
+  CSS += '\n.tkq-scene>svg.tkq-clock{max-height:100%;max-width:100%}'
+  // tablets: a clock face never below 94 px, even in the compact card (numerals are 15 viewBox units -> >= 14 px);
+  // the compact fit shrinks the other scene parts and the gaps instead
+  CSS += '\n.tkq:not(.tkq-short):not(.tkq-tall) .tkq-card svg.tkq-clock:not(.tkq-frac){min-width:94px;min-height:94px}'
+  // ... and its scene zone keeps room for it (clock + padding), so the face never rides up onto the prompt
+  CSS += '\n.tkq:not(.tkq-short):not(.tkq-tall) .tkq-card .tkq-scene:has(>svg.tkq-clock:not(.tkq-frac)){min-height:100px!important;flex-shrink:0}'
+  // Arabic speaker (listening items): a big round button beside the hero word, >= 64 px, drawn with the listen sprite
+  CSS += '\n.tkq-arw.tkq-lsn{position:relative;display:flex;flex-direction:column;align-items:center;padding:0 84px}' +
+    '.tkq-arsay{position:absolute;right:0;top:50%;margin-top:-36px;width:72px;height:72px;min-width:72px;min-height:72px;padding:0;border-radius:50%;border:3px solid #fff;background:linear-gradient(#5AA2FF,#1F63D6);box-shadow:0 4px 0 #103A88;display:grid;place-items:center;transition:transform 160ms cubic-bezier(.23,1,.32,1)}' +
+    '.tkq-arsay[hidden]{display:none}.tkq-arsay img,.tkq-arsay .tk-ico{width:40px;height:40px}.tkq-arsay:active{transform:scale(.94)}' +
+    '.tkq-arsay.muted{background:linear-gradient(#9aa6bd,#6b7690);box-shadow:0 4px 0 #4a5268}.tkq-arsay.muted::after{content:"";position:absolute;left:14px;right:14px;top:50%;height:5px;margin-top:-2px;border-radius:3px;background:#fff;transform:rotate(-40deg);box-shadow:0 0 0 2px #4a5268}' +
+    '.tkq-arsay.on{animation:tkq-arpulse 220ms ease-out}@keyframes tkq-arpulse{50%{transform:scale(1.08)}}' +
+    '.tkq-rm .tkq-arsay.on,.rm .tkq-arsay.on{animation:none}@media (prefers-reduced-motion:reduce){.tkq-arsay.on{animation:none}}' +
+    '.tkq-tall .tkq-arw.tkq-lsn{padding:0 70px}.tkq-tall .tkq-arsay,.tkq-short .tkq-arsay{width:64px;height:64px;min-width:64px;min-height:64px;margin-top:-32px}'
+  // tablet type floor (qa-tk-ui-audit): the speaker tag on a bubble >= 14 px when the short side is >= 600 px
+  CSS += '\n@media (min-width:600px) and (min-height:600px){.tkq-bub b,.tkq .tkq-plate p,.tkq .tkq-stat small,.tkq .tkq-tab,.tkq .tkq-tab span,.tkq .tkq-step span,.tkq .tkq-step,.tkq-tall .tkq-step.cur span{font-size:14px}}'
+  // phones (qa-tk-ui-audit 2026-09-29): the long plate title fits a 390 px frame; picture answers go picture-over-label in
+  // one row of three / 2x2 so each picture is >= 56 px (stacked rows squeezed them to ~30-48 px and pushed the asked
+  // Arabic word over its prompt)
+  CSS += '\n.tkq-tall .tkq-plate h2{font-size:clamp(16px,4.8vw,22px)}' +
+    '.tkq-fill.tkq-tall .tkq-ans.n3.pic{grid-template-columns:repeat(3,minmax(0,1fr))!important}' +
+    '.tkq-fill.tkq-tall .tkq-ans.pic .tkq-opt{flex-direction:column!important;justify-content:center;gap:4px;padding:6px 4px}.tkq-fill.tkq-tall .tkq-ans.n3.pic .tkq-opt{min-height:108px}' +
+    '.tkq-fill.tkq-tall .tkq-ans.pic .tkq-opt img{flex:1 1 0;width:100%;max-width:100%;height:auto;min-height:40px;max-height:200px;object-fit:contain}.tkq-fill.tkq-tall .tkq-ans.pic:not(.n3) .tkq-opt{padding:3px 4px;gap:2px}.tkq-fill.tkq-tall .tkq-ans.pic:not(.n3) .tkq-opt img{min-height:0}' +
+    '.tkq-fill.tkq-tall .tkq-ans.pic .tkq-opt .lb{flex:0 0 auto;min-width:0;font-size:clamp(16px,4.4vw,24px);text-align:center;line-height:1.1}' +
+    // (open, handed to the tk-quiz owner) an Arabic answer's harakat can touch the top of a 1.05 line box on a phone 2x2 / 3-row card
+    '.tkq-opt>span.tkq-ar{padding:0 2px}'
   function injectCSS () {
     if (typeof document === 'undefined' || document.getElementById('tkq-css')) return
     var st = document.createElement('style'); st.id = 'tkq-css'; st.textContent = CSS; document.head.appendChild(st)
@@ -964,6 +616,7 @@
       return (W.AssetIndex && W.AssetIndex.path(k)) || (BASE + 'assets/db/lib/' + k + '.webp')
     }
   }
+  var AR_PAINT = null, AR_LISTEN = false   // the Arabic listening speaker's repaint (see wireArSay)
   function sfxFn (opts) {
     return function (name) {
       if (opts && opts.sound === false) return
@@ -992,7 +645,7 @@
     var ticks = '', nums = ''
     for (var i = 1; i <= 12; i++) {
       var a = i * Math.PI / 6
-      nums += '<text x="' + (50 + 34 * Math.sin(a)).toFixed(1) + '" y="' + (50 - 34 * Math.cos(a) + 4.5).toFixed(1) + '" text-anchor="middle" font-size="12" fill="#1F3B73" font-family="Fredoka One,system-ui">' + i + '</text>'
+      nums += '<text x="' + (50 + 33 * Math.sin(a)).toFixed(1) + '" y="' + (50 - 33 * Math.cos(a) + 5.3).toFixed(1) + '" text-anchor="middle" font-size="15" fill="#1F3B73" font-family="Fredoka One,system-ui">' + i + '</text>'
       ticks += '<line x1="' + (50 + 43 * Math.sin(a)).toFixed(1) + '" y1="' + (50 - 43 * Math.cos(a)).toFixed(1) + '" x2="' + (50 + 46 * Math.sin(a)).toFixed(1) + '" y2="' + (50 - 46 * Math.cos(a)).toFixed(1) + '" stroke="#1F3B73" stroke-width="2"/>'
     }
     var ha = ((h % 12) + m / 60) * 30, ma = m * 6
@@ -1106,10 +759,13 @@
     var pengHTML = '<div class="tkq-char peng">' + (L.short ? '' : '<div class="tkq-bub from-p" data-b="p"><b>' + PENGUIN + '</b><div class="tx">Semangat, pelaut kecil!</div></div>') +
       '<span class="tkq-capt"><img src="' + esc(pengSrc) + '" alt="' + PENGUIN + '" draggable="false"><img class="asst" src="' + esc(asstSrc) + '" alt="' + ASSIST + '" draggable="false"></span></div>'
     var cardHTML = '<section class="tkq-card" aria-live="off"><div class="tkq-head">' +
-      '<button type="button" class="tkq-btn tkq-speak" aria-label="Dengar soal">' + sprite('listen', 'tk-prop/ship-bell', lib) + '</button><span class="tkq-count"></span>' +
+      '<button type="button" class="tkq-btn tkq-speak" aria-label="Dengar soal">' + sprite('listen', 'tk-prop/ships-bell', lib) + '</button><span class="tkq-count"></span>' +
       (noHints ? '' : '<button type="button" class="tkq-btn tkq-hintbtn" aria-label="Petunjuk">' + sprite('hint', 'tk-prop/lantern', lib) + '<span>Petunjuk</span></button>') + '<span class="tkq-badge"></span></div>' +
       '<div class="tkq-prompt"></div><div class="tkq-eq" hidden></div><div class="tkq-scene"></div><div class="tkq-help" aria-live="polite"></div>' +
       '<div class="tkq-ans" role="group" aria-label="Pilihan jawaban"></div><div class="tkq-explain" hidden aria-live="polite"></div></section>'
+    // opts.subFor(domain) -> the plate subtitle for the CURRENT question's topic (re-set on every question)
+    var subFor = typeof opts.subFor === 'function' ? opts.subFor : null
+    if (subFor && qs[0]) topic = subFor(qs[0].domain) || topic
     var topHTML = '<div class="tkq-top">' + plateHTML(title, topic || DEFAULT_SUB) + tabsHTML(lib, opts, qs[0] && qs[0].domain) + '</div>'
     var chal = !!opts.challenge, chalNext = opts.nextLabel || 'Lanjut Berlayar'
     var foot = footHTML(opts, stepOf(opts, 0), chal ? chalNext : 'Lanjut')
@@ -1192,8 +848,10 @@
         ;(q.visual || []).forEach(function (k) { h += objHTML(k, idx++, '', size) })
         if (q.seq) h += '<span class="tkq-q" style="--s:' + size + 'px">?</span>'
         if (q.rtl && q.ar && !q.letters && (q.listen || /^ar-w[pr]-/.test(q.id) || /^ar-fm-/.test(q.id))) {
-          h += '<div class="tkq-arw">' + (q.listen ? '<button type="button" class="tkq-btn tkq-say">' + ICON.speaker + '<span>Dengar</span></button><span class="tkq-tr">Dengar: «' + esc(q.tr) + '»</span>'
-            : '<span class="tkq-ar" dir="rtl" lang="ar">' + esc(q.ar) + '</span><span class="tkq-tr">' + esc(q.tr) + '</span>') + '</div>'
+          // a listening item shows the Arabic word as the hero too (owner tablet 2026-09-29: SFX-only mode has no voice, so
+          // "Dengar: «safiinah»" alone could not be answered); the round speaker plays it with an Arabic voice when one exists
+          h += '<div class="tkq-arw' + (q.listen ? ' tkq-lsn' : '') + '"><span class="tkq-ar" dir="rtl" lang="ar">' + esc(q.ar) + '</span><span class="tkq-tr">' + esc(q.tr) + '</span>' +
+            (q.listen ? '<button type="button" class="tkq-btn tkq-arsay" hidden aria-label="Dengarkan kata Arab">' + ICON.speaker + '</button>' : '') + '</div>'
         }
       }
       function inner (g, cls) { var s = ''; for (var j = 0; j < g.n; j++) s += objHTML(g.key, idx++, cls, size); return s }
@@ -1202,12 +860,30 @@
       root.classList.toggle('tkq-noscene', !h)
       // counting scenes: every object can be tapped to count it aloud ("satu, dua, ...")
       E.scene.classList.toggle('tapcount', q.domain === 'matematika' && /^(count|add|sub|groups|diff|twostep)$/.test(sc.mode))
-      var sayBtn = E.scene.querySelector('.tkq-say'); if (sayBtn) sayBtn.addEventListener('click', function () { speak(q.listen) })
+      var sayBtn = E.scene.querySelector('.tkq-arsay'); if (sayBtn) wireArSay(sayBtn, q.listen)
       // objects arrive: stagger (base first, then the arriving group)
       var os = E.scene.querySelectorAll('.tkq-o,.tkq-op')
       Array.prototype.forEach.call(os, function (o, k) { later(function () { o.classList.add('in') }, 60 + k * 45) })
       var hide = q.domain === 'matematika' && tierOf(q) >= 3 && sc.mode !== 'clock' && sc.mode !== 'capacity'
       if (hide) { E.scene.style.display = 'none'; root.classList.add('tkq-noscene') }
+    }
+    // the Arabic speaker (listening items): a child's tap is an explicit play action, so it speaks even with Narasi off;
+    // hidden when the device has no speechSynthesis or no Arabic voice; shown muted while G30 sound is off (a tap unmutes)
+    function arVoice () { try { return W.speechSynthesis ? (W.speechSynthesis.getVoices() || []).filter(function (x) { return /^ar/i.test(x.lang) })[0] || null : null } catch (e) { return null } }
+    function wireArSay (b, text) {
+      var paint = function () { if (!b.isConnected) { if (AR_PAINT === paint) AR_PAINT = null; return } b.hidden = !arVoice(); b.classList.toggle('muted', !!(opts.muted && opts.muted())) }
+      paint()
+      // ONE module-level voiceschanged listener repaints only the current speaker (no listener per question / level)
+      AR_PAINT = paint
+      if (!AR_LISTEN) { try { if (W.speechSynthesis && W.speechSynthesis.addEventListener) { W.speechSynthesis.addEventListener('voiceschanged', function () { if (AR_PAINT) AR_PAINT() }); AR_LISTEN = true } } catch (e) {} }
+      later(paint, 600)
+      b.addEventListener('click', function () {
+        if (opts.muted && opts.muted() && typeof opts.onUnmute === 'function') { try { opts.onUnmute() } catch (e) {} }
+        paint()
+        var v = arVoice(); if (!v) return
+        try { var u = new W.SpeechSynthesisUtterance(text); u.lang = v.lang || 'ar-SA'; u.voice = v; u.rate = 0.8; W.speechSynthesis.cancel(); W.speechSynthesis.speak(u) } catch (e) {}
+        b.classList.remove('on'); void b.offsetWidth; b.classList.add('on')
+      })
     }
     function speak (text) {
       sfx('click')
@@ -1227,12 +903,12 @@
       else if (q.rtl && /[؀-ۿ]/.test(c)) inner = '<span class="tkq-ar" dir="rtl" lang="ar">' + esc(c) + '</span>' + (q.trs && q.trs[c] ? '<span class="tkq-tr">' + esc(q.trs[c]) + '</span>' : '')
       else { inner = '<span>' + esc(c).replace(/\+/g, '+<wbr>') + '</span>'; if (/^\d+$/.test(c)) cls += ' num' }   // "Rp500+Rp200+Rp100" may break after a +
       return '<button type="button" class="' + cls + '" data-c="' + esc(c) + '" data-i="' + i + '" aria-label="' + esc(q.pics && q.pics[c] ? c : (q.trs && q.trs[c]) || c) + '">' + inner +
-        (twoTap ? '<span class="ear" aria-hidden="true">' + sprite('listen', 'tk-prop/ship-bell', lib) + '</span>' : '') + '<span class="ck">' + ICON.check + '</span></button>'
+        (twoTap ? '<span class="ear" aria-hidden="true">' + sprite('listen', 'tk-prop/ships-bell', lib) + '</span>' : '') + '<span class="ck">' + ICON.check + '</span></button>'
     }
     function renderAnswers (q) {
       if (q.letters) return renderArrange(q)
       E.ans.style.display = ''
-      var n3 = q.choices.length === 3, short = q.choices.every(function (c) { return String(c).length <= 7 || (q.pics && q.pics[c]) })
+      var n3 = q.choices.length === 3, short = q.choices.every(function (c) { return (String(c).length <= 7 && !/[\u0600-\u06FF]/.test(String(c))) || (q.pics && q.pics[c]) })   // an Arabic word is never 'num': three 104 px columns broke it letter by letter (phone, 2026-09-29)
       var pic = q.choices.some(function (c) { return q.pics && q.pics[c] })
       E.ans.className = 'tkq-ans' + (n3 ? ' n3 ' + (short ? 'num' : 'txt') : '') + (pic ? ' pic' : '')
       E.ans.innerHTML = q.choices.map(function (c, i) { return optHTML(q, c, i) }).join('')
@@ -1570,6 +1246,7 @@
       E.eq.hidden = !(q.eq && q.domain === 'matematika' && t === 2)
       E.eq.textContent = q.eq || ''
       help(!noHints && q.domain === 'matematika' && t >= 3 ? 'Butuh bantuan? Ketuk Petunjuk.' : '')
+      if (subFor) { var sp = root.querySelector('.tkq-plate p'), st = subFor(q.domain); if (sp && st) sp.textContent = st }
       Array.prototype.forEach.call(root.querySelectorAll('.tkq-tab'), function (tb) { var on = tb.dataset.d === q.domain; tb.classList.toggle('on', on); if (on) tb.setAttribute('aria-current', 'true'); else tb.removeAttribute('aria-current') })
       E.explain.hidden = true; E.explain.classList.remove('on')
       E.next.disabled = true
@@ -1646,7 +1323,7 @@
     }).join('')
     var topic = set.topic || opts.topic
     root.innerHTML = (L.short ? '' : '<div class="tkq-top">' + plateHTML(opts.title || 'Tantangan ' + du.label, topic || '') + '</div>') +
-      '<section class="tkq-card"><div class="tkq-head"><button type="button" class="tkq-btn tkq-speak" aria-label="Dengar perintah">' + sprite('listen', 'tk-prop/ship-bell', lib) + '</button><span class="tkq-count" data-k="left"></span>' +
+      '<section class="tkq-card"><div class="tkq-head"><button type="button" class="tkq-btn tkq-speak" aria-label="Dengar perintah">' + sprite('listen', 'tk-prop/ships-bell', lib) + '</button><span class="tkq-count" data-k="left"></span>' +
       '<span class="tkq-badge">' + (du.svg || '<img src="' + lib(du.icon) + '" alt="">') + '<span>' + esc(du.label) + '</span></span></div>' +
       '<div class="tkq-prompt">' + esc(set.prompt) + '</div><div class="tkq-help" aria-live="polite"></div>' +
       '<div class="tkq-sortbody"><div class="tkq-bins">' + binHTML + '</div><div class="tkq-tray" aria-label="Barang yang belum dipilah">' + itemHTML + '</div></div>' +
@@ -1810,9 +1487,6 @@
   /* ══ challenge: ONE question card over a running game (PRD v2 §13 "Collision → Knowledge Challenge") ══
      Reuses mount() whole (badge, prompt, scene, choices, hint ladder, explanation, read-aloud), composed
      as a single card with one "Lanjut Berlayar" button. Resolves when the child continues. */
-  var RECENT = [], RECENT_MAX = 40
-  function remember (id) { if (!id) return; RECENT.push(id); if (RECENT.length > RECENT_MAX) RECENT.shift() }
-  function recentMap () { var m = {}; RECENT.forEach(function (id) { m[id] = 1 }); return m }
   // a host-given question ("3 + 2" in the flooding scene, "20 − 14" in the lifeboat) -> engine question
   function fixedQuestion (o, opts) {
     var prompt = String(o.prompt || ''), answer = String(o.answer)
@@ -1836,17 +1510,11 @@
   }
   function challengeQuestion (opts) {
     if (opts.question && opts.question.prompt) return fixedQuestion(opts.question, opts)
-    var r = rng(opts.seed != null ? opts.seed : (Date.now() & 0x7fffffff)), ex = recentMap()
+    // SoalEngine context 'challenge' (profile g30): no "arrange the letters", no listen-only Arabic (needs a
+    // voice the device may lack), short prompts; the avatar history keeps cards from repeating across worlds
     var d = opts.domain || 'campur'
-    if (d === 'campur') d = chooseDomain(r, { islam: opts.islam, world: opts.world, exclude: ex, domains: opts.domains })
-    if (d === 'islam' && opts.islam === false) d = 'umum'
-    var lv = opts.level || mastery.levelFor(masteryOf(opts.mastery, d), opts.grade)
-    var popts = { islam: opts.islam, world: opts.world, exclude: ex, mixed: true, hard: !!opts.hard, easy: !opts.hard && isEasy(opts.grade, masteryOf(opts.mastery, d), opts.easy) }
-    var q = null
-    // a quick card never serves "arrange the letters" or listen-only Arabic (needs a voice the device may lack)
-    for (var t = 0; t < 12 && (!q || q.letters || q.listen); t++) q = pick(d, lv, r, popts)
-    if (!q || q.letters || q.listen) q = make('matematika', Math.min(lv, 2), r, { world: opts.world, easy: popts.easy })
-    return q
+    var o = seOpts(opts, d === 'campur' ? { context: 'challenge' } : { context: 'challenge', topic: topicOf(d, opts) })
+    return SE.one(o) || SE.one(seOpts(opts, { context: 'challenge', topic: 'matematika' }))
   }
   function challenge (host, opts) {
     opts = opts || {}
@@ -1866,7 +1534,6 @@
     }
     p.close = function () { settle({ correct: false, tries: 0, hints: 0, closed: true }) }
     if (!host || !q) { settle({ correct: true, tries: 1, hints: 0, skipped: true }); return p }
-    remember(q.id)
     ov = document.createElement('div')
     ov.className = 'tkq-chal' + (reduced ? ' rm' : '')
     ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', opts.title || 'Tantangan Pengetahuan')
@@ -1898,7 +1565,7 @@
   W.TKQuiz = {
     make: make, pick: pick, build: build, validate: validate, mastery: mastery,
     mount: mount, sortSet: sortSet, mountSort: mountSort, rng: rng, clockLabel: clockLabel,
-    easyify: easyify, isEasy: isEasy, numWord: numWord, challenge: challenge, makeHard: makeHard, MIX: MIX, chooseDomain: chooseDomain, challengeQuestion: challengeQuestion,
+    easyify: easyify, isEasy: isEasy, numWord: numWord, challenge: challenge, makeHard: makeHard, MIX: MIX, challengeQuestion: challengeQuestion,
     VERSION: '1.1.0'
   }
 })()

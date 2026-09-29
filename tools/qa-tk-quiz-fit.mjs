@@ -185,6 +185,61 @@ for (const [w, h] of [[1280, 800], [1340, 800], [1024, 768]]) for (const [kind, 
   await p.close()
 }
 console.log('proportions: 24 cases')
+
+/* Arabic listening items (owner tablet 2026-09-29 "tidak ada huruf arab, tidak ada suara"): SFX-only mode has no voice, so
+   every listen item shows the Arabic word at the hero size (>= 80 px tablet / >= 56 px phone) with its transliteration
+   (>= 22 / 16 px), the prompt is solvable by reading, no "Dengar: «" line remains, and the round speaker (>= 64 px)
+   is there when the device has an Arabic voice (stubbed) and hidden when it has none. */
+let lsnChecks = 0
+for (const [w, h] of [[1280, 800], [1340, 800], [1024, 768], [390, 844], [844, 390]]) for (const voice of [true, false]) {
+  const p = await browser.newPage(), errs = []
+  p.on('pageerror', e => errs.push(e.message))
+  await p.evaluateOnNewDocument(voice => {
+    const vs = voice ? [{ lang: 'ar-SA', name: 'stub-ar', voiceURI: 'stub-ar' }] : [{ lang: 'id-ID', name: 'stub-id', voiceURI: 'stub-id' }]
+    window.__spoken = []
+    try { Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { getVoices: () => vs, speak: u => window.__spoken.push(u.text), cancel () {}, addEventListener () {} } }) } catch (e) {}
+    window.SpeechSynthesisUtterance = function (t) { this.text = t }
+  }, voice)
+  await p.setViewport({ width: w, height: h, isMobile: w < 1000, hasTouch: w < 1000 })
+  await p.goto(BASE, { waitUntil: 'networkidle0', timeout: 60000 })
+  const r = await p.evaluate(async (voice) => {
+    await document.fonts.ready
+    const bad = [], tab = innerWidth >= 1000 && innerHeight >= 700, host = document.getElementById('host')
+    const L = TKQuestions.items.filter(q => q.listen)
+    if (!L.length) bad.push('no listening items in the bank')
+    for (const q0 of L) {
+      try { window.__tk.ctl && window.__tk.ctl.destroy() } catch (e) {}
+      host.innerHTML = ''
+      window.__tk.ctl = TKQuiz.mount(host, [{ ...q0, choices: q0.choices.slice() }], { topInset: 70, reducedMotion: true, sound: false })
+      await new Promise(r => setTimeout(r, 120))
+      const ar = document.querySelector('.tkq-scene .tkq-arw .tkq-ar'), tr = document.querySelector('.tkq-scene .tkq-arw .tkq-tr')
+      if (!ar || !/[\u0600-\u06FF]/.test(ar.textContent)) { bad.push(q0.id + ': no Arabic script'); continue }
+      const f = parseFloat(getComputedStyle(ar).fontSize), ft = tr ? parseFloat(getComputedStyle(tr).fontSize) : 0
+      if (f < (tab ? 79.5 : 55.5)) bad.push(`${q0.id}: Arabic ${f}px < ${tab ? 80 : 56}`)
+      if (ft < (tab ? 21.5 : 15.5)) bad.push(`${q0.id}: transliteration ${ft}px < ${tab ? 22 : 16}`)
+      if (/Dengar:\s*«/.test(document.querySelector('.tkq').innerText)) bad.push(q0.id + ': "Dengar: «" text')
+      if (/^Dengarkan,/.test(q0.prompt)) bad.push(q0.id + ': prompt needs audio')
+      const b = document.querySelector('.tkq-arsay'), shown = b && !b.hidden && getComputedStyle(b).display !== 'none'
+      if (voice && !shown) bad.push(q0.id + ': speaker hidden although an Arabic voice exists')
+      if (!voice && shown) bad.push(q0.id + ': speaker shown without an Arabic voice')
+      if (shown) {
+        const bb = b.getBoundingClientRect(), ab = ar.getBoundingClientRect()
+        if (Math.min(bb.width, bb.height) < 63.5) bad.push(`${q0.id}: speaker ${Math.round(bb.width)} px < 64`)
+        if (bb.left < ab.right - 1 && ab.left < bb.right - 1 && bb.top < ab.bottom - 1 && ab.top < bb.bottom - 1) bad.push(q0.id + ': speaker over the Arabic word')
+        if (bb.right > innerWidth + 1 || bb.left < -1) bad.push(q0.id + ': speaker off-screen')
+        b.click(); if (window.__spoken[window.__spoken.length - 1] !== q0.listen) bad.push(q0.id + ': tap did not speak the word')
+      }
+      const card = document.querySelector('.tkq-card').getBoundingClientRect()
+      if ((ar.getBoundingClientRect().top < card.top - 1 || ar.getBoundingClientRect().bottom > card.bottom + 1)) bad.push(q0.id + ': Arabic word outside the card')
+    }
+    return { bad, n: L.length }
+  }, voice).catch(e => ({ bad: ['evaluate: ' + e.message.split('\n')[0]], n: 0 }))
+  lsnChecks += r.n
+  const tag = `listen ${w}x${h} voice=${voice}`
+  if (r.bad.length || errs.length) { fails.push(`${tag}: ${r.bad.concat(errs).slice(0, 5).join(' ; ')}`); console.log('  FAIL ' + tag + ': ' + r.bad.concat(errs).slice(0, 5).join(' ; ')) }
+  await p.close()
+}
+console.log(`listening items: ${lsnChecks} renders checked`)
 await browser.close()
 console.log(fails.length ? `qa-tk-quiz-fit: FAIL ${fails.length} (${checked} buttons checked)` : `PASS qa-tk-quiz-fit: ${checked} answer buttons fit at ${SIZES.length} sizes`)
 process.exit(fails.length ? 1 : 0)

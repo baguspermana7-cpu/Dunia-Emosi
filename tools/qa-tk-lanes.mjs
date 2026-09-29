@@ -41,17 +41,31 @@ const AUTOPILOT = (fight) => {
   window.__autoStop && window.__autoStop()
   const L = document.querySelector('.tkl-left'), R = document.querySelector('.tkl-right')
   const tap = b => b.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerId: 3, pointerType: 'touch', isPrimary: true }))
-  window.__taps = 0; window.__phases = []
-  const id = setInterval(() => {
+  window.__taps = 0; window.__phases = []; window.__react = 0
+  // driven by requestAnimationFrame, not setInterval (2026-09-29): the flaky "never collides" at 1280x800 was the
+  // autopilot's REACTION TIME, not the game. At difficulty 3 the tightest row leaves ~0.5 s of game time between
+  // the safe lane opening and the hitbox; a 60 ms interval timer is starved on a loaded machine while the
+  // game's clamped fixed-step keeps running, so wall-clock polling let game-time latency grow with load
+  // (measured 0.017 s idle -> 0.1 s under 8 busy loops). Polling once per frame bounds the reaction to one
+  // frame of game time on any machine; __react records the worst reaction (game s) for the failure message.
+  let fc = 0, stopped = false, sl = null, since = null, prevLane = null
+  const tick = () => {
+    if (stopped) return
     const s = window.__h.state()
     if (window.__phases[window.__phases.length - 1] !== s.phase) window.__phases.push(s.phase)
-    if (s.sent) { clearInterval(id); return }
-    if (fight && s.phase !== 'player') { tap(R); window.__taps++; return }
-    if (s.waiting || s.phase !== 'player') return
-    const settled = Math.abs(s.x - (s.lane - 1) * 100) < 2
-    if (settled && s.lane !== s.safeLane) { tap(s.safeLane < s.lane ? L : R); window.__taps++ }
-  }, 60)
-  window.__autoStop = () => clearInterval(id)
+    if (s.sent) return
+    if (s.safeLane !== sl) { sl = s.safeLane; since = s.lane !== sl ? s.t : null }
+    if (since != null && prevLane != null && s.lane !== prevLane) { window.__react = Math.max(window.__react, +(s.t - since).toFixed(3)); since = null }
+    prevLane = s.lane
+    if (fight && s.phase !== 'player') { if (++fc % 4 === 0) { tap(R); window.__taps++ } requestAnimationFrame(tick); return }
+    if (!s.waiting && s.phase === 'player') {
+      const settled = Math.abs(s.x - (s.lane - 1) * 100) < 2
+      if (settled && s.lane !== s.safeLane) { tap(s.safeLane < s.lane ? L : R); window.__taps++ }
+    }
+    requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+  window.__autoStop = () => { stopped = true }
 }
 async function open (b, w, h, qs) {
   const p = await b.newPage()
@@ -82,6 +96,172 @@ async function fps (p, ms) {
 }
 
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
+
+// ── Q. embedded questions (owner 2026-09-29: action first; questions on a bump, a Soal buoy, a lighthouse gate) ──
+//   stub opts.onQuestion (harness &q=stub): each trigger opens exactly ONE question, the sim is frozen while it is
+//   open (rAF stopped, d unchanged), resumes with an ease-in; right = bonus/boost/shield/gate drops, wrong = the
+//   captain's "Tidak apa-apa…" and the gate STILL drops; collision questions obey the 8 s cooldown + per-level cap
+//   (the rest are soft bumps), the shield takes one bump; reduced motion; real TKQuiz card screenshots.
+//   QA_ONLY=action runs just this section.
+const QSHOTS = process.env.QA_ACTION_SHOTS || '/tmp/claude-1000/-home-baguspermana7/006f0cec-d381-48ee-882e-83cf434d8153/scratchpad/tk-action/'
+fs.mkdirSync(QSHOTS, { recursive: true })
+// wait (game-state driven) until a question opens or the run ends
+const nextQ = (p, ms) => waitFor(p, () => { const s = window.__h.state(); return s.waiting || s.sent ? { open: s.q.open, n: s.q.n, d: s.d, sent: s.sent, calls: window.__q.length, running: s.running } : null }, ms)
+{
+  // 1) buoy + gate + buoy along a normal run, autopilot on the safe lane
+  for (const [w, h, rm] of [[1280, 800, false], [390, 844, true]]) {
+    const tag = `Q lanes ${w}x${h}${rm ? ' reduced' : ''}`
+    const { p, errs } = await open(b, w, h, `q=stub&qon=collide,buoy,gate&qgates=1&qbuoys=2&sections=open,sparse,more&diff=1&seed=7${rm ? '&rm=1' : ''}`)
+    const s0 = await st(p)
+    check(s0.q.buoys.length === 2 && s0.q.gates.length === 1, `${tag}: level.questions placed 2 Soal buoys + 1 lighthouse gate (${s0.q.buoys.length}/${s0.q.gates.length})`)
+    await p.evaluate(AUTOPILOT, false)
+    // every question that opens is handled; an autopilot bump (collide) on a loaded machine is answered right
+    const seen = []
+    for (let k = 0; k < 8; k++) {
+      const o = await nextQ(p, 60000)
+      if (!o || o.sent) break
+      seen.push(o.open)
+      check(o.calls === k + 1, `${tag}: ${o.open} opens exactly one question (onQuestion calls ${o.calls})`)
+      const info = await p.evaluate(i => window.__q[i], k)
+      check(info.reason === o.open && typeof info.intro === 'string' && info.intro.length > 10, `${tag}: onQuestion({reason:'${info.reason}', topic, intro}) — "${info.intro}"`)
+      await sleep(700)
+      const fr = await st(p)
+      check(fr.waiting && !fr.running && Math.abs(fr.d - o.d) < 0.01, `${tag}: ${o.open} question freezes the ship (d ${o.d.toFixed(1)} -> ${fr.d.toFixed(1)}, loop ${fr.running ? 'running' : 'stopped'})`)
+      if (o.open !== 'collide' && !seen.slice(0, -1).includes(o.open)) await p.screenshot({ path: `${QSHOTS}lanes-stub-${o.open}-${w}x${h}.png` })
+      const right = o.open !== 'gate'   // the gate is answered WRONG: its chain must drop anyway
+      const bonus0 = fr.q.bonus
+      await p.evaluate(ok => window.__qAnswer(ok), right)
+      const af = await waitFor(p, () => { const s = window.__h.state(); return !s.waiting && s.running ? s : null }, 3000)
+      check(!!af && af.q.ease < 1, `${tag}: ${o.open} answered -> the loop resumes with an ease-in (ease ${af && af.q.ease.toFixed(2)})`)
+      if (o.open === 'collide') check(af && af.q.shield, `${tag}: right answer after a bump = a shield bubble`)
+      if (o.open === 'buoy') check(af && af.q.bonus === bonus0 + 1 && af.q.boost > 0 && af.boost > 0, `${tag}: right buoy answer = bonus star + 3 s speed boost (bonus ${af && af.q.bonus}, boost ${af && af.q.boost.toFixed(1)})`)
+      if (o.open === 'gate') {
+        const cap = await p.evaluate(() => { const c = document.querySelector('.tkl-cap'); return c && c.classList.contains('is-on') ? c.innerText : '' })
+        check(/Tidak apa-apa, coba lagi nanti!/.test(cap) && /Kapten/.test(cap), `${tag}: wrong answer -> the captain says "Tidak apa-apa, coba lagi nanti!" (${cap.replace(/\n/g, ' ')})`)
+        const g = await waitFor(p, () => { const s = window.__h.state(); return s.q.gates[0].open ? s : null }, 5000)
+        check(!!g && g.q.gates[0].drop === 1, `${tag}: after a wrong answer the chain still drops and the gate opens`)
+        const past = await waitFor(p, z => window.__h.state().d > z ? true : null, 8000, g ? g.q.gates[0].z : 0)
+        check(!!past, `${tag}: the ship sails through the opened gate`)
+        if (rm) { const s2 = await st(p); check(s2.parts === 0 && s2.shake === 0, `${tag}: reduced motion: no particles / shake around the gate (${s2.parts}/${s2.shake})`) }
+      }
+    }
+    const trig = seen.filter(r => r !== 'collide')
+    check(trig.join(',') === 'buoy,gate,buoy', `${tag}: each buoy / gate fired exactly once, in course order (${seen.join(',')})`)
+    const d = await waitFor(p, () => window.__done[0] || null, 60000)
+    const nc = seen.length - trig.length
+    check(!!d && d.qAsked === seen.length && d.qRight === seen.length - 1 && d.bonus === 2 && d.stars >= 1, `${tag}: onDone carries the questions (asked ${d && d.qAsked}, right ${d && d.qRight}, bonus ${d && d.bonus}, stars ${d && d.stars}; ${nc} autopilot bump(s))`)
+    const x = await p.evaluate(() => ({ calls: window.__q.length, bad: window.__bad }))
+    check(x.calls === seen.length, `${tag}: one onQuestion call per trigger (${x.calls} calls, ${seen.length} triggers)`)
+    check(x.bad.length === 0, `${tag}: no failure words`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => window.__autoStop && window.__autoStop())
+    await p.close()
+  }
+  // 2) collisions: a wall of ice every 300 units across all three lanes, no steering. Rules: <= 1 collision
+  //    question per 8 s game time, <= count per level, the rest are soft bumps; a right answer = a shield
+  //    that takes the next bump (no question, no slow-down)
+  {
+    const tag = 'Q lanes collide'
+    const { p, errs } = await open(b, 1280, 800, 'q=stub&manual=1')
+    await p.evaluate(() => {
+      const objects = []
+      for (let z = 700; z < 6200; z += 300) for (let l = 0; l < 3; l++) objects.push({ type: 'berg', lane: l, z })
+      window.__mount({ seed: 3, difficulty: 1, sections: ['open'], lengthScale: 8.5, tutorial: false, objects, questions: { on: ['collide'], count: 3 } })
+      // in-page recorder: game time of every question + shield consumption (hits must not grow then)
+      window.__ev = []
+      let prevShield = false
+      const rec = () => { const s = window.__h.state(); if (!s) return
+        if (prevShield && !s.q.shield) window.__ev.push({ shieldUsed: true, t: s.t, bumps: s.q.bumps, col: s.collisions })
+        prevShield = s.q.shield
+        if (!s.sent) requestAnimationFrame(rec) }
+      requestAnimationFrame(rec)
+    })
+    const times = []
+    let answers = [true, false, true]
+    for (let k = 0; k < 6; k++) {
+      const o = await nextQ(p, 45000)
+      if (!o || o.sent) break
+      const s = await st(p)
+      times.push(s.t)
+      await sleep(300)
+      await p.evaluate(ok => window.__qAnswer(ok), answers[k] !== false)
+      await waitFor(p, () => !window.__h.state().waiting, 3000)
+    }
+    const d = await waitFor(p, () => window.__done[0] || null, 90000)
+    const s = await st(p)
+    const gaps = times.slice(1).map((t, i) => +(t - times[i]).toFixed(1))
+    check(times.length === 3 && s.q.n.collide === 3, `${tag}: per-level cap: exactly 3 collision questions (${times.length}, n ${s.q.n.collide})`)
+    check(gaps.every(g => g >= 8), `${tag}: >= 8 s game time between collision questions (${gaps.join(', ')} s)`)
+    check(s.q.bumps >= 3, `${tag}: the other collisions are soft bumps, no question (${s.q.bumps} bumps)`)
+    const ev = await p.evaluate(() => window.__ev)
+    check(ev.length >= 1, `${tag}: a right answer gives a shield that the next bump uses up (${JSON.stringify(ev)})`)
+    check(!!d && d.qAsked === 3, `${tag}: the level still finishes (onDone asked ${d && d.qAsked}, stars ${d && d.stars})`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
+  // 3) the real TKQuiz.challenge card over each trigger (screenshots): buoy, gate, collide at two sizes
+  for (const [w, h] of [[1280, 800], [390, 844]]) {
+    const tag = `Q lanes real ${w}x${h}`
+    const { p, errs } = await open(b, w, h, 'q=real&manual=1')
+    await p.evaluate(() => {
+      window.__mount({ seed: 7, difficulty: 1, sections: ['open', 'sparse', 'more'], tutorial: false, objects: [{ type: 'berg', lane: 1, z: 520 }], questions: { on: ['collide', 'buoy', 'gate'], buoys: 1, gates: 1 } })
+    })
+    const got = {}
+    for (let k = 0; k < 3; k++) {
+      const o = await nextQ(p, 60000)
+      if (!o || o.sent) break
+      const card = await waitFor(p, () => { const c = document.querySelector('.tkq-chal.on'); return c ? c.innerText.slice(0, 160) : null }, 4000)
+      await sleep(500)
+      await p.screenshot({ path: `${QSHOTS}lanes-${o.open}-${w}x${h}.png` })
+      got[o.open] = !!card
+      if (k === 0) await p.evaluate(AUTOPILOT, false)
+      await p.evaluate(() => window.__qp && window.__qp.close())
+      await waitFor(p, () => !window.__h.state().waiting, 3000)
+    }
+    const dbg = await p.evaluate(() => { const s = window.__h && window.__h.state(); return s ? { d: Math.round(s.d), w: s.waiting, q: s.q.n, sent: s.sent, calls: window.__q.length } : 'no handle' })
+    check(got.collide && got.buoy && got.gate, `${tag}: the real Knowledge Challenge card opens for collide / buoy / gate (${JSON.stringify(got)} ${JSON.stringify(dbg)})`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => window.__autoStop && window.__autoStop())
+    await p.close()
+  }
+  // 4) playtest 2026-09-29 overlap cases, with the host's long step title + goal:
+  //    phone upright: no banner / hint / captain / HUD over the ship, chip values fully visible;
+  //    tablet: the Kecepatan lever clear of the HUD column and of LEFT; its top speed is not called "Penuh"
+  for (const [w, h] of [[390, 844], [360, 640], [1280, 800], [1024, 768]]) {
+    const tag = `Q lanes layout ${w}x${h}`
+    const { p, errs } = await open(b, w, h, 'q=wrong&manual=1')
+    await p.evaluate(() => __mount({ seed: 41, difficulty: 1, sections: ['open', 'sparse'], tutorial: true, title: 'Langkah 3/3 · Tantangan Navigasi',
+      goal: 'Pindah jalur ke kiri atau kanan. Kumpulkan bintang!', objects: [{ type: 'berg', lane: 1, z: 900 }] }))
+    const rect = e => { if (!e) return null; const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return null; const b = e.getBoundingClientRect(); return b.width && b.height ? { l: b.left, t: b.top, r: b.right, b: b.bottom } : null }
+    const probe = async () => p.evaluate(rs => {
+      const rect = new Function('return ' + rs)()
+      const s = window.__h.state(), sr = s.shipRect, hit = (a, b) => a && b && a.l < b.r - 2 && a.r > b.l + 2 && a.t < b.b - 2 && a.b > b.t + 2
+      const ship = { l: sr.left, t: sr.top, r: sr.right, b: sr.bottom }
+      const cover = []
+      ;[['banner', '.tkl-banner.is-on'], ['hint', '.tkl-hint.is-on'], ['captain', '.tkl-cap.is-on'], ['hud', '.tkl-tl'], ['radar', '.tkl-tr'], ['lever', '.tkl-lever']].forEach(([n, sel]) => { if (hit(rect(document.querySelector(sel)), ship)) cover.push(n) })
+      const cut = [...document.querySelectorAll('.tkl-stat:not([hidden]) b')].filter(b => { const r = b.getBoundingClientRect(); return b.scrollWidth > b.clientWidth + 1 || r.right > innerWidth || !r.width }).map(b => b.textContent)
+      const lv = rect(document.querySelector('.tkl-lever')), lvHits = []
+      if (lv) [['hud', '.tkl-tl'], ['left', '.tkl-left'], ['wheel', '.tkl-boost']].forEach(([n, sel]) => { if (hit(lv, rect(document.querySelector(sel)))) lvHits.push(n) })
+      const words = [...document.querySelectorAll('.tkl-lv')].map(e => e.textContent)
+      return { cover, cut, lvHits, words, lever: !!lv, t: s.t, hint: !!document.querySelector('.tkl-hint.is-on') }
+    }, rect.toString())
+    await waitFor(p, () => window.__h.state().t > 1.2, 8000)
+    const a = await probe()
+    await p.screenshot({ path: `${QSHOTS}lanes-layout-${w}x${h}.png` })
+    // a wrong answer after the bump: the captain's bubble must not cover the ship either
+    await waitFor(p, () => window.__q.length > 0 && !window.__h.state().waiting, 20000)
+    await sleep(300)
+    const c = await probe()
+    await p.screenshot({ path: `${QSHOTS}lanes-layout-captain-${w}x${h}.png` })
+    check(a.cover.length === 0 && c.cover.length === 0, `${tag}: nothing covers the ship (tutorial: ${a.cover.join(',') || 'clear'}${a.hint ? ' with hint' : ''}; captain: ${c.cover.join(',') || 'clear'})`)
+    check(a.cut.length === 0, `${tag}: HUD chip values fully visible (${a.cut.join(',') || 'ok'})`)
+    check(a.lvHits.length === 0 && c.lvHits.length === 0, `${tag}: the speed lever overlaps nothing (${a.lever ? a.lvHits.join(',') || 'clear' : 'hidden'})`)
+    check(!a.words.includes('Penuh'), `${tag}: lever words do not contradict "Cepat" (${a.words.join('/')})`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
+}
+if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n${fails} FAILED` : '\nALL PASS'); process.exit(fails ? 1 : 0) }
 
 // ── A. controls: taps, edge, keyboard, swipe, boost, target sizes, text sizes ──
 {
@@ -266,10 +446,10 @@ for (const [w, h, diff] of [[390, 844, 2], [844, 390, 2], [1280, 800, 3], [1024,
   }
   await sleep(300)
   if (w !== 1024) await p.screenshot({ path: `${SHOTS}normal-${tag}-end.png` })
-  const x = await p.evaluate(() => ({ taps: window.__taps, chal: window.__chal.length, n: window.__done.length, bad: window.__bad }))
+  const x = await p.evaluate(() => ({ taps: window.__taps, chal: window.__chal.length, n: window.__done.length, bad: window.__bad, react: window.__react }))
   check(!!d, `${tag} diff ${diff}: level finished via real taps (${d ? JSON.stringify(d) : 'no onDone'}; ${x.taps} taps)`)
   if (d) {
-    check(d.collisions === 0 && x.chal === 0 && d.stars === 3, `${tag}: autopilot on the safe lane never collides (collisions ${d.collisions}, stars ${d.stars}${firstHit ? '; first hit ' + JSON.stringify(firstHit) : ''})`)
+    check(d.collisions === 0 && x.chal === 0 && d.stars === 3, `${tag}: autopilot on the safe lane never collides (collisions ${d.collisions}, stars ${d.stars}, worst autopilot reaction ${x.react} s game time${firstHit ? '; first hit ' + JSON.stringify(firstHit) : ''})`)
     check(d.starsCollected > 0 && d.avoided > 0 && d.avoided <= d.iceTotal && d.final === false && typeof d.time === 'number', `${tag}: stars collected ${d.starsCollected}/${d.starsTotal}, avoided ${d.avoided}/${d.iceTotal}, tokens ${d.tokens}, score ${d.score}`)
   }
   const nSec = await p.evaluate(() => __h.state().sections)
@@ -418,7 +598,7 @@ for (const [w, h] of [[390, 844], [1024, 768]]) {
     await sleep(700)
     const sel = await p.evaluate(() => ({ on: !!document.querySelector('.tkf-root'), st: __h.state(), n: document.querySelectorAll('.tkf-card').length, text: document.querySelector('.tkf-root').innerText }))
     await p.screenshot({ path: `${FLEET}lanes-select-${w}x${h}.png` })
-    check(sel.on && sel.st.selecting && !sel.st.running && sel.n === 25 && !EMOJI.test(sel.text), `${tag}: no saved ship -> Character Selection first (25 cards, no emoji, game waits)`)
+    check(sel.on && sel.st.selecting && !sel.st.running && sel.n === 25 && !EMOJI.test(sel.text), `${tag}: no saved ship -> Character Selection first (25 cards of the open tab, no emoji, game waits)`)
     await p.evaluate(() => document.querySelector('.tkf-card[data-id="cruise"]').scrollIntoView({ inline: 'center' }))
     await p.click('.tkf-card[data-id="cruise"]'); await sleep(300); await p.click('.tkf-cta'); await sleep(1500)
     const g = await p.evaluate(() => ({ s: __h.state(), saved: localStorage.getItem('tk-fleet-ql' + innerWidth) }))
@@ -454,6 +634,26 @@ for (const [w, h] of [[390, 844], [1024, 768]]) {
       check(tm <= 6, `${tag}: pending timers pruned (${tm} after 12 s of play)`)
     }
     check(bad.length === 0 && errs.length === 0, `${tag}: no failure words, no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
+  // Kapal Legenda tab (owner 2026-09-29): a legend ship sails the lanes with its TOP view, pick persists
+  for (const [w, h] of [[1280, 800], [390, 844], [844, 390]]) {
+    const tag = `fleet legend ${w}x${h}`
+    const p = await b.newPage(); const errs = []
+    p.on('pageerror', e => errs.push(e.message))
+    await p.setViewport({ width: w, height: h, deviceScaleFactor: 1, isMobile: w < 900, hasTouch: true })
+    await p.goto(BASE + `?ship=pick&fresh=1&avatar=qg${w}&quiz=stub&seed=7`, { waitUntil: 'networkidle2', timeout: 60000 })
+    await sleep(700)
+    await p.click('.tkf-tab[data-group="legend"]'); await sleep(400)
+    const t = await p.evaluate(() => ({ n: document.querySelectorAll('.tkf-card').length, first: document.querySelector('.tkf-card').dataset.id, st: __h.state() }))
+    check(t.n === 25 && t.first === 'mary-rose' && t.st.selecting && !t.st.running, `${tag}: "Kapal Legenda" tab lists 25 legend ships, game waits`)
+    await p.evaluate(() => document.querySelector('.tkf-card[data-id="costa-concordia"]').scrollIntoView({ inline: 'center' }))
+    await p.click('.tkf-card[data-id="costa-concordia"]'); await sleep(300)
+    await p.screenshot({ path: `${FLEET}lanes-legend-${w}x${h}.png` })
+    await p.click('.tkf-cta'); await sleep(1500)
+    const g = await p.evaluate(() => ({ s: __h.state(), saved: localStorage.getItem('tk-fleet-qg' + innerWidth) }))
+    check(g.s.ship === 'costa-concordia' && g.saved === 'costa-concordia' && /tk-legend-top\/costa-concordia\.webp/.test(g.s.art || '') && g.s.artReady, `${tag}: legend pick sails its TOP view, saved per avatar (${(g.s.art || '').split('/').slice(-2).join('/')})`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
     await p.close()
   }
 }

@@ -45,7 +45,7 @@
   // Lewati sits left of the host's always-visible sound button (#sndfab, 52 px at the top-right corner)
   CSS += '.tks-logo{position:absolute;left:12px;top:calc(8px + env(safe-area-inset-top));width:clamp(120px,17vw,230px);z-index:4;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))}' +
     '.tks-plate{background:linear-gradient(#f6e3bb,#e2c690);border:0;border-radius:6px;padding:8px 34px 10px;clip-path:polygon(3% 0,97% 4%,100% 50%,97% 96%,3% 100%,0 50%)}' +
-    '.tks-plate small{font-size:clamp(12px,1.6vw,16px);font-weight:800}.tks-plate b{font-size:clamp(20px,3.4vw,40px)}.tks-plate i{display:block;font-style:normal;font-size:clamp(11px,1.5vw,16px);opacity:.85}' +
+    '.tks-plate small{font-size:clamp(12px,1.6vw,16px);font-weight:800}.tks-plate b{font-size:clamp(20px,3.4vw,40px)}.tks-plate i{display:block;font-style:normal;font-size:clamp(12px,1.5vw,16px);opacity:.85}' +
     '.tks-cap{border-radius:18px;padding:16px 20px 14px;box-shadow:0 10px 26px rgba(0,0,0,.4)}.tks-cap i{top:-16px;left:16px;padding:3px 14px;font-size:15px;background:#1F63D6}' +
     '.tks-bar{flex-direction:column;align-items:stretch;gap:8px;background:linear-gradient(rgba(8,12,36,0),rgba(8,12,36,.92) 30%)}' +
     '.tks-strip{min-width:0}.tks-thumbs{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 2px}' +
@@ -61,7 +61,7 @@
     '.tks-btn{display:inline-flex;align-items:center;gap:10px}.tks-back{background:rgba(8,12,36,.7)}' +
     '.tks-arr{width:16px;height:16px;border-top:4px solid currentColor;border-right:4px solid currentColor;transform:rotate(45deg);border-radius:2px}.tks-arr.l{transform:rotate(-135deg)}' +
     '@media (orientation:portrait){.tks-dots i{margin:0 5px}.tks-dots i+i::before{width:10px}.tks-btn{padding:0 14px;font-size:17px}.tks-back:not([style*=visible]){display:none}.tks-t{flex:0 0 72%;height:120px}.tks-thumbs{scroll-snap-type:x mandatory}.tks-t{scroll-snap-align:center}.tks-logo{width:118px}.tks-plate{top:calc(104px + env(safe-area-inset-top));max-width:86%}}'
-  CSS += '.tks-cap{font-size:clamp(20px,2.7vw,25px);line-height:1.35;padding-right:70px;min-height:74px}' +
+  CSS += '.tks-cap{font-size:clamp(20px,2.7vw,25px);line-height:1.35;padding-right:70px;min-height:74px}.tks-cap.r{left:auto;right:4%}' +
     '.tks-say{position:absolute;right:8px;top:50%;margin-top:-26px;width:52px;height:52px;border-radius:50%;border:3px solid #fff;background:linear-gradient(#5AA2FF,#1F63D6);box-shadow:0 3px 0 #103A88,0 6px 12px rgba(0,0,0,.3);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .12s ' + EO + '}' +
     '.tks-say:active{transform:scale(.92)}.tks-say img{width:32px;height:32px;object-fit:contain;pointer-events:none}' +
     '.tks-say.on{animation:tks-talk .9s ease-in-out infinite}@keyframes tks-talk{50%{box-shadow:0 3px 0 #103A88,0 0 0 8px rgba(95,208,255,.35)}}' +
@@ -72,7 +72,9 @@
     '@media (orientation:portrait){.tks-cap{padding-right:68px}.tks-next{min-width:140px;font-size:19px}}' +
     '@media (orientation:landscape) and (max-height:520px){.tks-strip{display:none}.tks-logo{width:104px}.tks-plate{padding:4px 30px 6px}.tks-plate b{font-size:clamp(18px,5.4vh,28px)}.tks-cap{left:auto;right:3%;max-width:min(62%,560px);font-size:20px;padding:12px 66px 10px 16px;min-height:0}.tks-bar{padding-top:6px}}' +
     '@media (prefers-reduced-motion:reduce){.tks-next::after,.tks-say.on{animation:none}}' +
-    '.rm .tks-next::after,.rm .tks-say.on{animation:none}'
+    '.rm .tks-next::after,.rm .tks-say.on{animation:none}' +
+    // tablet type floor (qa-tk-ui-audit): thumbnail captions >= 14 px when the short side is >= 600 px
+    '@media (min-width:600px) and (min-height:600px){.tks-t:only-child{flex:0 0 300px}.tks-tc{font-size:14px;line-height:1.12}.tks-t{height:120px}.tks-plate small,.tks-plate i{font-size:14px}}'
   function injectCss () { if (document.getElementById('tks-css')) return; var s = document.createElement('style'); s.id = 'tks-css'; s.textContent = CSS; document.head.appendChild(s) }
 
   function play (host, panels, opts) {
@@ -104,6 +106,18 @@
       var b = cap.querySelector('.tks-say'); clearTimeout(talkT)
       if (b && ok !== false) { b.classList.add('on'); talkT = setTimeout(function () { b.classList.remove('on') }, Math.min(9000, 900 + String(panels[i].caption || '').length * 70)) }
     }
+    // the caption card never hides a character (playtest 2026-09-29: Timmy stood behind "Kapten Smith"'s card):
+    // in landscape it takes the bottom corner (left or right) that covers the least character area
+    function placeCap () {
+      cap.classList.remove('r')
+      if (innerHeight > innerWidth) return
+      var cover = function () { var c = cap.getBoundingClientRect(), a = 0
+        ls.querySelectorAll('.tks-l img').forEach(function (im) { var r = im.getBoundingClientRect()
+          var w = Math.min(c.right, r.right) - Math.max(c.left, r.left), h = Math.min(c.bottom, r.bottom) - Math.max(c.top, r.top); if (w > 0 && h > 0) a += w * h })
+        return a }
+      var L = cover(); if (!L) return
+      cap.classList.add('r'); if (cover() >= L) cap.classList.remove('r')
+    }
     function show (n, dir) {
       i = Math.max(0, Math.min(panels.length - 1, n))
       var p = panels[i], rm = reduced()
@@ -116,6 +130,7 @@
       fitLayers()
       cap.innerHTML = (p.speaker ? '<i>' + esc(p.speaker) + '</i>' : '') + esc(p.caption) +
         (opts.say ? '<button class="tks-say" type="button" aria-label="Dengar lagi">' + listenIco() + '</button>' : '')
+      placeCap(); ls.querySelectorAll('.tks-l img').forEach(function (im) { if (!im.complete) im.addEventListener('load', placeCap, { once: true }) })
       speak()
       if (!rm) {
         A(bg, [{ opacity: 0.4 }, { opacity: 1 }], { duration: 420, easing: EO })

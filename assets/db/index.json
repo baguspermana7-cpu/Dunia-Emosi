@@ -13503,6 +13503,814 @@
    "h": 194,
    "psnr": 44.3
   },
+  "tk-legend-side/andrea-doria": {
+   "file": "assets/db/lib/tk-legend-side/andrea-doria.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "andrea",
+    "doria",
+    "liner",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#16",
+   "w": 290,
+   "h": 136,
+   "psnr": 44.6
+  },
+  "tk-legend-side/andrea-gail": {
+   "file": "assets/db/lib/tk-legend-side/andrea-gail.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "andrea",
+    "gail",
+    "fishing",
+    "boat",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#23",
+   "w": 261,
+   "h": 168,
+   "psnr": 44.4
+  },
+  "tk-legend-side/bismarck": {
+   "file": "assets/db/lib/tk-legend-side/bismarck.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "bismarck",
+    "navy",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#12",
+   "w": 299,
+   "h": 134,
+   "psnr": 44.4
+  },
+  "tk-legend-side/carpathia": {
+   "file": "assets/db/lib/tk-legend-side/carpathia.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "carpathia",
+    "liner",
+    "rescue",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#22",
+   "w": 291,
+   "h": 142,
+   "psnr": 44.7
+  },
+  "tk-legend-side/costa-concordia": {
+   "file": "assets/db/lib/tk-legend-side/costa-concordia.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "costa",
+    "concordia",
+    "cruise",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#24",
+   "w": 294,
+   "h": 145,
+   "psnr": 43.9
+  },
+  "tk-legend-side/dona-paz": {
+   "file": "assets/db/lib/tk-legend-side/dona-paz.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "dona",
+    "paz",
+    "ferry",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#18",
+   "w": 295,
+   "h": 129,
+   "psnr": 44.3
+  },
+  "tk-legend-side/edmund-fitzgerald": {
+   "file": "assets/db/lib/tk-legend-side/edmund-fitzgerald.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "edmund",
+    "fitzgerald",
+    "cargo",
+    "freighter",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#17",
+   "w": 287,
+   "h": 125,
+   "psnr": 44.5
+  },
+  "tk-legend-side/empress-of-ireland": {
+   "file": "assets/db/lib/tk-legend-side/empress-of-ireland.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "empress",
+    "of",
+    "ireland",
+    "liner",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#8",
+   "w": 290,
+   "h": 157,
+   "psnr": 44.8
+  },
+  "tk-legend-side/endurance": {
+   "file": "assets/db/lib/tk-legend-side/endurance.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "endurance",
+    "sailing",
+    "explorer",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#21",
+   "w": 261,
+   "h": 172,
+   "psnr": 44.0
+  },
+  "tk-legend-side/hms-erebus": {
+   "file": "assets/db/lib/tk-legend-side/hms-erebus.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "hms",
+    "erebus",
+    "sailing",
+    "explorer",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#3",
+   "w": 271,
+   "h": 166,
+   "psnr": 44.5
+  },
+  "tk-legend-side/hms-hood": {
+   "file": "assets/db/lib/tk-legend-side/hms-hood.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "hms",
+    "hood",
+    "navy",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#11",
+   "w": 290,
+   "h": 140,
+   "psnr": 44.6
+  },
+  "tk-legend-side/hms-terror": {
+   "file": "assets/db/lib/tk-legend-side/hms-terror.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "hms",
+    "terror",
+    "sailing",
+    "explorer",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#4",
+   "w": 260,
+   "h": 162,
+   "psnr": 44.2
+  },
+  "tk-legend-side/hms-victory": {
+   "file": "assets/db/lib/tk-legend-side/hms-victory.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "hms",
+    "victory",
+    "sailing",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#2",
+   "w": 272,
+   "h": 171,
+   "psnr": 44.2
+  },
+  "tk-legend-side/kursk": {
+   "file": "assets/db/lib/tk-legend-side/kursk.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "kursk",
+    "submarine",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#20",
+   "w": 292,
+   "h": 123,
+   "psnr": 44.7
+  },
+  "tk-legend-side/lusitania": {
+   "file": "assets/db/lib/tk-legend-side/lusitania.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "lusitania",
+    "liner",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#9",
+   "w": 291,
+   "h": 145,
+   "psnr": 44.7
+  },
+  "tk-legend-side/mary-celeste": {
+   "file": "assets/db/lib/tk-legend-side/mary-celeste.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "mary",
+    "celeste",
+    "sailing",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#5",
+   "w": 262,
+   "h": 165,
+   "psnr": 44.4
+  },
+  "tk-legend-side/mary-rose": {
+   "file": "assets/db/lib/tk-legend-side/mary-rose.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "mary",
+    "rose",
+    "sailing",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#0",
+   "w": 281,
+   "h": 162,
+   "psnr": 43.9
+  },
+  "tk-legend-side/ms-estonia": {
+   "file": "assets/db/lib/tk-legend-side/ms-estonia.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "ms",
+    "estonia",
+    "ferry",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#19",
+   "w": 290,
+   "h": 130,
+   "psnr": 43.9
+  },
+  "tk-legend-side/queen-annes-revenge": {
+   "file": "assets/db/lib/tk-legend-side/queen-annes-revenge.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "queen",
+    "annes",
+    "revenge",
+    "sailing",
+    "pirate",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#1",
+   "w": 268,
+   "h": 166,
+   "psnr": 44.5
+  },
+  "tk-legend-side/ss-republic": {
+   "file": "assets/db/lib/tk-legend-side/ss-republic.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "ss",
+    "republic",
+    "steamship",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#6",
+   "w": 283,
+   "h": 138,
+   "psnr": 44.7
+  },
+  "tk-legend-side/ss-sultana": {
+   "file": "assets/db/lib/tk-legend-side/ss-sultana.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "ss",
+    "sultana",
+    "paddle",
+    "steamer",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#7",
+   "w": 290,
+   "h": 140,
+   "psnr": 44.4
+  },
+  "tk-legend-side/ss-waratah": {
+   "file": "assets/db/lib/tk-legend-side/ss-waratah.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "ss",
+    "waratah",
+    "liner",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#10",
+   "w": 282,
+   "h": 149,
+   "psnr": 44.5
+  },
+  "tk-legend-side/uss-arizona": {
+   "file": "assets/db/lib/tk-legend-side/uss-arizona.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "uss",
+    "arizona",
+    "navy",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#13",
+   "w": 295,
+   "h": 148,
+   "psnr": 44.6
+  },
+  "tk-legend-side/wilhelm-gustloff": {
+   "file": "assets/db/lib/tk-legend-side/wilhelm-gustloff.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "wilhelm",
+    "gustloff",
+    "liner",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#15",
+   "w": 291,
+   "h": 138,
+   "psnr": 44.4
+  },
+  "tk-legend-side/yamato": {
+   "file": "assets/db/lib/tk-legend-side/yamato.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "yamato",
+    "navy",
+    "side-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-side-25.png#14",
+   "w": 297,
+   "h": 153,
+   "psnr": 44.8
+  },
+  "tk-legend-top/andrea-doria": {
+   "file": "assets/db/lib/tk-legend-top/andrea-doria.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "andrea",
+    "doria",
+    "liner",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#16",
+   "w": 114,
+   "h": 318,
+   "psnr": 43.8
+  },
+  "tk-legend-top/andrea-gail": {
+   "file": "assets/db/lib/tk-legend-top/andrea-gail.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "andrea",
+    "gail",
+    "fishing",
+    "boat",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#23",
+   "w": 151,
+   "h": 317,
+   "psnr": 43.9
+  },
+  "tk-legend-top/bismarck": {
+   "file": "assets/db/lib/tk-legend-top/bismarck.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "bismarck",
+    "navy",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#12",
+   "w": 132,
+   "h": 318,
+   "psnr": 44.0
+  },
+  "tk-legend-top/carpathia": {
+   "file": "assets/db/lib/tk-legend-top/carpathia.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "carpathia",
+    "liner",
+    "rescue",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#22",
+   "w": 109,
+   "h": 318,
+   "psnr": 43.6
+  },
+  "tk-legend-top/costa-concordia": {
+   "file": "assets/db/lib/tk-legend-top/costa-concordia.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "costa",
+    "concordia",
+    "cruise",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#24",
+   "w": 129,
+   "h": 310,
+   "psnr": 43.7
+  },
+  "tk-legend-top/dona-paz": {
+   "file": "assets/db/lib/tk-legend-top/dona-paz.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "dona",
+    "paz",
+    "ferry",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#18",
+   "w": 120,
+   "h": 319,
+   "psnr": 44.0
+  },
+  "tk-legend-top/edmund-fitzgerald": {
+   "file": "assets/db/lib/tk-legend-top/edmund-fitzgerald.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "edmund",
+    "fitzgerald",
+    "cargo",
+    "freighter",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#17",
+   "w": 99,
+   "h": 318,
+   "psnr": 44.3
+  },
+  "tk-legend-top/empress-of-ireland": {
+   "file": "assets/db/lib/tk-legend-top/empress-of-ireland.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "empress",
+    "of",
+    "ireland",
+    "liner",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#8",
+   "w": 112,
+   "h": 319,
+   "psnr": 44.6
+  },
+  "tk-legend-top/endurance": {
+   "file": "assets/db/lib/tk-legend-top/endurance.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "endurance",
+    "sailing",
+    "explorer",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#21",
+   "w": 159,
+   "h": 317,
+   "psnr": 43.9
+  },
+  "tk-legend-top/hms-erebus": {
+   "file": "assets/db/lib/tk-legend-top/hms-erebus.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "hms",
+    "erebus",
+    "sailing",
+    "explorer",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#3",
+   "w": 147,
+   "h": 316,
+   "psnr": 43.7
+  },
+  "tk-legend-top/hms-hood": {
+   "file": "assets/db/lib/tk-legend-top/hms-hood.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "hms",
+    "hood",
+    "navy",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#11",
+   "w": 118,
+   "h": 318,
+   "psnr": 44.0
+  },
+  "tk-legend-top/hms-terror": {
+   "file": "assets/db/lib/tk-legend-top/hms-terror.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "hms",
+    "terror",
+    "sailing",
+    "explorer",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#4",
+   "w": 140,
+   "h": 308,
+   "psnr": 43.8
+  },
+  "tk-legend-top/hms-victory": {
+   "file": "assets/db/lib/tk-legend-top/hms-victory.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "hms",
+    "victory",
+    "sailing",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#2",
+   "w": 140,
+   "h": 318,
+   "psnr": 43.7
+  },
+  "tk-legend-top/kursk": {
+   "file": "assets/db/lib/tk-legend-top/kursk.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "kursk",
+    "submarine",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#20",
+   "w": 98,
+   "h": 302,
+   "psnr": 44.5
+  },
+  "tk-legend-top/lusitania": {
+   "file": "assets/db/lib/tk-legend-top/lusitania.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "lusitania",
+    "liner",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#9",
+   "w": 101,
+   "h": 306,
+   "psnr": 43.7
+  },
+  "tk-legend-top/mary-celeste": {
+   "file": "assets/db/lib/tk-legend-top/mary-celeste.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "mary",
+    "celeste",
+    "sailing",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#5",
+   "w": 148,
+   "h": 306,
+   "psnr": 43.8
+  },
+  "tk-legend-top/mary-rose": {
+   "file": "assets/db/lib/tk-legend-top/mary-rose.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "mary",
+    "rose",
+    "sailing",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#0",
+   "w": 138,
+   "h": 309,
+   "psnr": 44.0
+  },
+  "tk-legend-top/ms-estonia": {
+   "file": "assets/db/lib/tk-legend-top/ms-estonia.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "ms",
+    "estonia",
+    "ferry",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#19",
+   "w": 113,
+   "h": 310,
+   "psnr": 43.8
+  },
+  "tk-legend-top/queen-annes-revenge": {
+   "file": "assets/db/lib/tk-legend-top/queen-annes-revenge.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "queen",
+    "annes",
+    "revenge",
+    "sailing",
+    "pirate",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#1",
+   "w": 156,
+   "h": 317,
+   "psnr": 44.2
+  },
+  "tk-legend-top/ss-republic": {
+   "file": "assets/db/lib/tk-legend-top/ss-republic.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "ss",
+    "republic",
+    "steamship",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#6",
+   "w": 114,
+   "h": 309,
+   "psnr": 43.9
+  },
+  "tk-legend-top/ss-sultana": {
+   "file": "assets/db/lib/tk-legend-top/ss-sultana.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "ss",
+    "sultana",
+    "paddle",
+    "steamer",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#7",
+   "w": 134,
+   "h": 318,
+   "psnr": 43.8
+  },
+  "tk-legend-top/ss-waratah": {
+   "file": "assets/db/lib/tk-legend-top/ss-waratah.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "ss",
+    "waratah",
+    "liner",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#10",
+   "w": 108,
+   "h": 306,
+   "psnr": 43.8
+  },
+  "tk-legend-top/uss-arizona": {
+   "file": "assets/db/lib/tk-legend-top/uss-arizona.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "uss",
+    "arizona",
+    "navy",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#13",
+   "w": 154,
+   "h": 319,
+   "psnr": 44.1
+  },
+  "tk-legend-top/wilhelm-gustloff": {
+   "file": "assets/db/lib/tk-legend-top/wilhelm-gustloff.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "wilhelm",
+    "gustloff",
+    "liner",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#15",
+   "w": 116,
+   "h": 310,
+   "psnr": 43.9
+  },
+  "tk-legend-top/yamato": {
+   "file": "assets/db/lib/tk-legend-top/yamato.webp",
+   "cat": "tk-legend-top",
+   "tags": [
+    "yamato",
+    "navy",
+    "top-view",
+    "ship",
+    "legend"
+   ],
+   "source": "legend-top-25.png#14",
+   "w": 146,
+   "h": 310,
+   "psnr": 44.0
+  },
   "tk-legend/bedroom": {
    "file": "assets/db/lib/tk-legend/bedroom.webp",
    "cat": "tk-legend",

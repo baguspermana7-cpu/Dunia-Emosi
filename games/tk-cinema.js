@@ -296,9 +296,9 @@
     var MF = 17.8, MA = 17.4
     lineF(m, [0, 5.4, 23.5], [0, MF, 23.1], COL.mast, 1)
     lineF(m, [0, 5.4, -24.5], [0, MA, -24.9], COL.mast, 0)
-    lineF(m, [0, MF, 23.1], [0, 5.8, 29.6], COL.mast, 1)
-    lineF(m, [0, MA, -24.9], [0, 5.8, -29.6], COL.mast, 0)
-    lineF(m, [0, MF, 23.1], [0, MA, -24.9], COL.mast, 1, { wire: 1 })
+    lineF(m, [0, MF, 23.1], [0, 5.8, 29.6], COL.mast, 1, { stay: 1 })
+    lineF(m, [0, MA, -24.9], [0, 5.8, -29.6], COL.mast, 0, { stay: 1 })
+    lineF(m, [0, MF, 23.1], [0, MA, -24.9], COL.mast, 1, { wire: 1, stay: 1 })
     SHIP = m
     return m
   }
@@ -417,9 +417,19 @@
           if (f.cap && !o.split) continue
           if (f.wire && o.split) continue
           if (f.L2) { // line
+            // o.masts: sinking scenes draw only masts whose FOOT is above the water, and no stays: a stay
+            // clipped at the waterline read as a wire trapezoid hanging past the hull (owner review)
+            if (o.masts && (f.stay || WY[f.i[0]] < 0.3)) continue
             var a = ids[0], b = ids[1]
-            if (o.clip && (WY[a] < 0 || WY[b] < 0)) continue
-            var it0 = item(), d1 = proj(cam, WX[a], WY[a], WZ[a], it0.p, 0), d2 = proj(cam, WX[b], WY[b], WZ[b], it0.p, 2)
+            var ax0 = WX[a], ay0 = WY[a], az0 = WZ[a], bx0 = WX[b], by0 = WY[b], bz0 = WZ[b]
+            if (o.clip) { // clip the line at the waterline (a mast half under water keeps its upper half, so a stay never floats)
+              if (ay0 < 0 && by0 < 0) continue
+              if (ay0 < 0 || by0 < 0) {
+                var tc = ay0 / (ay0 - by0), cxl = lerp(ax0, bx0, tc), czl = lerp(az0, bz0, tc)
+                if (ay0 < 0) { ax0 = cxl; ay0 = 0; az0 = czl } else { bx0 = cxl; by0 = 0; bz0 = czl }
+              }
+            }
+            var it0 = item(), d1 = proj(cam, ax0, ay0, az0, it0.p, 0), d2 = proj(cam, bx0, by0, bz0, it0.p, 2)
             if (d1 < 0 || d2 < 0) { used--; continue }
             it0.line = 1; it0.n = 2; it0.d = (d1 + d2) / 2; it0.fill = rgba(mix3(f.c, [0, 0, 0], 0.35 - light.amb * 0.3), 0.8); it0.w = max(0.6, cam.f / it0.d * 0.12)
             continue
@@ -501,17 +511,17 @@
   }
 
   /* ── sky / sea / glints / fog ────────────────────────────────────────── */
-  var NIGHT = { skyTop: [4, 9, 26], skyHor: [34, 56, 100], seaHor: [30, 52, 88], seaNear: [4, 11, 28], glint: [175, 205, 245], stars: 1, moon: 1,
+  var NIGHT = { skyTop: [4, 9, 26], skyHor: [34, 56, 100], seaHor: [30, 52, 88], seaNear: [4, 11, 28], glint: [175, 205, 245], stars: 1, moon: 1, aurora: 0.85,
     haze: [58, 82, 126], hazeA: 0.55, light: { dir: [-0.45, 0.62, 0.64], amb: 0.36, dif: 0.8, rim: 0.45, tint: [0.62, 0.74, 1.05] } }
-  var DAWN = { k: 1, skyTop: [44, 62, 128], skyHor: [252, 176, 116], seaHor: [176, 128, 128], seaNear: [22, 38, 70], glint: [255, 210, 160], stars: 0, moon: 0.15,
+  var DAWN = { k: 1, skyTop: [44, 62, 128], skyHor: [252, 176, 116], seaHor: [176, 128, 128], seaNear: [22, 38, 70], glint: [255, 210, 160], stars: 0, moon: 0.15, aurora: 0,
     haze: [246, 180, 146], hazeA: 0.45, light: { dir: [0.7, 0.35, 0.62], amb: 0.46, dif: 0.62, rim: 0.2, tint: [1.02, 0.86, 0.78] } }
   function mixLook (a, b, k) {
     if (k <= 0) return a; if (k >= 1) return b
     return { k: k, skyTop: mix3(a.skyTop, b.skyTop, k), skyHor: mix3(a.skyHor, b.skyHor, k), seaHor: mix3(a.seaHor, b.seaHor, k), seaNear: mix3(a.seaNear, b.seaNear, k),
-      glint: mix3(a.glint, b.glint, k), stars: lerp(a.stars, b.stars, k), moon: lerp(a.moon, b.moon, k), haze: mix3(a.haze, b.haze, k), hazeA: lerp(a.hazeA, b.hazeA, k),
+      glint: mix3(a.glint, b.glint, k), stars: lerp(a.stars, b.stars, k), aurora: lerp(a.aurora || 0, b.aurora || 0, k), moon: lerp(a.moon, b.moon, k), haze: mix3(a.haze, b.haze, k), hazeA: lerp(a.hazeA, b.hazeA, k),
       light: { dir: mix3(a.light.dir, b.light.dir, k), amb: lerp(a.light.amb, b.light.amb, k), dif: lerp(a.light.dif, b.light.dif, k), rim: lerp(a.light.rim, b.light.rim, k), tint: mix3(a.light.tint, b.light.tint, k) } }
   }
-  var SPR = null
+  var SPR = null, TWINK = null
   function sprites () {
     if (SPR) return SPR
     var r = rng(7), st = mkCanvas(1400, 520), g = st.getContext('2d')
@@ -520,6 +530,20 @@
       g.fillStyle = r() < 0.2 ? 'rgba(190,215,255,' + (0.5 + r() * 0.5) + ')' : 'rgba(255,255,255,' + (0.35 + r() * 0.65) + ')'
       g.beginPath(); g.arc(x, 520 - y, s, 0, TAU); g.fill()
     }
+    // aurora: soft green/teal curtains baked once into a small bitmap (the DOM layer only moves it: compositor only)
+    var au = mkCanvas(640, 200), ag = au.getContext('2d')
+    var AB = [[0.2, 0.6, 0.3, [96, 255, 186], 0.42], [0.46, 0.5, 0.24, [80, 220, 255], 0.28], [0.72, 0.62, 0.3, [120, 255, 170], 0.36], [0.92, 0.46, 0.2, [150, 170, 255], 0.2]]
+    for (var ai = 0; ai < AB.length; ai++) {
+      var A = AB[ai]; ag.save(); ag.translate(A[0] * 640, A[1] * 200); ag.scale(1, 0.55)
+      var agr = ag.createRadialGradient(0, 0, 0, 0, 0, A[2] * 640)
+      agr.addColorStop(0, 'rgba(' + A[3].join(',') + ',' + A[4] + ')'); agr.addColorStop(1, 'rgba(' + A[3].join(',') + ',0)')
+      ag.fillStyle = agr; ag.fillRect(-A[2] * 640, -A[2] * 640, A[2] * 1280, A[2] * 1280); ag.restore()
+    }
+    ag.globalCompositeOperation = 'lighter'
+    for (var cx0 = 0; cx0 < 640; cx0 += 9 + r() * 10) { ag.fillStyle = 'rgba(150,255,210,' + (0.02 + r() * 0.035).toFixed(3) + ')'; ag.fillRect(cx0, 20 + r() * 40, 2 + r() * 4, 100 + r() * 60) }
+    ag.globalCompositeOperation = 'destination-in'
+    var vf = ag.createLinearGradient(0, 0, 0, 200); vf.addColorStop(0, 'rgba(0,0,0,0)'); vf.addColorStop(0.4, '#000'); vf.addColorStop(0.7, '#000'); vf.addColorStop(1, 'rgba(0,0,0,0)')
+    ag.fillStyle = vf; ag.fillRect(0, 0, 640, 200); ag.globalCompositeOperation = 'source-over'
     var glow = mkCanvas(256, 256), gg = glow.getContext('2d'), rg = gg.createRadialGradient(128, 128, 0, 128, 128, 128)
     rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(0.25, 'rgba(255,255,255,.35)'); rg.addColorStop(1, 'rgba(255,255,255,0)')
     gg.fillStyle = rg; gg.fillRect(0, 0, 256, 256)
@@ -529,7 +553,7 @@
     mg.fillStyle = 'rgba(160,160,150,.28)'
     var cr = [[44, 50, 11], [80, 72, 14], [60, 90, 8], [86, 40, 6], [40, 82, 6]]
     for (var c = 0; c < cr.length; c++) { mg.beginPath(); mg.arc(cr[c][0], cr[c][1], cr[c][2], 0, TAU); mg.fill() }
-    SPR = { stars: st, glow: glow, moon: moon }
+    SPR = { stars: st, au: au, glow: glow, moon: moon }
     freeze(glow, SPR, 'glow'); freeze(moon, SPR, 'moon')
     return SPR
   }
@@ -544,6 +568,23 @@
     var md = opt.moonDir || [-0.42, 0.34, 0.84], mp = !top && look.moon > 0.01 ? projDir(cam, md[0], md[1], md[2]) : null
     // sky + sea gradients + stars live in a compositor-only DOM layer (see skyLayer in play())
     env.skyReq = { x: cam.cx, y: cam.cy + hy * cos(rot), rot: rot, k: look.k || 0, stars: look.stars, sx: -cam.yaw * cam.f }
+    // twinkling stars: a few world-anchored bright stars on the canvas (cheap: 3 batched paths)
+    if (!top && look.stars > 0.02) {
+      var TW = TWINK || (TWINK = (function () { var r = rng(31), a = []; for (var i = 0; i < 46; i++) { var az = r() * TAU, el = 0.04 + Math.pow(r(), 1.4) * 0.55, ce = cos(el); a.push([sin(az) * ce, Math.sin(el), cos(az) * ce, r() * TAU, 0.9 + r() * 1.3, 0.6 + r() * 1.6]) } return a })())
+      var bk = [[], [], []]
+      for (var ti = 0; ti < TW.length; ti++) {
+        var s0 = TW[ti], sp = projDir(cam, s0[0], s0[1], s0[2]); if (!sp || sp[0] < -4 || sp[0] > w + 4 || sp[1] < -4 || sp[1] > h) continue
+        var tv = env.rm ? 0.6 : 0.5 + 0.5 * sin(env.now * s0[5] + s0[3]), bi = tv > 0.72 ? 2 : tv > 0.4 ? 1 : 0
+        bk[bi].push(sp[0], sp[1], s0[4] * (0.7 + tv * 0.5))
+      }
+      var BA = [0.3, 0.6, 0.95]
+      for (var bj = 0; bj < 3; bj++) {
+        var Bq = bk[bj]; if (!Bq.length) continue
+        ctx.fillStyle = 'rgba(245,250,255,' + (BA[bj] * look.stars).toFixed(3) + ')'; ctx.beginPath()
+        for (var bq = 0; bq < Bq.length; bq += 3) { var zr = Bq[bq + 2]; ctx.rect(Bq[bq] - zr, Bq[bq + 1] - zr * 0.3, zr * 2, zr * 0.6); ctx.rect(Bq[bq] - zr * 0.3, Bq[bq + 1] - zr, zr * 0.6, zr * 2) }
+        ctx.fill()
+      }
+    }
     if (mp) {
       var ms = cam.f * 0.07 * (opt.moonScale || 1)
       ctx.globalAlpha = 0.5 * look.moon; ctx.drawImage(S.glow, mp[0] - ms * 2.4, mp[1] - ms * 2.4, ms * 4.8, ms * 4.8)
@@ -786,10 +827,11 @@
       "@font-face{font-family:'Fredoka One';src:url('" + base + "assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}" +
       '.tkc{--rim:rgba(120,190,255,.45);--ease:cubic-bezier(.23,1,.32,1);position:absolute;inset:0;overflow:hidden;background:#02040c;font-family:Nunito,"Segoe UI",system-ui,sans-serif;color:#F4F7FF;-webkit-user-select:none;user-select:none;touch-action:manipulation;z-index:40}' +
       '.tkc canvas{position:absolute;inset:0;width:100%;height:100%;display:block}' +
-      '.tkc-sky,.tkc-img{position:absolute;display:none;pointer-events:none;will-change:transform}.tkc-sky>div{position:absolute;left:0;top:0;width:100%;height:100%}.tkc-d{opacity:0}.tkc-st{background-repeat:repeat-x;will-change:transform,opacity}.tkc-img{background:#1a1320 center/cover no-repeat}' +
+      '.tkc-sky,.tkc-img{position:absolute;display:none;pointer-events:none;will-change:transform}.tkc-sky>div{position:absolute;left:0;top:0;width:100%;height:100%}.tkc-d{opacity:0}.tkc-st{background-repeat:repeat-x;will-change:transform,opacity}' +
+      '.tkc-img{background:#1a1320 center/cover no-repeat}' +
       '.tkc-vig,.tkc-fade{position:absolute;inset:0;pointer-events:none;will-change:opacity}.tkc-vig{background:radial-gradient(ellipse at center,rgba(0,0,0,0) 46%,rgba(0,0,8,.72) 100%)}.tkc-fade{background:#02040c;opacity:0}' +
       '.tkc .fk,.tkc-card b,.tkc-who,.tkc-chip,.tkc-load b{font-family:"Fredoka One",Nunito,sans-serif;font-weight:400;letter-spacing:.3px}' +
-      '.tkc-sub{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translate(-50%,10px);max-width:min(880px,calc(100% - 24px));width:max-content;box-sizing:border-box;padding:10px 18px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(24,44,96,.9),rgba(11,24,58,.9));border:2px solid var(--rim);box-shadow:0 8px 22px rgba(0,0,0,.4);font-size:clamp(16px,2.3vw,22px);line-height:1.38;font-weight:800;text-align:center;opacity:0;transition:opacity .32s var(--ease),transform .38s var(--ease);pointer-events:none;text-wrap:balance}' +
+      '.tkc-sub{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translate(-50%,10px);max-width:min(880px,calc(100% - 24px));width:max-content;box-sizing:border-box;padding:10px 18px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(24,44,96,.9),rgba(11,24,58,.9));border:2px solid var(--rim);box-shadow:0 8px 22px rgba(0,0,0,.4);font-size:clamp(20px,2.4vw,25px);line-height:1.36;font-weight:800;text-align:center;opacity:0;transition:opacity .32s var(--ease),transform .38s var(--ease);pointer-events:none;text-wrap:balance}' +
       '.tkc-sub.on{opacity:1;transform:translate(-50%,0)}' +
       '.tkc-who{display:inline-block;margin:0 8px 0 0;padding:3px 12px 2px;border-radius:10px;font-size:.78em;vertical-align:1px;background:linear-gradient(#FBF0D2,#EAD39C);color:#5a3a12;border:2px solid #B58B45;box-shadow:0 2px 0 rgba(0,0,0,.3)}' +
       '.tkc-ctl{position:absolute;top:calc(10px + env(safe-area-inset-top));right:calc(10px + env(safe-area-inset-right));display:flex;gap:8px;z-index:3}' +
@@ -815,7 +857,7 @@
       '.tkc-qb button:active{transform:scale(.96)}.tkc-qb button.no{opacity:.45;animation:tkc-wig .35s}.tkc-qb button.ok{background:linear-gradient(#FFE15A,#F2B01E);color:#3a2600;box-shadow:0 5px 0 #A86F0A}' +
       '.tkc-qb em{display:block;margin-top:12px;font-style:normal;font-weight:800;color:#FFE15A;min-height:1.3em}' +
       '@keyframes tkc-wig{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}' +
-      '@media (max-width:520px){.tkc-sub{bottom:calc(10px + env(safe-area-inset-bottom));padding:9px 14px 10px}.tkc-ctl button{height:48px;min-width:48px}}' +
+      '@media (max-width:520px){.tkc-sub{bottom:calc(10px + env(safe-area-inset-bottom));padding:9px 14px 10px;font-size:18px}.tkc-ctl button{height:48px;min-width:48px}}' +
       '@media (prefers-reduced-motion:reduce){.tkc-sub,.tkc-card,.tkc-chip{transition:opacity .4s ease}.tkc-qb,.tkc-q{animation:none}}'
     D.head.appendChild(s)
   }
@@ -843,6 +885,7 @@
     var skyEl = root.querySelector('.tkc-sky'), nEl = root.querySelector('.tkc-n'), dEl = root.querySelector('.tkc-d'), stEl = root.querySelector('.tkc-st'), imgEl = root.querySelector('.tkc-img'), skyState = {}, imgState = {}
     var cardEl = root.querySelector('.tkc-card'), chipEl = root.querySelector('.tkc-chip'), vigEl = root.querySelector('.tkc-vig'), fadeEl = root.querySelector('.tkc-fade'), lastVig = -1, lastFade = -1
     var rm = !!opts.reducedMotion || (W.matchMedia && W.matchMedia('(prefers-reduced-motion: reduce)').matches && opts.reducedMotion !== false)
+    if (rm) root.className += ' rm'
     var speed = opts.speed || 1
     var art = Art(opts), audio = LazyAudio(!!opts.muted), R = Renderer()
     var env = { w: 0, h: 0, dpr: 1, f0: 600, now: 0, dt: 0, rdt: 0, rm: rm, q: 1, s: {}, art: art, R: R, cam: Cam(), audio: audio,
@@ -1001,13 +1044,15 @@
         return (extra || '') + 'linear-gradient(180deg,' + rgba(L.skyTop) + ' 0px,' + rgba(L.skyTop) + ' ' + Math.round(hz - h * 0.9) + 'px,' + rgba(L.skyHor) + ' ' + hz + 'px,' +
           rgba(L.seaHor) + ' ' + hz + 'px,' + rgba(L.seaNear) + ' ' + Math.round(hz + h * 0.85) + 'px,' + rgba(L.seaNear) + ' 100%)'
       }
-      nEl.style.background = grad(NIGHT)
+      var S = sprites()
+      if (!skyState.auUrl) { try { skyState.auUrl = S.au.toDataURL('image/png') } catch (e) { skyState.auUrl = '' } }
+      // aurora baked into the night sky layer (no extra composited layer: the dawn layer covers it as k -> 1)
+      nEl.style.background = grad(NIGHT, skyState.auUrl ? 'url(' + skyState.auUrl + ') ' + Math.round(w * 0.55) + 'px ' + Math.round(hz - h * 0.74) + 'px/' + Math.round(w * 1.9) + 'px ' + Math.round(h * 0.6) + 'px no-repeat,' : '')
       var sunX = Math.round(w * 1.5 + env.f0 * 0.25)
       dEl.style.background = grad(DAWN, 'radial-gradient(' + Math.round(w * 0.9) + 'px ' + Math.round(h * 0.34) + 'px at ' + sunX + 'px ' + hz + 'px,rgba(255,214,150,.75),rgba(255,190,130,.25) 45%,rgba(255,190,130,0) 100%),')
-      var S = sprites()
       if (!skyState.starUrl) { try { skyState.starUrl = S.stars.toDataURL('image/png') } catch (e) { skyState.starUrl = '' } }
       stEl.style.cssText = 'top:' + Math.round(hz - S.stars.height - 6) + 'px;height:' + S.stars.height + 'px;width:' + (w * 3 + S.stars.width) + 'px;background-image:url(' + skyState.starUrl + ')'
-      skyState.t = skyState.k = skyState.s = skyState.sx = null
+      skyState.t = skyState.k = skyState.s = skyState.sx = skyState.au = null
     }
     function layers () {
       var q = env.skyReq
@@ -1096,7 +1141,8 @@
    * ===================================================================== */
   function sub (t, who, text, d) { return { t: t, who: who, text: text, d: d } }
   var ART = {
-    timmy: 'tk-key/timmy', captain: 'tk-key/captain-arms', lookout: 'tk-char/officer-boy-binoculars', captainBin: 'tk-char/captain-binoculars',
+    timmy: 'tk-char/timmy-map', timmySpy: 'tk-char/timmy-spyglass-2',   // tk-key/timmy is cut straight on its right side in the source sheet
+    captain: 'tk-key/captain-arms', lookout: 'tk-char/officer-boy-binoculars', captainBin: 'tk-char/captain-binoculars',
     girl: 'tk-char/hijab-girl-map', girl2: 'tk-char/hijab-girl-book', girl3: 'tk-char/hijab-girl-camera', girl4: 'tk-char/hijab-girl-blueprint', officerGirl: 'tk-char/hijab-officer-tablet',
     officer: 'tk-char/officer-boy', officer2: 'tk-char/officer-boy-salute', lanternBoy: 'tk-char/lantern-boy', mechanic: 'tk-char/mechanic-boy', mechanic2: 'tk-char/mechanic-boy-wrench',
     explorer: 'tk-char/explorer-kid', chef: 'tk-char/chef',
@@ -1774,13 +1820,17 @@
   function outsideFromBoat (ctx, env, B, t, o) {
     var cam = env.cam, P = breakPose(B)
     var push = o.push || 0
-    lookAt(cam, env, [-4 + push * 4, 2.6, -92 + push * 14], [2, 9 - push * 2, 0], env.rm ? 0 : sin(env.now * 0.7) * 0.01, env.portrait ? 0.95 : 1.1, env.portrait ? 0.44 : 0.5)
+    // the camera floats with the lifeboat: a slow lateral drift + a gentle rise and fall (never still)
+    var drift = env.rm ? 0 : sin(env.now * 0.21) * 2.2, heave = env.rm ? 0 : sin(env.now * 0.9) * 0.25
+    lookAt(cam, env, [-4 + push * 4 + drift, 2.6 + heave, -92 + push * 14], [2 + drift * 0.4, 9 - push * 2, 0], env.rm ? 0 : sin(env.now * 0.7) * 0.012, env.portrait ? 0.95 : 1.1, env.portrait ? 0.44 : 0.5)
     drawSea(ctx, env, cam, NIGHT, { moonDir: [-0.4, 0.26, 0.88], glint: 1.1 })
     env.R.begin(cam, NIGHT.light)
     var jit = !env.rm && B > 13.5 && B < 17.5 ? sin(env.now * 40) * 0.025 : 0
     P.z += jit
+    // slow list-and-settle on the swell so the hull is never a frozen frame
+    if (!env.rm) { P.roll += sin(env.now * 0.45) * 0.014; P.pitch += sin(env.now * 0.31 + 1) * 0.006; P.y += sin(env.now * 0.6) * 0.12 }
     var L = breakLights(B)
-    env.R.mesh(buildShip(), shipXfs(P), { clip: 1, split: P.split > 0.001, lights: L,
+    env.R.mesh(buildShip(), shipXfs(P), { clip: 1, masts: 1, split: P.split > 0.001, lights: L,
       flick: B >= 8 && B < 13 ? function (i) { var n = Math.floor(env.now * 12); return hash(i * 3.1 + n) > 0.35 + (B - 8) * 0.1 ? 1 : 0.1 } : null })
     var floe = buildFloe(), FL = o.floes
     for (var i = 0; i < FL.length; i++) { var f = FL[i]; env.R.mesh(floe, xf(f[0], sin(env.now * 0.8 + i) * 0.06, f[1], f[3], sin(env.now * 0.6 + i) * 0.05, 0, f[2]), { clip: 1 }) }
@@ -1793,6 +1843,17 @@
       emit(E, env, 'foam', (Math.random() - 0.5) * 50, 0.02, (Math.random() - 0.5) * 6, 1, 1, [0, 0, 0, 0, 0])
       if (B > 16.5 && B < 21) emit(E, env, 'spray', SPLIT, 1, -2, 4, 3, [0, 3, 0, 2, 2])
       if (B > 9 && B < 17.5 && Math.random() < 0.35) emit(E, env, 'spark', SPLIT + (Math.random() - 0.5) * 3, 6 + Math.random() * 3, -3.6, 1, 0.3, [0, 1.5, 0, 2, 1])
+    }
+    // steam drifting from the funnel tops, carried astern by the breeze (fades as the lights go)
+    env.s.fs = (env.s.fs || 0) + env.dt
+    if (env.s.fs > 0.22 && B < 17) {
+      env.s.fs = 0
+      var XS = shipXfs(P), FZ = [11, 4.5, -2, -9.6]
+      for (var fz = 0; fz < 4; fz++) {
+        if (Math.random() < 0.45) continue
+        var tp = xfPt(XS[FZ[fz] < SPLIT ? 0 : 1], 0.2, 15.7, FZ[fz] - 0.8)
+        if (tp[1] > 1) emit(E, env, 'smoke', tp[0], tp[1], tp[2], 1, 0.6, [-1.6, 0.7, 0, 0.3, 0.4])
+      }
     }
     drawParts(ctx, env, cam, E, NIGHT)
     drawHaze(ctx, env, cam, NIGHT, 0.8)
@@ -1847,12 +1908,67 @@
         outsideFromBoat(ctx, env, 26 + t, t, { floes: BSET.floes, boats: BSET.boats, push: 0.5 + 0.2 * eio(sm(0, 16, t)) })
       } }
   }
+  // the rescue steamer (Carpathia) drawn as a side view: long low hull, one tall funnel, four slim masts,
+  // a row of lit portholes. Bow to the left; x,y = waterline centre; L = hull length in px; k = dawn 0..1
+  function rescueShip (ctx, env, x, y, L, k, lit, alpha) {
+    var H = L * 0.07, deck = y - H, now = env.now
+    var hull = rgba(mix3([16, 20, 36], [46, 38, 52], k)), sup = rgba(mix3([46, 54, 82], [226, 206, 196], k)), sup2 = rgba(mix3([38, 46, 72], [206, 184, 176], k))
+    ctx.globalAlpha = alpha
+    // smoke first (behind the funnel): soft puffs drifting astern
+    var fx = x + L * 0.03, ftop = deck - H * 3.1
+    ctx.fillStyle = rgba(mix3([70, 76, 98], [196, 170, 170], k), 0.22 * alpha)
+    for (var i = 0; i < 6; i++) {
+      var ph = ((env.rm ? 0.5 : now * 0.12) + i / 6) % 1, pr = H * (0.5 + ph * 1.6)
+      ctx.beginPath(); ctx.ellipse(fx + L * 0.03 + ph * L * 0.42, ftop - H * 0.4 - ph * H * 1.6 + sin(i * 2.1) * H * 0.2, pr * 1.5, pr, 0, 0, TAU); ctx.fill()
+    }
+    // masts + stays (thin, behind the hull)
+    ctx.strokeStyle = rgba(mix3([30, 34, 52], [90, 70, 80], k)); ctx.lineWidth = max(1, L * 0.005)
+    var MX = [-0.33, 0.34], mt = deck - H * 2.3
+    ctx.beginPath()
+    for (var m = 0; m < MX.length; m++) { ctx.moveTo(x + MX[m] * L, deck); ctx.lineTo(x + MX[m] * L, mt + abs(MX[m]) * H) }
+    ctx.moveTo(x - L * 0.49, deck - H * 0.35); ctx.lineTo(x + MX[0] * L, mt + 0.33 * H)
+    ctx.stroke()
+    // hull: raised forecastle at the bow, gentle sheer, rounded counter stern
+    ctx.fillStyle = hull; ctx.beginPath()
+    ctx.moveTo(x - L * 0.5, deck - H * 0.35)
+    ctx.lineTo(x - L * 0.36, deck - H * 0.3); ctx.lineTo(x - L * 0.35, deck); ctx.quadraticCurveTo(x, deck + H * 0.12, x + L * 0.47, deck - H * 0.1)
+    ctx.quadraticCurveTo(x + L * 0.51, y - H * 0.4, x + L * 0.46, y); ctx.lineTo(x - L * 0.45, y)
+    ctx.closePath(); ctx.fill()
+    // superstructure: two tiers + the bridge at the front
+    ctx.fillStyle = sup; ctx.fillRect(x - L * 0.17, deck - H * 0.95, L * 0.37, H)
+    ctx.fillStyle = sup2; ctx.fillRect(x - L * 0.12, deck - H * 1.7, L * 0.26, H * 0.8); ctx.fillRect(x - L * 0.19, deck - H * 1.95, L * 0.08, H * 0.35)
+    // funnel: Cunard red with a black top, raked slightly aft
+    var fw = L * 0.05, fb = deck - H * 1.7
+    ctx.fillStyle = rgba(mix3([62, 36, 34], [206, 92, 44], k)); ctx.beginPath()
+    ctx.moveTo(fx - fw / 2, fb); ctx.lineTo(fx - fw / 2 + H * 0.25, ftop); ctx.lineTo(fx + fw / 2 + H * 0.25, ftop); ctx.lineTo(fx + fw / 2, fb); ctx.fill()
+    ctx.fillStyle = rgba(mix3([12, 12, 18], [34, 26, 30], k)); ctx.beginPath()
+    ctx.moveTo(fx - fw / 2 + H * 0.2, ftop + H * 0.8); ctx.lineTo(fx - fw / 2 + H * 0.25, ftop); ctx.lineTo(fx + fw / 2 + H * 0.25, ftop); ctx.lineTo(fx + fw / 2 + H * 0.2, ftop + H * 0.8); ctx.fill()
+    // lit portholes + deck windows (warm), fading as the dawn brightens
+    if (lit > 0.01) {
+      var ps = max(1.4, L * 0.006)
+      ctx.globalCompositeOperation = 'lighter'
+      ctx.fillStyle = 'rgba(255,196,110,' + (0.28 * lit * alpha).toFixed(3) + ')'; ctx.beginPath()
+      for (var p = -0.41; p < 0.44; p += 0.032) ctx.rect(x + p * L - ps * 1.6, y - H * 0.55 - ps * 1.6, ps * 3.2, ps * 3.2)
+      ctx.fill()
+      ctx.fillStyle = 'rgba(255,226,160,' + (lit * alpha).toFixed(3) + ')'; ctx.beginPath()
+      for (var p2 = -0.41; p2 < 0.44; p2 += 0.032) { var fl = env.rm ? 1 : 0.8 + 0.2 * sin(now * 2.3 + p2 * 40); ctx.rect(x + p2 * L - ps * fl / 2, y - H * 0.55 - ps * fl / 2, ps * fl, ps * fl) }
+      for (var w2 = -0.15; w2 < 0.19; w2 += 0.03) ctx.rect(x + w2 * L - ps / 2, deck - H * 0.5 - ps / 2, ps * 1.3, ps)
+      ctx.fill()
+      // masthead light
+      ctx.globalAlpha = lit * alpha * (0.75 + 0.25 * sin(now * 3)); ctx.fillStyle = '#fff4d6'; ctx.beginPath(); ctx.arc(x + MX[0] * L, mt + 0.33 * H, ps * 1.2, 0, TAU); ctx.fill()
+      ctx.globalCompositeOperation = 'source-over'
+    }
+    // soft reflection + bow wave
+    ctx.globalAlpha = 0.18 * alpha; ctx.fillStyle = hull; ctx.fillRect(x - L * 0.44, y, L * 0.9, H * 0.5)
+    ctx.globalAlpha = 0.5 * alpha; ctx.fillStyle = 'rgba(235,240,255,.7)'; ctx.beginPath(); ctx.ellipse(x - L * 0.46, y - H * 0.05, L * 0.04, H * 0.14, 0, 0, TAU); ctx.fill()
+    ctx.globalAlpha = 1
+  }
   function RescueDawn (o) {
     o = o || {}
     return { id: 'rescue', major: true, dur: o.dur || 22, fadeIn: 1.5, fadeOut: 1.2,
       mix: { ocean: 0.3, engine: 0, music: 0 },
       cues: [{ t: 8.6, a: 'horn' }, { t: 14.5, a: 'horn' }, { t: 12, mix: { music: 0.35, chord: [261.63, 329.63, 392, 523.25] } }],
-      art: [ART.timmy, ART.girl, ART.rescue, ART.lantern],
+      art: [ART.timmySpy, ART.girl, ART.lantern],
       subs: o.subs || [sub(2, 'Narator', 'Semua sunyi. Bintang-bintang bersinar, lentera sekoci menyala.'),
         sub(6, 'Timmy', 'Lihat! Ada lampu di ujung laut!'),
         sub(9.4, 'Timmy', 'Kapal penolong datang!', 3.6),
@@ -1870,14 +1986,7 @@
         var sx = projDir(cam, -0.08, 0.004, 1)
         if (sx) {
           var near = eio(sm(6, 22, t)), sw = w * (0.08 + 0.07 * near) * (env.portrait ? 1.6 : 1)
-          var im = env.art.tinted(ART.rescue, 'rgb(10,14,30)', 0.85)
-          if (im) { var sh = sw * im.height / im.width; ctx.globalAlpha = sm(4, 9, t); ctx.drawImage(im, sx[0] - sw / 2, sx[1] - sh * 0.92, sw, sh); ctx.globalAlpha = 1 }
-          var lf = sm(4.5, 6.5, t) * (1 - 0.6 * k)
-          if (lf > 0) {
-            ctx.globalCompositeOperation = 'lighter'
-            for (var li = 0; li < 7; li++) { var lx = sx[0] - sw * 0.4 + li * sw * 0.13, ly = sx[1] - sw * 0.07 - (li % 3 === 1 ? sw * 0.05 : 0); ctx.globalAlpha = lf * (0.7 + 0.3 * sin(env.now * 3 + li)); ctx.fillStyle = '#ffe1a0'; ctx.fillRect(lx - 1.5, ly - 1.5, 3, 3); ctx.globalAlpha = lf * 0.25; ctx.fillRect(lx - 4, ly - 4, 8, 8) }
-            ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'
-          }
+          rescueShip(ctx, env, sx[0], sx[1] + 1, sw * 1.35, k, sm(4.5, 6.5, t) * (1 - 0.7 * k), sm(4, 9, t))
           // a signal flare arcs up once, softly
           var fk = (t - 7) / 2.5
           if (fk > 0 && fk < 1) { ctx.fillStyle = 'rgba(210,255,220,' + (1 - fk).toFixed(3) + ')'; ctx.beginPath(); ctx.arc(sx[0] + sw * 0.2, sx[1] - sw * 0.1 - fk * h * 0.18, 2.5, 0, TAU); ctx.fill() }
@@ -1891,7 +2000,7 @@
         for (var b = 0; b < boats.length; b++) farBoat(ctx, env, cam, boats[b][0], boats[b][1], boats[b][2], b)
         // foreground: our lifeboat, Timmy looking toward the horizon
         var bw = min(w * 0.92, h * 0.9)
-        lifeboat2D(ctx, env, w * 0.46, h * (env.portrait ? 0.86 : 0.9), bw, t, [{ k: ART.girl, x: -0.2, back: 1 }, { k: ART.timmy, x: 0.05 }])
+        lifeboat2D(ctx, env, w * 0.46, h * (env.portrait ? 0.86 : 0.9), bw, t, [{ k: ART.girl, x: -0.2, back: 1 }, { k: ART.timmySpy, x: 0.05 }])
         drawDrift(ctx, env, cam, 0.5 * (1 - k))
         vignette(ctx, env, 0.9 - 0.3 * k)
       } }

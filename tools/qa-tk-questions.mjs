@@ -8,9 +8,11 @@
 //      Islamic filter removes every islam item (pick/build/sortSet/campur), Arabic items are rtl
 //      and contain Arabic letters, sort sets are complete and solvable.
 //   B3) grade fit for Kelas 1–2 (items tagged grade 2 or untagged).
-//   B4) Tingkat Sulit (grade 3–4, fase B): grade tag on every item, >= 25 per topic (Arab >= 20),
+//   B4) Tingkat Sulit (grade 3–4, fase B): grade tag on every item, >= 45 per topic (Arab >= 40),
 //      prompt <= 18 words, options <= 18 chars, 3–4 options, numbers <= 1000, no history / places / years,
-//      no duplicates, answer among the options; Mudah never serves grade 3–4.
+//      answer among the options; Mudah never serves grade 3–4.
+//   B5) variety: bank floors per tier, no shared normalized prompt + answer, no near-duplicates,
+//      wording skeletons used >= 3 times per topic are flagged (printed).
 //   C) puppeteer (tools/tk-harness-quiz.html, 390x844 + 1024x768): a 5-question set answered right
 //      and wrong through real taps, hint ladder reaches guided completion, sort drag works,
 //      RTL renders (computed direction rtl), arrange letters, targets >= 56 px, no page errors.
@@ -32,6 +34,7 @@ const check = (ok, msg) => { if (ok) passes++; else { fails.push(msg); console.l
 
 globalThis.window = globalThis
 require(path.join(ROOT, 'games/data/tk-questions.js'))
+for (const f of ['soal-engine', 'soal-gen-matematika', 'soal-pack-kapal']) require(path.join(ROOT, 'games/data/' + f + '.js'))   // SoalEngine (tk-quiz draws every question from it)
 require(path.join(ROOT, 'games/tk-quiz.js'))
 const TQ = globalThis.TKQuestions, TK = globalThis.TKQuiz
 const exists = k => fs.existsSync(path.join(ROOT, 'assets/db/lib', k + '.webp'))
@@ -305,7 +308,7 @@ const isSulit = o => +o.grade >= 3
 {
   const all = TQ.items, items = all.filter(isSulit)
   const MAX_Q_WORDS = 18, MAX_OPT_CHARS = 18, LONG_WORD = 12, MAX_N = 1000
-  const MIN = { umum: 25, islam: 25, logika: 25, arab: 20 }
+  const MIN = { umum: 45, islam: 45, logika: 45, arab: 40 }
   const words = s => String(s).trim().split(/\s+/).filter(Boolean).length
   const has = (text, term) => new RegExp('(^|[^a-z])' + term.replace(/[-]/g, '\\-') + '($|[^a-z])', 'i').test(text)
   const BANNED = { geografi: globalThis.__tkBanned.geografi, sejarah: globalThis.__tkBanned.sejarah }
@@ -314,7 +317,7 @@ const isSulit = o => +o.grade >= 3
   const push = (k, o, m) => { if (bad[k].length < 8) bad[k].push(o.id + ' ' + m) }
   // every item carries a grade tag (2 = Kelas 1–2; 3 / 4 = Sulit)
   for (const o of all) if (![2, 3, 4].includes(o.grade)) push('tag', o, 'grade ' + o.grade)
-  const seen = new Map(), perGrade = {}
+  const perGrade = {}
   for (const o of items) {
     perGrade[o.domain + ':' + o.grade] = (perGrade[o.domain + ':' + o.grade] || 0) + 1
     const p = o.prompt, ch = o.letters ? [] : o.choices, text = [p, o.explain, o.hint1, o.hint2, ...ch].join(' | ')
@@ -333,11 +336,7 @@ const isSulit = o => +o.grade >= 3
     if (nums.some(x => x > MAX_N)) push('num', o, 'number > ' + MAX_N + ': ' + nums.filter(x => x > MAX_N).join(','))
     // inside the tier: grade 3 -> L1–2, grade 4 -> L3–4 (the picker's level still means something)
     if (!(o.grade === 3 ? o.level <= 2 : o.level >= 3)) push('lvl', o, `grade ${o.grade} at level ${o.level}`)
-    // duplicates: same domain + prompt + picture + Arabic word + answer (against the whole bank)
-    const key = [o.domain, p.toLowerCase(), (o.visual || []).join(','), o.ar || '', o.answer].join('|')
-    if (seen.has(key)) push('dup', o, 'same as ' + seen.get(key)); else seen.set(key, o.id)
   }
-  for (const o of all.filter(o => !isSulit(o))) { const key = [o.domain, o.prompt.toLowerCase(), (o.visual || []).join(','), o.ar || '', o.answer].join('|'); if (seen.has(key)) push('dup', o, 'fase A item repeats Sulit ' + seen.get(key)) }
   const counts = {}; for (const o of items) counts[o.domain] = (counts[o.domain] || 0) + 1
   console.log('Sulit counts:', JSON.stringify(counts), '| per grade:', JSON.stringify(perGrade))
   check(bad.tag.length === 0, `every item has a grade tag 2 / 3 / 4: ${bad.tag.join(' | ')}`)
@@ -354,7 +353,6 @@ const isSulit = o => +o.grade >= 3
   check(bad.now.length === 0, `Sulit: no "back then" framing: ${bad.now.join(' | ')}`)
   check(bad.num.length === 0, `Sulit numbers <= ${MAX_N}: ${bad.num.join(' | ')}`)
   check(bad.lvl.length === 0, `Sulit levels: grade 3 -> L1–2, grade 4 -> L3–4: ${bad.lvl.join(' | ')}`)
-  check(bad.dup.length === 0, `no duplicate questions: ${bad.dup.join(' | ')}`)
   const arPics = items.filter(o => o.domain === 'arab' && ((o.visual || []).length || o.pics || o.swatch)).length
   console.log(`Sulit Arabic items with a picture: ${arPics}/${counts.arab || 0} (pictures where the sprite library has them)`)
   // tier separation in the picker (games/tk-quiz.js: opts.hard / spec.hard). Mudah must never serve grade 3–4.
@@ -365,6 +363,44 @@ const isSulit = o => +o.grade >= 3
   }
   check(leak === 0, `Mudah never serves a grade 3–4 item (${leak}/${n} leaked)`)
   check(hardHits > n * 0.4, `Sulit mostly serves grade 3–4 items (${hardHits}/${n})`)
+}
+
+/* ── B5. variety (owner 2026-09-29: "The questions repeat a lot") ────────────────────────────────
+   - bank floors per tier; - no two questions share the same normalized prompt + answer (the picture,
+   Arabic word, sound or swatch shown with the prompt counts as part of it, so "Apa gambar berikutnya?"
+   over two different patterns is two questions); - near-duplicates: same domain, same answer, same
+   picture and prompt words overlapping >= 75 % fail; - wording skeletons (numbers -> #) used >= 3 times
+   in a topic are FLAGGED (printed), not failed: templated picture/number items share one on purpose. */
+{
+  const all = TQ.items
+  const norm = s => String(s).toLowerCase().replace(/[…?!.,:;"()]/g, ' ').replace(/\s+/g, ' ').trim()
+  const shown = o => [(o.visual || []).join(','), o.ar || '', o.listen || '', o.swatch || ''].join('|')
+  const FLOOR = { 2: { umum: 180, logika: 110, islam: 100, arab: 95 }, S: { umum: 60, logika: 50, islam: 50, arab: 40 } }
+  const cnt = { 2: {}, S: {} }
+  for (const o of all) { const t = isSulit(o) ? 'S' : 2; cnt[t][o.domain] = (cnt[t][o.domain] || 0) + 1 }
+  console.log('bank per tier:', JSON.stringify(cnt))
+  for (const t of [2, 'S']) for (const [d, n] of Object.entries(FLOOR[t])) check((cnt[t][d] || 0) >= n, `${t === 2 ? 'Kelas 1–2' : 'Sulit'} ${d} >= ${n} (${cnt[t][d] || 0})`)
+  const seen = new Map(), dup = [], near = []
+  for (const o of all) {
+    const key = [o.domain, norm(o.prompt), shown(o), o.answer].join('#')
+    if (seen.has(key)) dup.push(o.id + ' = ' + seen.get(key)); else seen.set(key, o.id)
+  }
+  check(dup.length === 0, `no two questions share the normalized prompt + answer (${dup.length}): ${dup.slice(0, 10).join(' | ')}`)
+  const toks = o => new Set(norm(o.prompt).split(' ').filter(w => w.length > 2 || /\d/.test(w)))
+  const byAns = new Map()
+  for (const o of all) { const k = o.domain + '#' + o.answer + '#' + shown(o); if (!byAns.has(k)) byAns.set(k, []); byAns.get(k).push(o) }
+  for (const group of byAns.values()) for (let i = 0; i < group.length; i++) for (let j = i + 1; j < group.length; j++) {
+    const a = toks(group[i]), b = toks(group[j]), inter = [...a].filter(w => b.has(w)).length, uni = new Set([...a, ...b]).size
+    if (uni && inter / uni >= 0.75 && norm(group[i].prompt) !== norm(group[j].prompt)) near.push(`${group[i].id} ~ ${group[j].id} ("${group[i].prompt}" / "${group[j].prompt}")`)
+  }
+  check(near.length === 0, `no near-duplicate questions (same answer + picture, >= 75 % same prompt words) (${near.length}): ${near.slice(0, 8).join(' | ')}`)
+  const skel = o => norm(o.prompt).replace(/[؀-ۿ]+/g, '').replace(/\d+(\.\d{3})*/g, '#').replace(/\s+/g, ' ').trim()
+  const sk = {}
+  for (const o of all) { const k = o.domain + ' :: ' + skel(o); (sk[k] = sk[k] || []).push(o.id) }
+  const flagged = Object.entries(sk).filter(([, ids]) => ids.length >= 3).sort((x, y) => y[1].length - x[1].length)
+  console.log(`FLAG wording skeletons used >= 3 times per topic (${flagged.length}):`)
+  for (const [k, ids] of flagged) console.log(`  ${ids.length}x  ${k}  [${ids.slice(0, 4).join(', ')}${ids.length > 4 ? ', …' : ''}]`)
+  passes++
 }
 
 /* ── C. puppeteer ──────────────────────────────────────────────────────── */
@@ -483,8 +519,8 @@ if (!process.env.QA_NODE_ONLY) {
       check(wd === 'rtl', `${tag} Arabic prompt word computed direction rtl (${wd})`)
       await P.p.screenshot({ path: `${SHOTS}/arab-wp-${tag}.png` })
       s = await state(P); await tap(P, optSel(s.answer)); await sleep(700); await tap(P, '.tkq-next'); await sleep(500)
-      const lis = await P.p.evaluate(() => ({ say: !!document.querySelector('.tkq-say'), tr: (document.querySelector('.tkq-arw .tkq-tr') || {}).textContent }))
-      check(lis.say && /Dengar/.test(lis.tr || ''), `${tag} listen item: speaker button + transliteration text fallback (${lis.tr})`)
+      const lis = await P.p.evaluate(() => ({ say: !!document.querySelector('.tkq-say, .tkq-arsay'), tr: (document.querySelector('.tkq-arw .tkq-tr') || {}).textContent }))
+      check(lis.say && (/Dengar/.test(lis.tr || '') || /^[a-z' -]{2,}$/i.test((lis.tr || '').trim())), `${tag} listen item: speaker button + transliteration text fallback (${lis.tr})`)
       await tap(P, '.tkq-say')
       check(P.errs.length === 0, `${tag} arab: no page errors ${P.errs.slice(0, 3).join(' | ')}`)
       await P.p.close()

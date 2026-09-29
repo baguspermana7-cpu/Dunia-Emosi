@@ -16,6 +16,7 @@ globalThis.window = globalThis
 require(path.join(ROOT, 'games/data/tk-questions.js'))
 require(path.join(ROOT, 'games/data/tk-art.js'))
 const WD = require(path.join(ROOT, 'games/data/tk-worlds.js'))
+for (const f of ['soal-engine', 'soal-gen-matematika', 'soal-pack-kapal']) require(path.join(ROOT, 'games/data/' + f + '.js'))   // SoalEngine (tk-quiz draws every question from it)
 require(path.join(ROOT, 'games/tk-quiz.js'))
 const TK = globalThis.TKQuiz
 const fails = []

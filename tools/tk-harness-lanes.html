@@ -10,6 +10,9 @@
      ?final=1 &diff=1..3 &seed=N &rm=1 &muted=0 &scale=<lengthScale> &sections=open,sparse,… &quiz=stub (auto-answer challenges)
      &manual=1 (do not mount; call window.__mount(level, opts)) &grade=kelas1|kelas2
      window.__h = handle; window.__done = onDone payloads; window.__chal = onChallenge calls (when quiz=stub).
+     Embedded questions: &q=stub installs opts.onQuestion that records into window.__q and waits for the test:
+     window.__qAnswer(correct) settles the open one (&q=auto answers right at once, &q=wrong answers wrong);
+     &qon=collide,buoy,gate &qbuoys=N &qgates=N &qcount=N set level.questions; &q=real = TKQuiz.challenge.
      The real TKQuiz.challenge is used unless quiz=stub. TKHub.say is stubbed into window.__said. -->
 <style>
   @font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}
@@ -23,6 +26,9 @@
 <script src="../games/data/sfx-engine.js"></script>
 <script src="../games/data/tk-art.js"></script>
 <script src="../games/data/tk-questions.js"></script>
+<script src="../games/data/soal-engine.js"></script>
+<script src="../games/data/soal-gen-matematika.js"></script>
+<script src="../games/data/soal-pack-kapal.js"></script>
 <script src="../games/tk-quiz.js"></script>
 <script src="../games/tk-sea.js"></script>
 <script src="../games/tk-fleet.js"></script>
@@ -43,6 +49,20 @@
     o.avatar = q.get('avatar') || 'qa'
     if (q.get('theme')) o.theme = q.get('theme')
     if (q.get('fresh') === '1') { try { localStorage.removeItem('tk-fleet-' + o.avatar) } catch (e) {} }
+    var qm = q.get('q')
+    if (qm === 'stub' || qm === 'auto' || qm === 'wrong') {
+      window.__q = []; window.__qPending = []
+      window.__qAnswer = function (ok) { var r = window.__qPending.shift(); if (r) r({ correct: !!ok, tries: ok ? 1 : 2, hints: 0 }); return !!r }
+      o.onQuestion = function (info) {
+        window.__q.push(info)
+        if (qm === 'auto') return Promise.resolve({ correct: true, tries: 1, hints: 0 })
+        if (qm === 'wrong') return Promise.resolve({ correct: false, tries: 2, hints: 1 })
+        return new Promise(function (res) { window.__qPending.push(res) })
+      }
+    } else if (qm === 'real') {
+      window.__q = []
+      o.onQuestion = function (info) { window.__q.push(info); return window.__qp = TKQuiz.challenge(document.getElementById('host'), { domain: info.topic || 'campur', world: 'titanic', grade: 'kelas2', intro: info.intro, nextLabel: 'Lanjut Berlayar', title: 'Tantangan Pengetahuan', seed: 11 + info.index }) }
+    }
     if (q.get('quiz') === 'stub') o.onChallenge = function (info) { window.__chal.push(info); return Promise.resolve({ correct: true, tries: 1, hints: 0 }) }
     if (extra) for (var k in extra) o[k] = extra[k]
     window.__h = TKLanes.mount(document.getElementById('host'), level, o)
@@ -52,6 +72,7 @@
   if (q.get('diff')) lvl.difficulty = +q.get('diff')
   if (q.get('scale')) lvl.lengthScale = +q.get('scale')
   if (q.get('sections')) lvl.sections = q.get('sections').split(',')
+  if (q.get('qon')) lvl.questions = { on: q.get('qon').split(','), buoys: q.get('qbuoys') ? +q.get('qbuoys') : undefined, gates: q.get('qgates') ? +q.get('qgates') : undefined, count: q.get('qcount') ? +q.get('qcount') : undefined }
   if (lvl.final) { lvl.title = 'Bab 6: Tabrakan'; lvl.goal = 'Ladang es makin rapat…' } else { lvl.title = 'Bab 4: Tantangan Navigasi'; lvl.goal = 'Kemudikan Titanic dan hindari gunung es!' }
   if (q.get('manual') !== '1') window.__mount(lvl)
 })()

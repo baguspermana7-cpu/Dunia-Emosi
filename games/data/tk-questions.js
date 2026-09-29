@@ -88,7 +88,8 @@
     'real/food/ketupat': 'Ketupat', 'tk-key/timmy-sleeping': 'Timmy tidur',
     // Sulit (Kelas 3–4) picture answers
     'real/things/safety-pin': 'Peniti', 'tk-prop/ship-wheel': 'Kemudi', 'game/heart': 'Hati', 
-    'tk-ship/submarine-black': 'Kapal selam', 'animals/butterfly': 'Kupu-kupu', 'game/windmill': 'Kincir angin', 'animals/snail': 'Siput'
+    'tk-ship/submarine-black': 'Kapal selam', 'animals/butterfly': 'Kupu-kupu', 'game/windmill': 'Kincir angin', 'animals/snail': 'Siput',
+    'food/orange': 'Jeruk', 'school/notebook': 'Buku tulis', 'real/school/scissors': 'Gunting', 'animals/ladybug': 'Kepik', 'toys/drum': 'Drum'
   }
   function pics (keys) { var m = {}; keys.forEach(function (k) { m[NAME[k]] = k }); return m }
   function names (keys) { return keys.map(function (k) { return NAME[k] }) }
@@ -239,9 +240,9 @@
     if (i % 2) return
     var dp = peers(VOC, i, 3), pm = {}
     pm[v[3]] = v[4]; dp.forEach(function (x) { pm[x[3]] = x[4] })
-    ar.push({ id: 'ar-ls-' + ('0' + (i + 1)).slice(-2), level: 3, prompt: 'Dengarkan, lalu pilih gambarnya.', listen: v[0], ar: v[0], tr: v[2],
+    ar.push({ id: 'ar-ls-' + ('0' + (i + 1)).slice(-2), level: 3, prompt: 'Baca atau dengarkan, lalu pilih gambarnya.', listen: v[0], ar: v[0], tr: v[2],
       choices: [v[3]].concat(dp.map(function (x) { return x[3] })), answer: v[3], pics: pm,
-      explain: v[2] + ' (' + v[0] + ') artinya ' + v[3].toLowerCase() + '.', hint1: 'Dengarkan lagi: ' + v[2] + '.', hint2: 'Kata ini termasuk kelompok ' + v[5] + '.',
+      explain: v[2] + ' (' + v[0] + ') artinya ' + v[3].toLowerCase() + '.', hint1: 'Baca pelan-pelan: ' + v[2] + '.', hint2: 'Kata ini termasuk kelompok ' + v[5] + '.',
       world: AR_WORLD[v[4]] || null })
   })
   // arrange letters: only three short, pictured sky words (the Laut Malam level), top level only
@@ -525,6 +526,208 @@
   ])
   lg.forEach(function (o) { o.domain = 'logika'; o.choices = o.choices.map(String); if (!o.world) delete o.world; ITEMS.push(o) })
 
+  /* ══ 4b. VARIETY PACK, Kelas 1–2 (owner 2026-09-29: "The questions repeat a lot") ═══════════
+     More fase A items spread over every world and theme. Same B3 rules as sections 1–4. */
+  rows('umum', [
+    ['um-v01', 1, "Jendela bulat di kapal ini namanya…", ["Jendela", "Pintu", "Atap", "Lantai"], "Jendela bulat di kapal disebut jendela kapal.", "Kita bisa melihat laut dari sini.", "Lihat gambarnya.", { visual: ['tk-prop/porthole'], world: 'titanic' }],
+    ['um-v02', 2, "Ada orang jatuh ke laut. Kita lempar…", ["Pelampung", "Batu", "Sepatu", "Buku"], "Pelampung membuat orang itu tetap mengapung.", "Benda bulat merah putih.", "Benda yang mengapung.", { visual: ['game/lifebuoy'], world: 'titanic' }],
+    ['um-v03', 2, "Kapal berbunyi 'tuuut'. Kapal akan…", ["Berangkat", "Tidur", "Terbang"], "Bunyi 'tuuut' tanda kapal akan berangkat.", "Kapal memberi tanda.", "Kapal mulai berlayar.", { world: 'titanic' }],
+    ['um-v04', 3, "Di kapal, anak kecil selalu dekat dengan…", ["Orang tua", "Burung", "Ikan"], "Anak kecil tetap dekat orang tua agar aman.", "Siapa yang menjaga kita?", "Ayah dan ibu.", { world: 'titanic' }],
+    ['um-v05', 1, "Kain ini untuk membalut luka. Namanya…", ["Perban", "Kaus kaki", "Tali", "Kertas"], "Perban dipakai untuk membalut luka.", "Ada di kotak P3K.", "Lihat gambarnya.", { visual: ['real/things/bandage'], world: 'britannic' }],
+    ['um-v06', 2, "Badan panas dan pusing. Kita sedang…", ["Sakit", "Senang", "Lapar", "Bermain"], "Badan panas dan pusing tanda kita sakit.", "Kita perlu istirahat.", "Waktunya ke dokter."],
+    ['um-v07', 1, "Saat batuk, kita menutup…", ["Mulut", "Mata", "Telinga", "Kaki"], "Menutup mulut saat batuk agar kuman tidak menyebar.", "Batuk keluar dari sini.", "Tempat kita makan.", { world: 'britannic' }],
+    ['um-v08', 3, "Obat diminum sesuai petunjuk…", ["Dokter", "Teman", "Kucing"], "Obat diminum sesuai petunjuk dokter.", "Orang yang memeriksa kita.", "Ia bekerja di rumah sakit.", { world: 'britannic' }],
+    ['um-v09', 1, "Kotak kayu untuk menyimpan barang ini namanya…", ["Peti", "Bola", "Topi", "Ember"], "Kotak kayu untuk menyimpan barang disebut peti.", "Lihat gambarnya.", "Diawali huruf P.", { visual: ['game/crate-wood'], world: 'vasa' }],
+    ['um-v10', 3, "Kapal kayu dicat agar tidak cepat…", ["Rusak", "Wangi", "Terbang"], "Cat melindungi kayu agar tidak cepat rusak.", "Cat seperti baju untuk kayu.", "Supaya awet.", { world: 'vasa' }],
+    ['um-v11', 2, "Tukang kayu memotong kayu dengan…", ["Gergaji", "Sendok", "Sisir", "Pensil"], "Kayu dipotong dengan gergaji.", "Alat bergigi tajam.", "Diawali huruf G.", { world: 'vasa' }],
+    ['um-v12', 4, "Kapal miring ke kiri. Barang digeser ke…", ["Kanan", "Kiri", "Laut"], "Barang digeser ke kanan agar kapal seimbang.", "Kapal harus seimbang.", "Lawan dari kiri.", { world: 'vasa' }],
+    ['um-v13', 1, "Tiang tinggi di kapal untuk memasang…", ["Layar", "Kasur", "Kulkas"], "Tiang kapal dipakai untuk memasang layar.", "Kain yang menangkap angin.", "Lihat gambarnya.", { visual: ['vehicles/sailboat'], world: 'cuttysark' }],
+    ['um-v14', 2, "Tali kapal digulung agar tidak…", ["Kusut", "Basah", "Wangi"], "Tali digulung rapi agar tidak kusut.", "Tali yang berantakan sulit dipakai.", "Lihat gulungannya.", { visual: ['tk-prop/rope-coil'], world: 'cuttysark' }],
+    ['um-v15', 3, "Bendera berkibar ke kanan. Angin bertiup ke…", ["Kanan", "Kiri", "Bawah"], "Bendera mengikuti arah angin.", "Angin mendorong bendera.", "Arahnya sama dengan bendera.", { visual: ['game/flag-red'], world: 'cuttysark' }],
+    ['um-v16', 2, "Kincir ini berputar karena ditiup…", ["Angin", "Air", "Api"], "Kincir angin berputar karena angin.", "Namanya kincir angin.", "Tidak terlihat, tapi terasa.", { visual: ['game/windmill'], world: 'cuttysark' }],
+    ['um-v17', 1, "Topi ini dipakai oleh…", ["Kapten", "Koki", "Dokter", "Petani"], "Topi putih ini topi kapten.", "Pemimpin kapal.", "Kakek Kapten memakainya.", { visual: ['tk-prop/captain-hat'], world: 'victory' }],
+    ['um-v18', 3, "Lonceng kapal dibunyikan untuk…", ["Memberi tanda", "Menyanyi", "Tidur"], "Lonceng kapal memberi tanda kepada awak.", "Semua orang bisa mendengarnya.", "Ding-dong artinya ada kabar.", { visual: ['game/bell'], world: 'victory' }],
+    ['um-v19', 3, "Jarum kompas selalu menunjuk ke arah…", ["Utara", "Bawah", "Atas"], "Jarum kompas menunjuk ke utara.", "Lihat huruf U di kompas.", "Diawali huruf U.", { visual: ['game/compass'], world: 'victory' }],
+    ['um-v20', 2, "Awak kapal berbaris rapi. Mereka sedang…", ["Bersiap", "Tidur", "Mandi"], "Awak kapal berbaris untuk bersiap bekerja.", "Mereka menunggu perintah.", "Siap bekerja.", { world: 'victory' }],
+    ['um-v21', 1, "Saat hujan, kaki kita pakai…", ["Sepatu bot", "Sandal", "Kaus tangan"], "Sepatu bot menjaga kaki tetap kering.", "Lihat gambarnya.", "Sepatu tinggi dari karet.", { visual: ['things/rain-boot'], world: 'mayflower' }],
+    ['um-v22', 2, "Pakaian basah dijemur di bawah…", ["Matahari", "Bulan", "Meja"], "Panas matahari mengeringkan pakaian.", "Yang bersinar di siang hari.", "Lihat gambarnya.", { visual: ['nature/sun'], world: 'mayflower' }],
+    ['um-v23', 2, "Bekal perjalanan disimpan di…", ["Keranjang", "Kolam", "Sepatu"], "Bekal disimpan di keranjang.", "Lihat gambarnya.", "Ada pegangannya.", { visual: ['things/picnic-basket'], world: 'mayflower' }],
+    ['um-v24', 3, "Setelah hujan, tanah menjadi…", ["Basah", "Kering", "Panas"], "Air hujan membuat tanah basah.", "Air meresap ke tanah.", "Lawan dari kering.", { world: 'mayflower' }],
+    ['um-v25', 1, "Benda putih dingin ini turun dari langit. Namanya…", ["Salju", "Pasir", "Bulu"], "Itu salju. Salju turun saat sangat dingin.", "Lihat gambarnya.", "Bisa dibuat boneka.", { visual: ['nature/snowflake'], world: 'endurance' }],
+    ['um-v26', 2, "Tangan kedinginan. Kita pakai…", ["Sarung tangan", "Kacamata", "Topi pantai"], "Sarung tangan membuat tangan hangat.", "Dipakai di tangan.", "Lihat jari-jarimu.", { world: 'endurance' }],
+    ['um-v27', 3, "Anak penguin dijaga oleh…", ["Induknya", "Hiu", "Singa"], "Induk penguin menjaga anaknya.", "Seperti ibu menjaga kita.", "Penguin dewasa.", { visual: ['animals/penguin'], world: 'endurance' }],
+    ['um-v28', 2, "Susu hangat enak diminum saat udara…", ["Dingin", "Panas", "Terik"], "Minuman hangat membuat badan hangat saat dingin.", "Kapan badan butuh hangat?", "Lawan dari panas.", { visual: ['food/milk'], world: 'endurance' }],
+    ['um-v29', 1, "Buah ini berkulit keras dan berair manis. Namanya…", ["Kelapa", "Apel", "Anggur", "Jeruk"], "Itu kelapa. Airnya manis dan segar.", "Lihat gambarnya.", "Tumbuh di pantai.", { visual: ['food/coconut'], world: 'kontiki' }],
+    ['um-v30', 2, "Batang kayu rakit diikat dengan…", ["Tali", "Pita", "Rambut"], "Batang kayu rakit diikat kuat dengan tali.", "Benda panjang untuk mengikat.", "Lihat gambarnya.", { visual: ['tk-prop/rope-coil'], world: 'kontiki' }],
+    ['um-v31', 3, "Pagi hari matahari terbit, lalu makin…", ["Tinggi", "Rendah", "Dingin"], "Dari pagi ke siang matahari makin tinggi.", "Lihat posisinya saat siang.", "Lawan dari rendah.", { visual: ['nature/sun'], world: 'kontiki' }],
+    ['um-v32', 2, "Ombak besar datang. Rakit menjadi…", ["Bergoyang", "Diam", "Kering"], "Ombak besar membuat rakit bergoyang.", "Ombak mendorong rakit.", "Naik turun.", { world: 'kontiki' }],
+    ['um-v33', 1, "Hewan laut ini punya capit besar. Hewan apa?", ["Lobster", "Kucing", "Burung"], "Itu lobster. Capitnya besar.", "Lihat gambarnya.", "Hidup di laut.", { visual: ['animals/lobster'], world: 'calypso' }],
+    ['um-v34', 1, "Ikan pipih dan lebar ini namanya…", ["Ikan pari", "Ikan badut", "Gurita"], "Itu ikan pari. Badannya pipih dan lebar.", "Lihat gambarnya.", "Bentuknya seperti layang-layang.", { visual: ['animals/stingray'], world: 'calypso' }],
+    ['um-v35', 3, "Cumi-cumi menyemprot tinta saat merasa…", ["Takut", "Kenyang", "Mengantuk"], "Cumi-cumi menyemprot tinta untuk kabur saat takut.", "Tinta membuat air gelap.", "Saat ada musuh.", { visual: ['animals/squid'], world: 'calypso' }],
+    ['um-v36', 3, "Karang laut bisa rusak jika kita…", ["Menginjaknya", "Melihatnya", "Memotretnya"], "Karang mudah patah. Jangan diinjak.", "Karang itu rapuh.", "Pakai mata saja, jangan kaki.", { world: 'calypso' }],
+    ['um-v37', 2, "Siput membawa rumahnya di…", ["Punggung", "Kepala", "Ekor"], "Siput membawa cangkangnya di punggung.", "Lihat gambarnya.", "Cangkangnya di atas badan.", { visual: ['animals/snail'], world: 'kamar' }],
+    ['um-v38', 3, "Jarum jam terus berputar. Waktu terus…", ["Berjalan", "Berhenti", "Mundur"], "Waktu terus berjalan.", "Jarum jam tidak pernah diam.", "Maju terus.", { visual: ['things/alarm-clock'], world: 'queenmary' }],
+    ['um-v39', 2, "Tiket kapal disimpan baik agar tidak…", ["Hilang", "Tumbuh", "Terbang"], "Tiket disimpan agar tidak hilang.", "Tanpa tiket, tidak bisa naik.", "Simpan di tas.", { world: 'queenmary' }],
+    ['um-v40', 1, "Makan malam di kapal pakai piring dan…", ["Sendok", "Palu", "Sikat"], "Kita makan dengan piring dan sendok.", "Alat untuk menyuap nasi.", "Lihat gambarnya.", { visual: ['real/things/spoon'], world: 'queenmary' }],
+    ['um-v41', 2, "Selesai bermain, mainan kita…", ["Rapikan", "Lempar", "Injak"], "Mainan dirapikan setelah bermain.", "Agar kamar bersih.", "Masukkan ke kotak.", { world: 'kamar' }],
+    ['um-v42', 1, "Ada teman baru. Kita ajak…", ["Bermain", "Bertengkar", "Pergi"], "Kita mengajak teman baru bermain.", "Supaya ia tidak sendirian.", "Ajak bersenang-senang.", { world: 'arizona' }],
+    ['um-v43', 2, "Dua anak ingin ayunan yang sama. Mereka…", ["Bergantian", "Berebut", "Menangis"], "Bergantian membuat semua bisa bermain.", "Satu main dulu, lalu yang lain.", "Tunggu giliran.", { world: 'arizona' }],
+    ['um-v44', 3, "Teman kalah lomba. Kita bilang…", ["Semangat!", "Rasakan!", "Payah!"], "Kita menyemangati teman yang kalah.", "Kata yang membuat teman kuat.", "Kata penyemangat.", { world: 'arizona' }],
+    ['um-v45', 1, "Burung camar suka terbang di atas…", ["Laut", "Hutan", "Gurun"], "Burung camar terbang di atas laut mencari ikan.", "Lihat gambarnya.", "Tempat kapal berlayar.", { visual: ['tk-prop/seagull'], world: 'arizona' }],
+    ['um-v46', 1, "Kita menyapa tetangga dengan…", ["Senyum", "Cemberut", "Teriakan"], "Senyum membuat tetangga senang.", "Wajah yang ramah.", "Tunjukkan gigimu.", { world: 'missouri' }],
+    ['um-v47', 2, "Teman menjatuhkan buku. Kita bantu…", ["Mengambilkan", "Menendang", "Menginjak"], "Kita membantu mengambilkan bukunya.", "Teman butuh bantuan.", "Ambil dan berikan.", { visual: ['school/books'], world: 'missouri' }],
+    ['um-v48', 3, "Mainan satu, pemain dua. Sebaiknya…", ["Main bersama", "Berebut", "Membuang"], "Mainan bisa dipakai bersama-sama.", "Berbagi itu menyenangkan.", "Main berdua.", { world: 'missouri' }],
+    ['um-v49', 4, "Kita sudah berjanji. Janji harus…", ["Ditepati", "Dilupakan", "Dibuang"], "Janji harus ditepati.", "Orang percaya pada janji kita.", "Lakukan yang sudah dijanjikan.", { world: 'missouri' }],
+    ['um-v50', 1, "Kacamata ini dipakai saat…", ["Berenang", "Tidur", "Makan"], "Kacamata renang melindungi mata di air.", "Lihat gambarnya.", "Dipakai di kolam.", { visual: ['real/things/swim-goggles'], world: 'nautilus' }],
+    ['um-v51', 2, "Dari jendela kapal selam, kita melihat…", ["Ikan", "Awan", "Pesawat"], "Kapal selam ada di bawah laut, banyak ikan.", "Kapal selam ada di dalam air.", "Hewan yang berenang.", { visual: ['tk-prop/porthole-underwater'], world: 'nautilus' }],
+    ['um-v52', 3, "Penyelam membawa tabung berisi…", ["Udara", "Jus", "Pasir"], "Tabung berisi udara untuk bernapas.", "Kita butuh ini untuk bernapas.", "Tidak terlihat.", { visual: ['tk-char/diver'], world: 'nautilus' }],
+    ['um-v53', 3, "Makin dalam di laut, air makin…", ["Dingin", "Panas", "Manis"], "Laut dalam jauh dari matahari, jadi dingin.", "Sinar matahari tidak sampai.", "Lawan dari panas.", { world: 'nautilus' }],
+    ['um-v54', 1, "Kapal diikat ke dermaga memakai…", ["Tali", "Pita", "Benang"], "Tali kapal yang kuat mengikat kapal ke dermaga.", "Benda panjang dan kuat.", "Lihat gambarnya.", { visual: ['real/things/rope'], world: 'pelabuhan' }],
+    ['um-v55', 2, "Ikan tangkapan nelayan dijual di…", ["Pasar", "Sekolah", "Masjid"], "Ikan dijual di pasar.", "Tempat orang berbelanja.", "Diawali huruf P.", { world: 'pelabuhan' }],
+    ['um-v56', 2, "Lampu mercusuar menyala saat…", ["Malam", "Siang terik", "Sarapan"], "Mercusuar menyala di malam hari.", "Saat langit gelap.", "Lihat gambarnya.", { visual: ['park/lighthouse'], world: 'pelabuhan' }],
+    ['um-v57', 3, "Penumpang naik ke kapal lewat…", ["Tangga", "Jendela", "Cerobong"], "Penumpang naik lewat tangga kapal.", "Jalan untuk naik.", "Ada anak tangganya.", { world: 'pelabuhan' }],
+    ['um-v58', 1, "Untuk menggosok gigi, kita pakai…", names(['things/toothbrush', 'food/banana', 'toys/kite']), "Kita menggosok gigi dengan sikat gigi.", "Lihat gambarnya.", "Ada bulu sikatnya.", pic(['things/toothbrush', 'food/banana', 'toys/kite'], { world: 'kamar' })],
+    ['um-v59', 1, "Setelah mandi, badan dikeringkan dengan…", ["Handuk", "Kertas", "Daun"], "Handuk mengeringkan badan.", "Lihat gambarnya.", "Kain yang lembut.", { visual: ['real/things/towel'], world: 'kamar' }],
+    ['um-v60', 2, "Kuku panjang sebaiknya…", ["Dipotong", "Digigit", "Dibiarkan"], "Kuku dipotong agar bersih.", "Kuman suka kuku panjang.", "Pakai gunting kuku.", { world: 'kamar' }],
+    ['um-v61', 1, "Bola ini berbentuk…", ["Bulat", "Kotak", "Segitiga"], "Bola berbentuk bulat.", "Bisa menggelinding.", "Lihat gambarnya.", { visual: ['toys/beach-ball'], world: 'kamar' }],
+    ['um-v62', 2, "Peti kayu ini berbentuk…", ["Kotak", "Bulat", "Bintang"], "Peti ini berbentuk kotak.", "Punya sudut.", "Lihat gambarnya.", { visual: ['game/crate-wood'], world: 'kamar' }],
+    ['um-v63', 2, "Daun yang segar berwarna…", ["Hijau", "Ungu", "Hitam"], "Daun segar berwarna hijau.", "Seperti warna rumput.", "Lihat gambarnya.", { visual: ['nature/sprout'], world: 'mayflower' }],
+    ['um-v64', 3, "Merah dicampur kuning menjadi…", ["Oranye", "Hijau", "Ungu"], "Merah dan kuning menjadi oranye.", "Warna jeruk.", "Lihat gambarnya.", { visual: ['food/orange'], world: 'kamar' }],
+    ['um-v65', 4, "Biru dicampur kuning menjadi…", ["Hijau", "Oranye", "Merah"], "Biru dan kuning menjadi hijau.", "Warna daun.", "Seperti rumput.", { world: 'kamar' }]
+  ])
+
+  rows('islam', [
+    ['is-v01', 1, "Keluar rumah, kita mengucap…", ["Bismillah", "Aamiin", "Hore"], "Doa keluar rumah diawali Bismillah.", "Kita mulai dengan nama Allah.", "Bismi…"],
+    ['is-v02', 2, "Masuk kamar mandi dengan kaki…", ["Kiri", "Kanan", "Melompat"], "Masuk kamar mandi dengan kaki kiri.", "Kebalikan dari masuk masjid.", "Kaki yang lain."],
+    ['is-v03', 1, "Kita minum sambil…", ["Duduk", "Berlari", "Melompat"], "Kita minum sambil duduk.", "Supaya tidak tersedak.", "Pakai kursi."],
+    ['is-v04', 2, "Selesai makan, piring kita…", ["Dirapikan", "Dilempar", "Ditinggal"], "Piring dirapikan setelah makan.", "Membantu ibu.", "Bawa ke tempat cuci."],
+    ['is-v05', 3, "Uang jajan sisa bisa kita…", ["Sedekahkan", "Buang", "Sobek"], "Bersedekah adalah perbuatan baik.", "Berbagi dengan yang butuh.", "Diberikan kepada orang lain."],
+    ['is-v06', 1, "Nenek membawa barang berat. Kita…", ["Membantu", "Menonton", "Tertawa"], "Kita membantu nenek.", "Nenek butuh bantuan.", "Ikut membawakan."],
+    ['is-v07', 1, "Adik menangis. Kakak yang baik akan…", ["Memeluknya", "Memarahinya", "Pergi"], "Kakak yang baik memeluk adiknya.", "Adik butuh disayang.", "Peluk dengan lembut."],
+    ['is-v08', 2, "Saat guru menjelaskan, kita…", ["Memperhatikan", "Mengobrol", "Tidur"], "Kita memperhatikan guru.", "Supaya kita paham.", "Pakai mata dan telinga.", { visual: ['school/books'] }],
+    ['is-v09', 1, "Ayah pulang kerja. Kita sambut dengan…", ["Salam", "Teriakan", "Cemberut"], "Kita sambut ayah dengan salam.", "Assalamu'alaikum.", "Ucapan yang baik."],
+    ['is-v10', 3, "Doa untuk orang tua dibaca…", ["Setiap hari", "Sekali saja", "Saat marah"], "Kita mendoakan orang tua setiap hari.", "Orang tua selalu menyayangi kita.", "Selalu."],
+    ['is-v11', 2, "Kita bersalaman dengan tangan…", ["Kanan", "Kiri", "Kaki"], "Bersalaman dengan tangan kanan.", "Sama dengan tangan untuk makan.", "Lawan dari kiri."],
+    ['is-v12', 1, "Pakaian untuk sholat harus…", ["Bersih", "Kotor", "Basah"], "Pakaian sholat harus bersih.", "Kita menghadap Allah.", "Lawan dari kotor."],
+    ['is-v13', 2, "Kain alas untuk sholat disebut…", ["Sajadah", "Handuk", "Selimut"], "Alas sholat disebut sajadah.", "Digelar di lantai.", "Diawali huruf S."],
+    ['is-v14', 2, "Penutup kepala laki-laki saat sholat disebut…", ["Peci", "Helm", "Topi pantai"], "Laki-laki memakai peci saat sholat.", "Biasanya berwarna hitam.", "Diawali huruf P."],
+    ['is-v15', 2, "Anak perempuan muslim menutup rambut dengan…", ["Jilbab", "Topi pantai", "Helm"], "Anak perempuan muslim memakai jilbab.", "Kain penutup kepala.", "Diawali huruf J."],
+    ['is-v16', 3, "Sholat bersama di masjid disebut sholat…", ["Berjamaah", "Sendirian", "Cepat"], "Sholat bersama disebut berjamaah.", "Banyak orang dalam satu barisan.", "Diawali huruf B."],
+    ['is-v17', 3, "Orang yang memimpin sholat disebut…", ["Imam", "Tamu", "Kapten"], "Pemimpin sholat disebut imam.", "Ia berdiri paling depan.", "Diawali huruf I."],
+    ['is-v18', 2, "Sholat Jumat dikerjakan di…", ["Masjid", "Pasar", "Pantai"], "Sholat Jumat dikerjakan di masjid.", "Tempat ibadah umat Islam.", "Ada kubahnya."],
+    ['is-v19', 3, "Makan sebelum subuh saat puasa disebut…", ["Sahur", "Sarapan", "Makan siang"], "Makan sebelum subuh disebut sahur.", "Dilakukan saat masih gelap.", "Diawali huruf S."],
+    ['is-v20', 3, "Makan saat Magrib ketika puasa disebut…", ["Berbuka", "Sahur", "Sarapan"], "Saat Magrib kita berbuka puasa.", "Puasa selesai.", "Diawali huruf B."],
+    ['is-v21', 2, "Saat Idulfitri, kita saling…", ["Memaafkan", "Mengejek", "Marah"], "Saat Idulfitri kita saling memaafkan.", "Bersalaman dan minta maaf.", "Kata dasarnya 'maaf'.", { visual: ['real/food/ketupat'] }],
+    ['is-v22', 1, "Allah memberi kita mata untuk…", ["Melihat", "Makan", "Berjalan"], "Mata untuk melihat.", "Coba tutup matamu.", "Melihat ciptaan Allah."],
+    ['is-v23', 1, "Allah memberi kita telinga untuk…", ["Mendengar", "Melihat", "Mencium"], "Telinga untuk mendengar.", "Coba tutup telingamu.", "Mendengar suara."],
+    ['is-v24', 2, "Allah menurunkan hujan agar tanaman…", ["Tumbuh", "Layu", "Hilang"], "Hujan membuat tanaman tumbuh.", "Tanaman butuh air.", "Menjadi besar.", { visual: ['nature/sprout'] }],
+    ['is-v25', 3, "Nabi Muhammad SAW dikenal sangat…", ["Jujur", "Pemarah", "Pelit"], "Nabi Muhammad SAW sangat jujur.", "Beliau tidak pernah berbohong.", "Berkata benar."],
+    ['is-v26', 3, "Nabi pertama adalah Nabi…", ["Adam", "Nuh", "Musa", "Yunus"], "Nabi pertama adalah Nabi Adam AS.", "Manusia pertama.", "Diawali huruf A."],
+    ['is-v27', 4, "Nabi yang bisa berbicara dengan hewan adalah Nabi…", ["Sulaiman", "Adam", "Nuh"], "Nabi Sulaiman AS bisa berbicara dengan hewan.", "Ia berbicara dengan semut.", "Diawali huruf S."],
+    ['is-v28', 4, "Tongkat Nabi Musa bisa berubah menjadi…", ["Ular", "Burung", "Ikan"], "Dengan izin Allah, tongkat Nabi Musa menjadi ular.", "Hewan yang melata.", "Tidak punya kaki."],
+    ['is-v29', 3, "Tidur yang baik miring ke…", ["Kanan", "Kiri", "Tengkurap"], "Kita tidur miring ke kanan.", "Sama dengan tangan untuk makan.", "Lawan dari kiri.", { world: 'kamar' }],
+    ['is-v30', 2, "Saat menguap, kita tutup mulut dengan…", ["Tangan", "Kaki", "Buku"], "Menguap ditutup dengan tangan.", "Bagian tubuh yang mudah diangkat.", "Punya lima jari."],
+    ['is-v31', 4, "Mengambil barang tanpa izin disebut…", ["Mencuri", "Berbagi", "Menolong"], "Mengambil tanpa izin adalah mencuri.", "Perbuatan yang dilarang.", "Allah tidak suka."],
+    ['is-v32', 4, "Menjaga lisan artinya berkata yang…", ["Baik", "Kasar", "Bohong"], "Menjaga lisan artinya berkata baik.", "Lisan artinya mulut.", "Kata-kata yang sopan."],
+    ['is-v33', 2, "Saat sholat, hati kita…", ["Tenang", "Marah", "Bosan"], "Kita sholat dengan hati tenang.", "Kita sedang berdoa kepada Allah.", "Tidak terburu-buru."],
+    ['is-v34', 3, "Setelah sholat, kita berzikir dan…", ["Berdoa", "Berteriak", "Berlari"], "Setelah sholat kita berzikir dan berdoa.", "Menengadahkan tangan.", "Meminta kepada Allah."],
+    ['is-v35', 4, "Sebelum membaca Al-Qur'an, kita membaca…", ["A'udzubillah", "Aamiin", "Hore"], "Kita membaca A'udzubillah lalu Bismillah.", "Minta perlindungan kepada Allah.", "Diawali 'A'udzu…'."],
+    ['is-v36', 1, "Memberi hadiah kepada teman membuat teman…", ["Senang", "Sedih", "Marah"], "Hadiah membuat teman senang.", "Bayangkan kamu diberi hadiah.", "Teman tersenyum.", { visual: ['things/gift'] }]
+  ], { islam: true })
+
+  var lgv = []
+  // picture patterns: [level, sequence, answer, distractors(3), world]
+  ;[
+    [1, ['animals/crab', 'animals/starfish', 'animals/crab', 'animals/starfish', 'animals/crab'], 'animals/starfish', ['animals/crab', 'animals/octopus', 'animals/shark'], 'calypso'],
+    [1, ['food/banana', 'food/banana', 'food/apple', 'food/banana', 'food/banana'], 'food/apple', ['food/banana', 'food/grapes', 'food/carrot'], 'mayflower'],
+    [2, ['nature/cloud', 'nature/sun', 'nature/sun', 'nature/cloud', 'nature/sun'], 'nature/sun', ['nature/cloud', 'nature/rainbow', 'nature/moon-stars'], 'kontiki'],
+    [2, ['game/bell', 'game/bell', 'game/star', 'game/bell', 'game/bell'], 'game/star', ['game/bell', 'game/anchor', 'game/lantern'], 'victory'],
+    [2, ['animals/penguin', 'animals/penguin', 'nature/snowman', 'animals/penguin', 'animals/penguin'], 'nature/snowman', ['animals/penguin', 'game/crystal-ice', 'animals/sea-turtle'], 'endurance'],
+    [3, ['tk-prop/lifeboat', 'game/lifebuoy', 'game/anchor', 'tk-prop/lifeboat', 'game/lifebuoy'], 'game/anchor', ['tk-prop/lifeboat', 'game/lifebuoy', 'game/compass'], 'titanic'],
+    [3, ['animals/dolphin', 'animals/shark', 'animals/shark', 'animals/dolphin', 'animals/shark'], 'animals/shark', ['animals/dolphin', 'animals/octopus', 'animals/crab'], 'nautilus'],
+    [3, ['food/milk', 'food/bread', 'food/milk', 'food/bread', 'food/milk'], 'food/bread', ['food/milk', 'food/apple', 'food/cookie'], 'britannic'],
+    [4, ['game/compass', 'game/compass', 'game/bell', 'game/bell', 'game/compass', 'game/compass'], 'game/bell', ['game/compass', 'game/anchor', 'game/star'], 'queenmary'],
+    [4, ['nature/sun', 'nature/moon-stars', 'game/star', 'nature/sun', 'nature/moon-stars'], 'game/star', ['nature/sun', 'nature/moon-stars', 'nature/cloud'], 'arizona']
+  ].forEach(function (p, i) {
+    var all = [p[2]].concat(p[3])
+    lgv.push({ id: 'lg-vp-' + (i + 1), level: p[0], prompt: 'Apa gambar berikutnya?', visual: p[1], seq: true, choices: names(all), answer: NAME[p[2]], pics: pics(all),
+      explain: 'Polanya berulang, jadi berikutnya ' + NAME[p[2]].toLowerCase() + '.', hint1: 'Sebutkan gambarnya satu per satu.', hint2: 'Cari bagian yang berulang.', world: p[4] })
+  })
+  // odd one out: [level, [odd, a, b, c], explain, world]
+  ;[
+    [1, ['animals/elephant', 'food/apple', 'food/banana', 'food/orange'], 'Gajah adalah hewan; yang lain buah.', 'mayflower'],
+    [1, ['vehicles/bicycle', 'animals/cat', 'animals/dog', 'animals/rabbit'], 'Sepeda adalah kendaraan; yang lain hewan.', 'kamar'],
+    [2, ['food/corn', 'toys/drum', 'toys/soccer-ball', 'toys/rubber-duck'], 'Jagung adalah makanan; yang lain mainan.', 'kamar'],
+    [2, ['animals/eagle', 'animals/clownfish', 'animals/blue-tang', 'animals/pufferfish'], 'Elang adalah burung; yang lain ikan.', 'calypso'],
+    [3, ['food/banana', 'things/umbrella-red', 'things/rain-boot', 'real/things/raincoat'], 'Pisang adalah buah; yang lain dipakai saat hujan.', 'mayflower'],
+    [3, ['food/milk', 'school/books', 'school/notebook', 'real/school/scissors'], 'Susu adalah minuman; yang lain alat sekolah.', 'queenmary'],
+    [3, ['animals/giraffe', 'animals/eagle', 'animals/parrot', 'animals/owl'], 'Jerapah tidak bisa terbang; yang lain burung.', 'arizona'],
+    [4, ['food/ice-cream', 'nature/sun', 'park/campfire', 'game/cactus'], 'Es krim itu dingin; yang lain panas.', 'endurance']
+  ].forEach(function (o, i) {
+    lgv.push({ id: 'lg-vo-' + (i + 1), level: o[0], prompt: 'Mana yang berbeda dari yang lain?', choices: names(o[1]), answer: NAME[o[1][0]], pics: pics(o[1]),
+      explain: o[2], hint1: 'Tiga gambar punya persamaan. Apa itu?', hint2: 'Pikirkan golongannya: hewan, makanan, atau benda?', world: o[3] })
+  })
+  // counting pictures: [level, sprite, n, noun, world]
+  ;[
+    [1, 'animals/clownfish', 3, 'ikan', 'calypso'], [1, 'game/star', 4, 'bintang', 'titanic'], [2, 'animals/crab', 6, 'kepiting', 'kontiki'],
+    [2, 'game/barrel', 5, 'tong', 'vasa'], [3, 'animals/penguin', 7, 'penguin', 'endurance'], [4, 'game/lifebuoy', 9, 'pelampung', 'titanic']
+  ].forEach(function (c, i) {
+    var vis = []; for (var k = 0; k < c[2]; k++) vis.push(c[1])
+    lgv.push({ id: 'lg-vc-' + (i + 1), level: c[0], prompt: 'Ada berapa ' + c[3] + '?', visual: vis, choices: [c[2], c[2] + 1, c[2] - 1, c[2] + 2].map(String), answer: String(c[2]),
+      explain: 'Ada ' + c[2] + ' ' + c[3] + '.', hint1: 'Tunjuk satu per satu sambil berhitung.', hint2: 'Jangan hitung yang sama dua kali.', world: c[4] })
+  })
+  lgv.forEach(function (o) { o.domain = 'logika'; ITEMS.push(o) })
+  rows('logika', [
+    ['lg-vt-01', 1, "Segitiga punya berapa sisi?", [3, 4, 5, 2], "Segitiga punya 3 sisi.", "Tri artinya tiga.", "Hitung garisnya."],
+    ['lg-vt-02', 2, "Persegi punya berapa sudut?", [4, 3, 5, 6], "Persegi punya 4 sudut.", "Lihat peti kayu.", "Hitung pojoknya.", { visual: ['game/crate-wood'] }],
+    ['lg-vt-03', 1, "Angka setelah 9 adalah…", [10, 8, 11, 19], "Setelah 9 adalah 10.", "Hitung maju dari 9.", "Sembilan, sepuluh."],
+    ['lg-vt-04', 1, "Angka sebelum 15 adalah…", [14, 16, 13, 5], "Sebelum 15 adalah 14.", "Hitung mundur dari 15.", "Satu lebih kecil."],
+    ['lg-vt-05', 2, "Mana lebih besar, 12 atau 8?", ["12", "8", "Sama"], "12 lebih besar dari 8.", "Angka dua digit lebih besar.", "Dua belas lawan delapan."],
+    ['lg-vt-06', 2, "Angka di antara 16 dan 18 adalah…", [17, 15, 19, 18], "16, 17, 18. Di antaranya 17.", "Hitung dari 16.", "Satu lebih dari 16."],
+    ['lg-vt-07', 3, "Dua tangan punya berapa jari?", [10, 5, 8, 20], "Satu tangan 5 jari, dua tangan 10 jari.", "Hitung jarimu.", "5 + 5."],
+    ['lg-vt-08', 2, "Kucing berkaki empat. Ayam berkaki…", [2, 4, 6, 3], "Ayam berkaki dua.", "Ayam berjalan dengan dua kaki.", "Seperti kita.", { visual: ['animals/chicken'] }],
+    ['lg-vt-09', 3, "Ikan di air, burung di udara, cacing di…", ["Tanah", "Awan", "Laut"], "Cacing hidup di dalam tanah.", "Cacing suka tempat lembap.", "Di bawah rumput."],
+    ['lg-vt-10', 3, "Panas lawan dingin. Tinggi lawan…", ["Rendah", "Besar", "Jauh"], "Tinggi berlawanan dengan rendah.", "Kata yang artinya kebalikan.", "Diawali huruf R."],
+    ['lg-vt-11', 3, "Timmy di depan Kapten. Siapa paling depan?", ["Timmy", "Kapten", "Asisten Pinguin"], "Timmy di depan, jadi Timmy paling depan.", "Baca lagi pelan-pelan.", "Siapa yang disebut di depan?"],
+    ['lg-vt-12', 4, "Ani lebih tinggi dari Budi. Siapa lebih pendek?", ["Budi", "Ani", "Sama"], "Ani lebih tinggi, jadi Budi lebih pendek.", "Pendek lawan tinggi.", "Lihat siapa yang lebih tinggi dulu."],
+    ['lg-vt-13', 1, "Sepatu di kaki. Topi di…", ["Kepala", "Tangan", "Perut"], "Topi dipakai di kepala.", "Bagian tubuh paling atas.", "Lihat gambarnya.", { visual: ['things/cap'] }],
+    ['lg-vt-14', 4, "Tong A berat. Tong B lebih berat. Mana paling berat?", ["Tong B", "Tong A", "Sama"], "Tong B lebih berat dari tong A.", "Kata 'lebih' menunjukkan yang menang.", "Baca kata 'lebih berat'.", { visual: ['game/barrel', 'game/barrel'] }],
+    ['lg-vt-15', 3, "Hari ini Senin. Dua hari lagi hari…", ["Rabu", "Selasa", "Kamis"], "Selasa, lalu Rabu.", "Hitung maju dua hari.", "Senin, Selasa, …"],
+    ['lg-vt-16', 2, "Hari sebelum Minggu adalah…", ["Sabtu", "Senin", "Jumat"], "Sabtu, lalu Minggu.", "Hitung mundur satu hari.", "Hari libur juga."],
+    ['lg-vt-17', 3, "Pagi, siang, sore. Sebelum siang adalah…", ["Pagi", "Sore", "Malam"], "Sebelum siang adalah pagi.", "Waktu bangun tidur.", "Matahari baru terbit."]
+  ])
+
+  // Bahasa Arab, Kelas 1–2 (kept small): picture -> word, word -> picture. Every item has a picture.
+  // [ar, tr, meaning, sprite]
+  var VOC2 = [
+    ['سَرَطَانٌ', 'sarathaan', 'Kepiting', 'animals/crab'], ['أُخْطُبُوطٌ', 'ukhthubuuth', 'Gurita', 'animals/octopus'],
+    ['سُلَحْفَاةٌ', 'sulahfaah', 'Penyu', 'animals/sea-turtle'], ['قِرْشٌ', 'qirsy', 'Hiu', 'animals/shark'], ['بِطْرِيقٌ', 'bithriiq', 'Penguin', 'animals/penguin'],
+    ['نَحْلَةٌ', 'nahlah', 'Lebah', 'animals/bee'], ['فَرَاشَةٌ', 'faraasyah', 'Kupu-kupu', 'animals/butterfly'],
+    ['عِنَبٌ', '\'inab', 'Anggur', 'food/grapes'], ['بُرْتُقَالٌ', 'burtuqaal', 'Jeruk', 'food/orange'], ['بِطِّيخٌ', 'bith-thiikh', 'Semangka', 'food/watermelon'],
+    ['سَحَابٌ', 'sahaab', 'Awan', 'nature/cloud'], ['مِظَلَّةٌ', 'mizhallah', 'Payung', 'things/umbrella-red'], ['مِفْتَاحٌ', 'miftaah', 'Kunci', 'things/key-gold'],
+    ['وَرْدَةٌ', 'wardah', 'Bunga', 'nature/flower-pink'], ['سَاعَةٌ', 'saa\'ah', 'Jam', 'things/alarm-clock']
+  ]
+  var V2_WORLD = ['calypso', 'calypso', 'calypso', 'nautilus', 'endurance', 'kamar', 'kamar', 'mayflower', 'mayflower', 'kontiki', 'mayflower', 'mayflower', 'titanic', 'kamar', 'queenmary']
+  VOC2.forEach(function (v, i) {
+    var d = [VOC2[(i + 1) % VOC2.length], VOC2[(i + 4) % VOC2.length]], n = ('0' + (i + 1)).slice(-2)
+    var o = { id: 'ar-v' + n, domain: 'arab', rtl: true, level: 1 + (i % 4), ar: v[0], tr: v[1], world: V2_WORLD[i] }
+    if (i < 10) {
+      o.prompt = i < 5 ? 'Hewan laut ini, apa bahasa Arabnya?' : 'Ini apa dalam bahasa Arab?'
+      o.visual = [v[3]]; o.focus = [0]
+      o.choices = [v[0]].concat(d.map(function (x) { return x[0] })); o.answer = v[0]
+      o.trs = trMap([[v[0], 0, v[1]]].concat(d.map(function (x) { return [x[0], 0, x[1]] })))
+      o.explain = v[2] + ' dalam bahasa Arab adalah ' + v[0] + ' (' + v[1] + ').'
+      o.hint1 = 'Lihat gambarnya: ini ' + v[2].toLowerCase() + '.'; o.hint2 = 'Bacaannya: ' + v[1] + '.'
+    } else {
+      var pm = {}; pm[v[2]] = v[3]; d.forEach(function (x) { pm[x[2]] = x[3] })
+      o.prompt = 'Pilih gambar untuk kata Arab ini.'
+      o.choices = [v[2]].concat(d.map(function (x) { return x[2] })); o.answer = v[2]; o.pics = pm
+      o.explain = v[0] + ' (' + v[1] + ') artinya ' + v[2].toLowerCase() + '.'
+      o.hint1 = 'Baca pelan: ' + v[1] + '.'; o.hint2 = 'Artinya diawali huruf ' + v[2][0] + '.'
+    }
+    ITEMS.push(o)
+  })
+
   // grade tag (owner 2026-09-29, Tingkat Soal): everything above is fase A -> grade:2 ("Kelas 1–2").
   // tk-quiz: untagged or grade <= 2 = Mudah; grade 3 / 4 = Sulit only. Stamped BEFORE the Sulit block.
   ITEMS.forEach(function (o) { if (o.grade == null) o.grade = 2 })
@@ -699,6 +902,99 @@
     ['ar-s19', 4, 4, 'wm', 'الْمَوْزُ أَصْفَرُ', 'al-mauzu ashfar', 'Pisang kuning', ['Pisang hijau', 'Apel merah'], 'food/banana'],
     ['ar-s20', 4, 4, 'wm', 'التُّفَّاحَةُ حَمْرَاءُ', 'at-tuffaahatu hamraa\'', 'Apel merah', ['Apel hijau', 'Pisang kuning'], 'food/apple']
   ]
+  // Sulit, second batch (owner 2026-09-29: "The questions repeat a lot") — same rules, same tags.
+  rows('umum', [
+    ['um-s46', 1, "Hewan yang bernapas dengan insang adalah…", ["Ikan", "Kucing", "Ayam"], "Ikan bernapas dengan insang di dalam air.", "Hewan yang hidup di air.", "Lihat gambarnya.", { visual: ['animals/clownfish'] }],
+    ['um-s47', 2, "Paus hidup di laut, tetapi bernapas dengan…", ["Paru-paru", "Insang", "Sirip"], "Paus bernapas dengan paru-paru, jadi naik ke permukaan.", "Paus harus naik ke atas air.", "Sama seperti kita.", { visual: ['tk-world/whale-tail'], world: 'nautilus' }],
+    ['um-s48', 1, "Perubahan ulat menjadi kupu-kupu disebut…", ["Metamorfosis", "Fotosintesis", "Penguapan"], "Perubahan bentuk ulat menjadi kupu-kupu disebut metamorfosis.", "Artinya berubah bentuk.", "Diawali 'Meta…'.", { visual: ['animals/butterfly'] }],
+    ['um-s49', 2, "Anak katak yang masih berekor disebut…", ["Berudu", "Anak ayam", "Ulat"], "Anak katak yang berekor disebut berudu.", "Ia berenang di kolam.", "Diawali huruf B.", { visual: ['animals/frog'] }],
+    ['um-s50', 3, "Es batu dipanaskan berubah menjadi air. Peristiwa ini disebut…", ["Mencair", "Membeku", "Menguap"], "Benda padat yang menjadi cair disebut mencair.", "Es berubah menjadi air.", "Lawan dari membeku.", { grade: 4, visual: ['tk-prop/ice-cube'] }],
+    ['um-s51', 4, "Air mendidih pada suhu sekitar…", ["100 derajat", "10 derajat", "50 derajat"], "Air mendidih pada sekitar 100 derajat Celsius.", "Sangat panas.", "Angka ratusan.", { grade: 4 }],
+    ['um-s52', 4, "Bayangan terbentuk karena cahaya…", ["Terhalang benda", "Berwarna", "Berbunyi"], "Bayangan muncul saat cahaya terhalang benda.", "Coba berdiri di bawah lampu.", "Cahaya tidak bisa menembus.", { grade: 4, visual: ['things/flashlight'] }],
+    ['um-s53', 3, "Cahaya yang mengenai cermin akan…", ["Dipantulkan", "Dimakan", "Membeku"], "Cermin memantulkan cahaya.", "Kita bisa melihat diri di cermin.", "Cahayanya kembali.", { grade: 4, visual: ['real/things/hand-mirror'] }],
+    ['um-s54', 2, "Tumbuhan yang hidup di air contohnya…", ["Teratai", "Kaktus", "Mangga"], "Teratai hidup di kolam.", "Daunnya mengapung.", "Diawali huruf T."],
+    ['um-s55', 4, "Burung hantu aktif di malam hari. Ia disebut hewan…", ["Nokturnal", "Jinak", "Liar"], "Hewan yang aktif malam hari disebut nokturnal.", "Siang hari ia tidur.", "Diawali huruf N.", { grade: 4, visual: ['animals/owl'] }],
+    ['um-s56', 1, "Daun kering dan sisa sayur bisa dijadikan…", ["Kompos", "Plastik", "Kaca"], "Sampah daun dan sayur bisa menjadi kompos.", "Pupuk untuk tanaman.", "Diawali huruf K.", { visual: ['nature/sprout'] }],
+    ['um-s57', 4, "Botol plastik termasuk sampah…", ["Anorganik", "Organik", "Basah"], "Plastik sulit terurai, jadi termasuk sampah anorganik.", "Tidak bisa membusuk.", "Diawali 'An…'.", { grade: 4, visual: ['food/water-bottle'] }],
+    ['um-s58', 1, "Alat agar benda kecil tampak besar adalah…", ["Kaca pembesar", "Cermin", "Kompas"], "Kaca pembesar membuat benda kecil tampak besar.", "Lihat gambarnya.", "Detektif memakainya.", { visual: ['real/things/magnifier'] }],
+    ['um-s59', 3, "Bumi berputar pada porosnya. Akibatnya terjadi…", ["Siang dan malam", "Hujan", "Pelangi"], "Perputaran bumi membuat siang dan malam.", "Bagian yang menghadap matahari terang.", "Terang dan gelap bergantian.", { grade: 4, visual: ['nature/sun', 'nature/moon-stars'] }],
+    ['um-s60', 2, "Bulan bergerak mengelilingi…", ["Bumi", "Bintang", "Awan"], "Bulan mengelilingi bumi.", "Tempat kita tinggal.", "Planet kita.", { visual: ['nature/moon-stars'] }],
+    ['um-s61', 1, "Planet tempat kita tinggal adalah…", ["Bumi", "Bulan", "Matahari"], "Kita tinggal di planet Bumi.", "Ada laut dan daratan.", "Diawali huruf B."],
+    ['um-s62', 4, "Kapal selam menyelam dengan mengisi tangkinya dengan…", ["Air laut", "Pasir", "Udara panas"], "Tangki diisi air laut agar kapal selam lebih berat dan menyelam.", "Kapal menjadi lebih berat.", "Ada di sekitar kapal.", { grade: 4, visual: ['tk-ship/submarine-black'], world: 'nautilus' }],
+    ['um-s63', 1, "Cairan termometer naik jika suhu makin…", ["Panas", "Dingin", "Gelap"], "Saat panas, cairan termometer naik.", "Panas membuat cairan memuai.", "Lawan dari dingin."],
+    ['um-s64', 2, "Alat yang jarumnya selalu menunjuk utara adalah…", ["Kompas", "Jam", "Termometer"], "Jarum kompas selalu menunjuk utara.", "Pelaut memakainya.", "Lihat gambarnya.", { visual: ['game/compass'], world: 'victory' }],
+    ['um-s65', 3, "Pelampung berlampu di laut berguna untuk…", ["Memberi tanda", "Menangkap ikan", "Menyimpan air"], "Pelampung berlampu memberi tanda jalur aman bagi kapal.", "Kapal melihatnya di malam hari.", "Seperti rambu di jalan.", { grade: 4, visual: ['tk-prop/buoy-light'], world: 'pelabuhan' }]
+  ], { grade: 3 })
+
+  rows('islam', [
+    ['is-s34', 1, "Al-Ghafur artinya Allah Maha…", ["Pengampun", "Melihat", "Kuat"], "Al-Ghafur artinya Allah Maha Pengampun.", "Allah mengampuni orang yang bertobat.", "Kata dasarnya 'ampun'."],
+    ['is-s35', 2, "Ar-Razzaq artinya Allah Maha…", ["Pemberi rezeki", "Mendengar", "Melihat"], "Ar-Razzaq artinya Allah Maha Pemberi rezeki.", "Makanan kita datang dari Allah.", "Ada kata 'rezeki'."],
+    ['is-s36', 3, "Al-'Alim artinya Allah Maha…", ["Mengetahui", "Pengampun", "Merajai"], "Al-'Alim artinya Allah Maha Mengetahui.", "Allah tahu segalanya.", "Kata dasarnya 'tahu'.", { grade: 4 }],
+    ['is-s37', 2, "Nabi yang selamat dari api dengan izin Allah adalah Nabi…", ["Ibrahim", "Musa", "Yunus"], "Api menjadi dingin untuk Nabi Ibrahim AS.", "Beliau membangun Ka'bah.", "Diawali huruf I."],
+    ['is-s38', 4, "Nabi Ibrahim membangun Ka'bah bersama putranya, Nabi…", ["Ismail", "Yusuf", "Musa"], "Nabi Ibrahim dan Nabi Ismail membangun Ka'bah.", "Putra Nabi Ibrahim.", "Diawali huruf I.", { grade: 4 }],
+    ['is-s39', 1, "Nabi yang pandai menafsirkan mimpi adalah Nabi…", ["Yusuf", "Nuh", "Ayub"], "Nabi Yusuf AS pandai menafsirkan mimpi.", "Ia punya sebelas saudara.", "Diawali huruf Y."],
+    ['is-s40', 3, "Kitab Zabur diturunkan kepada Nabi…", ["Daud", "Musa", "Isa"], "Kitab Zabur diturunkan kepada Nabi Daud AS.", "Nabi yang suaranya merdu.", "Diawali huruf D.", { grade: 4 }],
+    ['is-s41', 4, "Kitab Injil diturunkan kepada Nabi…", ["Isa", "Daud", "Musa"], "Kitab Injil diturunkan kepada Nabi Isa AS.", "Salah satu dari empat kitab.", "Diawali huruf I.", { grade: 4 }],
+    ['is-s42', 1, "Malaikat yang membagikan rezeki adalah Malaikat…", ["Mikail", "Jibril", "Israfil"], "Malaikat Mikail membagikan rezeki.", "Juga mengatur hujan.", "Diawali huruf M."],
+    ['is-s43', 3, "Malaikat yang meniup sangkakala adalah Malaikat…", ["Israfil", "Mikail", "Jibril"], "Malaikat Israfil meniup sangkakala.", "Sangkakala seperti terompet.", "Diawali huruf I.", { grade: 4 }],
+    ['is-s44', 4, "Zakat fitrah dibayar di bulan…", ["Ramadan", "Muharam", "Rajab"], "Zakat fitrah dibayar di bulan Ramadan sebelum sholat Id.", "Bulan puasa.", "Diawali huruf R.", { grade: 4 }],
+    ['is-s45', 2, "Sholat malam khusus bulan Ramadan disebut…", ["Tarawih", "Duha", "Subuh"], "Sholat tarawih dikerjakan malam hari di bulan Ramadan.", "Setelah sholat Isya.", "Diawali huruf T."],
+    ['is-s46', 1, "Sholat sunah saat matahari naik di pagi hari disebut…", ["Duha", "Isya", "Tarawih"], "Sholat Duha dikerjakan di pagi hari.", "Setelah matahari naik.", "Diawali huruf D.", { visual: ['nature/sun'] }],
+    ['is-s47', 2, "Gerakan pertama sholat adalah…", ["Takbiratul ihram", "Sujud", "Salam"], "Sholat dimulai dengan takbiratul ihram: Allahu Akbar.", "Mengangkat kedua tangan.", "Mengucap Allahu Akbar."],
+    ['is-s48', 1, "Sholat diakhiri dengan…", ["Salam", "Rukuk", "Sujud"], "Sholat diakhiri dengan salam ke kanan dan ke kiri.", "Menoleh ke kanan dan kiri.", "Assalamu'alaikum…"],
+    ['is-s49', 2, "Menempelkan dahi ke lantai saat sholat disebut…", ["Sujud", "Rukuk", "Duduk"], "Dahi menempel di lantai disebut sujud.", "Posisi paling rendah.", "Diawali huruf S."],
+    ['is-s50', 3, "Membungkuk dengan tangan di lutut saat sholat disebut…", ["Rukuk", "Sujud", "Berdiri"], "Membungkuk dengan tangan di lutut disebut rukuk.", "Punggung lurus mendatar.", "Diawali huruf R.", { grade: 4 }],
+    ['is-s51', 4, "Surah Al-Kautsar terdiri dari berapa ayat?", [3, 4, 5, 6], "Al-Kautsar adalah surah terpendek, 3 ayat.", "Surah paling pendek.", "Kurang dari 4.", { grade: 4 }],
+    ['is-s52', 4, "Surah Al-Ikhlas terdiri dari berapa ayat?", [4, 3, 5, 6], "Surah Al-Ikhlas terdiri dari 4 ayat.", "Hitung sambil membacanya.", "Qul huwallahu ahad adalah ayat pertama.", { grade: 4 }],
+    ['is-s53', 3, "Menepati janji termasuk sifat…", ["Terpuji", "Tercela", "Sombong"], "Menepati janji adalah sifat terpuji.", "Sifat yang disukai Allah.", "Lawan dari tercela.", { grade: 4 }]
+  ], { islam: true, grade: 3 })
+
+  rows('logika', [
+    ['lg-s31', 1, "Angka berikutnya: 15, 30, 45, …", [60, 50, 55, 65], "Tambah 15 setiap langkah. 45 + 15 = 60.", "Berapa jarak 15 ke 30?", "Tambah 15."],
+    ['lg-s32', 4, "Angka berikutnya: 81, 72, 63, …", [54, 53, 56, 45], "Kurang 9 setiap langkah. 63 - 9 = 54.", "Angkanya makin kecil.", "Kurang 9.", { grade: 4 }],
+    ['lg-s33', 1, "Angka berikutnya: 11, 22, 33, …", [44, 43, 34, 55], "Tambah 11 setiap langkah. 33 + 11 = 44.", "Lihat angka kembarnya.", "Tambah 11."],
+    ['lg-s34', 2, "Angka yang hilang: 60, …, 80, 90", [70, 65, 75, 85], "Tambah 10 setiap langkah. 60 + 10 = 70.", "Lihat puluhannya.", "Tambah 10."],
+    ['lg-s35', 4, "Angka berikutnya: 1, 2, 4, 7, 11, …", [16, 15, 14, 17], "Tambahnya naik: +1, +2, +3, +4, lalu +5. 11 + 5 = 16.", "Lihat jarak tiap angka.", "Jaraknya bertambah satu.", { grade: 4 }],
+    ['lg-s36', 3, "Lompat 50: 150, 200, 250, …", [300, 260, 350, 275], "Tambah 50 setiap langkah. 250 + 50 = 300.", "Lompat lima puluh.", "Tambah 50.", { grade: 4 }],
+    ['lg-s37', 2, "Bilangan genap sesudah 58 adalah…", [60, 59, 62, 61], "58, 59, 60. Bilangan genap berikutnya 60.", "Genap berselang satu.", "Tambah 2."],
+    ['lg-s38', 3, "Angka berikutnya: 999, 998, 997, …", [996, 995, 998, 990], "Kurang 1 setiap langkah. 997 - 1 = 996.", "Angkanya turun satu-satu.", "Kurang 1.", { grade: 4 }],
+    ['lg-s39', 1, "Hari ini Kamis. Lima hari lagi hari…", ["Selasa", "Senin", "Rabu", "Minggu"], "Jumat, Sabtu, Minggu, Senin, Selasa.", "Hitung maju lima hari.", "Jumat (1), Sabtu (2), …"],
+    ['lg-s40', 4, "Kemarin lusa hari Senin. Hari ini hari…", ["Rabu", "Selasa", "Kamis"], "Kemarin lusa = dua hari lalu. Senin + 2 hari = Rabu.", "Kemarin lusa artinya dua hari lalu.", "Hitung maju dua hari dari Senin.", { grade: 4 }],
+    ['lg-s41', 2, "Pukul 9 pagi. Empat jam kemudian pukul…", ["1 siang", "12 siang", "2 siang"], "9 + 4 = 13, yaitu pukul 1 siang.", "Setelah pukul 12 kembali ke 1.", "10, 11, 12, lalu…"],
+    ['lg-s42', 1, "Tiga koin Rp200 jumlahnya…", ["Rp600", "Rp500", "Rp800"], "200 + 200 + 200 = 600.", "Hitung 200 tiga kali.", "Lompat 200."],
+    ['lg-s43', 3, "Rp1.000 ditukar koin Rp500. Dapat berapa koin?", [2, 5, 10, 1], "500 + 500 = 1.000, jadi 2 koin.", "Berapa kali 500 sampai 1.000?", "Setengah dari 1.000 adalah 500.", { grade: 4, visual: ['real/currency/coin-500'] }],
+    ['lg-s44', 4, "Timmy punya Rp700. Kurang berapa agar menjadi Rp1.000?", ["Rp300", "Rp200", "Rp500"], "1.000 - 700 = 300.", "Hitung dari 700 ke 1.000.", "Lompat 100 tiga kali.", { grade: 4 }],
+    ['lg-s45', 2, "Harga es Rp300. Timmy bayar Rp500. Kembaliannya…", ["Rp200", "Rp300", "Rp800"], "500 - 300 = 200.", "Kurangi uang dengan harga.", "Hitung dari 300 ke 500."],
+    ['lg-s46', 3, "Mana yang berbeda dari yang lain?", names(['animals/snail', 'animals/butterfly', 'animals/bee', 'animals/ladybug']), "Siput bukan serangga; yang lain serangga berkaki enam.", "Tiga hewan ini punya enam kaki.", "Mana yang tidak punya kaki?", pic(['animals/snail', 'animals/butterfly', 'animals/bee', 'animals/ladybug'], { grade: 4 })],
+    ['lg-s47', 2, "Mana yang punya garis simetri?", names(['game/star', 'food/banana', 'animals/snail']), "Bintang bisa dilipat menjadi dua bagian sama.", "Bayangkan dilipat di tengah.", "Bentuknya ada di bendera.", pic(['game/star', 'food/banana', 'animals/snail'])],
+    ['lg-s48', 4, "Berapa garis simetri pada huruf H?", [2, 1, 0, 4], "Huruf H bisa dilipat tegak dan mendatar: 2 garis.", "Coba lipat tegak, lalu mendatar.", "Lebih dari satu.", { grade: 4 }],
+    ['lg-s49', 1, "Mana yang berbeda: 12, 14, 17, 20?", ["17", "12", "14", "20"], "17 ganjil; yang lain genap.", "Genap atau ganjil?", "Lihat angka terakhirnya."],
+    ['lg-s50', 3, "Mana yang berbeda: 15, 25, 35, 42?", ["42", "15", "25", "35"], "42 tidak berakhiran 5.", "Lihat angka terakhirnya.", "Tiga angka berakhiran sama.", { grade: 4 }]
+  ], { grade: 3 })
+
+  ;[
+    ['ar-s21', 1, 3, 'nm', 'ثَلَاثَةَ عَشَرَ', 'tsalaatsata \'asyar', 13, [['ثَلَاثَةٌ', 'tsalaatsah'], ['أَرْبَعَةَ عَشَرَ', 'arba\'ata \'asyar']]],
+    ['ar-s22', 2, 3, 'nm', 'أَرْبَعَةَ عَشَرَ', 'arba\'ata \'asyar', 14, [['أَرْبَعَةٌ', 'arba\'ah'], ['سِتَّةَ عَشَرَ', 'sittata \'asyar']]],
+    ['ar-s23', 3, 4, 'nm', 'سِتَّةَ عَشَرَ', 'sittata \'asyar', 16, [['سَبْعَةَ عَشَرَ', 'sab\'ata \'asyar'], ['سِتَّةٌ', 'sittah']]],
+    ['ar-s24', 3, 4, 'nm', 'سَبْعَةَ عَشَرَ', 'sab\'ata \'asyar', 17, [['سَبْعَةٌ', 'sab\'ah'], ['ثَمَانِيَةَ عَشَرَ', 'tsamaaniyata \'asyar']]],
+    ['ar-s25', 4, 4, 'nm', 'ثَمَانِيَةَ عَشَرَ', 'tsamaaniyata \'asyar', 18, [['تِسْعَةَ عَشَرَ', 'tis\'ata \'asyar'], ['ثَمَانِيَةٌ', 'tsamaaniyah']]],
+    ['ar-s26', 4, 4, 'nm', 'تِسْعَةَ عَشَرَ', 'tis\'ata \'asyar', 19, [['تِسْعَةٌ', 'tis\'ah'], ['عِشْرُونَ', '\'isyruun']]],
+    ['ar-s27', 1, 3, 'wm', 'أَنْفٌ', 'anf', 'Hidung', ['Mulut', 'Telinga', 'Mata']],
+    ['ar-s28', 2, 3, 'wm', 'أُذُنٌ', 'udzun', 'Telinga', ['Hidung', 'Kaki', 'Kepala']],
+    ['ar-s29', 1, 3, 'wm', 'رِجْلٌ', 'rijl', 'Kaki', ['Tangan', 'Mata', 'Mulut']],
+    ['ar-s30', 3, 4, 'wm', 'فَمٌ', 'fam', 'Mulut', ['Hidung', 'Kaki', 'Kepala']],
+    ['ar-s31', 2, 3, 'wm', 'يَوْمُ السَّبْتِ', 'yaumus sabt', 'Hari Sabtu', ['Hari Kamis', 'Hari Selasa']],
+    ['ar-s32', 3, 4, 'wm', 'يَوْمُ الْخَمِيسِ', 'yaumul khamiis', 'Hari Kamis', ['Hari Sabtu', 'Hari Senin']],
+    ['ar-s33', 4, 4, 'wm', 'يَوْمُ الثُّلَاثَاءِ', 'yaumuts tsulaatsaa\'', 'Hari Selasa', ['Hari Kamis', 'Hari Jumat']],
+    ['ar-s34', 1, 3, 'wm', 'هٰذِهِ قِطَّةٌ', 'haadzihi qiththah', 'Ini kucing', ['Ini ikan', 'Ini kapal'], 'animals/cat'],
+    ['ar-s35', 2, 3, 'wm', 'هٰذِهِ سَمَكَةٌ', 'haadzihi samakah', 'Ini ikan', ['Ini kucing', 'Ini pohon'], 'animals/clownfish'],
+    ['ar-s36', 3, 4, 'wm', 'الشَّمْسُ كَبِيرَةٌ', 'asy-syamsu kabiirah', 'Matahari besar', ['Bulan kecil', 'Matahari kecil'], 'nature/sun'],
+    ['ar-s37', 4, 4, 'wm', 'أَنَا تِلْمِيذٌ', 'ana tilmiidz', 'Saya murid', ['Saya guru', 'Saya kapten'], 'school/backpack-green'],
+    ['ar-s38', 4, 4, 'wm', 'السَّمَاءُ زَرْقَاءُ', 'as-samaa\'u zarqaa\'', 'Langit biru', ['Langit hitam', 'Awan merah'], 'nature/cloud'],
+    ['ar-s39', 1, 3, 'pw', 'مِرْسَاةٌ', 'mirsaah', 'Jangkar', [['بَوْصَلَةٌ', 'bawshalah'], ['سَفِينَةٌ', 'safiinah']], 'game/anchor'],
+    ['ar-s40', 2, 3, 'pw', 'بَوْصَلَةٌ', 'bawshalah', 'Kompas', [['مِرْسَاةٌ', 'mirsaah'], ['سَاعَةٌ', 'saa\'ah']], 'game/compass']
+  ].forEach(function (a) { arS.push(a) })
+
   arS.forEach(function (a) {
     var o = { id: a[0], domain: 'arab', rtl: true, grade: a[2], level: a[1], ar: a[4], tr: a[5] }
     if (a[3] === 'wm') {
