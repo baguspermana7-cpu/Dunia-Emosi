@@ -508,6 +508,8 @@
           '<div class="tkh-seg">' + [['rendah', 'Rendah'], ['sedang', 'Sedang'], ['tinggi', 'Tinggi']].map(function (o) { return '<button type="button" data-q="' + o[0] + '" class="' + (q === o[0] ? 'on' : '') + '" aria-pressed="' + (q === o[0]) + '">' + o[1] + '</button>' }).join('') + '</div>' +
           tog('effects', 'Efek visual') + tog('reducedMotion', 'Gerakan dikurangi') + '</section>' +
         '<section class="tkh-card pa" data-sec="permainan"><h2 class="tkh-tab fk">' + ico('tk-prop/ship-wheel') + 'Permainan</h2>' +
+          // Tingkat Soal (owner 2026-09-29): Mudah = Kelas 1–2 (default), Sulit = Kelas 3–4
+          '<div class="lbl">Tingkat Soal</div><div class="tkh-seg tkh-lvl">' + [['mudah', 'Mudah (Kelas 1–2)'], ['sulit', 'Sulit (Kelas 3–4)']].map(function (o) { var on = (s.level === 'sulit' ? 'sulit' : 'mudah') === o[0]; return '<button type="button" data-lvl="' + o[0] + '" class="' + (on ? 'on' : '') + '" aria-pressed="' + on + '">' + o[1] + '</button>' }).join('') + '</div>' +
           tog('easy', 'Mode Mudah', 'tk-prop/lifebuoy-5') + '<p class="tkh-p sub">Soal lebih sedikit, pilihan lebih besar, dan petunjuk lebih cepat.</p>' +
           tog('hints', 'Petunjuk', 'tk-prop/lantern') + tog('confirmExit', 'Konfirmasi sebelum keluar', 'tk-prop/signpost-harbor') + tog('timer', 'Tampilkan waktu', 'tk-prop/pocket-watch-2') + '</section>' +
         '<section class="tkh-card pa" data-sec="bahasa"><h2 class="tkh-tab fk">' + ico('tk-prop/globe') + 'Bahasa</h2>' +
@@ -529,6 +531,7 @@
     on(R, '[data-tog]', 'click', function (b) { sfx(h, 'click'); var k = b.getAttribute('data-tog'), p = {}; p[k] = !get()[k]
       if (k === 'reducedMotion' && p[k]) p.effects = false
       set(p) })
+    on(R, '[data-lvl]', 'click', function (b) { sfx(h, 'click'); set({ level: b.getAttribute('data-lvl') === 'sulit' ? 'sulit' : 'mudah' }) })
     on(R, '[data-q]', 'click', function (b) { sfx(h, 'click'); var q = b.getAttribute('data-q')
       set(q === 'rendah' ? { reducedMotion: true, effects: false } : q === 'sedang' ? { reducedMotion: false, effects: false } : { reducedMotion: false, effects: true }) })
     on(R, '[data-mute]', 'click', function () {
@@ -699,6 +702,7 @@
     '.tkh-mute{position:relative;width:30px;height:30px;flex:none}.tkh-mute:before{content:"";position:absolute;left:2px;top:9px;width:9px;height:12px;background:#3b2410;border-radius:2px;box-shadow:6px 0 0 -1px #3b2410}.tkh-mute:after{content:"";position:absolute;left:6px;top:13px;width:22px;height:3px;background:#d33;transform:rotate(-40deg);border-radius:2px}',
     '.tkh-tog{position:relative;width:62px;height:44px;border:0;background:transparent;cursor:pointer;flex:none;padding:0}.tkh-tog:before{content:"";position:absolute;left:4px;right:4px;top:9px;height:26px;border-radius:14px;background:#8d8a86;box-shadow:inset 0 2px 4px rgba(0,0,0,.35);transition:background .2s var(--ease)}',
     '.tkh-tog:after{content:"";position:absolute;left:7px;top:12px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.35);transition:transform .22s var(--ease)}.tkh-tog.on:before{background:linear-gradient(#3b86ff,#1c4fbf)}.tkh-tog.on:after{transform:translateX(28px)}',
+    '.tkh-seg.tkh-lvl{grid-template-columns:repeat(2,1fr)}.tkh-seg.tkh-lvl button{font-size:15px;line-height:1.15;padding:4px 6px}',
     '.lbl{font-weight:800;font-size:14px;margin:2px 0 6px}.tkh-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}.tkh-seg button{min-height:46px;border:0;border-radius:10px;background:linear-gradient(#f7f1e4,#dfd3b8);color:#1c3a7a;font:16px "Fredoka One",Nunito,sans-serif;box-shadow:inset 0 0 0 2px rgba(60,90,160,.25);cursor:pointer}',
     '.tkh-seg button.on{background:linear-gradient(#3b86ff,#1c4fbf);color:#fff;box-shadow:inset 0 0 0 2px #cfe4ff}',
     '.tkh-lang{width:100%;min-height:52px;display:flex;align-items:center;gap:10px;border:0;border-radius:12px;padding:6px 14px;margin-bottom:10px;background:linear-gradient(#3b86ff,#1c4fbf);color:#fff;font:17px "Fredoka One",Nunito,sans-serif;box-shadow:inset 0 0 0 2px #cfe4ff}.tkh-lang span{flex:1;text-align:left}',

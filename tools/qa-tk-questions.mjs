@@ -7,6 +7,10 @@
 //      (assets/db/lib/<key>.webp), ship-history facts carry verified:false + source,
 //      Islamic filter removes every islam item (pick/build/sortSet/campur), Arabic items are rtl
 //      and contain Arabic letters, sort sets are complete and solvable.
+//   B3) grade fit for Kelas 1–2 (items tagged grade 2 or untagged).
+//   B4) Tingkat Sulit (grade 3–4, fase B): grade tag on every item, >= 25 per topic (Arab >= 20),
+//      prompt <= 18 words, options <= 18 chars, 3–4 options, numbers <= 1000, no history / places / years,
+//      no duplicates, answer among the options; Mudah never serves grade 3–4.
 //   C) puppeteer (tools/tk-harness-quiz.html, 390x844 + 1024x768): a 5-question set answered right
 //      and wrong through real taps, hint ladder reaches guided completion, sort drag works,
 //      RTL renders (computed direction rtl), arrange letters, targets >= 56 px, no page errors.
@@ -203,9 +207,11 @@ const AR_RE = /[؀-ۿ]/
 }
 
 /* ── B3. grade fit (Kelas 1–2, fase A) — owner 2026-09-28: "Kapal Endurance berlayar ke benua es
-   yang bernama…" is not a question a 6–8 year old can answer. These checks hold the line. ───── */
+   yang bernama…" is not a question a 6–8 year old can answer. These checks hold the line.
+   Scope: items tagged grade <= 2 or untagged (the Sulit tier, grade 3–4, is held by B4). ───── */
+const isSulit = o => +o.grade >= 3
 {
-  const items = TQ.items
+  const items = TQ.items.filter(o => !isSulit(o))
   const MAX_Q_WORDS = 12, MAX_Q_CHARS = 72, MAX_OPT_WORDS = 3, MAX_OPT_CHARS = 18, WARN_OPT_CHARS = 14, LONG_WORD = 12
   const words = s => String(s).trim().split(/\s+/).filter(Boolean).length
   const lc = s => String(s).toLowerCase()
@@ -221,9 +227,11 @@ const AR_RE = /[؀-ۿ]/
     istilah: ['mamalia', 'amfibi', 'gravitasi', 'insang', 'periskop', 'haluan', 'buritan', 'rasi', 'polaris', 'kepulauan', 'tekanan', 'balsa', 'nakhoda', 'lusa'],
     fikih: ['rakaat', 'tayamum', 'jibril', 'mikail', 'israfil', 'raqib', 'atid', 'ridwan', 'taurat', 'zabur', 'injil', 'juz', 'ayat', 'qada', 'qadar', 'zakat', 'siku', 'mata kaki', 'malaikat']
   }
+  globalThis.__tkBanned = BANNED
   // ship proper names: allowed only when the question shows that ship's own picture
   const SHIPS = [['titanic', 'titanic'], ['britannic', 'britannic'], ['vasa', 'vasa'], ['cutty sark', 'cuttysark'], ['victory', 'victory'], ['mayflower', 'mayflower'],
     ['endurance', 'endurance'], ['kon-tiki', 'kontiki'], ['calypso', 'calypso'], ['queen mary', 'queenmary'], ['arizona', 'arizona'], ['missouri', 'missouri'], ['nautilus', 'nautilus'], ['pinisi', 'pinisi']]
+  globalThis.__tkShips = SHIPS
   const bad = { len: [], opt: [], n: [], ban: [], ship: [], neg: [], num: [], arpic: [], rukun: [], wide: [], now: [] }, optWarn = []
   const push = (k, o, m) => { if (bad[k].length < 8) bad[k].push(o.id + ' ' + m) }
   let short10 = 0, opt2 = 0, optN = 0
@@ -288,6 +296,75 @@ const AR_RE = /[؀-ۿ]/
   warn(half12 === 0, `math: clocks use whole hours only (${half12}/${n} items show or offer "setengah")`)
   warn(multdiv === 0, `math: no multiplication / division kinds (groups/share) in fase A (${multdiv}/${n})`)
   warn(longp === 0, `math: prompts <= ${MAX_Q_WORDS} words (${longp}/${n} longer)`)
+}
+
+/* ── B4. Tingkat Sulit (Kelas 3–4, Kurikulum Merdeka fase B) — owner 2026-09-29: "Easy is for grade 1–2.
+   If set to hard, questions go up to the grade 4 SD curriculum." Every item has a grade tag; grade 3–4
+   items follow these rules. History, place names and years stay banned (map words like "utara" are fine);
+   fiqh terms (rakaat, malaikat) and ship-part words (haluan, buritan) are allowed here. ───────────── */
+{
+  const all = TQ.items, items = all.filter(isSulit)
+  const MAX_Q_WORDS = 18, MAX_OPT_CHARS = 18, LONG_WORD = 12, MAX_N = 1000
+  const MIN = { umum: 25, islam: 25, logika: 25, arab: 20 }
+  const words = s => String(s).trim().split(/\s+/).filter(Boolean).length
+  const has = (text, term) => new RegExp('(^|[^a-z])' + term.replace(/[-]/g, '\\-') + '($|[^a-z])', 'i').test(text)
+  const BANNED = { geografi: globalThis.__tkBanned.geografi, sejarah: globalThis.__tkBanned.sejarah }
+  const SHIPS = globalThis.__tkShips
+  const bad = { tag: [], len: [], opt: [], n: [], ans: [], ban: [], ship: [], neg: [], num: [], wide: [], now: [], dup: [], lvl: [] }
+  const push = (k, o, m) => { if (bad[k].length < 8) bad[k].push(o.id + ' ' + m) }
+  // every item carries a grade tag (2 = Kelas 1–2; 3 / 4 = Sulit)
+  for (const o of all) if (![2, 3, 4].includes(o.grade)) push('tag', o, 'grade ' + o.grade)
+  const seen = new Map(), perGrade = {}
+  for (const o of items) {
+    perGrade[o.domain + ':' + o.grade] = (perGrade[o.domain + ':' + o.grade] || 0) + 1
+    const p = o.prompt, ch = o.letters ? [] : o.choices, text = [p, o.explain, o.hint1, o.hint2, ...ch].join(' | ')
+    if (words(p) > MAX_Q_WORDS) push('len', o, `${words(p)} words: "${p}"`)
+    for (const c of ch) if (c.length > MAX_OPT_CHARS) push('opt', o, `option "${c}" (${c.length} chars)`)
+    if (ch.length > 3 && ch.some(c => c.length > LONG_WORD)) push('wide', o, `4 options with a word > ${LONG_WORD} chars: ${ch.join(' / ')}`)
+    if (!Array.isArray(o.choices) || o.choices.length < 3 || o.choices.length > 4) push('n', o, (o.choices || []).length + ' options')
+    if (o.choices.filter(c => c === o.answer).length !== 1 || new Set(o.choices).size !== o.choices.length) push('ans', o, `answer "${o.answer}" not exactly once among distinct ${o.choices.join(' / ')}`)
+    for (const [grp, terms] of Object.entries(BANNED)) for (const t of terms) if (has(text, t)) push('ban', o, `${grp}: "${t}"`)
+    if (/\b\d{4}\b/.test(text.replace(/\d{1,3}(\.\d{3})+/g, ''))) push('ban', o, 'a 4-digit number (year)')
+    for (const [name, id] of SHIPS) if (has(text, name) && !(o.visual || []).some(k => k.includes('ship-' + id))) push('ship', o, `ship name "${name}" without that ship's picture`)
+    if (/\bbukan\b/i.test([p, ...ch].join(' ')) || /\b(mana|apa|siapa|yang)\b[^?]*\b(tidak|bukan)\b[^?]*\?/i.test(p)) push('neg', o, `negative question "${p}"`)
+    if (/\bsekarang\b[^?…]*\b(di|menjadi)\b/i.test(p) || /\b(zaman dulu|dulu|dahulu)\b/i.test(p)) push('now', o, `history framing "${p}"`)
+    // numbers a child meets (prompt + options); "1.000" is one thousand
+    const nums = ([p, ...ch].join(' ').replace(/(\d{1,3})\.(\d{3})\b/g, '$1$2').match(/\d+/g) || []).map(Number)
+    if (nums.some(x => x > MAX_N)) push('num', o, 'number > ' + MAX_N + ': ' + nums.filter(x => x > MAX_N).join(','))
+    // inside the tier: grade 3 -> L1–2, grade 4 -> L3–4 (the picker's level still means something)
+    if (!(o.grade === 3 ? o.level <= 2 : o.level >= 3)) push('lvl', o, `grade ${o.grade} at level ${o.level}`)
+    // duplicates: same domain + prompt + picture + Arabic word + answer (against the whole bank)
+    const key = [o.domain, p.toLowerCase(), (o.visual || []).join(','), o.ar || '', o.answer].join('|')
+    if (seen.has(key)) push('dup', o, 'same as ' + seen.get(key)); else seen.set(key, o.id)
+  }
+  for (const o of all.filter(o => !isSulit(o))) { const key = [o.domain, o.prompt.toLowerCase(), (o.visual || []).join(','), o.ar || '', o.answer].join('|'); if (seen.has(key)) push('dup', o, 'fase A item repeats Sulit ' + seen.get(key)) }
+  const counts = {}; for (const o of items) counts[o.domain] = (counts[o.domain] || 0) + 1
+  console.log('Sulit counts:', JSON.stringify(counts), '| per grade:', JSON.stringify(perGrade))
+  check(bad.tag.length === 0, `every item has a grade tag 2 / 3 / 4: ${bad.tag.join(' | ')}`)
+  for (const [d, n] of Object.entries(MIN)) check((counts[d] || 0) >= n, `Sulit ${d} >= ${n} items (${counts[d] || 0})`)
+  for (const d of Object.keys(MIN)) for (const g of [3, 4]) check((perGrade[d + ':' + g] || 0) >= 5, `Sulit ${d} has >= 5 grade-${g} items (${perGrade[d + ':' + g] || 0})`)
+  check(bad.len.length === 0, `Sulit question <= ${MAX_Q_WORDS} words: ${bad.len.join(' | ')}`)
+  check(bad.opt.length === 0, `Sulit options <= ${MAX_OPT_CHARS} chars: ${bad.opt.join(' | ')}`)
+  check(bad.wide.length === 0, `Sulit long answer words get 3 options, not 4: ${bad.wide.join(' | ')}`)
+  check(bad.n.length === 0, `Sulit 3–4 options: ${bad.n.join(' | ')}`)
+  check(bad.ans.length === 0, `Sulit answer among distinct options exactly once: ${bad.ans.join(' | ')}`)
+  check(bad.ban.length === 0, `Sulit: no history, place names or years: ${bad.ban.join(' | ')}`)
+  check(bad.ship.length === 0, `Sulit ship proper names only with the ship's own picture: ${bad.ship.join(' | ')}`)
+  check(bad.neg.length === 0, `Sulit: no negative ("BUKAN") questions: ${bad.neg.join(' | ')}`)
+  check(bad.now.length === 0, `Sulit: no "back then" framing: ${bad.now.join(' | ')}`)
+  check(bad.num.length === 0, `Sulit numbers <= ${MAX_N}: ${bad.num.join(' | ')}`)
+  check(bad.lvl.length === 0, `Sulit levels: grade 3 -> L1–2, grade 4 -> L3–4: ${bad.lvl.join(' | ')}`)
+  check(bad.dup.length === 0, `no duplicate questions: ${bad.dup.join(' | ')}`)
+  const arPics = items.filter(o => o.domain === 'arab' && ((o.visual || []).length || o.pics || o.swatch)).length
+  console.log(`Sulit Arabic items with a picture: ${arPics}/${counts.arab || 0} (pictures where the sprite library has them)`)
+  // tier separation in the picker (games/tk-quiz.js: opts.hard / spec.hard). Mudah must never serve grade 3–4.
+  let leak = 0, hardHits = 0, n = 0
+  for (let seed = 0; seed < 300; seed++) for (const d of ['umum', 'islam', 'logika', 'arab']) {
+    for (const q of TK.build({ domain: d, count: 3, seed, islam: true })) { n++; if (isSulit(q)) leak++ }
+    for (const q of TK.build({ domain: d, count: 3, seed, islam: true, hard: true })) if (isSulit(q)) hardHits++
+  }
+  check(leak === 0, `Mudah never serves a grade 3–4 item (${leak}/${n} leaked)`)
+  check(hardHits > n * 0.4, `Sulit mostly serves grade 3–4 items (${hardHits}/${n})`)
 }
 
 /* ── C. puppeteer ──────────────────────────────────────────────────────── */

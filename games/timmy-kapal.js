@@ -120,7 +120,9 @@
     o = o || {}
     var st = o.settings || {}
     return { xp: o.xp || 0, stars: o.stars || {}, fragments: o.fragments || [], cards: o.cards || [], badges: o.badges || [], mastery: o.mastery || {},
-      settings: { grade: st.grade || 'adaptif', islam: st.islam !== false, sound: st.sound !== false, music: st.music !== false, narration: st.narration !== false, narrate: st.narrate === true, reducedMotion: !!st.reducedMotion, timer: !!st.timer, musicVol: st.musicVol, sfxVol: st.sfxVol, voiceVol: st.voiceVol, hints: st.hints !== false, effects: st.effects !== false, confirmExit: st.confirmExit !== false, easy: st.easy !== false },
+      settings: { grade: st.grade || 'adaptif', islam: st.islam !== false, sound: st.sound !== false, music: st.music !== false, narration: st.narration !== false, narrate: st.narrate === true, reducedMotion: !!st.reducedMotion, timer: !!st.timer, musicVol: st.musicVol, sfxVol: st.sfxVol, voiceVol: st.voiceVol, hints: st.hints !== false, effects: st.effects !== false, confirmExit: st.confirmExit !== false, easy: st.easy !== false,
+        // Tingkat Soal (owner 2026-09-29): 'mudah' = Kelas 1–2 (default), 'sulit' = Kelas 3–4
+        level: st.level === 'sulit' ? 'sulit' : 'mudah' },
       seenIntro: !!o.seenIntro, last: o.last || null, fav: o.fav || [], guide: o.guide || {}, seenSortTut: !!o.seenSortTut,
       progress: o.progress || {}, cine: o.cine || {}, legacy: o.legacy || {}, migrated: o.migrated || {} }
   }
@@ -870,7 +872,7 @@
   }
   // one Knowledge Challenge card over the play host (lanes collisions, cinema questions)
   function challenge (host, o) {
-    var p = TKQuiz.challenge(host, Object.assign({ world: CUR.w && CUR.w.id, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery, lib: Art.lib, reducedMotion: reduced(),
+    var p = TKQuiz.challenge(host, Object.assign({ hard: S.settings.level === 'sulit', world: CUR.w && CUR.w.id, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery, lib: Art.lib, reducedMotion: reduced(),
       timmy: Art.src('char/timmy'), penguin: Art.src(charKey('char/penguin', 'animals/penguin')), sound: soundOn() ? undefined : false, readAloud: !!S.settings.narrate, say: say,
       title: 'Tantangan Pengetahuan', nextLabel: 'Lanjut' }, o))
     p.then(function (r) { if (r && r.masteryDelta && r.domain) { S.mastery[r.domain] = Math.max(0, Math.min(100, (S.mastery[r.domain] || 0) + r.masteryDelta)); save() } }, function () {})
@@ -951,7 +953,8 @@
       else {
         // the questions are picked with the step's goal (on-topic first), but the plate subtitle describes the
         // QUIZ itself: a mission line ("Antar barang…", "Bantu pasien…") never sits above an unrelated question
-        var qs = TKQuiz.build({ domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0, topic: lv.goal, easy: common.easy, seed: (Date.now() ^ (CUR.k * 7919)) >>> 0 })
+        // mix: about half Matematika, the step's own topic fills the rest (owner 2026-09-29); hard = Tingkat Soal Sulit
+        var qs = TKQuiz.build({ mix: true, hard: S.settings.level === 'sulit', domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0, topic: lv.goal, easy: common.easy, seed: (Date.now() ^ (CUR.k * 7919)) >>> 0 })
         P0.handle = TKQuiz.mount(host, qs, Object.assign({}, opts, { topic: quizSub(lv.domain) }))
       }
     } catch (e) {

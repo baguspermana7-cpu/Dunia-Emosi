@@ -66,7 +66,9 @@ for (const [w, h] of (process.env.QA_ROT_ONLY || process.env.QA_PROP_ONLY ? [] :
           }
         })
         // owner 2026-09-29 "tulisan arabnya terlalu kecil": the asked Arabic word is the card's hero, answers >= 44 px
-        bs.forEach(b => { const a = b.querySelector('.tkq-ar'); if (a && parseFloat(getComputedStyle(a).fontSize) < 43.5) bad.push(`Arabic answer ${parseFloat(getComputedStyle(a).fontSize)}px < 44`) })
+        // (a phone on its side, ~390 px tall, may step a long two-word Arabic answer down to 34 px so all four fit)
+        const arMin = innerHeight < 500 ? 33.5 : 43.5
+        bs.forEach(b => { const a = b.querySelector('.tkq-ar'); if (a && parseFloat(getComputedStyle(a).fontSize) < arMin) bad.push(`Arabic answer ${parseFloat(getComputedStyle(a).fontSize)}px < ${Math.ceil(arMin)}`) })
         const tab = vw >= 1000 && innerHeight >= 700
         const pa = document.querySelector('.tkq-scene .tkq-arw .tkq-ar'), pt = document.querySelector('.tkq-scene .tkq-arw .tkq-tr')
         if (pa && getComputedStyle(document.querySelector('.tkq-scene')).display !== 'none') {

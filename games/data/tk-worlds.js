@@ -110,7 +110,7 @@
         goal: 'Bawa pesan ke ruang radio, lalu kemudikan kapal!',
         steps: [
           { id: 'c4a', from: 't4', type: 'grid', title: 'Rute ke Ruang Radio', goal: 'Bawa pesan ke ruang radio!', scene: 'night-ocean', board: board(['S.#..', '..#.G', '.....'], 'E', null, { blockArt: ICE }) },
-          { id: 'c4b', from: 't5', type: 'quiz', title: 'Laut Malam', domain: 'arab', count: 3, scene: 'night-ocean', goal: 'Bulan, bintang, dan kompas — dalam Bahasa Arab!' },
+          { id: 'c4b', from: 't5', type: 'quiz', title: 'Laut Malam', domain: 'campur', count: 3, scene: 'night-ocean', goal: 'Hitung bintang dan baca kompas di laut malam!' },
           { id: 'c4c', type: 'lanes', title: 'Tantangan Navigasi', difficulty: 1, sections: ['open', 'sparse', 'more'], tutorial: true, seed: 41,
             goal: 'Pindah jalur ke kiri atau kanan. Kumpulkan bintang!' }
         ] },
