@@ -16,6 +16,10 @@
 // Everywhere: no page errors, no failed requests, nothing off-screen, no horizontal scroll, tap targets
 // >= 40 px (main actions >= 56 px), no failure words.
 // QA_SIZES="390x844,…"  QA_OTHERS=all (other worlds at every size; default: the first size only)
+// Level-map checks (every world without chapters, every size): level-mode board, medallions + taps >= 56 px, no overlap,
+// titles >= 14 px + stars >= 18 px, the current level has the ring + "Main!" flag + ship beside it, locked = grey + lock and
+// a locked tap shakes with the hint toast, chest fragment node, "Peta <kapal>" plate + guide bubble, board fills >= 85%, and
+// (Vasa) a rotation re-lays out without replaying the ship.
 // QA_WORLDS="kamar,titanic,vasa" (default: all)  QA_SHOTS=<dir> (default: scratchpad tk-chapters/)
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
@@ -231,6 +235,67 @@ async function checkChapterMap (p, tag, expectNext) {
   return m
 }
 
+// the per-world LEVEL MAP (every world without chapters): the chapter board in level mode.
+// Save = levels 1-3 starred (Kamar: 1-2), so the next one is current and the rest are locked.
+async function checkLevelMap (p, tag, wid, rotate) {
+  await p.evaluate(id => {
+    const all = {}; TKWorlds.WORLDS.forEach(x => { all[x.id] = {}; x.levels.forEach(l => { all[x.id][l.id] = 3 }) })
+    const lv = TKWorlds.get(id).levels; all[id] = {}; lv.slice(0, lv.length > 4 ? 3 : 2).forEach(l => { all[id][l.id] = 2 })
+    const g = __tk.save().guide
+    __tk.load({ stars: all, fragments: [], guide: Object.assign({}, g, { map: 1 }) }); __tk.map(id)
+  }, wid)
+  await sleep(2100)
+  const probe = () => p.evaluate(() => {
+    const hit = (a, b) => a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1
+    const ch = [...document.querySelectorAll('#route .chap')], vw = innerWidth
+    const bx = ch.map(c => ({ md: c.querySelector('.md').getBoundingClientRect(), ct: c.querySelector('.ct').getBoundingClientRect(), s: c.querySelector('.s').getBoundingClientRect() }))
+    const ov = []
+    for (let i = 0; i < bx.length; i++) for (let j = i + 1; j < bx.length; j++) for (const x of ['md', 'ct', 's']) for (const y of ['md', 'ct', 's']) if (hit(bx[i][x], bx[j][y])) ov.push(`${i + 1}.${x}/${j + 1}.${y}`)
+    const cm = document.querySelector('#route .cmap'), cr = cm && cm.getBoundingClientRect(), tb = document.querySelector('#scr-map .topbar').getBoundingClientRect()
+    const nx = document.querySelector('#route .chap.next'), ship = document.querySelector('#route .cm-ship')
+    return {
+      n: ch.length, lmode: !!(cm && cm.classList.contains('lmode')), still: !!(cm && cm.classList.contains('still')), ov,
+      small: bx.map(b => Math.round(Math.min(b.md.width, b.md.height))).filter(w => w < 56),
+      tap: ch.map(c => c.getBoundingClientRect()).filter(r => r.width < 56 || r.height < 56).length,
+      font: Math.min(...ch.map(c => parseFloat(getComputedStyle(c.querySelector('.ct b')).fontSize))),
+      star: Math.min(...ch.map(c => c.querySelector('.s .tk-ico').getBoundingClientRect().width)),
+      off: bx.filter(b => b.md.left < -1 || b.md.right > vw + 1 || b.ct.left < -1 || b.ct.right > vw + 1).length,
+      next: nx ? +nx.getAttribute('data-k') : -1, ring: !!(nx && nx.querySelector('.ring')), flag: (nx && nx.querySelector('.flag') || {}).textContent,
+      ship: !!ship, shipOnNext: !!(ship && nx && hit(ship.getBoundingClientRect(), nx.querySelector('.md').getBoundingClientRect())),
+      locked: ch.filter(c => c.classList.contains('locked')).map(c => /grayscale/.test(getComputedStyle(c.querySelector('.md')).filter) && !!c.querySelector('.lk')),
+      chest: !!document.querySelector('#route .chap.chest'),
+      plate: (document.querySelector('.cm-plate b') || {}).textContent, guide: !!document.querySelector('.cm-guide img'),
+      fillW: cr ? cr.width / vw : 0, fillH: cr ? (Math.min(cr.bottom, innerHeight) - Math.max(cr.top, tb.bottom)) / (innerHeight - tb.bottom) : 0,
+      pos: bx.map(b => Math.round(b.md.left) + ',' + Math.round(b.md.top)).join(' ')
+    }
+  })
+  const m = await probe()
+  const name = await p.evaluate(id => TKWorlds.get(id).name, wid)
+  check(m.lmode && m.n === 6 || (wid === 'kamar' && m.n === 4), `${tag}: level-mode board with every level (${m.n})`)
+  check(!m.small.length && !m.tap, `${tag}: medallions + tap targets >= 56 px (${m.small.join(',')})`)
+  check(!m.ov.length && !m.off, `${tag}: medallions / labels / stars do not overlap or leave the screen (${m.ov.slice(0, 5).join(' ')})`)
+  check(m.font >= 14 && m.star >= 18, `${tag}: titles >= 14 px, stars >= 18 px (${m.font} / ${m.star})`)
+  check(m.next === (wid === 'kamar' ? 2 : 3) && m.ring && m.flag === 'Main!', `${tag}: the first unplayed level is current: pulse ring + "Main!" flag (${m.next} ${m.ring} ${m.flag})`)
+  check(wid === 'kamar' || (m.ship && !m.shipOnNext), `${tag}: the world's ship waits beside the current level`)
+  check(m.locked.length >= 1 && m.locked.every(Boolean), `${tag}: locked levels are grey with a lock (${m.locked.join(',')})`)
+  check(wid === 'kamar' || m.chest, `${tag}: the fragment level is a treasure chest`)
+  check(m.plate === 'Peta ' + name && m.guide, `${tag}: "Peta ${name}" plate + guide bubble (${m.plate} / ${m.guide})`)
+  check(m.fillW >= 0.85 && m.fillH >= 0.85, `${tag}: the board fills the frame (w ${m.fillW.toFixed(2)} h ${m.fillH.toFixed(2)})`)
+  // a locked tap: gentle shake + the hint toast, no level starts
+  await p.evaluate(() => { window.__shook = 0; const o = Element.prototype.animate; if (!o.__qa) { Element.prototype.animate = function (k, t) { if (this.classList && this.classList.contains('chap') && JSON.stringify(k).includes('translate')) window.__shook++; return o.call(this, k, t) }; Element.prototype.animate.__qa = true } })
+  await tapSel(p, '#route .chap.locked .md'); await sleep(250)
+  const lk = await p.evaluate(() => ({ shook: window.__shook, toast: document.getElementById('toast').textContent, s: __tk.state().screen }))
+  check(lk.shook >= 1 && /Selesaikan level sebelumnya dulu/.test(lk.toast) && lk.s === 'scr-map', `${tag}: a locked tap shakes + says "Selesaikan level sebelumnya dulu" (${JSON.stringify(lk)})`)
+  if (rotate) {   // rotation: the board re-lays out (debounced) without sailing the ship again
+    const vp = p.viewport()
+    await p.setViewport(Object.assign({}, vp, { width: vp.height, height: vp.width })); await sleep(700)
+    const r = await probe()
+    check(r.still && r.pos !== m.pos && !r.ov.length && !r.off && !r.small.length && r.next === m.next, `${tag}: rotation re-lays out the map without replaying the ship (still ${r.still}, overlap ${r.ov.length})`)
+    await p.setViewport(vp); await sleep(700)
+  }
+  return m
+}
+
 const SEQ = { c1: ['story', 'story'], c2: ['story', 'quiz', 'story'], c3: ['quiz', 'grid'], c4: ['grid', 'quiz', 'lanes'], c5: ['story', 'lanes'], c6: ['lanes', 'cinema'],
   c7: ['grid', 'grid', 'grid', 'story'], c8: ['sort', 'cinema'], c9: ['cinema'], c10: ['cinema', 'quiz', 'reflection', 'fragment'] }
 
@@ -425,10 +490,19 @@ for (const [w, h] of SIZES) {
 
   // ── the other ship worlds, level by level (unchanged) ──
   const others = (process.env.QA_WORLDS ? process.env.QA_WORLDS.split(',') : await p.evaluate(() => TKWorlds.WORLDS.map(w => w.id))).filter(x => x !== 'kamar' && x !== 'titanic')
+  // ── the level map of every world without chapters (every size) ──
+  {
+    const saved = await p.evaluate(() => JSON.parse(JSON.stringify(__tk.save())))
+    for (const wid of ['kamar'].concat(others)) {
+      await checkLevelMap(p, `${tag0} ${wid} level map`, wid, wid === 'vasa')
+      if (SHOTS && ['vasa', 'cuttysark', 'nautilus'].includes(wid)) await p.screenshot({ path: `${SHOTS}/${tag0}-levelmap-${wid}.png` })
+    }
+    await p.evaluate(s => { __tk.load(s); __tk.unlockAll() }, saved)
+  }
   if (first || process.env.QA_OTHERS === 'all') for (const wid of others) {
     const n = await p.evaluate(id => TKWorlds.get(id).levels.length, wid)
     await p.evaluate(id => __tk.map(id), wid); await sleep(700)
-    check(await p.evaluate(() => document.querySelectorAll('#route .node').length > 0 && !document.querySelector('#route .chap')), `${tag0} ${wid}: keeps the numbered level map`)
+    check(await p.evaluate(() => !!document.querySelector('#route .cmap.lmode .chap') && !document.querySelector('#route .node')), `${tag0} ${wid}: level map in level mode`)
     for (let k = 0; k < n; k++) {
       const tag = `${tag0} ${wid}#${k + 1}`
       await p.evaluate((id, k) => { window.__qaPlan = null; __tk.start(id, k) }, wid, k)

@@ -60,7 +60,10 @@
     'open-sea': 'jungle-falls', 'research-sea': 'island-cliff', 'shipyard': 'island-cliff',
     'deep-sea': 'underwater', 'antarctic': 'aurora-ice',
     'night-ocean': 'ice-night', 'night-deck': 'titanic-night-deck', 'lifeboat': 'ice-night', 'collision-far': 'ice-night',
-    'time-harbor': 'sky-plaza'
+    'time-harbor': 'sky-plaza',
+    // Timmy's room has no owner backdrop: the bedroom sprite stands on a moonlit sea (his dream of the ships), the
+    // portal and the time corridor on the aurora — never the plain navy gradient (owner tablet 2026-09-28)
+    'bedroom-night': 'ice-night', 'bedroom-portal': 'aurora-ice', 'time-tunnel': 'aurora-ice'
   }
   var PLACEHOLDER = {
     'char/timmy': 'tk-key/timmy', 'char/timmy-sleeping': 'tk-key/timmy-sleeping', 'char/timmy-flying': 'tk-key/timmy-flying',

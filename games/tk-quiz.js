@@ -450,7 +450,8 @@
     arab: { label: 'Bahasa Arab', icon: 'school/books' },
     umum: { label: 'Pengetahuan Umum', icon: 'school/globe' }, logika: { label: 'Logika', icon: 'things/light-bulb' }
   }
-  var PENGUIN = 'Kapten Pinguin'   // not "Pingu" (a trademarked character)
+  // owner 2026-09-29: the captain is the old man; the penguin is only his assistant (never "Pingu", a trademark)
+  var PENGUIN = 'Kapten', ASSIST = 'Asisten Pinguin'
   var PRAISE = ['Hebat! Kamu makin pintar!', 'Luar biasa!', 'Tepat sekali!', 'Pintar! Ayo lanjut!', 'Keren, kamu berhasil!']
   var ENCOURAGE = ['Tidak apa-apa, coba lagi ya!', 'Hampir! Lihat petunjuknya.', 'Ayo, kita cari bersama!', 'Pelan-pelan saja, kamu bisa!']
 
@@ -705,11 +706,44 @@
     '.tkq-fill .tkq-opt img{flex:1 1 0;width:100%;min-height:20px;max-height:200px;height:auto}',
     '.tkq-fill .tkq-opt .lb{flex:none;font-size:clamp(17px,2.2vw,30px);line-height:1.1}',
     '.tkq-fill .tkq-opt>span:first-child:not(.tkq-ar){font-size:clamp(20px,3vw,40px)}.tkq-fill .tkq-opt.num>span:first-child{font-size:clamp(34px,5vw,64px)}',
-    '.tkq-fill .tkq-opt .tkq-ar{font-size:clamp(30px,4vw,52px)}',
+    '.tkq-fill .tkq-opt .tkq-ar{font-size:clamp(44px,5vw,52px)}',
     '.tkq-fill .tkq-opt .ck{width:clamp(22px,3vw,36px);height:clamp(22px,3vw,36px)}',
     '.tkq-fill .tkq-prompt{font-size:clamp(20px,2.8vw,36px)}',
     '.tkq-fill.tkq-wide .tkq-ans.n3{grid-template-columns:repeat(3,minmax(0,1fr))!important}',
     '.tkq-fill.tkq-wide .tkq-ans:not(.n3){grid-template-columns:repeat(2,minmax(0,1fr))}',
+    /* landscape tablet proportions (owner photo 2026-09-29 "tidak proporsional"): the picture is the hero of the
+       card (the scene takes the free height, objects scale up to fill it), answers are one compact row of big
+       numbers / words (90–124 px tall), and Timmy (left) + the old Kapten (right, the penguin assistant small at
+       his side) stand full-size beside a centred card of ~55–60 % width */
+    '.tkq-fill.tkq-wide:not(.tkq-short){grid-template-columns:minmax(200px,20%) minmax(0,1fr) minmax(230px,23%)}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-card{justify-content:center}.tkq-noscene.tkq-fill.tkq-wide:not(.tkq-short):not(.tkq-chmode) .tkq-card{align-self:center;height:auto}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-scene{flex:1 1 0;min-height:33%;align-content:center}',
+    // the "benar" mark stays inside its answer (a wide flag sprite poked out of the first answer, owner photo)
+    '.tkq-opt .ck img{width:100%!important;height:100%!important;max-width:100%!important;object-fit:contain}',
+    // challenge card (lanes collision) on a landscape tablet: the same proportions — Timmy left, the Kapten
+    // right, his bubble above him, never over the card; Arabic answers >= 40 px, 2x2 compact
+    '@media (min-width:900px) and (min-height:560px){.tkq-chal-box{width:min(1240px,calc(100% - 12px));height:min(780px,calc(100% - 12px))}}',
+    '.tkq.tkq-chmode.tkq-fill.tkq-wide{grid-template-columns:minmax(150px,19%) minmax(0,1fr) minmax(170px,22%);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"tim top cap" "tim card cap" "tim foot cap";align-content:stretch}',
+    '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-card{align-self:stretch}',
+    '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars{display:contents}',
+    '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars .tkq-cimg{grid-area:tim;align-self:end;justify-self:start;height:min(46vh,100%);max-width:100%}',
+    '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars .tkq-cimg.peng{grid-area:cap;justify-self:end;height:min(40vh,300px)}',
+    '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars .tkq-bub{grid-area:cap;align-self:start;margin:14px 0 0;max-width:100%;font-size:15px}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt:has(.tkq-ar){max-height:130px;padding-top:4px;padding-bottom:6px;gap:0}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .tkq-ar{font-size:clamp(44px,3.8vw,52px)!important;line-height:1.2}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .tkq-tr{font-size:clamp(18px,1.6vw,22px)!important}',
+    '.tkq-wide:not(.tkq-short) .tkq-opt .tkq-ar{font-size:max(44px,1em)}.tkq-wide:not(.tkq-short) .tkq-opt .tkq-tr{font-size:18px}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-ans{flex:0 0 auto;grid-auto-rows:auto;justify-content:center}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-ans.n3:not(.pic){grid-template-columns:repeat(3,minmax(0,240px))!important}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt{height:auto;min-height:92px;max-height:124px}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt.num>span:first-child{font-size:clamp(44px,4.4vw,56px)}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt>span:first-child:not(.tkq-ar){font-size:clamp(22px,2.4vw,32px)}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt.num>span:first-child{font-size:clamp(44px,4.4vw,56px)}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt img{flex:0 0 auto;height:88px;min-height:0;width:auto;max-width:100%}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .lb{font-size:clamp(18px,1.7vw,22px);line-height:1.05}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt:has(img){max-height:152px;gap:2px;padding-top:4px;padding-bottom:4px}',
+    '.tkq-wide:not(.tkq-short) .tkq-char.timmy img{height:min(46vh,100%);max-width:100%}',
+    '.tkq-char .tkq-capt{position:relative;display:block;line-height:0}',
+    '.tkq-wide:not(.tkq-short) .tkq-char.peng .tkq-capt>img:first-child{height:min(42vh,340px);width:auto;max-width:100%}',
+    '.tkq-char.peng .tkq-capt .asst{position:absolute;left:-14%;bottom:-2%;height:36%!important;width:auto!important;max-width:none!important;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}',
+    '.tkq-short .tkq-char.peng .tkq-capt>img:first-child{height:clamp(60px,26vh,110px)}.tkq-tall .tkq-char.peng .tkq-capt .asst{display:none}',
+    '.tkq-wide:not(.tkq-short) .tkq-right{justify-content:space-between}.tkq-wide:not(.tkq-short) .tkq-left,.tkq-wide:not(.tkq-short) .tkq-right{overflow:visible}',
+    '.tkq-wide:not(.tkq-short) .tkq-stat small{font-size:14px}.tkq-wide:not(.tkq-short) .tkq-bub{font-size:15px}',
     // portrait: three stack (one per row), four go 2x2; a stacked picture card lays out picture | label
     '.tkq-fill.tkq-tall .tkq-ans.n3{grid-template-columns:minmax(0,1fr)!important}',
     '.tkq-fill.tkq-tall .tkq-ans.n3 .tkq-opt{flex-direction:row;justify-content:center;gap:clamp(10px,3vw,28px);max-height:240px}',
@@ -719,6 +753,20 @@
     '.tkq-fill.tkq-tall .tkq-ans.n3.pic .tkq-opt{max-height:300px}.tkq-fill.tkq-tall .tkq-ans.n3.pic .tkq-opt img{max-height:240px}',
     '.tkq-fill.tkq-tall .tkq-prompt{font-size:clamp(20px,4.2vw,34px)}',
     '.tkq-fill .tkq-scene{flex:0 1 auto}',
+    // the Arabic word being asked about is the hero of its card (owner: "tulisan arabnya terlalu kecil"): >= 80 px on a
+    // tablet, >= 56 px on a phone, transliteration >= 22 / 16 px; answers in Arabic >= 44 px everywhere
+    '.tkq-scene .tkq-arw .tkq-ar{font-size:calc(clamp(56px,min(10.5vh,17vw),110px) * min(1,var(--k,1)) + 0px);line-height:1.35}',
+    '.tkq-scene .tkq-arw .tkq-tr{font-size:clamp(16px,min(2.9vh,4.4vw),28px)}',
+    '.tkq-cmp .tkq-scene .tkq-arw .tkq-ar{font-size:max(56px,calc(clamp(56px,min(10.5vh,17vw),110px) * var(--k,1)))}',
+    '.tkq-opt .tkq-ar{font-size:44px;line-height:1.1}.tkq-opt .tkq-tr{font-size:14px}',
+    // phones: an Arabic answer keeps its 44 px word with the transliteration BESIDE it (a stacked pair did not fit)
+    '.tkq-tall .tkq-ans.n3.txt .tkq-opt:has(.tkq-ar){flex-direction:row;gap:10px}',
+    '.tkq-tall .tkq-opt:has(.tkq-ar),.tkq-short .tkq-opt:has(.tkq-ar){padding-top:1px;padding-bottom:2px;gap:0}.tkq-tall .tkq-opt .tkq-ar,.tkq-short .tkq-opt .tkq-ar{line-height:1.05}.tkq-tall .tkq-opt .tkq-tr,.tkq-short .tkq-opt .tkq-tr{line-height:1}',
+    // short landscape (844x390) with picture answers: the answer column takes the wider share, picture beside a
+    // one-line label, so four picture answers fit as 2x2 inside the card
+    '.tkq-short:not(.tkq-sort) .tkq-card:has(.tkq-ans.pic),.tkq-short:not(.tkq-sort) .tkq-card:has(.tkq-opt .tkq-ar){grid-template-columns:56px minmax(0,1fr) minmax(0,2.2fr)}.tkq-short:not(.tkq-sort) .tkq-card:has(.tkq-ans.n3.txt){grid-template-columns:56px minmax(0,1fr) minmax(0,2.2fr)}.tkq-short .tkq-ans.n3.txt{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-content:center}',
+    '.tkq-short .tkq-ans.pic .tkq-opt{flex-direction:row;gap:4px;padding:2px 4px}.tkq-short .tkq-ans.pic .tkq-opt img{flex:0 0 auto;width:auto;height:min(30px,55%);max-height:30px;min-height:0}',
+    '.tkq-short .tkq-ans.pic .tkq-opt .lb{flex:0 1 auto;min-width:0;line-height:1.05;text-align:left}',
     // compact card (fitCard): tighter gaps and answer heights (still >= 44 px targets); pictures scale by --k
     '.tkq-cmp .tkq-card{gap:4px;padding-top:6px;padding-bottom:8px}.tkq-cmp .tkq-ans{gap:6px!important;grid-auto-rows:minmax(56px,1fr)!important}.tkq-cmp .tkq-opt{min-height:56px!important;padding-top:2px;padding-bottom:2px}',
     '.tkq-cmp .tkq-scene{min-height:0!important;padding:0 2px;gap:4px 8px}.tkq-cmp .tkq-head{min-height:0}.tkq-cmp .tkq-prompt{line-height:1.15}',
@@ -731,7 +779,8 @@
     '.tkq-opt{overflow:hidden;min-width:0;justify-content:center;align-items:center;padding-left:10px;padding-right:10px}',
     '.tkq-opt>span:not(.ck):not(.ear){display:block;max-width:100%;min-width:0;overflow:hidden;text-align:center;overflow-wrap:normal;word-break:normal}',
     '.tkq-opt.brk>span:not(.ck):not(.ear){overflow-wrap:anywhere}',
-    '.tkq-short .tkq-ans.n3.pic{grid-template-columns:minmax(0,1fr)!important}.tkq-short .tkq-ans.n3.pic .tkq-opt{flex-direction:row;gap:8px}.tkq-short .tkq-ans.n3.pic .tkq-opt img{height:100%;max-height:44px;width:auto;flex:0 0 auto}.tkq-short .tkq-ans.n3.pic .tkq-opt .lb{flex:0 1 auto;min-width:0}',
+    // three picture answers in a short landscape: one row of three (picture over label) — a stack of three did not fit
+    '.tkq-short .tkq-ans.n3.pic{grid-template-columns:repeat(3,minmax(0,1fr))!important;align-content:center}.tkq-short .tkq-ans.n3.pic .tkq-opt{flex-direction:column;gap:4px;min-height:96px;padding:6px 4px}.tkq-short .tkq-ans.n3.pic .tkq-opt img{height:44px;max-height:44px;width:auto;flex:0 0 auto}.tkq-short .tkq-ans.n3.pic .tkq-opt .lb{flex:0 1 auto;min-width:0;text-align:center}',
     '.tkq-opt img{flex:0 1 auto;min-height:20px}.tkq-opt .lb{flex:none;font-size:max(16px,1em)}.tkq-fill .tkq-opt .lb{font-size:clamp(17px,2.2vw,30px)}',
     // rotated after mount: landscape markup shown tall / portrait markup shown wide
     '.tkq-mw.tkq-tall{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;grid-template-areas:"top top" "stats stats" "card card" "tim peng" "foot foot"}',
@@ -817,7 +866,7 @@
       cur = k
       root.classList.toggle('tkq-wide', L.wide); root.classList.toggle('tkq-tall', !L.wide); root.classList.toggle('tkq-short', L.short)
       root.classList.toggle('tkq-mw', L0.wide && !L.wide); root.classList.toggle('tkq-mt', !L0.wide && L.wide)
-      if (fill) root.classList.toggle('tkq-fill', !L.short)
+      if (fill) root.classList.toggle('tkq-fill', !L.short && (fill !== 'wide' || L.wide))
       if (root.classList.contains('tkq-sort')) root.classList.toggle('tkq-sfill', !L.short)
     }
     try { if (W.ResizeObserver) { ro = new W.ResizeObserver(check); ro.observe(host) } } catch (e) { ro = null }
@@ -826,6 +875,7 @@
   }
   function charSrc (opts, lib, who) {
     if (who === 'timmy') return opts.timmy || (W.TKArt ? W.TKArt.src('char/timmy') : lib('sd/explorer'))
+    if (who === 'captain') return opts.captain || lib('tk-char/captain-pointing')
     return opts.penguin || (W.TKArt ? W.TKArt.src('char/penguin') : lib('animals/penguin'))
   }
   function plateHTML (title, sub) {
@@ -874,9 +924,10 @@
 
     var L = layoutOf(host), wide = L.wide
     var root = rootFor(host, opts, L, reduced)
-    if (!L.short && !opts.challenge) root.classList.add('tkq-fill')   // answers grow to fill the card (tablets)
-    var unwatch = watchLayout(host, root, L, !opts.challenge)
-    var timmySrc = charSrc(opts, lib, 'timmy'), pengSrc = charSrc(opts, lib, 'peng')
+    // answers grow to fill the card (tablets); the challenge card only in landscape (beside Timmy + the Kapten)
+    if (!L.short && (!opts.challenge || L.wide)) root.classList.add('tkq-fill')
+    var unwatch = watchLayout(host, root, L, opts.challenge ? 'wide' : true)
+    var timmySrc = charSrc(opts, lib, 'timmy'), pengSrc = charSrc(opts, lib, 'captain'), asstSrc = charSrc(opts, lib, 'peng')
     var specDom = (set && !Array.isArray(set) && set.domain) || opts.domain
     var single = specDom !== 'campur' && qs.length && qs.every(function (q) { return q.domain === qs[0].domain }) ? qs[0].domain : null
     var title = opts.title || (single && DOMAIN_UI[single] ? 'Tantangan ' + DOMAIN_UI[single].label : 'Tantangan Pengetahuan')
@@ -888,7 +939,7 @@
     var bubT = '<div class="tkq-bub" data-b="' + (L.short ? 'x' : 't') + '"><b>Timmy</b><div class="tx">Ayo kita pecahkan bersama!</div></div>'
     var timmyHTML = '<div class="tkq-char timmy">' + bubT + '<img src="' + esc(timmySrc) + '" alt="Timmy" draggable="false"></div>'
     var pengHTML = '<div class="tkq-char peng">' + (L.short ? '' : '<div class="tkq-bub from-p" data-b="p"><b>' + PENGUIN + '</b><div class="tx">Semangat, pelaut kecil!</div></div>') +
-      '<img src="' + esc(pengSrc) + '" alt="' + PENGUIN + '" draggable="false"></div>'
+      '<span class="tkq-capt"><img src="' + esc(pengSrc) + '" alt="' + PENGUIN + '" draggable="false"><img class="asst" src="' + esc(asstSrc) + '" alt="' + ASSIST + '" draggable="false"></span></div>'
     var cardHTML = '<section class="tkq-card" aria-live="off"><div class="tkq-head">' +
       '<button type="button" class="tkq-btn tkq-speak" aria-label="Dengar soal">' + sprite('listen', 'tk-prop/ship-bell', lib) + '</button><span class="tkq-count"></span>' +
       (noHints ? '' : '<button type="button" class="tkq-btn tkq-hintbtn" aria-label="Petunjuk">' + sprite('hint', 'tk-prop/lantern', lib) + '<span>Petunjuk</span></button>') + '<span class="tkq-badge"></span></div>' +
@@ -982,6 +1033,7 @@
       function inner (g, cls) { var s = ''; for (var j = 0; j < g.n; j++) s += objHTML(g.key, idx++, cls, size); return s }
       E.scene.innerHTML = h
       E.scene.style.display = h ? '' : 'none'
+      root.classList.toggle('tkq-noscene', !h)
       // counting scenes: every object can be tapped to count it aloud ("satu, dua, ...")
       E.scene.classList.toggle('tapcount', q.domain === 'matematika' && /^(count|add|sub|groups|diff|twostep)$/.test(sc.mode))
       var sayBtn = E.scene.querySelector('.tkq-say'); if (sayBtn) sayBtn.addEventListener('click', function () { speak(q.listen) })
@@ -989,7 +1041,7 @@
       var os = E.scene.querySelectorAll('.tkq-o,.tkq-op')
       Array.prototype.forEach.call(os, function (o, k) { later(function () { o.classList.add('in') }, 60 + k * 45) })
       var hide = q.domain === 'matematika' && tierOf(q) >= 3 && sc.mode !== 'clock' && sc.mode !== 'capacity'
-      if (hide) E.scene.style.display = 'none'
+      if (hide) { E.scene.style.display = 'none'; root.classList.add('tkq-noscene') }
     }
     function speak (text) {
       sfx('click')
@@ -1027,7 +1079,7 @@
     /* fit the answers (owner tablet photo 2026-09-28: "Alhamdulillah" / "Wa'alaikumussalam" spilled out of a
        4-up row): four long answers go 2x2 instead of 4-up; then each label steps its font down to a 16 px
        floor until it sits inside its button; only then may a long word break (last resort). */
-    var fitKey = ''
+    var fitKey = '', fitRetry = false
     function fitAnswers () {
       var bs = E.ans.querySelectorAll('.tkq-opt')
       if (!bs.length || !E.ans.clientWidth) return
@@ -1037,17 +1089,32 @@
         Array.prototype.forEach.call(b.children, function (t) { if (t.tagName === 'SPAN' && !/\b(ck|ear)\b/.test(t.className)) { t.style.fontSize = ''; texts.push([b, t]) } })
       })
       E.ans.style.gridTemplateColumns = ''
-      if (bs.length === 4 && root.classList.contains('tkq-wide') && !root.classList.contains('tkq-fill') && !root.classList.contains('tkq-short')) {
+      if (bs.length === 4 && root.classList.contains('tkq-wide') && !root.classList.contains('tkq-short')) {
         // 4-up only when the widest label fits a quarter of the row at its own size
-        var gap = parseFloat(getComputedStyle(E.ans).columnGap) || 10, per = (E.ans.clientWidth - 3 * gap) / 4 - 22, need = 0
+        var gap = parseFloat(getComputedStyle(E.ans).columnGap) || 10, per = (E.ans.clientWidth - 3 * gap) / 4 - 34, need = 0
         texts.forEach(function (bt) { var t = bt[1], ws = t.style.whiteSpace; t.style.whiteSpace = 'nowrap'; need = Math.max(need, t.scrollWidth); t.style.whiteSpace = ws })
         E.ans.style.gridTemplateColumns = need <= per ? 'repeat(4,minmax(0,1fr))' : 'repeat(2,minmax(0,1fr))'
       }
       texts.forEach(function (bt) {
         var b = bt[0], t = bt[1], fs = parseFloat(getComputedStyle(t).fontSize) || 20, n = 0
-        while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1) && fs > 16 && n++ < 40) { fs = Math.max(16, fs - 1); t.style.fontSize = fs + 'px' }
+        var fl = t.classList.contains('tkq-ar') ? 44 : 16
+        while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1) && fs > fl && n++ < 40) { fs = Math.max(fl, fs - 1); t.style.fontSize = fs + 'px' }
         if (t.scrollWidth > t.clientWidth + 1) b.classList.add('brk')
       })
+      // a landscape tablet keeps words >= 18 px: when a label had to shrink below that, use fewer columns
+      if (!fitRetry && root.classList.contains('tkq-fill') && root.classList.contains('tkq-wide') && !root.classList.contains('tkq-short') && bs.length >= 3 &&
+          texts.some(function (bt) { return !bt[1].classList.contains('tkq-ar') && parseFloat(bt[1].style.fontSize || '99') < 18 })) {
+        fitRetry = true
+        texts.forEach(function (bt) { bt[1].style.fontSize = '' })
+        E.ans.style.setProperty('grid-template-columns', 'repeat(2,minmax(0,1fr))', 'important')
+        texts.forEach(function (bt) {
+          var b = bt[0], t = bt[1], fs = parseFloat(getComputedStyle(t).fontSize) || 20, n = 0
+          var fl2 = t.classList.contains('tkq-ar') ? 44 : 16
+          while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1) && fs > fl2 && n++ < 40) { fs = Math.max(fl2, fs - 1); t.style.fontSize = fs + 'px' }
+          b.classList.toggle('brk', t.scrollWidth > t.clientWidth + 1)
+        })
+        fitRetry = false
+      }
       fitCard()
       fitKey = E.ans.clientWidth + 'x' + E.ans.clientHeight
     }
@@ -1057,7 +1124,17 @@
       var c = E.card; if (!c || !c.clientHeight) return
       var over = function () { return c.scrollHeight > c.clientHeight + 1 }
       root.classList.remove('tkq-cmp'); c.style.removeProperty('--k')
-      if (!over()) return
+      if (!over()) {
+        // landscape tablet: the picture grows into the free scene height (up to 1.9x) — never past it
+        var sc = E.scene
+        if (root.classList.contains('tkq-fill') && root.classList.contains('tkq-wide') && !root.classList.contains('tkq-short') && sc && sc.style.display !== 'none' && sc.children.length) {
+          var fits = function () { return sc.scrollHeight <= sc.clientHeight + 1 && sc.scrollWidth <= sc.clientWidth + 1 && !over() }
+          var k = 1
+          for (var g = 1.1; g <= 1.91; g += 0.1) { c.style.setProperty('--k', g.toFixed(2)); if (fits()) k = g; else break }
+          if (k === 1) c.style.removeProperty('--k'); else c.style.setProperty('--k', k.toFixed(2))
+        }
+        return
+      }
       root.classList.add('tkq-cmp')
       for (var k = 0.9; over() && k >= 0.45; k -= 0.1) c.style.setProperty('--k', k.toFixed(2))
     }
@@ -1580,7 +1657,9 @@
       hint1: o.hint1 || (m ? (plus ? 'Gabungkan kedua kelompok, lalu hitung.' : 'Yang pergi tidak dihitung lagi.') : 'Baca soalnya pelan-pelan, ya.'),
       hint2: o.hint2 || (m ? (plus ? 'Mulai dari ' + a + ', hitung maju ' + b + ' lagi.' : 'Mulai dari ' + a + ', hitung mundur ' + b + '.') : 'Pikirkan lagi, pilih yang paling cocok.'),
       step1: o.step1 || (m ? (plus ? a + ' lalu ' + (a + 1) + ', …' : a + ' lalu ' + (a - 1) + ', …') : 'Coret pilihan yang pasti salah dulu.'),
-      scene: scene, visual: o.visual || [], world: opts.world || null }
+      scene: scene, visual: o.visual || [], world: opts.world || null,
+      // a bank item passed as a fixed question keeps its script / pictures (Arabic + transliteration, picture answers)
+      rtl: o.rtl, trs: o.trs, pics: o.pics, ar: o.ar, tr: o.tr, swatch: o.swatch, seq: o.seq }
   }
   function challengeQuestion (opts) {
     if (opts.question && opts.question.prompt) return fixedQuestion(opts.question, opts)

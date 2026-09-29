@@ -272,7 +272,13 @@
     '.tks-panel{background:rgba(6,26,46,.74);border:1.5px solid rgba(150,215,255,.32);border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.25)}',
     /* polish (owner 2026-09-28): wood & brass nautical HUD when tk-sea.js is loaded (.tks-sea) */
     '.tks-sea .tks-panel{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.12)),repeating-linear-gradient(92deg,#7a4a24 0 7px,#6d4120 7px 9px,#835029 9px 17px,#70431f 17px 20px);border:3px solid #d9a441;border-radius:16px;box-shadow:inset 0 0 0 2px #7a5314,0 4px 0 #4a2c10,0 8px 16px rgba(0,0,0,.3);color:#fff4d6;text-shadow:0 1px 0 rgba(40,20,0,.8)}',
-    '.tks-sea .tks-goal{font-family:"Fredoka One","Fredoka",var(--font-display,"Nunito"),system-ui,sans-serif;font-weight:400;font-size:16px}',
+    '.tks-sea .tks-goal{font-family:"Fredoka One","Fredoka",var(--font-display,"Nunito"),system-ui,sans-serif;font-weight:400;font-size:19px}',
+    '.tks-sea .tks-ic{width:26px;height:26px}.tks-sea .tks-ic svg,.tks-sea .tks-ic img{width:18px;height:18px}',
+    '.tks-sea .tks-goals{padding:10px 16px 10px 12px;gap:8px}',
+    '.tks-sea.tks-portrait .tks-goal{font-size:18px}',
+    '.tks-sea.tkx-compact .tks-goal{font-size:15px}.tks-sea.tkx-compact .tks-goals{padding:7px 12px 7px 9px;gap:5px}.tks-sea.tkx-compact .tks-ic{width:22px;height:22px}',
+    '.tks-sea.tkx-compact .tks-route{min-width:min(46vw,210px)}',
+    '.tks-sea.tks-short .tks-spd{height:48px;min-width:64px;font-size:15px}',
     '.tks-sea .tks-ic{background:#2f8fd0;box-shadow:0 0 0 2px #d9a441}',
     '.tks-sea .tks-hold{background:radial-gradient(circle at 35% 28%,#fff4c4 0,#f2c65e 30%,#cf9433 64%,#8d5b18 100%);border:4px solid #6b4412;box-shadow:inset 0 -6px 0 rgba(90,55,10,.45),inset 0 4px 0 rgba(255,250,220,.6),0 7px 0 #4f310b,0 12px 18px rgba(0,0,0,.32)}',
     '.tks-sea .tks-hold .tks-arw{background:linear-gradient(#24507a,#0f2c4a);filter:drop-shadow(0 2px 0 rgba(255,245,210,.7))}',
@@ -888,8 +894,10 @@
       root.classList.toggle('tks-portrait', vh > vw)
       root.classList.toggle('tks-big', Math.min(vw, vh) >= 640)
       root.classList.toggle('tks-short', vh < 480)
+      root.classList.toggle('tkx-compact', vh < 480 || vw < 600)
       layoutControls()
       if (route) route.size()
+      if (seaP) { var kk = scale * dpr; seaP.prewarm(ctx, [kk, kk * 0.8, kk * 0.6, kk * 0.5, kk * 0.8 * 0.5, kk * 0.8 * 0.6]) }
       var rs = radar.getBoundingClientRect().width || 108
       radar.width = Math.round(rs * dpr); radar.height = Math.round(rs * dpr)
       radarT = 0
@@ -919,6 +927,16 @@
         wheel = Math.min(wheel, vh - 24 - hold - 10 - 150)
       }
       wheel = Math.max(Math.round(wheel), Math.round(OLD.wheel * 1.3))
+      if (port) {
+        // a small phone upright (360x640): the column (wheel above RIGHT) must still leave room under the HUD
+        // for the ship, so both shrink together — buttons never below 96 px, the wheel never below 140
+        var rr0 = root.getBoundingClientRect(), statsB = stats.getBoundingClientRect().bottom - rr0.top
+        var avail = vh - statsB - (V.L * 1.08 * scale + 70) - 12
+        if (wheel + 10 + hold > avail) {
+          var f0 = Math.max(0.3, avail / (wheel + 10 + hold))
+          hold = Math.max(96, Math.round(hold * f0)); wheel = Math.max(140, Math.round(avail - 10 - hold))
+        }
+      }
       ctrl = { wheel: wheel, hold: hold, k: Math.min(wheel / OLD.wheel, hold / OLD.hold) }
       root.style.setProperty('--tks-wheel', wheel + 'px')
       root.style.setProperty('--tks-hold', hold + 'px')
@@ -1582,7 +1600,7 @@
       if (n < 3) return
       var pts = []
       for (var i = 0; i < n; i++) { var p = trail[i]; pts.push({ x: p.x, y: p.y, nx: Math.cos(p.a), ny: Math.sin(p.a), age: p.age }) }
-      SEA.wake(ctx, pts, { w0: V.B * 0.42, spread: V.B * 0.9 + 12, fade: 3.4, scale: 1 })
+      SEA.wake(ctx, pts, { w0: V.B * 0.42, spread: V.B * 0.75 + 10, fade: 2.6, scale: 1 })
     }
     // youngest kids (assist): a glowing dashed course from the bow to the next gate
     function drawTrailLine () {

@@ -17,7 +17,7 @@ const fails = []
 let checked = 0
 
 const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], protocolTimeout: 900000 })
-for (const [w, h] of (process.env.QA_ROT_ONLY ? [] : SIZES)) {
+for (const [w, h] of (process.env.QA_ROT_ONLY || process.env.QA_PROP_ONLY ? [] : SIZES)) {
   const p = await browser.newPage()
   const errs = []
   p.on('pageerror', e => errs.push(e.message))
@@ -54,12 +54,27 @@ for (const [w, h] of (process.env.QA_ROT_ONLY ? [] : SIZES)) {
             if (t.scrollWidth > t.clientWidth + 1) bad.push(`label "${lab}" wider than its box (${t.scrollWidth} > ${t.clientWidth})`)
             if (tr.left < r.left - 1 || tr.right > r.right + 1 || tr.top < r.top - 1 || tr.bottom > r.bottom + 1) bad.push(`label "${lab}" outside its button`)
             if (fs < 15.5 && !b.classList.contains('brk') && !t.classList.contains('tkq-tr')) bad.push(`label "${lab}" font ${fs}px < 16`)
+            // tablets (owner photo 2026-09-29): Arabic >= 40 px, transliteration / words >= 18 px
+            if (vw >= 1000 && innerHeight >= 700) {
+              if (t.classList.contains('tkq-ar') && fs < 43.5) bad.push(`Arabic "${lab}" ${fs}px < 44 on a tablet`)
+              else if (!t.classList.contains('tkq-ar') && fs < 17.5 && !b.classList.contains('brk')) bad.push(`label "${lab}" ${fs}px < 18 on a tablet`)
+            }
           }
           for (let j = i + 1; j < bs.length; j++) {
             const o = R[j]
             if (r.left < o.right - 1 && o.left < r.right - 1 && r.top < o.bottom - 1 && o.top < r.bottom - 1) bad.push(`buttons "${lab}" and "${(bs[j].getAttribute('data-c') || '').slice(0, 24)}" overlap`)
           }
         })
+        // owner 2026-09-29 "tulisan arabnya terlalu kecil": the asked Arabic word is the card's hero, answers >= 44 px
+        bs.forEach(b => { const a = b.querySelector('.tkq-ar'); if (a && parseFloat(getComputedStyle(a).fontSize) < 43.5) bad.push(`Arabic answer ${parseFloat(getComputedStyle(a).fontSize)}px < 44`) })
+        const tab = vw >= 1000 && innerHeight >= 700
+        const pa = document.querySelector('.tkq-scene .tkq-arw .tkq-ar'), pt = document.querySelector('.tkq-scene .tkq-arw .tkq-tr')
+        if (pa && getComputedStyle(document.querySelector('.tkq-scene')).display !== 'none') {
+          const f = parseFloat(getComputedStyle(pa).fontSize), ft = pt ? parseFloat(getComputedStyle(pt).fontSize) : 99
+          if (f < (tab ? 79.5 : 55.5)) bad.push(`asked Arabic word ${f}px < ${tab ? 80 : 56}`)
+          if (ft < (tab ? 21.5 : 15.5)) bad.push(`transliteration ${ft}px < ${tab ? 22 : 16}`)
+        }
+        if (tab && mode !== 'challenge') bs.forEach(b => { const im = b.querySelector('img:not(.ck img)'); if (im && im.getBoundingClientRect().height < 87.5) bad.push(`picture answer ${Math.round(im.getBoundingClientRect().height)}px < 88`) })
         if (bad.length) out.push(`${mode} ${q.id || q.kind || '?'}: ${bad.slice(0, 3).join(' ; ')}`)
       }
     }
@@ -81,7 +96,7 @@ const ROT = [[390, 844, 844, 390], [1280, 800, 800, 1280], [844, 390, 390, 844],
 const EXTRA = [[360, 640], [412, 915], [915, 412], [768, 1024], [1340, 800], [1920, 1080]]
 const CASES = ROT.concat(EXTRA.map(([w, h]) => [w, h, w, h]))
 let rotChecks = 0
-for (const [w0, h0, w1, h1] of CASES) {
+for (const [w0, h0, w1, h1] of (process.env.QA_PROP_ONLY ? [] : CASES)) {
   for (const kind of ['words', 'pics', 'sort']) {
     const p = await browser.newPage(), errs = []
     p.on('pageerror', e => errs.push(e.message))
@@ -116,7 +131,10 @@ for (const [w0, h0, w1, h1] of CASES) {
       const zone = document.querySelector(kind === 'sort' ? '.tkq-sortbody' : '.tkq-ans').getBoundingClientRect()
       const short = root.classList.contains('tkq-short')
       if (document.querySelector('.tkq-ans') && !document.querySelector('.tkq-ans .tkq-opt') && kind !== 'sort') bad.push('no answers after rotation (page reloaded?)')
-      if (!short && zone.height < card.height * 0.45) bad.push(`answers use only ${Math.round(zone.height / card.height * 100)} % of the card height`)
+      // landscape tablet (owner 2026-09-29): compact answers under a big picture — picture + answers fill the card
+      const scn = document.querySelector('.tkq-scene'), scH = scn && getComputedStyle(scn).display !== 'none' ? scn.getBoundingClientRect().height : 0
+      const used = kind !== 'sort' && wide && !short ? zone.height + scH : zone.height
+      if (!short && used < card.height * (kind !== 'sort' && wide ? 0.3 : 0.45)) bad.push(`answers${kind !== 'sort' && wide ? ' + picture' : ''} use only ${Math.round(used / card.height * 100)} % of the card height`)
       if (card.width < root.clientWidth * (wide ? 0.45 : 0.85)) bad.push(`card only ${Math.round(card.width)} px wide of ${root.clientWidth}`)
       return bad
     }, kind)
@@ -127,6 +145,44 @@ for (const [w0, h0, w1, h1] of CASES) {
   }
 }
 console.log(`rotate / owner sizes: ${rotChecks} cases`)
+
+/* proportions at 1280x800 (owner photo 2026-09-29 "tidak proporsional"): counting math, text Islam, picture Arab,
+   in the quiz AND the challenge overlay. The picture takes >= 30 % of the card, answers are compact (<= 130 px),
+   Timmy and the Kapten (the old captain, not the penguin) stand >= 35 % of the viewport high beside the card. */
+for (const [w, h] of [[1280, 800], [1340, 800], [1024, 768]]) for (const [kind, id] of [['math', null], ['islam', 'is-01'], ['arab', 'ar-pw-05'], ['arab-word', 'ar-wp-01']]) for (const chal of [false, true]) {
+  const p = await browser.newPage(), errs = []
+  p.on('pageerror', e => errs.push(e.message))
+  await p.setViewport({ width: w, height: h })
+  await p.goto(BASE, { waitUntil: 'networkidle0', timeout: 60000 })
+  const r = await p.evaluate(async (id, chal) => {
+    await document.fonts.ready
+    window.__tk.ctl.destroy(); const host = document.getElementById('host'); host.innerHTML = ''
+    const q = id ? { ...TKQuestions.items.find(x => x.id === id) } : TKQuiz.make('matematika', 1, TKQuiz.rng(4), { kind: 'add', world: 'titanic' })
+    q.choices = q.choices.slice()
+    if (chal) TKQuiz.challenge(host, { question: q, reducedMotion: true, sound: false })
+    else TKQuiz.mount(host, [q], { topInset: 70, reducedMotion: true, sound: false })
+    await new Promise(r => setTimeout(r, 900))
+    const bad = [], vh = innerHeight, R = s => { const e = document.querySelector(s); return e && e.getBoundingClientRect() }
+    const card = R('.tkq-card'), sc = document.querySelector('.tkq-scene'), scr = sc.getBoundingClientRect()
+    if (getComputedStyle(sc).display !== 'none' && scr.height < card.height * 0.3) bad.push(`picture ${Math.round(scr.height / card.height * 100)} % of the card`)
+    document.querySelectorAll('.tkq-opt').forEach(b => { if (b.getBoundingClientRect().height > (b.querySelector('img') ? 152.5 : 130.5)) bad.push('answer ' + Math.round(b.getBoundingClientRect().height) + ' px tall') })
+    const tim = [...document.querySelectorAll('img')].find(i => i.alt === 'Timmy'), cap = [...document.querySelectorAll('img')].find(i => i.alt === 'Kapten')
+    for (const [n, im] of [['Timmy', tim], ['Kapten', cap]]) {
+      if (!im) { bad.push(n + ' missing'); continue }
+      const b = im.getBoundingClientRect()
+      if (b.height < vh * 0.35) bad.push(`${n} ${Math.round(b.height / vh * 100)} % of the viewport height`)
+      if (b.left < card.right - 1 && card.left < b.right - 1 && b.top < card.bottom - 1 && card.top < b.bottom - 1) bad.push(n + ' overlaps the card')
+      if (b.left < -1 || b.right > innerWidth + 1 || b.bottom > vh + 1) bad.push(n + ' off-screen')
+    }
+    if (cap && !/captain/.test(cap.src)) bad.push('the Kapten is not the old captain: ' + cap.src)
+    document.querySelectorAll('.tkq-bub').forEach(b => { const x = b.getBoundingClientRect(); if (x.width && x.left < card.right - 1 && card.left < x.right - 1 && x.top < card.bottom - 1 && card.top < x.bottom - 1) bad.push('speech bubble over the card') })
+    return bad
+  }, id, chal)
+  const tag = `proportions ${w}x${h} ${kind}${chal ? ' challenge' : ''}`
+  if (r.length || errs.length) { fails.push(`${tag}: ${r.concat(errs).join(' ; ')}`); console.log('  FAIL ' + tag + ': ' + r.concat(errs).join(' ; ')) }
+  await p.close()
+}
+console.log('proportions: 24 cases')
 await browser.close()
 console.log(fails.length ? `qa-tk-quiz-fit: FAIL ${fails.length} (${checked} buttons checked)` : `PASS qa-tk-quiz-fit: ${checked} answer buttons fit at ${SIZES.length} sizes`)
 process.exit(fails.length ? 1 : 0)

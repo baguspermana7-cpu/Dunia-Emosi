@@ -233,7 +233,9 @@
     '.tkl-resume{min-width:160px;height:60px;border-radius:18px;background:#ffc83d;color:#3b2800;font-size:20px;box-shadow:0 5px 0 #c98f00}',
     /* polish (owner 2026-09-28): wood & brass HUD + brass controls when tk-sea.js is loaded */
     '.tkl-sea .tkl-panel{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.12)),repeating-linear-gradient(92deg,#7a4a24 0 7px,#6d4120 7px 9px,#835029 9px 17px,#70431f 17px 20px);border:3px solid #d9a441;border-radius:16px;box-shadow:inset 0 0 0 2px #7a5314,0 4px 0 #4a2c10,0 8px 16px rgba(0,0,0,.3);color:#fff4d6;text-shadow:0 1px 0 rgba(40,20,0,.8)}',
-    '.tkl-sea .tkl-obj b{color:#ffe066}.tkl-sea .tkl-obj span{color:#fff4d6}',
+    '.tkl-sea .tkl-obj b{color:#ffe066;font-size:21px}.tkl-sea .tkl-obj span{color:#fff4d6;font-size:15px}',
+    '.tkl-sea.tkl-port .tkl-obj b{font-size:19px}.tkl-sea.tkl-short .tkl-obj b{font-size:18px}',
+    '.tkl-sea .tkl-lever small{font-size:14px;color:#ffe3a3}.tkl-sea .tkl-lv{font-size:18px}',
     '.tkl-sea .tkl-stats{flex-direction:row;flex-wrap:wrap}.tkl-sea .tkl-stat{min-width:0;padding:4px 12px 4px 6px}',
     '.tkl-sea .tkl-route{min-width:0;align-self:stretch}',
     '.tkl-sea .tkl-turn{background:radial-gradient(circle at 35% 28%,#fff4c4 0,#f2c65e 30%,#cf9433 64%,#8d5b18 100%);border:4px solid #6b4412;box-shadow:inset 0 -6px 0 rgba(90,55,10,.45),inset 0 4px 0 rgba(255,250,220,.6),0 7px 0 #4f310b,0 12px 18px rgba(0,0,0,.32)}',
@@ -248,14 +250,21 @@
     '.tkl-sea .tkl-lv{background:#5a3518;border:2px solid #d9a441;color:#fff4d6}.tkl-sea .tkl-lv.is-on{background:radial-gradient(circle at 35% 28%,#fff4c4 0,#f2c65e 35%,#cf9433 75%);color:#3b2400}',
     '.tkl-sea .tkl-banner b{color:#ffe066}',
     // phone on its side: the tutorial hint sits at the TOP (it used to cover the ship over the controls)
-    '.tkl-short .tkl-hint{top:calc(10px + env(safe-area-inset-top,0px));bottom:auto!important;max-width:min(46%,420px)}',
+    '.tkl-short .tkl-hint{top:calc(10px + env(safe-area-inset-top,0px));bottom:auto!important;left:36%;right:17%;width:auto;max-width:none;font-size:14px}',
+    '.tkl-sea.tkl-short .tkl-tl{max-width:34%}.tkl-sea.tkl-short .tkl-stats{display:none}.tkl-sea.tkl-short .tkl-obj b{font-size:16px}',
+    '.tkl-sea.tkl-narrow .tkl-stats{flex-wrap:nowrap}.tkl-sea.tkl-narrow .tkl-stat{flex:1 1 auto;padding:3px 6px 3px 4px}.tkl-sea.tkl-narrow .tkl-stat img{width:22px;height:22px}.tkl-sea.tkl-narrow .tkl-stat small{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62px}.tkl-sea.tkl-narrow .tkl-obj span{font-size:13px}',
+    '.tkl-sea.tkl-port:not(.tkl-narrow) .tkl-stat b{font-size:22px}',
     // portrait: stats in one row under the objective, radar smaller
-    '.tkl-port .tkl-tl{right:120px;max-width:none}.tkl-port .tkl-stats{flex-direction:row;gap:5px;align-items:stretch}.tkl-port .tkl-stat{min-width:0;flex:1 1 0;padding:4px 7px}.tkl-port .tkl-stat b{font-size:18px}',
+    '.tkl-port .tkl-tl{right:142px;max-width:none}.tkl-port .tkl-stats{flex-direction:row;gap:5px;align-items:stretch}.tkl-port .tkl-stat{min-width:0;flex:1 1 0;padding:4px 7px}.tkl-port .tkl-stat b{font-size:18px}',
     '.tkl-port .tkl-radar{width:92px;height:92px}.tkl-port .tkl-obj b{font-size:15px}',
     // short landscape (phone on its side)
     '.tkl-boost span{font-size:calc(14px + var(--tkl-k,1) * 2px)}',
     '.tkl-short .tkl-boost{margin-left:auto;margin-right:10px}',
-    '.tkl-port .tkl-boost.is-up{position:absolute;right:14px;bottom:calc(var(--tkl-turn,88px) + 10px)}',
+    '.tkl-port .tkl-boost.is-up,.tkl-wide .tkl-boost.is-up{position:absolute;right:14px;bottom:calc(var(--tkl-turn,88px) + 10px)}',
+    '.tkl-wide .tkl-lever{right:auto;left:12px}',
+    // wide landscape: the hint sits at the bottom between the thumbs (under the ship), the captain above the wheel
+    '.tkl-wide .tkl-hint{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;max-width:min(52%,560px)}',
+    '.tkl-wide .tkl-cap{left:auto;right:14px;bottom:calc(var(--tkl-turn,88px) + var(--tkl-boost,104px) + 30px);max-width:min(40%,470px)}',
     '.tkl-toprow{display:flex;gap:8px}',
     '.tkl-shipbtn{width:56px;height:56px;padding:3px;border-radius:16px;border:1.5px solid rgba(150,215,255,.4);background:rgba(6,26,46,.82);display:grid;place-items:center}',
     '.tkl-shipbtn img{width:100%;height:100%;object-fit:contain;pointer-events:none}',
@@ -569,8 +578,9 @@
     var warn = el('div', 'tkl-warn', '<i class="tkl-tri"></i><span>Tidak ada jalur aman</span>')
     warn.setAttribute('role', 'status')
     root.appendChild(warn)
-    var cap = el('div', 'tkl-cap', '<img alt="Kapten Smith" draggable="false"><div class="tkl-bub"><b>Kapten Smith</b><span></span></div>')
-    cap.querySelector('img').src = (W.TKArt && W.TKArt.src) ? W.TKArt.src('char/captain') : lib('tk-key/captain-arms')
+    var cap = el('div', 'tkl-cap', '<img alt="Kapten" draggable="false"><div class="tkl-bub"><b>Kapten</b><span></span></div>')
+    // owner rule: the captain is the old human captain (the penguin is only his assistant)
+    cap.querySelector('img').src = lib('tk-char/captain-old')
     cap.setAttribute('role', 'status')
     root.appendChild(cap)
     var hint = el('div', 'tkl-hint')
@@ -638,11 +648,16 @@
       dpr = Math.min(W.devicePixelRatio || 1, 2)
       backing()
       var port = vh > vw, short = !port && vh < 500
+      wideMode = !port && !short && vw >= 900
       root.classList.toggle('tkl-port', port)
       root.classList.toggle('tkl-short', short)
-      shipY = vh * (short ? 0.68 : port ? 0.72 : 0.7)
-      scale = clamp(Math.min(vw / (LANE * 3 + 90), shipY / (short ? 340 : 440)), 0.45, 1.7)
+      root.classList.toggle('tkl-wide', wideMode)
+      root.classList.toggle('tkx-compact', short || vw < 600)
+      root.classList.toggle('tkl-narrow', vw < 600)
+      shipY = vh * (short ? 0.68 : port ? 0.72 : wideMode ? 0.66 : 0.7)
+      scale = computeScale(short)
       layoutControls(port, short)
+      if (seaP) { var kk = scale * dpr; seaP.prewarm(ctx, [kk, kk * 0.8, kk * 0.6, kk * 0.5, kk * 0.86 * 0.5, kk * 0.86 * 0.6, kk * 0.86]) }
       if (route) route.size()
       bgGrad = ctx.createLinearGradient(0, 0, 0, vh)
       if (SEA) {
@@ -675,13 +690,24 @@
       OLD = { turn: short ? 80 : 88, boost: short ? 88 : 104 }
       var turn = OLD.turn * 2, boost = OLD.boost * 2
       var row = turn * 2 + boost + 28 + 24
-      bB.classList.toggle('is-up', port && row > vw)
+      bB.classList.toggle('is-up', (port && row > vw) || wideMode)
       if (short) {
         // side-on phone: LEFT ... [wheel][RIGHT] — the wheel must end before the ship's lanes
         var band = shipBand()
         boost = Math.min(boost, vw / 2 - band - 14 - turn - 10)
       }
       boost = Math.max(Math.round(boost), Math.round(OLD.boost * 1.5))
+      if (!short) {
+        // narrow phones (360 wide): two 2x buttons must still fit side by side with a gap
+        turn = Math.min(turn, Math.floor((vw - 28 - 10) / 2))
+        // short uprights (360x640): the column under the HUD must leave room for the ship — shrink together
+        var tlB = tl.getBoundingClientRect().bottom - root.getBoundingClientRect().top
+        var need = turn + 10 + (bB.classList.contains('is-up') ? boost : 0), avail = vh - tlB - (ART_L * scale + 50) - 12
+        if (port && need > avail && avail > 0) {
+          var f0 = Math.max(0.3, avail / need)
+          turn = Math.max(96, Math.round(turn * f0)); if (bB.classList.contains('is-up')) boost = Math.max(110, Math.round(avail - 10 - turn))
+        }
+      }
       ctrlSz = { turn: turn, boost: boost, k: Math.min(turn / OLD.turn, boost / OLD.boost) }
       root.style.setProperty('--tkl-turn', turn + 'px'); root.style.setProperty('--tkl-boost', boost + 'px')
       root.style.setProperty('--tkl-k', String(ctrlSz.k))
@@ -696,11 +722,25 @@
       var want = lim - halfL - 14
       if (want < shipY) {
         shipY = Math.max(vh * 0.36, want)
-        scale = clamp(Math.min(vw / (LANE * 3 + 90), shipY / (short ? 340 : 440)), 0.45, 1.7)
+        scale = computeScale(short)
         halfL = ART_L * 0.5 * scale
         shipY = Math.max(vh * 0.36, Math.min(shipY, lim - halfL - 14))
       }
       root.style.setProperty('--tkl-ctrlh', Math.round(vh - ctop + 12) + 'px')
+    }
+    /* round 3 (owner): on a landscape tablet the three lanes used ~30% of the width. There the corridor
+       (outer buoy lines) now fills ~57% of the width and everything in it — ship, ice, stars, buoys — scales
+       with it (~1.7x). A stronger perspective keeps ~620 units of sea visible ahead (as before) so obstacles still show
+       early. Portrait and phones keep the old framing. */
+    var PKv = PK, wideMode = false
+    function computeScale (short) {
+      if (wideMode) {
+        var sc = clamp(0.57 * vw / (2 * (LANE * 1.5 + 18)), 0.45, 2.6), u = shipY / sc
+        PKv = Math.max(PK, (1 - u / 620) / u)      // ~620 units ahead, as the old framing showed (the final run times its warning on it)
+        return sc
+      }
+      PKv = PK
+      return clamp(Math.min(vw / (LANE * 3 + 90), shipY / (short ? 340 : 440)), 0.45, 1.7)
     }
     function backing () { pr = dpr * rq; cv.width = Math.max(1, Math.round(vw * pr)); cv.height = Math.max(1, Math.round(vh * pr)) }
     function adapt (dt) {
@@ -714,11 +754,11 @@
     /* projection: world (x lateral, z forward) -> screen; constant-x lines stay straight (true perspective) */
     var PX = 0, PY = 0, PS = 1
     function proj (x, z) {
-      var a = Math.max(z - S.d, -600), f = 1 / (1 + a * PK), s = scale * S.zoom
+      var a = Math.max(z - S.d, -600), f = 1 / (1 + a * PKv), s = scale * S.zoom
       PS = s * f; PY = shipY - a * s * f; PX = vw / 2 + (x - camX) * PS
     }
-    function aheadMax () { var u = shipY / (scale * S.zoom); return u * PK < 0.92 ? u / (1 - u * PK) : 5000 }
-    function behindMin () { var m = (vh - shipY) / (scale * S.zoom); return -m / (1 + m * PK) }
+    function aheadMax () { var u = shipY / (scale * S.zoom); return u * PKv < 0.92 ? u / (1 - u * PKv) : 5000 }
+    function behindMin () { var m = (vh - shipY) / (scale * S.zoom); return -m / (1 + m * PKv) }
 
     // the ship's screen box (axis-aligned around the rolled hull) — for the QA no-overlap check
     function shipRect () {
@@ -902,7 +942,7 @@
       if (sec !== S.sec) {
         S.sec = sec
         var sc = w.sections[sec]
-        if (sc) { showBanner(sc.title, sc.sub); if (sc.kind === 'corridor') beginAssist() }
+        if (sc) { (S.seen || (S.seen = [])).push(sc.kind); showBanner(sc.title, sc.sub); if (sc.kind === 'corridor') beginAssist() }
       }
       if (bannerT > 0) { bannerT -= dt; if (bannerT <= 0) banner.classList.remove('is-on') }
       tutorTick(dt)
@@ -1541,7 +1581,7 @@
           tokens: S.tokens, score: S.score, waiting: S.waiting, impact: !!S.impact, inv: S.inv, done: S.done, sent: doneSent, running: !!raf, paused: paused,
           frames: S.frames, parts: parts.length, shake: S.shake, zoom: S.zoom, quality: rq, reduced: reduced, difficulty: diff, final: fin, warn: S.warn,
           ease: S.ease, heading: S.head, tutorial: S.tut, challenge: chal ? { answer: chal.answer, wrong: chal.wrong, answered: chal.answered, rung: chal.rung } : null,
-          theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh,
+          seen: (S.seen || []).slice(), theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh,
           ship: shipId || null, art: shipImg ? shipImg.src : null, artReady: ready(shipImg), shipY: shipY, timers: timers.length,
           ctrl: { turn: ctrlSz.turn, boost: ctrlSz.boost, k: ctrlSz.k, old: OLD }, shipRect: shipRect(),
           wall: w.corridor ? w.corridor.wall : null, lastHit: S.lastHit ? { type: S.lastHit.type, x: Math.round(S.lastHit.x), z: Math.round(S.lastHit.z), extra: !!S.lastHit.extra } : null }

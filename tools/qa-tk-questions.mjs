@@ -198,7 +198,8 @@ const AR_RE = /[؀-ۿ]/
   check(kompas.slice(0, 2).every(q => /kompas|arah/i.test(q.prompt + q.explain)), `topic "Baca arah kompas." leads with compass questions: ${kompas.slice(0, 2).map(q => q.prompt).join(' / ')}`)
   const bagi = TK.build({ domain: 'matematika', world: 'titanic', count: 3, seed: 5, level: 3, topic: 'Bagikan selimut dan hitung penumpang yang selamat.' })
   check(bagi[0].kind === 'share', `maths topic "Bagikan …" asks a sharing question first (${bagi[0].kind})`)
-  check(!fs.readFileSync(path.join(ROOT, 'games/tk-quiz.js'), 'utf8').includes("'Kapten Pingu'"), 'mascot is "Kapten Pinguin", never "Kapten Pingu"')
+  // owner 2026-09-29: the captain is the old man ("Kapten"); the penguin is only his assistant ("Asisten Pinguin")
+  check(!/Kapten Pingu/.test(fs.readFileSync(path.join(ROOT, 'games/tk-quiz.js'), 'utf8')) && !/Kapten Pingu/.test(fs.readFileSync(path.join(ROOT, 'games/data/tk-questions.js'), 'utf8')), 'the captain is the old man: no "Kapten Pinguin" / "Kapten Pingu" in the quiz or the bank')
 }
 
 /* ── B3. grade fit (Kelas 1–2, fase A) — owner 2026-09-28: "Kapal Endurance berlayar ke benua es
@@ -491,7 +492,7 @@ if (!process.env.QA_NODE_ONLY) {
       const P = await open(w, h, 'set=math5&back=1&topic=' + encodeURIComponent('Hitung peti di kapal.'))
       const ui = await P.p.evaluate(() => ({ plate: (document.querySelector('.tkq-plate h2') || {}).textContent, sub: (document.querySelector('.tkq-plate p') || {}).textContent,
         tabs: document.querySelectorAll('.tkq-tab').length, on: [...document.querySelectorAll('.tkq-tab.on')].map(t => t.dataset.d), step: (document.querySelector('.tkq-step.cur span') || {}).textContent,
-        peng: [...document.querySelectorAll('img')].some(i => i.alt === 'Kapten Pinguin') }))
+        peng: [...document.querySelectorAll('img')].some(i => i.alt === 'Kapten' && /captain/.test(i.src)) }))
       check(ui.plate === 'Tantangan Matematika' && ui.tabs === 5 && ui.on.join() === 'matematika' && ui.step === 'Kuis' && ui.peng, `${tag} ui-08 chrome ${JSON.stringify(ui)}`)
       check(w < h || ui.sub === 'Hitung peti di kapal.' || h < 540, `${tag} plate subtitle = level goal (${ui.sub})`)
       const vis = await P.p.evaluate(() => { const vh = innerHeight, vw = innerWidth; return [...document.querySelectorAll('.tkq-stats,.tkq-plate,.tkq-tabs,.tkq-back,.tkq-next,.tkq-card')].filter(e => { const r = e.getBoundingClientRect(); return r.top < 70 || r.bottom > vh + 1 || r.right > vw + 1 || r.left < -1 }).map(e => e.className) })

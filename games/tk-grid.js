@@ -998,13 +998,13 @@
     var slots = el('div', 'tkg-slots'); slots.setAttribute('aria-label', theme === 'deck' ? 'Rute Timmy' : 'Rute kapal'); route.appendChild(slots)
 
     var tip = el('div', 'tkg-tip')
-    var tipTxt = el('div'); tipTxt.innerHTML = '<b>Tips Kapten Pinguin:</b>'
+    var tipTxt = el('div'); tipTxt.innerHTML = '<b>Tips Asisten Pinguin:</b>'
     // the default tip names what actually blocks THIS board (a Vasa board of rock arches said "Gunung es")
     var bj = blockKeys.join(' '), defTip = !L.blocks.length ? 'Pikirkan dulu rutenya, lalu tekan JALAN!'
       : /ice|es\b|berg/.test(bj) ? say$.tip : theme === 'deck' ? 'Pikirkan dulu rutenya. Barang di dek menghalangi jalan!'
         : /rock|arch|cliff|reef|karang|stone/.test(bj) ? 'Pikirkan dulu rutenya. Batu karang menghalangi jalan!' : 'Pikirkan dulu rutenya. Cari jalan yang kosong!'
     var tipSpan = el('span'); tipSpan.textContent = str(opts.tip || defTip); tipTxt.appendChild(tipSpan)
-    tip.appendChild(tipTxt); tip.appendChild(img(src('tipper'), '', 'Kapten Pinguin'))
+    tip.appendChild(tipTxt); tip.appendChild(img(src('tipper'), '', 'Asisten Pinguin'))
     bot.appendChild(tim); bot.appendChild(route); bot.appendChild(tip)
 
     // footer (portrait): Kembali · Level X dari Y · Lanjut — each part only when the host gives it

@@ -588,7 +588,10 @@
     // ── reward
     '.tkh-rw .tkh-hero{position:absolute;left:0;bottom:0;width:31%;height:100%;z-index:1;pointer-events:none}',
     '.tkh-rw .tkh-hero .timmy{position:absolute;left:8%;bottom:4%;height:72%;max-width:92%;object-fit:contain;filter:drop-shadow(0 10px 16px rgba(0,0,0,.45))}',
-    '.tkh-rw .tkh-hero .peng{position:absolute;left:-2%;bottom:3%;height:30%;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}',
+    // big screens (1920x1080): the reward column scales up instead of sitting small in the middle
+    '@media (min-width:1500px) and (min-height:950px){.tkh-rw.is-land .tkh-main{zoom:1.3}}',
+    // the penguin stays inside the frame (it bled off the left edge at every landscape size)
+    '.tkh-rw .tkh-hero .peng{position:absolute;left:max(8px,1.5%);bottom:3%;height:30%;max-width:46%;object-fit:contain;object-position:left bottom;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}',
     '.tkh-rw .tkh-hero .sign{position:absolute;left:4%;bottom:5%;transform:rotate(-8deg);background:linear-gradient(#f3e0b4,#dcc08a);color:#3b2410;padding:10px 14px;border-radius:6px;font-size:15px;line-height:1.25;box-shadow:0 6px 12px rgba(0,0,0,.4);display:none}',
     '.tkh-rw .tkh-main{position:absolute;inset:0 0 0 30%;z-index:2;overflow:auto;overscroll-behavior:contain;padding:12px 16px 12px;display:flex;flex-direction:column;align-items:center;gap:10px}',
     '.tkh-rw .tkh-main>*{flex:none}.tkh-rw.is-land .tkh-main{gap:6px;padding-top:8px}.tkh-rw.is-land .tkh-plate{padding:8px 28px 10px}.tkh-rw.is-land .tkh-plate h1{font-size:clamp(26px,5.2vh,44px)}.tkh-rw.is-land .tkh-row2{margin-top:6px}.tkh-rw.is-land .tkh-acts{padding:6px 12px}.tkh-rw.is-land .tkh-acts .tkh-btn{min-height:52px}.tkh-rw.is-land .tkh-card.fact .photo{height:84px}.tkh-rw.is-land .tkh-say .peng{height:72px}.tkh-rw .tkh-plate{width:min(560px,100%)}.tkh-rw .tkh-plate .ban{position:absolute;right:-6px;top:-4px;width:92px;transform:rotate(8deg);opacity:.95}',

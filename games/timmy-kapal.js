@@ -518,44 +518,93 @@
     $('map-stars').innerHTML = IC('star') + '<span>Bintang ' + worldStars(w) + '/' + w.levels.length * 3 + '</span>'
     var cap = w.captain || {}
     $('captain').innerHTML = '<img src="' + esc(Art.src(CAPT[w.id] || 'char/captain')) + '" alt=""><div><b>' + esc(cap.name) + '</b><span>“' + esc(cap.quote) + '”</span></div>'
-    $('captain').classList.toggle('hide', !cap.quote || !!w.chapters)
-    $('scr-map').classList.toggle('cmode', !!w.chapters)
+    $('captain').classList.add('hide')   // every world: the guide speaks from the board's footer bubble
+    $('scr-map').classList.add('cmode')
     layoutRoute(w)
     skel($('map-bg'))
-    if (w.chapters) { if ($('route').querySelector('.chap.next')) hand('map', function () { return $('route').querySelector('.chap.next .md') }, 'Ketuk bab yang bersinar untuk bermain!', true) }
-    else if ($('route').querySelector('.node.next')) hand('map', function () { return $('route').querySelector('.node.next .n') }, 'Ketuk angka yang bersinar untuk bermain!', true)
+    if ($('route').querySelector('.chap.next')) hand('map', function () { return $('route').querySelector('.chap.next .md') }, w.chapters ? 'Ketuk bab yang bersinar untuk bermain!' : 'Ketuk level yang bersinar untuk bermain!', true)
+  }
+  /* ── LEVEL MAP (every other world): the same parchment board in "level mode" (.lmode) ──
+     Big medallions showing the level's art (the ship for the opening level, a prop per level type, a
+     treasure chest for the compass fragment), a number badge, "Judul" + "(jenis)" and a row of 3 stars
+     under each; a serpentine rope route (odd rows run right→left, a row change runs down the board edge);
+     the current level pulses under a "Main!" flag with the world's ship bobbing beside it; the guide
+     speaks from the footer bubble. Columns are picked for the biggest medallion that fits. */
+  var TYPE_SUB = { quiz: 'Kuis', grid: 'Jalur', sort: 'Pilah', steer: 'Kemudi', lanes: 'Navigasi', story: 'Cerita', cutscene: 'Cerita', cinema: 'Film' }
+  var TYPE_PIC = { grid: 'tk-prop/treasure-map', sort: 'tk-prop/crate-plain', steer: 'tk-prop/ship-wheel', lanes: 'tk-prop/compass', story: 'tk-prop/adventure-log', cutscene: 'tk-prop/adventure-log', cinema: 'tk-prop/porthole' }
+  var DOM_PIC = { umum: 'tk-prop/books-ocean', matematika: 'tk-prop/sextant', logika: 'tk-prop/compass-open-2', campur: 'tk-prop/nautical-chart', sains: 'tk-prop/globe-2' }
+  function libOr (k, alt) { return Art.lib(k && W.AssetIndex && AssetIndex.path(k) ? k : alt) }
+  function medPic (w, lv, k, done) {
+    if (lv.pic) return Art.src(lv.pic)
+    if (lv.fragment) return libOr(done ? 'tk-prop/treasure-chest-open' : 'tk-prop/treasure-chest-3', 'tk-prop/treasure-chest-2')
+    if (k === 0 && w.ship) return Art.src(w.ship)
+    return libOr(lv.type === 'quiz' ? DOM_PIC[lv.domain] : TYPE_PIC[lv.type], 'tk-prop/compass-3')
+  }
+  // level-mode geometry: try each column count, keep the one with the biggest medallion
+  // label block under a medallion of m px (mirrors the .lmode clamps; a narrow column wraps the title to 2 lines)
+  function labOf (m, colW, short) {
+    var cl = function (a, v, b) { return Math.max(a, Math.min(b, v)) }
+    return Math.ceil(cl(14, m * 0.1, 20) * 1.15 * (colW < 170 ? 2 : 1) + (short ? 0 : cl(13, m * 0.075, 15) * 1.15) + cl(18, m * 0.13, 26) + 26)
+  }
+  // level-mode geometry: per column count, the biggest medallion whose rows (flag room + medallion + label)
+  // fit the board; prefer a layout that fits, then the bigger medallion
+  function levelGeom (n, bw, avail) {
+    var land = innerWidth > innerHeight, short = innerHeight < 520, wide = bw >= 600, FLAG = 36
+    var cand = land ? (short ? [Math.min(n, 6)] : [Math.min(5, Math.ceil(n / 2)), Math.min(5, n)]) : [2, 3]
+    var mMin = short || !wide ? 64 : 96, best = null
+    cand.forEach(function (cols) {
+      var rows = Math.ceil(n / cols), colW = bw / cols, m = Math.min(colW * 0.64, 200)
+      for (; m > mMin; m -= 2) if (rows * (m + labOf(m, colW, short) + FLAG) + 10 <= avail) break
+      m = Math.round(Math.max(mMin, m))
+      var labH = labOf(m, colW, short), need = rows * (m + labH + FLAG) + 10, fit = need <= avail
+      if (!best || (fit && !best.fit) || (fit === best.fit && (fit ? m > best.m + 8 : need < best.need))) best = { cols: cols, rows: rows, colW: colW, m: m, labH: labH, need: need, fit: fit }
+    })
+    best.rowH = Math.max(Math.floor((avail - 10) / best.rows), best.m + best.labH + FLAG)
+    best.top = FLAG + Math.max(0, Math.round((best.rowH - FLAG - best.m - best.labH) * 0.5))
+    return best
   }
   /* ── CHAPTER MAP (owner mockup ui-12 "CHAPTER MAP — A Journey of Knowledge and Courage") ──
      A parchment sea chart: a wooden title plate, round chapter medallions (the chapter's scene + an owner
      sprite) with "N. Judul" and "(Subjudul)", a dashed route in reading order (each row left→right; a row
      change runs down the right edge, back along the gap under the titles, down the left edge), a small
      ship that sails from the last finished chapter to the current one, grey + lock for locked chapters,
-     and a ribbon footer. 5 columns in landscape / wide portrait, 2 columns on a phone held upright. */
+     and a ribbon footer. 5 columns in landscape / wide portrait, 2 columns on a phone held upright.
+     Worlds without chapters use the same board in level mode (see LEVEL MAP above). */
   var SHIP_RAF = 0
   function layoutChapters (w, still) {
-    var host = $('route'), L = w.levels, n = L.length
+    var host = $('route'), L = w.levels, n = L.length, lm = !w.chapters, cap = w.captain || {}
     cancelAnimationFrame(SHIP_RAF)
-    host.innerHTML = '<div class="cmap"><i class="cm-rose" aria-hidden="true"><img src="' + esc(Art.lib('tk-prop/compass-3')) + '" alt=""></i>' +
-      '<header class="cm-plate"><b class="fk">' + esc(w.mapTitle || 'Peta Bab') + '</b><small>' + esc(w.mapSub || w.value) + '</small></header>' +
-      '<div class="cm-board"></div><footer class="cm-foot fk">' + esc(w.mapFoot || '') + '</footer></div>'
+    var foot = lm ? (cap.quote ? '<footer class="cm-foot cm-guide"><img src="' + esc(Art.src(CAPT[w.id] || 'char/captain')) + '" alt=""><span><b class="fk">' + esc(cap.name) + '</b><q>' + esc(cap.quote) + '</q></span></footer>' : '')
+      : '<footer class="cm-foot fk">' + esc(w.mapFoot || '') + '</footer>'
+    host.innerHTML = '<div class="cmap' + (lm ? ' lmode' : '') + (still ? ' still' : '') + '"><i class="cm-rose" aria-hidden="true"><img src="' + esc(Art.lib('tk-prop/compass-3')) + '" alt=""></i>' +
+      '<header class="cm-plate"><b class="fk">' + esc(lm ? 'Peta ' + w.name : (w.mapTitle || 'Peta Bab')) + '</b><small>' + esc(w.mapSub || w.value) + '</small></header>' +
+      '<div class="cm-board"></div>' + foot + '</div>'
     var cmap = host.firstChild, board = cmap.querySelector('.cm-board')
     var bw = board.clientWidth, land = innerWidth > innerHeight
-    var cols = land ? Math.min(5, n) : 2, rows = Math.ceil(n / cols), colW = bw / cols
     var short = innerHeight < 520
-    var avail = board.clientHeight
-    var labH = short ? 34 : 44, rowH = land ? Math.max(short ? 104 : 150, Math.floor(avail / rows)) : Math.max(146, Math.min(bw >= 600 ? 220 : 176, Math.floor(avail / rows)))
-    var m = Math.round(Math.max(56, Math.min(colW * (land ? 0.56 : 0.5), rowH - labH - (short ? 18 : 30), bw >= 600 ? 132 : 116)))
-    var top = Math.max(4, Math.round((rowH - m - labH) * (short ? 0.3 : 0.4))), pts = []
-    for (var k = 0; k < n; k++) { var r = Math.floor(k / cols), c = k % cols; pts.push({ x: colW * (c + 0.5), y: r * rowH + top + m / 2, row: r }) }
-    var H = rows * rowH
+    var avail = board.clientHeight, cols, rows, colW, labH, rowH, m, top, pts = []
+    if (lm) { var G = levelGeom(n, bw, avail); cols = G.cols; rows = G.rows; colW = G.colW; labH = G.labH; rowH = G.rowH; m = G.m; top = G.top }
+    else {
+      cols = land ? Math.min(5, n) : 2; rows = Math.ceil(n / cols); colW = bw / cols
+      labH = short ? 34 : 44; rowH = land ? Math.max(short ? 104 : 150, Math.floor(avail / rows)) : Math.max(146, Math.min(bw >= 600 ? 220 : 176, Math.floor(avail / rows)))
+      m = Math.round(Math.max(56, Math.min(colW * (land ? 0.56 : 0.5), rowH - labH - (short ? 18 : 30), bw >= 600 ? 132 : 116)))
+      top = Math.max(4, Math.round((rowH - m - labH) * (short ? 0.3 : 0.4)))
+    }
+    for (var k = 0; k < n; k++) { var r = Math.floor(k / cols), c = k % cols; if (lm && r % 2) c = cols - 1 - c; pts.push({ x: colW * (c + 0.5), y: r * rowH + top + m / 2, row: r }) }
+    var H = lm ? Math.max(rows * rowH, (rows - 1) * rowH + top + m + labH + 14) : rows * rowH
     board.style.height = H + 'px'
     // route: a gentle wave between neighbours; a row change goes right edge -> gap under the titles -> left edge
+    // (level mode is serpentine: a row change just runs down the board edge beside the last medallion)
     var d = 'M' + pts[0].x.toFixed(0) + ' ' + pts[0].y.toFixed(0), segs = []
     for (var q = 1; q < n; q++) {
-      var a = pts[q - 1], b = pts[q], sd
-      if (a.row === b.row) sd = ' Q' + ((a.x + b.x) / 2).toFixed(0) + ' ' + (a.y + m * 0.34).toFixed(0) + ' ' + b.x.toFixed(0) + ' ' + b.y.toFixed(0)
-      else {
-        var e1 = Math.min(bw - 6, a.x + colW / 2 - 4), e2 = Math.max(6, b.x - colW / 2 + 4), gy = a.y + m / 2 + labH + Math.max(6, (rowH - m - labH) / 2) - 4, rr = 12
+      var a = pts[q - 1], b = pts[q], sd, rr = 12
+      if (a.row === b.row) sd = ' Q' + ((a.x + b.x) / 2).toFixed(0) + ' ' + (a.y + m * (lm ? 0.22 : 0.34)).toFixed(0) + ' ' + b.x.toFixed(0) + ' ' + b.y.toFixed(0)
+      else if (lm) {
+        var sg = a.x > bw / 2 || cols === 1 ? 1 : -1, ex = sg > 0 ? Math.min(bw - 8, a.x + colW / 2 - 4) : Math.max(8, a.x - colW / 2 + 4)
+        sd = ' L' + (ex - sg * rr).toFixed(0) + ' ' + a.y.toFixed(0) + ' Q' + ex.toFixed(0) + ' ' + a.y.toFixed(0) + ' ' + ex.toFixed(0) + ' ' + (a.y + rr).toFixed(0) +
+          ' L' + ex.toFixed(0) + ' ' + (b.y - rr).toFixed(0) + ' Q' + ex.toFixed(0) + ' ' + b.y.toFixed(0) + ' ' + (ex - sg * rr).toFixed(0) + ' ' + b.y.toFixed(0) + ' L' + b.x.toFixed(0) + ' ' + b.y.toFixed(0)
+      } else {
+        var e1 = Math.min(bw - 6, a.x + colW / 2 - 4), e2 = Math.max(6, b.x - colW / 2 + 4), gy = a.y + m / 2 + labH + Math.max(6, (rowH - m - labH) / 2) - 4
         sd = ' L' + (e1 - rr).toFixed(0) + ' ' + a.y.toFixed(0) + ' Q' + e1.toFixed(0) + ' ' + a.y.toFixed(0) + ' ' + e1.toFixed(0) + ' ' + (a.y + rr).toFixed(0) +
           ' L' + e1.toFixed(0) + ' ' + (gy - rr).toFixed(0) + ' Q' + e1.toFixed(0) + ' ' + gy.toFixed(0) + ' ' + (e1 - rr).toFixed(0) + ' ' + gy.toFixed(0) +
           ' L' + (e2 + rr).toFixed(0) + ' ' + gy.toFixed(0) + ' Q' + e2.toFixed(0) + ' ' + gy.toFixed(0) + ' ' + e2.toFixed(0) + ' ' + (gy + rr).toFixed(0) +
@@ -565,79 +614,56 @@
     }
     var nextK = -1; for (var z = 0; z < n; z++) if (!starsOf(w.id, L[z].id) && levelOpen(w, z)) { nextK = z; break }
     var shipK = nextK >= 0 ? nextK : n - 1
-    board.innerHTML = '<svg class="cm-path" width="' + Math.round(bw) + '" height="' + H + '" aria-hidden="true"><path d="' + d + '" fill="none" stroke="rgba(255,248,225,.55)" stroke-width="6" stroke-linecap="round"/>' +
-      '<path d="' + d + '" fill="none" stroke="#7A5226" stroke-width="3" stroke-dasharray="9 9" stroke-linecap="round"/>' +
+    var rope = lm ? '<path d="' + d + '" fill="none" stroke="rgba(255,248,225,.7)" stroke-width="11" stroke-linecap="round"/>' +
+        '<path d="' + d + '" fill="none" stroke="' + esc(w.color || '#7A5226') + '" stroke-opacity=".55" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round"/>' +
+        (shipK > 0 ? '<path d="' + segs.slice(0, shipK).join(' ') + '" fill="none" stroke="#7A5226" stroke-width="5" stroke-dasharray="14 8" stroke-linecap="round"/>' : '')
+      : '<path d="' + d + '" fill="none" stroke="rgba(255,248,225,.55)" stroke-width="6" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="#7A5226" stroke-width="3" stroke-dasharray="9 9" stroke-linecap="round"/>'
+    board.innerHTML = '<svg class="cm-path" width="' + Math.round(bw) + '" height="' + H + '" aria-hidden="true">' + rope +
       (shipK > 0 ? '<path class="cm-seg" d="' + segs[shipK - 1] + '" fill="none" stroke="none"/>' : '') + '</svg>' +
       L.map(function (lv, k) {
         var st = starsOf(w.id, lv.id), open = levelOpen(w, k), pr = open && !st ? progOf(w, lv) : 0, stars = ''
+        var sub = lm ? (lv.fragment ? 'Harta Karun' : TYPE_SUB[lv.type] || '') : lv.sub
         for (var i = 0; i < 3; i++) stars += IC('star', i < st ? '' : 'tk-ico--dim')
-        return '<button class="chap' + (open ? '' : ' locked') + (st ? ' done' : '') + (k === nextK ? ' next' : '') + '" type="button" data-k="' + k + '"' +
-          ' aria-label="' + esc('Bab ' + (k + 1) + ': ' + lv.title + (lv.sub ? ' (' + lv.sub + ')' : '') + (open ? '' : ' (terkunci)')) + '"' +
+        return '<button class="chap' + (open ? '' : ' locked') + (st ? ' done' : '') + (k === nextK ? ' next' : '') + (lv.fragment ? ' chest' : '') + '" type="button" data-k="' + k + '"' +
+          ' aria-label="' + esc(unitLabel(w, k) + ': ' + lv.title + (sub ? ' (' + sub + ')' : '') + (open ? '' : ' (terkunci)') + (lm && st ? ', ' + st + ' bintang' : '')) + '"' +
           ' style="left:' + pts[k].x.toFixed(0) + 'px;top:' + (pts[k].y - m / 2).toFixed(0) + 'px;--m:' + m + 'px;width:' + Math.floor(colW - 6) + 'px;animation-delay:' + k * 45 + 'ms">' +
-          '<span class="md" style="background:' + esc(Art.scene(lv.picScene || lv.scene || w.scene)) + '"><img src="' + esc(Art.src(lv.pic || w.ship)) + '" alt="" draggable="false">' +
+          '<span class="md" style="background:' + esc(Art.scene(lv.picScene || lv.scene || w.scene)) + '"><img src="' + esc(lm ? medPic(w, lv, k, !!st) : Art.src(lv.pic || w.ship)) + '" alt="" draggable="false">' +
             (open ? '' : '<i class="lk">' + IC('lock', '', '') + '</i>') + (pr ? '<i class="pr fk">' + pr + '/' + (lv.steps || []).length + '</i>' : '') + '</span>' +
-          '<span class="ct"><b class="fk">' + (k + 1) + '. ' + esc(lv.title) + '</b>' + (lv.sub ? '<small>(' + esc(lv.sub) + ')</small>' : '') + '</span>' +
-          (st ? '<span class="s">' + stars + '</span>' : '') + '</button>'
-      }).join('') + '<img class="cm-ship" src="' + esc(Art.src(w.ship)) + '" alt="" draggable="false">'
+          (lm ? '<b class="no fk" aria-hidden="true">' + (k + 1) + '</b>' + (k === nextK ? '<i class="ring" aria-hidden="true"></i><i class="flag fk" aria-hidden="true">Main!</i>' : '') : '') +
+          '<span class="ct"><b class="fk">' + (lm ? '' : (k + 1) + '. ') + esc(lv.title) + '</b>' + (sub ? '<small>(' + esc(sub) + ')</small>' : '') + '</span>' +
+          (st || lm ? '<span class="s">' + stars + '</span>' : '') + '</button>'
+      }).join('') + (w.ship ? '<img class="cm-ship" src="' + esc(Art.src(w.ship)) + '" alt="" draggable="false">' : '')
     skel(board)
     // the small ship: sails along the route from the previous chapter to the current one, stopping beside it
-    var ship = board.querySelector('.cm-ship'), seg = board.querySelector('.cm-seg'), sw = Math.round(Math.max(44, m * 0.62))
+    var ship = board.querySelector('.cm-ship'), seg = board.querySelector('.cm-seg'), sw = Math.round(Math.max(44, m * (lm ? 0.56 : 0.62)))
+    var nx = board.querySelector('.chap.next'), scrollNext = function () { if (nx && !land) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() || still ? 'auto' : 'smooth' }) } catch (e) {} }, 80) }
+    if (!ship) { scrollNext(); return }
     ship.style.width = sw + 'px'
-    var place = function (x, y, flip) { ship.style.transform = 'translate3d(' + Math.round(x - sw / 2) + 'px,' + Math.round(y - sw * 0.62) + 'px,0)' + (flip ? ' scaleX(-1)' : '') }
+    var bob = function () { if (lm) ship.classList.add('bob') }
+    var place = function (x, y, flip) { if (lm) x = Math.max(sw / 2, Math.min(bw - sw / 2, x)); ship.style.transform = 'translate3d(' + Math.round(x - sw / 2) + 'px,' + Math.round(y - sw * 0.62) + 'px,0)' + (flip ? ' scaleX(-1)' : '') }
     var P0 = pts[shipK]
-    if (!seg || !seg.getTotalLength) { place(P0.x - m / 2 - sw / 2 - 4, P0.y, false); return }
+    if (!seg || !seg.getTotalLength) {
+      if (lm && P0.x - m / 2 - sw < 0) place(P0.x + m / 2 + sw / 2 + 4, P0.y, false); else place(P0.x - m / 2 - sw / 2 - 4, P0.y, false)
+      bob(); if (lm) scrollNext(); return
+    }
     var len = seg.getTotalLength(), stop = Math.max(0, len - (m / 2 + sw / 2 + 8)), at = function (u) { return seg.getPointAtLength(u) }
+    if (lm) {   // back the ship off along the rope until it clears the current medallion and its "Main!" flag
+      var clear = function (u) { var q = at(u), x = Math.max(sw / 2, Math.min(bw - sw / 2, q.x)); return x + sw / 2 < P0.x - m / 2 - 6 || x - sw / 2 > P0.x + m / 2 + 6 || q.y + sw * 0.2 < P0.y - m / 2 - 34 || q.y - sw * 0.62 > P0.y + m / 2 }
+      while (stop > 0 && !clear(stop)) stop -= 4
+    }
     var end = at(stop), flipEnd = at(Math.max(0, stop - 6)).x > end.x
-    if (still) { place(end.x, end.y, flipEnd); return }   // a resize / rotation re-lays the map without sailing again
-    if (reduced()) { place(end.x, end.y, flipEnd); ship.animate && ship.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300 }); return }
+    if (still) { place(end.x, end.y, flipEnd); bob(); return }   // a resize / rotation re-lays the map without sailing again
+    if (reduced()) { place(end.x, end.y, flipEnd); ship.animate && ship.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300 }); bob(); if (lm) scrollNext(); return }
     var t0 = performance.now() + 380, dur = 1400
     ;(function f (now) {
       if (!ship.isConnected) return
       var k = Math.max(0, Math.min(1, (now - t0) / dur)), e = 1 - Math.pow(1 - k, 3), u = stop * e, p = at(u), p2 = at(Math.min(len, u + 4))
       place(p.x, p.y, p2.x < p.x - 0.5 || (k >= 1 && flipEnd))
-      if (k < 1) SHIP_RAF = requestAnimationFrame(f)
+      if (k < 1) SHIP_RAF = requestAnimationFrame(f); else bob()
     })(performance.now())
-    var nx = board.querySelector('.chap.next'); if (nx && !land) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }) } catch (e) {} }, 80)
+    scrollNext()
   }
-  function layoutRoute (w, still) {
-    if (w.chapters) return layoutChapters(w, still)
-    var host = $('route'), cs = getComputedStyle(host), n = w.levels.length
-    var x0 = parseFloat(cs.paddingLeft) || 0, Wd = host.clientWidth - x0 - (parseFloat(cs.paddingRight) || 0)
-    var land = innerWidth > innerHeight && Wd >= 560
-    var cols = land ? Math.max(2, Math.ceil(n / 2)) : (Wd > 520 ? 4 : 3)
-    var gx = Wd / cols, rowH = land ? 150 : 138, tw = Math.round(Math.min(gx - 4, 132)), pts = []
-    for (var k = 0; k < n; k++) {
-      var row = Math.floor(k / cols), c = k % cols; if (!land && row % 2) c = cols - 1 - c     // portrait: snake
-      pts.push({ x: x0 + gx * (c + 0.5), y: 34 + row * rowH, row: row })
-    }
-    var H = pts[n - 1].y + 100
-    if (land) {   // lower the two rows into the open sea under the title, like the mockup
-      var avail = host.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0), off = Math.max(0, Math.round((avail - H) * 0.55))
-      pts.forEach(function (p) { p.y += off }); H += off
-    }
-    var d
-    if (land) {   // one route: row 1 left→right, down the right gutter, back along the gap under row 1's titles, down, row 2 left→right
-      d = 'M' + pts[0].x.toFixed(0) + ' ' + pts[0].y
-      for (var q = 1; q < n; q++) {
-        var a = pts[q - 1], b = pts[q]
-        if (a.row === b.row) { d += ' L' + b.x.toFixed(0) + ' ' + b.y; continue }
-        var e1 = a.x + gx / 2 - 3, gy = a.y + Math.round(rowH * 0.64), e2 = b.x - gx / 2 + 3, r = 14
-        d += ' L' + (e1 - r).toFixed(0) + ' ' + a.y + ' Q' + e1.toFixed(0) + ' ' + a.y + ' ' + e1.toFixed(0) + ' ' + (a.y + r) + ' L' + e1.toFixed(0) + ' ' + (gy - r) + ' Q' + e1.toFixed(0) + ' ' + gy + ' ' + (e1 - r).toFixed(0) + ' ' + gy +
-          ' L' + (e2 + r).toFixed(0) + ' ' + gy + ' Q' + e2.toFixed(0) + ' ' + gy + ' ' + e2.toFixed(0) + ' ' + (gy + r) + ' L' + e2.toFixed(0) + ' ' + (b.y - r) + ' Q' + e2.toFixed(0) + ' ' + b.y + ' ' + (e2 + r).toFixed(0) + ' ' + b.y + ' L' + b.x.toFixed(0) + ' ' + b.y
-      }
-    } else d = snakePath(pts, gx / 2 - 3, x0 + Wd / 2)
-    var nextK = -1; for (var z = 0; z < n; z++) if (!starsOf(w.id, w.levels[z].id) && levelOpen(w, z)) { nextK = z; break }
-    host.innerHTML = pathSvg(host.clientWidth, H, d, 4) +
-      w.levels.map(function (l, k) {
-        var s = starsOf(w.id, l.id), open = levelOpen(w, k), st = ''
-        for (var i = 0; i < 3; i++) st += IC('star', i < s ? '' : 'tk-ico--dim')
-        return '<button class="node' + (open ? '' : ' locked') + (s ? ' done' : '') + (k === nextK ? ' next' : '') + '" type="button" data-k="' + k + '" aria-label="' + esc('Level ' + (k + 1) + ': ' + l.title + (open ? '' : ' (terkunci)')) + '" style="left:' + pts[k].x.toFixed(0) + 'px;top:' + pts[k].y + 'px;width:' + tw + 'px;animation-delay:' + k * 60 + 'ms">' +
-          '<span class="n fk">' + (open ? k + 1 : IC('lock', '', 'terkunci')) + '</span>' +
-          '<span class="s">' + st + '</span><span class="t">' + esc(l.title) + '</span></button>'
-      }).join('')
-    var spacer = document.createElement('div'); spacer.style.height = H + 'px'; host.appendChild(spacer)
-    var nx = host.querySelector('.node.next'); if (nx && !land) setTimeout(function () { try { nx.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' }) } catch (e) {} }, 80)
-  }
+  function layoutRoute (w, still) { return layoutChapters(w, still) }
   function historyCards (w) {
     var ov = $('cards')
     ov.innerHTML = '<div class="panel glass"><h2 class="fk">Kartu Sejarah: ' + esc(w.name) + '</h2>' + (w.cards || []).map(function (c) {
@@ -704,6 +730,9 @@
   function mode (type) {
     var b = document.body.classList
     b.toggle('imm', type === 'lanes' || type === 'cinema'); b.toggle('lanes-on', type === 'lanes'); b.toggle('cine-on', type === 'cinema')
+    // quiz / sort: Timmy and the Kapten stand beside the card in the full frame; the chapter column steps aside
+    // (the plate + top-bar chip still name the chapter) — owner photo 2026-09-29
+    b.toggle('quiz-on', type === 'quiz' || type === 'sort')
   }
   // "Bab 4 · Laut Lepas — Langkah 2/3": a brief chip at every step start (read aloud with the step goal)
   function stepLabel (ch, i) { return 'Langkah ' + (i + 1) + '/' + ch.steps.length }
@@ -744,7 +773,7 @@
       runStep(from, true)
       return
     }
-    chapter(w, k)
+    mode(lv.type); chapter(w, k)
     var go = function () { runPlayer(lv, host) }
     if (lv.story && lv.type !== 'story' && lv.type !== 'cutscene') story(host, lv.story, lv.title, go)
     else go()
@@ -1161,7 +1190,10 @@
     $('ship-list').addEventListener('click', function (e) {
       var f = e.target.closest('.fav'); if (f) { var id = f.getAttribute('data-fav'), at = S.fav.indexOf(id); if (at >= 0) S.fav.splice(at, 1); else S.fav.push(id); save(); SND.chime(); f.classList.toggle('on', at < 0); A(f, [{ transform: 'scale(1)' }, { transform: 'scale(1.4)' }, { transform: 'scale(1)' }], { duration: 300, easing: EO }); return }
       var b = e.target.closest('.shipcard'); if (!b) return; SND.click(); detail(b.getAttribute('data-w')) })
-    $('route').addEventListener('click', function (e) { var b = e.target.closest('.node, .chap'); if (!b) return; SND.click(); startLevel(+b.getAttribute('data-k')) })
+    $('route').addEventListener('click', function (e) { var b = e.target.closest('.node, .chap'); if (!b) return; SND.click()
+      // a locked medallion: a gentle shake (the `translate` property, so the centring transform stays) + the hint toast
+      if (b.classList.contains('locked')) A(b, [{ translate: '0 0' }, { translate: '-7px 0' }, { translate: '6px 0' }, { translate: '-4px 0' }, { translate: '0 0' }], { duration: 240, easing: 'ease-out' })
+      startLevel(+b.getAttribute('data-k')) })
     tap('btn-story', function () { if (CUR.w) historyCards(CUR.w) })
     document.querySelectorAll('[data-back]').forEach(function (b) { tap(b, function () { var t = b.getAttribute('data-back'); if (t === 'ships') worldView(); else home() }) })
     var openPause = function () { $('pause').className = 'overlay show'; try { PLAYING && PLAYING.handle && PLAYING.handle.pause && PLAYING.handle.pause() } catch (e) {} }

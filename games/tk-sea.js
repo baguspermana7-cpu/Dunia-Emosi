@@ -50,6 +50,7 @@
   function theme (n) { return THEMES[n] || THEMES.day }
 
   /* ── seamless tiles ───────────────────────────────────────────────────── */
+  function rgb (hex) { var n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255] }
   function wrapDraw (fn) { for (var ox = -T; ox <= T; ox += T) for (var oy = -T; oy <= T; oy += T) fn(ox, oy) }
   function waveTile (th, seed, big) {
     var c = canvas(T, T), x = c.getContext('2d'), r = rng(seed)
@@ -162,12 +163,34 @@
     // pattern at integer offsets ~1.3 ms): everything static is baked into ONE opaque 256-unit tile —
     // theme colour, swells, waves, fine foam, soft caustics — and that tile is pre-scaled to the screen's
     // device-pixel scale (Sea.draw), so a frame paints the whole sea with a single unscaled fill.
-    var B = canvas(T, T), bx = B.getContext('2d')
-    var g = bx.createLinearGradient(0, 0, T, T); g.addColorStop(0, th.mid); g.addColorStop(0.5, th.top); g.addColorStop(1, th.mid)
-    bx.fillStyle = th.mid; bx.fillRect(0, 0, T, T)
-    bx.globalAlpha = 0.35; bx.fillStyle = g; bx.fillRect(0, 0, T, T); bx.globalAlpha = 1
-    bx.drawImage(t.swell, 0, 0); bx.drawImage(t.wave2, 0, 0); bx.drawImage(t.wave, 0, 0); bx.drawImage(t.foam, 0, 0)
-    if (th.caustic) { bx.globalAlpha = Math.min(1, th.caustic * 1.4); bx.drawImage(t.caustic, 0, 0); bx.globalAlpha = 1 }
+    // round 2 (review: "reads as polygon floor tiles"): the base is now a 512-unit tile whose dominant read is
+    // LONG ROLLING SWELL BANDS — a sum of seamless sine waves (integer frequencies, mostly across the course,
+    // mixed angles so no straight repeat line shows) — plus small chop, fine foam and only a faint, blurred
+    // hint of caustics.
+    var BT = T * 2, B = canvas(BT, BT), bx = B.getContext('2d')
+    var img = bx.createImageData(BT, BT), d = img.data
+    var cm = rgb(th.mid), ct = rgb(th.top), cb = rgb(th.bot), r0 = rng(83)
+    var W5 = [[1, 3, 0.5], [-2, 5, 0.32], [3, 7, 0.2], [0, 2, 0.28], [9, 14, 0.07], [-13, 11, 0.06], [17, -9, 0.04]]
+    for (var q = 0; q < W5.length; q++) W5[q].push(r0() * TAU)
+    for (var yy = 0; yy < BT; yy++) {
+      for (var xx = 0; xx < BT; xx++) {
+        var u = xx / BT, v = yy / BT, b = 0
+        for (var w = 0; w < W5.length; w++) b += W5[w][2] * Math.sin(TAU * (W5[w][0] * u + W5[w][1] * v) + W5[w][3])
+        var k2 = Math.max(-1, Math.min(1, b / 0.95)), to = k2 > 0 ? ct : cb, f = Math.abs(k2) * 0.55
+        var o = (yy * BT + xx) * 4
+        d[o] = cm[0] + (to[0] - cm[0]) * f; d[o + 1] = cm[1] + (to[1] - cm[1]) * f; d[o + 2] = cm[2] + (to[2] - cm[2]) * f; d[o + 3] = 255
+        if (k2 > 0.9 && th.foamA) { var cr = (k2 - 0.9) / 0.1 * 0.22 * th.foamA; d[o] += (255 - d[o]) * cr; d[o + 1] += (255 - d[o + 1]) * cr; d[o + 2] += (255 - d[o + 2]) * cr }
+      }
+    }
+    bx.putImageData(img, 0, 0)
+    for (var i2 = 0; i2 < 2; i2++) for (var j2 = 0; j2 < 2; j2++) { bx.drawImage(t.wave, i2 * T, j2 * T); bx.drawImage(t.foam, i2 * T, j2 * T) }
+    bx.globalAlpha = 0.55; bx.drawImage(t.wave2, 0, 0, BT, BT); bx.globalAlpha = 1
+    if (th.caustic) {
+      bx.save(); bx.globalAlpha = Math.min(0.5, th.caustic * 1.2)
+      try { bx.filter = 'blur(3px)' } catch (e) {}
+      bx.drawImage(t.caustic, 0, 0, BT, BT)
+      bx.restore()
+    }
     TEX[name] = { base: B, foam2: t.foam2, glint: t.glint, caustic: t.caustic }
     return TEX[name]
   }
@@ -192,16 +215,25 @@
   // k = device px per world unit, (ox, oy) = device position of the world origin. The tile is rebuilt
   // only when k changes by more than 3% (resize / camera zoom), never per frame.
   function Sea (name) {
-    var tex = textures(name), cur = null, TILE = 1.4        // one tile = 256 * 1.4 world units
+    var tex = textures(name), TILE = 1.25, cache = {}, order = []   // one tile = 512 * 1.25 world units
+    // tiles are cached by device-pixel size (8 px buckets). prewarm() builds the sizes the adaptive render
+    // quality can step to BEFORE play, so a quality step never rebuilds a tile mid-game (that rebuild was
+    // the one-off > 50 ms task the perf gate caught).
+    function tile (ctx, k) {
+      var px = Math.min(2048, Math.max(64, Math.round(tex.base.width * TILE * k / 8) * 8))
+      var c0 = cache[px]
+      if (!c0) {
+        var c = canvas(px, px), x = c.getContext('2d')
+        x.imageSmoothingQuality = 'high'; x.drawImage(tex.base, 0, 0, px, px)
+        c0 = cache[px] = { px: px, pat: ctx.createPattern(c, 'repeat') }
+        order.push(px); if (order.length > 8) delete cache[order.shift()]
+      }
+      return c0
+    }
     return {
+      prewarm: function (ctx, ks) { for (var i = 0; i < ks.length; i++) tile(ctx, ks[i]) },
       draw: function (ctx, k, ox, oy, Wd, Hd) {
-        var px = Math.max(64, Math.round(T * TILE * k))
-        if (!cur || Math.abs(cur.px - px) / px > 0.03) {
-          px = Math.min(px, 2048)
-          var c = canvas(px, px), x = c.getContext('2d')
-          x.imageSmoothingQuality = 'high'; x.drawImage(tex.base, 0, 0, px, px)
-          cur = { px: px, pat: ctx.createPattern(c, 'repeat') }
-        }
+        var cur = tile(ctx, k)
         var tx = Math.round(((ox % cur.px) + cur.px) % cur.px), ty = Math.round(((oy % cur.px) + cur.px) % cur.px)
         ctx.setTransform(1, 0, 0, 1, tx, ty)
         ctx.fillStyle = cur.pat
@@ -548,20 +580,23 @@
   var HUD_CSS = [
     '.tkx-wood{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.12)),repeating-linear-gradient(92deg,#7a4a24 0 7px,#6d4120 7px 9px,#835029 9px 17px,#70431f 17px 20px);border:3px solid #d9a441;border-radius:16px;box-shadow:inset 0 0 0 2px #7a5314,inset 0 2px 0 3px rgba(255,236,170,.35),0 4px 0 #4a2c10,0 8px 16px rgba(0,0,0,.3);color:#fff4d6;text-shadow:0 1px 0 rgba(40,20,0,.8)}',
     '.tkx-brass{background:radial-gradient(circle at 35% 28%,#fff4c4 0,#f2c65e 30%,#cf9433 64%,#8d5b18 100%);border:4px solid #6b4412;box-shadow:inset 0 -5px 0 rgba(90,55,10,.45),inset 0 3px 0 rgba(255,250,220,.6),0 6px 0 #4f310b,0 10px 18px rgba(0,0,0,.32)}',
-    '.tkx-chip{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;font-family:"Fredoka One","Fredoka",var(--font-display,"Nunito"),system-ui,sans-serif}',
-    '.tkx-chip img{width:30px;height:30px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35))}',
-    '.tkx-chip small{display:block;font:800 12px/1.1 system-ui,sans-serif;color:#ffe3a3;letter-spacing:.3px}',
-    '.tkx-chip b{display:block;font-weight:400;font-size:21px;line-height:1.05;font-variant-numeric:tabular-nums}',
-    '.tkx-route{position:relative;display:flex;align-items:center;gap:8px;padding:8px 12px 8px 10px;min-width:220px}',
-    '.tkx-track{position:relative;flex:1;height:14px;border-radius:8px;background:#2e1a0a;box-shadow:inset 0 2px 3px rgba(0,0,0,.6),0 1px 0 rgba(255,236,170,.35)}',
-    '.tkx-fill{position:absolute;left:2px;top:2px;bottom:2px;width:calc(100% - 4px);border-radius:6px;background:linear-gradient(#7fe0ff,#2f8fd0);transform-origin:0 50%;transform:scaleX(var(--tkx-p,0))}',
-    '.tkx-dots{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,244,210,.7) 1.5px,transparent 2px) 0 50%/14px 14px repeat-x;border-radius:8px}',
-    '.tkx-rship{position:absolute;top:50%;left:0;width:40px;height:32px;margin:-18px 0 0 -20px;object-fit:contain;transform:translateX(calc(var(--tkx-p,0) * var(--tkx-tw,160px)));filter:drop-shadow(0 2px 0 rgba(0,0,0,.45));pointer-events:none}',
+    '.tkx-chip{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;font-family:"Fredoka One","Fredoka",var(--font-display,"Nunito"),system-ui,sans-serif}',
+    '.tkx-chip img{width:36px;height:36px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35))}',
+    '.tkx-chip small{display:block;font:800 14px/1.15 system-ui,sans-serif;color:#ffe3a3;letter-spacing:.3px}',
+    '.tkx-chip b{display:block;font-weight:400;font-size:24px;line-height:1.05;font-variant-numeric:tabular-nums}',
+    '.tkx-route{position:relative;display:flex;align-items:center;gap:10px;padding:18px 14px 10px 14px;min-width:240px}',
+    '.tkx-track{position:relative;flex:1;height:28px;border-radius:14px;background:#2e1a0a;box-shadow:inset 0 2px 3px rgba(0,0,0,.6),0 1px 0 rgba(255,236,170,.35)}',
+    '.tkx-fill{position:absolute;left:3px;top:3px;bottom:3px;width:calc(100% - 6px);border-radius:11px;background:linear-gradient(#7fe0ff,#2f8fd0);transform-origin:0 50%;transform:scaleX(var(--tkx-p,0))}',
+    '.tkx-dots{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,244,210,.7) 2px,transparent 2.5px) 0 50%/18px 18px repeat-x;border-radius:14px}',
+    '.tkx-rship{position:absolute;top:50%;left:0;width:60px;height:46px;margin:-26px 0 0 -30px;object-fit:contain;transform:translateX(calc(var(--tkx-p,0) * var(--tkx-tw,160px)));filter:drop-shadow(0 2px 0 rgba(0,0,0,.45));pointer-events:none}',
     '.tkx-rdot{position:absolute;top:50%;left:0;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:#fff4d6;border:3px solid #d9a441;transform:translateX(calc(var(--tkx-p,0) * var(--tkx-tw,160px)))}',
-    '.tkx-flag{flex:none;position:relative;width:26px;height:30px}',
-    '.tkx-flag:before{content:"";position:absolute;left:3px;top:0;width:3px;height:30px;border-radius:2px;background:#f4e6c4}',
-    '.tkx-flag:after{content:"";position:absolute;left:6px;top:1px;width:19px;height:14px;background:conic-gradient(#111 25%,#fff 0 50%,#111 0 75%,#fff 0) 0 0/9.5px 7px;box-shadow:0 1px 2px rgba(0,0,0,.5)}',
-    '.tkx-rlabel{position:absolute;left:12px;top:-9px;padding:1px 8px;border-radius:8px;background:#4a2c10;border:1.5px solid #d9a441;font:800 12px/1.3 system-ui,sans-serif;color:#ffe3a3;white-space:nowrap}',
+    '.tkx-flag{flex:none;position:relative;width:30px;height:36px}',
+    '.tkx-flag:before{content:"";position:absolute;left:3px;top:0;width:4px;height:36px;border-radius:2px;background:#f4e6c4}',
+    '.tkx-flag:after{content:"";position:absolute;left:7px;top:1px;width:23px;height:16px;background:conic-gradient(#111 25%,#fff 0 50%,#111 0 75%,#fff 0) 0 0/9.5px 7px;box-shadow:0 1px 2px rgba(0,0,0,.5)}',
+    '.tkx-rlabel{position:absolute;left:12px;top:-12px;padding:1px 10px;border-radius:9px;background:#4a2c10;border:2px solid #d9a441;font:800 14px/1.35 system-ui,sans-serif;color:#ffe3a3;white-space:nowrap}',
+    // compact (phones: a short or a narrow frame): the modules set .tkx-compact on their root
+    '.tkx-compact .tkx-chip{padding:4px 10px 4px 6px;gap:6px}.tkx-compact .tkx-chip b{font-size:18px}.tkx-compact .tkx-chip small{font-size:12px}.tkx-compact .tkx-chip img{width:26px;height:26px}',
+    '.tkx-compact .tkx-route{padding:14px 10px 7px;min-width:0}.tkx-compact .tkx-track{height:18px}.tkx-compact .tkx-rship{width:42px;height:32px;margin:-18px 0 0 -21px}.tkx-compact .tkx-rlabel{font-size:12px;top:-10px}.tkx-compact .tkx-flag{transform:scale(.8)}',
     '.tkx-pop{font-family:"Fredoka One","Fredoka",var(--font-display,"Nunito"),system-ui,sans-serif!important;color:#ffe066!important;-webkit-text-stroke:1.5px #5a3200;text-shadow:0 3px 0 #5a3200,0 0 14px rgba(255,210,90,.7)!important}'
   ].join('\n')
   function injectHud () {
