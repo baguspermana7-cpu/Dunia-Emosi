@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Owner's two LEGEND ship sheets (G30 Timmy & Kapal Legendaris, 2026-09-29): the same 25 historic
-ships, same order, 5 per row, drawn twice -- SIDE view (caption BELOW each ship) and TOP view
-(caption ABOVE each ship, bow pointing right).
-    -> assets/db/lib/tk-legend-side/<id>.webp   bow RIGHT, as drawn (picker card + hero)
+Owner's LEGEND top-view sheet (G30 Timmy & Kapal Legendaris, 2026-09-29): 25 historic
+ships, 5 per row, caption ABOVE each ship, bow pointing right. Low-resolution side
+extraction is retired: use ingest-tk-legend-hq.py for the 27 newer owner side cards.
     -> assets/db/lib/tk-legend-top/<id>.webp    bow UP (rotated 90 deg CCW), gameplay sprite
 
     ~/.venvs/kokoro/bin/python tools/ingest-tk-legend.py [side.png top.png]
@@ -20,9 +19,10 @@ Pipeline (shared helpers from tools/ingest-asset-sheets.py and tools/ingest-tk-t
      foreground, so sails and rigging keep their lines; soft alpha un-premultiplied against white;
   4. top views get the same 2 px adaptive outline as tk-top/* (reads on the dark sea and the light
      card); side views are left without an outline (like tk-ship2/*-clean) so rigging stays fine.
-Index writes MERGE: re-read right before writing; only tk-legend-side/* and tk-legend-top/* keys set.
+Index writes MERGE: re-read right before writing; only tk-legend-top/* keys set.
 """
 import importlib.util, json, os, sys
+from pathlib import Path
 import numpy as np
 from PIL import Image
 from scipy import ndimage
@@ -39,6 +39,7 @@ def _load(name, file):
 
 ias = _load('ias', 'ingest-asset-sheets.py')
 itt = _load('itt', 'ingest-tk-top.py')
+transaction = _load('asset_transaction', 'asset_transaction.py')
 
 SRC = os.path.expanduser('~/Documents/temporary/game asset/timmy-ships')
 SIDE = sys.argv[1] if len(sys.argv) > 2 else os.path.join(SRC, 'legend-side-25.png')
@@ -177,11 +178,12 @@ def cut_alpha(cell, own, other, close_iter=1):
 
 
 def ingest(path, where, cat, rotate):
+    if cat != 'tk-legend-top':
+        raise ValueError('HQ sides are protected; use ingest-tk-legend-hq.py')
     im, boxes, bad = prep(path, where)
     ws = ias.segment_sheet(im, 5, 5, boxes=boxes, loose=True, cell_owned=True)
     out_dir = os.path.join(LIB, cat)
-    os.makedirs(out_dir, exist_ok=True)
-    made, rows = {}, []
+    made, rows, exports = {}, [], {}
     for k, name in enumerate(IDS):
         own_full = ws == k + 1
         if not own_full.any():
@@ -204,31 +206,26 @@ def ingest(path, where, cat, rotate):
         ps, amax = ias.psnr_opaque(spr, data)
         if ps < ias.MIN_PSNR or amax > 2:
             bad.append(f'{cat}/{name}: webp psnr {ps:.1f} alpha {amax}')
-        open(os.path.join(out_dir, name + '.webp'), 'wb').write(data)
+        exports[Path(out_dir) / (name + '.webp')] = data
         key = cat + '/' + name
         made[key] = {'file': 'assets/db/lib/' + key + '.webp', 'cat': cat,
                      'tags': name.split('-') + KIND[name].split() + [('top-view' if rotate else 'side-view'), 'ship', 'legend'],
                      'source': os.path.basename(path) + '#' + str(k), 'w': int(spr.shape[1]), 'h': int(spr.shape[0]),
                      'psnr': round(ps, 1)}
         rows.append(f'{key:40s} {spr.shape[1]:4d}x{spr.shape[0]:<4d} {len(data) // 1024:3d} KB  psnr {ps:.1f}  ring {ring}')
-    return made, rows, bad
+    return made, rows, bad, exports
 
 
 def main():
-    made, rows, bad = {}, [], []
-    for path, where, cat, rot in ((SIDE, 'bottom', 'tk-legend-side', False), (TOP, 'top', 'tk-legend-top', True)):
-        m, r, b = ingest(path, where, cat, rot)
-        made.update(m); rows += r; bad += b
-    fresh = json.load(open(INDEX))          # MERGE: re-read right before writing; only our keys change
-    fresh['assets'].update(made)
-    fresh['assets'] = dict(sorted(fresh['assets'].items()))
-    json.dump(fresh, open(INDEX, 'w'), indent=1)
-    ias.write_js(fresh)
+    made, rows, bad, exports = ingest(TOP, 'top', 'tk-legend-top', True)
     print('\n'.join(rows))
-    print(f'made {len(made)}, index total {len(fresh["assets"])}')
     for b in bad:
         print('  FAIL', b)
-    return 1 if bad else 0
+    if bad:
+        return 1
+    total = transaction.publish(INDEX, made, exports, ias)
+    print(f'made {len(made)}, index total {total}')
+    return 0
 
 
 if __name__ == '__main__':

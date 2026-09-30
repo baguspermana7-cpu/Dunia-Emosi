@@ -29,8 +29,9 @@
  * Question tiles (`q`, chest / door) are passable: the answer never changes the route; the UI pauses on them.
  * Fog (`fog`, `beacons`) is visual only.
  *
- * UI: TKGrid.mount(host, def, opts) -> { el, level, destroy, reset, hint, go, program, setProgram, state, layout }
+ * UI: TKGrid.mount(host, def, opts) -> { el, level, destroy, reset, pause, resume, setMuted, hint, go, program, setProgram, state, layout }
  *   opts: { onDone({stars, moves, attempts, hints, shortest, bonus, asked, hinted}), sfx:{click,good,bad,win}, lib(key)->url,
+ *           onHint() (persist the current attempt's star cap immediately),
  *           onQuestion({reason:'chest'|'door', topic, levelId, index}) -> Promise<{correct}> (question tiles; absent = open by itself),
  *           art:{boat, walker, ice, flag, crate, timmy, lighthouse, lifeboat, tipper, compass, block} (library keys;
  *             `block` = one key or a list the obstacles cycle through), theme:'sea'|'deck', bg (CSS background
@@ -38,6 +39,8 @@
  *           chapter:{ship, name, title, label, idx, total} (mini-card + "Level X dari Y"), onBack(), onNext()
  *             (footer buttons, hidden when absent), topInset (px left free for the host HUD, default 70),
  *           hintButton (false = host drives handle.hint()), starTarget (element stars fly to), starBase, reducedMotion, muted, keyboard (false = off) }
+ *   Manual and hidden-tab pauses preserve pending delays/question continuations; resume never clears a hidden-tab pause.
+ *   muted may be a boolean or a function; setMuted(bool) updates an already mounted board.
  *   The level definition may carry theme / blockArt / itemArt / goalArt / dropArt / scene / tip (TKWorlds.grid puts them there); opts win.
  *   Layout (owner mockups ui-05 / ui-07): landscape = chapter card left (>= 1000 px), parchment title plate over
  *   the board, "Perintah" panel right with Hapus + JALAN! inside it, bottom band = big Timmy (tap = Petunjuk) with his
@@ -713,9 +716,12 @@
     P: 'Ambil', D: 'Taruh', R2: 'Ulangi 2 kali', R3: 'Ulangi 3 kali', F1: 'Fungsi' }
   var SHORT = { F: 'Maju', L: 'Kiri', R: 'Kanan', P: 'Ambil', D: 'Taruh', R2: 'Ulangi', R3: 'Ulangi', F1: 'Fungsi' }
   // what the boat bumped, by the obstacle sprite (the bubble names it: "Ups, ada tong!")
-  var THING = [[/barrel|tong/, 'tong'], [/iceberg|ice-floe|ice/, 'gunung es'], [/rock|arch|cliff|reef|karang|stone|boulder/, 'batu karang'],
-    [/crate|cargo|box|peti/, 'peti'], [/rope|coil/, 'gulungan tali'], [/buoy/, 'pelampung'], [/whirlpool/, 'pusaran'], [/officer|char\//, 'awak kapal'],
-    [/tire/, 'tumpukan ban'], [/hay/, 'jerami']]
+  // (order matters: the first match wins; every obstacle key the worlds use has a word, else "penghalang")
+  var THING = [[/storm-cloud|cloud/, 'awan badai'], [/crystal/, 'kristal es'], [/ice-cube/, 'balok es'], [/barrel|tong/, 'tong'], [/iceberg|ice-floe|ice/, 'gunung es'],
+    [/boulder/, 'batu besar'], [/cave-island|palm-island|arch-island|island/, 'pulau'], [/rock|arch|cliff|reef|karang|stone/, 'batu karang'],
+    [/coal-cart|cart/, 'gerobak'], [/coal-pile|coal/, 'tumpukan batu bara'], [/crate|cargo|box|peti/, 'peti'], [/bollard/, 'tiang tambat'], [/rope|coil/, 'gulungan tali'],
+    [/buoy/, 'pelampung'], [/whirlpool/, 'pusaran'], [/officer|char\//, 'awak kapal'], [/deck-chair|chair/, 'kursi dek'], [/propeller/, 'baling-baling'],
+    [/dock/, 'dermaga'], [/sandcastle/, 'istana pasir'], [/book|journal/, 'tumpukan buku'], [/tire/, 'tumpukan ban'], [/hay/, 'jerami']]
   var MOB_WORD = { ice: 'es yang bergerak', whale: 'paus', patrol: 'kapal patroli', tug: 'kapal tunda' }
   var SAY = {
     block: 'Ups, ada {thing}! Coba jalur lain. Ubah perintah nomor {n}.',
@@ -875,6 +881,8 @@
     '.tkg-cur .tkg-ic{width:66%;height:66%;color:#f2feff;stroke-width:3.4;filter:drop-shadow(0 1px 1px rgba(0,30,70,.6));animation:tkg-flow 1.6s ease-in-out infinite alternate}',
     '.tkg-drop:before{content:"";position:absolute;inset:8%;border-radius:10px;border:3px dashed #ffd84a;background:rgba(255,216,74,.16)}',
     '.tkg-drop .tkg-ic{position:relative;width:46%;height:46%;color:#fff1a8}',
+    '.tkg-drop.art .tkg-ic{width:82%;height:82%}.tkg-drop.art img{filter:drop-shadow(0 3px 3px rgba(0,10,30,.45))}',
+    '.tkg-goal.art .lh{left:9%;right:auto;top:9%;bottom:auto;width:82%;height:82%}.tkg-goal.art .fl{right:0;top:0;bottom:auto;width:34%;height:38%}',
     '.tkg-goal:before{content:"";position:absolute;inset:4%;border-radius:8px;background:rgba(70,210,110,.38);border:3px solid #6dff95;box-shadow:0 0 14px rgba(90,255,140,.7),inset 0 0 12px rgba(90,255,140,.45)}',
     '.tkg-goal .lh{position:absolute;left:4%;bottom:10%;width:52%;height:78%;object-fit:contain}',
     '.tkg-goal .fl{position:absolute;right:4%;bottom:12%;width:52%;height:62%;object-fit:contain}',
@@ -1042,6 +1050,7 @@
     '.tkg-foot .tkg-btn i{display:block;width:18px;height:16px;background:currentColor;clip-path:polygon(0 50%,50% 0,50% 32%,100% 32%,100% 68%,50% 68%,50% 100%)}',
     '.tkg-foot .tkg-next i{transform:scaleX(-1)}',
     '.tkg-foot .tkg-btn[hidden]{visibility:hidden;display:flex}',
+    '.tkg-paused,.tkg-paused *{animation-play-state:paused!important}',
     '.tkg--busy .tkg-pal .tkg-chip,.tkg--busy .tkg-cact .tkg-btn,.tkg--busy .tkg-hintb,.tkg--won .tkg-pal .tkg-chip,.tkg--won .tkg-slots .tkg-chip,.tkg--won .tkg-cact .tkg-btn,.tkg--won .tkg-hintb{opacity:.55;pointer-events:none}',
     '.tkg--busy .tkg-slots .tkg-chip{pointer-events:none}',
     '@keyframes tkg-wave{from{transform:translate3d(0,0,0)}to{transform:translate3d(80px,0,0)}}',
@@ -1171,8 +1180,6 @@
     '.tkg-ask .st{display:flex;justify-content:center;gap:4px;margin-bottom:10px}.tkg-ask .st img{width:34px;height:34px}.tkg-ask .st img.dim{opacity:.3;filter:grayscale(1)}',
     '.tkg-ask .bt{display:flex;gap:10px;justify-content:center}.tkg-ask .tkg-btn{min-width:96px}',
     '.tkg-ask .yes{background:linear-gradient(180deg,#48d465,#1f9a3f);box-shadow:0 4px 0 #146e2d}.tkg-ask .no{background:linear-gradient(180deg,#667894,#3e4c66);box-shadow:0 4px 0 #27324a}',
-    '.tkg-slot--ghost{border:2px dashed #ffd84a;color:transparent;position:relative;animation:tkg-nudge 1.2s var(--e) infinite}',
-    '.tkg-slot--ghost .tkg-ic{width:26px;height:26px;opacity:.55}',
     '.tkg-chip--fix{box-shadow:0 0 0 3px #fff,0 0 0 6px #ff5a5a;outline:3px dashed #ff5a5a;outline-offset:4px}',
     '@keyframes tkg-glint{0%,70%{transform:translateX(-120%)}100%{transform:translateX(320%)}}',
     '@keyframes tkg-fade{0%{opacity:1}100%{opacity:0}}',
@@ -1180,9 +1187,17 @@
     '.tkg--won .tkg-key:after,.tkg--won .tkg-whirl img{animation-play-state:paused}',
     '.tkg--rm .tkg-door .dr,.tkg--rm .tkg-door .lk,.tkg--rm .tkg-qt .dr,.tkg--rm .tkg-fogc,.tkg--rm .tkg-stop img{transition:opacity 140ms linear!important;transform:none!important}',
     '.tkg--rm .tkg-door.open .dr,.tkg--rm .tkg-qt.door.open .dr{opacity:0}',
-    '.tkg--rm .tkg-slot--ghost{box-shadow:0 0 0 3px #ffd84a}',
     /* tablet type floor (short side >= 600): no text under 14 px (comes last so it wins over the base sizes above) */
-    '@media (min-width:600px) and (min-height:600px){.tkg-hintb .tkg-hl,.tkg-repb>i,.tkg-lane>b,.tkg-bag{font-size:14px}}'
+    '@media (min-width:600px) and (min-height:600px){.tkg-hintb .tkg-hl,.tkg-repb>i,.tkg-lane>b,.tkg-bag,.tkg-num{font-size:14px}.tkg-num{min-width:22px;height:22px;line-height:22px;border-radius:11px}}',
+    /* phone portrait, tall board: full-width board, the column scrolls */
+    '.tkg--scroll .tkg-body{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}',
+    '.tkg--scroll .tkg-sea{flex:0 0 auto}.tkg--scroll .tkg-body>*{flex-shrink:0}',
+    /* landscape: the command panel is as tall as its commands; the tip card under it in the same column */
+    '.tkg--land .tkg-cmd{align-self:start}',
+    '.tkg--land.tkg--tipcol .tkg-body{grid-template-rows:auto auto minmax(0,1fr) var(--both);grid-template-areas:"plate cmd" "sea cmd" "sea tip" "bot bot"}',
+    '.tkg--land.tkg--tipcol.tkg--side .tkg-body{grid-template-areas:"chap plate cmd" "chap sea cmd" "chap sea tip" "bot bot bot"}',
+    '.tkg--land.tkg--tipcol .tkg-tip{grid-area:tip;align-self:start;flex-direction:column-reverse;align-items:flex-start;text-align:left}',
+    '.tkg--land.tkg--tipcol .tkg-tip img{width:64px;height:72px;align-self:center}'
   ].join('\n')
 
   function injectCSS () {
@@ -1238,10 +1253,48 @@
     else if (name === 'warp') { tone(300, 900, 0.3, 'sine', 0.06); noise(0.3, 0.05, 400, 1800) }
   }
 
+  // A single pausable clock owns simulation steps, question continuations and rewards.
+  // Pausing preserves each remaining delay; tasks added while paused stay queued.
+  function timerQueue () {
+    var tasks = [], stopped = false, closed = false
+    function now () { return G.performance && G.performance.now ? G.performance.now() : Date.now() }
+    function remove (task) { var i = tasks.indexOf(task); if (i >= 0) tasks.splice(i, 1) }
+    function arm (task) {
+      task.at = now()
+      task.id = setTimeout(function () {
+        task.id = null
+        if (closed || stopped) return
+        remove(task); task.fn()
+      }, task.left)
+    }
+    function later (fn, ms) {
+      var task = { fn: fn, left: Math.max(0, ms || 0), id: null, at: 0 }
+      if (closed) return task
+      tasks.push(task); if (!stopped) arm(task)
+      return task
+    }
+    function cancel (task) { if (!task) return; clearTimeout(task.id); remove(task) }
+    function clear () { tasks.slice().forEach(cancel) }
+    function pause () {
+      if (closed || stopped) return
+      stopped = true
+      tasks.forEach(function (task) {
+        task.left = Math.max(0, task.left - (now() - task.at))
+        clearTimeout(task.id); task.id = null
+      })
+    }
+    function resume () {
+      if (closed || !stopped) return
+      stopped = false; tasks.slice().forEach(arm)
+    }
+    return { later: later, cancel: cancel, clear: clear, pause: pause, resume: resume,
+      paused: function () { return stopped }, destroy: function () { closed = true; clear() } }
+  }
+
   function mount (host, def, opts) {
     opts = opts || {}
     var dead = false
-    var noop = { el: null, level: null, destroy: function () {}, reset: function () {}, hint: function () {}, program: function () { return [] }, setProgram: function () {}, state: function () { return {} }, layout: function () {} }
+    var noop = { el: null, level: null, destroy: function () {}, reset: function () {}, pause: function () {}, resume: function () {}, hint: function () {}, program: function () { return [] }, setProgram: function () {}, state: function () { return {} }, layout: function () {} }
     if (!host || typeof document === 'undefined') return noop
     injectCSS()
     var L = create(def)
@@ -1254,16 +1307,14 @@
     var topInset = opts.topInset != null ? Math.max(0, int(opts.topInset, 70)) : 70
     var st = { prog: [], attempts: 0, hints: 0, running: false, done: false, runId: 0, bad: null, dirty: false, T: 56, angle: 0, face: 'E', earned: 0, msg: '' }
     var vis = null
-    var timers = []
+    var clock = timerQueue(), manualPaused = false, pausedAnimations = [], forcedMute = null
     var trail = [], blkArt = {}   // tiles the boat left this run (feedback only) · obstacle sprite per tile (bubble words)
     function later (fn, ms) {
-      var id = setTimeout(function () {
-        var i = timers.indexOf(id); if (i >= 0) timers.splice(i, 1)
+      return clock.later(function () {
         if (!dead) { try { fn() } catch (e) { if (G.console) console.error('[TKGrid]', e) } }
       }, ms)
-      timers.push(id); return id
     }
-    function muted () { try { return !!(opts.muted || (G.SFXEngine && G.SFXEngine.getMute && G.SFXEngine.getMute())) } catch (e) { return false } }
+    function muted () { try { return !!((forcedMute != null ? forcedMute : typeof opts.muted === 'function' ? opts.muted() : opts.muted) || (G.SFXEngine && G.SFXEngine.getMute && G.SFXEngine.getMute())) } catch (e) { return true } }
     function sfx (name) {
       if (muted()) return
       var own = opts.sfx && opts.sfx[name], S = G.SFXEngine, cue = S && typeof S.cue === 'function'
@@ -1445,9 +1496,10 @@
       var i = el('i', '', wrapIc(arw('E'))); i.style.transform = 'rotate(' + rot + 'deg)'; e.appendChild(i); O.cur.push(e)
     })
     // world-neutral markers; a level may bring its own (def.goalArt / def.dropArt, e.g. the mother penguin)
-    if (L.drop) { O.drop = obj('tkg-drop', L.drop.x, L.drop.y, wrapIc('')); O.drop.firstChild.appendChild(img(def.dropArt ? libSrc(def.dropArt) : src('drop'))) }
+    // a level's own drop art (a bed, a toolbox, the mother penguin) is drawn big enough to read (~80 % of a tile)
+    if (L.drop) { O.drop = obj('tkg-drop' + (def.dropArt ? ' art' : ''), L.drop.x, L.drop.y, wrapIc('')); O.drop.firstChild.appendChild(img(def.dropArt ? libSrc(def.dropArt) : src('drop'))) }
     if (L.goal && !(L.drop && L.drop.x === L.goal.x && L.drop.y === L.goal.y) && !L.goalIsStop) {
-      O.goal = obj('tkg-goal', L.goal.x, L.goal.y)
+      O.goal = obj('tkg-goal' + (def.goalArt ? ' art' : ''), L.goal.x, L.goal.y)
       if (def.goalArt) O.goal.appendChild(img(libSrc(def.goalArt), 'lh', ''))
       else O.goal.appendChild(img(src(theme === 'deck' ? 'lifeboat' : 'lighthouse'), 'lh', theme === 'deck' ? 'Sekoci' : 'Mercusuar'))
       O.goal.appendChild(img(src('flag'), 'fl'))
@@ -1619,10 +1671,17 @@
         root.style.setProperty('--sidew', (W >= 1200 ? 220 : 196) + 'px')
         cact.classList.toggle('stack', cols === 1)
         cact.classList.toggle('tight', cols !== 1 && cmdw < 320)
+        // the Perintah panel hugs its commands (playtest: half empty on a tablet); when the column has room below it,
+        // the tip card sits there and the route bar gets the whole bottom band
+        var cmdH = 30 + 16 + Math.ceil(n / cols) * (bh + 6) + (cols === 1 ? bH + 6 + gH : bH) + 16
+        var tipCol = tall && colH - cmdH >= 150
+        root.classList.toggle('tkg--tipcol', tipCol)
+        if (tipCol) { if (tip.parentNode !== body) body.appendChild(tip) } else if (tip.parentNode !== bot) bot.appendChild(tip)
         // the tip card needs a real route bar beside it
-        root.classList.toggle('tkg--notip', !tall || W - Math.max(cmdw, 270) - 380 - 40 < 6 * 58)
+        root.classList.toggle('tkg--notip', !tall || (!tipCol && W - Math.max(cmdw, 270) - 380 - 40 < 6 * 58))
       } else {
         root.classList.remove('tkg--short'); root.classList.remove('tkg--side'); cact.classList.remove('stack'); root.classList.remove('tkg--tab'); root.style.setProperty('--ks', '1')
+        root.classList.remove('tkg--tipcol'); if (tip.parentNode !== bot) bot.appendChild(tip)
         cols = Math.min(4, n)
         bh = 64
         bw = Math.max(64, Math.min(96, Math.floor((W - 40 - (cols - 1) * 6) / cols)))
@@ -1633,15 +1692,29 @@
       root.style.setProperty('--slot', (land ? (W >= 800 && H >= 600 ? Math.round(64 * Math.max(1, Math.min(1.5, Math.min(W / 1280, H / 800)))) : H >= 540 ? 52 : 48) : (W >= 600 && H >= 900 ? 60 : 48)) + 'px')
       root.style.setProperty('--cols', String(cols))
       root.style.setProperty('--bw', bw + 'px'); root.style.setProperty('--bh', bh + 'px')
+      var scrollT = 0
+      root.classList.remove('tkg--scroll'); sea.style.height = ''
       if (!land) {
         // portrait: give the board room first — drop the tip, then the plate, then the chapter card
         var drop = ['tkg--notip', 'tkg--noplate', 'tkg--nochap']
         for (var di = 0; di < drop.length && tileFor().T < MIN_T + 4; di++) root.classList.add(drop[di])
+        // playtest 2026-09-30: a tall board on a phone came out ~180 px wide. When the stacked column would make the
+        // board clearly narrower than the screen, the board takes the full width (16 px gutters) and the column
+        // scrolls, command panel right below the board; JALAN! scrolls the board into view.
+        // …but the whole board must still fit the screen height (a board taller than wide is capped by height)
+        var fullT = Math.min(MAX_T, Math.floor((W - 32) / L.w), Math.floor((H - 24) / L.h))
+        if (tileFor().T < fullT * 0.85) {
+          root.classList.remove('tkg--notip'); root.classList.remove('tkg--noplate'); if (showChap) root.classList.remove('tkg--nochap')
+          root.classList.add('tkg--scroll'); scrollT = fullT
+          sea.style.height = (fullT * L.h + 8) + 'px'
+        }
       }
       root.classList.toggle('tkg--nomax', route.clientWidth > 0 && route.clientWidth < 330)
       var tf = tileFor(), T = tf.T
+      if (scrollT) { tf = { aw: sea.clientWidth - 4, ah: sea.clientHeight - 4, T: scrollT, rose: '' }; T = scrollT }
       var k = T + ':' + land + ':' + W + ':' + H + ':' + tf.aw + ':' + tf.ah
       fitSlots()
+      fitTip()
       if (k === lastKey) return
       lastKey = k
       st.T = T
@@ -1672,6 +1745,13 @@
       want = Math.max(Math.min(tabF, base), Math.min(base, want))
       if (want !== base) root.style.setProperty('--slot', want + 'px')
       moreSlots()
+    }
+    function fitTip () {
+      tipSpan.style.fontSize = ''
+      if (!tip.clientHeight || root.classList.contains('tkg--notip')) return
+      var cur = parseFloat(getComputedStyle(tipSpan).fontSize) || 16
+      var sizes = [15, 14].concat(Math.min(G.innerWidth || 999, G.innerHeight || 999) >= 600 ? [] : [13, 12]).filter(function (z) { return z < cur })
+      for (var i = 0; i < sizes.length && tipTxt.scrollHeight > tip.clientHeight - 8; i++) tipSpan.style.fontSize = sizes[i] + 'px'
     }
     function moreSlots () {
       ;[slots, fnSlots].forEach(function (b) {
@@ -1741,10 +1821,10 @@
     function say (text, kind, ms) {
       st.msg = text
       setBubble(text, 'on' + (kind ? ' ' + kind : ''))
-      if (bubbleT) { clearTimeout(bubbleT); bubbleT = null }
-      if (ms) bubbleT = setTimeout(function () { if (!dead) hush() }, ms)
+      if (bubbleT) { clock.cancel(bubbleT); bubbleT = null }
+      if (ms) bubbleT = later(hush, ms)
     }
-    function hush () { if (bubbleT) { clearTimeout(bubbleT); bubbleT = null } setBubble(idleMsg, '') }
+    function hush () { if (bubbleT) { clock.cancel(bubbleT); bubbleT = null } setBubble(idleMsg, '') }
 
     /* ── palette + route ──
        Two lanes when the board has Fungsi: 'm' = the route (st.prog), 'f' = the Fungsi body (st.fn). A chip carries
@@ -1842,7 +1922,7 @@
       if (bubble.classList.contains('bad')) hush()
     }
     function addCmd (c, at, lane) {
-      if (st.running || st.done) return false
+      if (clock.paused() || st.running || st.done) return false
       lane = lane || st.lane
       if (lane === 'f' && c === 'F1') { wiggle(fnSlots); return false }
       var list = laneArr(lane)
@@ -1860,7 +1940,7 @@
       edited(); sfx('click'); renderSlots(-1)
     }
     function moveCmd (from, to, lf, lt) {
-      if (st.running || st.done) return
+      if (clock.paused() || st.running || st.done) return
       var c = laneArr(lf)[from]
       if (lt === 'f' && c === 'F1') { renderSlots(-1); return }
       setLane(lf, laneArr(lf).slice(0, from).concat(laneArr(lf).slice(from + 1)))
@@ -1967,12 +2047,11 @@
 
     /* ── Petunjuk: the child's explicit choice (owner 2026-09-29 "jangan beri bantuan"). The first press asks
        "Pakai petunjuk? Bintang paling banyak 2"; every "Ya" reveals exactly ONE next step (never fills a chip,
-       never draws a path): a correct prefix → the next palette chip glows + a dashed ghost in the next slot;
+       never draws a path or slot ghost): a correct prefix → the next palette chip glows;
        a wrong prefix → the first chip to change is outlined red. Once used the level ends with at most 2 stars. ── */
     function clearHintMarks () {
       if (goalEl) goalEl.classList.remove('tkg-glow')
       var sel = root.querySelectorAll('.tkg-chip--hint,.tkg-chip--fix'); for (var i = 0; i < sel.length; i++) sel[i].classList.remove('tkg-chip--hint', 'tkg-chip--fix')
-      var gs = root.querySelectorAll('.tkg-slot--ghost'); for (var k = 0; k < gs.length; k++) { gs[k].classList.remove('tkg-slot--ghost'); gs[k].innerHTML = ''; gs[k].textContent = String(+gs[k].getAttribute('data-empty') + 1) }
       var gh = board.querySelectorAll('.tkg-gh'); for (var j = 0; j < gh.length; j++) board.removeChild(gh[j])
     }
     var ask = el('div', 'tkg-ask'); ask.setAttribute('role', 'dialog'); ask.setAttribute('aria-label', 'Petunjuk')
@@ -1981,7 +2060,7 @@
     var askB = el('div', 'bt'), yesB = el('button', 'tkg-btn yes', '<span>Ya</span>'), noB = el('button', 'tkg-btn no', '<span>Batal</span>')
     yesB.type = 'button'; noB.type = 'button'; askB.appendChild(yesB); askB.appendChild(noB); ask.appendChild(askB); root.appendChild(ask)
     function askHint () {
-      if (st.running || st.done) return
+      if (clock.paused() || st.running || st.done) return
       sfx('click')
       if (st.hints > 0) { hint(); return }
       ask.classList.add('on'); try { yesB.focus() } catch (e) {}
@@ -1990,10 +2069,11 @@
     yesB.addEventListener('click', function (e) { e.stopPropagation(); closeAsk(); hint() })
     noB.addEventListener('click', function (e) { e.stopPropagation(); sfx('click'); closeAsk() })
     function hint () {
-      if (st.running || st.done) return
+      if (clock.paused() || st.running || st.done) return
       var h = nextHint(L, flat())
       if (!h) return
       st.hints++
+      if (typeof opts.onHint === 'function') { try { opts.onHint() } catch (e) { if (G.console) console.error('[TKGrid] onHint', e) } }
       root.setAttribute('data-hinted', '1')
       clearHintMarks()
       var lane = hasFn && h.lane === 'f' ? 'f' : (hasFn && h.lane === 'fn' ? 'f' : 'm')
@@ -2006,8 +2086,6 @@
         return
       }
       h.next.forEach(function (c) { var p = pal.querySelector('[data-cmd="' + c + '"]'); if (p) p.classList.add('tkg-chip--hint') })
-      var ghost = laneBox(lane).querySelector('.tkg-slot[data-empty]')
-      if (ghost && h.next.length) { ghost.textContent = ''; ghost.classList.add('tkg-slot--ghost'); ghost.innerHTML = h.next[h.next.length - 1] === 'F1' ? fnIcon() : icon(h.next[h.next.length - 1]); reveal(ghost) }
       var words = h.next.map(function (c) { return LABEL[c] }).join(' + ')
       say((lane === 'f' ? say$.hintFn : say$.hintNext).replace('{c}', words), 'good', 5000)
     }
@@ -2032,7 +2110,7 @@
     // the only idle behaviour left: the UI tour on the first grid level while the route is still empty
     function poke () {
       clearNudge()
-      if (idleT) { clearTimeout(idleT); idleT = null }
+      if (idleT) { clock.cancel(idleT); idleT = null }
       if (dead || st.done || !coachOn || st.prog.length || co.toured) return
       idleT = later(onIdle, COACH_IDLE_MS)
     }
@@ -2234,7 +2312,7 @@
       try {
         var a = f.animate([{ transform: 'translate3d(' + bx + 'px,' + by + 'px,0) scale(.9) rotate(0)' }, { transform: 'translate3d(' + mx + 'px,' + my + 'px,0) scale(1.1) rotate(-12deg)', offset: 0.5 },
           { transform: 'translate3d(' + tx + 'px,' + ty + 'px,0) scale(.7) rotate(0)' }], { duration: 520, easing: EASE, fill: 'forwards' })
-        a.onfinish = end
+        a.onfinish = function () { later(end, 0) }
       } catch (e) { end() }
     }
     function popEl (e) { if (!rm && e && e.animate) { try { e.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.18)' }, { transform: 'scale(1)' }], { duration: 200, easing: EASE }) } catch (er) {} } }
@@ -2407,13 +2485,16 @@
       var finish = function (correct) {
         if (resolved || dead || id !== st.runId) return
         resolved = true
-        root.classList.remove('tkg--ask')
-        openQ(q.i, correct)
-        if (t.type === 'chest' && correct) {
-          st.bonus++; say(say$.qBonus, 'good', 3000); sfx('star')
-          fly(null, q, count, src('sparkle'), function () { popEl(count) })
-        } else say(correct ? say$.qGood : say$.qBad, correct ? 'good' : '', 3000)
-        later(cb, rm ? 200 : 500)
+        later(function () {
+          if (id !== st.runId) return
+          root.classList.remove('tkg--ask')
+          openQ(q.i, correct)
+          if (t.type === 'chest' && correct) {
+            st.bonus++; say(say$.qBonus, 'good', 3000); sfx('star')
+            fly(null, q, count, src('sparkle'), function () { popEl(count) })
+          } else say(correct ? say$.qGood : say$.qBad, correct ? 'good' : '', 3000)
+          later(cb, rm ? 200 : 500)
+        }, 0)
       }
       if (typeof opts.onQuestion !== 'function') { later(function () { finish(false) }, rm ? 150 : 400); return }
       st.asked++
@@ -2423,8 +2504,15 @@
       if (p && typeof p.then === 'function') p.then(function (r) { finish(!!(r && r.correct)) }, function () { finish(false) })
       else finish(!!(p && p.correct))
     }
+    // scroll layout (phone, tall board): bring an element into the column's view
+    function bringIn (e, where) {
+      if (!root.classList.contains('tkg--scroll') || !e) return
+      var y = e.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop - 6
+      if (where === 'end') y = e.getBoundingClientRect().bottom - body.getBoundingClientRect().top + body.scrollTop - body.clientHeight + 10
+      try { body.scrollTo({ top: Math.max(0, y), behavior: rm ? 'auto' : 'smooth' }) } catch (er) { body.scrollTop = Math.max(0, y) }
+    }
     function go () {
-      if (st.running || st.done) return
+      if (clock.paused() || st.running || st.done) return
       if (!st.prog.length) { say(say$.noProg, 'bad', 2600); wiggle(slots); sfx('click'); return }
       sfx('click')
       closeAsk()
@@ -2432,6 +2520,7 @@
       st.bad = null; st.early = 0; renderSlots(-1); clearHintMarks(); hush()
       var res = run(L, flat())
       st.running = true; st.stepN = 0; root.classList.add('tkg--busy')
+      bringIn(sea)
       clearNudge(); if (co.on) hideCoach()
       var id = ++st.runId, i = 0
       function tick () {
@@ -2475,6 +2564,7 @@
         var msg = (say$[key] || say$.block).replace('{n}', String(where.n)).replace('{thing}', thingAt(last.toward, last)).replace('{color}', String(res.detail || ''))
         if (where.fn) msg = msg.replace('perintah nomor', 'Fungsi nomor')
         say(msg, 'bad', 6500)
+        later(function () { bringIn(route, 'end') }, 400)
       } else {
         var m = st.early && res.detail !== 'far' ? say$.early.replace('{k}', String(res.stopsDone + 1)) : (say$[res.detail] || say$.far)
         say(m, 'bad', 6500)
@@ -2511,7 +2601,7 @@
       fx('tkg-ring', g.x, g.y, 900)
       burst(g.x, g.y)
       goldPath()
-      clearNudge(); if (idleT) { clearTimeout(idleT); idleT = null }
+      clearNudge(); if (idleT) { clock.cancel(idleT); idleT = null }
       if (!rm && board.animate) {
         for (var k = 0; k < 8; k++) {
           var dEl = fx('', g.x, g.y, 800)
@@ -2522,7 +2612,9 @@
         }
       }
       sfx('win')
-      say(say$.win, 'good')
+      // the deck line names the lifeboat; a level with its own goal / drop art (a bed, an engine) just says "tujuan"
+      var who = theme === 'deck' ? 'Timmy' : 'Kapal'
+      say(def.goalName ? 'Hebat! ' + who + ' sampai di ' + def.goalName + '!' : def.goalArt || def.dropArt ? 'Hebat! ' + who + ' sampai di tujuan!' : say$.win, 'good')
       winStars.innerHTML = ''
       // Petunjuk is an explicit choice: using it caps this level at 2 stars
       var n = stars(res.moves, L.shortest, L.easy, st.hints > 0)
@@ -2559,7 +2651,7 @@
           try {
             var a = f.animate([{ transform: 'translate3d(' + x0 + 'px,' + y0 + 'px,0) scale(1)' }, { transform: 'translate3d(' + x1 + 'px,' + y1 + 'px,0) scale(.7)' }],
               { duration: 620, easing: EASE, fill: 'forwards' })
-            a.onfinish = land
+            a.onfinish = function () { later(land, 0) }
           } catch (e) { land() }
         }, i * 170)
       })
@@ -2568,7 +2660,7 @@
     /* ── keyboard (design B.7): arrows add commands, 2/3 repeat, f Fungsi, Backspace undo, Enter JALAN!, Tab lane.
        Keyboard adds skip the pop animation (Emil: no animation on keyboard actions). ── */
     function onKey (e) {
-      if (dead || e.altKey || e.ctrlKey || e.metaKey || !root.isConnected) return
+      if (dead || clock.paused() || e.altKey || e.ctrlKey || e.metaKey || !root.isConnected) return
       var t = e.target, tag = t && t.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return
       if (ask.classList.contains('on') || st.running || st.done) return
@@ -2590,16 +2682,38 @@
     }
     if (opts.keyboard !== false && typeof document !== 'undefined') document.addEventListener('keydown', onKey)
 
+    // Freeze pending work and visual progress together, including questions resolved in another tab.
+    function animations () { try { return root.getAnimations ? root.getAnimations({ subtree: true }) : [] } catch (e) { return [] } }
+    function syncPause () {
+      if (dead) return
+      var paused = manualPaused || document.hidden
+      if (paused === clock.paused()) return
+      if (paused) {
+        clock.pause()
+        pausedAnimations = animations().filter(function (a) { return a.playState === 'running' || a.pending })
+        pausedAnimations.forEach(function (a) { try { a.pause() } catch (e) {} })
+        root.classList.add('tkg-paused')
+      } else {
+        root.classList.remove('tkg-paused')
+        pausedAnimations.forEach(function (a) { if (a.playState === 'paused') { try { a.play() } catch (e) {} } })
+        pausedAnimations = []; clock.resume()
+      }
+    }
+    function pause () { manualPaused = true; syncPause() }
+    function resume () { manualPaused = false; syncPause() }
+    function cancelAnimations () { animations().forEach(function (a) { a.onfinish = null; try { a.cancel() } catch (e) {} }); pausedAnimations = [] }
+    document.addEventListener('visibilitychange', syncPause)
+
     /* ── wiring ── */
     if (opts.hintButton !== false) hintB.addEventListener('click', askHint)
     undoB.addEventListener('click', function () {
-      if (st.running || st.done) return
+      if (clock.paused() || st.running || st.done) return
       var l = laneArr(st.lane)
       if (!l.length) { wiggle(laneBox(st.lane)); return }
       removeAt(l.length - 1, st.lane)
     })
     trashB.addEventListener('click', function () {
-      if (st.running || st.done) return
+      if (clock.paused() || st.running || st.done) return
       if (!st.prog.length && !st.fn.length) { wiggle(slots); return }
       st.prog = []; st.fn = []; edited(); sfx('click'); renderSlots(-1)
     })
@@ -2612,19 +2726,26 @@
     later(layout, 60)
     hush()
     if (coachOn) later(showCoach, rm ? 300 : 700); else poke()
+    syncPause()
 
     return {
       el: root,
       level: L,
       hint: hint,
+      pause: pause,
+      resume: resume,
+      setMuted: function (off) {
+        forcedMute = !!off
+        if (AC) { try { var change = off || clock.paused() ? AC.suspend() : AC.resume(); if (change && change.catch) change.catch(function (e) { if (G.console) console.error('[TKGrid] audio', e) }) } catch (e) { if (G.console) console.error('[TKGrid] audio', e) } }
+      },
       go: go,
       tour: function () { if (!dead && !st.running && !st.done) { if (co.on) hideCoach(); showCoach() } },
       destroy: function () {
         if (dead) return
         dead = true
         co.run++
-        timers.forEach(clearTimeout); timers = []
-        if (bubbleT) clearTimeout(bubbleT)
+        clock.destroy(); cancelAnimations()
+        document.removeEventListener('visibilitychange', syncPause)
         if (ro) { try { ro.disconnect() } catch (e) {} }
         if (G.removeEventListener) G.removeEventListener('resize', onResize)
         if (typeof document !== 'undefined') document.removeEventListener('keydown', onKey)
@@ -2632,6 +2753,7 @@
       },
       reset: function () {
         if (dead) return
+        clock.clear(); cancelAnimations()
         st.runId++; st.running = false; st.done = false; st.prog = []; st.fn = []; st.bad = null; st.hints = 0; st.bonus = 0
         root.classList.remove('tkg--busy'); root.classList.remove('tkg--won'); root.classList.remove('tkg--ask'); root.removeAttribute('data-hinted'); win.classList.remove('on')
         clearHintMarks(); markRun(null); renderSlots(-1); resetBoard(true); hush(); poke()
@@ -2650,7 +2772,7 @@
           boat: vis ? { x: vis.x, y: vis.y } : null, maxLen: L.maxLen, shortest: L.shortest, stars: st.earned,
           coach: co.on, tourStop: co.on ? co.stop || null : null, tools: L.tools.slice(), easy: L.easy, trim: L.trim, preview: pv ? { ok: pv.ok, bad: pv.bad, path: pv.path.map(function (p) { return { x: p.x, y: p.y } }) } : null,
           trail: trail.map(function (p) { return { x: p.x, y: p.y } }), bonus: st.bonus, asked: st.asked, hinted: st.hints > 0,
-          qDone: Object.keys(st.qDone).map(Number), ask: ask.classList.contains('on'), paused: root.classList.contains('tkg--ask'),
+          qDone: Object.keys(st.qDone).map(Number), ask: ask.classList.contains('on'), paused: clock.paused() || root.classList.contains('tkg--ask'),
           nudge: nudged ? (nudged === goB ? 'go' : 'pal:' + nudged.getAttribute('data-cmd')) : null }
       },
       layout: onResize

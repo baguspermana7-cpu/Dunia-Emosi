@@ -135,21 +135,41 @@
     return SE.pick(o)
   }
 
-  /* a world quiz step (spec.mix, set by the game): about half the questions are Matematika, the step's own topic
-     (spec.domain, its goal line) fills the rest; a mixed / Arab / math-led step fills the rest by the profile
-     weights. Never more than one Arabic question per 4 and never an all-Arabic step. Order: the lead topic first. */
+  /* a world quiz step (spec.mix, set by the game). A topic-locked step serves only its topic (see below).
+     A mixed step: about half Matematika; an 'umum' step fills the rest with Umum about its goal, a campur step by
+     the profile weights with at most one Arabic question per 4. Order: other / maths alternating. */
   function buildMix (spec) {
+    // owner playtest 2026-09-30: a TOPIC-LOCKED step serves only its topic ("Latihan Matematika" served a science
+    // item, the Logika "Lorong Waktu" 2 of 3 maths). Locked = a practice tab (world 'latihan'), spec.topicOnly, or a
+    // single-topic domain other than the 'umum' default. 'umum' / 'campur' steps are mixed quizzes: about half maths.
+    var d0 = spec.domain && spec.domain !== 'campur' ? spec.domain : null
+    if (spec.topicOnly !== false && d0 && (spec.topicOnly === true || spec.world === 'latihan' || d0 !== 'umum')) {
+      var one = {}; for (var kk in spec) one[kk] = spec[kk]; one.mix = false; return build(one)
+    }
     var r = spec.rng || rng(spec.seed != null ? spec.seed : (Date.now() & 0x7fffffff)), n = spec.count || 4
     var s2 = {}; for (var k in spec) s2[k] = spec[k]; s2.rng = r
-    var lead = spec.domain && spec.domain !== 'campur' && spec.domain !== 'matematika' && spec.domain !== 'arab' ? topicOf(spec.domain, spec) : null
+    var exclude = {}
+    if (Array.isArray(spec.exclude)) spec.exclude.forEach(function (id) { exclude[id] = 1 })
+    else for (k in spec.exclude || {}) exclude[k] = spec.exclude[k]
+    s2.exclude = exclude
+    var lead = d0 ? topicOf(d0, spec) : null   // an 'umum' step leads with Umum about its goal
     var nMath = Math.floor(n / 2) + (n % 2 && r() < 0.5 ? 1 : 0), arabCap = Math.max(1, Math.floor(n / 4))
     var noMath = {}; for (k in MIX) if (k !== 'matematika') noMath[k] = MIX[k]
-    var others = SE.pick(seOpts(s2, lead ? { context: 'quiz', count: n - nMath, topic: lead, about: spec.topic || null, aboutCount: 1 }
-      : { context: 'quiz', count: n - nMath, weights: noMath, maxPer: { arab: arabCap } }))
-    var maths = SE.pick(seOpts(s2, { context: 'quiz', topic: 'matematika', count: n - others.length, about: spec.hard ? null : (spec.topic || null), aboutCount: 1 }))
-    // interleave: lead topic first, then math / other alternating
-    var out = []
-    while (others.length || maths.length) { if (others.length) out.push(others.shift()); if (maths.length) out.push(maths.shift()) }
+    // Pick in display order, so the shared engine's rolling quota matches what the child sees.
+    // Picking two pools first and interleaving later could bring Arabic items too close across rounds.
+    var out = [], otherLeft = n - nMath, mathLeft = nMath, arabic = 0
+    while (otherLeft || mathLeft) {
+      var other = otherLeft > 0 && (out.length % 2 === 0 || !mathLeft)
+      var config = { context: 'quiz', mixed: true, about: spec.hard && !other ? null : (spec.topic || null), aboutCount: out.length < 2 ? 1 : 0 }
+      if (other) {
+        if (lead) config.topic = lead
+        else { config.weights = {}; for (k in noMath) config.weights[k] = k === 'arab' && arabic >= arabCap ? 0 : noMath[k] }
+        otherLeft--
+      } else { config.topic = 'matematika'; mathLeft-- }
+      var q = SE.one(seOpts(s2, config))
+      if (!q) q = SE.one(seOpts(s2, { context: 'quiz', mixed: true, topic: 'matematika' }))
+      if (q) { out.push(q); exclude[q.id] = 1; if (q.domain === 'arab') arabic++ }
+    }
     return out
   }
 
@@ -503,18 +523,21 @@
     '@media (min-width:900px) and (min-height:560px){.tkq-chal-box{width:min(1240px,calc(100% - 12px));height:min(780px,calc(100% - 12px))}}',
     '.tkq.tkq-chmode.tkq-fill.tkq-wide{grid-template-columns:minmax(150px,19%) minmax(0,1fr) minmax(170px,22%);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"tim top cap" "tim card cap" "tim foot cap";align-content:stretch}',
     '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-card{align-self:stretch}',
+    // a text-only challenge (no scene) is as tall as its content, centred with its button right under it (playtest
+    // 2026-09-30: a fixed-height card left ~150 px empty above and below the question)
+    '.tkq.tkq-chmode.tkq-fill.tkq-wide.tkq-noscene{grid-template-rows:auto auto auto;align-content:center}.tkq.tkq-chmode.tkq-fill.tkq-wide.tkq-noscene .tkq-card{height:auto;align-self:start}',
     '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars{display:contents}',
     '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars .tkq-cimg{grid-area:tim;align-self:end;justify-self:start;height:min(46vh,100%);max-width:100%}',
     '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars .tkq-cimg.peng{grid-area:cap;justify-self:end;height:min(40vh,300px)}',
     '.tkq.tkq-chmode.tkq-fill.tkq-wide .tkq-chars .tkq-bub{grid-area:cap;align-self:start;margin:14px 0 0;max-width:100%;font-size:15px}',
-    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt:has(.tkq-ar){max-height:130px;padding-top:4px;padding-bottom:6px;gap:0}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .tkq-ar{font-size:clamp(44px,3.8vw,52px)!important;line-height:1.2}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .tkq-tr{font-size:clamp(18px,1.6vw,22px)!important}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt.tkq-opt--ar{max-height:130px;padding-top:4px;padding-bottom:6px;gap:0}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .tkq-ar{font-size:clamp(44px,3.8vw,52px)!important;line-height:1.35}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .tkq-tr{font-size:clamp(18px,1.6vw,22px)!important}',
     '.tkq-wide:not(.tkq-short) .tkq-opt .tkq-ar{font-size:max(44px,1em)}.tkq-wide:not(.tkq-short) .tkq-opt .tkq-tr{font-size:18px}',
     '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-ans{flex:0 0 auto;grid-auto-rows:auto;justify-content:center}',
     '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-ans.n3:not(.pic){grid-template-columns:repeat(3,minmax(0,240px))!important}',
     '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt{height:auto;min-height:92px;max-height:124px}',
     '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt.num>span:first-child{font-size:clamp(44px,4.4vw,56px)}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt>span:first-child:not(.tkq-ar){font-size:clamp(22px,2.4vw,32px)}',
     '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt.num>span:first-child{font-size:clamp(44px,4.4vw,56px)}',
-    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt img{flex:0 0 auto;height:88px;min-height:0;width:auto;max-width:100%}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .lb{font-size:clamp(18px,1.7vw,22px);line-height:1.05}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt:has(img){max-height:152px;gap:2px;padding-top:4px;padding-bottom:4px}',
+    '.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt img{flex:0 0 auto;height:88px;min-height:0;width:auto;max-width:100%}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt .lb{font-size:clamp(18px,1.7vw,22px);line-height:1.05}.tkq-fill.tkq-wide:not(.tkq-short) .tkq-opt.tkq-opt--img{max-height:152px;gap:2px;padding-top:4px;padding-bottom:4px}',
     '.tkq-wide:not(.tkq-short) .tkq-char.timmy img{height:min(46vh,100%);max-width:100%}',
     '.tkq-char .tkq-capt{position:relative;display:block;line-height:0}',
     '.tkq-wide:not(.tkq-short) .tkq-char.peng .tkq-capt>img:first-child{height:min(42vh,340px);width:auto;max-width:100%}',
@@ -536,13 +559,13 @@
     '.tkq-scene .tkq-arw .tkq-ar{font-size:calc(clamp(56px,min(10.5vh,17vw),110px) * min(1,var(--k,1)) + 0px);line-height:1.35}',
     '.tkq-scene .tkq-arw .tkq-tr{font-size:clamp(16px,min(2.9vh,4.4vw),28px)}',
     '.tkq-cmp .tkq-scene .tkq-arw .tkq-ar{font-size:max(56px,calc(clamp(56px,min(10.5vh,17vw),110px) * var(--k,1)))}',
-    '.tkq-opt .tkq-ar{font-size:44px;line-height:1.1}.tkq-opt .tkq-tr{font-size:14px}',
+    '.tkq-opt .tkq-ar{font-size:44px;line-height:1.35}.tkq-opt .tkq-tr{font-size:14px}',
     // phones: an Arabic answer keeps its 44 px word with the transliteration BESIDE it (a stacked pair did not fit)
-    '.tkq-tall .tkq-ans.n3.txt .tkq-opt:has(.tkq-ar){flex-direction:row;gap:10px}',
-    '.tkq-tall .tkq-opt:has(.tkq-ar),.tkq-short .tkq-opt:has(.tkq-ar){padding-top:1px;padding-bottom:2px;gap:0}.tkq-tall .tkq-opt .tkq-ar,.tkq-short .tkq-opt .tkq-ar{line-height:1.05}.tkq-tall .tkq-opt .tkq-tr,.tkq-short .tkq-opt .tkq-tr{line-height:1}',
+    '.tkq-tall .tkq-ans.n3.txt .tkq-opt.tkq-opt--ar{flex-direction:row;gap:10px}',
+    '.tkq-tall .tkq-opt.tkq-opt--ar,.tkq-short .tkq-opt.tkq-opt--ar{padding-top:0;padding-bottom:0;gap:0}.tkq-tall .tkq-opt .tkq-ar,.tkq-short .tkq-opt .tkq-ar{line-height:1.35}.tkq-tall .tkq-opt .tkq-tr,.tkq-short .tkq-opt .tkq-tr{line-height:1}',
     // short landscape (844x390) with picture answers: the answer column takes the wider share, picture beside a
     // one-line label, so four picture answers fit as 2x2 inside the card
-    '.tkq-short:not(.tkq-sort) .tkq-card:has(.tkq-ans.pic),.tkq-short:not(.tkq-sort) .tkq-card:has(.tkq-opt .tkq-ar){grid-template-columns:56px minmax(0,1fr) minmax(0,2.2fr)}.tkq-short:not(.tkq-sort) .tkq-card:has(.tkq-ans.n3.txt){grid-template-columns:56px minmax(0,1fr) minmax(0,2.2fr)}.tkq-short .tkq-ans.n3.txt{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-content:center}',
+    '.tkq-short:not(.tkq-sort) .tkq-card.tkq-card--pic,.tkq-short:not(.tkq-sort) .tkq-card.tkq-card--ar{grid-template-columns:56px minmax(0,1fr) minmax(0,2.2fr)}.tkq-short:not(.tkq-sort) .tkq-card.tkq-card--n3txt{grid-template-columns:56px minmax(0,1fr) minmax(0,2.2fr)}.tkq-short .tkq-ans.n3.txt{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-content:center}',
     '.tkq-short .tkq-ans.pic .tkq-opt{flex-direction:row;gap:4px;padding:2px 4px}.tkq-short .tkq-ans.pic .tkq-opt img{flex:0 0 auto;width:auto;height:min(30px,55%);max-height:30px;min-height:0}',
     '.tkq-short .tkq-ans.pic .tkq-opt .lb{flex:0 1 auto;min-width:0;line-height:1.05;text-align:left}',
     // compact card (fitCard): tighter gaps and answer heights (still >= 44 px targets); pictures scale by --k
@@ -574,7 +597,7 @@
     '.tkq-sfill .tkq-item .ppl{padding-left:12px}.tkq-sfill .tkq-item .ppl img{width:clamp(30px,4.2vh,44px);height:clamp(40px,5.6vh,58px);margin-left:-12px}.tkq-sfill .tkq-item .lb{max-width:150px;font-size:16px}',
     '.tkq-sfill .tkq-item.placed{min-width:84px;min-height:78px}.tkq-sfill .tkq-item.placed img{width:52px;height:52px}.tkq-sfill .tkq-item.placed .ppl img{width:36px;height:48px}',
     // seats stay on one row: each seat shrinks with its lifeboat card (5 across) instead of wrapping to 4 + 1
-    '.tkq-sfill .tkq-seats{gap:5px;flex-wrap:nowrap;width:100%;justify-content:center}.tkq-sfill .tkq-seatp{flex:0 1 48px;min-width:22px;width:auto;height:auto;aspect-ratio:3/4}.tkq-sfill .tkq-seatp img{width:100%;height:95%}.tkq-sfill .tkq-seats:has(.tkq-seatp:nth-child(9)){flex-wrap:wrap}.tkq-sfill .tkq-seats:has(.tkq-seatp:nth-child(9)) .tkq-seatp{flex:0 0 30px}',
+    '.tkq-sfill .tkq-seats{gap:5px;flex-wrap:nowrap;width:100%;justify-content:center}.tkq-sfill .tkq-seatp{flex:0 1 48px;min-width:22px;width:auto;height:auto;aspect-ratio:3/4}.tkq-sfill .tkq-seatp img{width:100%;height:95%}.tkq-sfill .tkq-seats.tkq-seats--many{flex-wrap:wrap}.tkq-sfill .tkq-seats.tkq-seats--many .tkq-seatp{flex:0 0 30px}',
     '.tkq.tkq-mt.tkq-short{grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"chars card" "foot foot"}.tkq-mt.tkq-short .tkq-stats,.tkq-mt.tkq-short .tkq-top{display:none}'
   ].join('\n')
   // the clock / fraction cake scales down to its scene instead of spilling over the question above it (qa-tk-ui-audit V);
@@ -584,7 +607,7 @@
   // the compact fit shrinks the other scene parts and the gaps instead
   CSS += '\n.tkq:not(.tkq-short):not(.tkq-tall) .tkq-card svg.tkq-clock:not(.tkq-frac){min-width:94px;min-height:94px}'
   // ... and its scene zone keeps room for it (clock + padding), so the face never rides up onto the prompt
-  CSS += '\n.tkq:not(.tkq-short):not(.tkq-tall) .tkq-card .tkq-scene:has(>svg.tkq-clock:not(.tkq-frac)){min-height:100px!important;flex-shrink:0}'
+  CSS += '\n.tkq:not(.tkq-short):not(.tkq-tall) .tkq-card .tkq-scene.tkq-scene--clock{min-height:100px!important;flex-shrink:0}'
   // Arabic speaker (listening items): a big round button beside the hero word, >= 64 px, drawn with the listen sprite
   CSS += '\n.tkq-arw.tkq-lsn{position:relative;display:flex;flex-direction:column;align-items:center;padding:0 84px}' +
     '.tkq-arsay{position:absolute;right:0;top:50%;margin-top:-36px;width:72px;height:72px;min-width:72px;min-height:72px;padding:0;border-radius:50%;border:3px solid #fff;background:linear-gradient(#5AA2FF,#1F63D6);box-shadow:0 4px 0 #103A88;display:grid;place-items:center;transition:transform 160ms cubic-bezier(.23,1,.32,1)}' +
@@ -603,8 +626,14 @@
     '.tkq-fill.tkq-tall .tkq-ans.pic .tkq-opt{flex-direction:column!important;justify-content:center;gap:4px;padding:6px 4px}.tkq-fill.tkq-tall .tkq-ans.n3.pic .tkq-opt{min-height:108px}' +
     '.tkq-fill.tkq-tall .tkq-ans.pic .tkq-opt img{flex:1 1 0;width:100%;max-width:100%;height:auto;min-height:40px;max-height:200px;object-fit:contain}.tkq-fill.tkq-tall .tkq-ans.pic:not(.n3) .tkq-opt{padding:3px 4px;gap:2px}.tkq-fill.tkq-tall .tkq-ans.pic:not(.n3) .tkq-opt img{min-height:0}' +
     '.tkq-fill.tkq-tall .tkq-ans.pic .tkq-opt .lb{flex:0 0 auto;min-width:0;font-size:clamp(16px,4.4vw,24px);text-align:center;line-height:1.1}' +
-    // (open, handed to the tk-quiz owner) an Arabic answer's harakat can touch the top of a 1.05 line box on a phone 2x2 / 3-row card
-    '.tkq-opt>span.tkq-ar{padding:0 2px}'
+    // an Arabic answer's harakat (vowel marks) sit above / below the letters: a 1.35 line box plus .18em of padding top and bottom holds the
+    // whole Naskh glyph box (~1.7em content area) inside the label, so no mark touches or leaves the button (qa-tk-ui-audit O, 2026-09-30);
+    // fitAnswers steps the font down when the taller label would overflow the card
+    '.tkq-opt>span.tkq-ar{padding:.18em 2px;flex-shrink:0}' +
+    // a phone on its side: an Arabic answer steps its font down (floor 34 px) before it may wrap onto a second line
+    // (two wrapped lines with their harakat are too tall for the 2x2 card); .brk is the last resort
+    '.tkq-short .tkq-opt:not(.brk)>span.tkq-ar{white-space:nowrap}' +
+    '.tkq-tall.tkq-cmp2 .tkq-tabs,.tkq-tall.tkq-cmp2 .tkq-plate p{display:none}.tkq-notr .tkq-opt .tkq-tr{display:none}'
   function injectCSS () {
     if (typeof document === 'undefined' || document.getElementById('tkq-css')) return
     var st = document.createElement('style'); st.id = 'tkq-css'; st.textContent = CSS; document.head.appendChild(st)
@@ -856,8 +885,13 @@
       }
       function inner (g, cls) { var s = ''; for (var j = 0; j < g.n; j++) s += objHTML(g.key, idx++, cls, size); return s }
       E.scene.innerHTML = h
+      // .tkq-scene--clock replaces a CSS :has() (Android WebView < Chrome 105 ignores it and the clock rode up onto the prompt)
+      E.scene.classList.toggle('tkq-scene--clock', Array.prototype.some.call(E.scene.children, function (c) { return c.tagName.toLowerCase() === 'svg' && c.classList.contains('tkq-clock') && !c.classList.contains('tkq-frac') }))
       E.scene.style.display = h ? '' : 'none'
       root.classList.toggle('tkq-noscene', !h)
+      // a scene sprite that arrives after the fit (cold cache: the counting ship had no height yet) fits the card again,
+      // so the grown scene never rides over the question (playtest 2026-09-30, challenge card)
+      Array.prototype.forEach.call(E.scene.querySelectorAll('img'), function (im) { if (!im.complete) im.addEventListener('load', refitSoon) })
       // counting scenes: every object can be tapped to count it aloud ("satu, dua, ...")
       E.scene.classList.toggle('tapcount', q.domain === 'matematika' && /^(count|add|sub|groups|diff|twostep)$/.test(sc.mode))
       var sayBtn = E.scene.querySelector('.tkq-arsay'); if (sayBtn) wireArSay(sayBtn, q.listen)
@@ -905,13 +939,25 @@
       return '<button type="button" class="' + cls + '" data-c="' + esc(c) + '" data-i="' + i + '" aria-label="' + esc(q.pics && q.pics[c] ? c : (q.trs && q.trs[c]) || c) + '">' + inner +
         (twoTap ? '<span class="ear" aria-hidden="true">' + sprite('listen', 'tk-prop/ships-bell', lib) + '</span>' : '') + '<span class="ck">' + ICON.check + '</span></button>'
     }
+    // state classes set from JS instead of CSS :has() (older Android WebViews, Chrome < 105, ignore :has): an option with an
+    // Arabic label / a picture, and the card holding picture / Arabic / 3-text answers
+    function flagAnswers () {
+      Array.prototype.forEach.call(E.ans.querySelectorAll('.tkq-opt'), function (b) {
+        b.classList.toggle('tkq-opt--ar', !!b.querySelector('.tkq-ar')); b.classList.toggle('tkq-opt--img', !!b.querySelector('img'))
+      })
+      if (!E.card) return
+      var a = E.ans.classList
+      E.card.classList.toggle('tkq-card--pic', a.contains('pic')); E.card.classList.toggle('tkq-card--n3txt', a.contains('n3') && a.contains('txt'))
+      E.card.classList.toggle('tkq-card--ar', !!E.ans.querySelector('.tkq-opt .tkq-ar'))
+    }
     function renderAnswers (q) {
-      if (q.letters) return renderArrange(q)
+      if (q.letters) { var ra = renderArrange(q); flagAnswers(); return ra }
       E.ans.style.display = ''
       var n3 = q.choices.length === 3, short = q.choices.every(function (c) { return (String(c).length <= 7 && !/[\u0600-\u06FF]/.test(String(c))) || (q.pics && q.pics[c]) })   // an Arabic word is never 'num': three 104 px columns broke it letter by letter (phone, 2026-09-29)
       var pic = q.choices.some(function (c) { return q.pics && q.pics[c] })
       E.ans.className = 'tkq-ans' + (n3 ? ' n3 ' + (short ? 'num' : 'txt') : '') + (pic ? ' pic' : '')
       E.ans.innerHTML = q.choices.map(function (c, i) { return optHTML(q, c, i) }).join('')
+      flagAnswers()
       Array.prototype.forEach.call(E.ans.querySelectorAll('.tkq-opt'), function (b, k) {
         later(function () { b.classList.add('in') }, 120 + k * 45)
         b.addEventListener('click', function () { choose(b) })
@@ -921,7 +967,10 @@
     /* fit the answers (owner tablet photo 2026-09-28: "Alhamdulillah" / "Wa'alaikumussalam" spilled out of a
        4-up row): four long answers go 2x2 instead of 4-up; then each label steps its font down to a 16 px
        floor until it sits inside its button; only then may a long word break (last resort). */
-    var fitKey = '', fitRetry = false
+    var fitKey = '', fitRetry = false, refitT = 0
+    function refitSoon () { clearTimeout(refitT); refitT = setTimeout(function () { if (alive) fitAnswers() }, 40); timers.push(refitT) }
+    // Arabic answer floor (owner 2026-09-29 "tulisan arabnya terlalu kecil"): 44 px, 34 px only on a phone on its side
+    function arFloor () { return root.classList.contains('tkq-short') ? 34 : 44 }
     function fitAnswers () {
       var bs = E.ans.querySelectorAll('.tkq-opt')
       if (!bs.length || !E.ans.clientWidth) return
@@ -930,7 +979,7 @@
         b.classList.remove('brk')
         Array.prototype.forEach.call(b.children, function (t) { if (t.tagName === 'SPAN' && !/\b(ck|ear)\b/.test(t.className)) { t.style.fontSize = ''; texts.push([b, t]) } })
       })
-      E.ans.style.gridTemplateColumns = ''
+      E.ans.style.gridTemplateColumns = ''; E.ans.style.removeProperty('grid-auto-rows'); root.classList.remove('tkq-notr')
       if (bs.length === 4 && root.classList.contains('tkq-wide') && !root.classList.contains('tkq-short')) {
         // 4-up only when the widest label fits a quarter of the row at its own size
         var gap = parseFloat(getComputedStyle(E.ans).columnGap) || 10, per = (E.ans.clientWidth - 3 * gap) / 4 - 34, need = 0
@@ -939,8 +988,9 @@
       }
       texts.forEach(function (bt) {
         var b = bt[0], t = bt[1], fs = parseFloat(getComputedStyle(t).fontSize) || 20, n = 0
-        var fl = t.classList.contains('tkq-ar') ? (root.classList.contains('tkq-short') ? 34 : 44) : 16
-        while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1) && fs > fl && n++ < 40) { fs = Math.max(fl, fs - 1); t.style.fontSize = fs + 'px' }
+        var ar = t.classList.contains('tkq-ar'), fl = ar ? arFloor() : 16
+        // an Arabic label also steps down while its marks do not fit its own line box (the grid row may squeeze the label)
+        while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1 || (ar && t.scrollHeight > t.clientHeight + 1)) && fs > fl && n++ < 40) { fs = Math.max(fl, fs - 1); t.style.fontSize = fs + 'px' }
         if (t.scrollWidth > t.clientWidth + 1) b.classList.add('brk')
       })
       // a landscape tablet keeps words >= 18 px: when a label had to shrink below that, use fewer columns
@@ -951,8 +1001,8 @@
         E.ans.style.setProperty('grid-template-columns', 'repeat(2,minmax(0,1fr))', 'important')
         texts.forEach(function (bt) {
           var b = bt[0], t = bt[1], fs = parseFloat(getComputedStyle(t).fontSize) || 20, n = 0
-          var fl2 = t.classList.contains('tkq-ar') ? (root.classList.contains('tkq-short') ? 34 : 44) : 16
-          while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1) && fs > fl2 && n++ < 40) { fs = Math.max(fl2, fs - 1); t.style.fontSize = fs + 'px' }
+          var ar2 = t.classList.contains('tkq-ar'), fl2 = ar2 ? arFloor() : 16
+          while ((t.scrollWidth > t.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1 || (ar2 && t.scrollHeight > t.clientHeight + 1)) && fs > fl2 && n++ < 40) { fs = Math.max(fl2, fs - 1); t.style.fontSize = fs + 'px' }
           b.classList.toggle('brk', t.scrollWidth > t.clientWidth + 1)
         })
         fitRetry = false
@@ -960,24 +1010,67 @@
       // long Arabic answers (two-word numbers) on a short screen: step every Arabic label down TOGETHER until the
       // card holds all answers (floor 34 px on a phone on its side, 44 px elsewhere)
       var ars = E.ans.querySelectorAll('.tkq-opt .tkq-ar')
+      // Arabic answers share one size: the smallest any of them needed
+      if (ars.length > 1) {
+        var amin = Math.min.apply(null, Array.prototype.map.call(ars, function (a) { return parseFloat(getComputedStyle(a).fontSize) || 44 }))
+        Array.prototype.forEach.call(ars, function (a) { if (Math.abs((parseFloat(getComputedStyle(a).fontSize) || 44) - amin) > 0.5) a.style.fontSize = amin + 'px' })
+      }
+      growArRows(ars)
       if (ars.length && E.card && E.card.scrollHeight > E.card.clientHeight + 1) {
-        var afl = root.classList.contains('tkq-short') ? 34 : 44, af = parseFloat(getComputedStyle(ars[0]).fontSize) || 44
-        while (E.card.scrollHeight > E.card.clientHeight + 1 && af > afl) { af = Math.max(afl, af - 2); Array.prototype.forEach.call(ars, function (a) { a.style.fontSize = af + 'px' }) }
+        var afl = arFloor(), af = parseFloat(getComputedStyle(ars[0]).fontSize) || 44
+        while (E.card.scrollHeight > E.card.clientHeight + 1 && af > afl) { af = Math.max(afl, af - 2); Array.prototype.forEach.call(ars, function (a) { a.style.fontSize = af + 'px' }); growArRows(ars) }
       }
       fitCard()
+      // after the card fit (compact mode may squeeze the rows): one more step for Arabic labels whose marks still do not
+      // fit their line box or their button, all together so the answers stay one size
+      if (ars.length) {
+        var arBad = function () { return Array.prototype.some.call(ars, function (a) { var bb = a.parentNode; return a.scrollHeight > a.clientHeight + 1 || bb.scrollHeight > bb.clientHeight + 1 }) }
+        var af2 = parseFloat(getComputedStyle(ars[0]).fontSize) || 44, fl3 = arFloor(), m = 0
+        while (arBad() && af2 > fl3 && m++ < 20) { af2 = Math.max(fl3, af2 - 1); Array.prototype.forEach.call(ars, function (a) { a.style.fontSize = af2 + 'px' }) }
+        for (var g2 = 0; g2 < 3 && arBad(); g2++) { growArRows(ars); fitCard() }
+        // last resort on a phone on its side (four two-word numbers at 34 px): the transliteration line goes (it stays
+        // in each button's aria-label) so the four answers keep their harakat inside a card that shows them all
+        if (root.classList.contains('tkq-short') && E.card && E.card.scrollHeight > E.card.clientHeight + 1 && E.ans.querySelector('.tkq-opt .tkq-tr')) {
+          root.classList.add('tkq-notr'); growArRows(ars); fitCard()
+        }
+      }
       fitKey = E.ans.clientWidth + 'x' + E.ans.clientHeight
+    }
+    /* Arabic answers: the label keeps its full line box (harakat included, it does not flex-shrink), so a grid row that is
+       too short for it grows to the button's content height; the card fit below then shrinks the scene to make room */
+    function growArRows (ars) {
+      if (!ars.length) return
+      E.ans.style.removeProperty('grid-auto-rows')
+      var need = 0, have = 1e9
+      Array.prototype.forEach.call(ars, function (a) { var b = a.parentNode; need = Math.max(need, b.scrollHeight + (b.offsetHeight - b.clientHeight)); have = Math.min(have, b.offsetHeight) })
+      if (need > have) E.ans.style.setProperty('grid-auto-rows', 'minmax(' + Math.ceil(need + 2) + 'px,1fr)', 'important')
     }
     /* the card never hides an answer below its edge (390x844 / 844x390: the third answer sat under the card's
        bottom): tighten the gaps first, then shrink the scene pictures (--k) down to half size */
     function fitCard () {
       var c = E.card; if (!c || !c.clientHeight) return
       var over = function () { return c.scrollHeight > c.clientHeight + 1 }
-      root.classList.remove('tkq-cmp'); c.style.removeProperty('--k')
+      root.classList.remove('tkq-cmp'); root.classList.remove('tkq-cmp2'); c.style.removeProperty('--k')
+      var sc = E.scene, ship = sc && sc.querySelector('.tkq-ship')
+      // the counting ship stays BESIDE the items (never wrapped onto its own line under them, never over the text)
+      var shipWrapped = function () {
+        if (!ship || !sc.firstElementChild || sc.firstElementChild === ship) return false
+        var a = sc.firstElementChild.getBoundingClientRect(), b = ship.getBoundingClientRect(); return b.top >= a.bottom - 4
+      }
+      // every scene part inside the scene box (a centred scene overflows UP as well, which scrollHeight cannot see)
+      var inside = function () {
+        var r = sc.getBoundingClientRect()
+        return Array.prototype.every.call(sc.children, function (e) { var q = e.getBoundingClientRect(); return !q.height || (q.top >= r.top - 1 && q.bottom <= r.bottom + 1) })
+      }
       if (!over()) {
+        if (ship && shipWrapped()) {
+          for (var ks = 0.9; ks >= 0.6 && shipWrapped(); ks -= 0.1) c.style.setProperty('--k', ks.toFixed(2))
+          if (shipWrapped()) c.style.removeProperty('--k')
+          return
+        }
         // landscape tablet: the picture grows into the free scene height (up to 1.9x) — never past it
-        var sc = E.scene
         if (root.classList.contains('tkq-fill') && root.classList.contains('tkq-wide') && !root.classList.contains('tkq-short') && sc && sc.style.display !== 'none' && sc.children.length) {
-          var fits = function () { return sc.scrollHeight <= sc.clientHeight + 1 && sc.scrollWidth <= sc.clientWidth + 1 && !over() }
+          var fits = function () { return sc.scrollHeight <= sc.clientHeight + 1 && sc.scrollWidth <= sc.clientWidth + 1 && !over() && inside() && !shipWrapped() }
           var k = 1
           for (var g = 1.1; g <= 1.91; g += 0.1) { c.style.setProperty('--k', g.toFixed(2)); if (fits()) k = g; else break }
           if (k === 1) c.style.removeProperty('--k'); else c.style.setProperty('--k', k.toFixed(2))
@@ -986,6 +1079,12 @@
       }
       root.classList.add('tkq-cmp')
       for (var k = 0.9; over() && k >= 0.45; k -= 0.1) c.style.setProperty('--k', k.toFixed(2))
+      // a phone portrait card that still overflows (three Arabic answers, each with its full harakat line box): drop the
+      // subject tabs and the plate subtitle, as a short phone (max-height 720) already does, and fit again
+      if (over() && root.classList.contains('tkq-tall')) {
+        root.classList.add('tkq-cmp2'); c.style.removeProperty('--k')
+        for (var k2 = 0.9; over() && k2 >= 0.45; k2 -= 0.1) c.style.setProperty('--k', k2.toFixed(2))
+      }
     }
     var fitRO = null
     try {
@@ -1312,7 +1411,7 @@
       return '<div class="tkq-bin" data-bin="' + esc(b.id) + '" role="group" aria-label="' + esc(b.label) + '"><div class="bh">' +
         (b.sprite ? '<img src="' + lib(b.sprite) + '" alt="">' : b.color ? '<span class="sw" style="background:' + esc(b.color) + '"></span>' : set.capacity ? '<span class="bi">' + ICON.boat + '</span>' : '') +
         '<span' + (b.rtl ? ' class="tkq-ar" dir="rtl" lang="ar"' : '') + '>' + esc(b.label) + '</span></div>' +
-        (b.cap ? '<div class="tkq-seats" data-seats="' + esc(b.id) + '" aria-hidden="true">' + seatRow(b, bi) + '</div><div class="cap" data-cap="' + esc(b.id) + '">0 / ' + b.cap + ' orang</div>' : '') + '<div class="tkq-stack"></div></div>'
+        (b.cap ? '<div class="tkq-seats' + (b.cap >= 9 ? ' tkq-seats--many' : '') + '" data-seats="' + esc(b.id) + '" aria-hidden="true">' + seatRow(b, bi) + '</div><div class="cap" data-cap="' + esc(b.id) + '">0 / ' + b.cap + ' orang</div>' : '') + '<div class="tkq-stack"></div></div>'
     }).join('')
     // capacity: one seat per place; a filled seat shows a passenger sprite (hijab girls, boys, men only)
     function seatRow (b, bi) { var h = ''; for (var j = 0; j < b.cap; j++) h += '<span class="tkq-seatp" data-j="' + j + '">' + pfig((bi * 3 + j) % npeople(), 'tkq-p') + '</span>'; return h }

@@ -18,6 +18,13 @@ localStorage.setItem(key, JSON.stringify(badges))
 
 Direct `localStorage.setItem('dunia-0-progress', ...)` is forbidden except as a `// LEGACY-FALLBACK` else-branch.
 
+`saveLevelProgress` returns `true` after the progress write succeeds and `false`
+for invalid/nonfinite input or a failed write. Presentation may remain
+idempotent while persistence is retried; do not mark an unpersisted reward as
+permanently saved. Repeating a successful call keeps the same completed-level
+entry and highest star count. A blocked session-result marker does not turn a
+successful progress write into failure.
+
 ## Why
 
 Hotfix #103 (2026-04-28) introduced avatar-keyed save:
@@ -68,6 +75,26 @@ localStorage.setItem(_g13cBadgeKey(), JSON.stringify(badges))
 ```
 
 ## Required HTML setup
+
+### Cached game state and another tab's avatar (2026-09-30)
+
+G30 and G31 load a child's complete game state once. Before that initial load,
+they call `window.lockGameAvatarSession()`. The shared engine then keeps its
+scoped reads, writes, removals, badge keys and level rewards bound to that
+document's original child. `SoalEngine` automatic history follows the same
+`_activeAvatarSlug()` result. Calling the lock again cannot change ownership.
+
+An already-open game continues belonging to its original child when another
+tab selects another avatar; a newly opened or reloaded game uses the newly
+selected avatar. A session opened without an avatar keeps its legacy keys.
+Other pages retain dynamic routing until they explicitly opt in. Do not mix a
+cached child's state with a key resolved from a newly selected child.
+
+`node tools/qa-game-avatar-session.mjs` verifies two independent live contexts,
+shared stars, collection selection, question-history ownership, scoped removal,
+legacy migration and the no-avatar fallback. Browser acceptance must also use
+two actual tabs. This is an avatar-isolation contract, not conflict resolution
+between two simultaneous games opened for the same avatar.
 
 Every standalone game MUST load `data/save-engine.js` before any save-block code:
 

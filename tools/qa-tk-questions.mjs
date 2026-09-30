@@ -92,7 +92,8 @@ const AR_RE = /[؀-ۿ]/
     const v = q.choices.map(Number).sort((a, b) => a - b); if (v[1] === +q.answer) mid++
   } }
   check(ebad.length === 0, 'easy math: 6000 items valid, 3 choices, numbers <= 10, objects on screen ' + ebad.join(' | '))
-  check(Object.keys(kinds).sort().join() === 'add,count,sub', 'easy math kinds are picture-first (count/add/sub): ' + Object.keys(kinds).join())
+  // SoalEngine EASY_KINDS (owner 2026-09-30, more variety): every kind shows its objects on screen
+  check(Object.keys(kinds).sort().join() === 'add,bond,count,double,sub,tomake', 'easy math kinds are picture-first (count/add/sub/double/tomake/bond): ' + Object.keys(kinds).join())
   check(mid < 6000 * 0.7, `easy answers are not always the middle value (${mid}/6000)`)
   const snap = JSON.stringify(TQ.items.map(o => o.choices))
   const cq = TQ.items.filter(o => !o.letters).map(o => TK.easyify(o))
@@ -201,9 +202,10 @@ const AR_RE = /[؀-ۿ]/
   }
   check(letters === 0, `campur never serves arrange-letters (${letters}/1500 sets did)`)
   check(offDomain === 0, `a Logika level serves Logika only (${offDomain}/1500 sets strayed)`)
-  const kompas = TK.build({ domain: 'campur', world: 'victory', count: 5, seed: 3, topic: 'Baca arah kompas.' })
+  // history: false — this checks goal matching; the gate's earlier 1,500 builds already used the session history
+  const kompas = TK.build({ domain: 'campur', world: 'victory', count: 5, seed: 3, topic: 'Baca arah kompas.', history: false })
   check(kompas.slice(0, 2).every(q => /kompas|arah/i.test(q.prompt + q.explain)), `topic "Baca arah kompas." leads with compass questions: ${kompas.slice(0, 2).map(q => q.prompt).join(' / ')}`)
-  const bagi = TK.build({ domain: 'matematika', world: 'titanic', count: 3, seed: 5, level: 3, topic: 'Bagikan selimut dan hitung penumpang yang selamat.' })
+  const bagi = TK.build({ domain: 'matematika', world: 'titanic', count: 3, seed: 5, level: 3, topic: 'Bagikan selimut dan hitung penumpang yang selamat.', history: false })
   check(bagi[0].kind === 'share', `maths topic "Bagikan …" asks a sharing question first (${bagi[0].kind})`)
   // owner 2026-09-29: the captain is the old man ("Kapten"); the penguin is only his assistant ("Asisten Pinguin")
   check(!/Kapten Pingu/.test(fs.readFileSync(path.join(ROOT, 'games/tk-quiz.js'), 'utf8')) && !/Kapten Pingu/.test(fs.readFileSync(path.join(ROOT, 'games/data/tk-questions.js'), 'utf8')), 'the captain is the old man: no "Kapten Pinguin" / "Kapten Pingu" in the quiz or the bank')

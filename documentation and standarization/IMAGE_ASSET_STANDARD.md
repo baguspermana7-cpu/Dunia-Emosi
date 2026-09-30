@@ -49,6 +49,34 @@ users on GitHub Pages (unlinked).
   loss (verify with a montage screenshot before committing).
 
 ## Gate
+
+### Literal sheet extraction and safe publication (2026-09-30)
+
+- Inventory every supplied sheet and every skipped or merged region. Preserve
+  distinct drawings with source-suffixed keys instead of overwriting a reused
+  name. Record byte-identical duplicate sheets and restricted-art exclusions.
+- Preserve source RGB and white paint. Border-connected paper removal may use
+  measured source-local masks; a global white-key operation is unsuitable for
+  white hulls, clothing and sails. Inspect complete outputs on light and dark
+  backgrounds, including enclosed gaps, captions, wheels and rigging.
+- Require valid geometry, nonempty crops, decoded dimensions and compression
+  quality before publishing any member of a batch. An error on the last sheet
+  must leave the previously published assets and both indexes intact.
+- The Mojo and Timmy ingesters use `tools/asset_transaction.py`. Full-index
+  publication locks index read/merge, renders both indexes before promotion,
+  stages assets, and restores backups after ordinary I/O failures. Failed
+  recovery retains backups and reports their paths. Symlink/duplicate targets
+  are rejected. This does not claim atomic recovery after power loss.
+- Preserve unrelated categories during a merge. The legacy Timmy top-view
+  ingest defaults to top views and cannot replace the reviewed HQ side views.
+- Run `tools/qa-asset-transaction.py`, `tools/qa-tk-art.py`,
+  `tools/qa-mojo-art.py` and `tools/qa-asset-index.mjs` for relevant changes.
+  Source-dependent checks explicitly skip if the owner's archived originals
+  are unavailable; synthetic failure/rollback checks still run.
+
+The [Mojo source catalogue](../docs/MOJO-ASSET-CATALOGUE.md) distinguishes
+preserved illustrations and component panels from implemented game mechanics.
+
 ```
 node tools/audit-image-formats.mjs      # 0 un-allowlisted PNG/JPG in tracked assets/ ; warns on >260KB WebP
 ```

@@ -17,6 +17,7 @@
   'use strict'
   var W = window
   var EO = 'cubic-bezier(.23,1,.32,1)'
+  var CAMERA_X = 10, CAMERA_Y = 5, LAYER_Y = 0.6, ART_PAD = 2
   function esc (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;') }
   function reduced () { try { return W.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('rm') } catch (e) { return false } }
   function A (el, f, o) { if (!el || !el.animate) return; try { el.animate(f, o) } catch (e) {} }
@@ -61,7 +62,7 @@
     '.tks-btn{display:inline-flex;align-items:center;gap:10px}.tks-back{background:rgba(8,12,36,.7)}' +
     '.tks-arr{width:16px;height:16px;border-top:4px solid currentColor;border-right:4px solid currentColor;transform:rotate(45deg);border-radius:2px}.tks-arr.l{transform:rotate(-135deg)}' +
     '@media (orientation:portrait){.tks-dots i{margin:0 5px}.tks-dots i+i::before{width:10px}.tks-btn{padding:0 14px;font-size:17px}.tks-back:not([style*=visible]){display:none}.tks-t{flex:0 0 72%;height:120px}.tks-thumbs{scroll-snap-type:x mandatory}.tks-t{scroll-snap-align:center}.tks-logo{width:118px}.tks-plate{top:calc(104px + env(safe-area-inset-top));max-width:86%}}'
-  CSS += '.tks-cap{font-size:clamp(20px,2.7vw,25px);line-height:1.35;padding-right:70px;min-height:74px}.tks-cap.r{left:auto;right:4%}' +
+  CSS += '.tks-cap{font-size:clamp(20px,2.7vw,25px);line-height:1.35;padding-right:70px;min-height:74px}' +
     '.tks-say{position:absolute;right:8px;top:50%;margin-top:-26px;width:52px;height:52px;border-radius:50%;border:3px solid #fff;background:linear-gradient(#5AA2FF,#1F63D6);box-shadow:0 3px 0 #103A88,0 6px 12px rgba(0,0,0,.3);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .12s ' + EO + '}' +
     '.tks-say:active{transform:scale(.92)}.tks-say img{width:32px;height:32px;object-fit:contain;pointer-events:none}' +
     '.tks-say.on{animation:tks-talk .9s ease-in-out infinite}@keyframes tks-talk{50%{box-shadow:0 3px 0 #103A88,0 0 0 8px rgba(95,208,255,.35)}}' +
@@ -106,31 +107,18 @@
       var b = cap.querySelector('.tks-say'); clearTimeout(talkT)
       if (b && ok !== false) { b.classList.add('on'); talkT = setTimeout(function () { b.classList.remove('on') }, Math.min(9000, 900 + String(panels[i].caption || '').length * 70)) }
     }
-    // the caption card never hides a character (playtest 2026-09-29: Timmy stood behind "Kapten Smith"'s card):
-    // in landscape it takes the bottom corner (left or right) that covers the least character area
-    function placeCap () {
-      cap.classList.remove('r')
-      if (innerHeight > innerWidth) return
-      var cover = function () { var c = cap.getBoundingClientRect(), a = 0
-        ls.querySelectorAll('.tks-l img').forEach(function (im) { var r = im.getBoundingClientRect()
-          var w = Math.min(c.right, r.right) - Math.max(c.left, r.left), h = Math.min(c.bottom, r.bottom) - Math.max(c.top, r.top); if (w > 0 && h > 0) a += w * h })
-        return a }
-      var L = cover(); if (!L) return
-      cap.classList.add('r'); if (cover() >= L) cap.classList.remove('r')
-    }
     function show (n, dir) {
       i = Math.max(0, Math.min(panels.length - 1, n))
       var p = panels[i], rm = reduced()
       bg.style.background = Art.scene(p.scene); if (W.TKSkel) try { W.TKSkel(bg) } catch (e) {}
       ls.innerHTML = (p.layers || []).map(function (L) {
-        return '<div class="tks-l" data-d="' + (L.d || 1) + '" data-x="' + L.x + '" data-s="' + L.s + '" style="left:' + L.x + '%;top:' + L.y + '%;height:' + L.s + '%;transform:translate(-50%,-100%)"><img src="' + Art.src(L.k) + '" alt="" draggable="false"></div>'
+        return '<div class="tks-l" data-d="' + (L.d || 1) + '" data-x="' + L.x + '" data-y="' + L.y + '" data-s="' + L.s + '" style="left:' + L.x + '%;top:' + L.y + '%;height:' + L.s + '%;transform:translate(-50%,-100%)"><img src="' + Art.src(L.k) + '" alt="" draggable="false"></div>'
       }).join('')
       layers = [].slice.call(ls.children)
       layers.forEach(function (el) { var im = el.firstChild; if (im && !im.complete) im.addEventListener('load', fitLayers) })
-      fitLayers()
       cap.innerHTML = (p.speaker ? '<i>' + esc(p.speaker) + '</i>' : '') + esc(p.caption) +
         (opts.say ? '<button class="tks-say" type="button" aria-label="Dengar lagi">' + listenIco() + '</button>' : '')
-      placeCap(); ls.querySelectorAll('.tks-l img').forEach(function (im) { if (!im.complete) im.addEventListener('load', placeCap, { once: true }) })
+      fitLayers()
       speak()
       if (!rm) {
         A(bg, [{ opacity: 0.4 }, { opacity: 1 }], { duration: 420, easing: EO })
@@ -146,33 +134,40 @@
       root.querySelector('.tks-back').style.visibility = i ? 'visible' : 'hidden'; root.querySelector('.tks-back').style.display = i ? '' : (innerHeight > innerWidth ? 'none' : '')
       root.querySelector('.tks-next').textContent = i === panels.length - 1 ? 'Mulai!' : 'Lanjut'
     }
-    // no sprite cropped at the sides (owner, real tablet: the bedroom ran off both edges in portrait): a layer
-    // keeps its height (% of the stage) unless that makes it wider than the stage or pushes it past an edge
+    // Keep whole foreground sprites between the title and caption, including their camera drift.
+    // Background scenery remains full-bleed; a shared scale preserves the panel's relative sprite sizes.
     function fitLayers () {
       var st = root.querySelector('.tks-stage'), SW = st.clientWidth, SH = st.clientHeight
       if (!SW || !SH) return
       // one scale for the whole panel keeps the composition (Timmy stays the right size for his bed)
-      var k = 1
+      var k = 1, stageTop = st.getBoundingClientRect().top
+      var capTop = cap.getBoundingClientRect().top - stageTop
+      var plate = root.querySelector('.tks-plate'), top = plate ? plate.getBoundingClientRect().bottom - stageTop + ART_PAD : 0
+      var bottom = Math.max(top + 1, Math.min(SH, capTop - (cap.querySelector('i') ? 18 : ART_PAD)))
+      var artHeight = Math.max(1, bottom - top)
       layers.forEach(function (el) {
         var im = el.firstChild, s = +el.getAttribute('data-s') || 0, x = +el.getAttribute('data-x') || 50
         if (!im || !im.naturalWidth || !im.naturalHeight || !s) return
-        var w = SH * s / 100 * im.naturalWidth / im.naturalHeight
-        var room = Math.min(SW * 0.98, (2 * Math.min(x, 100 - x) / 100 + 0.1) * SW)
-        k = Math.min(k, room / w)
+        var d = Math.abs(+el.getAttribute('data-d') || 1), padX = CAMERA_X * d + ART_PAD, padY = CAMERA_Y * LAYER_Y * d + ART_PAD
+        var y = Math.min(bottom - padY, top + (+el.getAttribute('data-y') || 50) * artHeight / 100)
+        var h = artHeight * s / 100, w = h * im.naturalWidth / im.naturalHeight
+        var room = Math.max(1, 2 * (Math.min(x, 100 - x) / 100 * SW - padX))
+        el.style.top = (y / SH * 100).toFixed(2) + '%'
+        k = Math.min(k, room / w, Math.max(1, y - top - padY) / h)
       })
-      layers.forEach(function (el) { el.style.height = ((+el.getAttribute('data-s') || 0) * k).toFixed(2) + '%' })
+      layers.forEach(function (el) { el.style.height = ((+el.getAttribute('data-s') || 0) * k * artHeight / SH).toFixed(2) + '%' })
     }
     function onResize () { if (!dead) fitLayers() }
     W.addEventListener('resize', onResize)
-    var sro = null; try { if (W.ResizeObserver) { sro = new W.ResizeObserver(onResize); sro.observe(root.querySelector('.tks-stage')) } } catch (e) { sro = null }
+    var sro = null; try { if (W.ResizeObserver) { sro = new W.ResizeObserver(onResize); sro.observe(root.querySelector('.tks-stage')); sro.observe(cap); var plate = root.querySelector('.tks-plate'); if (plate) sro.observe(plate) } } catch (e) { sro = null }
     // camera breathing: each layer drifts by its depth (translate property, so it composes with the
     // positioning transform)
     function loop (now) {
       if (dead) return
       if (!document.hidden && !reduced()) {
-        var t = (now - t0) / 1000, cx = Math.sin(t * 0.25) * 10, cy = Math.cos(t * 0.2) * 5
+        var t = (now - t0) / 1000, cx = Math.sin(t * 0.25) * CAMERA_X, cy = Math.cos(t * 0.2) * CAMERA_Y
         bg.style.transform = 'translate(' + (cx * 0.2).toFixed(2) + 'px,' + (cy * 0.2).toFixed(2) + 'px) scale(1.05)'
-        for (var k = 0; k < layers.length; k++) { var d = +layers[k].getAttribute('data-d'); layers[k].style.translate = (cx * d).toFixed(2) + 'px ' + (cy * d * 0.6).toFixed(2) + 'px' }
+        for (var k = 0; k < layers.length; k++) { var d = +layers[k].getAttribute('data-d'); layers[k].style.translate = (cx * d).toFixed(2) + 'px ' + (cy * d * LAYER_Y).toFixed(2) + 'px' }
       }
       raf = requestAnimationFrame(loop)
     }

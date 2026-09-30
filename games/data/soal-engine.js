@@ -15,7 +15,8 @@
  *        general, core, weight, validate(q)}. o: {level, kind, easy, about, nouns, vocab, extraKinds}
  *   SoalEngine.defineGame(gameId, cfg) / SoalEngine.profile(gameId[, cfg])   per-game profile (below)
  *   SoalEngine.pick(opts) -> [question]          opts: {game, context, avatar, grade, weights, topic,
- *        theme, count, exclude, seed|rng, level, easy, about, aboutCount, maxPer, without, pictures, kind, history}
+ *        theme, count, exclude, seed|rng, level, easy, about, aboutCount, maxPer, maxShare, topicGap, mixed,
+ *        without, pictures, kind, history}
  *   SoalEngine.one(opts)  -> question | null
  *   SoalEngine.generate(topic, opts) -> one generated question (no history)
  *   SoalEngine.reduceChoices(q, 3) / validate(q) / validateItem(item) / items(filter) / history(avatar)
@@ -224,7 +225,7 @@
   /* ── per-avatar history: localStorage 'soal-seen-<avatar>', capped, try/catch ─── */
   // a generated template (kind) at most KIND_MAX times in any KIND_WIN + 1 consecutive generated questions
   // (checked against the previous KIND_WIN), so one template ("Ada berapa peti?") never dominates a session
-  var SEEN_CAP = 1500, SEEN_TRIM = 1200, SIG_CAP = 50, KIND_WIN = 5, KIND_MAX = 2, HIST = {}
+  var SEEN_CAP = 1500, SEEN_TRIM = 1200, SIG_CAP = 50, KIND_WIN = 3, KIND_MAX = 1, HIST = {}   // owner 2026-09-30: a template at most 1 in 4
   function avatarId (a) {
     // 'auto' = the active Dunia avatar; no avatar chosen yet -> 'anon' (still persisted, so a reload or a
     // world change never resets the history). null = memory only (this page load).
@@ -232,6 +233,26 @@
     return a ? String(a) : ''
   }
   function storage () { try { return W.localStorage || null } catch (e) { return null } }
+  function record (value) { return !!value && typeof value === 'object' && !Array.isArray(value) }
+  function safeCount (n) { return typeof n === 'number' && isFinite(n) && n >= 0 && n % 1 === 0 && n < 9007199254740991 }
+  function historyMaps (value) {
+    var out = Object.create(null)
+    if (!record(value)) return out
+    Object.keys(value).forEach(function (scope) {
+      if (!record(value[scope])) return
+      var entries = out[scope] = Object.create(null)
+      Object.keys(value[scope]).forEach(function (id) { var n = value[scope][id]; if (safeCount(n)) entries[id] = n })
+    })
+    return out
+  }
+  function historyLists (value, limit) {
+    var out = Object.create(null)
+    if (!record(value)) return out
+    Object.keys(value).forEach(function (scope) {
+      if (Array.isArray(value[scope])) out[scope] = value[scope].filter(function (s) { return typeof s === 'string' }).slice(-limit)
+    })
+    return out
+  }
   function hist (avatar) {
     var k = avatarId(avatar)
     if (HIST[k]) return HIST[k]
@@ -239,7 +260,12 @@
     if (h.key) {
       try {
         var ls = storage(), raw = ls && ls.getItem(h.key), d = raw ? JSON.parse(raw) : null
-        if (d && d.v === 1) { h.n = +d.n || 0; h.seen = d.seen || {}; h.sig = d.sig || {}; h.kinds = d.kinds || {} }
+        if (d && d.v === 1) {
+          h.n = safeCount(d.n) ? d.n : 0
+          h.seen = historyMaps(d.seen); h.sig = historyLists(d.sig, SIG_CAP); h.kinds = historyLists(d.kinds, KIND_WIN)
+          Object.keys(h.seen).forEach(function (scope) { Object.keys(h.seen[scope]).forEach(function (id) { h.n = Math.max(h.n, h.seen[scope][id]) }) })
+          h.mix = record(d.mix) ? d.mix : {}
+        }
       } catch (e) {}
     }
     HIST[k] = h
@@ -247,7 +273,7 @@
   }
   function histSave (h) {
     if (!h.key) return
-    try { var ls = storage(); if (ls) ls.setItem(h.key, JSON.stringify({ v: 1, n: h.n, seen: h.seen, sig: h.sig, kinds: h.kinds || {} })) } catch (e) {}
+    try { var ls = storage(); if (ls) ls.setItem(h.key, JSON.stringify({ v: 1, n: h.n, seen: h.seen, sig: h.sig, kinds: h.kinds || {}, mix: h.mix || {} })) } catch (e) {}
   }
   function markSeen (h, scope, q) {
     h.n++
@@ -295,11 +321,23 @@
     if (P.grade && P.grade[s] != null) return P.grade[s]
     return /sulit|hard|kelas ?[34]/.test(s) ? 4 : 2
   }
+  function validMix (m, recentLimit) {
+    if (!m || !safeCount(m.n) || !record(m.count) || !Array.isArray(m.recent) || m.recent.length !== Math.min(m.n, recentLimit)) return false
+    var total = 0, recent = {}
+    var valid = Object.keys(m.count).every(function (t) { var n = m.count[t]; total += n; return safeCount(n) && n <= m.n && safeCount(total) })
+    return valid && total === m.n && m.recent.every(function (t) {
+      if (typeof t !== 'string') return false
+      recent[t] = (recent[t] || 0) + 1; return recent[t] <= (m.count[t] || 0)
+    })
+  }
   function ctxFor (opts) {
     opts = opts || {}
     runAuto()
     var P = resolveProfile(opts.game || 'default')
     var C = mergeCtx(P, (opts.context && P.contexts[opts.context]) || {})
+    arr(C.without).concat(arr(opts.without)).forEach(function (flag) {
+      if (C.exclusionOverrides && C.exclusionOverrides[flag]) C = mergeCtx(C, C.exclusionOverrides[flag])
+    })
     var X = {}, k
     for (k in C) X[k] = C[k]
     for (k in opts) if (opts[k] !== undefined) X[k] = opts[k]
@@ -313,6 +351,14 @@
     X.scope = P.scope === 'shared' ? '*' : (P.id || '*')
     // history: false = a stateless pick (tests, a host replaying a seed): nothing read, nothing stored
     X.h = opts.history === false ? { key: null, n: 0, seen: {}, sig: {} } : hist(opts.avatar !== undefined ? opts.avatar : P.avatar)
+    X.mixed = !X.topic || opts.mixed === true
+    if (X.mixed && (X.maxShare || X.topicGap)) {
+      if (!X.h.mix || typeof X.h.mix !== 'object' || Array.isArray(X.h.mix)) X.h.mix = {}
+      var m = X.h.mix[X.scope], recentLimit = 0
+      for (k in X.topicGap || {}) recentLimit = Math.max(recentLimit, X.topicGap[k] - 1)
+      if (!validMix(m, recentLimit)) m = { n: 0, count: {}, recent: [] }
+      X.mixState = X.h.mix[X.scope] = m
+    }
     X.sub = arr(P.themes)
     return X
   }
@@ -430,12 +476,29 @@
     if (n && n < q.choices.length && !q.hard && !(q.grade >= 3) && !q.letters) q = reduceChoices(q, n)
     return q
   }
+  // Mixed-topic limits survive short calls, context/world changes and reloads. Explicit topic
+  // practice is exempt. Adapters splitting a mixed set pass mixed:true on every constituent pick.
+  function topicAllowed (X, topic, count) {
+    if (X.maxPer && X.maxPer[topic] != null && (count[topic] || 0) >= X.maxPer[topic]) return false
+    var m = X.mixState, cap = X.maxShare && X.maxShare[topic], gap = X.topicGap && X.topicGap[topic]
+    if (!m) return true
+    if (cap != null && isFinite(cap) && cap >= 0 && cap < 1 &&
+      (m.count[topic] || 0) + 1 > Math.floor((m.n + 1) * cap + 1e-9)) return false
+    return !(gap > 1) || m.recent.slice(-(gap - 1)).indexOf(topic) < 0
+  }
+  function markMix (X, topic) {
+    var m = X.mixState
+    if (!m) return
+    var count = copy(m.count); count[topic] = (count[topic] || 0) + 1
+    var keep = 0; for (var t in X.topicGap || {}) keep = Math.max(keep, X.topicGap[t] - 1)
+    X.mixState = X.h.mix[X.scope] = { n: m.n + 1, count: count, recent: keep > 0 ? m.recent.concat([topic]).slice(-keep) : [] }
+  }
   function pickTopic (X, have, count) {
     var w = X.weights || {}, pairs = []
-    if (X.topic) return have[X.topic] ? X.topic : null
+    if (X.topic) return have[X.topic] && topicAllowed(X, X.topic, count) ? X.topic : null
     for (var t in have) {
       var wt = w[t] != null ? w[t] : (X.weights ? 0 : 10)
-      if (X.maxPer && X.maxPer[t] != null && (count[t] || 0) >= X.maxPer[t]) wt = 0
+      if (!topicAllowed(X, t, count)) wt = 0
       if (wt > 0) pairs.push([t, wt])
     }
     return pairs.length ? wpick(pairs, X.r) : null
@@ -461,23 +524,25 @@
       var seen = X.h.seen[X.scope] || {}
       ts.forEach(function (t) {
         var lv = levelFor(X, t)
-        eligible(X, t).forEach(function (o) { if ((lv == null || o.level == null || o.level <= lv + 1) && topicScore(o, aboutWords) > 0) topical.push(o) })
+        // UNSEEN matches only: a goal line must never pull back a question this avatar already had
+        // (2026-09-30: "Setelah malam, datang…" came back in practice because its hint shared "waktu")
+        eligible(X, t).forEach(function (o) { if (!seen[o.id] && (lv == null || o.level == null || o.level <= lv + 1) && topicScore(o, aboutWords) > 0) topical.push(o) })
       })
-      // unseen matches first (best match first), then the least recently seen matches
       topical = shuffle(topical, X.r).sort(function (a, b) {
-        return ((seen[a.id] || 0) - (seen[b.id] || 0)) || (topicScore(b, aboutWords) - topicScore(a, aboutWords)) ||
+        return (topicScore(b, aboutWords) - topicScore(a, aboutWords)) ||
           (X.themeList.some(function (t) { return b.theme.indexOf(t) >= 0 }) - X.themeList.some(function (t) { return a.theme.indexOf(t) >= 0 }))
       })
     }
     for (var i = 0; i < n; i++) {
       var q = null
-      if (i < X.aboutN) while (!q && topical.length) { var tq = topical.shift(); if (!used[tq.id] && (!X.maxPer || X.maxPer[tq.topic] == null || (count[tq.topic] || 0) < X.maxPer[tq.topic])) q = tq }
+      if (i < X.aboutN) while (!q && topical.length) { var tq = topical.shift(); if (!used[tq.id] && topicAllowed(X, tq.topic, count)) q = tq }
       var tried = {}
       while (!q) {
         var t = pickTopic(X, have, count)
         if (!t || tried[t]) {
           // the weighted topic had nothing left: any other topic that still has something
-          var rest = Object.keys(have).filter(function (x) { return !tried[x] && (!X.topic || x === X.topic) })
+          var rest = Object.keys(have).filter(function (x) { return !tried[x] && (!X.topic || x === X.topic) &&
+            (X.topic || !X.weights || X.weights[x] > 0) && topicAllowed(X, x, count) })
           if (!rest.length) break
           t = rest[0]
         }
@@ -489,6 +554,7 @@
       used[q.id] = 1
       if (!pq) { i--; if (Object.keys(used).length > n * 40) break; continue }
       count[pq.topic] = (count[pq.topic] || 0) + 1
+      markMix(X, pq.topic)
       markSeen(X.h, X.scope, q)
       out.push(pq)
     }
@@ -516,7 +582,7 @@
     var o = copy(q)
     var h = 0; String(q.id).split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) | 0 })
     var wrong = q.choices.filter(function (c) { return c !== q.answer })
-    if (/^\d+$/.test(q.answer) && !(q.calc && q.calc.op === 'max') && wrong.every(function (c) { return /^\d+$/.test(c) })) {
+    if (/^\d+$/.test(q.answer) && !(q.calc && (q.calc.op === 'max' || q.calc.op === 'min')) && wrong.every(function (c) { return /^\d+$/.test(c) })) {
       // numbers: the nearest values inside 0..10 (the easy range), one dropped (by the id) so the
       // answer is not always the middle value; order shuffled deterministically
       var a = +q.answer, top = Math.max(10, a), seen = {}, pool = []
@@ -529,7 +595,7 @@
       var keep = wrong.slice(0, n - 1)
       o.choices = q.choices.filter(function (c) { return c === q.answer || keep.indexOf(c) >= 0 })
     }
-    if (q.calc && q.calc.op === 'max') o.calc = { op: 'max', list: o.choices.map(Number) }
+    if (q.calc && (q.calc.op === 'max' || q.calc.op === 'min')) o.calc = { op: q.calc.op, list: o.choices.map(Number) }
     o.easy = true
     return o
   }

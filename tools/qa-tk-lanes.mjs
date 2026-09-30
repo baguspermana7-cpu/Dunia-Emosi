@@ -260,6 +260,52 @@ const nextQ = (p, ms) => waitFor(p, () => { const s = window.__h.state(); return
     check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
     await p.close()
   }
+  // 5) playtest 2026-09-30 (phones): the ship-to-horizon corridor (all three lanes, from the HUD down to the ship)
+  //    holds no control; the Cepat pill sits in the bottom row; no radar on a phone; an open question hides pause
+  for (const [w, h] of [[390, 844], [360, 640], [412, 915]]) {
+    const tag = `Q lanes phone ${w}x${h}`
+    const { p, errs } = await open(b, w, h, 'ship=tug&seed=7&q=stub&qon=collide,buoy&qbuoys=1&diff=1')
+    await p.evaluate(AUTOPILOT, false)
+    const CORR = () => {
+      const s = window.__h.state(), sr = s.shipRect, [xl, xr] = s.lanesX
+      const vis = e => e && e.offsetWidth && getComputedStyle(e).display !== 'none' && getComputedStyle(e).visibility !== 'hidden'
+      const hud = Math.max(...[...document.querySelectorAll('.tkl-tl,.tkl-toprow')].filter(vis).map(e => e.getBoundingClientRect().bottom))
+      const hits = [...document.querySelectorAll('.tkl-turn,.tkl-boost,.tkl-lever,.tkl-radar,.tkl-pausebtn,.tkl-shipbtn')].filter(vis).filter(e => { const b = e.getBoundingClientRect(); return b.left < xr - 2 && b.right > xl + 2 && b.top < sr.bottom - 2 && b.bottom > hud + 2 }).map(e => e.className.split(' ').pop())
+      const B = document.querySelector('.tkl-boost').getBoundingClientRect(), L = document.querySelector('.tkl-left').getBoundingClientRect()
+      return { hits, pill: (B.top + B.bottom) / 2 > L.top && (B.top + B.bottom) / 2 < L.bottom && B.top > sr.bottom - 2, radar: vis(document.querySelector('.tkl-radar')), waiting: s.waiting, pauseVis: vis(document.querySelector('.tkl-pausebtn')), q: s.q.open }
+    }
+    const bad = new Set(); let n = 0, pillOk = true, radar = false, pauseDuringQ = null
+    for (let i = 0; i < 40 && n < 16; i++) {
+      const c = await p.evaluate(CORR)
+      if (c.waiting) { if (pauseDuringQ === null) pauseDuringQ = c.pauseVis; await p.evaluate(() => window.__qAnswer(true)); await sleep(300); continue }
+      n++; c.hits.forEach(x => bad.add(x)); pillOk = pillOk && c.pill; radar = radar || c.radar
+      if (i === 4) await p.screenshot({ path: `${QSHOTS}lanes-phone-${w}x${h}.png` })
+      await sleep(350)
+    }
+    check(bad.size === 0, `${tag}: the ship-to-horizon corridor holds no control (${[...bad].join(',') || 'clear'} over ${n} samples)`)
+    check(pillOk && !radar, `${tag}: "Cepat" is a pill in the bottom row below the ship, no radar on a phone`)
+    if (pauseDuringQ === null) { await waitFor(p, () => window.__h.state().waiting, 90000); pauseDuringQ = await p.evaluate(() => getComputedStyle(document.querySelector('.tkl-pausebtn')).visibility !== 'hidden'); await p.evaluate(() => window.__qAnswer(true)) }
+    check(pauseDuringQ === false, `${tag}: the pause button is hidden while a question is open`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => window.__autoStop && window.__autoStop())
+    await p.close()
+  }
+  // 6) obstacle (2026-09-30: Vasa's lanes levels carry obstacle:'rock'): art + every word follow it
+  for (const [obs, hudRe, goalRe, hitRe] of [['rock', /Batu karang dihindari/, /Hindari batu karang!/, /batu karang/], ['reef', /Terumbu dihindari/, /Hindari terumbu karang!/, /terumbu karang/], ['ice', /Gunung es dihindari/, /hindari gunung es!/, /membentur es/]]) {
+    const tag = `Q lanes obstacle ${obs}`
+    const { p, errs } = await open(b, 1280, 800, `q=stub&manual=1&theme=day`)
+    await p.evaluate(o => __mount({ seed: 7, difficulty: 1, sections: ['open', 'sparse'], tutorial: false, obstacle: o, objects: [{ type: 'berg', lane: 1, z: 700 }] }), obs)
+    await sleep(900)
+    const t = await p.evaluate(() => ({ hud: document.querySelector('.tkl-tl').innerText, st: __h.state().obstacle, icon: [...document.querySelectorAll('.tkl-stat img')].map(i => i.src.split('/').slice(-2).join('/')) }))
+    check(t.st === obs && hudRe.test(t.hud) && goalRe.test(t.hud) && (obs === 'ice' || !/Gunung es|gunung es/.test(t.hud)), `${tag}: HUD label + goal follow the obstacle (${t.hud.replace(/\n/g, ' | ').slice(0, 140)})`)
+    const o = await waitFor(p, () => window.__q && window.__q.length ? window.__q[0] : null, 30000)
+    check(!!o && hitRe.test(o.intro), `${tag}: the collision question names it ("${o && o.intro}")`)
+    await sleep(200)
+    await p.screenshot({ path: `${QSHOTS}lanes-obstacle-${obs}.png` })
+    await p.evaluate(() => window.__qAnswer(true))
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.close()
+  }
 }
 if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n${fails} FAILED` : '\nALL PASS'); process.exit(fails ? 1 : 0) }
 
@@ -605,7 +651,9 @@ for (const [w, h] of [[390, 844], [1024, 768]]) {
     check(g.s.ship === 'cruise' && g.saved === 'cruise' && /tk-top\/cruise\.webp/.test(g.s.art || '') && g.s.artReady, `${tag}: pick -> the cruise ship sails, saved per avatar, TOP-VIEW sprite loaded (${(g.s.art || '').split('/').slice(-2).join('/')})`)
     const c = await p.evaluate(() => { const r = s => document.querySelector(s).getBoundingClientRect(); const L = r('.tkl-left'), R = r('.tkl-right'), B = r('.tkl-boost'); return { L: [L.left, L.right, L.bottom, L.width], R: [R.left, R.right, R.bottom, R.width], B: B.width } })
     const kT = Math.min(c.L[3], c.R[3]) / OLDT(w, h), kB = c.B / OLDB(w, h), needB = (w > h && h < 500) ? 1.5 : 2
-    check(kT >= 2 && kB >= needB - 0.01, `${tag}: LEFT/RIGHT ${Math.round(c.L[3])} px = ${kT.toFixed(2)}x (>= 2x of ${OLDT(w, h)}), wheel (Cepat) ${Math.round(c.B)} px = ${kB.toFixed(2)}x (>= ${needB}x of ${OLDB(w, h)})`)
+    // phone upright (playtest 2026-09-30, supersedes 2x there): LEFT / RIGHT >= 96 px with the "Cepat" pill (>= 88 px) between them
+    if (h > w && w < 600) check(Math.min(c.L[3], c.R[3]) >= 96 && c.B >= 88, `${tag}: phone row: LEFT/RIGHT ${Math.round(c.L[3])} px (>= 96), Cepat pill ${Math.round(c.B)} px wide (>= 88)`)
+    else check(kT >= 2 && kB >= needB - 0.01, `${tag}: LEFT/RIGHT ${Math.round(c.L[3])} px = ${kT.toFixed(2)}x (>= 2x of ${OLDT(w, h)}), wheel (Cepat) ${Math.round(c.B)} px = ${kB.toFixed(2)}x (>= ${needB}x of ${OLDB(w, h)})`)
     check(c.L[1] < w / 2 && c.R[0] > w / 2 && c.L[2] > h * 0.8 && c.R[2] > h * 0.8, `${tag}: LEFT bottom-left, RIGHT bottom-right`)
     await p.evaluate(AUTOPILOT)
     let overlap = 0, samples = 0
@@ -646,7 +694,7 @@ for (const [w, h] of [[390, 844], [1024, 768]]) {
     await sleep(700)
     await p.click('.tkf-tab[data-group="legend"]'); await sleep(400)
     const t = await p.evaluate(() => ({ n: document.querySelectorAll('.tkf-card').length, first: document.querySelector('.tkf-card').dataset.id, st: __h.state() }))
-    check(t.n === 25 && t.first === 'mary-rose' && t.st.selecting && !t.st.running, `${tag}: "Kapal Legenda" tab lists 25 legend ships, game waits`)
+    check(t.n === 27 && t.first === 'mary-rose' && t.st.selecting && !t.st.running, `${tag}: "Kapal Legenda" tab lists 27 legend ships, game waits`)
     await p.evaluate(() => document.querySelector('.tkf-card[data-id="costa-concordia"]').scrollIntoView({ inline: 'center' }))
     await p.click('.tkf-card[data-id="costa-concordia"]'); await sleep(300)
     await p.screenshot({ path: `${FLEET}lanes-legend-${w}x${h}.png` })

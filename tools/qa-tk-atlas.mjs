@@ -48,6 +48,15 @@ check(GF.out.titanic.length >= 2 && GF.out.titanic.length <= 3, `after Kamar -> 
 check(branchy.length >= 3, `the chart branches (branch points: ${branchy})`)
 check(branchy.every(id => TA.NODES[id].sign), `every branch point has a signpost spot (${branchy.filter(id => !TA.NODES[id].sign)})`)
 check(branchy.every(id => GF.out[id].every(b => GF.hints[id + '>' + b])), 'every signpost arrow has a hint')
+// regions (playtest 2026-09-30: "Laut Karibia" sat under Vasa of Laut Eropa): no world lies inside another region's sea
+{
+  const inside = []
+  for (const id of Object.keys(TA.NODES)) {
+    const n = TA.NODES[id]
+    TA.REGIONS.forEach(g => { if (g.id !== n.r && ((n.x - g.blob[0]) / g.blob[2]) ** 2 + ((n.y - g.blob[1]) / g.blob[3]) ** 2 < 1) inside.push(id + ' in ' + g.id) })
+  }
+  check(!inside.length, `no world inside another region's sea (${inside})`)
+}
 // the chart as it loads today (legends present or not)
 const GL = TA.graph(WD.WORLDS.map(w => w.id))
 check(TA.validate(GL).length === 0, `the chart for the loaded worlds is valid (${TA.validate(GL)})`)
@@ -193,13 +202,87 @@ try {
     check(!hits.length, `${tag}: no overlap (${hits.slice(0, 8)})`)
     const tiny = M.texts.filter(t => t.px < 14 - 0.05)
     check(!tiny.length, `${tag}: chart text >= 14 px (${tiny.map(t => t.t + ' ' + t.px.toFixed(1))})`)
-    const badCtl = M.ctl.filter(c => Math.min(c.w, c.h) < 56 || c.l < 0 || c.r > M.vw || c.t < M.box.top - 1 || c.b > M.vh - M.box.bot + 1)
+    const badCtl = M.ctl.filter(c => c.w && c.h).filter(c => Math.min(c.w, c.h) < 56 || c.l < 0 || c.r > M.vw || c.t < M.box.top - 1 || c.b > M.vh - M.box.bot + 1)
     check(!badCtl.length, `${tag}: zoom / Timmy / mini-map controls >= 56 px inside the free area (${badCtl.map(c => c.c + ' ' + Math.round(c.w) + 'x' + Math.round(c.h) + '@' + Math.round(c.t))})`)
     const mini = M.ctl.find(c => /atl-mini/.test(c.c)), zs = M.ctl.filter(c => !/atl-mini/.test(c.c))
     check(!mini || !zs.some(z => ov(z, mini)), `${tag}: mini-map clear of the buttons`)
     check(!M.hs, `${tag}: no horizontal page scroll`)
     const nx = await p.evaluate(() => { const n = document.querySelector('.atl-node.next'); if (!n) return null; const r = n.querySelector('.land').getBoundingClientRect(), V = TKAtlas.view().box(); return { id: n.dataset.w, vis: r.left >= 0 && r.right <= innerWidth && r.top >= V.top - 20 && r.bottom <= innerHeight - V.bot + 20 } })
     check(nx && nx.vis, `${tag}: the glowing next world is on screen at start (${JSON.stringify(nx)})`)
+
+    // START VIEW (owner tablet + playtest 2026-09-30: the Atlantik banner behind the zoom buttons and the title plate,
+    // a signpost cut at the left edge, labels under the star counter / nav): every banner and signpost on screen is
+    // WHOLE and clear of all chrome; every world on screen (island + label) is clear of all chrome
+    const SV = await p.evaluate(() => {
+      const vis = e => { const cs = getComputedStyle(e), r = e.getBoundingClientRect(); return cs.display !== 'none' && cs.visibility !== 'hidden' && +cs.opacity > 0.05 && r.width > 0 ? r : null }
+      const chrome = [...document.querySelectorAll('#scr-world .topbar > *, #scr-world .w-foot > *, .atl-ctl, .atl-mini, #sndfab')].map(e => ({ e: (e.id || e.className || e.tagName).toString().slice(0, 24), r: vis(e) })).filter(c => c.r)
+      const hit = (r, c) => r.left < c.r.right - 2 && c.r.left < r.right - 2 && r.top < c.r.bottom - 2 && c.r.top < r.bottom - 2
+      const box = (els) => els.map(e => e.getBoundingClientRect()).filter(r => r.width).reduce((a, r) => a ? { left: Math.min(a.left, r.left), top: Math.min(a.top, r.top), right: Math.max(a.right, r.right), bottom: Math.max(a.bottom, r.bottom) } : { left: r.left, top: r.top, right: r.right, bottom: r.bottom }, null)
+      const items = [...document.querySelectorAll('.atl-ban')].map(e => ['banner ' + e.textContent.trim(), [e], true])
+        .concat([...document.querySelectorAll('.atl-sign')].map(e => ['signpost@' + e.dataset.w, [e, ...e.querySelectorAll('.pl, .ar')], true]))
+        .concat([...document.querySelectorAll('.atl-node')].flatMap(e => [['world ' + e.dataset.w, [e.querySelector('.land')], false], ['label ' + e.dataset.w, [e.querySelector('.lab')], false]]))
+      // a banner / signpost on screen is whole on screen (tablets) and clear of all chrome (bar buttons, title plate, star
+      // counter, dock, mini-map); a world (island, label) whose centre is inside the free area F (between the top bar and
+      // the footer) has at most a 20 % corner under any chrome (a world past a bar is off the view, like past the edge)
+      const V = TKAtlas.view().box(), FT = V.top, FB = innerHeight - V.bot, out = []
+      items.forEach(([k, els, whole]) => {
+        const r = box(els); if (!r) return
+        if (whole) {
+          if (r.right <= 0 || r.left >= innerWidth || r.bottom <= 0 || r.top >= innerHeight) return
+          // tablets (the owner's device, short side >= 600): also whole on screen; a phone is too narrow for a 2-plank
+          // signpost + its banner to always sit whole, so there only the chrome rule applies
+          if (Math.min(innerWidth, innerHeight) >= 600 && (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1)) out.push(k + ' cut by the screen edge')
+        } else {
+          const mx = (r.left + r.right) / 2, my = (r.top + r.bottom) / 2
+          if (mx <= 0 || mx >= innerWidth || my <= FT || my >= FB) return
+          // a world: at most a 20 % corner of its island / label under a piece of chrome
+          chrome.forEach(c => { const cw = Math.min(r.right, c.r.right) - Math.max(r.left, c.r.left), chh = Math.min(r.bottom, c.r.bottom) - Math.max(r.top, c.r.top)
+            if (cw > 0 && chh > 0 && cw * chh / ((r.right - r.left) * (r.bottom - r.top)) > 0.2) out.push(k + ' under ' + c.e + ' (' + Math.round(100 * cw * chh / ((r.right - r.left) * (r.bottom - r.top))) + '%)') })
+          return
+        }
+        chrome.forEach(c => { if (hit(r, c)) out.push(k + ' under ' + c.e) })
+      })
+      return out
+    })
+    check(!SV.length, `${tag}: start view — banners / signposts whole, nothing under the chrome (${SV.slice(0, 8)}) ${JSON.stringify(await p.evaluate(() => TKAtlas.view().homeInfo))}`)
+    // the dock: zoom in / out + Timmy in ONE backed panel at the bottom right, above the footer
+    const DK = await p.evaluate(() => { const d = document.querySelector('.atl-ctl'), r = d.getBoundingClientRect(), V = TKAtlas.view().box(), bg = getComputedStyle(d).backgroundImage + getComputedStyle(d).backgroundColor
+      return { r: r.right, b: r.bottom, l: r.left, n: d.querySelectorAll('button').length, bg: !/^none(rgba\(0, 0, 0, 0\))?$/.test(bg), foot: innerHeight - V.bot } })
+    check(DK.n === 3 && DK.bg && DK.r > w * 0.8 && DK.b <= DK.foot + 1 && DK.b > DK.foot - 40, `${tag}: zoom + Timmy share one backed dock at the bottom right above the footer (${JSON.stringify(DK)})`)
+    // signposts: each plank's arrow points along its route's first stretch (playtest: three right arrows for up / right / down)
+    const SA = await p.evaluate(() => [...document.querySelectorAll('.atl-sign .pl')].map(pl => {
+      const from = pl.closest('.atl-sign').dataset.w, to = pl.dataset.to, path = document.querySelector('.rt[data-e="' + from + '>' + to + '"] path.rd')
+      if (!path) return { from, to, miss: true }
+      const L = path.getTotalLength(), a = path.getPointAtLength(0), b2 = path.getPointAtLength(L * 0.3), exp = Math.atan2(b2.y - a.y, b2.x - a.x) * 180 / Math.PI
+      const ar = pl.querySelector('.ar'); if (!ar) return { from, to, noArrow: true }
+      const m = new DOMMatrix(getComputedStyle(ar).transform), got = Math.atan2(m.b, m.a) * 180 / Math.PI
+      return { from, to, exp: Math.round(exp), got: Math.round(got) }
+    }))
+    const badArrow = SA.filter(a => a.miss || a.noArrow || Math.abs(((a.got - a.exp) % 360 + 540) % 360 - 180) > 25)
+    check(!badArrow.length, `${tag}: signpost arrows point along their routes (${JSON.stringify(badArrow.slice(0, 4))}; ${SA.length} planks)`)
+    if (tag === '1280x800') {
+      check(SA.length >= 2, `${tag}: the mid save shows a signpost (${SA.length} planks)`)
+      // a banner sits by its own worlds: >= 40 chart units from every other region's world (island + label)
+      const BN = await p.evaluate(() => {
+        const s = TKAtlas.view().cam().s, out = []
+        const nodes = [...document.querySelectorAll('.atl-node')].map(e => { const a = e.querySelector('.land').getBoundingClientRect(), b = e.querySelector('.lab').getBoundingClientRect(); return { id: e.dataset.w, reg: TKAtlas.NODES[e.dataset.w].r, l: Math.min(a.left, b.left), t: Math.min(a.top, b.top), r: Math.max(a.right, b.right), b: Math.max(a.bottom, b.bottom) } })
+        document.querySelectorAll('.atl-ban').forEach(e => {
+          const r = e.getBoundingClientRect(), reg = e.dataset.r
+          nodes.forEach(n => { if (n.reg === reg) return; const dx = Math.max(n.l - r.right, r.left - n.r, 0), dy = Math.max(n.t - r.bottom, r.top - n.b, 0), g = Math.hypot(dx, dy) / s; if (g < 40) out.push(reg + ' banner ' + Math.round(g) + ' from ' + n.id) })
+        })
+        return out
+      })
+      check(!BN.length, `banners stay by their own region's worlds (${BN})`)
+      // max zoom-out: past the chart edge is open sea (the vp's own backdrop), never the harbour painting behind the screen
+      const ZO = await p.evaluate(async () => {
+        const V = TKAtlas.view(); for (let i = 0; i < 8; i++) V.zoom(0.7)
+        await new Promise(r => setTimeout(r, 400)); V.pan(-5000, 0); const a = document.querySelector('.atl-world').getBoundingClientRect()
+        V.pan(10000, 0); const b = document.querySelector('.atl-world').getBoundingClientRect()
+        const bg = getComputedStyle(document.querySelector('.atl-vp')).backgroundColor, box = V.box()
+        const s0 = V.cam().s; V.home(); return { s: s0, bg, overR: Math.round(innerWidth - a.right), overL: Math.round(b.left), min: TKAtlas.MIN_S }
+      })
+      check(Math.abs(ZO.s - ZO.min) < 0.01 && ZO.bg !== 'rgba(0, 0, 0, 0)' && ZO.overR <= 230 && ZO.overL <= 20, `max zoom-out: sea past the chart edge, the chart slides past it only by the side chrome (${JSON.stringify(ZO)})`)
+    }
 
     // chrome never hides a world for good: centred on each world, its island + label clear every bar, button,
     // mini-map and character on screen (the old map's Timmy figure permanently covered the left column)
@@ -263,12 +346,16 @@ try {
     await p.evaluate(() => document.querySelector('.atl-me').click()); await settle(p)
     const me = await p.evaluate(() => { const b2 = document.querySelector('.atl-boat').getBoundingClientRect(), V = TKAtlas.view().box(); return { x: b2.left + b2.width / 2, y: b2.top + b2.height / 2, top: V.top, bot: V.bot } })
     check(me.x > 0 && me.x < w && me.y > me.top && me.y < h - me.bot, `${tag}: "Lokasi Timmy" brings Timmy's boat into view (${Math.round(me.x)},${Math.round(me.y)})`)
-    // mini-map tap moves the camera
-    const m0 = await p.evaluate(() => TKAtlas.view().cam())
-    const mr = await p.evaluate(() => { const r = document.querySelector('.atl-mini').getBoundingClientRect(); return { x: r.left + r.width * 0.9, y: r.top + r.height * 0.85 } })
-    await p.touchscreen.tap(mr.x, mr.y); await settle(p)
-    const m1 = await p.evaluate(() => TKAtlas.view().cam())
-    check(Math.abs(m1.x - m0.x) + Math.abs(m1.y - m0.y) > 30, `${tag}: tapping the mini-map moves the chart`)
+    // mini-map tap moves the camera (a phone on its side hides the mini-map: no room beside the dock)
+    const miniShown = await p.evaluate(() => !document.querySelector('.atl-mini').hidden)
+    check(miniShown || (h < 500 && w > h), `${tag}: the mini-map shows (hidden only on a phone on its side)`)
+    if (miniShown) {
+      const m0 = await p.evaluate(() => TKAtlas.view().cam())
+      const mr = await p.evaluate(() => { const r = document.querySelector('.atl-mini').getBoundingClientRect(); return { x: r.left + r.width * 0.9, y: r.top + r.height * 0.85 } })
+      await p.touchscreen.tap(mr.x, mr.y); await settle(p)
+      const m1 = await p.evaluate(() => TKAtlas.view().cam())
+      check(Math.abs(m1.x - m0.x) + Math.abs(m1.y - m0.y) > 30, `${tag}: tapping the mini-map moves the chart`)
+    }
     // tap a locked world: shake + hint, stays here
     const lockId = await p.evaluate(() => { const n = document.querySelector('.atl-node.locked'); return n && n.dataset.w })
     if (lockId) {

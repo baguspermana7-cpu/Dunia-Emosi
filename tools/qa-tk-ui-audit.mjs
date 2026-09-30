@@ -24,18 +24,14 @@ const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 /* deliberate exemptions: [selector, checks it is exempt from, reason] */
 const EXEMPT = [
-  ['.sea-bg, .map-bg, .ships-bg, .room-bg, .reward-bg, .px-l, .px-l *, .tks-bg, .gc-bg', 'CX', 'full-bleed scenery: bleeds past the frame on purpose (parallax / cover)'],
+  ['.sea-bg, .map-bg, .ships-bg, .room-bg, .reward-bg, .px-l, .px-l *:not(.home-timmy), .tks-bg, .gc-bg', 'CX', 'full-bleed scenery: bleeds past the frame on purpose (parallax / cover); character art must stay whole'],
   ['.gull', 'CX', 'gulls fly in from off-screen'],
   ['.tkg-coach, .tkg-coach *', 'CXT', 'coach hand: pointer-events none, drawn over the arrow it points at'],
   ['.car-dots, .car-dots *', 'T', 'carousel dots: aria-hidden position markers, not buttons'],
-  ['.tks-l, .tks-l *', 'CX', 'story panel characters stand on the stage edge; the stage crops them at the knees on purpose'],
   ['.carousel *, .list *, .route *, .islands *, .room-body *, .tkh-body *, .tkh-side *, .settings *', 'X', 'inside a scroll area: items past the edge are reached by scrolling'],
   ['.fly-layer *', 'CXTFO', 'collectible fly-to-journal sprite in flight'],
-  ['.sc .sc-img, .sc .sc-img *, .shipcard .img img, .detail .dimg img, .chap .md img', 'C', 'ship / chapter art framed as a postcard or a round medallion: a cover crop by design'],
-  ['.tkq-opt>span.tkq-ar', 'O', 'KNOWN OPEN (handed to the tk-quiz owner 2026-09-30): on phone 2x2 / 3-row Arabic answers the harakat touch the 1.05 line box; a taller box breaks qa-tk-quiz-fit card fit'],
   ['.atl-vp, .atl-vp *, .atl-ctl, .atl-ctl *', 'CXOT', 'the world atlas is a pan / zoom viewport (tk-atlas, gated by qa-tk-atlas): nodes pass under its edge and the fixed footer while panning'],
-  ['#sndfab', 'T', 'the always-on speaker floats above every scrolling pane (like a status bar); rows pass beneath it while scrolling'],
-  ['#w-timmy, #ships-timmy', 'X', 'Timmy leans in from the left edge of the world map (landscape tablet), a deliberate bleed']
+  ['#sndfab', 'T', 'the always-on speaker floats above every scrolling pane (like a status bar); rows pass beneath it while scrolling']
 ]
 
 const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], protocolTimeout: 900000 })
@@ -254,6 +250,16 @@ const AUDIT = (EX) => {
       if (pl.width > Math.max(tw, 200) * 1.8 + 80) out.push(`G plate ${Math.round(pl.width)} px wide for ${Math.round(tw)} px of title (empty parchment)`)
     }
   }
+  // H: the first-visit hand must stay whole and leave the primary CTA words readable.
+  const start = document.querySelector('#btn-start'), hand = document.querySelector('.tk-hand')
+  if (start && hand && visible(start) && getComputedStyle(hand).opacity !== '0') {
+    const words = [...start.querySelectorAll('#start-t, #start-sub')].filter(n => n.textContent.trim()).map(n => { const r = document.createRange(); r.selectNodeContents(n); return r.getBoundingClientRect() })
+    for (const part of hand.querySelectorAll('.hp > i')) {
+      const r = part.getBoundingClientRect()
+      if (r.left < -1 || r.right > vw + 1 || r.top < -1 || r.bottom > vh + 1) out.push('H first-visit hand clipped at viewport')
+      if (words.some(b => r.left < b.right - 1 && r.right > b.left + 1 && r.top < b.bottom - 1 && r.bottom > b.top + 1)) out.push('H first-visit hand covers primary label')
+    }
+  }
   // X: page scroll
   if (document.scrollingElement.scrollWidth > vw + 1) out.push(`X horizontal page scroll ${document.scrollingElement.scrollWidth} > ${vw}`)
   // K: copy
@@ -290,7 +296,7 @@ for (const [w, h] of SIZES) {
     const fresh = msgs.filter(m => { const k = nm + '|' + m; if (seen.has(k)) return false; seen.add(k); return true })
     if (fresh.length) { console.log(`${w}x${h} ${nm}: ${fresh.length} findings`); fresh.slice(0, 14).forEach(m => console.log('   ' + m)) }
     fresh.forEach(m => fails.push(`${w}x${h} ${nm}: ${m}`))
-    if ((w === 1280 && h === 800) || (w === 390 && h === 844)) await p.screenshot({ path: `${SHOTS}/${w}x${h}-${nm}.png` })
+    if (process.env.QA_SAVE_ALL || (w === 1280 && h === 800) || (w === 390 && h === 844)) await p.screenshot({ path: `${SHOTS}/${w}x${h}-${nm}.png` })
     // leave any running level cleanly
     await ev(p, () => { try { if (document.body.getAttribute('data-scr') === 'scr-play') document.getElementById('p-home').click() } catch (e) {} try { const ps = document.getElementById('pause'); ps.className = 'overlay'; document.getElementById('parent').className = 'overlay'; document.getElementById('cards').className = 'overlay' } catch (e) {} })
   }

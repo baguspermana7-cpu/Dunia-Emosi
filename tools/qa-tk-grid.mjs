@@ -456,7 +456,7 @@ if (process.env.QA_UI !== '0') {
       if (hit(bub, board)) bad.push('bubble covers the board')
       if (!bub) bad.push('Timmy bubble not visible')
       for (const [n, b] of [['JALAN', go], ['Hapus', tr]]) if (!b || !cmd || b.left < cmd.left - 1 || b.right > cmd.right + 1 || b.top < cmd.top - 1 || b.bottom > cmd.bottom + 1) bad.push(n + ' outside the Perintah panel')
-      if (go && (go.left < 4 || go.top < 4 || go.right > vw - 4 || go.bottom > vh - 4)) bad.push('JALAN touches the viewport edge')
+      if (go && (go.left < 4 || go.right > vw - 4 || (!document.querySelector('.tkg--scroll') && (go.top < 4 || go.bottom > vh - 4)))) bad.push('JALAN touches the viewport edge')
       if (hit(tr, av)) bad.push('Hapus overlaps the Timmy avatar')
       const tiny = []
       for (const e of document.querySelectorAll('.tkg *')) {
@@ -467,14 +467,20 @@ if (process.env.QA_UI !== '0') {
       if (tiny.length) bad.push('text < 12px: ' + tiny.slice(0, 3).join(', '))
       for (const e of document.querySelectorAll('.tkg-cmd .tkg-btn, .tkg-foot .tkg-btn')) if (vis(e) && e.scrollWidth > e.clientWidth + 1) bad.push('label overflows ' + e.className)
       if (/\p{Extended_Pictographic}/u.test(document.querySelector('.tkg').textContent)) bad.push('emoji in the UI text')
+      // phone + tall board (2.0 scroll layout): the column scrolls, so only the sides of the screen bound it; the board
+      // itself must still be fully on screen and take the width minus the 16 px gutters
+      const scroll = document.querySelector('.tkg').classList.contains('tkg--scroll')
+      const inside2 = scroll ? (b => b.left >= -1 && b.right <= vw + 1) : inside
+      // full width, unless the tile hit its 160 px cap or the board is as tall as the screen allows
+      if (scroll && board) { { const bt = document.querySelector('.tkg-body').getBoundingClientRect().top; if (board.left < -1 || board.right > vw + 1 || board.height > vh - bt + 1) bad.push('scroll layout: the board cannot be shown whole') } if (board.width < vw - 32 - 12 && window.__h.state().tile < 160 && board.height < vh - 24 - 60) bad.push('scroll layout: board ' + Math.round(board.width) + ' px < full width') }
       for (const e of document.querySelectorAll('.tkg button, .tkg-slot, .tkg-board, .tkg-cmd, .tkg-route')) {
         if (!vis(e)) continue
         const b = e.getBoundingClientRect(), inSlots = slots.contains(e)
         // route bar may scroll sideways in short landscape: its chips must sit inside the bar vertically
-        if (inSlots ? !(b.top >= sr.top - 8 && b.bottom <= sr.bottom + 8) : !inside(b)) bad.push((e.className || e.tagName) + ' ' + JSON.stringify([b.left, b.top, b.right, b.bottom].map(Math.round)))
+        if (inSlots ? !(b.top >= sr.top - 8 && b.bottom <= sr.bottom + 8) : !inside2(b)) bad.push((e.className || e.tagName) + ' ' + JSON.stringify([b.left, b.top, b.right, b.bottom].map(Math.round)))
         if ((e.tagName === 'BUTTON' || e.classList.contains('tkg-slot')) && Math.min(b.width, b.height) < 43.5) small.push(e.className + ' ' + Math.round(b.width) + 'x' + Math.round(b.height))
       }
-      if (!inside(sr)) bad.push('slots bar ' + JSON.stringify([sr.left, sr.top, sr.right, sr.bottom].map(Math.round)))
+      if (!inside2(sr)) bad.push('slots bar ' + JSON.stringify([sr.left, sr.top, sr.right, sr.bottom].map(Math.round)))
       const hs = document.documentElement.scrollWidth > vw + 1 || document.body.scrollWidth > vw + 1
       const tile = window.__h.state().tile
       // fill the frame (owner, real tablet 2026-09-28): the board uses >= ~85 % of the free play area in its
@@ -579,7 +585,7 @@ if (process.env.QA_UI !== '0') {
     }
   }
 
-  // Petunjuk (2.0): an explicit choice. First press asks; "Ya" reveals ONE next step (glow + dashed ghost slot),
+  // Petunjuk: an explicit choice. First press asks; "Ya" reveals ONE next palette step,
   // never fills a chip, never draws a path; a wrong prefix marks the chip to change; the level then ends with <= 2 stars.
   {
     const p = await open(390, 844, '?l=0&coach=0')
@@ -592,7 +598,7 @@ if (process.env.QA_UI !== '0') {
       await tapSel(p, '.tkg-hintb'); await sleep(250); await tapSel(p, '.tkg-ask .yes'); await sleep(250)
       const g = await p.evaluate(() => ({ hint: [...document.querySelectorAll('.tkg-pal .tkg-chip--hint')].map(e => e.getAttribute('data-cmd')), ghost: document.querySelectorAll('.tkg-slot--ghost').length,
         glow: document.querySelectorAll('.tkg-glow').length, gh: document.querySelectorAll('.tkg-gh').length, path: document.querySelectorAll('.tkg-path *').length }))
-      check(eq(g.hint, [sol[0]]) && g.ghost === 1 && !g.glow && !g.gh && !g.path, `Petunjuk: one next step (${JSON.stringify(g)})`)
+      check(eq(g.hint, [sol[0]]) && g.ghost === 0 && !g.glow && !g.gh && !g.path, `Petunjuk: one next step without a slot ghost (${JSON.stringify(g)})`)
       check(eq((await state(p)).program, []), 'Petunjuk never fills a chip')
       await build(p, ['E', 'E'])   // h1's wrong route: chip 2 bumps the iceberg
       await tapSel(p, '.tkg-hintb'); await sleep(250)
@@ -813,7 +819,7 @@ if (process.env.QA_UI !== '0') {
       for (let i = 0; i < 2; i++) {
         const p = await open(390, 844, '?w=kamar&lv=k2'); await sleep(900)
         check((await state(p)).coach, `k2 visit ${i + 1}: the very first grid always shows the coach`)
-        if (i === 0) await p.screenshot({ path: '/tmp/claude-1000/-home-baguspermana7/006f0cec-d381-48ee-882e-83cf434d8153/scratchpad/tk-ease-grid/390x844-k2-coach.png' })
+        if (i === 0) await p.screenshot({ path: `${EASE}/390x844-k2-coach.png` })
         await p.close()
       }
       { const p = await open(390, 844, '?l=0'); await p.evaluate(() => localStorage.clear()); await p.close() }

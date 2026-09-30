@@ -303,6 +303,7 @@
     '@keyframes tkl-fade{0%{opacity:0}20%{opacity:1}100%{opacity:0}}',
     '.tkl-pause{position:absolute;inset:0;background:rgba(4,18,32,.55);display:none;place-items:center;z-index:40}.tkl-pause.is-on{display:grid}',
     '.tkl-pause-card{padding:22px 28px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}.tkl-pause-card h3{margin:0;font-weight:normal;font-size:28px}',
+    '.tkl-topnote{max-width:260px;margin:0;font-size:14px;line-height:1.3;color:#fff0bd}',
     '.tkl-resume{min-width:160px;height:60px;border-radius:18px;background:#ffc83d;color:#3b2800;font-size:20px;box-shadow:0 5px 0 #c98f00}',
     /* polish (owner 2026-09-28): wood & brass HUD + brass controls when tk-sea.js is loaded */
     '.tkl-sea .tkl-panel{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.12)),repeating-linear-gradient(92deg,#7a4a24 0 7px,#6d4120 7px 9px,#835029 9px 17px,#70431f 17px 20px);border:3px solid #d9a441;border-radius:16px;box-shadow:inset 0 0 0 2px #7a5314,0 4px 0 #4a2c10,0 8px 16px rgba(0,0,0,.3);color:#fff4d6;text-shadow:0 1px 0 rgba(40,20,0,.8)}',
@@ -336,11 +337,21 @@
     '.tkl-port .tkl-boost.is-up,.tkl-wide .tkl-boost.is-up{position:absolute;right:14px;bottom:calc(var(--tkl-turn,88px) + 10px)}',
     '.tkl-wide .tkl-lever{right:auto;left:12px}',
     /* playtest 2026-09-29, phone upright: the section banner duplicated the route-bar label and sat on the bow
-       (hidden there); the hint and the captain move to the free column above LEFT (beside the wheel), never over
-       the ship; the chips keep icon, label and value, and the objective keeps its title line (chip labels stay, ellipsised) */
+       (hidden there); the hint and the captain sit over the objective card, never over the sea; the chips keep icon, label and value, and the objective keeps its title line (chip labels stay, ellipsised) */
     '.tkl-port .tkl-banner{display:none}',
-    '.tkl-upw .tkl-hint{left:12px;right:auto;margin:0;width:auto;max-width:calc(100% - var(--tkl-boost,104px) - 44px);bottom:calc(var(--tkl-turn,88px) + 24px + env(safe-area-inset-bottom,0px))!important;text-align:left;font-size:15px}',
-    '.tkl-upw .tkl-cap{left:12px;bottom:calc(var(--tkl-turn,88px) + 24px + env(safe-area-inset-bottom,0px));max-width:calc(100% - var(--tkl-boost,104px) - 40px)}',
+    '.tkl-upw .tkl-boost{height:80px;border-radius:40px;align-self:center;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 10px 0 6px}',
+    '.tkl-sea.tkl-upw .tkl-boost{background:linear-gradient(#fff4c4,#f2c65e 45%,#cf9433);border:3px solid #6b4412;box-shadow:inset 0 2px 0 rgba(255,250,220,.6),0 5px 0 #4f310b,0 8px 14px rgba(0,0,0,.3)}',
+    '.tkl-upw .tkl-boost img{width:48px;height:48px;flex:none}.tkl-upw .tkl-boost .tkl-up{display:none}',
+    '.tkl-upw .tkl-boost span,.tkl-sea.tkl-upw .tkl-boost span{position:static;transform:none;padding:0;background:none;border:0;font-size:16px;color:#3b2800}',
+    '.tkl-upw .tkl-radar{display:none}.tkl-upw .tkl-tl{right:136px}',
+    '.tkl-upw .tkl-stat small{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
+    '.tkl-sea.tkl-upw .tkl-stat{padding:3px 8px 3px 4px;flex:1 1 auto;min-width:0}.tkl-sea.tkl-upw .tkl-stat b{font-size:17px}',
+    /* an open question holds the game: its pause / ship buttons would do nothing, so they step aside */
+    '.tkl-asking .tkl-pausebtn,.tkl-asking .tkl-shipbtn{visibility:hidden}',
+    // (2026-09-30, pill layout: the ship sits just above the bottom row) hint + captain lie over the objective card
+    // at the top for their few seconds, never on the sea between the ship and the horizon
+    '.tkl-upw .tkl-hint{top:calc(10px + env(safe-area-inset-top,0px));bottom:auto!important;left:10px;right:136px;margin:0;width:auto;max-width:none;text-align:left;font-size:15px;z-index:6}',
+    '.tkl-upw .tkl-cap{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto;left:10px;right:136px;max-width:none;z-index:6}',
     '.tkl-upw .tkl-cap img{width:58px;height:58px}.tkl-upw .tkl-bub span{font-size:15px}',
     '.tkl-sea.tkl-narrow .tkl-obj span{display:none}',
     // wide landscape: the hint sits at the bottom between the thumbs (under the ship), the captain above the wheel
@@ -498,6 +509,18 @@
     return { c: c, cx: cx, cy: cy, R: R }
   }
   // flat ice floe: low slab with cracks
+  // a reef rock: the rock sprite with seeded coral knobs (pink / orange / violet) on its top face
+  function reefify (sp) {
+    var c = canvas(sp.c.width, sp.c.height), x = c.getContext('2d'), R = rng((sp.c.width * 131 + sp.c.height) >>> 0)
+    x.drawImage(sp.c, 0, 0)
+    var cols = ['#ff7aa2', '#ff9f43', '#c77dff', '#ffd166'], r0 = (sp.R || 40) * 0.55
+    for (var i = 0; i < 9; i++) {
+      var a = R() * Math.PI * 2, d = R() * r0, px = sp.cx + Math.cos(a) * d, py = sp.cy + Math.sin(a) * d * 0.7, rr = 3 + R() * r0 * 0.22
+      x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(px, py, rr, 0, Math.PI * 2); x.fill()
+      x.fillStyle = 'rgba(255,255,255,.35)'; x.beginPath(); x.arc(px - rr * 0.3, py - rr * 0.3, rr * 0.35, 0, Math.PI * 2); x.fill()
+    }
+    return { c: c, cx: sp.cx, cy: sp.cy, R: sp.R }
+  }
   function floeSprite (seed, R, night) { return iceSprite(seed, R, Math.max(3, R * 0.08), night) }
   // procedural top-down liner (bow up): black hull, teak deck, white houses, 4 buff funnels with black tops
   function shipSprite (L, B, k) {
@@ -589,6 +612,12 @@
     var themeName = opts.theme || level.theme || (/nautilus|deep/.test(worldId0) ? 'deep' : /endurance|antar|polar/.test(worldId0) ? 'polar'
       : (level.night != null ? (level.night ? 'night' : 'day') : 'night'))
     var night = SEA ? (themeName === 'night' || themeName === 'deep') : (level.night != null ? !!level.night : true)
+    // what the child steers around: 'ice' (default), 'rock' (Vasa, deep sea) or 'reef' — art + every word follow it
+    var OBS = { ice: { hud: 'Gunung es dihindari', goal: 'Kemudikan kapal dan hindari gunung es!', hit: 'Kapal membentur es!', icon: 'tk-prop/iceberg-5' },
+      rock: { hud: 'Batu karang dihindari', goal: 'Hindari batu karang!', hit: 'Kapal menyentuh batu karang!', icon: 'gt-el/boulders' },
+      reef: { hud: 'Terumbu dihindari', goal: 'Hindari terumbu karang!', hit: 'Kapal menyentuh terumbu karang!', icon: 'gt-el/boulders' } }
+    var obstacle = OBS[opts.obstacle] ? opts.obstacle : OBS[level.obstacle] ? level.obstacle : themeName === 'deep' ? 'rock' : 'ice'
+    var OB = OBS[obstacle]
     var reduced = !!opts.reducedMotion
     if (opts.reducedMotion == null) { try { reduced = !!(W.matchMedia && W.matchMedia('(prefers-reduced-motion: reduce)').matches) } catch (e) {} }
     var world = opts.world || level.world || 'titanic'
@@ -607,10 +636,11 @@
     var tl = el('div', 'tkl-tl')
     var obj = el('div', 'tkl-obj tkl-panel', '<b></b><span></span>')
     obj.querySelector('b').textContent = level.title || (fin ? 'Malam di Samudra Atlantik' : 'Tantangan Navigasi')
-    obj.querySelector('span').textContent = level.goal || 'Kemudikan kapal dan hindari gunung es!'
+    obj.querySelector('span').textContent = level.goal || OB.goal
     tl.appendChild(obj)
     var stats = el('div', 'tkl-stats'), route = null
-    var ICONS = { 'Waktu': 'tk-key/compass', 'Skor': 'tk-ui/anchor-coin', 'Gunung es dihindari': 'tk-prop/iceberg-5' }
+    var ICONS = { 'Waktu': 'tk-key/compass', 'Skor': 'tk-ui/anchor-coin' }
+    ICONS[OB.hud] = OB.icon
     function stat (label, cls) {
       var s
       if (SEA && ICONS[label]) s = SEA.chip(lib(ICONS[label]), label, 'tkl-stat tkl-panel' + (cls ? ' ' + cls : ''))
@@ -621,7 +651,7 @@
       route = SEA.routeBar({ ship: fleet ? W.TKFleet.sideSrc(shipId, opts) : null, text: '', label: 'Perjalanan ke tujuan', cls: 'tkl-route tkl-panel' })
       tl.appendChild(route.el)
     }
-    var stTime = stat('Waktu'), stScore = stat('Skor'), stIce = stat('Gunung es dihindari'), stDist = stat('Jarak', 'is-warn')
+    var stTime = stat('Waktu'), stScore = stat('Skor'), stIce = stat(OB.hud), stDist = stat('Jarak', 'is-warn')
     stDist.hidden = true
     tl.appendChild(stats)
     root.appendChild(tl)
@@ -671,6 +701,10 @@
     root.appendChild(pops)
     var pauseOv = el('div', 'tkl-pause', '<div class="tkl-pause-card tkl-panel"><h3>Jeda</h3><button class="tkl-btn tkl-resume" type="button">Lanjut</button></div>')
     root.appendChild(pauseOv)
+    if (fleet && fleet.topNote) {
+      var topNote = el('p', 'tkl-topnote'); topNote.textContent = fleet.topNote
+      pauseOv.querySelector('.tkl-pause-card').appendChild(topNote)
+    }
     if (fleet && onSwap) {
       var swapBtn = el('button', 'tkl-btn tkl-swap', '<img alt="" draggable="false"><span>Ganti Kapal</span>')
       swapBtn.type = 'button'; swapBtn.querySelector('img').src = W.TKFleet.sideSrc(shipId, opts)
@@ -701,6 +735,11 @@
     // polish: layered bergs (shelf, rim) / reef rocks in the deep sea, buoys, lighthouse posts, dressing
     var SS = SEA ? SEA.sprites(themeName) : null
     if (SS) { SPR.berg = SS.berg; SPR.big = SS.big; SPR.fated = SS.fated }
+    if (SEA && obstacle !== 'ice') {
+      // rocks: the sea module's drawn rock set (the deep-sea one); a reef = the same rocks grown with coral
+      var RS = SEA.sprites('deep'), coral = obstacle === 'reef' ? reefify : function (x) { return x }
+      SPR.berg = RS.berg.map(coral); SPR.big = RS.big.map(coral); SPR.floe = RS.berg.map(coral); SPR.fated = coral(RS.fated)
+    }
     var DIMG = SEA ? { barrel: IMG['tk-prop/barrel'], light: loadImg(lib('tk-world/lighthouse-island')) } : null
     var confetti = SEA ? SEA.Confetti() : null, vigGrad = null
     SPR.ship = shipSprite(SHIP_L, SHIP_B, 3)
@@ -790,15 +829,21 @@
       OLD = { turn: short ? 80 : 88, boost: short ? 88 : 104 }
       var turn = OLD.turn * 2, boost = OLD.boost * 2
       var row = turn * 2 + boost + 28 + 24
-      bB.classList.toggle('is-up', (port && row > vw) || wideMode)
-      root.classList.toggle('tkl-upw', port && row > vw)
+      // phone upright (playtest 2026-09-30: the 2x wheel covered ~40% of the sea, the ice lane included): the
+      // boost is a compact "Cepat" pill in the bottom row between LEFT and RIGHT, the sea above stays clear
+      var upw = port && row > vw
+      bB.classList.toggle('is-up', wideMode)
+      root.classList.toggle('tkl-upw', upw)
       if (short) {
         // side-on phone: LEFT ... [wheel][RIGHT] — the wheel must end before the ship's lanes
         var band = shipBand()
         boost = Math.min(boost, vw / 2 - band - 14 - turn - 10)
       }
       boost = Math.max(Math.round(boost), Math.round(OLD.boost * 1.5))
-      if (!short) {
+      if (upw) {
+        boost = clamp(Math.round(vw * 0.27), 88, 120)
+        turn = Math.min(turn, Math.floor((vw - 24 - 20 - boost) / 2))
+      } else if (!short) {
         // narrow phones (360 wide): two 2x buttons must still fit side by side with a gap
         turn = Math.min(turn, Math.floor((vw - 28 - 10) / 2))
         // short uprights (360x640): the column under the HUD must leave room for the ship — shrink together
@@ -872,6 +917,8 @@
       var ex = hb * c + hl * sn, ey = hl * c + hb * sn
       return { left: PX - ex, top: PY - ey, right: PX + ex, bottom: PY + ey }
     }
+    // the three lanes' screen span at the ship (outer buoy lines) — the QA ship-to-horizon corridor
+    function lanesX () { proj(-LANE * 1.5, S.d); var a = PX; proj(LANE * 1.5, S.d); return [Math.round(a), Math.round(PX)] }
     /* input */
     function laneTo (dir, auto) {
       if (S.waiting || S.done) return false
@@ -1186,13 +1233,14 @@
       audio.rumble(1.0, 0.9); audio.splash(1.2)
       if (!reduced) S.shake = 6
     }
-    var INTRO = { collide: 'Kapal membentur es! Jawab soal ini, lalu kapal berlayar lagi.',
+    var INTRO = { collide: OB.hit + ' Jawab soal ini, lalu kapal berlayar lagi.',
       buoy: 'Pelampung Soal! Jawab dengan benar untuk bintang bonus.', chest: 'Peti Harta! Jawab dengan benar untuk harta bonus.',
       gate: 'Gerbang Mercusuar! Jawab soalnya, lalu rantai diturunkan.' }
     // the ONE question contract (collide / buoy / gate): the simulation freezes (rAF stopped, ship where it is),
     // opts.onQuestion({reason, topic, …}) -> Promise<{correct}>, then answered() resumes with an ease-in
     function ask (reason, obj) {
       S.waiting = true; S.qOpen = reason; S.qObj = obj || null
+      root.classList.add('tkl-asking')
       banner.classList.remove('is-on'); bannerT = 0
       if (reason !== 'collide') S.qn[reason]++
       S.qAsked++
@@ -1217,6 +1265,7 @@
       if (dead) return
       var ok = !!res.correct
       S.qOpen = null; S.qObj = null
+      root.classList.remove('tkl-asking')
       S.qLog.push({ reason: reason, correct: ok, t: Math.round(S.t * 10) / 10 })
       if (ok) S.qRight++
       S.qCombo = ok ? S.qCombo + 1 : 0
@@ -1855,9 +1904,9 @@
           tokens: S.tokens, score: S.score, waiting: S.waiting, impact: !!S.impact, inv: S.inv, done: S.done, sent: doneSent, running: !!raf, paused: paused,
           frames: S.frames, parts: parts.length, shake: S.shake, zoom: S.zoom, quality: rq, reduced: reduced, difficulty: diff, final: fin, warn: S.warn,
           ease: S.ease, heading: S.head, tutorial: S.tut, challenge: chal ? { answer: chal.answer, wrong: chal.wrong, answered: chal.answered, rung: chal.rung } : null,
-          seen: (S.seen || []).slice(), theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh,
+          seen: (S.seen || []).slice(), obstacle: obstacle, theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh,
           ship: shipId || null, art: shipImg ? shipImg.src : null, artReady: ready(shipImg), shipY: shipY, timers: timers.length,
-          ctrl: { turn: ctrlSz.turn, boost: ctrlSz.boost, k: ctrlSz.k, old: OLD }, shipRect: shipRect(),
+          ctrl: { turn: ctrlSz.turn, boost: ctrlSz.boost, k: ctrlSz.k, old: OLD }, shipRect: shipRect(), lanesX: lanesX(),
           q: { open: S.qOpen, n: { collide: S.qn.collide, buoy: S.qn.buoy, gate: S.qn.gate }, asked: S.qAsked, right: S.qRight, log: S.qLog.slice(), lastCollideT: S.lastColQ,
             cool: Q_COOL, count: QC.count, on: Object.keys(QC.on), topic: QC.topic, shield: S.shield, boost: S.rewardBoost, bonus: S.bonus, combo: S.qCombo, ease: S.easeT, bumps: S.bumps,
             buoys: w.objs.filter(function (o) { return o.type === 'qbuoy' }).map(function (o) { return { x: Math.round(o.x), z: Math.round(o.z), kind: o.kind, taken: o.taken } }),

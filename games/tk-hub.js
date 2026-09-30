@@ -10,6 +10,7 @@
  *   TKHub.reward(host, data, handlers)   -> { destroy }
  *   TKHub.room(host, data, handlers)     -> { destroy, select(id), tab(name) }
  *   TKHub.settings(host, data, handlers) -> { destroy }
+ *   TKHub.gallery(host, data, handlers)  -> { destroy, tab(g), open(id), close(), state() } — "Galeri Kapal", every TKFleet ship
  *   TKHub.say(text) · TKHub.sayKey(name, text) · TKHub.hush() · TKHub.music(on) · TKHub.stats(save, worlds) · TKHub.achievements(stats)
  *   TKHub.normalize(settings) -> copy with musicVol/sfxVol/voiceVol filled and booleans in sync
  *
@@ -246,18 +247,20 @@
       return '<div class="tkh-badge' + (b.got ? '' : ' no') + '" title="' + esc(b.how) + '">' + ico(b.sprite, 'bi') + (b.got ? '' : ico('gt/lock', 'lk')) + '<b>' + esc(b.name) + '</b></div>'
     }).join('') + '</div>'
   }
-  var CATL = { penjelajahan: 'Penjelajahan', tragedi: 'Kisah Sejarah', 'perang-damai': 'Perang & Damai', sains: 'Sains', awal: 'Awal' }
+  var CATL = { penjelajahan: 'Penjelajahan', tragedi: 'Kisah Haru', 'perang-damai': 'Kenangan & Damai', sains: 'Sains', awal: 'Awal', penyelamatan: 'Penyelamatan' }
 
   /* ════════════════════════════════════════════════════════════════════════
    * REWARD — mockup ui-10
    * data = { world, k, stars, title?, subtitle?, result:{ moves, shortest, timeMs, items:{got,total},
    *          right, asked, hits, story, scripted }, xp, newCards:[{title,text}], badge?:{title,sub},
-   *          fragment?:{ n, total, finale }, fact?:{title,text}, levelStars:[n per level], hasNext }
+   *          fragment?:{ n, total, finale }, fact?:{title,text}, levelStars:[n per level], hasNext, mapLabel?, practice? }
    * handlers = { onReplay, onNext, onMap, sfx? }
    * ══════════════════════════════════════════════════════════════════════ */
   function rows (r) {
-    r = r || {}; var out = [], g = function (p) { return p >= 0.9 ? 'Hebat!' : 'Bagus!' }
-    if (r.moves) out.push(['tk-prop/ship-wheel', 'Langkah', r.moves + (r.shortest > 0 ? ' / ' + r.shortest : ''), r.shortest > 0 ? g(r.shortest / r.moves) : 'Bagus!'])
+    // praise graded honestly and kindly (playtest 2026-09-30: "Skor kuis 0/2 · Bagus!"): none right = an
+    // encouragement, some right = "Hampir!", all right = "Luar biasa!"
+    r = r || {}; var out = [], g = function (p) { return p >= 1 ? 'Luar biasa!' : p > 0 ? 'Hampir!' : 'Ayo coba lagi, kamu pasti bisa!' }
+    if (r.moves) out.push(['tk-prop/ship-wheel', 'Langkah', r.moves + (r.shortest > 0 ? ' / ' + r.shortest : ''), r.shortest > 0 && r.moves > r.shortest ? 'Hampir!' : 'Luar biasa!'])
     if (r.timeMs > 0) { var s = Math.round(r.timeMs / 1000); out.push(['tk-prop/pocket-watch-2', 'Waktu', Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2), 'Hebat!']) }
     if (r.items && r.items.total) out.push(['tk-prop/crate-supplies', 'Barang', r.items.got + ' / ' + r.items.total, g(r.items.got / r.items.total)])
     if (r.asked) out.push(['tk-legend/journal-book', 'Skor kuis', r.right + ' / ' + r.asked, g(r.right / r.asked)])
@@ -278,8 +281,8 @@
     gifts.push('<div class="gift"><span class="gi">' + ico('tk-key/star') + '</span><div><b class="fk">+<span data-xp>0</span> XP</b><small>Pengetahuan</small></div></div>')
     if (data.badge) gifts.push('<div class="gift"><span class="gi">' + ico('tk-prop/ship-wheel') + '</span><div><b>' + esc(data.badge.title) + '</b><small>' + esc(data.badge.sub || 'Lencana baru') + '</small></div></div>')
     ;(data.newCards || []).slice(0, 2).forEach(function (c) { gifts.push('<div class="gift"><span class="gi">' + ico('tk-prop/scroll-sealed') + '</span><div><b>Kartu Sejarah Baru</b><small>' + esc(c.title) + '</small></div></div>') })
-    var fr = data.fragment
-    if (fr) gifts.push('<div class="gift frag"><span class="gi tkh-cmp" style="--p:' + (clamp(fr.n, 0, fr.total || 14) / (fr.total || 14) * 100).toFixed(1) + '%">' + ico('tk-key/compass') + '</span><div><b>Kepingan Kompas ' + fr.n + '/' + (fr.total || 14) + '</b><small>' + (fr.finale ? 'Kompas utuh — Timmy bisa pulang!' : 'Kompas Waktu makin lengkap') + '</small></div></div>')
+    var fr = data.fragment, legW = w.series === 'legenda'
+    if (fr) gifts.push('<div class="gift frag"><span class="gi tkh-cmp" style="--p:' + (clamp(fr.n, 0, fr.total || 14) / (fr.total || 14) * 100).toFixed(1) + '%">' + ico('tk-key/compass') + '</span><div><b>' + (legW ? 'Kepingan Legenda ' : 'Kepingan Kompas ') + fr.n + '/' + (fr.total || 14) + '</b><small>' + (legW ? 'Koleksi legenda makin lengkap' : fr.finale ? 'Kompas utuh — Timmy bisa pulang!' : 'Kompas Waktu makin lengkap') + '</small></div></div>')
     var fact = data.fact
     var lvStars = data.levelStars || []
     var LV = w.levels || [], lo = 0, hi = LV.length
@@ -300,7 +303,7 @@
         '<div class="tkh-herop">' + img(art('char/timmy'), 'timmy') + img(art('char/penguin'), 'peng') + '</div>' +
         '<div class="tkh-row2">' +
           '<section class="tkh-card res"><h2 class="tkh-tab fk">Hasilmu</h2><table>' + rs.map(function (r) {
-            return '<tr><td>' + ico(r[0]) + '</td><th>' + esc(r[1]) + '</th><td class="v fk">' + esc(r[2]) + '</td><td><span class="chip fk">' + esc(r[3]) + '</span></td></tr>' }).join('') + '</table></section>' +
+            return '<tr><td>' + ico(r[0]) + '</td><th>' + esc(r[1]) + '</th><td class="v fk">' + esc(r[2]) + '</td><td><span class="chip fk' + (r[3].length > 12 ? ' soft' : '') + '">' + esc(r[3]) + '</span></td></tr>' }).join('') + '</table></section>' +
           '<section class="tkh-card navy gifts"><h2 class="tkh-tab fk">Hadiah</h2>' + gifts.join('') + '</section>' +
         '</div>' +
         '<div class="tkh-row2 b">' +
@@ -311,9 +314,10 @@
         // the ONE obvious next step: a big glowing gold button, focused; Ulangi / Peta stay small
         '<nav class="tkh-acts">' +
           '<button type="button" class="tkh-btn blue sm" data-act="replay"><i class="tkh-rep"></i>Ulangi</button>' +
-          '<button type="button" class="tkh-btn gold big tkh-primary" data-act="next"><span class="bl"><b>' + esc(data.hasNext === false ? 'Peta Level' : (data.nextLabel || 'Level Berikutnya')) + '</b>' +
+          '<button type="button" class="tkh-btn gold big tkh-primary" data-act="next"><span class="bl"><b>' + esc(data.hasNext === false ? (data.mapLabel || 'Peta Level') : (data.nextLabel || 'Level Berikutnya')) + '</b>' +
             (data.hasNext !== false && data.nextSub ? '<small>' + esc(data.nextSub) + '</small>' : '') + '</span><i class="tkh-arr r"></i></button>' +
-          '<button type="button" class="tkh-btn blue sm" data-act="map">' + ico('tk-prop/treasure-map') + 'Peta</button>' +
+          // practice (data.practice) has no level map: the gold button is its one way on, no second Peta button
+          (data.practice ? '' : '<button type="button" class="tkh-btn blue sm" data-act="map">' + ico('tk-prop/treasure-map') + 'Peta</button>') +
         '</nav>' +
         (strip ? '<ol class="tkh-strip">' + strip + '</ol>' : '') +
       '</div><div class="tkh-fly"></div>'
@@ -369,9 +373,9 @@
   /* ════════════════════════════════════════════════════════════════════════
    * ROOM — mockup ui-09 "Koleksi Kapal"
    * data = { save: S, worlds: WD.WORLDS, learn: [[domain,label]...], tab?, select? }
-   * handlers = { onBack, onFav(id) -> new fav bool, sfx? }
+   * handlers = { onBack, onFav(id) -> new fav bool, onGallery() (side-nav "Galeri Kapal"), sfx? }
    * ══════════════════════════════════════════════════════════════════════ */
-  var ROOM_TABS = [['kapal', 'Kapal', 'tk-prop/titanic-ship'], ['kompas', 'Kompas Waktu', 'tk-key/compass'], ['kartu', 'Kartu Sejarah', 'tk-legend/journal-book'],
+  var ROOM_TABS = [['kapal', 'Kapal', 'tk-prop/titanic-ship'], ['galeri', 'Galeri Kapal', 'tk-ship/sailboat'], ['kompas', 'Kompas Waktu', 'tk-key/compass'], ['kartu', 'Kartu Sejarah', 'tk-legend/journal-book'],
     ['capaian', 'Pencapaian', 'game/trophy-gold'], ['belajar', 'Kemajuan Belajar', 'tk-prop/globe']]
   function room (host, data, h) {
     data = data || {}; h = h || {}
@@ -461,7 +465,8 @@
       modal.hidden = false; anim(modal.firstChild, [{ opacity: 0, transform: 'scale(.94)' }, { opacity: 1, transform: 'none' }], { duration: 280 })
       var ttl = modal.querySelector('article:not(.no) b'); if (ttl) say(ttl.textContent + '. ' + modal.querySelector('article:not(.no) p').textContent)
     }
-    on(R, '[data-tab]', 'click', function (b) { sfx(h, 'click'); st.tab = b.getAttribute('data-tab'); paint() })
+    // 'galeri' is a door, not a tab: the full-screen Galeri Kapal (every TKFleet ship) opens through the host
+    on(R, '[data-tab]', 'click', function (b) { sfx(h, 'click'); var t = b.getAttribute('data-tab'); if (t === 'galeri') { if (h.onGallery) h.onGallery(); return } st.tab = t; paint() })
     on(R, '[data-f]', 'click', function (b) { sfx(h, 'click'); st.f = b.getAttribute('data-f'); paintGrid() })
     on(R, '[data-fav]', 'click', function (b, e) { e.stopPropagation(); sfx(h, 'click'); var id = b.getAttribute('data-fav'), v = h.onFav ? h.onFav(id) : !fav(id)
       if (!h.onFav) { S.fav = (S.fav || []).filter(function (x) { return x !== id }).concat(v ? [id] : []) } paintGrid(); paintDet() })
@@ -479,9 +484,174 @@
   }
 
   /* ════════════════════════════════════════════════════════════════════════
+   * GALLERY — "Galeri Kapal" (owner 2026-09-30: "New ships like Edmund Fitzgerald … aren't there yet?")
+   * Every TKFleet ship (Kapal Modern + Kapal Legenda tabs; counts from TKFleet.ships) as a collection. A card shows the side view, the
+   * kid name + real-name chip, the stat pips and the gentle fact; a tap opens the detail sheet (big side view,
+   * "Tampak atas", "Pakai kapal ini" = TKFleet.save for this avatar, so the next steer / lanes level sails it).
+   * A ship with its OWN story world (TKFleet.storyShip + the legend worlds' w.legend slugs) shows
+   * "Punya petualangan!"; the sheet's button of that name calls onWorld(worldId). Ships finished a steer / lanes
+   * run with (TKFleet.sailed) wear a gold "Sudah berlayar" ribbon; "Kapal dicoba: n/<total>". Nothing is locked.
+   * Only the open tab's cards are in the DOM; thumbnails load as they scroll near (IntersectionObserver).
+   * data = { worlds: WD.WORLDS, tab?: 'modern'|'legend', avatar? }   handlers = { onBack, onWorld(id), onUse(id)?, sfx? }
+   * ══════════════════════════════════════════════════════════════════════ */
+  // ship id -> the story world whose own ship it is (first match in world order; the bedroom is not a ship)
+  function fleetWorlds (worlds) {
+    var F = W.TKFleet, m = {}
+    if (!F) return m
+    ;(worlds || []).forEach(function (w) {
+      if (!w || !w.id || w.id === 'kamar') return
+      var ids = (w.legend || []).slice(), s = F.storyShip ? F.storyShip(w.id) : null
+      if (s) ids.push(s)
+      ids.forEach(function (id) { if (F.get(id) && !m[id]) m[id] = w })
+    })
+    return m
+  }
+  var GAL_STAT = [['cepat', 'Cepat'], ['lincah', 'Lincah'], ['kuat', 'Kuat']]
+  function galStats (s) {
+    return '<span class="tkg-stats">' + GAL_STAT.map(function (k) {
+      var n = s.stats[k[0]] || 0, p = ''
+      for (var i = 0; i < 3; i++) p += '<i' + (i < n ? ' class="on"' : '') + '></i>'
+      return '<span class="st" aria-label="' + k[1] + ' ' + n + ' dari 3"><em>' + k[1] + '</em><span class="pp">' + p + '</span></span>'
+    }).join('') + '</span>'
+  }
+  function gallery (host, data, h) {
+    data = data || {}; h = h || {}
+    var F = W.TKFleet
+    var R = mountRoot(host, 'tkh-gal'), dead = false
+    if (!F) { R.innerHTML = '<p class="tkg-none">Galeri belum siap.</p>' + backBtn(); on(R, '[data-act="back"]', 'click', function () { h.onBack && h.onBack() }); return { root: R, destroy: function () { R._off(); R.remove() } } }
+    var av = data.avatar || F.avatar(), wmap = fleetWorlds(data.worlds), total = F.ships.length
+    var optsLib = { lib: lib }
+    var st = { tab: data.tab === 'legend' ? 'legend' : 'modern', open: null, from: null }
+    var sailedSet = function () { var o = {}; F.sailed(av).forEach(function (id) { o[id] = 1 }); return o }
+    R.innerHTML =
+      '<div class="tkh-bg" style="background:' + esc(scene('harbor-dawn')).replace(/&quot;/g, '"') + '"></div><div class="tkh-shade"></div>' +
+      '<header class="tkg-head">' +
+        '<button type="button" class="tkh-btn blue tkg-back" data-act="back" aria-label="Kembali"><i class="tkh-arr l"></i><span>Kembali</span></button>' +
+        '<h1 class="tkg-title fk">Galeri Kapal</h1>' +
+        '<div class="tkg-tabs" role="tablist" aria-label="Jenis kapal">' + F.groups.map(function (g) {
+          return '<button type="button" role="tab" class="fk" data-gtab="' + g.id + '">' + esc(g.label) + '<small>' + g.ids.length + '</small></button>' }).join('') + '</div>' +
+        '<div class="tkg-cnt">' + ico('tk-prop/ship-wheel') + '<span>Kapal dicoba:</span><b class="fk" data-cnt></b></div>' +
+      '</header>' +
+      '<main class="tkg-body"><div class="tkg-grid"></div></main>' +
+      '<div class="tkg-sheet" hidden></div>'
+    var body = R.querySelector('.tkg-body'), grid = R.querySelector('.tkg-grid'), sheet = R.querySelector('.tkg-sheet')
+    // lazy thumbnails: a card's picture is requested when it scrolls within ~one screen of the pane
+    var io = null
+    try { if (W.IntersectionObserver) io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) loadPic(e.target) }) }, { root: body, rootMargin: '320px 0px' }) } catch (e) { io = null }
+    function loadPic (card) {
+      if (io) io.unobserve(card)
+      var im = card.querySelector('img[data-src]'); if (!im) return
+      im.onload = function () { im.classList.add('ok') }
+      im.onerror = function () { im.classList.add('ok', 'bad') }
+      im.src = im.getAttribute('data-src'); im.removeAttribute('data-src')
+    }
+    function count () { var n = F.sailed(av).length; R.querySelector('[data-cnt]').textContent = n + '/' + total; return n }
+    function card (s, sail, mine, i) {
+      var w = wmap[s.id]
+      return '<button type="button" class="tkg-card' + (sail ? ' is-sailed' : '') + (mine ? ' is-mine' : '') + '" data-ship="' + s.id + '" aria-label="' + esc(s.name + (s.real ? ', ' + s.real : '') + (sail ? ', sudah berlayar' : '')) + '" style="--i:' + i + '">' +
+        '<span class="tkg-pic"><img data-src="' + esc(F.sideSrc(s.id, optsLib)) + '" alt="" draggable="false" decoding="async"></span>' +
+        (sail ? '<span class="tkg-rib fk">Sudah berlayar</span>' : '') + (mine ? '<span class="tkg-mine fk">Kapalmu</span>' : '') +
+        '<span class="tkg-txt"><b class="tkg-name fk">' + esc(s.name) + '</b>' + (s.real ? '<span class="tkg-real">' + esc(s.real) + '</span>' : '') +
+        galStats(s) + '<span class="tkg-fact">' + esc(s.fact) + '</span>' +
+        (s.topNote ? '<span class="tkg-topnote">' + esc(s.topNote) + '</span>' : '') +
+        (w ? '<span class="tkg-adv">' + ico('tk-prop/treasure-map') + '<span>Punya petualangan!</span></span>' : '') + '</span></button>'
+    }
+    function paintTabs () {
+      R.querySelectorAll('[data-gtab]').forEach(function (b) { var o = b.getAttribute('data-gtab') === st.tab; b.setAttribute('aria-selected', String(o)); b.tabIndex = o ? 0 : -1; b.classList.toggle('on', o) })
+    }
+    function paintGrid (animate) {
+      if (io) io.disconnect()
+      var sail = sailedSet(), mine = F.saved(av)
+      var ids = (F.groups.filter(function (g) { return g.id === st.tab })[0] || F.groups[0]).ids
+      grid.innerHTML = ids.map(function (id, i) { return card(F.get(id), !!sail[id], id === mine, i) }).join('')
+      grid.querySelectorAll('.tkg-card').forEach(function (c, i) {
+        if (io) io.observe(c); else loadPic(c)
+        if (animate && i < 12) anim(c, [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 220, delay: i * 18 })
+      })
+      count()
+    }
+    function setTab (t, user) {
+      if (t !== 'modern' && t !== 'legend') return
+      if (user) sfx(h, 'click')
+      var same = t === st.tab
+      st.tab = t; paintTabs()
+      if (same && grid.firstChild) return
+      body.scrollTop = 0; paintGrid(true)
+    }
+    /* detail sheet */
+    function sheetHtml (s) {
+      var w = wmap[s.id], sail = !!sailedSet()[s.id], mine = F.saved(av) === s.id
+      return '<div class="tkg-back2" data-close="1"></div>' +
+        '<div class="tkg-pan" role="dialog" aria-modal="true" aria-labelledby="tkg-sn">' +
+          '<div class="tkg-sv">' + img(F.sideSrc(s.id, optsLib), 'side') + '</div>' +
+          '<div class="tkg-info">' +
+            '<div class="tkg-tags">' + (s.real ? '<span class="tkg-real">' + esc(s.real) + '</span>' : '') + (sail ? '<span class="tkg-rib2 fk">Sudah berlayar</span>' : '') + '</div>' +
+            '<h2 class="fk" id="tkg-sn">' + esc(s.name) + '</h2><p class="tkg-f2">' + esc(s.fact) + '</p>' + galStats(s) +
+          '</div>' +
+          '<figure class="tkg-top"><figcaption class="fk">' + (s.topAlt ? 'Tampak atas contoh' : 'Tampak atas') + '</figcaption><div class="tv">' + img(F.topSrc(s.id, optsLib), 'top') + '</div></figure>' +
+          '<div class="tkg-acts">' +
+            '<button type="button" class="tkh-btn gold tkg-use' + (mine ? ' is-on' : '') + '" data-use="' + s.id + '" aria-pressed="' + mine + '">' + (mine ? '<i class="tkh-check"></i>Kapalmu sekarang' : 'Pakai kapal ini') + '</button>' +
+            (w ? '<button type="button" class="tkh-btn blue tkg-go" data-world="' + esc(w.id) + '"><span class="bl"><b>Punya petualangan!</b><small>' + esc(w.name) + '</small></span><i class="tkh-arr r"></i></button>' : '') +
+            '<button type="button" class="tkh-btn blue tkg-close" data-close="1">Tutup</button>' +
+          '</div>' +
+        '</div>'
+    }
+    function openSheet (id, fromEl) {
+      var s = F.get(id); if (!s) return
+      st.open = id; st.from = fromEl || null
+      sheet.innerHTML = sheetHtml(s); sheet.hidden = false
+      anim(sheet.querySelector('.tkg-back2'), [{ opacity: 0 }, { opacity: 1 }], { duration: 180 })
+      anim(sheet.querySelector('.tkg-pan'), [{ opacity: 0, transform: 'translateY(18px) scale(.98)' }, { opacity: 1, transform: 'none' }], { duration: 230 })
+      try { sheet.querySelector('.tkg-use').focus({ preventScroll: true }) } catch (e) {}
+      say(s.name + '. ' + s.fact)
+    }
+    function closeSheet () {
+      if (sheet.hidden) return
+      var from = st.from; st.open = null; st.from = null
+      var pan = sheet.querySelector('.tkg-pan'), a = reduced() || !pan || !pan.animate ? null : pan.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(12px)' }], { duration: 150, easing: 'ease-in', fill: 'forwards' })
+      var fin = function () { if (dead) return; sheet.hidden = true; sheet.innerHTML = '' }
+      if (a) a.finished.then(fin, fin); else fin()
+      if (from && from.isConnected) try { from.focus({ preventScroll: true }) } catch (e) {}
+      say('')
+    }
+    function use (id) {
+      if (!F.save(av, id)) return
+      sfx(h, 'chime')
+      try { if (h.onUse) h.onUse(id) } catch (e) {}
+      var b = sheet.querySelector('[data-use]')
+      if (b) { b.classList.add('is-on'); b.setAttribute('aria-pressed', 'true'); b.innerHTML = '<i class="tkh-check"></i>Kapalmu sekarang'
+        anim(b, [{ transform: 'scale(1)' }, { transform: 'scale(.96)' }, { transform: 'scale(1)' }], { duration: 200, fill: 'none' }) }
+      grid.querySelectorAll('.tkg-card').forEach(function (c) {
+        var on = c.getAttribute('data-ship') === id, m = c.querySelector('.tkg-mine')
+        c.classList.toggle('is-mine', on)
+        if (on && !m) { m = D.createElement('span'); m.className = 'tkg-mine fk'; m.textContent = 'Kapalmu'; c.insertBefore(m, c.querySelector('.tkg-txt')) } else if (!on && m) m.remove()
+      })
+    }
+    on(R, '[data-gtab]', 'click', function (b) { setTab(b.getAttribute('data-gtab'), true) })
+    R.querySelector('.tkg-tabs').addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+      e.preventDefault(); var t = st.tab === 'modern' ? 'legend' : 'modern'; setTab(t, true)
+      var b = R.querySelector('[data-gtab="' + t + '"]'); if (b) b.focus()
+    })
+    on(R, '.tkg-card', 'click', function (c) { sfx(h, 'click'); openSheet(c.getAttribute('data-ship'), c) })
+    on(R, '[data-use]', 'click', function (b) { use(b.getAttribute('data-use')) })
+    on(R, '[data-world]', 'click', function (b) { sfx(h, 'click'); var wid = b.getAttribute('data-world'); if (h.onWorld) h.onWorld(wid) })
+    on(R, '[data-close]', 'click', function () { sfx(h, 'click'); closeSheet() })
+    on(R, '[data-act="back"]', 'click', function () { sfx(h, 'click'); if (!sheet.hidden) closeSheet(); if (h.onBack) h.onBack() })
+    var onKey = function (e) { if (e.key === 'Escape' && !sheet.hidden) { e.preventDefault(); closeSheet() } }
+    D.addEventListener('keydown', onKey)
+    paintTabs(); paintGrid(false)
+    anim(R.querySelector('.tkg-head'), [{ opacity: 0, transform: 'translateY(-8px)' }, { opacity: 1, transform: 'none' }], { duration: 220 })
+    if (data.open && F.get(data.open)) openSheet(data.open)
+    return { root: R, tab: function (t) { setTab(t, false) }, open: function (id) { openSheet(id) }, close: closeSheet, count: count,
+      state: function () { return { tab: st.tab, open: st.open, sailed: F.sailed(av).length, total: total, mine: F.saved(av), cards: grid.children.length } },
+      destroy: function () { dead = true; if (io) io.disconnect(); D.removeEventListener('keydown', onKey); say(''); R._off(); R.remove() } }
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
    * SETTINGS — mockup ui-11 "Pengaturan"
    * data = { save: S, worlds: WD.WORLDS, version? }
-   * handlers = { get() -> settings, set(patch) (merge + save), onSave, onBack, onParent, sfx? }
+   * handlers = { get() -> settings, set(patch) (merge + save), onSave, onBack, onParent, onExit? (Keluar: leave G30), sfx? }
    * ══════════════════════════════════════════════════════════════════════ */
   var SET_TABS = [['profil', 'Profil', 'tk-key/timmy'], ['audio', 'Audio', 'tk-prop/ships-bell'], ['tampilan', 'Tampilan', 'tk-prop/spyglass'], ['permainan', 'Permainan', 'tk-prop/ship-wheel'],
     ['bahasa', 'Bahasa', 'tk-prop/globe'], ['ortu', 'Orang Tua', 'tk-char/captain-old'], ['bantuan', 'Bantuan', 'tk-prop/lantern'], ['tentang', 'Tentang', 'tk-legend/journal-book']]
@@ -529,7 +699,8 @@
         '<section class="tkh-card pa" data-sec="ortu"><h2 class="tkh-tab fk">' + ico('tk-char/captain-old') + 'Orang Tua</h2><p class="tkh-p">Tingkat soal, Studi Islam, dan kemajuan belajar. Dijaga dengan tombol tahan 3 detik.</p>' +
           '<button type="button" class="tkh-btn blue wide" data-act="parent">' + ico('tk-char/captain-old') + 'Buka area orang tua</button></section>' +
         '<section class="tkh-card pa" data-sec="bantuan"><h2 class="tkh-tab fk">' + ico('tk-prop/lantern') + 'Bantuan</h2><p class="tkh-p">Pilih kapal di peta, selesaikan levelnya, dan kumpulkan kepingan Kompas Waktu. Tekan lentera saat butuh petunjuk. Tidak ada kalah — selalu boleh mencoba lagi!</p></section>' +
-        '<section class="tkh-card pa" data-sec="tentang"><h2 class="tkh-tab fk">' + ico('tk-legend/journal-book') + 'Tentang</h2><p class="tkh-p">Timmy &amp; Kapal Legendaris — belajar sejarah, matematika, bahasa, dan kebaikan bersama kapal-kapal terkenal dunia.' + (data.version ? ' Versi ' + esc(data.version) + '.' : '') + '</p></section>'
+        '<section class="tkh-card pa" data-sec="tentang"><h2 class="tkh-tab fk">' + ico('tk-legend/journal-book') + 'Tentang</h2><p class="tkh-p">Timmy &amp; Kapal Legendaris — belajar sejarah, matematika, bahasa, dan kebaikan bersama kapal-kapal terkenal dunia.' + (data.version ? ' Versi ' + esc(data.version) + '.' : '') + '</p>' +
+          (h.onExit ? '<button type="button" class="tkh-btn blue wide tkh-exit" data-act="exit">' + ico('tk-prop/signpost-harbor') + 'Keluar dari permainan</button>' : '') + '</section>'
     }
     var cur = 'audio'
     function mark (k) { cur = k; R.querySelectorAll('[data-go]').forEach(function (b) { var o = b.getAttribute('data-go') === k; b.classList.toggle('on', o); b.setAttribute('aria-pressed', String(o)) }) }
@@ -553,7 +724,7 @@
       if (k === 'sfxVol') sfx(h, 'chime'); if (k === 'voiceVol') say('Halo, aku Timmy!'); if (k === 'musicVol' && MU.on) music(true) })
     on(R, '[data-test]', 'click', function () { if (!say('Halo! Aku Timmy. Ayo berlayar bersama!')) sfx(h, 'chime') })
     on(R, '[data-act]', 'click', function (b) { var a = b.getAttribute('data-act'); sfx(h, 'click')
-      if (a === 'back' && h.onBack) h.onBack(); if (a === 'parent' && h.onParent) h.onParent()
+      if (a === 'back' && h.onBack) h.onBack(); if (a === 'parent' && h.onParent) h.onParent(); if (a === 'exit' && h.onExit) h.onExit()
       if (a === 'save') { anim(b, [{ transform: 'scale(1)' }, { transform: 'scale(.94)' }, { transform: 'scale(1)' }], { duration: 240, fill: 'none' }); if (h.onSave) h.onSave(get()) } })
     // highlight the sidebar entry of the section in view
     var body = R.querySelector('.tkh-body')
@@ -759,6 +930,100 @@
     // the next-level name under Lanjut wraps to a second line instead of an ellipsis (phone: "Level 2 · Lorong Rumah Sakit")
     '.tkh-primary .bl small{white-space:normal;text-overflow:clip;overflow:visible;line-height:1.1;text-align:center}' +
     '.tkh-rw td .chip{display:inline-flex;align-items:center;justify-content:center;line-height:1.15;vertical-align:middle;padding:5px 12px}.tkh-rw td:has(.chip){text-align:center;vertical-align:middle}'
+  // ── gallery (Galeri Kapal). Layout: a header row (Kembali · title · tabs · counter) clear of the fixed
+  // speaker (#sndfab, top-right 52 px), then ONE scroll pane holding a responsive card grid that fills the frame.
+  // Motion: transform / opacity only, 150–230 ms ease-out; reduced motion = fades (anim()).
+  CSS += [
+    '.tkh-gal{display:flex;flex-direction:column}',
+    '.tkg-head{position:relative;z-index:3;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-areas:"back title tabs cnt";align-items:center;gap:10px 14px;padding:calc(10px + env(safe-area-inset-top)) 80px 8px 14px}',
+    '.tkg-back{grid-area:back;min-height:56px;min-width:56px;padding:6px 16px}',
+    '.tkg-title{grid-area:title;margin:0;font-size:clamp(24px,3.4vw,36px);line-height:1.05;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 12px rgba(0,0,0,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.tkg-tabs{grid-area:tabs;display:flex;gap:4px;padding:4px;border-radius:20px;background:rgba(6,20,52,.72);box-shadow:inset 0 0 0 2px rgba(150,205,255,.35)}',
+    '.tkg-tabs button{flex:1;min-height:56px;padding:0 16px;border:0;border-radius:16px;background:transparent;color:#d6efff;font-size:18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;transition:transform .15s var(--ease)}',
+    '.tkg-tabs button small{font:900 14px/1 Nunito,sans-serif;padding:3px 7px;border-radius:9px;background:rgba(255,255,255,.18)}',
+    '.tkg-tabs button.on{background:linear-gradient(#ffe45a,#f6b10c);color:#3a2300;box-shadow:0 3px 0 #a86a00}.tkg-tabs button.on small{background:rgba(58,35,0,.16)}',
+    '.tkg-tabs button:active{transform:scale(.97)}',
+    '.tkg-cnt{grid-area:cnt;display:flex;align-items:center;gap:6px;padding:6px 14px 6px 8px;min-height:48px;border-radius:24px;background:linear-gradient(rgba(22,48,110,.94),rgba(11,26,70,.94));box-shadow:inset 0 0 0 2px rgba(255,210,80,.55);font-weight:800;font-size:15px;white-space:nowrap}',
+    '.tkg-cnt b{font-size:20px;color:#FFE45A}.tkg-cnt .tkh-i{width:30px;height:30px}',
+    '.tkg-body{position:relative;z-index:2;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:6px 14px calc(16px + env(safe-area-inset-bottom))}',
+    '.tkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tkg-cw,212px),1fr));gap:14px;align-items:stretch}',
+    '.tkg-card{position:relative;display:flex;flex-direction:column;align-items:stretch;min-height:56px;padding:0;border:0;border-radius:18px;overflow:hidden;cursor:pointer;text-align:left;color:#3b2410;background:linear-gradient(#fbf1d9,#efdcb1);box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 0 3px rgba(40,80,160,.55),0 6px 14px rgba(0,0,0,.3);font:inherit;touch-action:manipulation;transition:transform .16s var(--ease)}',
+    '.tkg-card:active{transform:scale(.97)}',
+    '.tkg-card.is-sailed{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 0 3px #f6b10c,0 6px 14px rgba(0,0,0,.3)}',
+    '.tkg-pic{position:relative;display:block;height:var(--tkg-ph,112px);background:radial-gradient(120% 90% at 50% 100%,#8fd3ff 0%,#3a8fd6 55%,#1d5aa8 100%)}',
+    '.tkg-pic:after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(rgba(20,90,170,0),rgba(20,90,170,.55))}',
+    '.tkg-pic img{position:absolute;inset:10px 10px 8px;width:calc(100% - 20px);height:calc(100% - 18px);object-fit:contain;z-index:1;opacity:0;filter:drop-shadow(0 5px 5px rgba(0,0,0,.35));transition:opacity .2s ease-out}',
+    '.tkg-pic img.ok{opacity:1}.tkg-pic img.bad{visibility:hidden}',
+    '.tkg-rib{position:absolute;z-index:2;left:0;top:10px;padding:4px 12px 4px 10px;border-radius:0 12px 12px 0;background:linear-gradient(#ffe45a,#f6b10c);color:#3a2300;font-size:14px;line-height:1.15;box-shadow:0 2px 4px rgba(0,0,0,.3)}',
+    '.tkg-mine{position:absolute;z-index:2;right:8px;top:10px;padding:4px 10px;border-radius:12px;background:linear-gradient(#4fdc7a,#1d9a48);color:#fff;font-size:14px;line-height:1.15;box-shadow:0 2px 4px rgba(0,0,0,.3)}',
+    '.tkg-card.is-sailed .tkg-mine{top:44px}',
+    '.tkg-txt{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 12px 12px;flex:1}',
+    '.tkg-name{font-size:19px;line-height:1.1;color:#2d1a08}',
+    '.tkg-real{display:inline-block;padding:3px 9px;border-radius:9px;background:#16306e;color:#d8ecff;font-weight:900;font-size:14px;line-height:1.2}',
+    '.tkg-stats{display:flex;flex-wrap:wrap;gap:4px 10px}.tkg-stats .st{display:inline-flex;align-items:center;gap:5px}',
+    '.tkg-stats em{font-style:normal;font-weight:900;font-size:14px;color:#5a3b1c}.tkg-stats .pp{display:inline-flex;gap:3px}',
+    '.tkg-stats i{width:11px;height:11px;border-radius:50%;background:rgba(90,59,28,.22)}.tkg-stats i.on{background:#f6a60c;box-shadow:inset 0 0 0 1.5px #fff0a0}',
+    '.tkg-fact{font-weight:700;font-size:15px;line-height:1.3;color:#4a2f14}',
+    '.tkg-topnote{font-weight:800;font-size:14px;line-height:1.3;color:#16306e}',
+    '.tkg-adv{display:inline-flex;align-items:center;gap:6px;margin-top:auto;padding:4px 10px 4px 5px;border-radius:12px;background:linear-gradient(#4b93ff,#1f56c9);color:#fff;font-weight:900;font-size:14px;line-height:1.15}.tkg-adv .tkh-i{width:22px;height:22px}',
+    '.tkg-none{position:relative;z-index:2;margin:40px auto;text-align:center;font-size:18px}',
+    // detail sheet
+    '.tkg-sheet{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 16px calc(12px + env(safe-area-inset-bottom))}',
+    '.tkg-sheet[hidden]{display:none}',
+    '.tkg-back2{position:absolute;inset:0;background:rgba(4,10,30,.7)}',
+    '.tkg-pan{position:relative;width:min(960px,100%);max-height:100%;overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,26%);grid-template-areas:"sv top" "info top" "acts acts";gap:12px 18px;padding:18px;border-radius:22px;color:#3b2410;background:linear-gradient(#fbf1d9,#efdcb1);box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 0 3px rgba(40,80,160,.6),0 18px 40px rgba(0,0,0,.45)}',
+    '.tkg-sv{grid-area:sv;position:relative;height:clamp(140px,30vh,260px);border-radius:16px;background:radial-gradient(120% 90% at 50% 100%,#8fd3ff 0%,#3a8fd6 55%,#1d5aa8 100%)}',
+    '.tkg-sv img{position:absolute;inset:12px;width:calc(100% - 24px);height:calc(100% - 24px);object-fit:contain;filter:drop-shadow(0 8px 8px rgba(0,0,0,.35))}',
+    '.tkg-info{grid-area:info;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}',
+    '.tkg-tags{display:flex;flex-wrap:wrap;gap:6px}.tkg-tags:empty{display:none}',
+    '.tkg-rib2{padding:3px 10px;border-radius:9px;background:linear-gradient(#ffe45a,#f6b10c);color:#3a2300;font-size:14px;line-height:1.2}',
+    '.tkg-info h2{margin:0;font-size:clamp(24px,3.2vw,34px);line-height:1.08;color:#2d1a08}',
+    '.tkg-f2{margin:0;font-weight:800;font-size:clamp(16px,2vw,20px);line-height:1.35;color:#4a2f14}',
+    '.tkg-info .tkg-stats{gap:6px 16px}.tkg-info .tkg-stats em{font-size:16px}.tkg-info .tkg-stats i{width:14px;height:14px}',
+    '.tkg-top{grid-area:top;margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:0;padding:10px;border-radius:16px;background:linear-gradient(#2e7fd0,#1b5aa6);box-shadow:inset 0 0 0 2px rgba(150,205,255,.45)}',
+    '.tkg-top figcaption{font-size:16px;color:#fff}',
+    '.tkg-top .tv{position:relative;flex:1;width:100%;min-height:150px}',
+    '.tkg-top .tv img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}',
+    '.tkg-acts{grid-area:acts;display:flex;flex-wrap:wrap;gap:12px;align-items:center}',
+    '.tkg-acts .tkh-btn{min-height:60px;font-size:20px}.tkg-use{flex:1 1 220px}.tkg-go{flex:1 1 220px}.tkg-close{flex:0 0 auto;min-width:110px}',
+    '.tkg-use .tkh-check{border-color:#3a2300}.tkg-use.is-on{background:linear-gradient(#b8f5c8,#4fdc7a);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 0 0 2px #e0ffe8,0 4px 0 #1d7a3f,0 8px 16px rgba(0,0,0,.3)}',
+    '.tkg-go .bl{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;min-width:0}.tkg-go .bl small{font:800 14px/1.2 Nunito,sans-serif;opacity:.95}',
+    // phone portrait: two columns; header wraps into rows (tabs full width); the sheet is a bottom sheet
+    '.tkh-gal.is-port .tkg-head{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"back title" "tabs tabs" "cnt cnt";padding-right:76px;gap:8px 10px}',
+    '.tkh-gal.is-port .tkg-tabs{margin-right:-62px}.tkh-gal.is-port .tkg-cnt{justify-self:start}',
+    '.tkh-gal.is-port .tkg-grid{--tkg-cw:150px;gap:10px}.tkh-gal.is-port .tkg-pic{--tkg-ph:92px}',
+    '.tkh-gal.is-port .tkg-tabs button{padding:0 10px;font-size:17px}',
+    '.tkh-gal.is-port .tkg-sheet{align-items:flex-end;padding:calc(70px + env(safe-area-inset-top)) 0 0}',
+    '.tkh-gal.is-port .tkg-pan{grid-template-columns:minmax(0,1fr) 30%;grid-template-areas:"sv top" "info info" "acts acts";border-radius:22px 22px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}',
+    '.tkh-gal.is-port .tkg-sv{height:clamp(120px,22vh,200px)}.tkh-gal.is-port .tkg-top .tv{min-height:0}',
+    '.tkh-gal.is-port .tkg-acts .tkh-btn{flex:1 1 100%}',
+    // short landscape (phone on its side): one compact header row, the title gives way first
+    '.tkh-gal.is-land.is-short .tkg-head{grid-template-columns:auto auto minmax(0,1fr) auto;grid-template-areas:"back tabs title cnt";padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:4px;padding-right:74px;gap:8px}',
+    '.tkh-gal.is-land.is-short .tkg-back span{display:none}.tkh-gal.is-land.is-short .tkg-back{padding:6px 18px}',
+    '.tkh-gal.is-land.is-short .tkg-title{font-size:22px}.tkh-gal.is-land.is-short .tkg-tabs button{padding:0 12px;font-size:16px}.tkh-gal.is-land.is-short .tkg-cnt>span{display:none}',
+    '.tkh-gal.is-land.is-short .tkg-grid{--tkg-cw:184px;gap:10px}.tkh-gal.is-land.is-short .tkg-pic{--tkg-ph:84px}',
+    // the fixed speaker (#sndfab, top-right) stays clear of the sheet
+    '.tkh-gal.is-land.is-short .tkg-sheet{padding-right:76px;padding-left:12px}',
+    '.tkh-gal.is-land.is-short .tkg-pan{grid-template-columns:minmax(0,1fr) 22%;padding:12px 14px;gap:8px 14px}.tkh-gal.is-land.is-short .tkg-sv{height:clamp(100px,30vh,150px)}',
+    '.tkh-gal.is-land.is-short .tkg-acts .tkh-btn{min-height:56px;font-size:18px}.tkh-gal.is-land.is-short .tkg-f2{font-size:16px}',
+    // narrower landscape tablets (1024): the header row tightens so the title is never cut
+    '@media (max-width:1150px){.tkh-gal.is-land:not(.is-short) .tkg-head{gap:8px 10px}.tkh-gal.is-land:not(.is-short) .tkg-title{font-size:26px}.tkh-gal.is-land:not(.is-short) .tkg-tabs button{padding:0 10px;font-size:17px}.tkh-gal.is-land:not(.is-short) .tkg-back{padding:6px 12px}}',
+    // tablets: bigger cards, taller pictures
+    '@media (min-width:1000px) and (min-height:600px){.tkh-gal .tkg-grid{--tkg-cw:222px;gap:16px}.tkh-gal .tkg-pic{--tkg-ph:124px}}',
+    '@media (hover:hover){.tkg-card:hover{transform:translateY(-2px)}.tkg-tabs button:not(.on):hover{background:rgba(255,255,255,.1)}}',
+    '@media (prefers-reduced-motion:reduce){.tkg-card,.tkg-card:active,.tkg-tabs button{transition:none;transform:none}.tkg-pic img{transition:none}}',
+    '.rm .tkg-card,.rm .tkg-card:active{transition:none;transform:none}.rm .tkg-pic img{transition:none}'
+  ].join('\n')
+
+  // playtest 2026-09-30: the encouragement chip ("Ayo coba lagi, kamu pasti bisa!") wraps and is calm blue, not gold;
+  // phone portrait: the room / settings side-nav becomes a wrapped grid (every tab visible, no hidden 5th/6th tab);
+  // phones get a 13 px text floor where the 12 px lines were
+  CSS += '.tkh-rw td .chip.soft{white-space:normal;max-width:190px;background:linear-gradient(#d8ecff,#9fcbff);color:#0f2a5a;box-shadow:inset 0 0 0 1px #5d93d6}' +
+    '.tkh.is-port .tkh-side{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}.tkh-set.is-port .tkh-side{grid-template-columns:repeat(4,minmax(0,1fr))}' +
+    '.tkh.is-port .tkh-side button{min-width:0;min-height:60px;font-size:13px;line-height:1.1}' +
+    '@media (min-width:600px) and (min-height:600px){.tkh.is-port .tkh-side button{font-size:14px}}' +
+    '.tkh-exit{margin-top:10px}' +
+    '@media (max-width:599px),(max-height:599px){.tkh-prof span,.chip,.tkh-plate p,.tkh .tkh-plate p,.tkh-room.is-port .tkh-ship b,.bar em,.tkh-p.sub,.tkh-strip small,.gift small,.cnt span,.tags span,.spec,.tkh-frags small,.tkh-hc small,.tkh-badge b,.tkh-note,.tkh-primary .bl small,.tkh-rw.is-port .tkh-acts .tkh-btn.sm{font-size:13px}}'
   // SFX-only mode: every "listen / read again" button in the game is hidden (no voice exists)
   if (SFX_ONLY) CSS += 'html:not(.tk-narr) .tkq-speak,html:not(.tk-narr) .tkq-say,html:not(.tk-narr) .tks-say,html:not(.tk-narr) .tkl-say,html:not(.tk-narr) .tkg-say{display:none!important}'
   // scroll a section into view inside its OWN scroll pane only: scrollIntoView also scrolled the screen itself, which put
@@ -774,5 +1039,5 @@
   injectCss()
 
   W.TKHub = { reward: reward, room: room, settings: settings, say: say, sayKey: sayKey, hush: hush, music: music, config: config, normalize: normalize,
-    stats: stats, achievements: achievements, rows: rows, sfx: SFX, _cfg: CFG, _vo: VO, version: '1.0.0' }
+    gallery: gallery, fleetWorlds: fleetWorlds, stats: stats, achievements: achievements, rows: rows, sfx: SFX, _cfg: CFG, _vo: VO, version: '1.0.0' }
 })()

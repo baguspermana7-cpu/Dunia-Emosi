@@ -93,7 +93,7 @@ the answer from `q.calc`. The engine rejects any generated item that fails `vali
 
 | Generator | Topic | Grades | Eligible |
 |---|---|---|---|
-| `mat-a` | matematika | 1–2 | core (every game): numbers ≤ 20, whole hours, no × ÷; level 1–4, easy = counting only |
+| `mat-a` | matematika | 1–2 | core (every game): numbers ≤ 20, whole hours, no × ÷; level 1–4. Kinds: count, add, sub, biggest, smallest, bond (a + ? = t), tomake (berapa lagi supaya jadi N), double, pattern (skip counting), fewer, length (measuring with blocks), diff, capacity, clock, twostep; easy = the picture-first ones (count, add, sub, double, tomake, bond) |
 | `mat-sulit` | matematika | 3–4 | core: 3-digit ± with regrouping, 10×10, exact ÷, ½ ⅓ ¼, 5-minute clocks, Rp change, m→cm, kg, 2-step stories ≤ 18 words |
 | `sq-bahasa/-sains/-emosi/-umum/-logika/-bentuk/-waktu` | SuperQuiz subjects | 1–4 | general pools (`general !== false`) |
 | `sq-math` | matematika | 1–4 | only when a game lists it (`generators: ['sq-math']`) — it mixes × ÷ into "medium" |
@@ -114,6 +114,9 @@ SoalEngine.profile('g29')                                  // the resolved profi
 |---|---|---|
 | `topics` | all with a source | allowed topics |
 | `weights` | `{matematika:40, umum:15, logika:15, bahasa:10, sains:10, bentuk:5, waktu:5, emosi:5}` | share per topic (unlisted topics get 0 once weights exist) |
+| `maxShare` | none | cumulative mixed-topic ceiling per avatar/scope, e.g. `{arab:0.08}`; enforced after exclusions, goal matches and fallback |
+| `topicGap` | none | minimum distance between mixed picks of a topic, e.g. `{arab:4}` permits at most one in any four |
+| `exclusionOverrides` | none | declared profile/context overrides activated by a `without` flag; explicit call options still take priority |
 | `themes` / `themeShare` | `[]` / 0.6 | THEME packs the game may draw; share of curated picks restricted to them (rest = general pools) |
 | `packs` | null | explicit pack allow-list (overrides themes + general) |
 | `general` | true | may draw general packs / generators |
@@ -133,6 +136,9 @@ SoalEngine.profile('g29')                                  // the resolved profi
 
 **Contexts** — `pick({game, context})` merges `profile.contexts[context]` over the profile, and the call's own
 options over both (call > context > profile > extends chain):
+If a removed flag has an `exclusionOverrides` entry, that entry applies after the context and before
+explicit call options. For example, G30 redistributes Islamic questions into Umum/Logika when Islamic
+content is off, keeping the maths weight at 50%; explicit topic practice and caller weights still win.
 
 | Context | Default override | Use |
 |---|---|---|
@@ -145,32 +151,43 @@ options over both (call > context > profile > extends chain):
 
 ```
 { game, context, avatar ('auto' | id | null = session only), history? (false = stateless), grade ('mudah' | 'sulit' | 1–4 | a profile alias),
-  count (1), topic?, weights?, maxPer? {arab: 1}, theme? (string | [..], e.g. the world), level? (n | {topic:n}),
+  count (1), topic?, weights?, maxPer? {arab: 1}, maxShare?, topicGap?, mixed?, theme? (string | [..], e.g. the world), level? (n | {topic:n}),
   easy? (bool | {topic:bool}), about? (the level goal line), aboutCount? (ceil(count/2)), exclude? (ids),
   without? [...], seed? | rng?, pictures?, kind? (force a generator kind), generators? [...], packs? [...] }
 ```
 
 Per question slot:
-1. `about` slots: curated items matching the goal line (shared content word), unseen first, best match first.
-2. Topic by the weights (capped by `maxPer`); a topic with nothing left falls through to one that has.
+1. `about` slots: UNSEEN curated items matching the goal line (shared content word), best match first — a goal line never brings back a seen item.
+2. Topic by the weights (capped by `maxPer`, `maxShare` and `topicGap`); a topic with nothing left falls through to an eligible topic with positive weight. Goal matches obey the same caps.
 3. Curated vs generated: generated only when the topic has no curated items, the curated pool is all seen, or by
    the generator weight share.
 4. Curated stages: call theme (80 %) → game theme (`themeShare`) → exact level → level ± 1 → all. Sulit restricts to
    grade ≥ 3 first (`sulitShare`). Inside the first stage that still has an **unseen** item, a random unseen item.
    Every stage exhausted → the **least recently seen** item.
-5. Generated: retried until the signature (prompt + numbers) is not among the avatar's last 50, the prompt fits
-   `maxWords` and the item validates.
+5. Generated: retried until the signature (prompt + numbers) is not among the avatar's last 50, the template (kind)
+   is not among the last 3 generated (at most 1 in 4), the prompt fits `maxWords` and the item validates.
+   A container and its contents are never the same noun (`nouns` minus `vocab.crate/box/seat`).
 6. Output: pictures mode applied, choices shuffled, easy → `choices.easy`, history marked and saved.
 
 `SoalEngine.one(opts)` = the first of `pick({count: 1})`. `SoalEngine.generate(topic, opts)` = one generated question
 without history (tests, harnesses, host-fixed rounds).
 
+Mixed-topic quotas count actual returned items and survive one-card calls, world changes and reloads.
+With `maxShare:{arab:0.08}`, the first Arabic mixed item is eligible at item 13; every cumulative
+prefix stays at or below 8%. Explicit `topic:'arab'` practice remains unrestricted and does not
+consume the mixed quota. An adapter that composes a mixed round using topic-specific picks passes
+`mixed:true` on each constituent pick so its maths also count. `history:false` starts a fresh quota
+for that call and stores nothing; a capped topic can therefore be absent from a short stateless round.
+
 ## 7. No repeats
 
-- localStorage **`soal-seen-<avatar>`** = `{v:1, n, seen:{scope:{id:stamp}}, sig:{scope:[last 50 signatures]}}`.
+- localStorage **`soal-seen-<avatar>`** = `{v:1, n, seen:{scope:{id:stamp}}, sig:{scope:[last 50 signatures]}, kinds, mix:{scope:{n,count,recent}}}`. Old saves without `mix` start an empty mixed quota.
   Every read/write is in try/catch; private mode / blocked storage falls back to memory for the session.
 - Capped at 1,500 ids per scope (trimmed to the 1,200 most recent).
 - Scope = the game id (`scope:'game'`) or `*` (`scope:'shared'`).
+- Malformed stored fields are repaired independently: valid `seen` scopes and signature/template lists
+  survive corruption elsewhere. A mixed quota must have safe integer counters adding up to its total
+  and a bounded recent-topic list; inconsistent quotas reset without deleting valid question history.
 - Within one call: never the same id twice. Without an avatar: no repeats within the session (memory).
 - Once a pool is exhausted: least recently seen first, so the cycle restarts oldest-first.
 
@@ -194,7 +211,13 @@ every generated question (prompt, choices, explain, hints). A match is never ser
 `topics [matematika, umum, logika, islam, arab]`, weights `50/15/15/12/8`, `packs ['kapal']`, `general:false`
 (fase A content rules are stricter than the general pools), `pictures:'sprite'`, nouns per world, ship vocab,
 `mathKinds.queenmary` clock boost, contexts `challenge` (≤ 14 words, no letters / listen) and `quiz` (no letters).
-`games/tk-quiz.js` draws every question through `SoalEngine.pick({game:'g30', …})`.
+`games/tk-quiz.js` draws every question through `SoalEngine.pick({game:'g30', …})`. A topic-locked step — a practice tab
+(world 'latihan'), `topicOnly: true`, or a logika / islam / arab / matematika step — serves ONLY that topic; 'umum'
+(the default) and campur steps and challenges are mixed, about half maths (owner playtest 2026-09-30).
+`maxShare:{arab:0.08}` and `topicGap:{arab:4}` enforce the Arabic ceiling even when Islamic content
+is disabled; the remaining weights cannot renormalize Arabic above the cap.
+The profile's `exclusionOverrides.islam.weights` is `50/21/21/0/8`, preserving about half maths in
+single-card action challenges as well as mixed quiz rounds.
 
 ### Draft — G29 Garasi Tempur (not wired yet)
 

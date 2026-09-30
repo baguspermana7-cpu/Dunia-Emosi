@@ -7949,6 +7949,8644 @@
    "h": 239,
    "psnr": 43.6
   },
+  "mojo-bg/beach-dock-land": {
+   "file": "assets/db/lib/mojo-bg/beach-dock-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "beach",
+    "dock",
+    "land",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 960,
+   "h": 609
+  },
+  "mojo-bg/beach-dock-port": {
+   "file": "assets/db/lib/mojo-bg/beach-dock-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "beach",
+    "dock",
+    "port",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 539,
+   "h": 1007
+  },
+  "mojo-bg/blueprint": {
+   "file": "assets/db/lib/mojo-bg/blueprint.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "blueprint",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 402,
+   "h": 222
+  },
+  "mojo-bg/canyon": {
+   "file": "assets/db/lib/mojo-bg/canyon.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "canyon",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 402,
+   "h": 219
+  },
+  "mojo-bg/canyon-road-land": {
+   "file": "assets/db/lib/mojo-bg/canyon-road-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "canyon",
+    "road",
+    "land",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 962,
+   "h": 600
+  },
+  "mojo-bg/canyon-road-port": {
+   "file": "assets/db/lib/mojo-bg/canyon-road-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "canyon",
+    "road",
+    "port",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 537,
+   "h": 1007
+  },
+  "mojo-bg/castle-bridge-land": {
+   "file": "assets/db/lib/mojo-bg/castle-bridge-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "castle",
+    "bridge",
+    "land",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 963,
+   "h": 575
+  },
+  "mojo-bg/castle-bridge-port": {
+   "file": "assets/db/lib/mojo-bg/castle-bridge-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "castle",
+    "bridge",
+    "port",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 516,
+   "h": 1007
+  },
+  "mojo-bg/city-sheet11": {
+   "file": "assets/db/lib/mojo-bg/city-sheet11.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "city",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 206,
+   "h": 196
+  },
+  "mojo-bg/coast-land": {
+   "file": "assets/db/lib/mojo-bg/coast-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "coast",
+    "land",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 965,
+   "h": 589
+  },
+  "mojo-bg/coast-port": {
+   "file": "assets/db/lib/mojo-bg/coast-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "coast",
+    "port",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 520,
+   "h": 1007
+  },
+  "mojo-bg/construction": {
+   "file": "assets/db/lib/mojo-bg/construction.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "construction",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 339,
+   "h": 225
+  },
+  "mojo-bg/construction-sheet16": {
+   "file": "assets/db/lib/mojo-bg/construction-sheet16.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "construction",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 304,
+   "h": 201
+  },
+  "mojo-bg/desert-sheet16": {
+   "file": "assets/db/lib/mojo-bg/desert-sheet16.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "desert",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 302,
+   "h": 201
+  },
+  "mojo-bg/forest-trail-land": {
+   "file": "assets/db/lib/mojo-bg/forest-trail-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "forest",
+    "trail",
+    "land",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 961,
+   "h": 598
+  },
+  "mojo-bg/forest-trail-port": {
+   "file": "assets/db/lib/mojo-bg/forest-trail-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "forest",
+    "trail",
+    "port",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 536,
+   "h": 1007
+  },
+  "mojo-bg/garage": {
+   "file": "assets/db/lib/mojo-bg/garage.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "garage",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 403,
+   "h": 288
+  },
+  "mojo-bg/garage-interior-sheet16": {
+   "file": "assets/db/lib/mojo-bg/garage-interior-sheet16.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "garage",
+    "interior",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 342,
+   "h": 201
+  },
+  "mojo-bg/garage-street-land": {
+   "file": "assets/db/lib/mojo-bg/garage-street-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "garage",
+    "street",
+    "land",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 958,
+   "h": 578
+  },
+  "mojo-bg/garage-street-port": {
+   "file": "assets/db/lib/mojo-bg/garage-street-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "garage",
+    "street",
+    "port",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 539,
+   "h": 1005
+  },
+  "mojo-bg/map": {
+   "file": "assets/db/lib/mojo-bg/map.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "map",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 346,
+   "h": 286
+  },
+  "mojo-bg/panel-canyon": {
+   "file": "assets/db/lib/mojo-bg/panel-canyon.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "panel",
+    "canyon",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 221,
+   "h": 175
+  },
+  "mojo-bg/panel-construction": {
+   "file": "assets/db/lib/mojo-bg/panel-construction.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "panel",
+    "construction",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 190,
+   "h": 191
+  },
+  "mojo-bg/panel-garage": {
+   "file": "assets/db/lib/mojo-bg/panel-garage.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "panel",
+    "garage",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 249,
+   "h": 183
+  },
+  "mojo-bg/panel-snow": {
+   "file": "assets/db/lib/mojo-bg/panel-snow.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "panel",
+    "snow",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 224,
+   "h": 192
+  },
+  "mojo-bg/road-track-sheet11": {
+   "file": "assets/db/lib/mojo-bg/road-track-sheet11.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "road",
+    "track",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 182,
+   "h": 196
+  },
+  "mojo-bg/snow-road-sheet15": {
+   "file": "assets/db/lib/mojo-bg/snow-road-sheet15.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "snow",
+    "road",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 390,
+   "h": 220
+  },
+  "mojo-bg/snow-sheet16": {
+   "file": "assets/db/lib/mojo-bg/snow-sheet16.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "snow",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 278,
+   "h": 201
+  },
+  "mojo-bg/title-town": {
+   "file": "assets/db/lib/mojo-bg/title-town.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "title",
+    "town",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 403,
+   "h": 286
+  },
+  "mojo-bg/town-road": {
+   "file": "assets/db/lib/mojo-bg/town-road.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "town",
+    "road",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 401,
+   "h": 220
+  },
+  "mojo-bg/town-sheet16": {
+   "file": "assets/db/lib/mojo-bg/town-sheet16.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "town",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 256,
+   "h": 201
+  },
+  "mojo-bg/waterfall-land": {
+   "file": "assets/db/lib/mojo-bg/waterfall-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "waterfall",
+    "land",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 967,
+   "h": 595
+  },
+  "mojo-bg/waterfall-port": {
+   "file": "assets/db/lib/mojo-bg/waterfall-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "waterfall",
+    "port",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 504,
+   "h": 1007
+  },
+  "mojo-char/bird": {
+   "file": "assets/db/lib/mojo-char/bird.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bird",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 59,
+   "h": 72
+  },
+  "mojo-char/bo": {
+   "file": "assets/db/lib/mojo-char/bo.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 218,
+   "h": 380
+  },
+  "mojo-char/bo-celebrate": {
+   "file": "assets/db/lib/mojo-char/bo-celebrate.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "celebrate",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 141,
+   "h": 193
+  },
+  "mojo-char/bo-excited": {
+   "file": "assets/db/lib/mojo-char/bo-excited.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "excited",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 237,
+   "h": 363
+  },
+  "mojo-char/bo-goggles": {
+   "file": "assets/db/lib/mojo-char/bo-goggles.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "goggles",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 132,
+   "h": 202
+  },
+  "mojo-char/bo-jump": {
+   "file": "assets/db/lib/mojo-char/bo-jump.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "jump",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 131,
+   "h": 203
+  },
+  "mojo-char/bo-main": {
+   "file": "assets/db/lib/mojo-char/bo-main.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "main",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 115,
+   "h": 208
+  },
+  "mojo-char/bo-sheet10": {
+   "file": "assets/db/lib/mojo-char/bo-sheet10.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "sheet10",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 160,
+   "h": 274
+  },
+  "mojo-char/bo-sit": {
+   "file": "assets/db/lib/mojo-char/bo-sit.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "sit",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 133,
+   "h": 203
+  },
+  "mojo-char/bo-surprised": {
+   "file": "assets/db/lib/mojo-char/bo-surprised.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "surprised",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 128,
+   "h": 205
+  },
+  "mojo-char/bo-tablet": {
+   "file": "assets/db/lib/mojo-char/bo-tablet.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "tablet",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 109,
+   "h": 203
+  },
+  "mojo-char/bo-think": {
+   "file": "assets/db/lib/mojo-char/bo-think.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "think",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 202,
+   "h": 367
+  },
+  "mojo-char/bo-think2": {
+   "file": "assets/db/lib/mojo-char/bo-think2.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "think2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 107,
+   "h": 202
+  },
+  "mojo-char/bo-thumbs": {
+   "file": "assets/db/lib/mojo-char/bo-thumbs.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "thumbs",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 119,
+   "h": 206
+  },
+  "mojo-char/bo-tools": {
+   "file": "assets/db/lib/mojo-char/bo-tools.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "tools",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 236,
+   "h": 362
+  },
+  "mojo-char/bo-wave": {
+   "file": "assets/db/lib/mojo-char/bo-wave.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "wave",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 224,
+   "h": 355
+  },
+  "mojo-char/bo-wink": {
+   "file": "assets/db/lib/mojo-char/bo-wink.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "bo",
+    "wink",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 135,
+   "h": 204
+  },
+  "mojo-char/build-bot": {
+   "file": "assets/db/lib/mojo-char/build-bot.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "build",
+    "bot",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 124,
+   "h": 168
+  },
+  "mojo-char/cat": {
+   "file": "assets/db/lib/mojo-char/cat.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "cat",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 55,
+   "h": 70
+  },
+  "mojo-char/cow": {
+   "file": "assets/db/lib/mojo-char/cow.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "cow",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 61,
+   "h": 72
+  },
+  "mojo-char/dog": {
+   "file": "assets/db/lib/mojo-char/dog.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "dog",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 56,
+   "h": 68
+  },
+  "mojo-char/float": {
+   "file": "assets/db/lib/mojo-char/float.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "float",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 166,
+   "h": 204
+  },
+  "mojo-char/float-curious": {
+   "file": "assets/db/lib/mojo-char/float-curious.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "float",
+    "curious",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 103,
+   "h": 129
+  },
+  "mojo-char/float-happy": {
+   "file": "assets/db/lib/mojo-char/float-happy.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "float",
+    "happy",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 103,
+   "h": 112
+  },
+  "mojo-char/float-love": {
+   "file": "assets/db/lib/mojo-char/float-love.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "float",
+    "love",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 112,
+   "h": 124
+  },
+  "mojo-char/float-sheet10": {
+   "file": "assets/db/lib/mojo-char/float-sheet10.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "float",
+    "sheet10",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 154,
+   "h": 190
+  },
+  "mojo-char/float2": {
+   "file": "assets/db/lib/mojo-char/float2.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "float2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 101,
+   "h": 151
+  },
+  "mojo-char/grandad": {
+   "file": "assets/db/lib/mojo-char/grandad.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "grandad",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 205,
+   "h": 278
+  },
+  "mojo-char/grandad-arms": {
+   "file": "assets/db/lib/mojo-char/grandad-arms.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "grandad",
+    "arms",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 77,
+   "h": 147
+  },
+  "mojo-char/grandad-sheet10": {
+   "file": "assets/db/lib/mojo-char/grandad-sheet10.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "grandad",
+    "sheet10",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 188,
+   "h": 253
+  },
+  "mojo-char/grandad-thumbs": {
+   "file": "assets/db/lib/mojo-char/grandad-thumbs.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "grandad",
+    "thumbs",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 114,
+   "h": 147
+  },
+  "mojo-char/grandad-wrench": {
+   "file": "assets/db/lib/mojo-char/grandad-wrench.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "grandad",
+    "wrench",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 108,
+   "h": 146
+  },
+  "mojo-char/grandad2": {
+   "file": "assets/db/lib/mojo-char/grandad2.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "grandad2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 133,
+   "h": 202
+  },
+  "mojo-char/mechanic-bot": {
+   "file": "assets/db/lib/mojo-char/mechanic-bot.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "mechanic",
+    "bot",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 113,
+   "h": 150
+  },
+  "mojo-char/neon": {
+   "file": "assets/db/lib/mojo-char/neon.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "neon",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 136,
+   "h": 276
+  },
+  "mojo-char/neon2": {
+   "file": "assets/db/lib/mojo-char/neon2.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "neon2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 115,
+   "h": 210
+  },
+  "mojo-char/oona": {
+   "file": "assets/db/lib/mojo-char/oona.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "oona",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 163,
+   "h": 223
+  },
+  "mojo-char/oona-play": {
+   "file": "assets/db/lib/mojo-char/oona-play.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "oona",
+    "play",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 103,
+   "h": 139
+  },
+  "mojo-char/oona-run": {
+   "file": "assets/db/lib/mojo-char/oona-run.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "oona",
+    "run",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 100,
+   "h": 141
+  },
+  "mojo-char/oona-sheet10": {
+   "file": "assets/db/lib/mojo-char/oona-sheet10.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "oona",
+    "sheet10",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 162,
+   "h": 237
+  },
+  "mojo-char/oona-sit": {
+   "file": "assets/db/lib/mojo-char/oona-sit.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "oona",
+    "sit",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 94,
+   "h": 140
+  },
+  "mojo-char/oona-sleep": {
+   "file": "assets/db/lib/mojo-char/oona-sleep.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "oona",
+    "sleep",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 117,
+   "h": 121
+  },
+  "mojo-char/oona2": {
+   "file": "assets/db/lib/mojo-char/oona2.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "oona2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 109,
+   "h": 190
+  },
+  "mojo-char/painter-bot": {
+   "file": "assets/db/lib/mojo-char/painter-bot.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "painter",
+    "bot",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 118,
+   "h": 156
+  },
+  "mojo-char/rabbit": {
+   "file": "assets/db/lib/mojo-char/rabbit.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "rabbit",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 51,
+   "h": 67
+  },
+  "mojo-char/race-bot": {
+   "file": "assets/db/lib/mojo-char/race-bot.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "race",
+    "bot",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 125,
+   "h": 155
+  },
+  "mojo-char/sheep": {
+   "file": "assets/db/lib/mojo-char/sheep.webp",
+   "cat": "mojo-char",
+   "tags": [
+    "sheep",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 63,
+   "h": 69
+  },
+  "mojo-fx/boost-flame-sheet13": {
+   "file": "assets/db/lib/mojo-fx/boost-flame-sheet13.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "boost",
+    "flame",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 100,
+   "h": 66
+  },
+  "mojo-fx/checkpoint": {
+   "file": "assets/db/lib/mojo-fx/checkpoint.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "checkpoint",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 70
+  },
+  "mojo-fx/collect": {
+   "file": "assets/db/lib/mojo-fx/collect.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "collect",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 84,
+   "h": 65
+  },
+  "mojo-fx/confetti": {
+   "file": "assets/db/lib/mojo-fx/confetti.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "confetti",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 93,
+   "h": 77
+  },
+  "mojo-fx/confetti-sheet03": {
+   "file": "assets/db/lib/mojo-fx/confetti-sheet03.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "confetti",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 55
+  },
+  "mojo-fx/confetti-sheet13": {
+   "file": "assets/db/lib/mojo-fx/confetti-sheet13.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "confetti",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 94,
+   "h": 59
+  },
+  "mojo-fx/confetti2": {
+   "file": "assets/db/lib/mojo-fx/confetti2.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "confetti2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 101,
+   "h": 73
+  },
+  "mojo-fx/dust": {
+   "file": "assets/db/lib/mojo-fx/dust.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "dust",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 108,
+   "h": 65
+  },
+  "mojo-fx/dust-cloud": {
+   "file": "assets/db/lib/mojo-fx/dust-cloud.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "dust",
+    "cloud",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 101,
+   "h": 69
+  },
+  "mojo-fx/effects": {
+   "file": "assets/db/lib/mojo-fx/effects.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "effects",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 246,
+   "h": 131
+  },
+  "mojo-fx/explosion": {
+   "file": "assets/db/lib/mojo-fx/explosion.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "explosion",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 62
+  },
+  "mojo-fx/explosion-sheet13": {
+   "file": "assets/db/lib/mojo-fx/explosion-sheet13.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "explosion",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 101,
+   "h": 78
+  },
+  "mojo-fx/explosion2": {
+   "file": "assets/db/lib/mojo-fx/explosion2.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "explosion2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 92,
+   "h": 75
+  },
+  "mojo-fx/fireworks": {
+   "file": "assets/db/lib/mojo-fx/fireworks.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "fireworks",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 118,
+   "h": 69
+  },
+  "mojo-fx/highlight": {
+   "file": "assets/db/lib/mojo-fx/highlight.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "highlight",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 71
+  },
+  "mojo-fx/invalid": {
+   "file": "assets/db/lib/mojo-fx/invalid.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "invalid",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 66,
+   "h": 64
+  },
+  "mojo-fx/level-up": {
+   "file": "assets/db/lib/mojo-fx/level-up.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "level",
+    "up",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 69
+  },
+  "mojo-fx/mud-splash": {
+   "file": "assets/db/lib/mojo-fx/mud-splash.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "mud",
+    "splash",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 101,
+   "h": 69
+  },
+  "mojo-fx/path-preview-reference-sheet03": {
+   "file": "assets/db/lib/mojo-fx/path-preview-reference-sheet03.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "path",
+    "preview",
+    "reference",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 84,
+   "h": 72
+  },
+  "mojo-fx/portal": {
+   "file": "assets/db/lib/mojo-fx/portal.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "portal",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 101,
+   "h": 91
+  },
+  "mojo-fx/portal-sheet13": {
+   "file": "assets/db/lib/mojo-fx/portal-sheet13.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "portal",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-fx/portal2": {
+   "file": "assets/db/lib/mojo-fx/portal2.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "portal2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 78,
+   "h": 73
+  },
+  "mojo-fx/repair": {
+   "file": "assets/db/lib/mojo-fx/repair.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "repair",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 87,
+   "h": 78
+  },
+  "mojo-fx/repair-sparks": {
+   "file": "assets/db/lib/mojo-fx/repair-sparks.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "repair",
+    "sparks",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 99,
+   "h": 83
+  },
+  "mojo-fx/selection": {
+   "file": "assets/db/lib/mojo-fx/selection.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "selection",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 70,
+   "h": 66
+  },
+  "mojo-fx/skid": {
+   "file": "assets/db/lib/mojo-fx/skid.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "skid",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 109,
+   "h": 73
+  },
+  "mojo-fx/smoke": {
+   "file": "assets/db/lib/mojo-fx/smoke.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "smoke",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 58,
+   "h": 62
+  },
+  "mojo-fx/snow-spray": {
+   "file": "assets/db/lib/mojo-fx/snow-spray.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "snow",
+    "spray",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 97,
+   "h": 64
+  },
+  "mojo-fx/sparkle": {
+   "file": "assets/db/lib/mojo-fx/sparkle.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "sparkle",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 57,
+   "h": 55
+  },
+  "mojo-fx/sparks": {
+   "file": "assets/db/lib/mojo-fx/sparks.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "sparks",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 69
+  },
+  "mojo-fx/sparks2": {
+   "file": "assets/db/lib/mojo-fx/sparks2.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "sparks2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 59
+  },
+  "mojo-fx/speed-boost": {
+   "file": "assets/db/lib/mojo-fx/speed-boost.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "speed",
+    "boost",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 104,
+   "h": 75
+  },
+  "mojo-fx/speed-trail": {
+   "file": "assets/db/lib/mojo-fx/speed-trail.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "speed",
+    "trail",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 93,
+   "h": 60
+  },
+  "mojo-fx/splash": {
+   "file": "assets/db/lib/mojo-fx/splash.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "splash",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 47,
+   "h": 56
+  },
+  "mojo-fx/tire-smoke": {
+   "file": "assets/db/lib/mojo-fx/tire-smoke.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "tire",
+    "smoke",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 74,
+   "h": 61
+  },
+  "mojo-fx/valid": {
+   "file": "assets/db/lib/mojo-fx/valid.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "valid",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 69,
+   "h": 68
+  },
+  "mojo-fx/water-splash": {
+   "file": "assets/db/lib/mojo-fx/water-splash.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "water",
+    "splash",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 84,
+   "h": 60
+  },
+  "mojo-prop/apple-cart": {
+   "file": "assets/db/lib/mojo-prop/apple-cart.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "apple",
+    "cart",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 215,
+   "h": 199
+  },
+  "mojo-prop/attachments": {
+   "file": "assets/db/lib/mojo-prop/attachments.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "attachments",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 300,
+   "h": 157
+  },
+  "mojo-prop/backpack": {
+   "file": "assets/db/lib/mojo-prop/backpack.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "backpack",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 61,
+   "h": 67
+  },
+  "mojo-prop/banana": {
+   "file": "assets/db/lib/mojo-prop/banana.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "banana",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 206,
+   "h": 207
+  },
+  "mojo-prop/banana-banner": {
+   "file": "assets/db/lib/mojo-prop/banana-banner.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "banana",
+    "banner",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 203,
+   "h": 221
+  },
+  "mojo-prop/banana-crate": {
+   "file": "assets/db/lib/mojo-prop/banana-crate.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "banana",
+    "crate",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 207,
+   "h": 192
+  },
+  "mojo-prop/banner-crown": {
+   "file": "assets/db/lib/mojo-prop/banner-crown.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "banner",
+    "crown",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 125,
+   "h": 233
+  },
+  "mojo-prop/banner-steps": {
+   "file": "assets/db/lib/mojo-prop/banner-steps.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "banner",
+    "steps",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 191,
+   "h": 226
+  },
+  "mojo-prop/barrel": {
+   "file": "assets/db/lib/mojo-prop/barrel.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "barrel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 167,
+   "h": 204
+  },
+  "mojo-prop/barrel-rope": {
+   "file": "assets/db/lib/mojo-prop/barrel-rope.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "barrel",
+    "rope",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 166,
+   "h": 214
+  },
+  "mojo-prop/barrel2": {
+   "file": "assets/db/lib/mojo-prop/barrel2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "barrel2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 179,
+   "h": 211
+  },
+  "mojo-prop/barrier-sheet15": {
+   "file": "assets/db/lib/mojo-prop/barrier-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "barrier",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 69,
+   "h": 63
+  },
+  "mojo-prop/barrier2": {
+   "file": "assets/db/lib/mojo-prop/barrier2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "barrier2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 103,
+   "h": 77
+  },
+  "mojo-prop/battery": {
+   "file": "assets/db/lib/mojo-prop/battery.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "battery",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 54,
+   "h": 86
+  },
+  "mojo-prop/battery-sheet03": {
+   "file": "assets/db/lib/mojo-prop/battery-sheet03.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "battery",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 39,
+   "h": 60
+  },
+  "mojo-prop/battery2": {
+   "file": "assets/db/lib/mojo-prop/battery2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "battery2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 39,
+   "h": 71
+  },
+  "mojo-prop/beach-shells": {
+   "file": "assets/db/lib/mojo-prop/beach-shells.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "beach",
+    "shells",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 222,
+   "h": 197
+  },
+  "mojo-prop/bell": {
+   "file": "assets/db/lib/mojo-prop/bell.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bell",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 165,
+   "h": 224
+  },
+  "mojo-prop/bench": {
+   "file": "assets/db/lib/mojo-prop/bench.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bench",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 65,
+   "h": 46
+  },
+  "mojo-prop/big-tree": {
+   "file": "assets/db/lib/mojo-prop/big-tree.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "big",
+    "tree",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 225,
+   "h": 223
+  },
+  "mojo-prop/bird-blue": {
+   "file": "assets/db/lib/mojo-prop/bird-blue.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bird",
+    "blue",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 198,
+   "h": 223
+  },
+  "mojo-prop/block-grass": {
+   "file": "assets/db/lib/mojo-prop/block-grass.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "block",
+    "grass",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 207,
+   "h": 170
+  },
+  "mojo-prop/blossom-tree": {
+   "file": "assets/db/lib/mojo-prop/blossom-tree.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "blossom",
+    "tree",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 224,
+   "h": 226
+  },
+  "mojo-prop/blueprint": {
+   "file": "assets/db/lib/mojo-prop/blueprint.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "blueprint",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 60,
+   "h": 56
+  },
+  "mojo-prop/bodies-sheet12": {
+   "file": "assets/db/lib/mojo-prop/bodies-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bodies",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 248,
+   "h": 123
+  },
+  "mojo-prop/bolt": {
+   "file": "assets/db/lib/mojo-prop/bolt.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bolt",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 62,
+   "h": 78
+  },
+  "mojo-prop/bolt-sheet03": {
+   "file": "assets/db/lib/mojo-prop/bolt-sheet03.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bolt",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 52,
+   "h": 60
+  },
+  "mojo-prop/bridge": {
+   "file": "assets/db/lib/mojo-prop/bridge.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bridge",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 91,
+   "h": 75
+  },
+  "mojo-prop/bridge-arch": {
+   "file": "assets/db/lib/mojo-prop/bridge-arch.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bridge",
+    "arch",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 227,
+   "h": 185
+  },
+  "mojo-prop/bridge-broken": {
+   "file": "assets/db/lib/mojo-prop/bridge-broken.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bridge",
+    "broken",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 86,
+   "h": 69
+  },
+  "mojo-prop/bridge-road": {
+   "file": "assets/db/lib/mojo-prop/bridge-road.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bridge",
+    "road",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 150,
+   "h": 111
+  },
+  "mojo-prop/bridge-rope": {
+   "file": "assets/db/lib/mojo-prop/bridge-rope.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bridge",
+    "rope",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 228,
+   "h": 170
+  },
+  "mojo-prop/bridge-wood": {
+   "file": "assets/db/lib/mojo-prop/bridge-wood.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bridge",
+    "wood",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 223,
+   "h": 210
+  },
+  "mojo-prop/bridge2": {
+   "file": "assets/db/lib/mojo-prop/bridge2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bridge2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 129,
+   "h": 93
+  },
+  "mojo-prop/building-station": {
+   "file": "assets/db/lib/mojo-prop/building-station.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "building",
+    "station",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 204,
+   "h": 153
+  },
+  "mojo-prop/bumpers": {
+   "file": "assets/db/lib/mojo-prop/bumpers.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bumpers",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 191,
+   "h": 115
+  },
+  "mojo-prop/bumpers2": {
+   "file": "assets/db/lib/mojo-prop/bumpers2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bumpers2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 125,
+   "h": 75
+  },
+  "mojo-prop/bush": {
+   "file": "assets/db/lib/mojo-prop/bush.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bush",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 79,
+   "h": 60
+  },
+  "mojo-prop/bush-flowers": {
+   "file": "assets/db/lib/mojo-prop/bush-flowers.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bush",
+    "flowers",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 227,
+   "h": 170
+  },
+  "mojo-prop/bush-sheet15": {
+   "file": "assets/db/lib/mojo-prop/bush-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bush",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 77,
+   "h": 71
+  },
+  "mojo-prop/bush2": {
+   "file": "assets/db/lib/mojo-prop/bush2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bush2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 89,
+   "h": 79
+  },
+  "mojo-prop/bush3": {
+   "file": "assets/db/lib/mojo-prop/bush3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "bush3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 217,
+   "h": 194
+  },
+  "mojo-prop/cactus": {
+   "file": "assets/db/lib/mojo-prop/cactus.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cactus",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 214,
+   "h": 212
+  },
+  "mojo-prop/cactus2": {
+   "file": "assets/db/lib/mojo-prop/cactus2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cactus2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 193,
+   "h": 223
+  },
+  "mojo-prop/campfire": {
+   "file": "assets/db/lib/mojo-prop/campfire.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "campfire",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 211,
+   "h": 215
+  },
+  "mojo-prop/cement-swoptop": {
+   "file": "assets/db/lib/mojo-prop/cement-swoptop.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cement",
+    "swoptop",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 180,
+   "h": 163
+  },
+  "mojo-prop/chassis": {
+   "file": "assets/db/lib/mojo-prop/chassis.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "chassis",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 255,
+   "h": 111
+  },
+  "mojo-prop/checkered-flag": {
+   "file": "assets/db/lib/mojo-prop/checkered-flag.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "checkered",
+    "flag",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 192,
+   "h": 205
+  },
+  "mojo-prop/chest": {
+   "file": "assets/db/lib/mojo-prop/chest.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "chest",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 205,
+   "h": 194
+  },
+  "mojo-prop/chest-gold": {
+   "file": "assets/db/lib/mojo-prop/chest-gold.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "chest",
+    "gold",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 212,
+   "h": 208
+  },
+  "mojo-prop/chest-iron": {
+   "file": "assets/db/lib/mojo-prop/chest-iron.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "chest",
+    "iron",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 207,
+   "h": 198
+  },
+  "mojo-prop/chevron": {
+   "file": "assets/db/lib/mojo-prop/chevron.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "chevron",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 119,
+   "h": 52
+  },
+  "mojo-prop/cliff": {
+   "file": "assets/db/lib/mojo-prop/cliff.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cliff",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 229,
+   "h": 197
+  },
+  "mojo-prop/cloud": {
+   "file": "assets/db/lib/mojo-prop/cloud.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cloud",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 67,
+   "h": 52
+  },
+  "mojo-prop/coin": {
+   "file": "assets/db/lib/mojo-prop/coin.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "coin",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 51,
+   "h": 55
+  },
+  "mojo-prop/coin-crown": {
+   "file": "assets/db/lib/mojo-prop/coin-crown.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "coin",
+    "crown",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 182,
+   "h": 187
+  },
+  "mojo-prop/coin-sack": {
+   "file": "assets/db/lib/mojo-prop/coin-sack.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "coin",
+    "sack",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 208,
+   "h": 196
+  },
+  "mojo-prop/coin-sheet13": {
+   "file": "assets/db/lib/mojo-prop/coin-sheet13.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "coin",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 74,
+   "h": 74
+  },
+  "mojo-prop/coin-sheet15": {
+   "file": "assets/db/lib/mojo-prop/coin-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "coin",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 73,
+   "h": 73
+  },
+  "mojo-prop/coin-star": {
+   "file": "assets/db/lib/mojo-prop/coin-star.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "coin",
+    "star",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 79,
+   "h": 87
+  },
+  "mojo-prop/coin2": {
+   "file": "assets/db/lib/mojo-prop/coin2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "coin2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 53,
+   "h": 74
+  },
+  "mojo-prop/collectibles": {
+   "file": "assets/db/lib/mojo-prop/collectibles.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "collectibles",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 291,
+   "h": 110
+  },
+  "mojo-prop/collectibles2": {
+   "file": "assets/db/lib/mojo-prop/collectibles2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "collectibles2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 197,
+   "h": 135
+  },
+  "mojo-prop/cone-barrier": {
+   "file": "assets/db/lib/mojo-prop/cone-barrier.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cone",
+    "barrier",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 193,
+   "h": 113
+  },
+  "mojo-prop/cone-sheet15": {
+   "file": "assets/db/lib/mojo-prop/cone-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cone",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 85
+  },
+  "mojo-prop/cone2": {
+   "file": "assets/db/lib/mojo-prop/cone2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cone2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 86,
+   "h": 96
+  },
+  "mojo-prop/cone3": {
+   "file": "assets/db/lib/mojo-prop/cone3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "cone3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 69,
+   "h": 79
+  },
+  "mojo-prop/construction-swoptop": {
+   "file": "assets/db/lib/mojo-prop/construction-swoptop.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "construction",
+    "swoptop",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 196,
+   "h": 197
+  },
+  "mojo-prop/consumables": {
+   "file": "assets/db/lib/mojo-prop/consumables.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "consumables",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 229,
+   "h": 144
+  },
+  "mojo-prop/crate-sheet15": {
+   "file": "assets/db/lib/mojo-prop/crate-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crate",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 66,
+   "h": 72
+  },
+  "mojo-prop/crate2": {
+   "file": "assets/db/lib/mojo-prop/crate2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crate2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 89,
+   "h": 84
+  },
+  "mojo-prop/crate3": {
+   "file": "assets/db/lib/mojo-prop/crate3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crate3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 194,
+   "h": 215
+  },
+  "mojo-prop/crate4": {
+   "file": "assets/db/lib/mojo-prop/crate4.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crate4",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 197,
+   "h": 190
+  },
+  "mojo-prop/crates": {
+   "file": "assets/db/lib/mojo-prop/crates.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crates",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 158,
+   "h": 144
+  },
+  "mojo-prop/crystal": {
+   "file": "assets/db/lib/mojo-prop/crystal.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crystal",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 44,
+   "h": 60
+  },
+  "mojo-prop/crystal-rocks": {
+   "file": "assets/db/lib/mojo-prop/crystal-rocks.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crystal",
+    "rocks",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 232,
+   "h": 214
+  },
+  "mojo-prop/crystal2": {
+   "file": "assets/db/lib/mojo-prop/crystal2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "crystal2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 205,
+   "h": 222
+  },
+  "mojo-prop/decal-flag-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-flag-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "flag",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 51,
+   "h": 71
+  },
+  "mojo-prop/decal-flame-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-flame-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "flame",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 102,
+   "h": 42
+  },
+  "mojo-prop/decal-heart-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-heart-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "heart",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 48,
+   "h": 47
+  },
+  "mojo-prop/decal-lightning-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-lightning-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "lightning",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 49,
+   "h": 71
+  },
+  "mojo-prop/decal-rainbow-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-rainbow-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "rainbow",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 79,
+   "h": 53
+  },
+  "mojo-prop/decal-star-1-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-star-1-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "star",
+    "1",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 27,
+   "h": 29
+  },
+  "mojo-prop/decal-star-2-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-star-2-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "star",
+    "2",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 27,
+   "h": 28
+  },
+  "mojo-prop/decal-star-3-sheet12": {
+   "file": "assets/db/lib/mojo-prop/decal-star-3-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "decal",
+    "star",
+    "3",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 29,
+   "h": 28
+  },
+  "mojo-prop/diamond": {
+   "file": "assets/db/lib/mojo-prop/diamond.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "diamond",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 188,
+   "h": 171
+  },
+  "mojo-prop/direction-sign": {
+   "file": "assets/db/lib/mojo-prop/direction-sign.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "direction",
+    "sign",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 156,
+   "h": 81
+  },
+  "mojo-prop/dock": {
+   "file": "assets/db/lib/mojo-prop/dock.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "dock",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 90,
+   "h": 69
+  },
+  "mojo-prop/dock-bridge": {
+   "file": "assets/db/lib/mojo-prop/dock-bridge.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "dock",
+    "bridge",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 242,
+   "h": 193
+  },
+  "mojo-prop/drill": {
+   "file": "assets/db/lib/mojo-prop/drill.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "drill",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 86,
+   "h": 87
+  },
+  "mojo-prop/engine": {
+   "file": "assets/db/lib/mojo-prop/engine.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "engine",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 96,
+   "h": 94
+  },
+  "mojo-prop/env-props": {
+   "file": "assets/db/lib/mojo-prop/env-props.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "env",
+    "props",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 375,
+   "h": 147
+  },
+  "mojo-prop/exhaust": {
+   "file": "assets/db/lib/mojo-prop/exhaust.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "exhaust",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 84
+  },
+  "mojo-prop/exhausts": {
+   "file": "assets/db/lib/mojo-prop/exhausts.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "exhausts",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 211,
+   "h": 151
+  },
+  "mojo-prop/face-panels": {
+   "file": "assets/db/lib/mojo-prop/face-panels.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "face",
+    "panels",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 177,
+   "h": 117
+  },
+  "mojo-prop/face-panels2": {
+   "file": "assets/db/lib/mojo-prop/face-panels2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "face",
+    "panels2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 98,
+   "h": 93
+  },
+  "mojo-prop/factory": {
+   "file": "assets/db/lib/mojo-prop/factory.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "factory",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 77,
+   "h": 77
+  },
+  "mojo-prop/fan": {
+   "file": "assets/db/lib/mojo-prop/fan.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fan",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 79,
+   "h": 98
+  },
+  "mojo-prop/fence": {
+   "file": "assets/db/lib/mojo-prop/fence.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fence",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 87,
+   "h": 39
+  },
+  "mojo-prop/fence-wood": {
+   "file": "assets/db/lib/mojo-prop/fence-wood.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fence",
+    "wood",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 218,
+   "h": 162
+  },
+  "mojo-prop/fence2": {
+   "file": "assets/db/lib/mojo-prop/fence2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fence2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 96,
+   "h": 57
+  },
+  "mojo-prop/fire-bowl": {
+   "file": "assets/db/lib/mojo-prop/fire-bowl.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fire",
+    "bowl",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 173,
+   "h": 222
+  },
+  "mojo-prop/flag-sheet15": {
+   "file": "assets/db/lib/mojo-prop/flag-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "flag",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 59,
+   "h": 73
+  },
+  "mojo-prop/flags": {
+   "file": "assets/db/lib/mojo-prop/flags.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "flags",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 59,
+   "h": 84
+  },
+  "mojo-prop/flower-cactus": {
+   "file": "assets/db/lib/mojo-prop/flower-cactus.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "flower",
+    "cactus",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 190,
+   "h": 216
+  },
+  "mojo-prop/fountain": {
+   "file": "assets/db/lib/mojo-prop/fountain.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fountain",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 214,
+   "h": 229
+  },
+  "mojo-prop/fountain-wall": {
+   "file": "assets/db/lib/mojo-prop/fountain-wall.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fountain",
+    "wall",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 231,
+   "h": 207
+  },
+  "mojo-prop/fuel-can": {
+   "file": "assets/db/lib/mojo-prop/fuel-can.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "fuel",
+    "can",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 46,
+   "h": 59
+  },
+  "mojo-prop/garage": {
+   "file": "assets/db/lib/mojo-prop/garage.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "garage",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 75,
+   "h": 70
+  },
+  "mojo-prop/garage2": {
+   "file": "assets/db/lib/mojo-prop/garage2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "garage2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 127,
+   "h": 103
+  },
+  "mojo-prop/gas-station": {
+   "file": "assets/db/lib/mojo-prop/gas-station.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "gas",
+    "station",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 132,
+   "h": 101
+  },
+  "mojo-prop/gear": {
+   "file": "assets/db/lib/mojo-prop/gear.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "gear",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 72,
+   "h": 77
+  },
+  "mojo-prop/gear-sheet03": {
+   "file": "assets/db/lib/mojo-prop/gear-sheet03.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "gear",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 56,
+   "h": 61
+  },
+  "mojo-prop/gear-sheet15": {
+   "file": "assets/db/lib/mojo-prop/gear-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "gear",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 64,
+   "h": 68
+  },
+  "mojo-prop/gem": {
+   "file": "assets/db/lib/mojo-prop/gem.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "gem",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 64,
+   "h": 71
+  },
+  "mojo-prop/golden-banana": {
+   "file": "assets/db/lib/mojo-prop/golden-banana.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "golden",
+    "banana",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 219,
+   "h": 201
+  },
+  "mojo-prop/gorilla": {
+   "file": "assets/db/lib/mojo-prop/gorilla.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "gorilla",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 201,
+   "h": 224
+  },
+  "mojo-prop/grass-tuft": {
+   "file": "assets/db/lib/mojo-prop/grass-tuft.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "grass",
+    "tuft",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 210,
+   "h": 175
+  },
+  "mojo-prop/hammer": {
+   "file": "assets/db/lib/mojo-prop/hammer.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "hammer",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 59,
+   "h": 63
+  },
+  "mojo-prop/hammer2": {
+   "file": "assets/db/lib/mojo-prop/hammer2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "hammer2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 105
+  },
+  "mojo-prop/hay-bale": {
+   "file": "assets/db/lib/mojo-prop/hay-bale.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "hay",
+    "bale",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 220,
+   "h": 210
+  },
+  "mojo-prop/hay-cart": {
+   "file": "assets/db/lib/mojo-prop/hay-cart.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "hay",
+    "cart",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 219,
+   "h": 186
+  },
+  "mojo-prop/haystack": {
+   "file": "assets/db/lib/mojo-prop/haystack.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "haystack",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 231,
+   "h": 224
+  },
+  "mojo-prop/haystack2": {
+   "file": "assets/db/lib/mojo-prop/haystack2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "haystack2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 219,
+   "h": 215
+  },
+  "mojo-prop/headlights": {
+   "file": "assets/db/lib/mojo-prop/headlights.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "headlights",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 172,
+   "h": 118
+  },
+  "mojo-prop/heart": {
+   "file": "assets/db/lib/mojo-prop/heart.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "heart",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 68
+  },
+  "mojo-prop/heart2": {
+   "file": "assets/db/lib/mojo-prop/heart2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "heart2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 181,
+   "h": 154
+  },
+  "mojo-prop/hill": {
+   "file": "assets/db/lib/mojo-prop/hill.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "hill",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 164,
+   "h": 81
+  },
+  "mojo-prop/horns": {
+   "file": "assets/db/lib/mojo-prop/horns.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "horns",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 73,
+   "h": 78
+  },
+  "mojo-prop/hospital": {
+   "file": "assets/db/lib/mojo-prop/hospital.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "hospital",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 77,
+   "h": 68
+  },
+  "mojo-prop/house": {
+   "file": "assets/db/lib/mojo-prop/house.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "house",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 65
+  },
+  "mojo-prop/hut": {
+   "file": "assets/db/lib/mojo-prop/hut.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "hut",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 221,
+   "h": 210
+  },
+  "mojo-prop/ice-block": {
+   "file": "assets/db/lib/mojo-prop/ice-block.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "ice",
+    "block",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 94,
+   "h": 76
+  },
+  "mojo-prop/ice-crystal": {
+   "file": "assets/db/lib/mojo-prop/ice-crystal.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "ice",
+    "crystal",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 216,
+   "h": 206
+  },
+  "mojo-prop/ice-crystals": {
+   "file": "assets/db/lib/mojo-prop/ice-crystals.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "ice",
+    "crystals",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 218,
+   "h": 220
+  },
+  "mojo-prop/igloo": {
+   "file": "assets/db/lib/mojo-prop/igloo.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "igloo",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 235,
+   "h": 180
+  },
+  "mojo-prop/invincibility": {
+   "file": "assets/db/lib/mojo-prop/invincibility.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "invincibility",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 77
+  },
+  "mojo-prop/jump-boost": {
+   "file": "assets/db/lib/mojo-prop/jump-boost.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "jump",
+    "boost",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 60,
+   "h": 73
+  },
+  "mojo-prop/jungle-fruit": {
+   "file": "assets/db/lib/mojo-prop/jungle-fruit.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "jungle",
+    "fruit",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 227,
+   "h": 213
+  },
+  "mojo-prop/lamp-post": {
+   "file": "assets/db/lib/mojo-prop/lamp-post.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lamp",
+    "post",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 18,
+   "h": 65
+  },
+  "mojo-prop/lamp-post2": {
+   "file": "assets/db/lib/mojo-prop/lamp-post2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lamp",
+    "post2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 90,
+   "h": 226
+  },
+  "mojo-prop/lantern-post": {
+   "file": "assets/db/lib/mojo-prop/lantern-post.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lantern",
+    "post",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 170,
+   "h": 208
+  },
+  "mojo-prop/lava-rock": {
+   "file": "assets/db/lib/mojo-prop/lava-rock.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lava",
+    "rock",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 242,
+   "h": 215
+  },
+  "mojo-prop/lava-track": {
+   "file": "assets/db/lib/mojo-prop/lava-track.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lava",
+    "track",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 140,
+   "h": 127
+  },
+  "mojo-prop/letter-a": {
+   "file": "assets/db/lib/mojo-prop/letter-a.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "letter",
+    "a",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 46,
+   "h": 54
+  },
+  "mojo-prop/letter-b": {
+   "file": "assets/db/lib/mojo-prop/letter-b.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "letter",
+    "b",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 41,
+   "h": 55
+  },
+  "mojo-prop/letter-c": {
+   "file": "assets/db/lib/mojo-prop/letter-c.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "letter",
+    "c",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 45,
+   "h": 55
+  },
+  "mojo-prop/level-markers": {
+   "file": "assets/db/lib/mojo-prop/level-markers.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "level",
+    "markers",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 293,
+   "h": 120
+  },
+  "mojo-prop/lighthouse": {
+   "file": "assets/db/lib/mojo-prop/lighthouse.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lighthouse",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 64,
+   "h": 78
+  },
+  "mojo-prop/lighthouse2": {
+   "file": "assets/db/lib/mojo-prop/lighthouse2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lighthouse2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 117,
+   "h": 117
+  },
+  "mojo-prop/lighthouse3": {
+   "file": "assets/db/lib/mojo-prop/lighthouse3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "lighthouse3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 194,
+   "h": 235
+  },
+  "mojo-prop/log2": {
+   "file": "assets/db/lib/mojo-prop/log2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "log2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 231,
+   "h": 177
+  },
+  "mojo-prop/logs": {
+   "file": "assets/db/lib/mojo-prop/logs.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "logs",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 222,
+   "h": 177
+  },
+  "mojo-prop/magnet": {
+   "file": "assets/db/lib/mojo-prop/magnet.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "magnet",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 85,
+   "h": 83
+  },
+  "mojo-prop/magnet2": {
+   "file": "assets/db/lib/mojo-prop/magnet2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "magnet2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 84
+  },
+  "mojo-prop/magnet3": {
+   "file": "assets/db/lib/mojo-prop/magnet3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "magnet3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 74,
+   "h": 71
+  },
+  "mojo-prop/market-stall": {
+   "file": "assets/db/lib/mojo-prop/market-stall.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "market",
+    "stall",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 215,
+   "h": 203
+  },
+  "mojo-prop/materials": {
+   "file": "assets/db/lib/mojo-prop/materials.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "materials",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 248,
+   "h": 136
+  },
+  "mojo-prop/medal-sheet15": {
+   "file": "assets/db/lib/mojo-prop/medal-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "medal",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 73,
+   "h": 102
+  },
+  "mojo-prop/mine-cart-cave": {
+   "file": "assets/db/lib/mojo-prop/mine-cart-cave.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mine",
+    "cart",
+    "cave",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 236,
+   "h": 210
+  },
+  "mojo-prop/mine-cave": {
+   "file": "assets/db/lib/mojo-prop/mine-cave.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mine",
+    "cave",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 243,
+   "h": 242
+  },
+  "mojo-prop/mission-items": {
+   "file": "assets/db/lib/mojo-prop/mission-items.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mission",
+    "items",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 307,
+   "h": 100
+  },
+  "mojo-prop/mod-bucket": {
+   "file": "assets/db/lib/mojo-prop/mod-bucket.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "bucket",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 108,
+   "h": 86
+  },
+  "mojo-prop/mod-cargo": {
+   "file": "assets/db/lib/mojo-prop/mod-cargo.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "cargo",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 105,
+   "h": 98
+  },
+  "mojo-prop/mod-chassis": {
+   "file": "assets/db/lib/mojo-prop/mod-chassis.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "chassis",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 113,
+   "h": 70
+  },
+  "mojo-prop/mod-crane": {
+   "file": "assets/db/lib/mojo-prop/mod-crane.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "crane",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 90,
+   "h": 101
+  },
+  "mojo-prop/mod-drill": {
+   "file": "assets/db/lib/mojo-prop/mod-drill.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "drill",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 109,
+   "h": 84
+  },
+  "mojo-prop/mod-ladder": {
+   "file": "assets/db/lib/mojo-prop/mod-ladder.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "ladder",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 98,
+   "h": 97
+  },
+  "mojo-prop/mod-mixer": {
+   "file": "assets/db/lib/mojo-prop/mod-mixer.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "mixer",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 90,
+   "h": 101
+  },
+  "mojo-prop/mod-rescue": {
+   "file": "assets/db/lib/mojo-prop/mod-rescue.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "rescue",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 100,
+   "h": 95
+  },
+  "mojo-prop/mod-rocket": {
+   "file": "assets/db/lib/mojo-prop/mod-rocket.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "rocket",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 93,
+   "h": 90
+  },
+  "mojo-prop/mod-swap": {
+   "file": "assets/db/lib/mojo-prop/mod-swap.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mod",
+    "swap",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 106,
+   "h": 77
+  },
+  "mojo-prop/monkey-orange": {
+   "file": "assets/db/lib/mojo-prop/monkey-orange.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "monkey",
+    "orange",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 195,
+   "h": 225
+  },
+  "mojo-prop/monkey-red": {
+   "file": "assets/db/lib/mojo-prop/monkey-red.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "monkey",
+    "red",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 202,
+   "h": 231
+  },
+  "mojo-prop/monkey-white": {
+   "file": "assets/db/lib/mojo-prop/monkey-white.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "monkey",
+    "white",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 178,
+   "h": 209
+  },
+  "mojo-prop/mossy-rock": {
+   "file": "assets/db/lib/mojo-prop/mossy-rock.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mossy",
+    "rock",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 215,
+   "h": 184
+  },
+  "mojo-prop/mossy-rocks": {
+   "file": "assets/db/lib/mojo-prop/mossy-rocks.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mossy",
+    "rocks",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 228,
+   "h": 208
+  },
+  "mojo-prop/mud-puddle": {
+   "file": "assets/db/lib/mojo-prop/mud-puddle.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mud",
+    "puddle",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 106,
+   "h": 46
+  },
+  "mojo-prop/multiplier": {
+   "file": "assets/db/lib/mojo-prop/multiplier.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "multiplier",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 79,
+   "h": 60
+  },
+  "mojo-prop/mushroom": {
+   "file": "assets/db/lib/mojo-prop/mushroom.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mushroom",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 205,
+   "h": 201
+  },
+  "mojo-prop/mushrooms": {
+   "file": "assets/db/lib/mojo-prop/mushrooms.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "mushrooms",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 201,
+   "h": 184
+  },
+  "mojo-prop/number-1": {
+   "file": "assets/db/lib/mojo-prop/number-1.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "number",
+    "1",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 29,
+   "h": 55
+  },
+  "mojo-prop/number-2": {
+   "file": "assets/db/lib/mojo-prop/number-2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "number",
+    "2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 40,
+   "h": 58
+  },
+  "mojo-prop/number-3": {
+   "file": "assets/db/lib/mojo-prop/number-3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "number",
+    "3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 39,
+   "h": 57
+  },
+  "mojo-prop/observatory": {
+   "file": "assets/db/lib/mojo-prop/observatory.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "observatory",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 118,
+   "h": 116
+  },
+  "mojo-prop/obstacles": {
+   "file": "assets/db/lib/mojo-prop/obstacles.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "obstacles",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 282,
+   "h": 142
+  },
+  "mojo-prop/oil-spill": {
+   "file": "assets/db/lib/mojo-prop/oil-spill.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "oil",
+    "spill",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 104,
+   "h": 68
+  },
+  "mojo-prop/package": {
+   "file": "assets/db/lib/mojo-prop/package.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "package",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 62,
+   "h": 62
+  },
+  "mojo-prop/paint-colors": {
+   "file": "assets/db/lib/mojo-prop/paint-colors.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "paint",
+    "colors",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 107,
+   "h": 81
+  },
+  "mojo-prop/palm": {
+   "file": "assets/db/lib/mojo-prop/palm.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "palm",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 199,
+   "h": 231
+  },
+  "mojo-prop/person-adult": {
+   "file": "assets/db/lib/mojo-prop/person-adult.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "person",
+    "adult",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 48,
+   "h": 77
+  },
+  "mojo-prop/playground": {
+   "file": "assets/db/lib/mojo-prop/playground.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "playground",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 86,
+   "h": 71
+  },
+  "mojo-prop/pond": {
+   "file": "assets/db/lib/mojo-prop/pond.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "pond",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 229,
+   "h": 194
+  },
+  "mojo-prop/pond2": {
+   "file": "assets/db/lib/mojo-prop/pond2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "pond2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 237,
+   "h": 189
+  },
+  "mojo-prop/potion": {
+   "file": "assets/db/lib/mojo-prop/potion.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "potion",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 184,
+   "h": 208
+  },
+  "mojo-prop/powerups": {
+   "file": "assets/db/lib/mojo-prop/powerups.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "powerups",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 228,
+   "h": 142
+  },
+  "mojo-prop/propellers": {
+   "file": "assets/db/lib/mojo-prop/propellers.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "propellers",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 183,
+   "h": 155
+  },
+  "mojo-prop/race-swoptop": {
+   "file": "assets/db/lib/mojo-prop/race-swoptop.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "race",
+    "swoptop",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 192,
+   "h": 166
+  },
+  "mojo-prop/ramp": {
+   "file": "assets/db/lib/mojo-prop/ramp.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "ramp",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 155,
+   "h": 104
+  },
+  "mojo-prop/road-barrier": {
+   "file": "assets/db/lib/mojo-prop/road-barrier.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "road",
+    "barrier",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 95,
+   "h": 70
+  },
+  "mojo-prop/rock": {
+   "file": "assets/db/lib/mojo-prop/rock.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rock",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 84
+  },
+  "mojo-prop/rock-cluster": {
+   "file": "assets/db/lib/mojo-prop/rock-cluster.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rock",
+    "cluster",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 75,
+   "h": 60
+  },
+  "mojo-prop/rock-grass": {
+   "file": "assets/db/lib/mojo-prop/rock-grass.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rock",
+    "grass",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 224,
+   "h": 168
+  },
+  "mojo-prop/rock-sheet15": {
+   "file": "assets/db/lib/mojo-prop/rock-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rock",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 72,
+   "h": 72
+  },
+  "mojo-prop/rocket-part": {
+   "file": "assets/db/lib/mojo-prop/rocket-part.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rocket",
+    "part",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 92,
+   "h": 93
+  },
+  "mojo-prop/rocks": {
+   "file": "assets/db/lib/mojo-prop/rocks.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rocks",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 225,
+   "h": 188
+  },
+  "mojo-prop/roofs": {
+   "file": "assets/db/lib/mojo-prop/roofs.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "roofs",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 120,
+   "h": 72
+  },
+  "mojo-prop/roofs-lights": {
+   "file": "assets/db/lib/mojo-prop/roofs-lights.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "roofs",
+    "lights",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 189,
+   "h": 111
+  },
+  "mojo-prop/rope-bridge": {
+   "file": "assets/db/lib/mojo-prop/rope-bridge.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rope",
+    "bridge",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 225,
+   "h": 212
+  },
+  "mojo-prop/rope-bridge2": {
+   "file": "assets/db/lib/mojo-prop/rope-bridge2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rope",
+    "bridge2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 227,
+   "h": 209
+  },
+  "mojo-prop/rowboat": {
+   "file": "assets/db/lib/mojo-prop/rowboat.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rowboat",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 221,
+   "h": 181
+  },
+  "mojo-prop/ruin-arch": {
+   "file": "assets/db/lib/mojo-prop/ruin-arch.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "ruin",
+    "arch",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 224,
+   "h": 204
+  },
+  "mojo-prop/ruin-pillar": {
+   "file": "assets/db/lib/mojo-prop/ruin-pillar.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "ruin",
+    "pillar",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 196,
+   "h": 219
+  },
+  "mojo-prop/school": {
+   "file": "assets/db/lib/mojo-prop/school.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "school",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 75
+  },
+  "mojo-prop/screwdriver": {
+   "file": "assets/db/lib/mojo-prop/screwdriver.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "screwdriver",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 72,
+   "h": 105
+  },
+  "mojo-prop/seats": {
+   "file": "assets/db/lib/mojo-prop/seats.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "seats",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 161,
+   "h": 81
+  },
+  "mojo-prop/shield": {
+   "file": "assets/db/lib/mojo-prop/shield.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "shield",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 67,
+   "h": 72
+  },
+  "mojo-prop/shield-sheet15": {
+   "file": "assets/db/lib/mojo-prop/shield-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "shield",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 90,
+   "h": 98
+  },
+  "mojo-prop/shop": {
+   "file": "assets/db/lib/mojo-prop/shop.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "shop",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 83,
+   "h": 70
+  },
+  "mojo-prop/side-panels": {
+   "file": "assets/db/lib/mojo-prop/side-panels.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "side",
+    "panels",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 105,
+   "h": 87
+  },
+  "mojo-prop/sign-arrow": {
+   "file": "assets/db/lib/mojo-prop/sign-arrow.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "arrow",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 49,
+   "h": 60
+  },
+  "mojo-prop/sign-arrow-wood": {
+   "file": "assets/db/lib/mojo-prop/sign-arrow-wood.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "arrow",
+    "wood",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 179,
+   "h": 211
+  },
+  "mojo-prop/sign-curve": {
+   "file": "assets/db/lib/mojo-prop/sign-curve.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "curve",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 78,
+   "h": 76
+  },
+  "mojo-prop/sign-left": {
+   "file": "assets/db/lib/mojo-prop/sign-left.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "left",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 198,
+   "h": 201
+  },
+  "mojo-prop/sign-left-sheet13": {
+   "file": "assets/db/lib/mojo-prop/sign-left-sheet13.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "left",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 71,
+   "h": 72
+  },
+  "mojo-prop/sign-right": {
+   "file": "assets/db/lib/mojo-prop/sign-right.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "right",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 199,
+   "h": 201
+  },
+  "mojo-prop/sign-right-sheet13": {
+   "file": "assets/db/lib/mojo-prop/sign-right-sheet13.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "right",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 74,
+   "h": 73
+  },
+  "mojo-prop/sign-speed": {
+   "file": "assets/db/lib/mojo-prop/sign-speed.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "speed",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 62,
+   "h": 70
+  },
+  "mojo-prop/sign-stop": {
+   "file": "assets/db/lib/mojo-prop/sign-stop.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "stop",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 64,
+   "h": 64
+  },
+  "mojo-prop/sign-wood": {
+   "file": "assets/db/lib/mojo-prop/sign-wood.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "wood",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 192,
+   "h": 217
+  },
+  "mojo-prop/sign-yield": {
+   "file": "assets/db/lib/mojo-prop/sign-yield.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sign",
+    "yield",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 57
+  },
+  "mojo-prop/signpost": {
+   "file": "assets/db/lib/mojo-prop/signpost.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "signpost",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 183,
+   "h": 215
+  },
+  "mojo-prop/sirens": {
+   "file": "assets/db/lib/mojo-prop/sirens.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sirens",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 191,
+   "h": 148
+  },
+  "mojo-prop/snow-tree": {
+   "file": "assets/db/lib/mojo-prop/snow-tree.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "snow",
+    "tree",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 187,
+   "h": 219
+  },
+  "mojo-prop/space-swoptop": {
+   "file": "assets/db/lib/mojo-prop/space-swoptop.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "space",
+    "swoptop",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 186,
+   "h": 170
+  },
+  "mojo-prop/special-parts": {
+   "file": "assets/db/lib/mojo-prop/special-parts.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "special",
+    "parts",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 188,
+   "h": 122
+  },
+  "mojo-prop/special-star": {
+   "file": "assets/db/lib/mojo-prop/special-star.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "special",
+    "star",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 61,
+   "h": 61
+  },
+  "mojo-prop/speed-boost2": {
+   "file": "assets/db/lib/mojo-prop/speed-boost2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "speed",
+    "boost2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 89,
+   "h": 65
+  },
+  "mojo-prop/spiral-stone": {
+   "file": "assets/db/lib/mojo-prop/spiral-stone.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "spiral",
+    "stone",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 180,
+   "h": 187
+  },
+  "mojo-prop/spoiler": {
+   "file": "assets/db/lib/mojo-prop/spoiler.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "spoiler",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 101,
+   "h": 64
+  },
+  "mojo-prop/spoilers": {
+   "file": "assets/db/lib/mojo-prop/spoilers.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "spoilers",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 192,
+   "h": 116
+  },
+  "mojo-prop/spray-paint": {
+   "file": "assets/db/lib/mojo-prop/spray-paint.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "spray",
+    "paint",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 112,
+   "h": 105
+  },
+  "mojo-prop/spring": {
+   "file": "assets/db/lib/mojo-prop/spring.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "spring",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 175,
+   "h": 201
+  },
+  "mojo-prop/stairs-stone": {
+   "file": "assets/db/lib/mojo-prop/stairs-stone.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stairs",
+    "stone",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 235,
+   "h": 171
+  },
+  "mojo-prop/star": {
+   "file": "assets/db/lib/mojo-prop/star.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "star",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 79,
+   "h": 79
+  },
+  "mojo-prop/star-sheet03": {
+   "file": "assets/db/lib/mojo-prop/star-sheet03.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "star",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 57,
+   "h": 57
+  },
+  "mojo-prop/star-sheet13": {
+   "file": "assets/db/lib/mojo-prop/star-sheet13.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "star",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 72
+  },
+  "mojo-prop/star-sheet15": {
+   "file": "assets/db/lib/mojo-prop/star-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "star",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 67
+  },
+  "mojo-prop/star2": {
+   "file": "assets/db/lib/mojo-prop/star2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "star2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 79,
+   "h": 83
+  },
+  "mojo-prop/star4": {
+   "file": "assets/db/lib/mojo-prop/star4.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "star4",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 177,
+   "h": 172
+  },
+  "mojo-prop/status-icons": {
+   "file": "assets/db/lib/mojo-prop/status-icons.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "status",
+    "icons",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 263,
+   "h": 113
+  },
+  "mojo-prop/stickers": {
+   "file": "assets/db/lib/mojo-prop/stickers.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stickers",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 115,
+   "h": 84
+  },
+  "mojo-prop/stone-arch": {
+   "file": "assets/db/lib/mojo-prop/stone-arch.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stone",
+    "arch",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 231,
+   "h": 214
+  },
+  "mojo-prop/stone-arch2": {
+   "file": "assets/db/lib/mojo-prop/stone-arch2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stone",
+    "arch2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 233,
+   "h": 135
+  },
+  "mojo-prop/stone-block": {
+   "file": "assets/db/lib/mojo-prop/stone-block.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stone",
+    "block",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 194,
+   "h": 205
+  },
+  "mojo-prop/stone-face-pillar": {
+   "file": "assets/db/lib/mojo-prop/stone-face-pillar.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stone",
+    "face",
+    "pillar",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 197,
+   "h": 219
+  },
+  "mojo-prop/street-lamp": {
+   "file": "assets/db/lib/mojo-prop/street-lamp.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "street",
+    "lamp",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 44,
+   "h": 88
+  },
+  "mojo-prop/stump": {
+   "file": "assets/db/lib/mojo-prop/stump.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stump",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 223,
+   "h": 168
+  },
+  "mojo-prop/stump2": {
+   "file": "assets/db/lib/mojo-prop/stump2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "stump2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 216,
+   "h": 173
+  },
+  "mojo-prop/sunflower": {
+   "file": "assets/db/lib/mojo-prop/sunflower.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "sunflower",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 186,
+   "h": 223
+  },
+  "mojo-prop/suspension": {
+   "file": "assets/db/lib/mojo-prop/suspension.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "suspension",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 54,
+   "h": 94
+  },
+  "mojo-prop/suspension-spring-sheet11": {
+   "file": "assets/db/lib/mojo-prop/suspension-spring-sheet11.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "suspension",
+    "spring",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 35,
+   "h": 100
+  },
+  "mojo-prop/swap-stand": {
+   "file": "assets/db/lib/mojo-prop/swap-stand.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "swap",
+    "stand",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 168,
+   "h": 146
+  },
+  "mojo-prop/swoptop-faces": {
+   "file": "assets/db/lib/mojo-prop/swoptop-faces.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "swoptop",
+    "faces",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 329,
+   "h": 112
+  },
+  "mojo-prop/swoptops-example": {
+   "file": "assets/db/lib/mojo-prop/swoptops-example.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "swoptops",
+    "example",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 276,
+   "h": 222
+  },
+  "mojo-prop/teddy": {
+   "file": "assets/db/lib/mojo-prop/teddy.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "teddy",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 53,
+   "h": 68
+  },
+  "mojo-prop/tent": {
+   "file": "assets/db/lib/mojo-prop/tent.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tent",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 229,
+   "h": 211
+  },
+  "mojo-prop/tiki-mask": {
+   "file": "assets/db/lib/mojo-prop/tiki-mask.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tiki",
+    "mask",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 186,
+   "h": 221
+  },
+  "mojo-prop/time-extend": {
+   "file": "assets/db/lib/mojo-prop/time-extend.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "time",
+    "extend",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 74,
+   "h": 80
+  },
+  "mojo-prop/tire-stack": {
+   "file": "assets/db/lib/mojo-prop/tire-stack.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tire",
+    "stack",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 97,
+   "h": 89
+  },
+  "mojo-prop/tires": {
+   "file": "assets/db/lib/mojo-prop/tires.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tires",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 183,
+   "h": 120
+  },
+  "mojo-prop/toolbox": {
+   "file": "assets/db/lib/mojo-prop/toolbox.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "toolbox",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 140,
+   "h": 114
+  },
+  "mojo-prop/tools": {
+   "file": "assets/db/lib/mojo-prop/tools.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tools",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 208,
+   "h": 150
+  },
+  "mojo-prop/tower": {
+   "file": "assets/db/lib/mojo-prop/tower.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tower",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 48,
+   "h": 78
+  },
+  "mojo-prop/town-house-sheet13": {
+   "file": "assets/db/lib/mojo-prop/town-house-sheet13.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "town",
+    "house",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 143,
+   "h": 94
+  },
+  "mojo-prop/town-square-sheet13": {
+   "file": "assets/db/lib/mojo-prop/town-square-sheet13.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "town",
+    "square",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 109,
+   "h": 97
+  },
+  "mojo-prop/track-curve": {
+   "file": "assets/db/lib/mojo-prop/track-curve.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "track",
+    "curve",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 130,
+   "h": 112
+  },
+  "mojo-prop/track-straight": {
+   "file": "assets/db/lib/mojo-prop/track-straight.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "track",
+    "straight",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 139,
+   "h": 92
+  },
+  "mojo-prop/track-tiles": {
+   "file": "assets/db/lib/mojo-prop/track-tiles.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "track",
+    "tiles",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 352,
+   "h": 142
+  },
+  "mojo-prop/traffic-light": {
+   "file": "assets/db/lib/mojo-prop/traffic-light.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "traffic",
+    "light",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 31,
+   "h": 63
+  },
+  "mojo-prop/traffic-light2": {
+   "file": "assets/db/lib/mojo-prop/traffic-light2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "traffic",
+    "light2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 31,
+   "h": 89
+  },
+  "mojo-prop/treasure-chest": {
+   "file": "assets/db/lib/mojo-prop/treasure-chest.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "treasure",
+    "chest",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 61,
+   "h": 69
+  },
+  "mojo-prop/treasure-map": {
+   "file": "assets/db/lib/mojo-prop/treasure-map.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "treasure",
+    "map",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 223,
+   "h": 188
+  },
+  "mojo-prop/tree-large": {
+   "file": "assets/db/lib/mojo-prop/tree-large.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tree",
+    "large",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 60,
+   "h": 73
+  },
+  "mojo-prop/tree-pine": {
+   "file": "assets/db/lib/mojo-prop/tree-pine.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tree",
+    "pine",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 170,
+   "h": 227
+  },
+  "mojo-prop/tree-round": {
+   "file": "assets/db/lib/mojo-prop/tree-round.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tree",
+    "round",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 199,
+   "h": 226
+  },
+  "mojo-prop/tree-sheet15": {
+   "file": "assets/db/lib/mojo-prop/tree-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tree",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 62,
+   "h": 86
+  },
+  "mojo-prop/tree-small": {
+   "file": "assets/db/lib/mojo-prop/tree-small.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tree",
+    "small",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 47,
+   "h": 65
+  },
+  "mojo-prop/treehouse": {
+   "file": "assets/db/lib/mojo-prop/treehouse.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "treehouse",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 132,
+   "h": 112
+  },
+  "mojo-prop/tunnel": {
+   "file": "assets/db/lib/mojo-prop/tunnel.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tunnel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 148,
+   "h": 120
+  },
+  "mojo-prop/tunnel2": {
+   "file": "assets/db/lib/mojo-prop/tunnel2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "tunnel2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 120,
+   "h": 99
+  },
+  "mojo-prop/vine-bridge": {
+   "file": "assets/db/lib/mojo-prop/vine-bridge.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "vine",
+    "bridge",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 212,
+   "h": 211
+  },
+  "mojo-prop/volcano": {
+   "file": "assets/db/lib/mojo-prop/volcano.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "volcano",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 230,
+   "h": 221
+  },
+  "mojo-prop/wall-stone": {
+   "file": "assets/db/lib/mojo-prop/wall-stone.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wall",
+    "stone",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 216,
+   "h": 165
+  },
+  "mojo-prop/watchtower": {
+   "file": "assets/db/lib/mojo-prop/watchtower.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "watchtower",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 166,
+   "h": 235
+  },
+  "mojo-prop/water-tower": {
+   "file": "assets/db/lib/mojo-prop/water-tower.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "water",
+    "tower",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 197,
+   "h": 227
+  },
+  "mojo-prop/water-track": {
+   "file": "assets/db/lib/mojo-prop/water-track.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "water",
+    "track",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 138,
+   "h": 86
+  },
+  "mojo-prop/waterdrop-sheet15": {
+   "file": "assets/db/lib/mojo-prop/waterdrop-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "waterdrop",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 59,
+   "h": 80
+  },
+  "mojo-prop/waterfall": {
+   "file": "assets/db/lib/mojo-prop/waterfall.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "waterfall",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 240,
+   "h": 226
+  },
+  "mojo-prop/waterfall2": {
+   "file": "assets/db/lib/mojo-prop/waterfall2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "waterfall2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 237,
+   "h": 252
+  },
+  "mojo-prop/waterfall3": {
+   "file": "assets/db/lib/mojo-prop/waterfall3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "waterfall3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 232,
+   "h": 222
+  },
+  "mojo-prop/well-blue": {
+   "file": "assets/db/lib/mojo-prop/well-blue.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "well",
+    "blue",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 198,
+   "h": 232
+  },
+  "mojo-prop/well-red": {
+   "file": "assets/db/lib/mojo-prop/well-red.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "well",
+    "red",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 199,
+   "h": 232
+  },
+  "mojo-prop/wheel": {
+   "file": "assets/db/lib/mojo-prop/wheel.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wheel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 83,
+   "h": 97
+  },
+  "mojo-prop/wheel-sheet15": {
+   "file": "assets/db/lib/mojo-prop/wheel-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wheel",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 71
+  },
+  "mojo-prop/wheels": {
+   "file": "assets/db/lib/mojo-prop/wheels.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wheels",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 288,
+   "h": 162
+  },
+  "mojo-prop/windmill": {
+   "file": "assets/db/lib/mojo-prop/windmill.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "windmill",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 69,
+   "h": 77
+  },
+  "mojo-prop/windmill2": {
+   "file": "assets/db/lib/mojo-prop/windmill2.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "windmill2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 104,
+   "h": 118
+  },
+  "mojo-prop/windmill3": {
+   "file": "assets/db/lib/mojo-prop/windmill3.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "windmill3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 190,
+   "h": 231
+  },
+  "mojo-prop/windmill4": {
+   "file": "assets/db/lib/mojo-prop/windmill4.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "windmill4",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 177,
+   "h": 227
+  },
+  "mojo-prop/windshields-sheet12": {
+   "file": "assets/db/lib/mojo-prop/windshields-sheet12.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "windshields",
+    "sheet12",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 177,
+   "h": 114
+  },
+  "mojo-prop/workbench": {
+   "file": "assets/db/lib/mojo-prop/workbench.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "workbench",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 193,
+   "h": 159
+  },
+  "mojo-prop/wrench": {
+   "file": "assets/db/lib/mojo-prop/wrench.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wrench",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 71,
+   "h": 101
+  },
+  "mojo-prop/wrench-sheet03": {
+   "file": "assets/db/lib/mojo-prop/wrench-sheet03.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wrench",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 66,
+   "h": 60
+  },
+  "mojo-prop/wrench-sheet15": {
+   "file": "assets/db/lib/mojo-prop/wrench-sheet15.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wrench",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 64,
+   "h": 79
+  },
+  "mojo-prop/wrench-token": {
+   "file": "assets/db/lib/mojo-prop/wrench-token.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "wrench",
+    "token",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 72,
+   "h": 71
+  },
+  "mojo-tile/barrier": {
+   "file": "assets/db/lib/mojo-tile/barrier.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "barrier",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 48
+  },
+  "mojo-tile/blueprint": {
+   "file": "assets/db/lib/mojo-tile/blueprint.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "blueprint",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 51
+  },
+  "mojo-tile/boulder": {
+   "file": "assets/db/lib/mojo-tile/boulder.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "boulder",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 78,
+   "h": 72
+  },
+  "mojo-tile/bouncy": {
+   "file": "assets/db/lib/mojo-tile/bouncy.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "bouncy",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/boxes": {
+   "file": "assets/db/lib/mojo-tile/boxes.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "boxes",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 70
+  },
+  "mojo-tile/bush": {
+   "file": "assets/db/lib/mojo-tile/bush.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "bush",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 77,
+   "h": 63
+  },
+  "mojo-tile/button-blue": {
+   "file": "assets/db/lib/mojo-tile/button-blue.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "button",
+    "blue",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 66,
+   "h": 57
+  },
+  "mojo-tile/button-red": {
+   "file": "assets/db/lib/mojo-tile/button-red.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "button",
+    "red",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 65,
+   "h": 56
+  },
+  "mojo-tile/cart": {
+   "file": "assets/db/lib/mojo-tile/cart.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "cart",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 63
+  },
+  "mojo-tile/checker-floor": {
+   "file": "assets/db/lib/mojo-tile/checker-floor.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "checker",
+    "floor",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/checkpoint": {
+   "file": "assets/db/lib/mojo-tile/checkpoint.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "checkpoint",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 52,
+   "h": 47
+  },
+  "mojo-tile/cone": {
+   "file": "assets/db/lib/mojo-tile/cone.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "cone",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 61,
+   "h": 67
+  },
+  "mojo-tile/conveyor-left": {
+   "file": "assets/db/lib/mojo-tile/conveyor-left.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "conveyor",
+    "left",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 72
+  },
+  "mojo-tile/conveyor-right": {
+   "file": "assets/db/lib/mojo-tile/conveyor-right.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "conveyor",
+    "right",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 72
+  },
+  "mojo-tile/crack": {
+   "file": "assets/db/lib/mojo-tile/crack.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "crack",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/crate": {
+   "file": "assets/db/lib/mojo-tile/crate.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "crate",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 72,
+   "h": 70
+  },
+  "mojo-tile/crate-move": {
+   "file": "assets/db/lib/mojo-tile/crate-move.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "crate",
+    "move",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 68,
+   "h": 69
+  },
+  "mojo-tile/day-night": {
+   "file": "assets/db/lib/mojo-tile/day-night.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "day",
+    "night",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/deep-water": {
+   "file": "assets/db/lib/mojo-tile/deep-water.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "deep",
+    "water",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 76
+  },
+  "mojo-tile/dirt": {
+   "file": "assets/db/lib/mojo-tile/dirt.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "dirt",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/door-closed": {
+   "file": "assets/db/lib/mojo-tile/door-closed.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "door",
+    "closed",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 61,
+   "h": 71
+  },
+  "mojo-tile/door-open": {
+   "file": "assets/db/lib/mojo-tile/door-open.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "door",
+    "open",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 66,
+   "h": 67
+  },
+  "mojo-tile/elevator": {
+   "file": "assets/db/lib/mojo-tile/elevator.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "elevator",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 63
+  },
+  "mojo-tile/fallen-tree": {
+   "file": "assets/db/lib/mojo-tile/fallen-tree.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "fallen",
+    "tree",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 85,
+   "h": 65
+  },
+  "mojo-tile/falling-rocks": {
+   "file": "assets/db/lib/mojo-tile/falling-rocks.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "falling",
+    "rocks",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 74,
+   "h": 75
+  },
+  "mojo-tile/fence": {
+   "file": "assets/db/lib/mojo-tile/fence.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "fence",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 85,
+   "h": 59
+  },
+  "mojo-tile/finish": {
+   "file": "assets/db/lib/mojo-tile/finish.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "finish",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 53,
+   "h": 52
+  },
+  "mojo-tile/fire": {
+   "file": "assets/db/lib/mojo-tile/fire.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "fire",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 85,
+   "h": 79
+  },
+  "mojo-tile/fog": {
+   "file": "assets/db/lib/mojo-tile/fog.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "fog",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 73
+  },
+  "mojo-tile/fuel": {
+   "file": "assets/db/lib/mojo-tile/fuel.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "fuel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 38,
+   "h": 44
+  },
+  "mojo-tile/gate-closed": {
+   "file": "assets/db/lib/mojo-tile/gate-closed.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "gate",
+    "closed",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 67,
+   "h": 60
+  },
+  "mojo-tile/gate-open": {
+   "file": "assets/db/lib/mojo-tile/gate-open.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "gate",
+    "open",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 69,
+   "h": 59
+  },
+  "mojo-tile/grass": {
+   "file": "assets/db/lib/mojo-tile/grass.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "grass",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/hint": {
+   "file": "assets/db/lib/mojo-tile/hint.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "hint",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 32,
+   "h": 49
+  },
+  "mojo-tile/ice": {
+   "file": "assets/db/lib/mojo-tile/ice.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "ice",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/ice-patch": {
+   "file": "assets/db/lib/mojo-tile/ice-patch.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "ice",
+    "patch",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 73
+  },
+  "mojo-tile/ice-slide": {
+   "file": "assets/db/lib/mojo-tile/ice-slide.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "ice",
+    "slide",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/if-color": {
+   "file": "assets/db/lib/mojo-tile/if-color.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "if",
+    "color",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 72
+  },
+  "mojo-tile/if-item": {
+   "file": "assets/db/lib/mojo-tile/if-item.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "if",
+    "item",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 72
+  },
+  "mojo-tile/if-number": {
+   "file": "assets/db/lib/mojo-tile/if-number.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "if",
+    "number",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 72
+  },
+  "mojo-tile/indoor-floor": {
+   "file": "assets/db/lib/mojo-tile/indoor-floor.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "indoor",
+    "floor",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/lava": {
+   "file": "assets/db/lib/mojo-tile/lava.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "lava",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 83,
+   "h": 76
+  },
+  "mojo-tile/lever": {
+   "file": "assets/db/lib/mojo-tile/lever.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "lever",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 63,
+   "h": 77
+  },
+  "mojo-tile/log": {
+   "file": "assets/db/lib/mojo-tile/log.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "log",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 56
+  },
+  "mojo-tile/magic": {
+   "file": "assets/db/lib/mojo-tile/magic.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "magic",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 70
+  },
+  "mojo-tile/metal-floor": {
+   "file": "assets/db/lib/mojo-tile/metal-floor.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "metal",
+    "floor",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/mud": {
+   "file": "assets/db/lib/mojo-tile/mud.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "mud",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/mud-puddle": {
+   "file": "assets/db/lib/mojo-tile/mud-puddle.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "mud",
+    "puddle",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 83,
+   "h": 76
+  },
+  "mojo-tile/oil-spill": {
+   "file": "assets/db/lib/mojo-tile/oil-spill.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "oil",
+    "spill",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 76
+  },
+  "mojo-tile/oneway-down": {
+   "file": "assets/db/lib/mojo-tile/oneway-down.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "oneway",
+    "down",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 72
+  },
+  "mojo-tile/oneway-left": {
+   "file": "assets/db/lib/mojo-tile/oneway-left.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "oneway",
+    "left",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 72
+  },
+  "mojo-tile/oneway-right": {
+   "file": "assets/db/lib/mojo-tile/oneway-right.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "oneway",
+    "right",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 72
+  },
+  "mojo-tile/oneway-up": {
+   "file": "assets/db/lib/mojo-tile/oneway-up.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "oneway",
+    "up",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 72
+  },
+  "mojo-tile/pavement": {
+   "file": "assets/db/lib/mojo-tile/pavement.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "pavement",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/pressure-plate": {
+   "file": "assets/db/lib/mojo-tile/pressure-plate.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "pressure",
+    "plate",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/question-letter": {
+   "file": "assets/db/lib/mojo-tile/question-letter.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "question",
+    "letter",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 61,
+   "h": 23
+  },
+  "mojo-tile/question-math": {
+   "file": "assets/db/lib/mojo-tile/question-math.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "question",
+    "math",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 58,
+   "h": 25
+  },
+  "mojo-tile/quicksand": {
+   "file": "assets/db/lib/mojo-tile/quicksand.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "quicksand",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 84,
+   "h": 78
+  },
+  "mojo-tile/random": {
+   "file": "assets/db/lib/mojo-tile/random.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "random",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 33,
+   "h": 50
+  },
+  "mojo-tile/road": {
+   "file": "assets/db/lib/mojo-tile/road.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "road",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/rock-large": {
+   "file": "assets/db/lib/mojo-tile/rock-large.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "rock",
+    "large",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 76,
+   "h": 68
+  },
+  "mojo-tile/rock-push": {
+   "file": "assets/db/lib/mojo-tile/rock-push.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "rock",
+    "push",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 72,
+   "h": 58
+  },
+  "mojo-tile/rock-small": {
+   "file": "assets/db/lib/mojo-tile/rock-small.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "rock",
+    "small",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 65,
+   "h": 47
+  },
+  "mojo-tile/rotating": {
+   "file": "assets/db/lib/mojo-tile/rotating.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "rotating",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 82,
+   "h": 70
+  },
+  "mojo-tile/sand": {
+   "file": "assets/db/lib/mojo-tile/sand.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "sand",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/sand-dune": {
+   "file": "assets/db/lib/mojo-tile/sand-dune.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "sand",
+    "dune",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 92,
+   "h": 75
+  },
+  "mojo-tile/snow": {
+   "file": "assets/db/lib/mojo-tile/snow.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "snow",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/snow-pile": {
+   "file": "assets/db/lib/mojo-tile/snow-pile.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "snow",
+    "pile",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 73
+  },
+  "mojo-tile/speed-boost": {
+   "file": "assets/db/lib/mojo-tile/speed-boost.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "speed",
+    "boost",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 70
+  },
+  "mojo-tile/start": {
+   "file": "assets/db/lib/mojo-tile/start.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "start",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 49,
+   "h": 52
+  },
+  "mojo-tile/stone": {
+   "file": "assets/db/lib/mojo-tile/stone.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "stone",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-tile/storm": {
+   "file": "assets/db/lib/mojo-tile/storm.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "storm",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 75
+  },
+  "mojo-tile/swamp": {
+   "file": "assets/db/lib/mojo-tile/swamp.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "swamp",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/switch": {
+   "file": "assets/db/lib/mojo-tile/switch.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "switch",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 55,
+   "h": 62
+  },
+  "mojo-tile/switch-off": {
+   "file": "assets/db/lib/mojo-tile/switch-off.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "switch",
+    "off",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 78,
+   "h": 70
+  },
+  "mojo-tile/switch-on": {
+   "file": "assets/db/lib/mojo-tile/switch-on.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "switch",
+    "on",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/teleport": {
+   "file": "assets/db/lib/mojo-tile/teleport.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "teleport",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 59,
+   "h": 46
+  },
+  "mojo-tile/teleport-in": {
+   "file": "assets/db/lib/mojo-tile/teleport-in.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "teleport",
+    "in",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 72
+  },
+  "mojo-tile/teleport-out": {
+   "file": "assets/db/lib/mojo-tile/teleport-out.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "teleport",
+    "out",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 72
+  },
+  "mojo-tile/time-bonus": {
+   "file": "assets/db/lib/mojo-tile/time-bonus.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "time",
+    "bonus",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 53,
+   "h": 47
+  },
+  "mojo-tile/timer": {
+   "file": "assets/db/lib/mojo-tile/timer.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "timer",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 70
+  },
+  "mojo-tile/toolbox": {
+   "file": "assets/db/lib/mojo-tile/toolbox.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "toolbox",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 64,
+   "h": 45
+  },
+  "mojo-tile/trap-hole": {
+   "file": "assets/db/lib/mojo-tile/trap-hole.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "trap",
+    "hole",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 70
+  },
+  "mojo-tile/tree": {
+   "file": "assets/db/lib/mojo-tile/tree.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "tree",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 66,
+   "h": 81
+  },
+  "mojo-tile/valve": {
+   "file": "assets/db/lib/mojo-tile/valve.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "valve",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 54,
+   "h": 64
+  },
+  "mojo-tile/wall": {
+   "file": "assets/db/lib/mojo-tile/wall.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "wall",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 84,
+   "h": 71
+  },
+  "mojo-tile/warp-pad": {
+   "file": "assets/db/lib/mojo-tile/warp-pad.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "warp",
+    "pad",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 60,
+   "h": 43
+  },
+  "mojo-tile/water": {
+   "file": "assets/db/lib/mojo-tile/water.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "water",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 84,
+   "h": 76
+  },
+  "mojo-tile/weight": {
+   "file": "assets/db/lib/mojo-tile/weight.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "weight",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 78,
+   "h": 72
+  },
+  "mojo-tile/wood-floor": {
+   "file": "assets/db/lib/mojo-tile/wood-floor.webp",
+   "cat": "mojo-tile",
+   "tags": [
+    "wood",
+    "floor",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 80,
+   "h": 76
+  },
+  "mojo-top/aerial-ladder": {
+   "file": "assets/db/lib/mojo-top/aerial-ladder.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "aerial",
+    "ladder",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 308,
+   "h": 351
+  },
+  "mojo-top/ambulance": {
+   "file": "assets/db/lib/mojo-top/ambulance.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "ambulance",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 342,
+   "h": 300
+  },
+  "mojo-top/balloon": {
+   "file": "assets/db/lib/mojo-top/balloon.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "balloon",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 303,
+   "h": 338
+  },
+  "mojo-top/base": {
+   "file": "assets/db/lib/mojo-top/base.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "base",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 300,
+   "h": 273
+  },
+  "mojo-top/base-sheet04": {
+   "file": "assets/db/lib/mojo-top/base-sheet04.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "base",
+    "sheet04",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 313,
+   "h": 256
+  },
+  "mojo-top/base-sheet05": {
+   "file": "assets/db/lib/mojo-top/base-sheet05.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "base",
+    "sheet05",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 331,
+   "h": 287
+  },
+  "mojo-top/base-sheet10": {
+   "file": "assets/db/lib/mojo-top/base-sheet10.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "base",
+    "sheet10",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 194,
+   "h": 193
+  },
+  "mojo-top/boat": {
+   "file": "assets/db/lib/mojo-top/boat.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "boat",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 349,
+   "h": 346
+  },
+  "mojo-top/bridge": {
+   "file": "assets/db/lib/mojo-top/bridge.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "bridge",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 352,
+   "h": 350
+  },
+  "mojo-top/camera": {
+   "file": "assets/db/lib/mojo-top/camera.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "camera",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 329,
+   "h": 328
+  },
+  "mojo-top/cargo-crane": {
+   "file": "assets/db/lib/mojo-top/cargo-crane.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "cargo",
+    "crane",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 347,
+   "h": 332
+  },
+  "mojo-top/chopper": {
+   "file": "assets/db/lib/mojo-top/chopper.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "chopper",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 354,
+   "h": 351
+  },
+  "mojo-top/crane": {
+   "file": "assets/db/lib/mojo-top/crane.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "crane",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 301,
+   "h": 357
+  },
+  "mojo-top/delivery": {
+   "file": "assets/db/lib/mojo-top/delivery.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "delivery",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 343,
+   "h": 304
+  },
+  "mojo-top/dozer": {
+   "file": "assets/db/lib/mojo-top/dozer.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "dozer",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 361,
+   "h": 331
+  },
+  "mojo-top/drill": {
+   "file": "assets/db/lib/mojo-top/drill.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "drill",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 322,
+   "h": 331
+  },
+  "mojo-top/drilling": {
+   "file": "assets/db/lib/mojo-top/drilling.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "drilling",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 307,
+   "h": 311
+  },
+  "mojo-top/dumper": {
+   "file": "assets/db/lib/mojo-top/dumper.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "dumper",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 360,
+   "h": 340
+  },
+  "mojo-top/farm": {
+   "file": "assets/db/lib/mojo-top/farm.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "farm",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 358,
+   "h": 285
+  },
+  "mojo-top/fire": {
+   "file": "assets/db/lib/mojo-top/fire.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "fire",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 310,
+   "h": 334
+  },
+  "mojo-top/forklift": {
+   "file": "assets/db/lib/mojo-top/forklift.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "forklift",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 367,
+   "h": 312
+  },
+  "mojo-top/fuel": {
+   "file": "assets/db/lib/mojo-top/fuel.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "fuel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 358,
+   "h": 320
+  },
+  "mojo-top/garbage": {
+   "file": "assets/db/lib/mojo-top/garbage.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "garbage",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 363,
+   "h": 323
+  },
+  "mojo-top/harvester": {
+   "file": "assets/db/lib/mojo-top/harvester.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "harvester",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 345,
+   "h": 312
+  },
+  "mojo-top/ice-cream": {
+   "file": "assets/db/lib/mojo-top/ice-cream.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "ice",
+    "cream",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 347,
+   "h": 323
+  },
+  "mojo-top/jet": {
+   "file": "assets/db/lib/mojo-top/jet.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "jet",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 354,
+   "h": 331
+  },
+  "mojo-top/jumper": {
+   "file": "assets/db/lib/mojo-top/jumper.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "jumper",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 359,
+   "h": 334
+  },
+  "mojo-top/lift": {
+   "file": "assets/db/lib/mojo-top/lift.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "lift",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 308,
+   "h": 350
+  },
+  "mojo-top/logging": {
+   "file": "assets/db/lib/mojo-top/logging.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "logging",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 341,
+   "h": 314
+  },
+  "mojo-top/mixer": {
+   "file": "assets/db/lib/mojo-top/mixer.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "mixer",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 332,
+   "h": 307
+  },
+  "mojo-top/monster": {
+   "file": "assets/db/lib/mojo-top/monster.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "monster",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 357,
+   "h": 346
+  },
+  "mojo-top/police": {
+   "file": "assets/db/lib/mojo-top/police.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "police",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 323,
+   "h": 309
+  },
+  "mojo-top/racer": {
+   "file": "assets/db/lib/mojo-top/racer.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "racer",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 336,
+   "h": 315
+  },
+  "mojo-top/recycling": {
+   "file": "assets/db/lib/mojo-top/recycling.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "recycling",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 323,
+   "h": 317
+  },
+  "mojo-top/rescue": {
+   "file": "assets/db/lib/mojo-top/rescue.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "rescue",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 344,
+   "h": 333
+  },
+  "mojo-top/rocket": {
+   "file": "assets/db/lib/mojo-top/rocket.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "rocket",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 335,
+   "h": 333
+  },
+  "mojo-top/satellite": {
+   "file": "assets/db/lib/mojo-top/satellite.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "satellite",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 304,
+   "h": 353
+  },
+  "mojo-top/searchlight": {
+   "file": "assets/db/lib/mojo-top/searchlight.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "searchlight",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 325,
+   "h": 352
+  },
+  "mojo-top/snow-plow": {
+   "file": "assets/db/lib/mojo-top/snow-plow.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "snow",
+    "plow",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 333,
+   "h": 329
+  },
+  "mojo-top/space-lab": {
+   "file": "assets/db/lib/mojo-top/space-lab.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "space",
+    "lab",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 321,
+   "h": 331
+  },
+  "mojo-top/submarine": {
+   "file": "assets/db/lib/mojo-top/submarine.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "submarine",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 330,
+   "h": 344
+  },
+  "mojo-top/sweeper": {
+   "file": "assets/db/lib/mojo-top/sweeper.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "sweeper",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 369,
+   "h": 309
+  },
+  "mojo-top/towing": {
+   "file": "assets/db/lib/mojo-top/towing.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "towing",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 345,
+   "h": 320
+  },
+  "mojo-top/tree-cutter": {
+   "file": "assets/db/lib/mojo-top/tree-cutter.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "tree",
+    "cutter",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 305,
+   "h": 316
+  },
+  "mojo-top/water": {
+   "file": "assets/db/lib/mojo-top/water.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "water",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 324,
+   "h": 329
+  },
+  "mojo-top/workshop": {
+   "file": "assets/db/lib/mojo-top/workshop.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "workshop",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 344,
+   "h": 338
+  },
+  "mojo-top/wrecking-ball": {
+   "file": "assets/db/lib/mojo-top/wrecking-ball.webp",
+   "cat": "mojo-top",
+   "tags": [
+    "wrecking",
+    "ball",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 355,
+   "h": 355
+  },
+  "mojo-ui/arrow-down": {
+   "file": "assets/db/lib/mojo-ui/arrow-down.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "arrow",
+    "down",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 38,
+   "h": 57
+  },
+  "mojo-ui/arrows": {
+   "file": "assets/db/lib/mojo-ui/arrows.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "arrows",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 180,
+   "h": 86
+  },
+  "mojo-ui/back-sheet15": {
+   "file": "assets/db/lib/mojo-ui/back-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "back",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 85,
+   "h": 85
+  },
+  "mojo-ui/blank-blue-sheet15": {
+   "file": "assets/db/lib/mojo-ui/blank-blue-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "blank",
+    "blue",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 129,
+   "h": 75
+  },
+  "mojo-ui/blank-green-sheet15": {
+   "file": "assets/db/lib/mojo-ui/blank-green-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "blank",
+    "green",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 149,
+   "h": 75
+  },
+  "mojo-ui/blank-red-sheet15": {
+   "file": "assets/db/lib/mojo-ui/blank-red-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "blank",
+    "red",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 135,
+   "h": 75
+  },
+  "mojo-ui/blank-yellow-sheet15": {
+   "file": "assets/db/lib/mojo-ui/blank-yellow-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "blank",
+    "yellow",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 129,
+   "h": 75
+  },
+  "mojo-ui/bo-dialogue-sheet13": {
+   "file": "assets/db/lib/mojo-ui/bo-dialogue-sheet13.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "bo",
+    "dialogue",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 141,
+   "h": 94
+  },
+  "mojo-ui/bo-dialogue-sheet15": {
+   "file": "assets/db/lib/mojo-ui/bo-dialogue-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "bo",
+    "dialogue",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 335,
+   "h": 293
+  },
+  "mojo-ui/bo-profile-sheet11": {
+   "file": "assets/db/lib/mojo-ui/bo-profile-sheet11.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "bo",
+    "profile",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 95,
+   "h": 96
+  },
+  "mojo-ui/bo-result-sheet15": {
+   "file": "assets/db/lib/mojo-ui/bo-result-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "bo",
+    "result",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 355,
+   "h": 232
+  },
+  "mojo-ui/btn-action": {
+   "file": "assets/db/lib/mojo-ui/btn-action.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "action",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 322,
+   "h": 110
+  },
+  "mojo-ui/btn-bantuan": {
+   "file": "assets/db/lib/mojo-ui/btn-bantuan.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "bantuan",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 65,
+   "h": 65
+  },
+  "mojo-ui/btn-berhenti": {
+   "file": "assets/db/lib/mojo-ui/btn-berhenti.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "berhenti",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 67,
+   "h": 65
+  },
+  "mojo-ui/btn-customize": {
+   "file": "assets/db/lib/mojo-ui/btn-customize.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "customize",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 136,
+   "h": 64
+  },
+  "mojo-ui/btn-garage": {
+   "file": "assets/db/lib/mojo-ui/btn-garage.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "garage",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 127,
+   "h": 64
+  },
+  "mojo-ui/btn-hapus": {
+   "file": "assets/db/lib/mojo-ui/btn-hapus.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "hapus",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 118,
+   "h": 93
+  },
+  "mojo-ui/btn-jalan": {
+   "file": "assets/db/lib/mojo-ui/btn-jalan.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "jalan",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 124,
+   "h": 93
+  },
+  "mojo-ui/btn-kembali": {
+   "file": "assets/db/lib/mojo-ui/btn-kembali.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "kembali",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 63,
+   "h": 60
+  },
+  "mojo-ui/btn-langkah": {
+   "file": "assets/db/lib/mojo-ui/btn-langkah.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "langkah",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 126,
+   "h": 91
+  },
+  "mojo-ui/btn-lanjut": {
+   "file": "assets/db/lib/mojo-ui/btn-lanjut.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "lanjut",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 56,
+   "h": 59
+  },
+  "mojo-ui/btn-main": {
+   "file": "assets/db/lib/mojo-ui/btn-main.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "main",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 334,
+   "h": 117
+  },
+  "mojo-ui/btn-missions": {
+   "file": "assets/db/lib/mojo-ui/btn-missions.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "missions",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 126,
+   "h": 64
+  },
+  "mojo-ui/btn-nav": {
+   "file": "assets/db/lib/mojo-ui/btn-nav.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "nav",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 230,
+   "h": 106
+  },
+  "mojo-ui/btn-pause": {
+   "file": "assets/db/lib/mojo-ui/btn-pause.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "pause",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 46,
+   "h": 59
+  },
+  "mojo-ui/btn-play": {
+   "file": "assets/db/lib/mojo-ui/btn-play.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "play",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 108,
+   "h": 60
+  },
+  "mojo-ui/btn-reset": {
+   "file": "assets/db/lib/mojo-ui/btn-reset.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "reset",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 122,
+   "h": 89
+  },
+  "mojo-ui/btn-settings": {
+   "file": "assets/db/lib/mojo-ui/btn-settings.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "btn",
+    "settings",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 277,
+   "h": 99
+  },
+  "mojo-ui/buttons": {
+   "file": "assets/db/lib/mojo-ui/buttons.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "buttons",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 223,
+   "h": 117
+  },
+  "mojo-ui/chevron-left-sheet15": {
+   "file": "assets/db/lib/mojo-ui/chevron-left-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "chevron",
+    "left",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 60,
+   "h": 80
+  },
+  "mojo-ui/chevron-right-sheet15": {
+   "file": "assets/db/lib/mojo-ui/chevron-right-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "chevron",
+    "right",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 59,
+   "h": 81
+  },
+  "mojo-ui/coin-counter": {
+   "file": "assets/db/lib/mojo-ui/coin-counter.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "coin",
+    "counter",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 217,
+   "h": 62
+  },
+  "mojo-ui/collection-panel-sheet15": {
+   "file": "assets/db/lib/mojo-ui/collection-panel-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "collection",
+    "panel",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 340,
+   "h": 215
+  },
+  "mojo-ui/confirm-sheet11": {
+   "file": "assets/db/lib/mojo-ui/confirm-sheet11.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "confirm",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 132,
+   "h": 99
+  },
+  "mojo-ui/customize-ui": {
+   "file": "assets/db/lib/mojo-ui/customize-ui.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "customize",
+    "ui",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 147,
+   "h": 92
+  },
+  "mojo-ui/drag-hand": {
+   "file": "assets/db/lib/mojo-ui/drag-hand.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "drag",
+    "hand",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 62,
+   "h": 57
+  },
+  "mojo-ui/drop-slot": {
+   "file": "assets/db/lib/mojo-ui/drop-slot.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "drop",
+    "slot",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 52,
+   "h": 54
+  },
+  "mojo-ui/energy-counter-sheet03": {
+   "file": "assets/db/lib/mojo-ui/energy-counter-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "energy",
+    "counter",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 97,
+   "h": 39
+  },
+  "mojo-ui/feedback-icons": {
+   "file": "assets/db/lib/mojo-ui/feedback-icons.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "feedback",
+    "icons",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 225,
+   "h": 77
+  },
+  "mojo-ui/forbidden": {
+   "file": "assets/db/lib/mojo-ui/forbidden.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "forbidden",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 47,
+   "h": 50
+  },
+  "mojo-ui/frames": {
+   "file": "assets/db/lib/mojo-ui/frames.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "frames",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 231,
+   "h": 120
+  },
+  "mojo-ui/garage-sheet11": {
+   "file": "assets/db/lib/mojo-ui/garage-sheet11.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "garage",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 178,
+   "h": 110
+  },
+  "mojo-ui/garage-ui2": {
+   "file": "assets/db/lib/mojo-ui/garage-ui2.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "garage",
+    "ui2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 130,
+   "h": 85
+  },
+  "mojo-ui/hint-panel-sheet03": {
+   "file": "assets/db/lib/mojo-ui/hint-panel-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "hint",
+    "panel",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 88,
+   "h": 52
+  },
+  "mojo-ui/home-sheet15": {
+   "file": "assets/db/lib/mojo-ui/home-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "home",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 114,
+   "h": 87
+  },
+  "mojo-ui/hud": {
+   "file": "assets/db/lib/mojo-ui/hud.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "hud",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 287,
+   "h": 94
+  },
+  "mojo-ui/ico-audio": {
+   "file": "assets/db/lib/mojo-ui/ico-audio.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "audio",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 49,
+   "h": 47
+  },
+  "mojo-ui/ico-bahasa": {
+   "file": "assets/db/lib/mojo-ui/ico-bahasa.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "bahasa",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 41,
+   "h": 43
+  },
+  "mojo-ui/ico-bengkel": {
+   "file": "assets/db/lib/mojo-ui/ico-bengkel.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "bengkel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 46,
+   "h": 50
+  },
+  "mojo-ui/ico-episode": {
+   "file": "assets/db/lib/mojo-ui/ico-episode.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "episode",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 49,
+   "h": 43
+  },
+  "mojo-ui/ico-home": {
+   "file": "assets/db/lib/mojo-ui/ico-home.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "home",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 50,
+   "h": 50
+  },
+  "mojo-ui/ico-info": {
+   "file": "assets/db/lib/mojo-ui/ico-info.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "info",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 39,
+   "h": 43
+  },
+  "mojo-ui/ico-keluar": {
+   "file": "assets/db/lib/mojo-ui/ico-keluar.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "keluar",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 42,
+   "h": 45
+  },
+  "mojo-ui/ico-koleksi": {
+   "file": "assets/db/lib/mojo-ui/ico-koleksi.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "koleksi",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 49,
+   "h": 49
+  },
+  "mojo-ui/ico-orangtua": {
+   "file": "assets/db/lib/mojo-ui/ico-orangtua.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "orangtua",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 49,
+   "h": 43
+  },
+  "mojo-ui/ico-pengaturan": {
+   "file": "assets/db/lib/mojo-ui/ico-pengaturan.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "pengaturan",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 46,
+   "h": 50
+  },
+  "mojo-ui/ico-peta": {
+   "file": "assets/db/lib/mojo-ui/ico-peta.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ico",
+    "peta",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 51,
+   "h": 48
+  },
+  "mojo-ui/icons": {
+   "file": "assets/db/lib/mojo-ui/icons.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "icons",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 250,
+   "h": 116
+  },
+  "mojo-ui/info-panel-sheet03": {
+   "file": "assets/db/lib/mojo-ui/info-panel-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "info",
+    "panel",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 88,
+   "h": 52
+  },
+  "mojo-ui/item-counter-sheet03": {
+   "file": "assets/db/lib/mojo-ui/item-counter-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "item",
+    "counter",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 81,
+   "h": 39
+  },
+  "mojo-ui/level-select-sheet11": {
+   "file": "assets/db/lib/mojo-ui/level-select-sheet11.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "level",
+    "select",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 165,
+   "h": 110
+  },
+  "mojo-ui/level-select-sheet13": {
+   "file": "assets/db/lib/mojo-ui/level-select-sheet13.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "level",
+    "select",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 180,
+   "h": 85
+  },
+  "mojo-ui/life-hearts-sheet03": {
+   "file": "assets/db/lib/mojo-ui/life-hearts-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "life",
+    "hearts",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 123,
+   "h": 40
+  },
+  "mojo-ui/loading-sheet11": {
+   "file": "assets/db/lib/mojo-ui/loading-sheet11.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "loading",
+    "sheet11",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 134,
+   "h": 99
+  },
+  "mojo-ui/loading2": {
+   "file": "assets/db/lib/mojo-ui/loading2.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "loading2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 134,
+   "h": 91
+  },
+  "mojo-ui/logo": {
+   "file": "assets/db/lib/mojo-ui/logo.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "logo",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 176,
+   "h": 94
+  },
+  "mojo-ui/map-sheet15": {
+   "file": "assets/db/lib/mojo-ui/map-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "map",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 113,
+   "h": 87
+  },
+  "mojo-ui/map-ui": {
+   "file": "assets/db/lib/mojo-ui/map-ui.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "map",
+    "ui",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 150,
+   "h": 92
+  },
+  "mojo-ui/menu-buttons": {
+   "file": "assets/db/lib/mojo-ui/menu-buttons.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "menu",
+    "buttons",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 262,
+   "h": 98
+  },
+  "mojo-ui/mission-complete-sheet13": {
+   "file": "assets/db/lib/mojo-ui/mission-complete-sheet13.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "mission",
+    "complete",
+    "sheet13",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 133,
+   "h": 84
+  },
+  "mojo-ui/mission-panel": {
+   "file": "assets/db/lib/mojo-ui/mission-panel.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "mission",
+    "panel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 158,
+   "h": 110
+  },
+  "mojo-ui/mission-ui": {
+   "file": "assets/db/lib/mojo-ui/mission-ui.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "mission",
+    "ui",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 225,
+   "h": 104
+  },
+  "mojo-ui/next-sheet15": {
+   "file": "assets/db/lib/mojo-ui/next-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "next",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 89,
+   "h": 85
+  },
+  "mojo-ui/objective-panel-sheet03": {
+   "file": "assets/db/lib/mojo-ui/objective-panel-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "objective",
+    "panel",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 185,
+   "h": 106
+  },
+  "mojo-ui/oona-dialogue-sheet15": {
+   "file": "assets/db/lib/mojo-ui/oona-dialogue-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "oona",
+    "dialogue",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 334,
+   "h": 225
+  },
+  "mojo-ui/pause-menu": {
+   "file": "assets/db/lib/mojo-ui/pause-menu.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "pause",
+    "menu",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 129,
+   "h": 109
+  },
+  "mojo-ui/pause-menu2": {
+   "file": "assets/db/lib/mojo-ui/pause-menu2.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "pause",
+    "menu2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 102,
+   "h": 96
+  },
+  "mojo-ui/pause-menu3": {
+   "file": "assets/db/lib/mojo-ui/pause-menu3.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "pause",
+    "menu3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 112,
+   "h": 89
+  },
+  "mojo-ui/play-sheet15": {
+   "file": "assets/db/lib/mojo-ui/play-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "play",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 149,
+   "h": 87
+  },
+  "mojo-ui/progress-bar-sheet03": {
+   "file": "assets/db/lib/mojo-ui/progress-bar-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "progress",
+    "bar",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 221,
+   "h": 33
+  },
+  "mojo-ui/progress-green-sheet15": {
+   "file": "assets/db/lib/mojo-ui/progress-green-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "progress",
+    "green",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 242,
+   "h": 37
+  },
+  "mojo-ui/progress-red-sheet15": {
+   "file": "assets/db/lib/mojo-ui/progress-red-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "progress",
+    "red",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 242,
+   "h": 40
+  },
+  "mojo-ui/progress-yellow-sheet15": {
+   "file": "assets/db/lib/mojo-ui/progress-yellow-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "progress",
+    "yellow",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 241,
+   "h": 36
+  },
+  "mojo-ui/pulse": {
+   "file": "assets/db/lib/mojo-ui/pulse.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "pulse",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 57,
+   "h": 58
+  },
+  "mojo-ui/reference-customize-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-customize-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "customize",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 404,
+   "h": 338
+  },
+  "mojo-ui/reference-gameplay-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-gameplay-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "gameplay",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 434,
+   "h": 338
+  },
+  "mojo-ui/reference-garage-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-garage-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "garage",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 404,
+   "h": 370
+  },
+  "mojo-ui/reference-level-select-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-level-select-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "level",
+    "select",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 279,
+   "h": 370
+  },
+  "mojo-ui/reference-main-menu-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-main-menu-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "main",
+    "menu",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 427,
+   "h": 370
+  },
+  "mojo-ui/reference-map-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-map-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "map",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 373,
+   "h": 370
+  },
+  "mojo-ui/reference-pause-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-pause-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "pause",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 281,
+   "h": 338
+  },
+  "mojo-ui/reference-result-sheet16": {
+   "file": "assets/db/lib/mojo-ui/reference-result-sheet16.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reference",
+    "result",
+    "sheet16",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 377,
+   "h": 338
+  },
+  "mojo-ui/reward-panel": {
+   "file": "assets/db/lib/mojo-ui/reward-panel.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "reward",
+    "panel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 137,
+   "h": 108
+  },
+  "mojo-ui/ring": {
+   "file": "assets/db/lib/mojo-ui/ring.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ring",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 52,
+   "h": 56
+  },
+  "mojo-ui/ripple": {
+   "file": "assets/db/lib/mojo-ui/ripple.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "ripple",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 51,
+   "h": 60
+  },
+  "mojo-ui/settings-panel": {
+   "file": "assets/db/lib/mojo-ui/settings-panel.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "settings",
+    "panel",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 154,
+   "h": 110
+  },
+  "mojo-ui/settings-sheet15": {
+   "file": "assets/db/lib/mojo-ui/settings-sheet15.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "settings",
+    "sheet15",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 114,
+   "h": 87
+  },
+  "mojo-ui/sliders": {
+   "file": "assets/db/lib/mojo-ui/sliders.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "sliders",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 218,
+   "h": 115
+  },
+  "mojo-ui/star-0": {
+   "file": "assets/db/lib/mojo-ui/star-0.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "star",
+    "0",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 45,
+   "h": 44
+  },
+  "mojo-ui/star-1": {
+   "file": "assets/db/lib/mojo-ui/star-1.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "star",
+    "1",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 42,
+   "h": 42
+  },
+  "mojo-ui/star-2": {
+   "file": "assets/db/lib/mojo-ui/star-2.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "star",
+    "2",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 42,
+   "h": 42
+  },
+  "mojo-ui/star-2b": {
+   "file": "assets/db/lib/mojo-ui/star-2b.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "star",
+    "2b",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 43,
+   "h": 43
+  },
+  "mojo-ui/star-3": {
+   "file": "assets/db/lib/mojo-ui/star-3.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "star",
+    "3",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 51,
+   "h": 48
+  },
+  "mojo-ui/star-counter": {
+   "file": "assets/db/lib/mojo-ui/star-counter.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "star",
+    "counter",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 137,
+   "h": 53
+  },
+  "mojo-ui/step-counter-sheet03": {
+   "file": "assets/db/lib/mojo-ui/step-counter-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "step",
+    "counter",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 85,
+   "h": 39
+  },
+  "mojo-ui/success-panel-sheet03": {
+   "file": "assets/db/lib/mojo-ui/success-panel-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "success",
+    "panel",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 88,
+   "h": 52
+  },
+  "mojo-ui/tap-hand": {
+   "file": "assets/db/lib/mojo-ui/tap-hand.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "tap",
+    "hand",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 42,
+   "h": 57
+  },
+  "mojo-ui/timer-sheet03": {
+   "file": "assets/db/lib/mojo-ui/timer-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "timer",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 90,
+   "h": 40
+  },
+  "mojo-ui/upgrade-token": {
+   "file": "assets/db/lib/mojo-ui/upgrade-token.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "upgrade",
+    "token",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 77,
+   "h": 84
+  },
+  "mojo-ui/warning-panel-sheet03": {
+   "file": "assets/db/lib/mojo-ui/warning-panel-sheet03.webp",
+   "cat": "mojo-ui",
+   "tags": [
+    "warning",
+    "panel",
+    "sheet03",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheets 2026-09-30",
+   "w": 88,
+   "h": 52
+  },
   "nature/cherry-blossom": {
    "file": "assets/db/lib/nature/cherry-blossom.webp",
    "cat": "nature",
@@ -13509,15 +22147,15 @@
    "tags": [
     "andrea",
     "doria",
-    "liner",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#16",
-   "w": 290,
-   "h": 136,
-   "psnr": 44.6
+   "source": "legend-side-hq-2.png#7",
+   "w": 487,
+   "h": 244,
+   "psnr": 44.4
   },
   "tk-legend-side/andrea-gail": {
    "file": "assets/db/lib/tk-legend-side/andrea-gail.webp",
@@ -13525,47 +22163,45 @@
    "tags": [
     "andrea",
     "gail",
-    "fishing",
-    "boat",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#23",
-   "w": 261,
-   "h": 168,
-   "psnr": 44.4
+   "source": "legend-side-hq-3.png#5",
+   "w": 478,
+   "h": 279,
+   "psnr": 44.6
   },
   "tk-legend-side/bismarck": {
    "file": "assets/db/lib/tk-legend-side/bismarck.webp",
    "cat": "tk-legend-side",
    "tags": [
     "bismarck",
-    "navy",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#12",
-   "w": 299,
-   "h": 134,
-   "psnr": 44.4
+   "source": "legend-side-hq-2.png#3",
+   "w": 497,
+   "h": 252,
+   "psnr": 44.7
   },
   "tk-legend-side/carpathia": {
    "file": "assets/db/lib/tk-legend-side/carpathia.webp",
    "cat": "tk-legend-side",
    "tags": [
     "carpathia",
-    "liner",
-    "rescue",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#22",
-   "w": 291,
-   "h": 142,
-   "psnr": 44.7
+   "source": "legend-side-hq-3.png#4",
+   "w": 504,
+   "h": 279,
+   "psnr": 44.9
   },
   "tk-legend-side/costa-concordia": {
    "file": "assets/db/lib/tk-legend-side/costa-concordia.webp",
@@ -13573,15 +22209,15 @@
    "tags": [
     "costa",
     "concordia",
-    "cruise",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#24",
-   "w": 294,
-   "h": 145,
-   "psnr": 43.9
+   "source": "legend-side-hq-3.png#6",
+   "w": 504,
+   "h": 252,
+   "psnr": 44.4
   },
   "tk-legend-side/dona-paz": {
    "file": "assets/db/lib/tk-legend-side/dona-paz.webp",
@@ -13589,15 +22225,15 @@
    "tags": [
     "dona",
     "paz",
-    "ferry",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#18",
-   "w": 295,
-   "h": 129,
-   "psnr": 44.3
+   "source": "legend-side-hq-3.png#0",
+   "w": 502,
+   "h": 244,
+   "psnr": 44.4
   },
   "tk-legend-side/edmund-fitzgerald": {
    "file": "assets/db/lib/tk-legend-side/edmund-fitzgerald.webp",
@@ -13605,16 +22241,15 @@
    "tags": [
     "edmund",
     "fitzgerald",
-    "cargo",
-    "freighter",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#17",
-   "w": 287,
-   "h": 125,
-   "psnr": 44.5
+   "source": "legend-side-hq-2.png#8",
+   "w": 493,
+   "h": 236,
+   "psnr": 44.9
   },
   "tk-legend-side/empress-of-ireland": {
    "file": "assets/db/lib/tk-legend-side/empress-of-ireland.webp",
@@ -13623,31 +22258,46 @@
     "empress",
     "of",
     "ireland",
-    "liner",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#8",
-   "w": 290,
-   "h": 157,
-   "psnr": 44.8
+   "source": "legend-side-hq-1.png#8",
+   "w": 481,
+   "h": 240,
+   "psnr": 44.4
   },
   "tk-legend-side/endurance": {
    "file": "assets/db/lib/tk-legend-side/endurance.webp",
    "cat": "tk-legend-side",
    "tags": [
     "endurance",
-    "sailing",
-    "explorer",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#21",
-   "w": 261,
-   "h": 172,
-   "psnr": 44.0
+   "source": "legend-side-hq-3.png#3",
+   "w": 480,
+   "h": 279,
+   "psnr": 44.1
+  },
+  "tk-legend-side/great-eastern": {
+   "file": "assets/db/lib/tk-legend-side/great-eastern.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "great",
+    "eastern",
+    "side-view",
+    "ship",
+    "legend",
+    "hq"
+   ],
+   "source": "legend-side-hq-3.png#8",
+   "w": 493,
+   "h": 246,
+   "psnr": 44.9
   },
   "tk-legend-side/hms-erebus": {
    "file": "assets/db/lib/tk-legend-side/hms-erebus.webp",
@@ -13655,16 +22305,15 @@
    "tags": [
     "hms",
     "erebus",
-    "sailing",
-    "explorer",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#3",
-   "w": 271,
-   "h": 166,
-   "psnr": 44.5
+   "source": "legend-side-hq-1.png#3",
+   "w": 443,
+   "h": 242,
+   "psnr": 44.2
   },
   "tk-legend-side/hms-hood": {
    "file": "assets/db/lib/tk-legend-side/hms-hood.webp",
@@ -13672,15 +22321,15 @@
    "tags": [
     "hms",
     "hood",
-    "navy",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#11",
-   "w": 290,
-   "h": 140,
-   "psnr": 44.6
+   "source": "legend-side-hq-2.png#2",
+   "w": 504,
+   "h": 273,
+   "psnr": 44.7
   },
   "tk-legend-side/hms-terror": {
    "file": "assets/db/lib/tk-legend-side/hms-terror.webp",
@@ -13688,16 +22337,15 @@
    "tags": [
     "hms",
     "terror",
-    "sailing",
-    "explorer",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#4",
-   "w": 260,
-   "h": 162,
-   "psnr": 44.2
+   "source": "legend-side-hq-1.png#4",
+   "w": 432,
+   "h": 241,
+   "psnr": 44.1
   },
   "tk-legend-side/hms-victory": {
    "file": "assets/db/lib/tk-legend-side/hms-victory.webp",
@@ -13705,45 +22353,45 @@
    "tags": [
     "hms",
     "victory",
-    "sailing",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#2",
-   "w": 272,
-   "h": 171,
-   "psnr": 44.2
+   "source": "legend-side-hq-1.png#2",
+   "w": 452,
+   "h": 256,
+   "psnr": 43.6
   },
   "tk-legend-side/kursk": {
    "file": "assets/db/lib/tk-legend-side/kursk.webp",
    "cat": "tk-legend-side",
    "tags": [
     "kursk",
-    "submarine",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#20",
-   "w": 292,
-   "h": 123,
-   "psnr": 44.7
+   "source": "legend-side-hq-3.png#2",
+   "w": 494,
+   "h": 243,
+   "psnr": 45.2
   },
   "tk-legend-side/lusitania": {
    "file": "assets/db/lib/tk-legend-side/lusitania.webp",
    "cat": "tk-legend-side",
    "tags": [
     "lusitania",
-    "liner",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#9",
-   "w": 291,
-   "h": 145,
-   "psnr": 44.7
+   "source": "legend-side-hq-2.png#0",
+   "w": 495,
+   "h": 272,
+   "psnr": 44.4
   },
   "tk-legend-side/mary-celeste": {
    "file": "assets/db/lib/tk-legend-side/mary-celeste.webp",
@@ -13751,15 +22399,15 @@
    "tags": [
     "mary",
     "celeste",
-    "sailing",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#5",
-   "w": 262,
-   "h": 165,
-   "psnr": 44.4
+   "source": "legend-side-hq-1.png#5",
+   "w": 429,
+   "h": 238,
+   "psnr": 44.2
   },
   "tk-legend-side/mary-rose": {
    "file": "assets/db/lib/tk-legend-side/mary-rose.webp",
@@ -13767,15 +22415,15 @@
    "tags": [
     "mary",
     "rose",
-    "sailing",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#0",
-   "w": 281,
-   "h": 162,
-   "psnr": 43.9
+   "source": "legend-side-hq-1.png#0",
+   "w": 423,
+   "h": 257,
+   "psnr": 44.4
   },
   "tk-legend-side/ms-estonia": {
    "file": "assets/db/lib/tk-legend-side/ms-estonia.webp",
@@ -13783,15 +22431,15 @@
    "tags": [
     "ms",
     "estonia",
-    "ferry",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#19",
-   "w": 290,
-   "h": 130,
-   "psnr": 43.9
+   "source": "legend-side-hq-3.png#1",
+   "w": 504,
+   "h": 247,
+   "psnr": 44.2
   },
   "tk-legend-side/queen-annes-revenge": {
    "file": "assets/db/lib/tk-legend-side/queen-annes-revenge.webp",
@@ -13800,16 +22448,15 @@
     "queen",
     "annes",
     "revenge",
-    "sailing",
-    "pirate",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#1",
-   "w": 268,
-   "h": 166,
-   "psnr": 44.5
+   "source": "legend-side-hq-1.png#1",
+   "w": 450,
+   "h": 255,
+   "psnr": 44.3
   },
   "tk-legend-side/ss-republic": {
    "file": "assets/db/lib/tk-legend-side/ss-republic.webp",
@@ -13817,15 +22464,15 @@
    "tags": [
     "ss",
     "republic",
-    "steamship",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#6",
-   "w": 283,
-   "h": 138,
-   "psnr": 44.7
+   "source": "legend-side-hq-1.png#6",
+   "w": 489,
+   "h": 225,
+   "psnr": 43.9
   },
   "tk-legend-side/ss-sultana": {
    "file": "assets/db/lib/tk-legend-side/ss-sultana.webp",
@@ -13833,16 +22480,15 @@
    "tags": [
     "ss",
     "sultana",
-    "paddle",
-    "steamer",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#7",
-   "w": 290,
-   "h": 140,
-   "psnr": 44.4
+   "source": "legend-side-hq-1.png#7",
+   "w": 483,
+   "h": 217,
+   "psnr": 43.8
   },
   "tk-legend-side/ss-waratah": {
    "file": "assets/db/lib/tk-legend-side/ss-waratah.webp",
@@ -13850,15 +22496,15 @@
    "tags": [
     "ss",
     "waratah",
-    "liner",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#10",
-   "w": 282,
-   "h": 149,
-   "psnr": 44.5
+   "source": "legend-side-hq-2.png#1",
+   "w": 499,
+   "h": 274,
+   "psnr": 44.8
   },
   "tk-legend-side/uss-arizona": {
    "file": "assets/db/lib/tk-legend-side/uss-arizona.webp",
@@ -13866,15 +22512,31 @@
    "tags": [
     "uss",
     "arizona",
-    "navy",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#13",
-   "w": 295,
-   "h": 148,
-   "psnr": 44.6
+   "source": "legend-side-hq-2.png#4",
+   "w": 496,
+   "h": 252,
+   "psnr": 45.0
+  },
+  "tk-legend-side/uss-enterprise": {
+   "file": "assets/db/lib/tk-legend-side/uss-enterprise.webp",
+   "cat": "tk-legend-side",
+   "tags": [
+    "uss",
+    "enterprise",
+    "side-view",
+    "ship",
+    "legend",
+    "hq"
+   ],
+   "source": "legend-side-hq-3.png#7",
+   "w": 504,
+   "h": 252,
+   "psnr": 44.9
   },
   "tk-legend-side/wilhelm-gustloff": {
    "file": "assets/db/lib/tk-legend-side/wilhelm-gustloff.webp",
@@ -13882,29 +22544,29 @@
    "tags": [
     "wilhelm",
     "gustloff",
-    "liner",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#15",
-   "w": 291,
-   "h": 138,
-   "psnr": 44.4
+   "source": "legend-side-hq-2.png#6",
+   "w": 490,
+   "h": 243,
+   "psnr": 44.2
   },
   "tk-legend-side/yamato": {
    "file": "assets/db/lib/tk-legend-side/yamato.webp",
    "cat": "tk-legend-side",
    "tags": [
     "yamato",
-    "navy",
     "side-view",
     "ship",
-    "legend"
+    "legend",
+    "hq"
    ],
-   "source": "legend-side-25.png#14",
-   "w": 297,
-   "h": 153,
+   "source": "legend-side-hq-2.png#5",
+   "w": 504,
+   "h": 252,
    "psnr": 44.8
   },
   "tk-legend-top/andrea-doria": {

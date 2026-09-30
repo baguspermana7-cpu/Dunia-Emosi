@@ -36,13 +36,36 @@
     if (pic) layers.push({ k: pic, x: 50, y: 64, s: 20, d: 1.15 })
     var ex = { theme: o.deck ? 'deck' : 'sea', blockArt: o.blk, par: o.par }
     if (o.item) ex.itemArt = o.item
+    if (o.drop) ex.dropArt = o.drop          // where the cargo goes (a bed, the carpenter's tools, the mother penguin …)
+    if (o.goalArt) ex.goalArt = o.goalArt    // the goal marker when the default (lighthouse / lifeboat) does not fit
     if (o.ice) ex.ice = o.ice
     if (o.max) ex.maxLen = o.max
-    return { id: id, title: title, type: 'grid', goal: mission, scene: o.scene, fact: o.fact, hint: o.hint, added: '2026-09-29',
+    if (o.fog) ex.fog = true                 // kabut: visual only, a lighthouse buoy ('L') reveals around it
+    if (o.topic) ex.qTopic = o.topic         // topic of the question chest / door tiles ('T' / 'P')
+    if (o.easy != null) ex.easy = !!o.easy   // a gentle mechanic intro keeps the forgiving stars
+    if (o.sulit) ex.sulit = o.sulit          // Tingkat Soal Sulit variant: { rows, tools (F/L/R + F1), par, dir? }
+    return { id: id, title: title, type: 'grid', goal: mission, scene: o.scene, fact: o.fact, hint: o.hint, added: o.added || '2026-09-29',
       story: [P(o.scene, o.say + ' Tahukah kamu? ' + o.fact, who, layers)],
       board: board(rows, o.dir || 'E', o.tools || (o.item ? ['N', 'E', 'S', 'W', 'P', 'D'] : null), ex) }
   }
   var PD = ['N', 'E', 'S', 'W', 'P', 'D'], PK = ['N', 'E', 'S', 'W', 'P']
+  /* mechanic boards (tk-grid 2.x, owner 2026-09-30: "more and more varied route-board levels"). Row characters on top of
+     the classic ones: '~' licin (slide on) · 'm'/'b'/'h' key merah/biru/hijau, 'M'/'B'/'H' its door · '1'..'9' flags
+     delivered in order · 'o'/'O', 'u'/'U' whirlpool pairs · 'L' lighthouse buoy (with fog) · 'T' question chest ·
+     'P' question door. o.ice[i].kind = 'whale' | 'patrol' | 'tug' | 'ice'. Each world gets ONE new mechanic: a gentle
+     board that teaches it by its layout (no text help, no route preview), then a harder one. Optional (`added`). */
+  function ml (id, title, mission, rows, o) { var c = {}; for (var k in o) c[k] = o[k]; c.added = '2026-09-30'; return gl(id, title, mission, rows, c) }
+  // every non-final lanes run: collisions, 2 Soal buoys and 1 lighthouse gate ask questions (playtest 2026-09-30: some runs
+  // asked none), and it lasts ~50 s. lengthScale from tk-lanes' section lengths and cruising speed (d1 150, d2 170 units/s).
+  var LANE_LEN = { open: 800, sparse: 1300, more: 1400, narrow: 1300, dense: 1500 }, LANE_V = [150, 170, 190]
+  function laneFit (lv) {
+    var secs = lv.sections || ['open', 'sparse', 'more', 'narrow', 'dense'], len = 0
+    secs.forEach(function (k) { len += LANE_LEN[k] || 1300 })
+    lv.lengthScale = Math.round(52 * LANE_V[(lv.difficulty || 1) - 1] / len * 10) / 10
+    lv.questions = { on: ['collide', 'buoy', 'gate'], buoys: 2, gates: 1, count: (lv.questions && lv.questions.count) || 2 }
+    return lv
+  }
+  function path (pts) { return pts.map(function (p) { return { x: p[0], y: p[1] } }) }
 
   /* ── World 0: Timmy's bedroom (tutorial + time corridor) ───────────────── */
   var INTRO = [
@@ -71,7 +94,11 @@
         { scene: 'bedroom-night', who: 'Timmy', say: 'Aduh, bendera perahu mainanku jatuh ke air! Ayo ambil dulu.', item: 'game/flag-red', tools: PK,
           blk: ['tk-prop/books-ocean', 'game/crate-wood', 'tk-legend/journal-book'], par: 6,
           fact: 'Kapal sungguhan memasang bendera supaya kapal lain tahu dari negara mana ia datang.', hint: 'Ambil bendera dulu, lalu ke mercusuar.' }),
-      { id: 'k4', title: 'Lorong Waktu', type: 'quiz', domain: 'logika', count: 3, scene: 'time-tunnel', goal: 'Buka lorong waktu dengan menjawab 3 teka-teki!' }
+      ml('k6', 'Peti Mainan', 'Lewati peti tanya, lalu bawa perahu ke bendera!', ['S.#', '.T.', '#.G'],
+        { scene: 'bedroom-night', who: 'Timmy', easy: true, say: 'Ada peti tanya di lantai kamarku! Kalau perahu lewat, petinya memberi soal.',
+          pic: 'tk-prop/treasure-chest-4', blk: ['tk-prop/books-ocean', 'game/crate-wood'], par: 4, topic: 'matematika',
+          fact: 'Pelaut zaman dulu menyimpan barang berharga di peti kayu.' }),
+      { id: 'k4', title: 'Lorong Waktu', type: 'quiz', domain: 'logika', count: 5, scene: 'time-tunnel', goal: 'Buka lorong waktu dengan menjawab 5 teka-teki!' }
     ]
   }
 
@@ -139,8 +166,8 @@
             { scene: 'engine', deck: true, say: 'Mesin kapal butuh batu bara supaya bisa berlayar. Tolong kumpulkan 3 karung, ya!', item: 'tk-prop/coal-crate', tools: PK,
               blk: ['tk-prop/coal-cart', 'tk-prop/coal-pile', 'tk-prop/crate-engine-room'], par: 8,
               fact: 'Titanic punya 29 ketel uap besar yang dipanaskan dengan batu bara.', hint: 'Ambil tiap karung: Ambil di atas karungnya.' }),
-          { id: 'c4c', type: 'lanes', title: 'Tantangan Navigasi', difficulty: 1, sections: ['open', 'sparse', 'more'], tutorial: true, seed: 41, questions: { on: 'collide', count: 2 },
-            goal: 'Pindah jalur ke kiri atau kanan. Kumpulkan bintang!' }
+          laneFit({ id: 'c4c', type: 'lanes', title: 'Tantangan Navigasi', difficulty: 1, sections: ['open', 'sparse', 'more'], tutorial: true, seed: 41, questions: { on: 'collide', count: 2 },
+            goal: 'Pindah jalur ke kiri atau kanan. Kumpulkan bintang!' })
         ] },
       { id: 'c5', no: 5, type: 'chapter', title: 'Peringatan Es', sub: 'Tantangan', scene: 'night-ocean', pic: 'tk-prop/iceberg-5', picScene: 'night-ocean',
         goal: 'Hindari gunung es. Kalau menabrak, jawab soal untuk berlayar lagi!',
@@ -152,8 +179,11 @@
             { scene: 'night-ocean', say: 'Malam ini banyak gunung es. Pelan-pelan, cari jalan yang aman!', pic: 'tk-prop/iceberg-5', blk: ICE,
               ice: [{ path: [{ x: 4, y: 1 }, { x: 4, y: 2 }, { x: 4, y: 3 }, { x: 4, y: 2 }] }], par: 9,
               fact: 'Sebagian besar gunung es tersembunyi di bawah air. Yang terlihat hanya puncaknya saja.' }),
-          { id: 'c5b', from: 't7', type: 'lanes', title: 'Ladang Es', difficulty: 2, sections: ['sparse', 'more', 'narrow', 'dense'], seed: 57, questions: { on: 'collide', count: 3 },
-            goal: 'Hindari gunung es. Kalau menabrak, jawab soal lalu berlayar lagi!' }
+          ml('c5d', 'Kabut Malam', 'Kabut tebal! Lewati pelampung lampu, lalu ke mercusuar.', ['S.#..', '.L#.#', '.T#..', '#..L.', '##.#G'],
+            { scene: 'night-ocean', fog: true, say: 'Malam ini ada kabut tebal. Pelampung lampu menerangi laut di sekitarnya!', pic: 'tk-prop/buoy-light',
+              blk: ICE, par: 8, topic: 'umum', fact: 'Saat berkabut, kapal membunyikan terompet kabut supaya tidak bertabrakan.' }),
+          laneFit({ id: 'c5b', from: 't7', type: 'lanes', title: 'Ladang Es', difficulty: 2, sections: ['sparse', 'more', 'narrow', 'dense'], seed: 57, questions: { on: 'collide', count: 3 },
+            goal: 'Hindari gunung es. Kalau menabrak, jawab soal lalu berlayar lagi!' })
         ] },
       { id: 'c6', no: 6, type: 'chapter', title: 'Tabrakan', sub: 'Peristiwa Besar', scene: 'collision-far', pic: 'tk-key/titanic-bow', picScene: 'collision-far',
         goal: 'Malam 14 April 1912. Tetap tenang, Kapten membantu.',
@@ -213,10 +243,13 @@
   /* ── Worlds 2–14: a complete 6-level arc each, same level types ────────── */
   // o.more = three route-logic grid levels (ids <world>7..9, appended ids so saves keep every old one), played
   // after the world's first board (easy), after the play level (easy) and just before the fragment (the harder one)
+  // o.mech = up to two mechanic boards (ids <world>10, 11): the gentle intro after the world's third board (so the
+  // first three boards keep their place and ease), the harder one just before the fragment
   function arc (o) {
-    var id = o.id, g = (o.more || []).map(function (lv) { if (!lv.scene) { lv.scene = o.scene; lv.story[0].scene = o.scene } return lv })
+    var id = o.id, sc = function (lv) { if (!lv.scene) { lv.scene = o.scene; lv.story[0].scene = o.scene } return lv }
+    var g = (o.more || []).map(sc), m = (o.mech || []).map(sc)
     var lvs = arcLevels(o, id)
-    if (g.length) lvs = [lvs[0], lvs[1], lvs[2], g[0], lvs[3], g[1], lvs[4], g[2], lvs[5]].filter(Boolean)
+    if (g.length) lvs = [lvs[0], lvs[1], lvs[2], g[0], lvs[3], g[1], m[0], lvs[4], g[2], m[1], lvs[5]].filter(Boolean)
     return {
       id: id, name: o.name, ship: 'ship/' + id, year: o.year, value: o.value, cat: o.cat, color: o.color, scene: o.scene,
       captain: o.captain, cards: o.cards,
@@ -236,7 +269,7 @@
     victory: [['Pelayaran Pagi', 'Pindah jalur dan kumpulkan bintang!'], ['Bendera di Laut', 'Kemudikan kapal, ambil pelampung soal!', 'sail', 'clipper'], ['Kepingan V', 'Hindari rintangan untuk Kepingan Kompas V!']],
     mayflower: [['Samudra Luas', 'Berlayar di tiga jalur menyeberangi samudra!'], ['Badai Kecil', 'Kemudikan kapal melewati ombak, ambil pelampung soal!', 'sail', 'clipper'], ['Kepingan VI', 'Sampai di daratan baru dan temukan Kepingan VI!']],
     endurance: [['Laut Beku', 'Hindari es di tiga jalur. Menabrak? Jawab soal!'], ['Bekal Kutub', 'Pilah perlengkapan untuk cuaca dingin.'], ['Kepingan VII', 'Lewati ladang es menuju Kepingan Kompas VII!']],
-    kontiki: [['Ombak Pasifik', 'Rakit melaju di tiga jalur. Hindari karang!'], ['Isi Rakit', 'Pilah benda yang mengapung dan yang tenggelam.'], ['Kepingan VIII', 'Arungi samudra menuju Kepingan Kompas VIII!']],
+    kontiki: [['Ombak Pasifik', 'Rakit melaju di tiga jalur. Hindari karang!'], ['Isi Rakit', 'Pilah benda yang mengapung dan yang turun ke dasar.'], ['Kepingan VIII', 'Arungi samudra menuju Kepingan Kompas VIII!']],
     calypso: [['Menuju Lokasi Selam', 'Pindah jalur, hindari karang!'], ['Jelajah Terumbu', 'Kemudikan kapal, ambil pelampung soal!', 'gates', 'boat'], ['Kepingan IX', 'Hindari rintangan untuk Kepingan Kompas IX!']],
     queenmary: [['Menyeberangi Atlantik', 'Melaju di tiga jalur, tepat waktu!'], ['Masuk Pelabuhan', 'Lewati gerbang pelabuhan, jawab soal di pelampung!', 'gates', 'liner'], ['Kepingan X', 'Tiba tepat waktu dan temukan Kepingan X!']],
     arizona: [['Pelabuhan Pagi', 'Berlayar pelan di tiga jalur.'], ['Perahu Kenangan', 'Dayung ke monumen, ambil pelampung soal!', 'gates', 'boat'], ['Kepingan XI', 'Berlayar dengan tenang menuju Kepingan XI!']],
@@ -254,10 +287,10 @@
       : { id: id + '5', title: A[1][0], type: 'steer', mode: A[1][2], vessel: A[1][3], domain: 'campur', scene: o.scene, goal: A[1][1], questions: { on: ['collide', 'buoy'], buoys: 2, count: 3 } }
     return [
         { id: id + '1', title: o.t[0], type: 'quiz', domain: 'umum', count: 4, scene: o.scene, goal: o.g[0], world: id, story: [P(o.scene, o.intro, 'Timmy', [{ k: 'ship/' + id, x: 60, y: 52, s: 64, d: 0.6 }, { k: TIMMY, x: 18, y: 76, s: 38, d: 1 }])] },
-        { id: id + '2', title: A[0][0], type: 'lanes', difficulty: 1, sections: ['open', 'sparse', 'more'], seed: sd, domain: 'campur', scene: o.scene, goal: A[0][1], questions: { on: 'collide', count: 2 } },
+        laneFit({ id: id + '2', title: A[0][0], type: 'lanes', difficulty: 1, sections: ['open', 'sparse', 'more'], seed: sd, domain: 'campur', scene: o.scene, goal: A[0][1], questions: { on: 'collide', count: 2 }, obstacle: o.lanes }),
         { id: id + '3', title: o.t[2], type: 'grid', goal: o.g[2], board: o.board, scene: o.scene },
         lv4, lv5,
-        { id: id + '6', title: A[2][0], type: 'lanes', difficulty: 2, sections: ['sparse', 'more', 'narrow', 'dense'], seed: sd + 11, domain: 'campur', scene: o.scene, goal: A[2][1], fragment: true, questions: { on: 'collide', count: 3 } }
+        laneFit({ id: id + '6', title: A[2][0], type: 'lanes', difficulty: 2, sections: ['sparse', 'more', 'narrow', 'dense'], seed: sd + 11, domain: 'campur', scene: o.scene, goal: A[2][1], fragment: true, questions: { on: 'collide', count: 3 }, obstacle: o.lanes })
     ]
   }
   var C = function (a, b, c) { return [{ id: a[0], title: a[1], text: a[2] }, { id: b[0], title: b[1], text: b[2] }, { id: c[0], title: c[1], text: c[2] }] }
@@ -281,10 +314,14 @@
         { deck: true, say: 'Dokter butuh dua kotak obat. Kotaknya ada di dua tempat berbeda!', item: 'tk-prop/crate-fragile',
           blk: ['tk-prop/crate-plain', 'gt-el/crate', 'tk-prop/crate-white-star'], par: 11,
           fact: 'Britannic punya empat cerobong asap, tetapi satu hanya untuk mengalirkan udara.' })],
-      cards: C(['britannic-1', 'Kapal Rumah Sakit', 'HMHS Britannic dipakai sebagai kapal rumah sakit pada Perang Dunia I untuk merawat orang yang terluka.'],
+      mech: [ml('britannic10', 'Pintu Bangsal', 'Ambil kunci merah, buka pintu bangsal, lalu ke dokter!', ['S.#.', 'm.#.', '#M#.', '.P.G'],
+        { deck: true, easy: true, say: 'Pintu bangsal terkunci. Ambil kunci merah dulu! Pintu tanya membuka dengan satu soal.', pic: 'things/key-gold',
+          blk: ['tk-prop/crate-plain', 'gt-el/crate'], par: 6, topic: 'umum',
+          fact: 'Bangsal adalah ruangan besar berisi banyak tempat tidur pasien.' })],
+      cards: C(['britannic-1', 'Kapal Rumah Sakit', 'HMHS Britannic menjadi kapal rumah sakit yang merawat banyak orang yang sakit dan terluka.'],
         ['britannic-2', 'Tanda Palang Merah', 'Kapal rumah sakit dicat putih dengan tanda palang merah agar semua tahu kapal itu untuk menolong.'],
         ['britannic-3', 'Belajar dari Titanic', 'Britannic dibangun lebih aman setelah kejadian Titanic, misalnya dengan lebih banyak sekoci.']) }),
-    arc({ id: 'vasa', name: 'Vasa', year: 1628, value: 'Belajar dari Kesalahan', cat: 'sains', color: '#8B5A2B', scene: 'shipyard', dom: 'matematika',
+    arc({ id: 'vasa', lanes: 'rock', name: 'Vasa', year: 1628, value: 'Belajar dari Kesalahan', cat: 'sains', color: '#8B5A2B', scene: 'shipyard', dom: 'matematika',
       captain: { name: 'Tukang Kayu Henrik', quote: 'Kapal yang indah juga harus seimbang.' },
       intro: 'Kapal Vasa dari Swedia sangat megah — tapi terlalu berat di bagian atas.',
       t: ['Galangan Kapal', 'Pola Hiasan', 'Antar Kayu', 'Seimbang!', 'Angin Bertiup', 'Kepingan III'],
@@ -296,10 +333,19 @@
           fact: 'Kapal Vasa dihias lebih dari 500 patung ukiran kayu.' }),
       gl('vasa8', 'Dermaga Nomor Dua', 'Merapat di dermaga yang benar, lewati tiang-tiang kayu!', ['S.#.', '..#.', '#...', '.#.G'],
         { say: 'Perahu kayu harus merapat di dermaga kedua. Hati-hati tiang kayu!', pic: 'tk-key/dock', blk: ['tk-prop/bollard-rope', 'tk-key/dock'], par: 6,
-          fact: 'Vasa tenggelam setelah berlayar hanya sekitar 1.300 meter.' }),
+          fact: 'Vasa terlalu berat di atas, jadi miring setelah berlayar sekitar 1.300 meter.' }),
       gl('vasa9', 'Batu Pemberat', 'Ambil 2 batu pemberat, lalu taruh di lambung kapal!', ['S....', '.#..#', 'c#c#.', '..d..', '..###'],
         { say: 'Kapal butuh pemberat di bawah supaya tidak mudah miring. Ambil dua batu!', item: 'gt-el/boulders', blk: ['tk-world/arch-rock', 'gt-el/boulders'], par: 10,
           fact: 'Batu pemberat di dasar kapal membuat kapal tegak dan tidak mudah terbalik.' })],
+      mech: [ml('vasa10', 'Kapal Tunda Lewat', 'Tunggu kapal tunda lewat, lalu ke dermaga!', ['S...#', '#.#..', '....G'],
+        { easy: true, say: 'Awas, kapal tunda bergerak maju-mundur di pelabuhan. Lihat jalannya dulu, baru berlayar!', pic: 'tk-ship/tugboat-red',
+          blk: ['tk-prop/bollard-rope', 'tk-key/dock'], par: 6, ice: [{ kind: 'tug', path: path([[2, 0], [3, 0], [3, 1], [3, 0]]) }],
+          fact: 'Di pelabuhan, kapal besar dibantu kapal tunda supaya aman.' }),
+      ml('vasa11', 'Pelabuhan Ramai', 'Seberangi jalur kapal tunda, buka peti tanya, lalu merapat!', ['S.#...', '..#.#.', '......', '.#T#..', '.#...G'],
+        { say: 'Kapal tunda sibuk bolak-balik di jalur tengah. Pilih waktu yang tepat untuk menyeberang!', pic: 'tk-ship/tugboat-red',
+          blk: ['tk-world/arch-rock', 'tk-prop/bollard-rope'], par: 9, topic: 'matematika',
+          ice: [{ kind: 'tug', path: path([[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [4, 2], [3, 2], [2, 2], [1, 2]]) }],
+          fact: 'Di museum Stockholm, Vasa disimpan di ruangan sejuk supaya kayunya awet.' })],
       cards: C(['vasa-1', 'Kapal Megah', 'Vasa dibuat untuk raja Swedia dan berlayar pertama kali pada tahun 1628 di Stockholm.'],
         ['vasa-2', 'Terlalu Berat di Atas', 'Vasa terlalu berat di bagian atas sehingga mudah miring saat tertiup angin.'],
         ['vasa-3', 'Diangkat Kembali', 'Vasa diangkat dari dasar laut pada tahun 1961 dan kini ada di museum di Stockholm.']) }),
@@ -319,6 +365,14 @@
       gl('cuttysark9', 'Bal Wol dari Pulau', 'Ambil 2 bal wol di pulau-pulau, lalu antar ke kapal!', ['Sc.#..', '.v.#.#', '....#.', '.#.#..', '.c.d..'],
         { say: 'Cutty Sark kini membawa wol. Ambil dua bal wol di antara pulau-pulau!', item: 'gt-el/hay-roll', blk: ['tk-world/palm-island', 'tk-world/arch-island'], par: 11,
           fact: 'Cutty Sark pernah membawa wol dari Australia ke Inggris.' })],
+      mech: [ml('cuttysark10', 'Tiga Pelabuhan', 'Antar teh ke bendera 1, lalu 2, lalu 3!', ['S.1.', '#.#2', '3.<.'],
+        { easy: true, say: 'Bendera bernomor harus didatangi berurutan: 1, lalu 2, lalu 3. Arus bisa membantu!', item: 'tk-prop/tea-set', pic: 'tk-prop/tea-set',
+          tools: ['N', 'E', 'S', 'W'], blk: ROCK, par: 7,
+          fact: 'Kapal teh berlomba, siapa paling dulu tiba di London.' }),
+      ml('cuttysark11', 'Rute Dagang', 'Singgah di bendera 1, 2, 3, lalu ke mercusuar!', ['S.#.2', '1.>..', '#.#T#', '..#3.', '#...G'],
+        { say: 'Kapal harus singgah di tiga pelabuhan berurutan. Jangan sampai terbalik urutannya!', item: 'tk-prop/tea-set', pic: 'tk-prop/flag-compass',
+          tools: ['N', 'E', 'S', 'W'], blk: ['tk-world/palm-island', 'tk-world/arch-rock'], par: 11, topic: 'logika',
+          fact: 'Kapal layar tidak punya mesin. Angin mendorong layarnya.' })],
       cards: C(['cuttysark-1', 'Kapal Teh', 'Cutty Sark dibuat pada tahun 1869 untuk membawa teh dari Tiongkok ke Inggris.'],
         ['cuttysark-2', 'Sangat Cepat', 'Dengan layar yang banyak, Cutty Sark termasuk kapal layar tercepat di zamannya.'],
         ['cuttysark-3', 'Museum di Greenwich', 'Sekarang Cutty Sark bisa dikunjungi di Greenwich, London.']) }),
@@ -338,6 +392,13 @@
       gl('victory9', 'Bendera Sinyal', 'Ambil 2 bendera sinyal, lalu kibarkan di tiang!', ['Sc#...', '#.#...', '.....#', '.c#d..', '.#...#'],
         { deck: true, say: 'Kapten ingin mengirim pesan dengan bendera. Kumpulkan dua bendera sinyal!', item: 'tk-prop/flag-compass', blk: ['tk-prop/cargo-net', 'tk-prop/crate-plain', 'tk-prop/barrels'], par: 11,
           fact: 'Kapal zaman dulu mengirim pesan dengan bendera berwarna, seperti bahasa rahasia.' })],
+      mech: [ml('victory10', 'Kunci Gudang', 'Ambil kunci merah, buka pintu merah, lalu ke bendera!', ['m.S', '#M#', '..G'],
+        { deck: true, easy: true, dir: 'W', say: 'Pintu merah terkunci. Kunci merahnya ada di belakangmu. Ambil dulu, ya!', pic: 'things/key-gold',
+          blk: BARRELS, par: 6, fact: 'Kapal kayu menyimpan bekal di gudang bawah dek supaya kering.' }),
+      ml('victory11', 'Dua Pintu', 'Kunci merah dulu, lalu kunci biru, lalu ke bendera!', ['Sm#b.', '..M.#', '..#.B', '####P', '....G'],
+        { deck: true, say: 'Ada pintu merah dan pintu biru. Tiap pintu butuh kunci yang warnanya sama!', pic: 'things/key-gold',
+          blk: ['tk-prop/rope-coil', 'tk-prop/barrels', 'tk-prop/crate-plain'], par: 10, topic: 'logika',
+          fact: 'Awak HMS Victory tidur di tempat tidur gantung dari kain.' })],
       cards: C(['victory-1', 'Kapal Kayu Tua', 'HMS Victory diluncurkan pada tahun 1765 dan masih ada sampai sekarang di Portsmouth, Inggris.'],
         ['victory-2', 'Bendera Sinyal', 'Kapal zaman dulu berbicara dengan bendera berwarna yang punya arti masing-masing.'],
         ['victory-3', 'Museum', 'Kini HMS Victory menjadi museum tempat anak-anak belajar sejarah pelayaran.']) }),
@@ -357,6 +418,13 @@
       gl('mayflower9', 'Bekal untuk Keluarga', 'Ambil 3 keranjang bekal, lalu bagikan ke keluarga!', ['Sc...', '#c.#.', '.#.#.', '.....', '#cd..'],
         { deck: true, say: 'Tiga keranjang bekal tersebar di dek. Kumpulkan lalu bagikan!', item: 'tk-prop/picnic-basket', blk: BARRELS, par: 12,
           fact: 'Sebelum membawa penumpang, Mayflower adalah kapal pengangkut barang dagangan.' })],
+      mech: [ml('mayflower10', 'Antar Berurutan', 'Antar bekal ke bendera 1, lalu 2, lalu 3!', ['S.2', '...', '1.3'],
+        { deck: true, easy: true, say: 'Tiga keluarga menunggu bekal. Bendera 1 dulu, baru 2, lalu 3!', item: 'tk-prop/picnic-basket', pic: 'tk-prop/picnic-basket',
+          tools: ['N', 'E', 'S', 'W'], blk: BARRELS, par: 8, fact: 'Di Mayflower, penumpang tidur berdesakan di dek bawah selama perjalanan.' }),
+      ml('mayflower11', 'Rumah Baru', 'Singgah di bendera 1, 2, 3, lalu ke daratan!', ['S.1#.', '#.#3.', '..2..', '#.#T#', '....G'],
+        { say: 'Di daratan baru ada tiga rumah. Antar bekal berurutan, jangan terbalik!', item: 'tk-prop/picnic-basket', pic: 'gt-el/sandcastle',
+          tools: ['N', 'E', 'S', 'W'], blk: ['gt-el/sandcastle', 'gt-el/boulders'], par: 12, topic: 'matematika',
+          fact: 'Mayflower tiba di Amerika pada bulan November 1620, saat udara dingin.' })],
       cards: C(['mayflower-1', 'Tahun 1620', 'Mayflower berlayar dari Inggris ke Amerika pada tahun 1620.'],
         ['mayflower-2', 'Perjalanan Panjang', 'Perjalanan menyeberangi Samudra Atlantik itu memakan waktu sekitar dua bulan.'],
         ['mayflower-3', 'Berbagi', 'Para penumpang harus berbagi ruang dan bekal selama perjalanan.']) }),
@@ -365,7 +433,7 @@
       intro: 'Endurance berlayar ke Antartika yang sangat dingin dan penuh es.',
       t: ['Persiapan', 'Baju Hangat', 'Es Bergerak', 'Menembus Es', 'Hewan Kutub', 'Kepingan VII'],
       g: ['Jawab soal tentang laut dan kapal.', 'Pilih pakaian untuk cuaca dingin.', 'Hindari es yang bergerak!', 'Kemudikan kapal di antara es.', 'Kenali hewan kutub.', 'Temukan Kepingan Kompas VII!'],
-      board: board(['S...#', '.#...', '...#G'], 'E', null, { blockArt: ICE, ice: [{ path: [{ x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 2 }, { x: 2, y: 1 }] }] }),
+      board: board(['S...#', '.#...', '...#G'], 'E', null, { blockArt: ICE, ice: [{ path: [{ x: 2, y: 0 }, { x: 3, y: 0 }] }] }),
       play: { type: 'steer', mode: 'ice', vessel: 'explorer' },
       more: [      gl('endurance7', 'Anak Pinguin Tersesat', 'Antar anak pinguin kembali ke ibunya!', ['S.#.', '#c.d'],
         { say: 'Seekor anak pinguin terpisah dari ibunya. Ayo antar dia pulang!', item: 'animals/penguin', blk: ['gt-el/ice-crystal', 'tk-prop/ice-cube'], par: 6,
@@ -376,8 +444,14 @@
           fact: 'Air laut di Antartika bisa membeku menjadi lautan es yang luas.' }),
       gl('endurance9', 'Jemput Awak Kapal', 'Jemput 2 awak kapal di es, lalu ke bendera!', ['S..#..', '.#...#', '.c.#..', '##..c.', '...#.G'],
         { say: 'Dua awak kapal menunggu di atas es. Jemput mereka satu per satu!', item: 'tk-char/explorer-kid', tools: PK, blk: ICE, par: 11,
-          ice: [{ path: [{ x: 4, y: 0 }, { x: 4, y: 1 }, { x: 4, y: 2 }, { x: 4, y: 1 }] }],
+          ice: [{ path: [{ x: 5, y: 2 }, { x: 5, y: 3 }] }],
           fact: 'Semua 28 awak Endurance selamat karena mereka bekerja sama.' })],
+      mech: [ml('endurance10', 'Es Licin', 'Meluncur di es licin sampai ke bendera!', ['S~~~#', '..#.G', '#....'],
+        { easy: true, say: 'Awas lantai es licin, kapal meluncur terus sampai menabrak sesuatu!', pic: 'tk-prop/ice-floe', blk: ICE, par: 3,
+          fact: 'Es laut di sekitar Antartika bisa setebal beberapa meter.' }),
+      ml('endurance11', 'Ladang Es Licin', 'Pakai gunung es untuk berhenti, lalu ke bendera!', ['S~.~.', '#~#..', '#~~.~', '~~.##', '#..TG'],
+        { say: 'Es licin di mana-mana! Kapal baru berhenti di air biasa atau saat menabrak es.', pic: 'tk-prop/ice-floe', blk: ICE, par: 10, topic: 'umum',
+          fact: 'Saat terjebak es, awak Endurance bermain sepak bola di atas es.' })],
       cards: C(['endurance-1', 'Ke Antartika', 'Kapal Endurance berangkat pada tahun 1914 menuju Antartika.'],
         ['endurance-2', 'Terjebak Es', 'Kapal itu terjebak es laut, tetapi semua awaknya bekerja sama dan akhirnya selamat.'],
         ['endurance-3', 'Ditemukan', 'Bangkai Endurance ditemukan di dasar laut pada tahun 2022.']) }),
@@ -397,6 +471,13 @@
       gl('kontiki9', 'Awas Pusaran Air', 'Ambil 2 tong air minum. Hindari pusaran air!', ['S.v..#', '...#..', 'c#c#..', '<..G..', '#.....'],
         { say: 'Rakit butuh air minum. Ambil dua tong, tapi jauhi pusaran air!', item: 'tk-prop/water-barrel-2', tools: PK, blk: ['tk-world/whirlpool'], par: 10,
           fact: 'Ikan terbang sering melompat dan mendarat di atas rakit Kon-Tiki.' })],
+      mech: [ml('kontiki10', 'Pusaran Ajaib', 'Masuk pusaran, lalu muncul di pusaran kembarannya!', ['S.o#', '..##', '#O.G'],
+        { easy: true, say: 'Lihat, pusaran air! Masuk satu pusaran, rakit muncul di pusaran kembarannya.', pic: 'tk-world/whirlpool', blk: ROCK, par: 4,
+          fact: 'Pusaran air terbentuk saat arus laut bertemu lalu berputar.' }),
+      ml('kontiki11', 'Arus dan Pusaran', 'Pakai arus dan pusaran untuk sampai ke pulau!', ['S.....', '....>O', '..##..', 'o#..##', '..T..G'],
+        { say: 'Arus mendorong rakit, pusaran memindahkannya. Rencanakan jalannya di kepala!', pic: 'tk-world/palm-island',
+          blk: ['tk-world/arch-rock', 'tk-world/palm-island'], par: 10, topic: 'umum',
+          fact: 'Rakit Kon-Tiki dibuat dari sembilan batang kayu balsa yang diikat tali.' })],
       cards: C(['kontiki-1', 'Rakit Kayu', 'Kon-Tiki adalah rakit dari kayu balsa yang berlayar pada tahun 1947.'],
         ['kontiki-2', '101 Hari', 'Rakit itu menyeberangi Samudra Pasifik selama sekitar 101 hari.'],
         ['kontiki-3', 'Arus & Angin', 'Kon-Tiki bergerak dengan bantuan arus laut dan angin.']) }),
@@ -416,6 +497,10 @@
       gl('calypso9', 'Penyu Pulang', 'Antar penyu kecil ke terumbu karang. Ikuti arus!', ['S...#v', '>...#.', '.##...', '#.c.d.', '#.#...'],
         { say: 'Penyu kecil tersesat jauh dari rumahnya. Bawa dia ke terumbu karang!', item: 'animals/sea-turtle', blk: ['gt-el/pink-crystal', 'gt-el/purple-crystal'], par: 10,
           fact: 'Terumbu karang sebenarnya terbuat dari hewan-hewan kecil yang hidup bersama.' })],
+      mech: [ml('calypso10', 'Pusaran Terumbu', 'Masuk pusaran, buka peti tanya, lalu ke bendera!', ['S.#...', '..o#..', '##.#v.', '..T.#.', '#O#..G'],
+        { say: 'Di dekat terumbu ada pusaran kembar. Satu pusaran membawamu ke pusaran lainnya!', pic: 'tk-world/whirlpool',
+          blk: ['gt-el/pink-crystal', 'gt-el/purple-crystal'], par: 9, topic: 'umum',
+          fact: 'Tim Calypso memakai kapal selam kecil berbentuk piring untuk menjelajah laut.' })],
       cards: C(['calypso-1', 'Kapal Peneliti', 'Calypso dipakai untuk meneliti laut dan membuat film tentang kehidupan bawah laut.'],
         ['calypso-2', 'Menjaga Laut', 'Para peneliti mengajak semua orang untuk menjaga laut tetap bersih.'],
         ['calypso-3', 'Makhluk Laut', 'Laut adalah rumah bagi ikan, penyu, lumba-lumba, terumbu karang, dan banyak lagi.']) }),
@@ -435,6 +520,13 @@
       gl('queenmary9', 'Teh Pagi', 'Ambil 2 cangkir teh, lalu antar ke ruang makan!', ['Scc..', '..##.', '.....', '#.d..', '##...'],
         { deck: true, say: 'Sarapan hampir siap! Bawakan dua cangkir teh ke ruang makan.', item: 'tk-prop/tea-set', blk: ['tk-prop/deck-chair', 'tk-prop/crate-plain', 'tk-prop/rope-coil'], par: 10,
           fact: 'Kini Queen Mary menjadi hotel. Orang bisa menginap di kabinnya.' })],
+      mech: [ml('queenmary10', 'Pintu Kabin Merah', 'Ambil kunci merah, lalu buka pintu kabin!', ['m.S.', '###M', '...G'],
+        { deck: true, easy: true, dir: 'W', say: 'Pintu kabin terkunci. Kunci merahnya ada di ujung lorong!', pic: 'tk-prop/cabin-key',
+          blk: ['tk-prop/deck-chair', 'tk-prop/crate-plain'], par: 7, fact: 'Queen Mary punya kolam renang di dalam kapal.' }),
+      ml('queenmary11', 'Lorong Kabin', 'Kunci biru, kunci hijau, lalu ke ruang makan!', ['S.b##', '##.#h', '##BP.', '####H', '...#G'],
+        { deck: true, say: 'Lorong kabin punya pintu biru dan pintu hijau. Cocokkan warna kuncinya!', pic: 'tk-prop/cabin-key',
+          blk: ['tk-prop/deck-chair', 'tk-prop/crate-plain', 'tk-prop/rope-coil'], par: 10, topic: 'matematika',
+          fact: 'Di kapal penumpang, setiap kabin punya nomor supaya penumpang tidak tersesat.' })],
       cards: C(['queenmary-1', 'Tahun 1936', 'Queen Mary berlayar pertama kali pada tahun 1936 antara Inggris dan Amerika.'],
         ['queenmary-2', 'Hotel Terapung', 'Kini Queen Mary menjadi hotel dan museum di Long Beach, California.'],
         ['queenmary-3', 'Jadwal', 'Kapal penumpang harus menjaga jadwal agar semua penumpang tiba tepat waktu.']) }),
@@ -454,8 +546,12 @@
       gl('arizona9', 'Bunga Kenangan', 'Ambil 2 bunga, lalu letakkan di monumen!', ['S.#d..', 'cc#.#.', '#.....', '...#..', '###...'],
         { say: 'Orang membawa bunga untuk mengenang. Kumpulkan dua bunga dengan tenang.', item: 'nature/flower-pink', blk: ['tk-prop/buoy-light', 'tk-prop/bollard-rope'], par: 10,
           fact: 'Monumen Arizona dibangun di atas kapal, tanpa menyentuh kapalnya.' })],
-      cards: C(['arizona-1', 'Sebuah Kapal Perang', 'USS Arizona adalah kapal Angkatan Laut Amerika Serikat yang diluncurkan pada tahun 1915.'],
-        ['arizona-2', '7 Desember 1941', 'Pada tanggal ini kapal Arizona tenggelam di Pearl Harbor saat perang.'],
+      mech: [ml('arizona10', 'Kabut Pagi', 'Kabut pagi! Lewati pelampung lampu, lalu ke monumen.', ['S.#.', '.L..', '#.#P', '#.#G'],
+        { easy: true, fog: true, say: 'Pagi ini berkabut. Pelampung lampu menerangi laut di sekitarnya.', pic: 'tk-prop/rowboat',
+          blk: ['tk-prop/bollard-rope', 'tk-key/dock'], par: 6, topic: 'logika',
+          fact: 'Setiap tahun banyak orang naik perahu kecil untuk mengunjungi monumen Arizona.' })],
+      cards: C(['arizona-1', 'Kapal Angkatan Laut', 'USS Arizona adalah kapal Angkatan Laut Amerika Serikat yang diluncurkan pada tahun 1915.'],
+        ['arizona-2', '7 Desember 1941', 'Pada hari itu kapal Arizona beristirahat di dasar Pearl Harbor. Kini tempat itu dijaga dengan hormat.'],
         ['arizona-3', 'Monumen Kenangan', 'Kini ada monumen putih di atas kapal itu, tempat orang mengenang dan belajar tentang perdamaian.']) }),
     arc({ id: 'missouri', name: 'USS Missouri', year: 1944, value: 'Perdamaian', cat: 'perang-damai', color: '#4A5A8A', scene: 'harbor-day', dom: 'umum',
       captain: { name: 'Pemandu Museum', quote: 'Perdamaian lebih kuat dari apa pun.' },
@@ -473,8 +569,13 @@
       gl('missouri9', 'Roda Gigi Mesin', 'Ambil 2 roda gigi, lalu antar ke ruang mesin!', ['S#.##.', '.c##d#', 'c.....', '....#.', '.#.#..', '....#.'],
         { deck: true, say: 'Mesin kapal butuh dua roda gigi baru. Ambil dari gudang!', item: 'gt-el/gear', blk: ['tk-prop/propeller', 'gt-el/crate', 'tk-prop/crate-plain'], par: 12,
           fact: 'USS Missouri lebih panjang dari dua lapangan sepak bola.' })],
+      mech: [ml('missouri10', 'Kapal Patroli', 'Kapal patroli lewat! Pilih waktu yang tepat, lalu merapat.', ['S.#...', '..#.#.', '......', '#.#T#.', '..#..G'],
+        { say: 'Kapal patroli bolak-balik di jalur tengah. Lihat jalannya, lalu menyeberang!', pic: 'tk-top/patrol',
+          blk: ['tk-key/dock', 'tk-prop/bollard-rope'], par: 9, topic: 'umum',
+          ice: [{ kind: 'patrol', path: path([[1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [4, 2], [3, 2], [2, 2]]) }],
+          fact: 'Kapal patroli kecil menjaga pelabuhan supaya semua kapal aman.' })],
       cards: C(['missouri-1', 'Kapal Besar', 'USS Missouri adalah kapal besar Angkatan Laut Amerika Serikat yang diluncurkan pada tahun 1944.'],
-        ['missouri-2', 'Hari Damai', 'Pada 2 September 1945 perjanjian yang mengakhiri Perang Dunia II ditandatangani di atas kapal ini.'],
+        ['missouri-2', 'Hari Damai', 'Pada 2 September 1945, perjanjian damai ditandatangani di atas kapal ini.'],
         ['missouri-3', 'Museum', 'Kini USS Missouri menjadi museum di Pearl Harbor, dekat monumen Arizona.']) }),
     arc({ id: 'nautilus', name: 'Kapal Selam Nautilus', year: 1954, value: 'Menjelajah yang Tak Terlihat', cat: 'sains', color: '#3D5A80', scene: 'deep-sea', dom: 'umum',
       captain: { name: 'Kapten Nemo', quote: 'Di bawah laut, ada dunia yang menakjubkan.' },
@@ -492,6 +593,16 @@
       gl('nautilus9', 'Tiga Mutiara', 'Kumpulkan 3 mutiara, lalu ke bendera!', ['Sc....', '#c#cG#', '##...#', '......', '.<....'],
         { say: 'Tiga mutiara bersinar di lorong gelap. Kumpulkan semuanya!', item: 'game/gem-blue', tools: PK, blk: ['tk-world/arch-rock', 'gt-el/boulders'], par: 10,
           fact: 'Nautilus adalah kapal selam pertama yang melewati bawah es Kutub Utara.' })],
+      mech: [ml('nautilus10', 'Paus Lewat', 'Paus sedang lewat. Tunggu, lalu ke bendera!', ['S....', '#.#.#', '....G'],
+        { easy: true, say: 'Seekor paus berenang naik turun. Jangan menabraknya, tunggu dia lewat!', pic: 'tk-world/whale-tail', blk: ROCK, par: 6,
+          ice: [{ kind: 'whale', path: path([[3, 0], [3, 1], [3, 2], [3, 1]]) }],
+          fact: 'Paus biru adalah hewan terbesar di dunia, lebih besar dari dinosaurus.' }),
+      ml('nautilus11', 'Lorong Paus', 'Hindari paus, buka peti tanya, lalu ke bendera!', ['S..#..', '.#....', '.#.##.', '..T#..', '##...G'],
+        { say: 'Paus berenang bolak-balik di lorong atas. Perhatikan langkahnya!', pic: 'tk-world/whale-tail',
+          blk: ['tk-world/arch-rock', 'gt-el/boulders'], par: 9, topic: 'umum',
+          ice: [{ kind: 'whale', path: path([[2, 1], [3, 1], [4, 1], [5, 1], [4, 1], [3, 1]]) }],
+          sulit: { rows: ['S..#..', '##...#', '#.#..#', '##.#..', '###..G'], tools: ['F', 'L', 'R', 'R2', 'F1'], par: 9, ice: [] },
+          fact: 'Paus bernapas dengan udara, jadi ia harus naik ke permukaan laut.' })],
       cards: C(['nautilus-1', 'Nama dari Buku', 'Nama Nautilus berasal dari kapal selam dalam novel karya Jules Verne.'],
         ['nautilus-2', 'Kapal Selam Nyata', 'USS Nautilus (1954) adalah kapal selam pertama yang melewati bawah es Kutub Utara.'],
         ['nautilus-3', 'Sonar', 'Sonar memakai suara untuk "melihat" benda di bawah air.']) }),
@@ -513,6 +624,11 @@
           blk: ['tk-world/whirlpool', 'tk-prop/iceberg-5', 'tk-world/storm-cloud'], par: 11,
           ice: [{ path: [{ x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 3, y: 2 }] }],
           fact: 'Pelaut zaman dulu memakai bintang di langit untuk menentukan arah.' })],
+      mech: [ml('pelabuhan10', 'Pelabuhan Campur', 'Es licin, kunci, pusaran, bendera: pakai semuanya!', ['S~~~m#', '##.#P#', '2#..M.', 'O###1o', '....#G'],
+        { say: 'Semua yang kamu pelajari ada di sini: es licin, kunci, pusaran, dan bendera berurutan!', pic: 'tk-key/crystal',
+          blk: ['tk-world/storm-cloud', 'tk-prop/iceberg-5'], par: 8, topic: 'campur',
+          sulit: { rows: ['S.###', '#..##', '##..#', '###..', '####G'], tools: ['F', 'L', 'R', 'R2', 'R3', 'F1'], par: 7 },
+          fact: 'Pelabuhan besar punya menara yang mengatur kapal keluar-masuk.' })],
       cards: C(['pelabuhan-1', 'Kompas Waktu', 'Semua kepingan kompas sudah terkumpul.'],
         ['pelabuhan-2', 'Pelajaran Kapal', 'Setiap kapal mengajarkan sesuatu: berani, menolong, teliti, dan menjaga perdamaian.'],
         ['pelabuhan-3', 'Pulang', 'Timmy kembali ke kamarnya dengan kenangan dan ilmu baru.']) })
@@ -524,8 +640,8 @@
   // `verified:false` until an editor checks them (PRD QA: fact cards need editorial review)
   var SPEC = {
     titanic: ['Kapal penumpang', '269 m', 'Kisahnya yang terkenal dan keberanian para penumpangnya', 'Bahkan di saat paling gelap, kebaikan manusia bersinar paling terang.'],
-    britannic: ['Kapal rumah sakit', '269 m', 'Merawat orang terluka di Perang Dunia I', 'Menolong orang lain adalah pekerjaan paling mulia.'],
-    vasa: ['Kapal perang kayu', '69 m', 'Diangkat utuh dari dasar laut setelah 333 tahun', 'Dari kesalahan, kita belajar menjadi lebih baik.'],
+    britannic: ['Kapal rumah sakit', '269 m', 'Merawat banyak orang yang sakit dan terluka', 'Menolong orang lain adalah pekerjaan paling mulia.'],
+    vasa: ['Kapal kayu kerajaan', '69 m', 'Diangkat utuh dari dasar laut setelah 333 tahun', 'Dari kesalahan, kita belajar menjadi lebih baik.'],
     cuttysark: ['Kapal layar (clipper)', '85 m', 'Salah satu kapal layar tercepat pembawa teh', 'Kerja keras dan semangat membawa kita jauh.'],
     victory: ['Kapal kayu tua', '69 m', 'Kapal tua yang masih bisa dikunjungi di museum', 'Pemimpin yang baik mendengarkan orang lain.'],
     mayflower: ['Kapal layar', '30 m', 'Membawa keluarga menyeberangi Samudra Atlantik', 'Setiap awal yang baru butuh keberanian.'],
@@ -540,6 +656,24 @@
     kamar: ['Kamar Timmy', '—', 'Awal dari semua petualangan', 'Setiap petualangan besar dimulai dari mimpi.']
   }
   WORLDS.forEach(function (w) { var x = SPEC[w.id]; if (x) w.spec = { type: x[0], length: x[1], famous: x[2], quote: x[3], verified: false } })
+  // where each delivery ends (playtest 2026-09-30: a tiny generic sack stood in for a patient's bed and a carpenter).
+  // d = the drop tile's sprite, g = the goal marker when a lighthouse / lifeboat does not fit the story
+  var GOAL_ART = {
+    c3b: { d: 'real/things/bed' }, c7b: { d: 'tk-prop/lifeboat' }, c7c: { d: 'tk-prop/lifeboat' }, c7e: { d: 'real/things/bed' }, c4d: { g: 'gt/part-engine' },
+    britannic3: { d: 'things/first-aid-kit' }, britannic7: { d: 'real/things/bed' }, britannic9: { d: 'things/first-aid-kit' }, britannic10: { g: 'things/first-aid-kit' },
+    vasa3: { d: 'gt/tool-kit' }, vasa7: { d: 'gt/tool-kit' }, vasa9: { d: 'game/crate-wood' }, vasa10: { g: 'tk-key/dock' }, vasa11: { g: 'tk-key/dock' },
+    cuttysark8: { d: 'tk-prop/cargo-net' }, cuttysark9: { d: 'tk-key/dock' },
+    victory7: { d: 'tk-prop/flag-compass' }, victory9: { d: 'tk-prop/flag-compass' }, victory10: { g: 'tk-prop/flag-compass' }, victory11: { g: 'tk-prop/flag-compass' },
+    mayflower3: { d: 'tk-prop/cargo-net' }, mayflower7: { d: 'tk-prop/cargo-net' }, mayflower9: { d: 'tk-char/hijab-girl-book' },
+    endurance7: { d: 'animals/penguin' }, calypso7: { d: 'tk-world/cave-island' }, calypso9: { d: 'tk-world/cave-island' },
+    queenmary3: { d: 'real/things/bed' }, queenmary7: { d: 'real/things/bed' }, queenmary9: { d: 'real/things/table' }, queenmary10: { g: 'real/things/bed' }, queenmary11: { g: 'real/things/table' },
+    arizona7: { d: 'tk-key/radar' }, arizona9: { d: 'tk-key/dock' }, arizona10: { g: 'tk-key/dock' },
+    missouri7: { d: 'real/things/table' }, missouri9: { d: 'tk-prop/engine-telegraph' }, missouri10: { g: 'tk-key/dock' },
+    pelabuhan3: { d: 'gt-el/portal-blue' }, pelabuhan8: { d: 'gt-el/portal-blue' }, pelabuhan9: { d: 'gt-el/portal-blue' }, pelabuhan10: { g: 'gt-el/portal-blue' }
+  }
+  WORLDS.forEach(function (w) {
+    flat(w).forEach(function (lv) { var a = lv.type === 'grid' && GOAL_ART[lv.id]; if (!a) return; if (a.d) lv.board.dropArt = a.d; if (a.g) lv.board.goalArt = a.g })
+  })
   // ease ladder (owner 2026-09-28: "easy to be played, tapi cakep"): the first 3 grid boards of every world
   // are EASY (only the commands the route needs, forgiving stars, coach on first visit); the very first
   // grid of the game always shows the coach. The first steer level of every world is the slow, assisted one.
@@ -559,12 +693,15 @@
       if (lv.type === 'steer') lv.steerNo = ++st
     })
   })
-  var CATS = [['semua', 'Semua Kapal'], ['penjelajahan', 'Penjelajahan'], ['tragedi', 'Tragedi'], ['perang-damai', 'Perang & Damai'], ['sains', 'Sains']]
+  var CATS = [['semua', 'Semua Kapal'], ['penjelajahan', 'Penjelajahan'], ['tragedi', 'Tragedi'], ['perang-damai', 'Kenangan & Damai'], ['sains', 'Sains']]
 
   /* board text -> TKGrid definition */
-  function grid (lv) {
-    var b = lv.board, rows = b.rows, def = { w: rows[0].length, h: rows.length, blocks: [], items: [], currents: [], tools: b.tools.slice(), ice: b.ice || [] }
-    var CUR = { '>': 'E', '<': 'W', '^': 'N', v: 'S' }
+  // opt.level 'sulit' (Tingkat Soal Sulit, grades 3–4) plays the board's `sulit` variant when it has one
+  function grid (lv, opt) {
+    var b = lv.board
+    if (opt && opt.level === 'sulit' && b.sulit) { var v = {}, k; for (k in b) v[k] = b[k]; for (k in b.sulit) v[k] = b.sulit[k]; delete v.sulit; b = v }
+    var rows = b.rows, def = { w: rows[0].length, h: rows.length, blocks: [], items: [], currents: [], tools: b.tools.slice(), ice: b.ice || [] }
+    var CUR = { '>': 'E', '<': 'W', '^': 'N', v: 'S' }, q = []
     rows.forEach(function (r, y) {
       for (var x = 0; x < r.length; x++) {
         var ch = r[x]
@@ -574,8 +711,15 @@
         else if (ch === 'c') def.items.push({ x: x, y: y, id: 'peti' })
         else if (ch === 'd') def.drop = { x: x, y: y }
         else if (CUR[ch]) def.currents.push({ x: x, y: y, dir: CUR[ch] })
+        else if (ch === 'T' || ch === 'P') q.push({ x: x, y: y, type: ch === 'T' ? 'chest' : 'door', topic: b.qTopic || '' })
       }
     })
+    // the mechanics (keys / doors / flags / licin / whirlpools / beacons) come from the rows themselves (TKGrid.parse)
+    def.rows = rows.slice()
+    if (q.length) def.q = q
+    if (b.fog) def.fog = true
+    if (b.beaconR) def.beaconR = b.beaconR
+    if (b.fnMax) def.fnMax = b.fnMax
     if (!def.goal && def.drop) def.goal = { x: def.drop.x, y: def.drop.y }
     // look (read by TKGrid.mount): theme 'sea' | 'deck', obstacle + cargo sprites, backdrop scene
     def.id = lv.id; def.title = lv.title; def.mission = lv.goal
@@ -583,9 +727,12 @@
     if (lv.hint) def.hint = lv.hint          // Timmy's idle line
     if (lv.fact) def.tip = lv.fact           // the penguin tip card (read by TKGrid once it takes def.tip)
     if (b.par) def.par = b.par
+    if (lv.goalName || b.goalName) def.goalName = lv.goalName || b.goalName   // win line: "sampai di <goalName>!"
     def.theme = b.theme === 'deck' ? 'deck' : 'sea'
     if (b.blockArt) def.blockArt = b.blockArt.slice ? b.blockArt.slice() : b.blockArt
     if (b.itemArt) def.itemArt = b.itemArt
+    if (b.dropArt) def.dropArt = b.dropArt
+    if (b.goalArt) def.goalArt = b.goalArt
     if (lv.scene) def.scene = lv.scene
     def.easy = b.easy != null ? !!b.easy : !(lv.gridNo > EASY_GRIDS)
     // owner "no help" rule: only the tutorial room's first two boards trim the palette to the arrows the route needs

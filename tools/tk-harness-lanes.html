@@ -72,6 +72,7 @@
   if (q.get('diff')) lvl.difficulty = +q.get('diff')
   if (q.get('scale')) lvl.lengthScale = +q.get('scale')
   if (q.get('sections')) lvl.sections = q.get('sections').split(',')
+  if (q.get('obstacle')) lvl.obstacle = q.get('obstacle')   // ice | rock | reef
   if (q.get('qon')) lvl.questions = { on: q.get('qon').split(','), buoys: q.get('qbuoys') ? +q.get('qbuoys') : undefined, gates: q.get('qgates') ? +q.get('qgates') : undefined, count: q.get('qcount') ? +q.get('qcount') : undefined }
   if (lvl.final) { lvl.title = 'Bab 6: Tabrakan'; lvl.goal = 'Ladang es makin rapat…' } else { lvl.title = 'Bab 4: Tantangan Navigasi'; lvl.goal = 'Kemudikan Titanic dan hindari gunung es!' }
   if (q.get('manual') !== '1') window.__mount(lvl)

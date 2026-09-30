@@ -430,6 +430,7 @@
     '.tks-shipbtn{pointer-events:auto;width:56px;height:56px;padding:3px;border-radius:16px;border:1.5px solid rgba(150,215,255,.4);background:rgba(6,26,46,.8);display:grid;place-items:center;cursor:pointer}',
     '.tks-shipbtn img{width:100%;height:100%;object-fit:contain;pointer-events:none}',
     '.tks-toprow{display:flex;gap:8px}',
+    '.tks-topnote{max-width:260px;margin:0;font-size:14px;line-height:1.3;color:#fff0bd}',
     '.tks-swap{min-width:160px;height:56px;border-radius:18px;background:#2f8fd0;color:#fff;font-weight:900;font-size:18px;box-shadow:0 5px 0 #1b5f8f;display:flex;align-items:center;gap:8px;padding:0 16px 0 8px}',
     '.tks-swap img{width:52px;height:40px;object-fit:contain}',
     '.tks-kid.tks-short .tks-radar{display:none}',
@@ -445,7 +446,10 @@
     '.tks-bub{background:#fff;color:#12314f;border-radius:16px;padding:8px 14px 10px;box-shadow:0 6px 14px rgba(0,0,0,.3);margin-bottom:8px}',
     '.tks-bub b{display:inline-block;margin:-20px 0 4px;padding:2px 10px;border-radius:10px;background:#1F4FA0;color:#fff;font-weight:400;font-size:14px;font-family:var(--font-display,"Fredoka One","Nunito",sans-serif)}',
     '.tks-bub span{display:block;font-weight:800;font-size:17px;line-height:1.3}',
-    '.tks-rm .tks-cap,.tks-rm .tks-cap.is-on{transform:translate(-50%,0);transition:opacity .3s linear}'
+    '.tks-rm .tks-cap,.tks-rm .tks-cap.is-on{transform:translate(-50%,0);transition:opacity .3s linear}',
+    '.tks-mid{position:absolute;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex}',
+    /* an open question holds the game: its pause / ship buttons would do nothing, so they step aside */
+    '.tks-asking .tks-pausebtn,.tks-asking .tks-shipbtn{visibility:hidden}'
   ].join('\n')
 
   function injectCss () {
@@ -897,6 +901,8 @@
       left.appendChild(btnL); right.appendChild(wheelEl); right.appendChild(btnR)
     } else { right.appendChild(lr); right.appendChild(wheelEl) }
     root.appendChild(left); root.appendChild(right)
+    var mid = el('div', 'tks-mid')
+    root.appendChild(mid)
     var pops = el('div', 'tks-pops')
     root.appendChild(pops)
     var caption = el('div', 'tks-caption tks-panel')
@@ -911,6 +917,10 @@
     root.appendChild(cdEl)
     var pauseOv = el('div', 'tks-pause', '<div class="tks-pause-card tks-panel"><h3>Jeda</h3><button class="tks-btn tks-resume" type="button">Lanjut</button></div>')
     root.appendChild(pauseOv)
+    if (fleet && fleet.topNote) {
+      var topNote = el('p', 'tks-topnote'); topNote.textContent = fleet.topNote
+      pauseOv.querySelector('.tks-pause-card').appendChild(topNote)
+    }
     if (fleet && onSwap) {
       var swapBtn = el('button', 'tks-btn tks-swap', '<img alt="" draggable="false"><span>Ganti Kapal</span>')
       swapBtn.type = 'button'; swapBtn.querySelector('img').src = W.TKFleet.sideSrc(shipId, opts)
@@ -991,7 +1001,15 @@
       var hold = OLD.hold * 2, wheel = OLD.wheel * 2
       var port = vh > vw, narrow = w.assist && port && vw < 600
       root.classList.toggle('tks-narrow', narrow)
-      if (w.assist && short && !port) {
+      if (narrow) {
+        // phone upright (playtest 2026-09-30: the 2x wheel filled the sea ahead): ONE bottom row
+        // [LEFT][wheel][RIGHT] at the bottom edge, the wheel <= 30% of the height, the ship always above it
+        if (wheelEl.parentNode !== mid) mid.appendChild(wheelEl)
+        wheel = Math.min(Math.round(vh * 0.3), 200)
+        hold = Math.floor((vw - 40 - wheel) / 2)
+        if (hold < 88) { hold = 88; wheel = vw - 40 - 2 * hold }
+        hold = Math.min(hold, 150)
+      } else if (w.assist && short && !port) {
         // phone on its side: [LEFT][wheel] ... [RIGHT], the wheel must end before the ship's lane
         if (wheelEl.parentNode !== left) left.appendChild(wheelEl)
         var clear = V.L * 1.08 * scale * 0.55 + vh * 0.06 + 16      // = the ship band used for the anchor below
@@ -1002,8 +1020,8 @@
       } else {
         wheel = Math.min(wheel, vh - 24 - hold - 10 - 150)
       }
-      wheel = Math.max(Math.round(wheel), Math.round(OLD.wheel * 1.3))
-      if (port) {
+      if (!narrow) wheel = Math.max(Math.round(wheel), Math.round(OLD.wheel * 1.3))
+      if (port && !narrow) {
         // a small phone upright (360x640): the column (wheel above RIGHT) must still leave room under the HUD
         // for the ship, so both shrink together — buttons never below 96 px, the wheel never below 140
         var rr0 = root.getBoundingClientRect(), statsB = stats.getBoundingClientRect().bottom - rr0.top
@@ -1498,6 +1516,7 @@
     }
     function ask (reason, obj) {
       S.waiting = true; S.qOpen = reason; S.qObj = obj || null
+      root.classList.add('tks-asking')
       if (reason !== 'collide') S.qn[reason]++
       S.qAsked++
       releaseHolds(); input.keyL = input.keyR = false; input.drag = false; drag = null
@@ -1520,6 +1539,7 @@
       if (dead) return
       var ok = !!res.correct
       S.qOpen = null; S.qObj = null; S.waiting = false
+      root.classList.remove('tks-asking')
       S.qLog.push({ reason: reason, correct: ok, t: Math.round(S.t * 10) / 10 })
       if (ok) S.qRight++
       S.qCombo = ok ? S.qCombo + 1 : 0

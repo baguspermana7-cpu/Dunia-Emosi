@@ -201,7 +201,11 @@ for (const w of NEW) {
       const qs = TKQ.build({ mix: true, domain: lv.domain, world: w.id, count: lv.count, grade: 1, islam: true, mastery: 0, topic: lv.goal, seed: 7 })
       check(qs.length === lv.count, `${lt}: TKQuiz.build gives ${lv.count} questions (${qs.length})`)
       const nm = qs.filter(q => q.domain === 'matematika' || !q.domain).length
-      check(nm >= Math.floor(lv.count / 2) - 0, `${lt}: about half Matematika (${nm}/${qs.length})`)
+      // owner playtest 2026-09-30: a step locked to one topic (logika / islam / arab / matematika, or topicOnly) serves
+      // only that topic; 'umum' / 'campur' steps are mixed quizzes, about half Matematika (games/tk-quiz.js buildMix)
+      const locked = lv.topicOnly === true || !['umum', 'campur'].includes(lv.domain)
+      if (locked) check(qs.every(q => q.domain === lv.domain), `${lt}: topic-locked ${lv.domain} step serves only ${lv.domain} (${qs.map(q => q.domain)})`)
+      else check(nm >= Math.floor(lv.count / 2) - 0, `${lt}: about half Matematika (${nm}/${qs.length})`)
     }
     if (lv.type === 'sort') {
       check(!!lv.domain, `${lt}: sort domain`)

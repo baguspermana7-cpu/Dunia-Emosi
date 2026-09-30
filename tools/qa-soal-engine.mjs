@@ -140,21 +140,96 @@ function distribution (opts, N) {
   let win = 0
   for (let i = 0; i < sigs.length; i++) if (sigs.slice(Math.max(0, i - 49), i).includes(sigs[i])) win++
   check(win === 0, `generated math: no signature repeated inside 50 (${win} repeats in 300)`)
-  // one template never dominates: a generated kind at most 2x in any 6 consecutive generated questions
-  const ks = []
-  for (let s = 0; s < 300; s++) ks.push(S.one({ game: 'g30', avatar: 'qa-kind', topic: 'matematika', seed: 5000 + s, easy: true, level: 1 }).kind)
-  let crowd = 0
-  for (let i = 5; i < ks.length; i++) { const w = ks.slice(i - 5, i + 1); if (w.filter(k => k === ks[i]).length > 2) crowd++ }
-  check(crowd === 0, `template spread: no kind more than 2x in 6 (${crowd} crowded windows; easy mode, where counting weighs 45 %)`)
+  // one template never dominates (owner 2026-09-30): a generated kind at most once in any 4 consecutive questions
+  for (const [lbl, extra] of [['easy', { easy: true, level: 1 }], ['level 2', { level: 2 }], ['level 4', { level: 4 }]]) {
+    const ks = []
+    for (let s = 0; s < 300; s++) ks.push(S.one({ game: 'g30', avatar: 'qa-kind-' + lbl, topic: 'matematika', seed: 5000 + s, ...extra }).kind)
+    let crowd = 0
+    for (let i = 3; i < ks.length; i++) if (ks.slice(i - 3, i).includes(ks[i])) crowd++
+    check(crowd === 0, `template spread (${lbl}): no kind twice in any 4 (${crowd} crowded windows)`)
+  }
+  // variety: 57 fase A prompts (the playtest sample size) use >= 8 templates, none above 25 %
+  {
+    const ks = {}
+    for (let s = 0; s < 57; s++) { const k = S.one({ game: 'g30', avatar: 'qa-variety', topic: 'matematika', seed: 9000 + s, level: 2 }).kind; ks[k] = (ks[k] || 0) + 1 }
+    check(Object.keys(ks).length >= 8 && Math.max(...Object.values(ks)) <= 57 * 0.25, `fase A variety over 57 prompts: ${JSON.stringify(ks)}`)
+  }
   // cross-world / cross-level: one avatar history across every world and level of the game
   const cw = []
   const WORLDS = ['titanic', 'britannic', 'vasa', 'calypso', 'endurance', 'queenmary', 'kontiki', 'mayflower']
   for (let s = 0; s < 80; s++) cw.push(...S.pick({ game: 'g30', avatar: 'qa-worlds', count: 4, seed: 800 + s, theme: WORLDS[s % WORLDS.length], level: 1 + (s % 4), weights: { umum: 1 } }).map(q => q.id))
   const umumPool = S.items('kapal').filter(o => o.topic === 'umum' && o.grade <= 2).length
   check(new Set(cw).size === Math.min(cw.length, umumPool), `across 8 worlds x 4 levels: ${cw.length} umum picks, ${new Set(cw).size} distinct (pool ${umumPool})`)
+  // a goal line ("about") never brings back a question the avatar already had (playtest 2026-09-30: lg-dy-6 twice)
+  {
+    const pool = S.items('kapal').filter(o => o.topic === 'logika' && o.grade <= 2).length
+    const ids = []
+    for (let k = 0; k < Math.floor(pool / 5); k++) ids.push(...S.pick({ game: 'g30', avatar: 'qa-about', topic: 'logika', count: 5, seed: 300 + k, about: k % 2 ? 'Latihan bebas — tanpa batas waktu.' : 'Setelah malam datang pagi, waktunya bangun' }).map(q => q.id))
+    check(new Set(ids).size === ids.length, `goal-line picks keep the no-repeat history (${ids.length} picks, ${new Set(ids).size} distinct, pool ${pool})`)
+  }
+  // an explicitly requested topic serves only that topic
+  {
+    const bad = []
+    for (const t of ['matematika', 'logika', 'umum', 'islam', 'arab']) for (let s = 0; s < 200; s++) for (const q of S.pick({ game: 'g30', topic: t, count: 5, seed: s, about: 'Latihan bebas — tanpa batas waktu.' })) if (q.topic !== t && bad.length < 3) bad.push(t + '->' + q.id)
+    check(!bad.length, `topic requests serve only that topic ${bad.join(' | ')}`)
+  }
 }
 
 /* ── E) history persistence ──────────────────────────────────────────── */
+{
+  SE.defineGame('qa-exclusion', { topics: ['umum', 'logika'], weights: { umum: 100 },
+    exclusionOverrides: { optional: { weights: { logika: 100 } } } })
+  const automatic = SE.pick({ game: 'qa-exclusion', without: ['optional'], count: 8, seed: 8 })
+  const explicit = SE.pick({ game: 'qa-exclusion', without: ['optional'], weights: { umum: 100 }, count: 8, seed: 8 })
+  const practice = SE.pick({ game: 'qa-exclusion', without: ['optional'], topic: 'umum', count: 8, seed: 8 })
+  check(automatic.length === 8 && automatic.every(q => q.topic === 'logika'), 'declared exclusion override changes the profile centrally')
+  check(explicit.length === 8 && explicit.every(q => q.topic === 'umum') && practice.length === 8 && practice.every(q => q.topic === 'umum'),
+    'explicit call weights and topic practice retain priority over exclusion overrides')
+}
+{
+  const cases = [
+    { seen: 'broken' }, { seen: { g30: 'broken', valid: { keep: 7 } } },
+    { sig: { g30: {}, valid: ['keep-signature'] } }, { kinds: { g30: {}, valid: ['keep-kind'] } },
+    { mix: { g30: { n: 1000, count: {}, recent: [] } } },
+    { mix: { g30: { n: Number.MAX_SAFE_INTEGER + 1, count: { matematika: Number.MAX_SAFE_INTEGER + 1 }, recent: [] } } },
+    { mix: { g30: { n: 100, count: { matematika: 100 }, recent: Array(100).fill('matematika') } } }
+  ]
+  const failures = []
+  for (const [index, broken] of cases.entries()) {
+    const store = memStorage()
+    store.setItem('soal-seen-qa-corrupt', JSON.stringify({ v: 1, n: 7, seen: { valid: { keep: 7 } },
+      sig: { valid: ['keep-signature'] }, kinds: { valid: ['keep-kind'] }, ...broken }))
+    try {
+      const engine = load(ENGINE, store).SoalEngine
+      const question = engine.one({ game: 'g30', avatar: 'qa-corrupt', seed: 4, weights: { arab: 99, matematika: 1 } })
+      const saved = JSON.parse(store.getItem('soal-seen-qa-corrupt'))
+      if (!question || question.topic === 'arab') failures.push(index + ': delivery/quota')
+      if (typeof broken.seen !== 'string' && saved.seen.valid.keep !== 7) failures.push(index + ': valid seen lost')
+      if (saved.sig.valid[0] !== 'keep-signature' || saved.kinds.valid[0] !== 'keep-kind') failures.push(index + ': valid lists lost')
+    } catch (error) { failures.push(index + ': ' + error.message) }
+  }
+  check(!failures.length, `malformed history scopes and inconsistent quotas recover without losing valid fields (${failures.join('; ')})`)
+}
+{
+  const store = memStorage(), files = [...GENERAL, ...ENGINE]
+  let engine = load(files, store).SoalEngine
+  const topics = [], violations = []
+  for (let i = 0; i < 1000; i++) {
+    if (i === 400) engine = load(files, store).SoalEngine
+    const q = engine.one({ game: 'g30', avatar: 'qa-arab-cap', seed: i, without: ['islam'],
+      weights: { arab: 99, matematika: 1 }, about: 'Bahasa Arab', aboutCount: 1 })
+    if (!q) { violations.push('empty ' + i); continue }
+    topics.push(q.topic)
+    const arabic = topics.filter(t => t === 'arab').length
+    if (arabic > Math.floor(topics.length * 0.08 + 1e-9)) violations.push('share at ' + i)
+    if (topics.slice(-4).filter(t => t === 'arab').length > 1) violations.push('four-question window at ' + i)
+  }
+  check(!violations.length && topics.includes('arab'), `mixed Arabic cap survives one-question calls, topical priority, Islam off and reload (${violations.slice(0, 4)})`)
+  const practice = engine.pick({ game: 'g30', avatar: 'qa-arab-cap', topic: 'arab', count: 8, seed: 4 })
+  check(practice.length === 8 && practice.every(q => q.topic === 'arab'), 'explicit Arabic practice bypasses the mixed cap')
+  const another = engine.one({ game: 'g30', avatar: 'qa-arab-cap-other', weights: { arab: 99, matematika: 1 }, seed: 4 })
+  check(another && another.topic !== 'arab', 'another avatar starts a separate mixed quota')
+}
 {
   const store = memStorage()
   const A = load([...GENERAL, ...ENGINE], store)
@@ -206,7 +281,7 @@ function distribution (opts, N) {
     if (p.length && bad.length < 4) bad.push(`${q.kind} ${q.prompt} [${q.choices}] ${q.answer}: ${p.join(';')}`)
   }
   check(!bad.length, 'fase A: 10,000 generated, all correct and in range ' + bad.join(' | '))
-  check(['count', 'add', 'sub', 'biggest', 'clock', 'diff', 'capacity', 'twostep'].every(k => kinds[k]), 'fase A covers every scheduled kind: ' + Object.keys(kinds).join())
+  check(['count', 'add', 'sub', 'biggest', 'smallest', 'bond', 'tomake', 'double', 'pattern', 'fewer', 'length', 'clock', 'diff', 'capacity', 'twostep'].every(k => kinds[k]), 'fase A covers every scheduled kind: ' + Object.keys(kinds).join())
   bad = []; kinds = {}
   const r2 = SE.rng(99)
   for (let i = 0; i < 10000; i++) {
@@ -218,9 +293,24 @@ function distribution (opts, N) {
   }
   check(!bad.length, 'Sulit: 10,000 generated, all correct and in range ' + bad.join(' | '))
   check(['add3', 'sub3', 'times', 'div', 'frac', 'clock5', 'money', 'measure', 'story'].every(k => kinds[k]), 'Sulit covers every Kelas 3–4 kind: ' + Object.keys(kinds).join())
+  // the container and its contents are different nouns ("Ada 4 peti. Tiap peti berisi 7 peti." — playtest 2026-09-30)
+  {
+    const same = []
+    for (let i = 0; i < 4000; i++) {
+      const q = SE.generate('matematika', { game: 'g30', grade: 'sulit', seed: i, theme: ['vasa', 'titanic', 'queenmary', null][i % 4], kind: ['times', 'story', 'div'][i % 3] })
+      if (/\b(peti|sekoci)\b[^.]*\b(\d+) (peti|sekoci)\b/.test(q.prompt.replace(/^[^.]*?(Tiap|tiap)/, '$1')) || q.noun === 'peti' || q.noun === 'sekoci') same.push(q.prompt)
+      const a = SE.generate('matematika', { game: 'g30', grade: 2, level: 3, seed: i, theme: 'vasa', kind: ['groups', 'share', 'capacity'][i % 3] })
+      if (a.noun === 'sekoci' || a.noun === 'peti') same.push(a.prompt)
+    }
+    check(!same.length, `container != contents noun (${same.length}) ${same.slice(0, 2).join(' | ')}`)
+    SE.defineGame('qa-karung', { nouns: { _: [['qa/karung', 'karung'], ['food/apple', 'apel']] }, vocab: { crate: 'karung', box: 'karung' } })
+    const k = []
+    for (let i = 0; i < 300; i++) { const q = SE.generate('matematika', { game: 'qa-karung', grade: 'sulit', seed: i, kind: 'times' }); if (q.noun !== 'apel') k.push(q.prompt) }
+    check(!k.length, `karung holds apel, never karung (${k.slice(0, 2).join(' | ')})`)
+  }
   // forced kinds incl. the goal-only ones
   let fb = []
-  for (const k of ['groups', 'share', 'groupsplus', 'clock', 'twostep']) for (let i = 0; i < 400; i++) { const q = SE.generate('matematika', { game: 'g30', grade: 2, level: 4, kind: k, seed: i }); const p = SE.validate(q); if (p.length && fb.length < 3) fb.push(k + ' ' + p.join(';')) }
+  for (const k of ['groups', 'share', 'groupsplus', 'clock', 'twostep', 'smallest', 'bond', 'tomake', 'double', 'pattern', 'fewer', 'length']) for (let i = 0; i < 400; i++) { const q = SE.generate('matematika', { game: 'g30', grade: 2, level: 4, kind: k, seed: i }); const p = SE.validate(q); if (p.length && fb.length < 3) fb.push(k + ' ' + p.join(';')) }
   check(!fb.length, 'forced fase A kinds valid ' + fb.join(' | '))
   // easy mode: 3 choices, numbers within 0..10 around the answer
   let eb = 0
@@ -347,7 +437,7 @@ function distribution (opts, N) {
   for (let s = 0; s < 5000; s++) { const q = SE.one({ game: 'g30', context: 'challenge', seed: 20000 + s }); cc[q.topic] = (cc[q.topic] || 0) + 1 }
   check(Math.abs(pct(cc, 'matematika', 5000) - 50) <= 5 && pct(cc, 'arab', 5000) <= 13, `g30 challenge distribution ${JSON.stringify(cc)}`)
   // about (a level's goal line): matching curated items come first
-  const ab = SE.pick({ game: 'g30', count: 4, seed: 3, about: 'Kenali pelampung dan jaket pelampung', weights: { umum: 1, logika: 1 } })
+  const ab = SE.pick({ game: 'g30', count: 4, seed: 3, history: false, about: 'Kenali pelampung dan jaket pelampung', weights: { umum: 1, logika: 1 } })
   const abw = SE.topicWords('Kenali pelampung dan jaket pelampung', ['kapal', 'timmy'])
   check(ab.length === 4 && SE.topicScore(ab[0], abw) > 0, `about: the first question matches the goal ("${ab[0] && ab[0].prompt}", words ${abw})`)
   const clk = SE.pick({ game: 'g30', count: 2, seed: 4, topic: 'matematika', about: 'Baca jadwal pukul berapa kapal berangkat', level: 2 })

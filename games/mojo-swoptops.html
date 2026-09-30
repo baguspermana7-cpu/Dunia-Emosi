@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#1F6FB2">
+<link rel="icon" href="../assets/db/lib/gt/tool-kit.webp">
+<title>Mojo Swoptops: Swop, Rencana &amp; Selamatkan</title>
+<!--
+  G31 "Mojo Swoptops: Swop, Plan & Rescue" — visual-programming rescue puzzles (owner PRD 2026-09-30,
+  documentation and standarization/PRD-Swop-Plan-Rescue.md). Standalone page like G27–G30; the map only
+  launches it. Offline PWA, per-avatar save, no API calls.
+  Modules: prog-grid (headless interpreter + solver, shared), data/mojo-levels (forms + levels),
+  data/soal-pack-mojo (SoalEngine words + world maths), data/mojo-art (art slots), mojo-swoptops (the game).
+-->
+<link rel="stylesheet" href="mojo-swoptops.css?v=v63.18-20261001a">
+</head>
+<body data-scr="scr-home">
+
+<!-- HOME -->
+<section class="scr active" id="scr-home">
+  <div class="town" aria-hidden="true"><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="hills"></div><div class="skyline" id="home-skyline"></div><div class="road"></div></div>
+  <div class="home-top">
+    <button class="ibtn" id="btn-exit" type="button" aria-label="Kembali ke peta Dunia"><i class="ico" data-ico="map"></i></button>
+    <span class="sp"></span>
+    <button class="ibtn" id="btn-sound" type="button" aria-label="Suara"><i class="ico" data-ico="sound"></i></button>
+    <button class="ibtn" id="btn-settings" type="button" aria-label="Pengaturan"><i class="ico" data-ico="settings"></i></button>
+  </div>
+  <div class="home-brand">
+    <h1 class="logo fk"><span class="l1">Mojo</span><span class="l2">Swoptops</span></h1>
+    <p class="tag fk">Swop · Rencana · Selamatkan</p>
+  </div>
+  <div class="home-stage">
+    <img class="home-bo" id="home-bo" alt="Bo">
+    <div class="home-mojo" id="home-mojo" aria-label="Mojo"></div>
+  </div>
+  <div class="home-cta">
+    <button class="btn b-go big fk" id="btn-play" type="button"><i class="ico" data-ico="run"></i><span id="play-t">Ayo Main!</span></button>
+    <button class="btn b-soft fk" id="btn-levels" type="button"><i class="ico" data-ico="plan"></i><span>Misi</span></button>
+    <button class="btn b-soft fk" id="btn-workshop" type="button"><span>Bengkel</span></button>
+    <button class="btn b-soft fk" id="btn-collection" type="button"><span>Koleksi</span></button>
+    <button class="btn b-soft fk" id="btn-learn" type="button"><span>Belajar</span></button>
+    <button class="btn b-soft fk" id="btn-profile" type="button"><span>Profil</span></button>
+  </div>
+</section>
+
+<!-- MISSION MAP -->
+<section class="scr" id="scr-map">
+  <div class="map-bg" aria-hidden="true"></div>
+  <div class="topbar">
+    <button class="ibtn" type="button" data-go="home" aria-label="Kembali"><i class="ico" data-ico="home"></i></button>
+    <div class="plate fk">Peta Misi Swoppiton</div>
+    <span class="sp"></span>
+    <span class="starpill fk" id="map-stars"></span>
+  </div>
+  <div class="chapters" id="chapters"></div>
+</section>
+
+<!-- PLAY -->
+<section class="scr" id="scr-play">
+  <header class="p-top">
+    <button class="ibtn" id="btn-quit" type="button" aria-label="Peta misi"><i class="ico" data-ico="map"></i></button>
+    <div class="p-title"><b class="fk" id="p-title"></b><span class="beats" id="p-beats" aria-label="Babak"></span></div>
+    <div class="objs" id="p-objs" aria-label="Tugas"></div>
+    <div class="inv" id="p-inv" aria-label="Isi Mojo"></div>
+    <button class="ibtn sm" id="btn-sound2" type="button" aria-label="Suara"><i class="ico" data-ico="sound"></i></button>
+  </header>
+  <main class="p-board-wrap" id="board-wrap">
+    <div class="board" id="board">
+      <canvas id="board-bg"></canvas>
+      <div class="layer" id="decor"></div>
+      <div class="layer" id="objs"></div>
+      <div class="mojo" id="mojo"><div class="mj-rot" id="mojo-rot"><div class="mj-ch" id="mojo-ch"></div><div class="mj-mod" id="mojo-mod"></div></div><div class="mj-badge" id="mojo-badge"></div></div>
+      <div class="layer fx" id="fx"></div>
+    </div>
+  </main>
+  <aside class="p-side">
+    <div class="bo" id="bo">
+      <img class="bo-img" id="bo-img" alt="Bo">
+      <div class="bubble"><button class="bo-copy" id="bo-details" type="button" aria-label="Baca pesan lengkap Bo"><strong id="bo-task"></strong><span id="bo-text"></span><small>Pesan Bo ›</small></button><button class="spk" id="bo-say" type="button" aria-label="Dengarkan"><i class="ico" data-ico="speak"></i></button></div>
+    </div>
+    <div class="palette-box"><div class="palette" id="palette" aria-label="Perintah"></div><p class="palette-scroll-note">Geser daftar perintah</p></div>
+    <button class="btn b-hint" id="btn-hint" type="button"><i class="ico" data-ico="hint"></i><span>Petunjuk</span><em id="hint-lv"></em></button>
+  </aside>
+  <footer class="p-strip">
+    <div class="slots" id="slots" aria-label="Rencana"></div>
+    <div class="strip-btns">
+      <button class="ibtn sq" id="btn-undo" type="button" aria-label="Batalkan"><i class="ico" data-ico="undo"></i></button>
+      <button class="ibtn sq" id="btn-clear" type="button" aria-label="Hapus semua"><i class="ico" data-ico="clear"></i></button>
+      <button class="btn b-run fk" id="btn-run" type="button"><i class="ico" data-ico="run"></i><span id="run-t">Jalan!</span></button>
+    </div>
+  </footer>
+</section>
+
+<div class="overlay" id="ov-card" role="dialog" aria-modal="true"></div>
+<div class="overlay" id="ov-mg" role="dialog" aria-modal="true"></div>
+<div class="overlay" id="ov-swop" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="drag-ghost" id="drag-ghost" aria-hidden="true"></div>
+
+<script src="data/asset-index.js?v=v63.18-20261001a"></script>
+<script src="data/save-engine.js?v=v63.18-20261001a"></script>
+<script src="data/sfx-engine.js?v=v63.18-20261001a"></script>
+<script src="prog-grid.js?v=v63.18-20261001a"></script>
+<script src="data/mojo-art.js?v=v63.18-20261001a"></script>
+<script src="data/mojo-levels.js?v=v63.18-20261001a"></script>
+<script src="mojo-save.js?v=v63.18-20261001a"></script>
+<script src="data/soal-engine.js?v=v63.18-20261001a"></script>
+<script src="data/soal-gen-matematika.js?v=v63.18-20261001a"></script>
+<script src="data/soal-pack-mojo.js?v=v63.18-20261001a"></script>
+<script src="mojo-events.js?v=v63.18-20261001a"></script>
+<script src="mojo-menu.js?v=v63.18-20261001a"></script>
+<script src="mojo-swoptops.js?v=v63.18-20261001a"></script>
+<script src="sw-reload.js?v=v63.18-20261001a"></script>
+</body>
+</html>

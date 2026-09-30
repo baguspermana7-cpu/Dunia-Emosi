@@ -118,9 +118,10 @@ async function playSort (p, tag) {
 }
 // plays ONE level (or one whole chapter: its steps come one after another) until the reward screen.
 // onStep(lv) is called once per new step (chapters) so the caller can screenshot / check it.
+// budget 420 s: chapters now hold up to 4 steps, lanes runs are ~52 s plus buoy/gate/collision questions (2026-10-01)
 async function playLevel (p, tag, onStep, hooks = {}) {
   const t0 = Date.now(); let lastStep = null, lanesArmed = null, subSeen = null
-  while (Date.now() - t0 < 240000) {
+  while (Date.now() - t0 < 420000) {
     const st = await p.evaluate(() => ({ s: __tk.state(), lv: __tk.level(), skip: !!document.querySelector('.tks-skip'), chal: !!document.querySelector('.tkq-chal') }))
     if (st.s.screen === 'scr-reward') return true
     if (st.s.screen !== 'scr-play') { check(false, `${tag}: left the play screen mid-level (${st.s.screen})`); return false }
@@ -171,7 +172,7 @@ async function playLevel (p, tag, onStep, hooks = {}) {
     if (type === 'reflection' || type === 'fragment') { if (await tapSel(p, '.tkx-go')) await sleep(1500); else await sleep(300); continue }
     await sleep(400)
   }
-  check(false, `${tag}: did not finish in 240 s (${JSON.stringify(await p.evaluate(() => [__tk.state(), __tk.level(), __tk.step()]))})`)
+  check(false, `${tag}: did not finish in 420 s (${JSON.stringify(await p.evaluate(() => [__tk.state(), __tk.level(), __tk.step()]))})`)
   return false
 }
 

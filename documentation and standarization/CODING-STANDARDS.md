@@ -603,3 +603,33 @@ users had to re-request. Source of truth prevents regression.
 
 **Cross-reference**: `~/.claude/.../feedback_always_document.md` enforces this at
 future session start.
+
+## G30/G31 continuation regression patterns (2026-09-30)
+
+- Persist earned completion at the successful game-state transition, before a
+  delayed celebration. Cancelling presentation during quit/pagehide must not
+  erase a completed mission or award it twice.
+- A host Pause control requires an actual module pause/resume contract. Freeze
+  delayed command execution, question continuations and completion callbacks;
+  exclude paused/hidden time from active-play duration.
+- Carry per-attempt assistance markers through every chapter step and saved
+  checkpoint. Averaging subgame scores must not defeat a two-star hint cap;
+  a fresh replay clears attempt-only markers.
+- Bind cached per-child state to its original avatar before loading it. See
+  [SAVE_ENGINE_STANDARD.md](SAVE_ENGINE_STANDARD.md) for the shared session
+  lock, two-tab regression and legacy fallback behavior.
+- Treat saved JSON as untrusted input: validate record shapes and bounded
+  numbers, retain valid sibling progress, rebuild trusted level definitions
+  instead of accepting saved definitions, and render saved values as text.
+- Image bounds alone do not prove intact art: inspect ancestor overflow and
+  foreground occlusion. Reserve title/caption space, constrain implicit grid
+  tracks and remeasure after images/fonts load. Verify the real screen as well
+  as isolated component harnesses at portrait and short landscape sizes.
+- A tile requires a real playable action. Preserve geographic labels and
+  reference art without presenting unavailable missions as working buttons.
+- Asset publication must preserve other categories, old distinct drawings and
+  source provenance. Follow [IMAGE_ASSET_STANDARD.md](IMAGE_ASSET_STANDARD.md)
+  for measured masks, complete region disposition and failed-batch rollback.
+- Offline acceptance must disable HTTP cache and stop the origin server after
+  installation. Test previously unvisited content and full audio responses;
+  a successful service-worker registration alone is insufficient.

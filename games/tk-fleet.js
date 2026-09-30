@@ -2,17 +2,18 @@
  * tk-fleet.js — window.TKFleet. Timmy & Kapal Legendaris: the ship catalogue + the
  * "Pilih Kapalmu" Character Selection screen (owner 2026-09-28).
  *
- *   TKFleet.ships                        50 ships: { id, name, fact, side, top, stats:{cepat,lincah,kuat}, size, aspect, rec, flag?,
+ *   TKFleet.ships                        52 ships: { id, name, fact, side, top, stats:{cepat,lincah,kuat}, size, aspect, rec, flag?, topNote?,
  *                                        group:'modern'|'legend', real? (the ship's real name), alt? [other side-view DB keys] }
  *   TKFleet.groups                       [{ id:'modern', label:'Kapal Modern', ids }, { id:'legend', label:'Kapal Legenda', ids }]
  *   TKFleet.get(id)                      one ship (null if unknown)
  *   TKFleet.sideSrc(id) / topSrc(id)     URLs (side view = picker card, top view = gameplay, bow UP)
  *   TKFleet.handling(id)                 { len, beam, turnK, speedK } — gentle: every ship stays easy
  *   TKFleet.saved(avatar) / save(avatar, id)   per-avatar pick (localStorage 'tk-fleet-<avatar>')
+ *   TKFleet.sailed(avatar) / markSailed(avatar, id)   sail history: ships finished a steer / lanes run with ('tk-fleet-sailed-<avatar>')
  *   TKFleet.avatar(opts)                 opts.avatar || the active Dunia avatar || 'anon'
  *   TKFleet.open(host, opts) -> { destroy, pick(id), current() }
  *        opts { current, group, onPick(id), onClose (shows a "Kembali" button), lib(key), reducedMotion, sfx:{muted}, title }
- *        Two tabs (Kapal Modern / Kapal Legenda); only the open tab's 25 cards are in the DOM and their
+ *        Two tabs (Kapal Modern / Kapal Legenda); only the open tab's cards are in the DOM and their
  *        thumbnails load lazily as they scroll into the strip (IntersectionObserver on the strip).
  *   TKFleet.resolve(host, opts, start)   the modules' entry: opts.ship given -> start(id) now; a saved pick ->
  *                                        start(saved); otherwise the picker opens, saves the pick, then start(id).
@@ -49,7 +50,7 @@
     ['tallship', 'Kapal Layar Tinggi', 'Berlayar dengan tenaga angin.', 'tk-ship2/cutty-sark-clean', 2, 2, 1, 'm', 0.747],
     ['coastguard', 'Kapal Penjaga Pantai', 'Siap menolong orang di laut.', 'tk-ship3/national-guard-cutter-clean', 3, 2, 2, 'm', 0.439],
     ['icebreaker', 'Kapal Pemecah Es', 'Hidungnya kuat untuk membelah es.', 'tk-ship3/icebreaker-50-let-pobedy-clean', 1, 2, 3, 'm', 0.584, 'pemecah es merah-hitam, atas merah-hijau bulat'],
-    ['submarine', 'Kapal Selam', 'Bisa menyelam ke bawah laut!', 'tk-ship/submarine-black', 2, 2, 2, 'm', 0.627],
+    ['submarine', 'Kapal Selam', 'Bisa menyelam ke bawah laut!', 'tk-ship/submarine-black', 2, 2, 2, 'm', 0.627, 'ilustrasi samping biru berjendela, atas hitam berbeda bentuk'],
     ['frigate', 'Kapal Penjaga Cepat', 'Ada tempat helikopter di belakangnya.', 'tk-ship3/hms-dreadnought-f111-clean', 3, 2, 2, 'm', 0.418],
     ['patrol', 'Kapal Patroli', 'Berkeliling menjaga laut tetap aman.', 'tk-ship3/corvette-clean', 3, 3, 1, 'm', 0.381],
     ['destroyer', 'Kapal Penjaga Panjang', 'Panjang dan cepat menjaga laut.', 'tk-ship3/uss-arleigh-burke-clean', 3, 2, 2, 'm', 0.414],
@@ -71,7 +72,9 @@
     ['hms-erebus', 'Kapal Penjelajah Es', 'HMS Erebus', 'Kapal penjelajah es yang berlayar jauh ke laut beku.', 1, 2, 3, 'm', 0.465],
     ['hms-terror', 'Kapal Kembar Penjelajah', 'HMS Terror', 'Kembaran Erebus, lambungnya dibuat kuat untuk melewati es.', 1, 2, 3, 'm', 0.455],
     ['mary-celeste', 'Kapal Layar Dua Tiang', 'Mary Celeste', 'Kapal layar dari kayu yang membawa barang menyeberangi samudra.', 2, 3, 1, 's', 0.484],
-    ['ss-republic', 'Kapal Uap Pembawa Koin', 'SS Republic', 'Kapal uap ini pernah membawa banyak koin emas!', 2, 2, 2, 'm', 0.369],
+    // The story uses the 1909 radio-rescue liner, not the 1865 coin-carrying SS Republic.
+    // Primary source: nps.gov/caco/learn/news/cape-cod-national-seashore-and-the-chatham-marconi-maritime-museum-to-commemorate-wireless-technology-and-the-one-hundredth-anniversary-of-the-sinking-of-the-titanic.htm
+    ['ss-republic', 'Kapal Pembawa Pesan Radio', 'RMS Republic', 'Pesan radio dari kapal ini membantu memanggil kapal penolong.', 2, 2, 2, 'm', 0.369],
     ['ss-sultana', 'Kapal Roda Kayuh', 'SS Sultana', 'Kapal sungai dengan roda kayuh besar di sampingnya.', 1, 2, 2, 'm', 0.421],
     ['empress-of-ireland', 'Kapal Permaisuri', 'RMS Empress of Ireland', 'Kapal penumpang dengan dua cerobong merah, berlayar ke Kanada.', 2, 1, 3, 'l', 0.351],
     ['lusitania', 'Kapal Kilat Samudra', 'RMS Lusitania', 'Dulu ia kapal penumpang tercepat menyeberangi samudra!', 3, 1, 3, 'l', 0.33],
@@ -89,15 +92,23 @@
     ['endurance', 'Kapal Penjelajah Kutub', 'Endurance', 'Kapal kayu yang kuat untuk menjelajah laut es di Kutub Selatan.', 2, 3, 2, 'm', 0.502, ['tk-ship2/endurance-clean', 'tk-legend/ship-endurance-clean']],
     ['carpathia', 'Kapal Penolong Berani', 'RMS Carpathia', 'Kapal penolong yang berani, melaju cepat untuk menolong orang di laut.', 3, 2, 2, 'm', 0.343],
     ['andrea-gail', 'Kapal Nelayan Tangguh', 'Andrea Gail', 'Kapal nelayan yang mencari ikan todak di laut lepas.', 2, 3, 2, 's', 0.476],
-    ['costa-concordia', 'Kapal Pesiar Raksasa', 'Costa Concordia', 'Kapal pesiar raksasa dengan banyak kolam renang, seperti hotel terapung!', 2, 1, 3, 'l', 0.416]
+    ['costa-concordia', 'Kapal Pesiar Raksasa', 'Costa Concordia', 'Kapal pesiar raksasa dengan banyak kolam renang, seperti hotel terapung!', 2, 1, 3, 'l', 0.416],
+    // owner HQ sheet 3 (2026-09-30): side view only. topAlt = the TOP view is borrowed (flagged) until the owner
+    // sends one; [.., alt, topKey]
+    ['uss-enterprise', 'Kapal Induk Raksasa', 'USS Enterprise (CVN-65)', 'Kapal induk bertenaga nuklir pertama, panjangnya lebih dari 3 lapangan sepak bola!', 2, 1, 3, 'l', 0.429, null, 'tk-top/carrier'],
+    // Royal Museums Greenwich: rmg.co.uk/collections/objects/rmgc-object-66865 (Atlantic telegraph cables).
+    ['great-eastern', 'Kapal Raksasa Enam Tiang', 'SS Great Eastern', 'Kapal raksasa ini memasang kabel telegraf di dasar laut untuk mengirim pesan.', 1, 1, 3, 'l', 0.33, null, 'tk-legend-top/lusitania']
   ]
   var REC = 'lifeboat'
   var SHIPS = ROWS.map(function (r) {
     return { id: r[0], name: r[1], fact: r[2], side: r[3], top: 'tk-top/' + r[0], stats: { cepat: r[4], lincah: r[5], kuat: r[6] },
-      size: r[7], aspect: r[8], flag: r[9] || null, rec: r[0] === REC, group: 'modern', real: null, alt: null }
+      size: r[7], aspect: r[8], flag: r[9] || null, topNote: r[9] ? 'Gambar samping dan atas berbeda' : null,
+      rec: r[0] === REC, group: 'modern', real: null, alt: null }
   }).concat(LEGEND.map(function (r) {
-    return { id: r[0], name: r[1], real: r[2], fact: r[3], side: 'tk-legend-side/' + r[0], top: 'tk-legend-top/' + r[0],
-      stats: { cepat: r[4], lincah: r[5], kuat: r[6] }, size: r[7], aspect: r[8], flag: null, rec: false, group: 'legend', alt: r[9] || null }
+    return { id: r[0], name: r[1], real: r[2], fact: r[3], side: 'tk-legend-side/' + r[0], top: r[10] || 'tk-legend-top/' + r[0],
+      stats: { cepat: r[4], lincah: r[5], kuat: r[6] }, size: r[7], aspect: r[8], group: 'legend', alt: r[9] || null, rec: false,
+      topAlt: !!r[10], topNote: r[10] ? 'Tampak atas memakai kapal contoh' : null,
+      flag: r[10] ? 'tampak atas dipinjam dari ' + r[10] : null }
   }))
   var GROUPS = [{ id: 'modern', label: 'Kapal Modern', ids: [] }, { id: 'legend', label: 'Kapal Legenda', ids: [] }]
   var GBY = { modern: GROUPS[0], legend: GROUPS[1] }
@@ -108,12 +119,18 @@
   // a world / story level whose OWN ship is in the catalogue (tk-worlds ids, 'ship/<world>' keys, or any catalogue
   // id such as the legend ships). Only the SAME ship: Nautilus, Missouri, Britannic ... have none and get null.
   var WORLD_SHIP = { titanic: 'titanic', cuttysark: 'tallship', 'cutty-sark': 'tallship', victory: 'hms-victory',
-    endurance: 'endurance', arizona: 'uss-arizona' }
+    endurance: 'endurance', arizona: 'uss-arizona',
+    // legend story worlds (games/data/tk-worlds-legends.js ids)
+    maryrose: 'mary-rose', queenanne: 'queen-annes-revenge', erebus: 'hms-erebus', maryceleste: 'mary-celeste',
+    republic: 'ss-republic', carpathia: 'carpathia' }
   function storyShip (x) {
     if (!x) return null
     x = String(x).replace(/^ship\//, '')
     if (WORLD_SHIP[x]) return WORLD_SHIP[x]
-    return BY[x] ? x : null
+    if (BY[x]) return x
+    // any other world that names its legend ship(s): TKWorlds world.legend[0]
+    try { var w = W.TKWorlds && W.TKWorlds.get && W.TKWorlds.get(x); if (w && w.legend && BY[w.legend[0]]) return w.legend[0] } catch (e) {}
+    return null
   }
 
   function lib (k, opts) {
@@ -140,6 +157,19 @@
   }
   function saved (av) { try { var v = W.localStorage.getItem('tk-fleet-' + av); return BY[v] ? v : null } catch (e) { return null } }
   function save (av, id) { if (!BY[id]) return false; try { W.localStorage.setItem('tk-fleet-' + av, id); return true } catch (e) { return false } }
+  // sail history (Galeri Kapal "Sudah berlayar"): ships this avatar finished a steer / lanes run with,
+  // localStorage 'tk-fleet-sailed-<avatar>' = JSON id list. markSailed returns the new list (unknown ids ignored).
+  function sailed (av) {
+    try { var v = JSON.parse(W.localStorage.getItem('tk-fleet-sailed-' + av) || '[]'); if (!v || !v.filter) return []
+      return v.filter(function (id, i) { return !!BY[id] && v.indexOf(id) === i }) } catch (e) { return [] }
+  }
+  function markSailed (av, id) {
+    var v = sailed(av)
+    if (!BY[id] || v.indexOf(id) >= 0) return v
+    v = v.concat([id])
+    try { W.localStorage.setItem('tk-fleet-sailed-' + av, JSON.stringify(v)) } catch (e) {}
+    return v
+  }
 
   /* ── CSS (injected once, scoped to .tkf-root) ─────────────────────────── */
   var CSS = [
@@ -170,6 +200,7 @@
     '.tkf-real[hidden]{display:none}',
     '.tkf-name{margin:0;font-family:var(--font-display,"Fredoka One","Nunito",sans-serif);font-weight:400;font-size:clamp(26px,4.4vmin,44px);line-height:1.05;text-shadow:0 2px 0 rgba(0,0,0,.25)}',
     '.tkf-fact{margin:0;font-weight:800;font-size:clamp(16px,2.4vmin,21px);line-height:1.35;color:#e8f6ff;max-width:34ch}',
+    '.tkf-topnote{margin:0;font-size:14px;line-height:1.3;font-weight:800;color:#fff0bd}.tkf-topnote[hidden]{display:none}',
     '.tkf-stats{display:flex;flex-wrap:wrap;gap:8px}',
     '.tkf-stat{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:14px;background:rgba(6,26,46,.55);font-weight:900;font-size:15px}',
     '.tkf-pips{display:flex;gap:4px}.tkf-pips i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.22)}.tkf-pips i.on{background:#ffd166;box-shadow:0 0 0 1.5px #fff3c4 inset}',
@@ -182,16 +213,17 @@
     '.tkf-strip{flex:1;min-width:0;display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding:0 8px;padding:8px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}',
     '.tkf-strip::-webkit-scrollbar{display:none}',
     '.tkf-card{position:relative;flex:none;scroll-snap-align:center;width:var(--tkf-card,132px);height:calc(var(--tkf-card,132px) * .78);padding:6px;border:0;border-radius:16px;background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 2px rgba(255,255,255,.18);cursor:pointer;display:grid;place-items:center;transition:transform .2s ' + EASE + ',background-color .2s ease-out,box-shadow .2s ease-out}',
-    '.tkf-card img{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);object-fit:contain;pointer-events:none;opacity:0;transition:opacity .2s ease-out}',
+    '.tkf-card img{position:absolute;inset:6px 6px 26px;width:calc(100% - 12px);height:calc(100% - 32px);object-fit:contain;pointer-events:none;opacity:0;transition:opacity .2s ease-out}',
+    '.tkf-card .tkf-cname{position:absolute;left:4px;right:4px;bottom:5px;font:800 14px/1.1 var(--font,"Nunito",system-ui,sans-serif);color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.5)}',
     '.tkf-card img.is-ok{opacity:1}',
     '.tkf-card.is-on{background:rgba(255,209,102,.3);box-shadow:inset 0 0 0 3px #ffd166,0 6px 14px rgba(0,0,0,.25);transform:translateY(-3px)}',
     '.tkf-card .tkf-dot{position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:#ffc83d;box-shadow:0 0 0 2px #fff}',
     '.tkf-port .tkf-main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;align-items:stretch;justify-items:center;padding:4px 16px}',
     '.tkf-port .tkf-info{align-items:center;text-align:center}.tkf-port .tkf-fact{max-width:40ch}.tkf-port .tkf-stats{justify-content:center}',
     '.tkf-short .tkf-tab{min-height:44px;padding:0 12px}',
-    '.tkf-short .tkf-head{padding-top:calc(6px + env(safe-area-inset-top,0px))}.tkf-short .tkf-main{gap:8px 16px}.tkf-short .tkf-info{gap:7px}.tkf-short .tkf-foot{padding-top:2px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}',
+    '.tkf-short .tkf-head{padding-top:calc(6px + env(safe-area-inset-top,0px))}.tkf-short .tkf-main{gap:8px 16px;padding-bottom:12px}.tkf-short .tkf-info{gap:4px}.tkf-short .tkf-foot{padding-top:2px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}',
     '.tkf-short .tkf-cta{min-height:56px}.tkf-short .tkf-stat{padding:4px 10px;font-size:14px}',
-    '.tkf-short .tkf-real{font-size:14px;padding:2px 8px}.tkf-short .tkf-name{font-size:clamp(22px,4vmin,30px)}.tkf-short .tkf-fact{font-size:15px;line-height:1.25}',
+    '.tkf-short .tkf-real{font-size:14px;padding:2px 8px}.tkf-short .tkf-name{font-size:clamp(22px,4vmin,30px)}.tkf-short .tkf-fact{font-size:15px;line-height:1.2;max-width:none}',
     '.tkf-short .tkf-stats{flex-wrap:nowrap;gap:6px}.tkf-short .tkf-stat{gap:5px;padding:4px 8px}.tkf-short .tkf-pips i{width:10px;height:10px}',
     '.tkf-rm .tkf-card img{transition:none}',
     '.tkf-rm .tkf-hero,.tkf-rm .tkf-sea:after{animation:none}.tkf-rm .tkf-heroBox,.tkf-rm .tkf-heroBox.is-swap{transform:none}.tkf-rm .tkf-card,.tkf-rm .tkf-card.is-on{transform:none}',
@@ -241,7 +273,7 @@
     var main = el('div', 'tkf-main')
     var stage = el('div', 'tkf-stage', '<div class="tkf-sea"></div><div class="tkf-heroBox"><img class="tkf-hero" alt="" draggable="false" decoding="async"></div>')
     var heroBox = stage.querySelector('.tkf-heroBox'), hero = stage.querySelector('.tkf-hero')
-    var info = el('div', 'tkf-info', '<span class="tkf-rec">Rekomendasi</span><span class="tkf-real" hidden></span><h3 class="tkf-name" aria-live="polite"></h3><p class="tkf-fact"></p><div class="tkf-stats"></div>')
+    var info = el('div', 'tkf-info', '<span class="tkf-rec">Rekomendasi</span><span class="tkf-real" hidden></span><h3 class="tkf-name" aria-live="polite"></h3><p class="tkf-fact"></p><div class="tkf-stats"></div><p class="tkf-topnote" hidden></p>')
     var cta = el('button', 'tkf-cta', 'Pilih Kapal Ini'); cta.type = 'button'
     info.appendChild(cta)
     main.appendChild(stage); main.appendChild(info)
@@ -272,7 +304,8 @@
       list = GBY[grp].ids
       cards = list.map(function (id) {
         var s = BY[id]
-        var c = el('button', 'tkf-card', '<img alt="" draggable="false" decoding="async">' + (id === recId ? '<span class="tkf-dot"></span>' : ''))
+        var c = el('button', 'tkf-card', '<img alt="" draggable="false" decoding="async"><span class="tkf-cname" aria-hidden="true"></span>' + (id === recId ? '<span class="tkf-dot"></span>' : ''))
+        c.querySelector('.tkf-cname').textContent = s.real || s.name
         c.type = 'button'; c.setAttribute('role', 'radio'); c.setAttribute('aria-label', s.real ? s.name + ', ' + s.real : s.name); c.setAttribute('data-id', id)
         c.addEventListener('click', function () { select(id, true) })
         strip.appendChild(c)
@@ -321,6 +354,7 @@
       var real = info.querySelector('.tkf-real'); real.hidden = !s.real; real.textContent = s.real || ''
       info.querySelector('.tkf-name').textContent = s.name
       info.querySelector('.tkf-fact').textContent = s.fact
+      var note = info.querySelector('.tkf-topnote'); note.hidden = !s.topNote; note.textContent = s.topNote || ''
       var st = info.querySelector('.tkf-stats'); st.innerHTML = ''
       ;['cepat', 'lincah', 'kuat'].forEach(function (k) {
         var n = s.stats[k], b = el('span', 'tkf-stat', '<span></span><span class="tkf-pips"><i></i><i></i><i></i></span>')
@@ -424,6 +458,6 @@
       onPick: function (id) { save(av, id); if (fresh) markWorld(av, wkey); start(id) } })
   }
 
-  W.TKFleet = { ships: SHIPS, groups: GROUPS, get: get, storyShip: storyShip, sideSrc: sideSrc, topSrc: topSrc, handling: handling, saved: saved, save: save,
-    avatar: avatar, open: open, resolve: resolve, recommended: REC, version: '1.2.0' }
+  W.TKFleet = { ships: SHIPS, groups: GROUPS, get: get, storyShip: storyShip, sideSrc: sideSrc, topSrc: topSrc, handling: handling, saved: saved, save: save, sailed: sailed, markSailed: markSailed,
+    avatar: avatar, open: open, resolve: resolve, recommended: REC, version: '1.3.0' }
 })(window)

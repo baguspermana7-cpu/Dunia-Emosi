@@ -10,7 +10,7 @@
  *   { xp, stars{world:{level:n}}, fragments[], cards[], badges[], mastery{domain:n},
  *     settings{grade, islam, sound, narration, reducedMotion, timer, easy}, seenIntro, last, fav[],
  *     guide{home, world, map} (pointing-hand hints already shown),
- *     progress{world:{chapter:stepIndex}} (next step of an unfinished chapter), cine{'world/chapter/step': sceneId}
+ *     progress{world:{chapter:stepIndex}} (next step of an unfinished chapter), chapterHints{'world/chapter':true}, cine{'world/chapter/step': sceneId}
  *     (cinema checkpoint), legacy{world:{t1..:n}} (stars before the chapter restructure), migrated{world:1} }
  *
  * CHAPTERS (Titanic, owner mockup ui-12): a level may be {type:'chapter', steps:[…]}; its steps are ordinary
@@ -107,6 +107,7 @@
 ;(function () {
   'use strict'
   var W = window, WD = W.TKWorlds, Art = W.TKArt, IC = W.TKIcon
+  if (W.lockGameAvatarSession) W.lockGameAvatarSession()
   var KEY = 'dunia-tk-v1', GAME_ID = 'g30'
   function $ (id) { return document.getElementById(id) }
   function esc (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;') }
@@ -116,6 +117,11 @@
 
   /* ── save ───────────────────────────────────────────────────────────── */
   var S
+  function chapterHintMap (value) {
+    var out = {}
+    Object.keys(value || {}).forEach(function (key) { if (/^[a-z0-9-]+\/[a-z0-9-]+$/.test(key) && value[key] === true) out[key] = true })
+    return out
+  }
   function fill (o) {
     o = o || {}
     var st = o.settings || {}
@@ -124,7 +130,7 @@
         // Tingkat Soal (owner 2026-09-29): 'mudah' = Kelas 1–2 (default), 'sulit' = Kelas 3–4
         level: st.level === 'sulit' ? 'sulit' : 'mudah' },
       seenIntro: !!o.seenIntro, last: o.last || null, fav: o.fav || [], guide: o.guide || {}, seenSortTut: !!o.seenSortTut,
-      progress: o.progress || {}, cine: o.cine || {}, legacy: o.legacy || {}, migrated: o.migrated || {},
+      progress: o.progress || {}, cine: o.cine || {}, chapterHints: chapterHintMap(o.chapterHints), legacy: o.legacy || {}, migrated: o.migrated || {},
       atlas: o.atlas && o.atlas.open ? { v: 1, open: o.atlas.open.slice() } : null }   // world-select sea chart: worlds ever unlocked (tk-atlas.js)
   }
   /* save migration: a world that became chapters (Titanic t1..t13 -> c1..c10) keeps its progress. A chapter
@@ -249,7 +255,7 @@
   function hand (key, getTarget, line, side) {
     unhand()
     if ((S.guide || {})[key]) return
-    var el = document.createElement('div'); el.className = 'tk-hand' + (side ? ' side' : ''); el.setAttribute('aria-hidden', 'true')
+    var el = document.createElement('div'); el.className = 'tk-hand' + (side ? ' side' : '') + (key === 'home' ? ' home' : ''); el.setAttribute('aria-hidden', 'true')
     el.innerHTML = '<i class="ring"></i><i class="hp"><i class="palm"></i><i class="fg"></i><i class="th"></i><i class="cuff"></i></i>'
     $('fly').appendChild(el)
     var done = function () { S.guide = Object.assign({}, S.guide); S.guide[key] = 1; save(); unhand() }
@@ -261,8 +267,18 @@
       if (t && t.isConnected) {
         var r = t.getBoundingClientRect(), vis = r.width > 0 && r.bottom > 0 && r.top < innerHeight
         el.style.opacity = vis ? '' : '0'
-        if (side) el.classList.toggle('flip', r.left + r.width / 2 > innerWidth * 0.62)
-        el.style.transform = 'translate3d(' + Math.round(r.left + r.width / 2) + 'px,' + Math.round(r.top + r.height / 2) + 'px,0)'
+        var x = Math.round(r.left + r.width / 2), y = Math.round(r.top + r.height / 2), pad = 6
+        if (side) el.classList.toggle('flip', key !== 'home' && x > innerWidth * 0.62)
+        // Home points from the arrow's right side, leaving the words uncovered. Shrink only the
+        // decorative hand on a phone; the button itself retains its full touch target.
+        if (key === 'home') el.style.setProperty('--hand-scale', Math.min(1, Math.max(0.45, (innerWidth - x - pad) / 96)))
+        el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'
+        var parts = [].slice.call(el.querySelectorAll('.hp > i')).map(function (p) { return p.getBoundingClientRect() })
+        var left = Math.min.apply(null, parts.map(function (p) { return p.left })), right = Math.max.apply(null, parts.map(function (p) { return p.right }))
+        var top = Math.min.apply(null, parts.map(function (p) { return p.top })), bottom = Math.max.apply(null, parts.map(function (p) { return p.bottom }))
+        x += Math.max(0, pad - left) - Math.max(0, right - innerWidth + pad)
+        y += Math.max(0, pad - top) - Math.max(0, bottom - innerHeight + pad)
+        el.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0)'
       } else el.style.opacity = '0'
       cur.raf = requestAnimationFrame(loop)
     }
@@ -363,19 +379,20 @@
     if (sub) sub.textContent = nu ? (nu.w.id === 'kamar' ? 'Kamar Timmy' : nu.w.name) + ' · ' + unitLabel(nu.w, nu.k) : 'Semua level selesai!'
     skel($('home-sky'))
     var list = shipWorlds()
-    $('carousel').innerHTML = list.map(function (w) {
+    // first card: Galeri Kapal (every TKFleet ship, Modern + Legenda; owner 2026-09-30 looked for Edmund Fitzgerald here)
+    $('carousel').innerHTML = galCard() + list.map(function (w) {
       var open = worldOpen(wIndex(w))
       return '<button class="sc' + (open ? '' : ' locked') + '" type="button" data-w="' + w.id + '" aria-label="' + esc(w.name + (open ? '' : ' (terkunci)')) + '">' + shipScene(w, 'sc-img') + (open ? '' : lockBadge()) +
         '<span class="sc-t"><b>' + esc(w.name) + '</b><small>' + esc(w.value) + '</small></span></button>'
     }).join('')
-    $('car-dots').innerHTML = list.map(function (w, i) { return '<i' + (i ? '' : ' class="on"') + '></i>' }).join('')
+    $('car-dots').innerHTML = [0].concat(list).map(function (w, i) { return '<i' + (i ? '' : ' class="on"') + '></i>' }).join('')
     $('cats').innerHTML = CATS.filter(function (c) { return c[0] !== 'islam' || S.settings.islam }).map(function (c) {
-      return '<button class="cat" type="button" data-d="' + c[0] + '"><i style="background:' + c[3] + '"><img src="' + esc(Art.lib(c[2])) + '" alt=""></i><span>' + c[1].replace('Pengetahuan', 'Penge\u00ADtahuan') + '</span></button>'
+      return '<button class="cat" type="button" data-d="' + c[0] + '"><i style="background:' + c[3] + '"><img src="' + esc(Art.lib(c[2])) + '" alt=""></i><span>' + c[1].replace('Matematika', 'Mate\u00ADmatika').replace('Pengetahuan', 'Penge\u00ADtahuan') + '</span></button>'
     }).join('')
     paintSound()
     carouselWire(); requestAnimationFrame(paintCar)
     skel($('carousel'))
-    hand('home', function () { return $('btn-start').querySelector('.chev') || $('btn-start') }, S.seenIntro ? 'Ketuk tombol kuning untuk lanjut berlayar!' : 'Halo! Ketuk tombol kuning untuk mulai berlayar!', true)   // side hand: it pointed down over the Kamar Timmy tile (playtest)
+    hand('home', function () { return $('btn-start').querySelector('.chev') || $('btn-start') }, S.seenIntro ? 'Ketuk tombol kuning untuk lanjut berlayar!' : 'Halo! Ketuk tombol kuning untuk mulai berlayar!', 'r')   // side hand: it pointed down over the Kamar Timmy tile (playtest)
   }
   // carousel arrows (CSS chevrons) + dots; landscape pages by a screenful, portrait by one card
   var carWired = false
@@ -412,7 +429,9 @@
     var tm = $('ships-timmy'); if (!tm.getAttribute('src')) tm.src = Art.src('char/timmy')
     var lg = $('ships-logo'); if (LOGO_ART && !lg.getAttribute('src') && W.AssetIndex && AssetIndex.path('tk-key/logo')) lg.src = Art.src('ui/logo')
     $('ships-stars').innerHTML = IC('star') + '<span>' + totalStars() + '/' + maxStars() + '</span>'
-    var cats = WD.CATS.concat([['favorit', 'Favorit']])
+    // kid-safe chip labels (playtest 2026-09-30): no war / disaster words on a filter chip
+    var KID_CAT = { tragedi: 'Kisah Haru', 'perang-damai': 'Kenangan & Damai' }
+    var cats = WD.CATS.map(function (c) { return /perang|tragedi|bencana/i.test(c[1]) && KID_CAT[c[0]] ? [c[0], KID_CAT[c[0]]] : c }).concat([['favorit', 'Favorit']])
     $('ship-filter').innerHTML = cats.map(function (c) { return '<button class="chip' + (c[0] === FILTER ? ' on' : '') + '" type="button" data-c="' + c[0] + '" aria-pressed="' + (c[0] === FILTER) + '">' + c[1] + '</button>' }).join('')
     var shown = 0
     $('ship-list').innerHTML = shipWorlds().map(function (w) {
@@ -753,6 +772,7 @@
     var o = Object.assign({}, (S.progress || {})[w.id])
     if (i > 0) o[lv.id] = i; else delete o[lv.id]
     S.progress = Object.assign({}, S.progress); S.progress[w.id] = o
+    if (clear) { var hints = Object.assign({}, S.chapterHints); delete hints[w.id + '/' + lv.id]; S.chapterHints = hints }
     if (clear) { var c = Object.assign({}, S.cine), pre = w.id + '/' + lv.id + '/'; Object.keys(c).forEach(function (k) { if (k.indexOf(pre) === 0) delete c[k] }); S.cine = c }
     save()
   }
@@ -802,7 +822,7 @@
       if (opt && typeof opt.step === 'number') from = opt.step
       if (!(from >= 0 && from < lv.steps.length)) from = 0
       if (fresh) setProg(w, lv, 0, true)   // a replay forgets the old checkpoint (and its cinema scene)
-      PLAYING.chap = { i: from, res: [], doneI: -1 }
+      PLAYING.chap = { i: from, res: [], doneI: -1, hinted: S.chapterHints[w.id + '/' + lv.id] === true }
       $('lvchip').textContent = w.name + ' · Bab ' + lv.no + ' · ' + lv.title
       runStep(from, true)
       return
@@ -819,6 +839,8 @@
     P0.chap.i = i; P0.step = st
     var mount = function () {
       if (PLAYING !== P0) return
+      if (document.hidden || Object.keys(P0.pauseReasons || {}).length) { P0.resumeMount = mount; return }
+      P0.resumeMount = null
       try { if (P0.handle && P0.handle.destroy) P0.handle.destroy() } catch (e) {}
       P0.handle = null; host.innerHTML = ''; document.body.classList.remove('story-on')
       mode(st.type); chapter(P0.w, P0.k)
@@ -833,24 +855,33 @@
     }
     if (first) mount(); else hostFade(host, true, mount)
   }
+  function markChapterHint (P0) {
+    if (PLAYING !== P0 || !P0.chap || P0.chap.hinted) return
+    P0.chap.hinted = true
+    S.chapterHints = Object.assign({}, S.chapterHints); S.chapterHints[P0.w.id + '/' + P0.lv.id] = true
+    save()
+  }
   function stepDone (P0, i, res) {
     if (PLAYING !== P0 || !P0.chap || P0.chap.i !== i || P0.chap.doneI === i) return
     P0.chap.doneI = i
     P0.chap.res.push(res || { stars: 3 })
+    if (res && res.hinted) markChapterHint(P0)
     var ch = P0.lv, n = ch.steps.length
     if (i + 1 < n) { setProg(P0.w, ch, i + 1); SND.chime(); runStep(i + 1, false); return }
     setProg(P0.w, ch, 0, true)
-    finish(aggregate(P0.chap.res))
+    finish(aggregate(P0.chap.res, P0.chap.hinted))
   }
   // chapter result = its steps together: mean stars (story / cinema steps count as 3), summed answers
-  function aggregate (list) {
-    var o = { stars: 0, story: false }, n = 0
+  function aggregate (list, hinted) {
+    var o = { stars: 0, story: false, hinted: !!hinted }, n = 0
     list.forEach(function (r) {
       n++; o.stars += Math.max(1, Math.min(3, r.stars || 3))
       ;['right', 'asked', 'moves', 'shortest', 'hits'].forEach(function (k) { if (typeof r[k] === 'number') o[k] = (o[k] || 0) + r[k] })
       if (r.story) o.story = true
+      if (r.hinted) o.hinted = true
     })
     o.stars = n ? Math.max(1, Math.min(3, Math.round(o.stars / n))) : 3
+    if (o.hinted) o.stars = Math.min(o.stars, 2)
     if (o.right != null || o.moves != null || o.hits != null) o.story = false
     return o
   }
@@ -889,14 +920,33 @@
     var wi = CUR.w ? WD.WORLDS.indexOf(CUR.w) : -1
     return CUR.w ? CUR.w.name : ''
   }
+  // Story reading, menu pauses and hidden tabs may overlap; subtract their union only once.
+  function playIdle (P0, reason, on) {
+    if (!P0) return
+    var reasons = Object.assign({}, P0.idleReasons || {}), was = Object.keys(reasons).length > 0
+    if (on) reasons[reason] = true; else delete reasons[reason]
+    var now = Date.now(), active = Object.keys(reasons).length > 0
+    if (!was && active) P0.idleSince = now
+    if (was && !active) { P0.idle = (P0.idle || 0) + now - P0.idleSince; P0.idleSince = null }
+    P0.idleReasons = reasons
+  }
+  function pausePlay (reason, on) {
+    var P0 = PLAYING; if (!P0) return
+    var reasons = Object.assign({}, P0.pauseReasons || {})
+    if (on) reasons[reason] = true; else delete reasons[reason]
+    var active = Object.keys(reasons).length > 0
+    P0.pauseReasons = reasons; playIdle(P0, 'pause', active)
+    if (!active && P0.resumeMount) { var mount = P0.resumeMount; P0.resumeMount = null; mount() }
+    try { var handle = P0.handle, method = active ? 'pause' : 'resume'; if (handle && handle[method]) handle[method]() } catch (e) { console.error('[Timmy] pause', e) }
+  }
   // keep: leave the last panel on screen when it ends (a chapter cross-fades it into the next step)
   function story (host, panels, title, done, keep) {
     document.body.classList.add('story-on')
-    var P0 = PLAYING
+    var P0 = PLAYING; playIdle(P0, 'story', true)
     P0 && (P0.handle = TKStory.play(host, panels, { title: title, chapter: chapLabel(), subtitle: P0 && P0.chap ? CUR.w.name : CUR.w && CUR.w.value,
       logo: LOGO_ART && W.AssetIndex && AssetIndex.path('tk-key/logo') ? Art.src('ui/logo') : '', sfx: { page: SND.page, go: SND.chime },
       say: say, listen: IC('listen', '', ''), easy: easyOn(),
-      onDone: function () { if (PLAYING !== P0) return; document.body.classList.remove('story-on'); if (!keep) host.innerHTML = ''; done() } }))
+      onDone: function () { if (PLAYING !== P0) return; playIdle(P0, 'story', false); document.body.classList.remove('story-on'); if (!keep) host.innerHTML = ''; done() } }))
   }
   function sfxBag () { return { click: SND.click, good: function () { SND.cue('correct') }, bad: function () { SND.cue('wrong') }, win: function () { SND.cue('levelup') }, splash: SND.splash, muted: !soundOn() } }
   // a TKArt character key whose sprite is not ingested yet falls back to a library key (no 404)
@@ -936,13 +986,14 @@
     try {
       if (lv.type === 'story' || lv.type === 'cutscene') return story(host, lv.story || [], lv.title, function () { end({ stars: 3, story: true }) }, !!(P0 && P0.chap))
       if (lv.type === 'grid') {
-        P0.handle = TKGrid.mount(host, WD.grid(lv), Object.assign({}, common, { title: lv.title, mission: lv.goal, lib: Art.src, bg: Art.scene(painted(lv.scene || (chN && chN.scene) || w.scene)), chapterCard: false,
+        P0.handle = TKGrid.mount(host, WD.grid(lv, { level: S.settings.level }), Object.assign({}, common, { title: lv.title, mission: lv.goal, lib: Art.src, bg: Art.scene(painted(lv.scene || (chN && chN.scene) || w.scene)), chapterCard: false,
           chapter: chN ? { ship: w.ship, name: w.name, title: chN.title, label: 'Bab ' + chN.no + ' · ' + chN.title, idx: chN.no, total: w.levels.length }
             : { ship: w.ship, name: w.name, title: w.value, label: w.name, idx: CUR.k + 1, total: w.levels.length },
           onBack: toMap,
+          onHint: function () { markChapterHint(P0) },
           onQuestion: function (q) { return challenge(host, { domain: q.topic || lv.domain || 'campur', seed: ((lv.seed || 7) * 97 + q.index * 13 + (Date.now() & 1023)) >>> 0, intro: q.reason === 'door' ? 'Jawab soal ini untuk membuka pintu.' : 'Jawab soal ini untuk membuka peti.', nextLabel: 'Lanjut' }) },
           art: { boat: CUR.w.id === 'kamar' ? 'vehicles/sailboat' : 'ship/' + CUR.w.id, timmy: 'char/timmy', tipper: charKey('char/penguin', 'animals/penguin') },
-          onDone: function (res) { end({ stars: res.stars, moves: res.moves, shortest: res.shortest }) } }))
+          onDone: function (res) { end({ stars: res.stars, moves: res.moves, shortest: res.shortest, hinted: !!res.hinted }) } }))
         return
       }
       // action steps (steer / lanes): questions slipped into the sailing — a bump, a Soal buoy, a lighthouse gate —
@@ -957,6 +1008,7 @@
           // TKSteer sails the child's TKFleet ship (top-down art; the "Pilih Kapalmu" screen opens when none is saved)
           onQuestion: askAction,
           onDone: function (res) {
+            sailedWith(P0)
             var after = function () { end({ stars: res.stars || 1, scripted: res.scripted, hits: res.hits, right: res.qAsked ? res.qRight : undefined, asked: res.qAsked || undefined }) }
             if (lv.after) { host.innerHTML = ''; story(host, lv.after, lv.title, after) } else after()
           } }, common))
@@ -966,7 +1018,7 @@
         // three-lane navigation (tk-lanes): a collision asks one Knowledge Challenge; the Titanic's final run
         // (final:true) ends in the scripted impact that the next step's cinema continues
         P0.handle = TKLanes.mount(host, { seed: lv.seed || (Date.now() >>> 0), difficulty: lv.difficulty, final: !!lv.final, title: chN ? stepLabel(chN, P0.chap.i) + ' · ' + lv.title : lv.title, goal: lv.goal, sections: lv.sections,
-          night: lv.night, lengthScale: FAST ? 0.6 : lv.lengthScale, tutorial: lv.tutorial, world: w.id, questions: lv.questions }, {
+          night: lv.night, lengthScale: FAST ? 0.6 : lv.lengthScale, tutorial: lv.tutorial, world: w.id, questions: lv.questions, obstacle: lv.obstacle }, {
           world: w.id, grade: S.settings.grade, mastery: S.mastery, islam: S.settings.islam, lib: Art.lib, sfx: { muted: !soundOn() }, reducedMotion: reduced(), topInset: 70,
           // the Titanic's chapters are the Titanic's own story: the child sails the Titanic (no ship picker there);
           // lanes in other worlds keep the TKFleet choice (saved pick, or the "Pilih Kapalmu" screen first)
@@ -974,6 +1026,7 @@
           tutorial: !!lv.tutorial, narrate: !!S.settings.narrate, pauseOverlay: false,
           onQuestion: askAction,
           onDone: function (res) {
+            sailedWith(P0)
             if (res.final) { end({ stars: 3, scripted: true }); return }
             end({ stars: res.stars, hits: res.collisions, right: res.qAsked ? res.qRight : undefined, asked: res.qAsked || undefined })
           } })
@@ -1082,7 +1135,7 @@
   /* ── REWARD ─────────────────────────────────────────────────────────── */
   function finish (res) {
     if (!PLAYING) return
-    var w = PLAYING.w, lv = PLAYING.lv, k = PLAYING.k, t0 = PLAYING.t0
+    var w = PLAYING.w, lv = PLAYING.lv, k = PLAYING.k, t0 = PLAYING.t0, idleMs = (PLAYING.idle || 0) + (PLAYING.idleSince != null ? Date.now() - PLAYING.idleSince : 0)   // union of story, menu and background intervals
     // a world's way home (w.outro panels, Legend Ships PRD §14): played once, right after its fragment level
     if (!res.outro && lv.fragment && w.outro && w.outro.length && S.fragments.indexOf(w.id) < 0) {
       try { if (PLAYING.handle && PLAYING.handle.destroy) PLAYING.handle.destroy() } catch (e) {}
@@ -1107,7 +1160,9 @@
     show('scr-reward')
     var wi = WD.WORLDS.indexOf(w), nextK = k + 1 < (w.levels || []).length ? k + 1 : -1
     var more = nextK < 0 && w.id !== 'latihan' ? nextUp() : null
-    var title = res.scripted ? 'Kamu tetap tenang!' : (stars === 3 ? 'Luar biasa!' : chap ? 'Bab Selesai!' : 'Level Selesai!')
+    // "Luar biasa!" only when it is true: never above a quiz score with wrong answers (playtest: 0/2 under "Luar biasa!")
+    var allRight = !res.asked || res.right >= res.asked
+    var title = res.scripted ? 'Kamu tetap tenang!' : (stars === 3 && allRight ? 'Luar biasa!' : chap ? 'Bab Selesai!' : 'Level Selesai!')
     // the last chapter of a chapter world ends in Timmy's room, where the new ship model now stands
     var home2 = chap && nextK < 0 && !!w.chapters
     var fact = (w.cards || [])[Math.min((w.cards || []).length - 1, Math.floor(k / Math.max(1, (w.levels || []).length / 3)))]
@@ -1117,11 +1172,12 @@
       chapter: chap ? w.name + ' · Bab ' + lv.no + ' · ' + lv.title : w.name,
       title: title,
       subtitle: 'Hebat, Timmy! ' + (lv.goal || ''), banner: false, cheer: lv.cheer,
-      result: { moves: res.moves, shortest: res.shortest, timeMs: Date.now() - (t0 || Date.now()), right: res.right, asked: res.asked, hits: res.hits, scripted: res.scripted, story: res.story },
+      result: { moves: res.moves, shortest: res.shortest, timeMs: res.story ? 0 : Math.max(0, Date.now() - (t0 || Date.now()) - (idleMs || 0)), right: res.right, asked: res.asked, hits: res.hits, scripted: res.scripted, story: res.story },
       xp: xp, newCards: newCards,
       badge: newFrag ? { title: 'Lencana ' + w.name, sub: w.fragmentName ? 'Kepingan Legenda: ' + w.fragmentName : 'Kepingan kompas ditemukan' } : null,
       fragment: newFrag ? { n: fragTally(w).n, total: fragTally(w).total, finale: !!(w.levels[k] && w.levels[k].finale) } : null,
       fact: fact || null, levelStars: (w.levels || []).map(function (l) { return starsOf(w.id, l.id) }), hasNext: nextK >= 0 || !!more || home2,
+      practice: w.id === 'latihan', mapLabel: w.id === 'latihan' ? 'Beranda' : null,
       nextLabel: home2 ? 'Kembali ke Kamar Timmy' : nextK >= 0 ? (chap ? 'Bab Berikutnya' : 'Lanjut') : 'Kapal Berikutnya',
       nextSub: home2 ? 'Lihat model ' + w.name + ' di koleksimu' : nextK >= 0 ? unitLabel(w, nextK) + ' · ' + w.levels[nextK].title : more ? (more.w.id === 'kamar' ? 'Kamar Timmy' : more.w.name) : ''
     }, {
@@ -1145,7 +1201,26 @@
     HUB = TKHub.room($('scr-room'), { save: S, worlds: WD.WORLDS, tab: ROOM_TAB, select: select || null, learn: CATS.filter(function (c) { return c[0] !== 'islam' || S.settings.islam }) },
       { onBack: home,
         onFav: function (id) { var on = S.fav.indexOf(id) < 0; S.fav = on ? S.fav.concat([id]) : S.fav.filter(function (x) { return x !== id }); save(); return on },
+        onGallery: function () { gallery('room') },
         sfx: { click: SND.click } })
+  }
+  /* ── GALERI KAPAL (TKHub.gallery): every TKFleet ship; from the home carousel's first card and Kamar Timmy ── */
+  function galCard () {
+    var n = W.TKFleet ? TKFleet.ships.length : 50
+    return '<button class="sc sc-gal" type="button" data-gal="1" aria-label="Galeri Kapal, ' + n + ' kapal"><span class="sc-img"><img src="' + esc(Art.lib('tk-legend-side/edmund-fitzgerald')) + '" alt="" draggable="false"></span>' +
+      '<span class="sc-t"><b>Galeri Kapal</b><small>Semua ' + n + ' kapal</small></span></button>'
+  }
+  function gallery (from) {
+    if (!W.TKHub || !TKHub.gallery) return room('kapal')
+    show('scr-room'); if (HUB) { try { HUB.destroy() } catch (e) {} }
+    HUB = TKHub.gallery($('scr-room'), { worlds: WD.WORLDS }, {
+      onBack: from === 'room' ? function () { room() } : home,
+      onWorld: openWorld,
+      sfx: { click: SND.click, chime: SND.chime } })
+  }
+  // sail history for the Galeri Kapal ribbon: the ship a finished steer / lanes run sailed (TKFleet, per avatar)
+  function sailedWith (P0) {
+    try { var sh = P0 && P0.handle && P0.handle.state && P0.handle.state().ship; if (sh && W.TKFleet && TKFleet.markSailed) TKFleet.markSailed(TKFleet.avatar(), sh) } catch (e) {}
   }
 
   /* ── settings (TKHub.settings — mockup ui-11); parent area stays behind the hold gate ── */
@@ -1156,7 +1231,7 @@
       set: function (p) { S.settings = Object.assign({}, S.settings, p); save(); TKHub.config(S.settings); paintSound(); TKHub.music(!!S.settings.music)
         document.documentElement.classList.toggle('rm', !!S.settings.reducedMotion) },
       onSave: function () { toast('Pengaturan disimpan!'); home() },
-      onBack: home, onParent: parentGate, sfx: { click: SND.click } })
+      onBack: home, onParent: parentGate, onExit: exitGame, sfx: { click: SND.click } })
   }
 
   /* ── parent area (hold 3 s) ─────────────────────────────────────────── */
@@ -1205,6 +1280,12 @@
     try { if (PLAYING && PLAYING.handle && PLAYING.handle.setMuted) PLAYING.handle.setMuted(!soundOn()) } catch (e) {}
     try { if (!soundOn() && AC && AC.state === 'running') AC.suspend(); else if (soundOn() && AC && AC.state === 'suspended') AC.resume() } catch (e) {}
   }
+  function globalSoundChanged (event) {
+    if (event.key !== 'dunia-emosi-sound' && event.key !== null) return
+    try { GLOBAL_MUTE = localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return }
+    paintSound()
+  }
+  W.addEventListener('storage', globalSoundChanged)
   // one tap: all G30 sound off / on (the same setting as Pengaturan > Bisukan semua; also lifts the main app's mute for G30)
   function toggleSound () { if (GLOBAL_MUTE) { GLOBAL_MUTE = false; S.settings = Object.assign({}, S.settings, { sound: true }) } else S.settings = Object.assign({}, S.settings, { sound: !S.settings.sound }); save(); paintSound(); if (soundOn()) SND.click() }
 
@@ -1227,7 +1308,9 @@
   /* ── wiring ─────────────────────────────────────────────────────────── */
   function wire () {
     if (IC.hydrate) IC.hydrate()
-    tap('btn-map', function () { location.href = '../index.html' })
+    // playtest 2026-09-30: the map icon opened ../index.html (left the game). It opens the sea chart; leaving is "Keluar"
+    tap('btn-map', worldView)
+    tap('p-exit', exitGame)
     tap('btn-start', function () {
       SND.horn(); if (W.TKHub) TKHub.music(!!S.settings.music && !GLOBAL_MUTE)
       if (!S.seenIntro) { S.seenIntro = true; save() }
@@ -1247,7 +1330,7 @@
     $('btn-sound').addEventListener('click', toggleSound)
     $('sndfab').addEventListener('click', toggleSound)
     paintSound()
-    $('carousel').addEventListener('click', function (e) { var b = e.target.closest('.sc'); if (!b) return; SND.click(); openWorld(b.getAttribute('data-w')) })
+    $('carousel').addEventListener('click', function (e) { var b = e.target.closest('.sc'); if (!b) return; SND.click(); if (b.hasAttribute('data-gal')) { gallery('home'); return } openWorld(b.getAttribute('data-w')) })
     $('cats').addEventListener('click', function (e) { var b = e.target.closest('.cat'); if (!b) return; SND.click(); practice(b.getAttribute('data-d')) })
     $('ship-filter').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b) return; SND.click(); FILTER = b.getAttribute('data-c'); ships() })
     $('ship-list').addEventListener('click', function (e) {
@@ -1259,11 +1342,11 @@
       startLevel(+b.getAttribute('data-k')) })
     tap('btn-story', function () { if (CUR.w) historyCards(CUR.w) })
     document.querySelectorAll('[data-back]').forEach(function (b) { tap(b, function () { var t = b.getAttribute('data-back'); if (t === 'ships') worldView(); else home() }) })
-    var openPause = function () { $('pause').className = 'overlay show'; try { PLAYING && PLAYING.handle && PLAYING.handle.pause && PLAYING.handle.pause() } catch (e) {} }
+    var openPause = function () { $('pause').className = 'overlay show'; pausePlay('menu', true) }
     tap('btn-pause', openPause)
     // the lanes module keeps its own pause button (our HUD is hidden there): it opens OUR pause menu
     $('play-host').addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.tkl-pausebtn')) openPause() })
-    tap('p-resume', function () { $('pause').className = 'overlay'; try { PLAYING && PLAYING.handle && PLAYING.handle.resume && PLAYING.handle.resume() } catch (e) {} })
+    tap('p-resume', function () { $('pause').className = 'overlay'; pausePlay('menu', false) })
     var quit = function (to) { $('pause').className = 'overlay'; try { PLAYING && PLAYING.handle && PLAYING.handle.destroy && PLAYING.handle.destroy() } catch (e) {} try { PLAYING && PLAYING.chal && PLAYING.chal.close && PLAYING.chal.close() } catch (e) {}
       var virt = PLAYING && PLAYING.virtual; PLAYING = null; document.body.classList.remove('story-on'); $('play-host').innerHTML = ''; $('play-host').style.opacity = ''; if (to === 'map' && CUR.w && !virt) worldMap(CUR.w.id); else home() }
     tap('p-map', function () { quit('map') }); tap('p-home', function () { quit('home') })
@@ -1271,6 +1354,8 @@
     addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { if (document.body.getAttribute('data-scr') === 'scr-map' && CUR.w) layoutRoute(CUR.w, true) }, 120) })
     document.documentElement.classList.toggle('rm', !!S.settings.reducedMotion)
   }
+  // leave G30 for the Dunia Emosi hub (pause menu + Pengaturan "Keluar")
+  function exitGame () { try { save() } catch (e) {} location.href = '../index.html' }
   function openWorld (id) {
     var i = -1; WD.WORLDS.forEach(function (w, k) { if (w.id === id) i = k })
     if (i < 0) return
@@ -1310,7 +1395,7 @@
     var go = function () { (W.requestIdleCallback || function (f) { setTimeout(f, 1500) })(function () { try { warm() } catch (e) {} }, { timeout: 4000 }) }
     navigator.serviceWorker.ready.then(go).catch(function () {}); navigator.serviceWorker.addEventListener('controllerchange', go)
   }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) save() })
+  document.addEventListener('visibilitychange', function () { pausePlay('hidden', document.hidden); if (document.hidden) save() })
 
   if (W.TKHub) TKHub.config(GLOBAL_MUTE ? Object.assign({}, S.settings, { sound: false, music: false, narration: false }) : S.settings)
   wire(); home()

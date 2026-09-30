@@ -23,13 +23,15 @@
   /* ══ fase A ═══════════════════════════════════════════════════════════════ */
   // groups / share / groupsplus stay available (o.kind) but are never scheduled in fase A
   var KINDS = {
-    1: [['count', 40], ['add', 25], ['sub', 20], ['biggest', 15]],
-    2: [['add', 25], ['sub', 25], ['count', 15], ['clock', 15], ['diff', 10], ['capacity', 10]],
-    3: [['add', 25], ['sub', 25], ['capacity', 15], ['clock', 15], ['diff', 20]],
-    4: [['twostep', 35], ['add', 15], ['sub', 15], ['diff', 15], ['clock', 10], ['capacity', 10]]
+    // owner 2026-09-30 ("soalnya itu-itu saja"): many templates, none above ~20 %
+    1: [['count', 18], ['add', 14], ['sub', 12], ['biggest', 8], ['smallest', 8], ['bond', 12], ['tomake', 10], ['pattern', 9], ['double', 9]],
+    2: [['add', 13], ['sub', 13], ['count', 8], ['clock', 10], ['diff', 8], ['capacity', 8], ['bond', 10], ['tomake', 10], ['double', 8], ['pattern', 7], ['fewer', 5]],
+    3: [['add', 13], ['sub', 13], ['capacity', 9], ['clock', 10], ['diff', 11], ['bond', 9], ['tomake', 10], ['pattern', 10], ['length', 9], ['fewer', 6]],
+    4: [['twostep', 22], ['add', 10], ['sub', 10], ['diff', 9], ['clock', 8], ['capacity', 7], ['tomake', 10], ['pattern', 9], ['length', 9], ['bond', 6]]
   }
   var MAXN = 20
-  var EASY_KINDS = [['count', 45], ['add', 30], ['sub', 25]]
+  // easy (Kelas 1 / low mastery): picture-first — the objects of the story are on screen
+  var EASY_KINDS = [['count', 22], ['add', 20], ['sub', 18], ['double', 18], ['tomake', 12], ['bond', 10]]
   function cap (level) { return level <= 2 ? 10 : 20 }
   function clockLabel (h, m) { return m === 30 ? 'Pukul setengah ' + (h % 12 + 1) : 'Pukul ' + h }
   function seqStr (from, to, step) { step = step || 1; var o = []; for (var v = from; step > 0 ? v <= to : v >= to; v += step) o.push(v); return o.join(', ') }
@@ -52,15 +54,24 @@
   // story words per game (profile.vocab); the neutral defaults read well anywhere
   var VOCAB = { place: 'meja', deck: 'meja', load: 'ditambah', unload: 'diambil', carrier: 'Tim', box: 'kotak', crate: 'kotak', seat: 'Mobil', rope: 'Tali', cheer: '' }
   function vocabOf (o) { var v = {}, k; for (k in VOCAB) v[k] = VOCAB[k]; for (k in (o && o.vocab) || {}) v[k] = o.vocab[k]; return v }
-  function nounOf (o, r) { var th = (o.nouns && o.nouns.length) ? o.nouns : [['game/crate-wood', 'kotak']]; return oneOf(th, r) }
+  // avoid: container words of the story ("Tiap peti berisi 7 peti" must never happen) -> another noun, else 'ikan'
+  function nounOf (o, r, avoid) {
+    var th = (o.nouns && o.nouns.length) ? o.nouns : [['game/crate-wood', 'kotak']]
+    if (avoid) {
+      var bad = function (n) { return avoid.some(function (a) { a = String(a || '').toLowerCase(); return a && (n === a || n.indexOf(a + ' ') === 0) }) }
+      var ok = th.filter(function (x) { return !bad(x[1]) })
+      th = ok.length ? ok : [['animals/clownfish', 'ikan']]
+    }
+    return oneOf(th, r)
+  }
 
   function faseA (grade, r, theme, o) {
     o = o || {}
     var level = Math.max(1, Math.min(4, (o.level | 0) || (grade <= 1 ? 1 : 2)))
-    var it = nounOf(o, r), key = it[0], noun = it[1], v = vocabOf(o)
+    var v = vocabOf(o), it = nounOf(o, r, [v.box, v.crate, v.seat]), key = it[0], noun = it[1]
     var kinds = KINDS[level]
     if (o.extraKinds) kinds = kinds.concat(o.extraKinds)
-    // easy (Kelas 1 / low mastery): picture-first counting only — every number is an object on screen
+    // easy (Kelas 1 / low mastery): the picture-first kinds only (EASY_KINDS)
     if (o.easy && level <= 2) kinds = EASY_KINDS
     var forced = o.kind || (o.about ? kindFor(o.about, level) : null)
     if (forced) kinds = [[forced, 1]]
@@ -142,6 +153,60 @@
           calc: { op: 'two', a: a4, b: b4, c: c4 } }
         break
       }
+      case 'smallest': {
+        var sv = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], r).slice(0, 4), mn = Math.min.apply(null, sv)
+        q = { prompt: 'Angka mana yang paling kecil?', eq: null, ans: mn, fixed: sv.map(String),
+          scene: { mode: 'none', groups: [] }, hint1: 'Angka kecil artinya lebih sedikit.', hint2: 'Bayangkan urutan 1 sampai 10. Mana yang paling awal?',
+          step1: 'Bandingkan dua angka dulu, simpan yang lebih kecil.', explain: mn + ' adalah angka paling kecil.', calc: { op: 'min', list: sv } }
+        break
+      }
+      case 'bond': {   // number bonds: a + ? = t
+        var bt = level <= 2 ? ri(r, 4, 10) : ri(r, 8, 20), ba = ri(r, 1, bt - 1), bm = bt - ba
+        q = { prompt: ba + ' dan berapa supaya jadi ' + bt + '?', eq: ba + ' + ? = ' + bt, ans: bm, near: [bt, ba, bm + 1, bm - 1, bt + ba <= 20 ? bt + ba : bm + 2],
+          scene: { mode: 'count', groups: [G(key, ba)] }, hint1: 'Mulai dari ' + ba + ', hitung maju sampai ' + bt + '.', hint2: 'Berapa langkah dari ' + ba + ' ke ' + bt + '?',
+          step1: ba + ', ' + seqStr(ba + 1, Math.min(bt, ba + 2)) + (bt - ba > 2 ? ', …' : ''), explain: ba + ' + ' + bm + ' = ' + bt + '.', calc: { op: 'bond', a: ba, t: bt } }
+        break
+      }
+      case 'tomake': {   // "berapa lagi supaya jadi N"
+        var tt = level <= 2 ? ri(r, 5, 10) : ri(r, 10, 20), th2 = ri(r, 2, tt - 1), tn = tt - th2
+        q = { prompt: 'Sudah ada ' + th2 + ' ' + noun + '. Berapa lagi supaya jadi ' + tt + '?', eq: tt + ' − ' + th2 + ' = ?', ans: tn,
+          near: [tt, th2, tn + 1, tn - 1, tn + 2], scene: { mode: 'count', groups: [G(key, th2)] },
+          hint1: 'Hitung maju dari ' + th2 + ' sampai ' + tt + '.', hint2: 'Yang kurang = ' + tt + ' dikurangi ' + th2 + '.',
+          step1: 'Mulai dari ' + th2 + ': ' + seqStr(th2 + 1, Math.min(tt, th2 + 2)) + (tn > 2 ? ', …' : ''), explain: 'Kurang ' + tn + ' lagi: ' + th2 + ' + ' + tn + ' = ' + tt + '.', calc: { op: '-', a: tt, b: th2 } }
+        break
+      }
+      case 'double': {   // doubles with pictures
+        var dd = ri(r, 1, level <= 2 ? 5 : 9), ds = dd * 2
+        q = { prompt: 'Kiri ' + dd + ' ' + noun + ', kanan juga ' + dd + '. Semuanya berapa?', eq: dd + ' + ' + dd + ' = ?', ans: ds,
+          near: [dd, ds + 1, ds - 1, ds + 2], scene: { mode: 'add', groups: [G(key, dd), G(key, dd, 'add')] },
+          hint1: 'Dua kelompok sama banyak.', hint2: 'Hitung yang kiri, lalu lanjut hitung yang kanan.',
+          step1: 'Kiri ' + dd + ', lalu ' + seqStr(dd + 1, Math.min(ds, dd + 2)) + (dd > 2 ? ', …' : ''), explain: dd + ' + ' + dd + ' = ' + ds + '. Dua kali ' + dd + ' sama dengan ' + ds + '.', calc: { op: '+', a: dd, b: dd } }
+        break
+      }
+      case 'pattern': {   // skip counting: a, a+s, a+2s, ?
+        var ps = level <= 1 ? 1 : oneOf(level <= 2 ? [1, 2, 2] : [1, 2, 2, 5], r), pa = ri(r, 1, Math.max(1, (level <= 2 ? 10 : 20) - 3 * ps)), pn = pa + 3 * ps
+        if (ps === 5) { pa = 5 * ri(r, 0, 1); pn = pa + 15 }
+        q = { prompt: 'Lanjutkan pola ' + pa + ', ' + (pa + ps) + ', ' + (pa + 2 * ps) + ', …', eq: null, ans: pn, near: [pn + 1, pn - 1, pn + ps, pa + 2 * ps],
+          scene: { mode: 'none', groups: [] }, hint1: 'Lihat, tiap angka naik berapa?', hint2: 'Tiap langkah tambah ' + ps + '.',
+          step1: (pa + 2 * ps) + ' + ' + ps + ' = ?', explain: 'Tiap langkah tambah ' + ps + ', jadi ' + (pa + 2 * ps) + ' + ' + ps + ' = ' + pn + '.', calc: { op: 'seq', a: pa, s: ps } }
+        break
+      }
+      case 'fewer': {   // compare: how many fewer
+        var fa = ri(r, 4, M), fb = ri(r, 1, fa - 1), fd = fa - fb, fr = r() < 0.5
+        q = { prompt: v.carrier + ' Merah ' + (fr ? fa : fb) + ' ' + noun + ', ' + v.carrier + ' Biru ' + (fr ? fb : fa) + '. Yang sedikit kurang berapa?', eq: fa + ' − ' + fb + ' = ?', ans: fd,
+          near: [fb, fd + 1, fd - 1, fa + fb <= M + 3 ? fa + fb : fd + 2], scene: { mode: 'diff', groups: [G(key, fr ? fa : fb, 'red'), G(key, fr ? fb : fa, 'blue')] },
+          hint1: 'Pasangkan satu-satu.', hint2: 'Yang tidak punya pasangan, itu kurangnya.',
+          step1: 'Yang banyak ' + fa + ', yang sedikit ' + fb + '.', explain: fb + ' kurang ' + fd + ' dari ' + fa + ': ' + fa + ' − ' + fb + ' = ' + fd + '.', calc: { op: '-', a: fa, b: fb } }
+        break
+      }
+      case 'length': {   // measuring with pictures (blocks)
+        var ma = ri(r, 3, Math.min(M, 12)), mb = ri(r, 2, ma - 1), mdf = ma - mb
+        q = { prompt: 'Tali ' + ma + ' kotak, pita ' + mb + ' kotak. Tali lebih panjang berapa kotak?', eq: ma + ' − ' + mb + ' = ?', ans: mdf,
+          near: [mb, ma, mdf + 1, mdf - 1], scene: { mode: 'diff', groups: [G('game/crate-wood', ma, 'red'), G('game/crate-wood', mb, 'blue')] },
+          hint1: 'Bandingkan kedua baris kotak.', hint2: 'Hitung kotak yang lebih pada tali.',
+          step1: 'Tali ' + ma + ', pita ' + mb + '. Hitung dari ' + mb + ' sampai ' + ma + '.', explain: ma + ' − ' + mb + ' = ' + mdf + ' kotak.', calc: { op: '-', a: ma, b: mb } }
+        break
+      }
       default: {  // clock — fase A: whole hours only, in the answer AND the wrong choices
         var h = ri(r, 1, 12), m = 0, lab = clockLabel(h, m)
         var alt = [clockLabel(h % 12 + 1, 0), clockLabel((h + 10) % 12 + 1, 0), clockLabel((h + 1) % 12 + 1, 0), clockLabel((h + 9) % 12 + 1, 0)]
@@ -167,6 +232,9 @@
       else if (c.op === '+') truth = c.a + c.b
       else if (c.op === '-') truth = c.a - c.b
       else if (c.op === 'max') truth = Math.max.apply(null, c.list)
+      else if (c.op === 'min') truth = Math.min.apply(null, c.list)
+      else if (c.op === 'bond') truth = c.t - c.a
+      else if (c.op === 'seq') { truth = c.a + 3 * c.s; if (truth > MAXN) p.push('pattern above ' + MAXN) }
       else if (c.op === 'groups') truth = c.g * c.k + c.e
       else if (c.op === 'share') truth = c.t % c.g === 0 ? c.t / c.g : NaN
       else if (c.op === 'two') { truth = c.a + c.b - c.c; if (c.a + c.b > M) p.push('intermediate > ' + M) }
@@ -175,7 +243,8 @@
       ;['a', 'b', 'c', 'n', 't'].forEach(function (k) { if (c[k] != null && (c[k] < 0 || c[k] > M)) p.push('operand ' + k + '=' + c[k] + ' outside 0..' + M) })
       if (truth > M) p.push('answer above ' + M)
       q.choices.forEach(function (x) { if (+x > MAXN) p.push('choice ' + x + ' above ' + MAXN) })
-      if (c.op === 'max' && q.choices.filter(function (x) { return +x === truth }).length !== 1) p.push('max not unique')
+      if ((c.op === 'max' || c.op === 'min') && q.choices.filter(function (x) { return +x === truth }).length !== 1) p.push(c.op + ' not unique')
+      if (c.op === 'bond' && (c.t > M || c.a >= c.t)) p.push('bond outside 1..' + M)
     } else if (clockLabel(c.h, c.m) !== q.answer) p.push('clock label mismatch')
     return p
   }
@@ -193,7 +262,7 @@
   function numAlts (a, steps) { var o = []; steps.forEach(function (d) { if (a + d >= 0) o.push(String(a + d)) }); return o }
   function sulit (grade, r, theme, o) {
     o = o || {}
-    var it = nounOf(o, r), noun = it[1], v = vocabOf(o)
+    var v = vocabOf(o), it = nounOf(o, r, [v.crate, v.box, 'kotak']), noun = it[1]
     var kinds = grade <= 3 ? HARD_KINDS.filter(function (k) { return HARD_GRADE[k[0]] <= 3 }) : HARD_KINDS
     var kind = o.kind && HARD_GRADE[o.kind] ? o.kind : wpick(kinds, r), q
     switch (kind) {
@@ -257,7 +326,7 @@
       }
       default: {   // story: two steps, <= 18 words
         var s1 = ri(r, 3, 9), s2 = ri(r, 3, 9), gv = ri(r, 5, Math.min(40, s1 * s2 - 1)), res = s1 * s2 - gv
-        q = { prompt: 'Ada ' + s1 + ' kotak, tiap kotak ' + s2 + ' ' + noun + '. ' + gv + ' dibagikan. Sisa berapa?', eq: s1 + ' × ' + s2 + ' − ' + gv + ' = ?', ans: String(res),
+        q = { prompt: 'Ada ' + s1 + ' ' + v.crate + ', tiap ' + v.crate + ' ' + s2 + ' ' + noun + '. ' + gv + ' dibagikan. Sisa berapa?', eq: s1 + ' × ' + s2 + ' − ' + gv + ' = ?', ans: String(res),
           alts: numAlts(res, [gv > 10 ? 10 : 2, -1, 1, s2]), calc: { op: 'story', a: s1, b: s2, c: gv }, explain: s1 + ' × ' + s2 + ' = ' + (s1 * s2) + ', lalu ' + (s1 * s2) + ' − ' + gv + ' = ' + res + '.', hint1: 'Langkah 1: kalikan. Langkah 2: kurangi.', hint2: 'Semua ' + noun + ': ' + s1 + ' × ' + s2 + '.' }
         kind = 'story'
       }

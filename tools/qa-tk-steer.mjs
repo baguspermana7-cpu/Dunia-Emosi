@@ -19,6 +19,7 @@
 // Screenshots -> QA_SHOTS (default: the session scratchpad tk-steer/ folder).
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
+import { execFileSync } from 'node:child_process'
 const BASE = process.env.QA_URL || 'http://localhost:8081/tools/tk-harness-steer.html'
 const SHOTS = process.env.QA_SHOTS || '/tmp/claude-1000/-home-baguspermana7/006f0cec-d381-48ee-882e-83cf434d8153/scratchpad/tk-steer/'
 fs.mkdirSync(SHOTS, { recursive: true })
@@ -92,6 +93,26 @@ async function fps (p, ms) {
     const f = now => { t.push(now - last); last = now; if (now - t0 < ms) requestAnimationFrame(f); else { t.sort((a, b) => a - b); res(Math.round(1000 / t[Math.floor(t.length * 0.9)])) } }
     requestAnimationFrame(f)
   }), ms)
+}
+
+// Capture the accumulated browser context AFTER the unchanged performance sample.
+// A failed sample also gets a separate CPU profile; this never changes its measured result.
+const PERF_STARTED = Date.now()
+async function perfContext (page, browser, label, failed, cdp) {
+  const rows = execFileSync('ps', ['-eo', 'pid,ppid,pcpu,rss,comm', '--sort=-pcpu'], { encoding: 'utf8' }).trim().split('\n').slice(1).map(line => {
+    const [pid, ppid, cpu, rss, name] = line.trim().split(/\s+/)
+    return { pid: +pid, ppid: +ppid, cpu: +cpu, rssKB: +rss, name }
+  })
+  const owned = new Set([browser.process().pid])
+  for (let i = 0; i < 5; i++) rows.forEach(r => { if (owned.has(r.ppid)) owned.add(r.pid) })
+  const context = { label, elapsedSeconds: Math.round((Date.now() - PERF_STARTED) / 1000), fault: !!process.env.QA_FAULT,
+    pageCount: (await browser.pages()).length, metrics: await page.metrics(), chrome: rows.filter(r => owned.has(r.pid)), cpuHot: rows.slice(0, 8) }
+  console.log('PERF_CONTEXT ' + JSON.stringify(context))
+  if (!failed) return
+  await cdp.send('Profiler.enable'); await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 }); await cdp.send('Profiler.start')
+  await sleep(5000)
+  const { profile } = await cdp.send('Profiler.stop'); await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 })
+  fs.writeFileSync(SHOTS + 'failed-' + label.replace(/[^a-z0-9]+/gi, '-') + '.cpuprofile', JSON.stringify(profile))
 }
 
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
@@ -184,7 +205,7 @@ const nextQ = (p, ms) => qWait(p, () => { const s = window.__h.state(); return s
       // count 2 (final gate 2026-09-30): a bumped boat drifts off the berg line, so a third question >= 8 s after
       // the second was not guaranteed on this course (7 hits, 2 questions 11.4 s apart); 2 still proves the cap
       // because bumps keep coming after the second question
-      __mount({ mode: 'gates', vessel: 'boat', seed: 2, length: 5600, assist: false, gates, ice, questions: { on: ['collide'], count: 2 } }, { countdown: false })
+      __mount({ mode: 'gates', vessel: 'boat', seed: 2, length: 5600, assist: false, gates, ice, questions: { on: ['collide'], count: 2 } }, { countdown: false, netAfter: 9999, capAfter: 9999 })   // the safety net is gated in 5); here it would shorten the course on a slow run
       window.__ev = []
       let prevShield = false, prevHits = 0
       const rec = () => { const s = window.__h.state()
@@ -275,6 +296,36 @@ const nextQ = (p, ms) => qWait(p, () => { const s = window.__h.state(); return s
     await p.evaluate(() => clearInterval(window.__wob))
     await p.close()
   }
+  // 6) playtest 2026-09-30 (phones): one bottom row [LEFT][wheel][RIGHT], wheel <= 32% of the height at the bottom
+  //    edge, the ship always above it; the corridor from the HUD to the ship holds no control; pause hides during a question
+  for (const [w, h] of [[390, 844], [360, 640], [412, 915]]) {
+    const tag = `Q steer phone ${w}x${h}`
+    const { p, errs } = await open(b, w, h, 'mode=gates&ship=tug&seed=7&cd=0&muted=1&q=stub')
+    await p.evaluate(AUTOPILOT)
+    const CORR = () => {
+      const s = window.__h.state(), sr = s.shipRect, cx = (sr.left + sr.right) / 2, half = Math.max((sr.right - sr.left) / 2, innerWidth * 0.2)
+      const vis = e => e && e.offsetWidth && getComputedStyle(e).display !== 'none' && getComputedStyle(e).visibility !== 'hidden'
+      const hud = Math.max(...[...document.querySelectorAll('.tks-goals,.tks-stats')].filter(vis).map(e => e.getBoundingClientRect().bottom))
+      const hits = [...document.querySelectorAll('.tks-hold,.tks-wheel,.tks-spd,.tks-sail,.tks-radar,.tks-wind')].filter(vis).filter(e => { const b = e.getBoundingClientRect(); return b.left < cx + half && b.right > cx - half && b.top < sr.bottom - 2 && b.bottom > hud + 2 }).map(e => e.className.split(' ').pop())
+      const W = document.querySelector('.tks-wheel').getBoundingClientRect()
+      return { hits, wheelH: W.height, wheelBottom: W.bottom, above: sr.bottom <= W.top + 2, waiting: s.waiting, pauseVis: vis(document.querySelector('.tks-pausebtn')) }
+    }
+    const bad = new Set(); let n = 0, above = true, wh = 0, wb = 0, pauseDuringQ = null
+    for (let i = 0; i < 40 && n < 16; i++) {
+      const c = await p.evaluate(CORR)
+      if (c.waiting) { if (pauseDuringQ === null) pauseDuringQ = c.pauseVis; await p.evaluate(() => window.__qAnswer(true)); await sleep(300); continue }
+      n++; c.hits.forEach(x => bad.add(x)); above = above && c.above; wh = Math.max(wh, c.wheelH); wb = c.wheelBottom
+      if (i === 4) await p.screenshot({ path: `${QSHOTS}steer-phone-${w}x${h}.png` })
+      await sleep(350)
+    }
+    check(bad.size === 0, `${tag}: the ship-to-horizon corridor holds no control (${[...bad].join(',') || 'clear'} over ${n} samples)`)
+    check(wh <= h * 0.32 && wb >= h - 40 && above, `${tag}: wheel ${Math.round(wh)} px (<= 32% of ${h}) at the bottom edge (bottom ${Math.round(wb)}), ship always above it (${above})`)
+    if (pauseDuringQ === null) { const o = await nextQ(p, 60000); pauseDuringQ = o && !o.sent ? await p.evaluate(() => getComputedStyle(document.querySelector('.tks-pausebtn')).visibility !== 'hidden') : null; if (o && !o.sent) await p.evaluate(() => window.__qAnswer(true)) }
+    check(pauseDuringQ === false, `${tag}: the pause button is hidden while a question is open`)
+    check(errs.length === 0, `${tag}: no page errors (${errs.join(' | ')})`)
+    await p.evaluate(() => window.__autoStop && window.__autoStop())
+    await p.close()
+  }
 }
 if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n${fails} FAILED` : '\nALL PASS'); process.exit(fails ? 1 : 0) }
 
@@ -348,6 +399,7 @@ for (const [w, h] of SIZES) {
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 })
     const s = await p.evaluate(() => __h.state())
     console.log(`  ${tag} ice @4x CPU: p90 ${f1} fps (ship y ${Math.round(s.y)}, ${s.ice} bergs, render quality ${s.quality})`)
+    await perfContext(p, b, tag + '-ice', f1 < 24, cdp)
     check(f1 >= 24, `${tag}: p90 frame rate >= 24 fps at 4x CPU (${f1})`)
     check(errs.length === 0, `${tag}: fps run no page errors`)
     await p.close()
@@ -562,14 +614,14 @@ for (const rm of [0, 1]) {
         const ok = async u => { if (!u) return false; const r = await fetch(u); return r.ok && (await r.blob()).size > 2000 }
         let alt = true
         for (const k of s.alt || []) alt = alt && await ok(AssetIndex.path(k))
-        out.push({ id: s.id, group: s.group, side: await ok(side), top: await ok(top), alt, legendArt: s.group !== 'legend' || (/^tk-legend-side\//.test(s.side) && /^tk-legend-top\//.test(s.top)),
+        out.push({ id: s.id, group: s.group, side: await ok(side), top: await ok(top), alt, legendArt: s.group !== 'legend' || (/^tk-legend-side\//.test(s.side) && (/^tk-legend-top\//.test(s.top) || (s.topAlt === true && !!s.flag))), topAlt: !!s.topAlt,
           text: s.name + ' ' + (s.real || '') + ' ' + s.fact, stats: [s.stats.cepat, s.stats.lincah, s.stats.kuat], hand: TKFleet.handling(s.id) })
       }
       return { out, rec: TKFleet.recommended, groups: TKFleet.groups.map(g => [g.id, g.label, g.ids.length]) }
     })
     const bad = cat.out.filter(x => !x.side || !x.top || !x.alt || !x.legendArt)
-    check(cat.out.length === 50 && bad.length === 0, `fleet catalogue: 50 ships, each with a side view AND a top view that load (${bad.map(x => x.id).join(',') || 'all ok'})`)
-    check(JSON.stringify(cat.groups) === JSON.stringify([['modern', 'Kapal Modern', 25], ['legend', 'Kapal Legenda', 25]]) && new Set(cat.out.map(x => x.id)).size === 50, `fleet catalogue: two groups of 25, unique ids (${JSON.stringify(cat.groups)})`)
+    check(cat.out.length === 52 && bad.length === 0, `fleet catalogue: 52 ships (25 modern + 27 legend; borrowed top views flagged topAlt), each with a side view AND a top view that load (${bad.map(x => x.id).join(',') || 'all ok'})`)
+    check(JSON.stringify(cat.groups) === JSON.stringify([['modern', 'Kapal Modern', 25], ['legend', 'Kapal Legenda', 27]]) && new Set(cat.out.map(x => x.id)).size === 52 && cat.out.filter(x => x.topAlt).map(x => x.id).join() === 'uss-enterprise,great-eastern', `fleet catalogue: Modern 25 + Legenda 27, unique ids, topAlt only on the two borrowed top views (${JSON.stringify(cat.groups)})`)
     check(cat.out.every(x => !EMOJI.test(x.text) && x.stats.every(v => v >= 1 && v <= 3) && x.hand && x.hand.len > 0 && x.hand.beam > 0), 'fleet catalogue: no emoji in names/facts, stats 1..3, a handling profile each')
     TKIDS.legend = cat.out.filter(x => x.group === 'legend').map(x => x.id)
     const banned = cat.out.filter(x => BAN.test(x.text)).map(x => x.id + ': ' + x.text.match(BAN)[0])
@@ -623,7 +675,9 @@ for (const rm of [0, 1]) {
     })
     const kW = c.wheel.w / OLDW(w, h), kH = Math.min(c.L.w, c.R.w) / OLDH(w, h)
     const needW = h < 480 ? 1.3 : 2      // a phone on its side: 2x cannot sit beside the ship (see tk-steer layoutControls)
-    check(kH >= 2 && kW >= needW - 0.01, `${tag}: LEFT/RIGHT ${Math.round(c.L.w)} px = ${kH.toFixed(2)}x (>= 2x of ${OLDH(w, h)}), wheel ${Math.round(c.wheel.w)} px = ${kW.toFixed(2)}x (>= ${needW}x of ${OLDW(w, h)})`)
+    // phone upright (playtest 2026-09-30, supersedes 2x there): one bottom row, wheel <= 32% of the height, buttons >= 88 px
+    if (h > w && w < 600) check(c.wheel.h <= h * 0.32 && c.wheel.w >= 140 && Math.min(c.L.w, c.R.w) >= 88, `${tag}: phone row: wheel ${Math.round(c.wheel.h)} px (<= 32% of ${h}, >= 140), LEFT/RIGHT ${Math.round(c.L.w)} px (>= 88)`)
+    else check(kH >= 2 && kW >= needW - 0.01, `${tag}: LEFT/RIGHT ${Math.round(c.L.w)} px = ${kH.toFixed(2)}x (>= 2x of ${OLDH(w, h)}), wheel ${Math.round(c.wheel.w)} px = ${kW.toFixed(2)}x (>= ${needW}x of ${OLDW(w, h)})`)
     check(c.L.r < w / 2 && c.R.l > w / 2 && c.L.b > h * 0.75 && c.R.b > h * 0.75, `${tag}: LEFT bottom-left, RIGHT bottom-right (thumb corners)`)
     // play with the autopilot; the ship never sits under a control
     await sleep(2600)
@@ -686,9 +740,11 @@ for (const rm of [0, 1]) {
       const r = document.querySelector('.tkf-root')
       return { sel: [...r.querySelectorAll('.tkf-tab')].map(t => t.getAttribute('aria-selected')).join(), ids: [...r.querySelectorAll('.tkf-card')].map(c => c.dataset.id),
         name: r.querySelector('.tkf-name').textContent, real: r.querySelector('.tkf-real').textContent, realOn: !r.querySelector('.tkf-real').hidden,
-        hero: r.querySelector('.tkf-hero').getAttribute('src') || '' }
+        hero: r.querySelector('.tkf-hero').getAttribute('src') || '',
+        names: [...r.querySelectorAll('.tkf-card')].map(c => { const n = c.querySelector('.tkf-cname'); return n && n.textContent.trim() && parseFloat(getComputedStyle(n).fontSize) >= 14 && n.getBoundingClientRect().bottom <= c.getBoundingClientRect().bottom + 0.5 }) }
     })
-    check(t1.sel === 'false,true' && t1.ids.length === 25 && t1.ids.every(id => TKIDS.legend.includes(id)) && t1.ids[0] === 'mary-rose', `${tag}: "Kapal Legenda" tab shows the 25 legend ships (${t1.ids[0]} .. ${t1.ids[24]})`)
+    check(t1.sel === 'false,true' && t1.ids.length === 27 && t1.ids.every(id => TKIDS.legend.includes(id)) && t1.ids[0] === 'mary-rose', `${tag}: "Kapal Legenda" tab shows the 27 legend ships (${t1.ids[0]} .. ${t1.ids[26]})`)
+    check(t1.names.length === 27 && t1.names.every(Boolean), `${tag}: every thumbnail carries its name label (>= 14 px, inside the card)`)
     check(/tk-legend-side\/mary-rose/.test(t1.hero) && t1.realOn && t1.real === 'Mary Rose', `${tag}: big preview switches to the legend SIDE view, real name shown ("${t1.name}" / ${t1.real})`)
     // smooth scroll across the whole strip: every thumbnail ends up loaded, no long frames while scrolling
     const sc = await p.evaluate(async () => {
@@ -702,7 +758,7 @@ for (const rm of [0, 1]) {
       const imgs = [...strip.querySelectorAll('.tkf-card img')]
       return { loaded: imgs.filter(i => i.complete && i.naturalWidth > 0).length, n: imgs.length, long: gaps.filter(g => g > 50).length, frames: gaps.length, worst: Math.round(Math.max(...gaps)) }
     })
-    check(sc.loaded === 25 && sc.long <= 2, `${tag}: scrolling the strip loads every legend thumbnail (${sc.loaded}/25), frames smooth (${sc.long} over 50 ms of ${sc.frames}, worst ${sc.worst} ms)`)
+    check(sc.loaded === 27 && sc.long <= 2, `${tag}: scrolling the strip loads every legend thumbnail (${sc.loaded}/27), frames smooth (${sc.long} over 50 ms of ${sc.frames}, worst ${sc.worst} ms)`)
     // keyboard on the tabs: ArrowLeft goes back to Modern
     await p.focus('.tkf-tab[data-group="legend"]'); await p.keyboard.press('ArrowLeft'); await sleep(300)
     const k = await p.evaluate(() => ({ g: document.querySelector('.tkf-tab[aria-selected="true"]').dataset.group, first: document.querySelector('.tkf-card').dataset.id }))
@@ -746,11 +802,27 @@ for (const rm of [0, 1]) {
       root = host.querySelector('.tkf-root'); out.legend = root ? [root.querySelector('.tkf-tab[aria-selected="true"]').dataset.group, root.querySelector('.tkf-card.is-on').dataset.id] : null
       root && root.remove()
       started = null; TKFleet.resolve(host, { avatar: 'st', world: 'nautilus' }, id => { started = id }); out.none = started
+      // EVERY world whose own ship is in the fleet preselects it (legacy worlds + the legend story worlds, via world.legend)
+      out.worlds = []
+      // the steer harness loads tk-worlds.js only; the legend story worlds live in tk-worlds-legends.js
+      if (window.TKWorlds && !TKWorlds.WORLDS.some(w => w.legend)) await new Promise(res => { const sc = document.createElement('script'); sc.src = '../games/data/tk-worlds-legends.js'; sc.onload = sc.onerror = res; document.head.appendChild(sc) })
+      const WS = { titanic: 'titanic', cuttysark: 'tallship', victory: 'hms-victory', endurance: 'endurance', arizona: 'uss-arizona' }
+      for (const w of (window.TKWorlds ? TKWorlds.WORLDS : [])) {
+        const want = WS[w.id] || (w.legend && w.legend[0]) || null
+        if (!want) continue
+        localStorage.setItem('tk-fleet-wz', 'lifeboat'); localStorage.removeItem('tk-fleet-world-wz')
+        const h = TKFleet.resolve(host, { avatar: 'wz', world: w.id }, () => {}); await new Promise(r => setTimeout(r, 60))
+        const rr = host.querySelector('.tkf-root')
+        out.worlds.push([w.id, want, rr ? rr.querySelector('.tkf-card.is-on').dataset.id : null, rr ? rr.querySelector('.tkf-rec').textContent : ''])
+        h && h.destroy()
+      }
       return out
     })
     check(JSON.stringify(r.first) === JSON.stringify(['tallship', 'Kapal di cerita ini!', 70]) && r.started === 'tallship', `fleet story ship: Cutty Sark world preselects its own ship over the saved pick, badge "Kapal di cerita ini!", overlay starts below the 70 px chip row (${JSON.stringify(r.first)})`)
     check(r.again[0] === 'tallship' && !r.again[1], 'fleet story ship: the picker opens ONCE per world, then the saved pick applies')
     check(JSON.stringify(r.legend) === JSON.stringify(['legend', 'endurance']) && r.none === 'tallship', `fleet story ship: Endurance opens on the Kapal Legenda tab; a world without its own ship keeps the pick (${JSON.stringify(r.legend)}, ${r.none})`)
+    const wbad = r.worlds.filter(x => x[1] !== x[2] || x[3] !== 'Kapal di cerita ini!')
+    check(r.worlds.length >= 11 && wbad.length === 0, `fleet story ship: every world with a fleet ship preselects it (${r.worlds.length} worlds; ${wbad.map(x => x.join('>')).join(' | ') || 'all ok'})`)
     check(errs.length === 0, `fleet story ship: no page errors (${errs.join(' | ')})`)
     await p.close()
   }
@@ -869,6 +941,7 @@ for (const rm of [0, 1]) {
     // budget (software canvas, no GPU in headless): unthrottled = one 60 Hz frame; 4x CPU = never slower than
     // 30 fps at p95 and no long task > 50 ms. The owner's "median <= 20 ms at 4x" is NOT met by tk-steer
     // (33 ms = 30 fps after the adaptive resolution drop) and is reported, not faked.
+    await perfContext(p, b, M.name + '-1280-polish', u.med > 20 || u.long.length > 0 || th.p95 > 50 || th.long.some(x => x > 50), cdp)
     check(u.med <= 20 && u.long.length === 0, `${M.name} perf: unthrottled median ${u.med} ms (<= 20), no long task > 50 ms (${u.long.length})`)
     check(th.p95 <= 50 && th.long.filter(x => x > 50).length === 0, `${M.name} perf 4x CPU: p95 ${th.p95} ms (<= 50), median ${th.med} ms, long tasks > 50 ms: ${th.long.filter(x => x > 50).length}`)
     check(errs.length === 0, `${M.name} perf: no page errors (${errs.join(' | ')})`)

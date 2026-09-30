@@ -12,8 +12,12 @@
  *   - `window.saveLevelProgress(gameId, level, stars)` — single source of
  *     truth. Routes write to current active avatar's bucket. Falls back to
  *     `dunia-0-progress` if avatar can't be resolved (boot or no slot picked).
+ *     Returns true only when the progress write succeeds; false permits retry.
  *   - `window.activeAvatarBadgeKey(badgeId)` — returns avatar-keyed badge
  *     key, e.g. `dunia-avatar-lion-g13c_badges`. Used by g13c gym ladder.
+ *   - `window.lockGameAvatarSession()` — opt in before loading a standalone
+ *     game's state. Keeps saves, rewards and question history with that child
+ *     when another tab changes the active avatar. A new document selects anew.
  *
  * Usage from any standalone game:
  *
@@ -39,7 +43,11 @@
     '🐸': 'frog', '🐯': 'tiger', '🐼': 'panda', '🐨': 'koala',
   };
 
+  let sessionLocked = false;
+  let sessionAvatar = null;
+
   function _activeAvatarSlug() {
+    if (sessionLocked) return sessionAvatar;
     try {
       const aSlot = JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]');
       const slot = (Array.isArray(aSlot) ? parseInt(aSlot[0]) : 0) || 0;
@@ -49,6 +57,14 @@
     } catch (_) {
       return null;
     }
+  }
+
+  function lockGameAvatarSession() {
+    if (!sessionLocked) {
+      sessionAvatar = _activeAvatarSlug();
+      sessionLocked = true;
+    }
+    return sessionAvatar;
   }
 
   function _progressKey() {
@@ -62,18 +78,32 @@
     return `dunia-avatar-${av}-${suffix}`;
   }
 
+  function _record(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
+
   function saveLevelProgress(gameId, level, stars) {
-    if (!gameId || typeof level !== 'number' || typeof stars !== 'number') return;
+    if (typeof gameId !== 'string' || !/^g\d+[a-z]?$/.test(gameId) ||
+        typeof level !== 'number' || !Number.isFinite(level) ||
+        typeof stars !== 'number' || !Number.isFinite(stars)) return false;
     const key = _progressKey();
+    let stored = false;
     try {
       const prog = JSON.parse(localStorage.getItem(key) || '{}');
-      if (!prog[gameId]) prog[gameId] = { completed: [], stars: {} };
+      if (!_record(prog)) throw new TypeError('Invalid saved progress record');
+      if (Object.prototype.hasOwnProperty.call(prog, gameId) && !_record(prog[gameId])) {
+        throw new TypeError('Invalid saved game record');
+      }
+      if (!Object.prototype.hasOwnProperty.call(prog, gameId)) prog[gameId] = { completed: [], stars: {} };
       const g = prog[gameId];
-      if (!Array.isArray(g.completed)) g.completed = [];
-      if (typeof g.stars !== 'object' || g.stars === null) g.stars = {};
+      if (g.completed !== undefined && !Array.isArray(g.completed)) throw new TypeError('Invalid completed-level list');
+      if (g.stars !== undefined && !_record(g.stars)) throw new TypeError('Invalid level-star record');
+      if (g.completed === undefined) g.completed = [];
+      if (g.stars === undefined) g.stars = {};
       if (!g.completed.includes(level)) g.completed.push(level);
       if ((g.stars[level] || 0) < stars) g.stars[level] = stars;
       localStorage.setItem(key, JSON.stringify(prog));
+      stored = true;
     } catch (e) {
       console.warn('[save-engine] saveLevelProgress fail:', e);
     }
@@ -82,6 +112,7 @@
     try {
       sessionStorage.setItem(`${gameId}Result`, JSON.stringify({ stars, level }));
     } catch (_) {}
+    return stored;
   }
 
   /* ── per-child collectibles ────────────────────────────────────────────────
@@ -146,5 +177,6 @@
     window.avatarScopedSet = avatarScopedSet;
     window.avatarScopedRemove = avatarScopedRemove;
     window._activeAvatarSlug = _activeAvatarSlug;
+    window.lockGameAvatarSession = lockGameAvatarSession;
   }
 })();

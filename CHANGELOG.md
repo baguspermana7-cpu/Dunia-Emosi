@@ -1,3 +1,23 @@
+## v63.17 — 2026-09-30 — Timmy and Mojo continuation (release candidate)
+
+### Games and child-facing polish
+- Add G31 Mojo Swoptops to the Dunia map with 16 initial missions, a shared deterministic programming interpreter, in-program transformation, editable command sequences, recoverable mistakes, learning actions, checkpoints, collections and a parent-gated reset. Five forms are used by these missions; two further capability definitions have engine coverage. The 50-form/250-family design catalogue is retained as expansion scope.
+- Improve G30 Timmy's story composition, full ship previews, first-visit guidance, compact sailing controls, gallery navigation, question presentation and persistent mixed-question pacing. Preserve original world indices and existing unlocks across 15 original and six legend worlds.
+- Preserve all 52 selectable ships and upgrade 27 legend side views using the supplied HQ sheets. Surface differences between supplied side/top drawings and borrowed top views; correct Republic and Great Eastern facts.
+- Retain literal owner artwork, distinguish archived reference screens from playable content, and show unimplemented geographic regions as place labels without fake mission buttons.
+
+### Correctness and persistence
+- Bind G30/G31 cached game state to the child who opened the document, preserving saves, fleet selection, question history and shared stars when another tab switches avatars.
+- Persist Mojo completion before delayed result presentation; normalize saved records against trusted level data and render saved counters as text. Reset preserves other games, other children and preferences.
+- Pause Timmy grid timers and question continuations; preserve hint use across chapter checkpoints and cap the attempt reward. Exclude paused/background intervals from active-play duration.
+- Respect live global mute changes and keep presentation callbacks from reopening abandoned game screens.
+
+### Assets, offline behavior and verification
+- Inventory all 29 Mojo sheets with named, source-traceable output variants and explicit exclusions; retain the supplied generic component panels without claiming matched animation modules for every form.
+- Validate complete asset batches before publication, serialize index merges and restore earlier files on ordinary publication failure. Protect reviewed HQ side art from the legacy top-view importer.
+- Add the standalone Mojo shell and full shared SFX responses to the service worker; keep first activation from reloading active play and align local cache URLs with `v63.17-20260930a`.
+- Recover and track 77 requirements in [the continuation acceptance record](docs/G30-G31-CONTINUATION.md). Independent Astra HIGH code, Python and UI audits drive the regression fixes. Final browser, asset and performance acceptance is pending; this entry does not certify release readiness.
+
 ## [2026-06-21] — AAA proposal page: detailed plan from owner review + interactive Review Console
 
 ### NEW: Detail plan blocks (proposals/50-ideas-aaa.html)

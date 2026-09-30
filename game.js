@@ -7502,7 +7502,7 @@ window.addEventListener('pageshow', function(e) {
   // Standalone games that save through save-engine write progress themselves, so
   // their session result is only a hand-off marker; drop it so it cannot linger
   // into a later visit and be mistaken for a fresh result.
-  for (const gn of [23, 24, 25, 27, 28, 29, 30]) {
+  for (const gn of [23, 24, 25, 27, 28, 29, 30, 31]) {
     try { sessionStorage.removeItem(`g${gn}Result`); sessionStorage.removeItem(`${gn}Result`) } catch (_) {}
   }
   // Returning from a standalone game via bfcache restores the OLD map DOM: the

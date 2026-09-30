@@ -15,6 +15,7 @@
  *     effectiveness: 'super' | 'normal' | 'weak' | 'immune'
  *   })
  *   SFXEngine.setMute(true) / setVolume(0..1)
+ *     Mute stops current cues and discards delayed tails; unmute permits new cues only.
  *   AdaptiveMusic.setState('idle' | 'battle' | 'lowHp' | 'win')
  *
  * Design rules (matches kid-safe Block E standard in proposals):
@@ -53,6 +54,8 @@
     // playback bookkeeping
     voicesPerSrc: {},    // src → count of active <audio>
     audioCache: {},      // src → array of pooled Audio elements
+    activeAudio: [],     // active playback records with idempotent release
+    generation: 0,       // invalidates delayed cue tails when muted
     recentHits: [],      // rapid-fire detector timestamps
     ctx: null,           // shared Web Audio context (init lazily after gesture)
     masterGain: null,
@@ -96,6 +99,12 @@
     return state.recentHits.length >= RAPID_THRESHOLD
   }
 
+  function releaseStoppedAudio (src) {
+    state.activeAudio.slice().forEach(function (voice) {
+      if ((!src || voice.src === src) && (voice.audio.paused || voice.audio.ended)) voice.release()
+    })
+  }
+
   function getCachedAudio (src) {
     var pool = state.audioCache[src]
     if (!pool) { pool = state.audioCache[src] = []; }
@@ -113,8 +122,9 @@
     return audio
   }
 
-  function playAudio (src, volume) {
+  function playAudio (src, volume, onError) {
     if (state.muted || !src) return null
+    releaseStoppedAudio(src)
     if ((state.voicesPerSrc[src] || 0) >= CONCURRENT_CAP) return null
 
     var audio = getCachedAudio(src)
@@ -123,13 +133,23 @@
     audio.volume = Math.max(0, Math.min(1, (volume == null ? 1 : volume) * state.volume))
     state.voicesPerSrc[src] = (state.voicesPerSrc[src] || 0) + 1
 
+    var released = false, voice, generation = state.generation
     var release = function () {
+      if (released) return
+      released = true
+      var at = state.activeAudio.indexOf(voice); if (at >= 0) state.activeAudio.splice(at, 1)
       state.voicesPerSrc[src] = Math.max(0, (state.voicesPerSrc[src] || 1) - 1)
       audio.removeEventListener('ended', release)
-      audio.removeEventListener('error', release)
+      audio.removeEventListener('error', failed)
     }
+    var failed = function () {
+      var eligible = !released && generation === state.generation && !state.muted
+      release()
+      if (eligible && onError) onError()
+    }
+    voice = { audio: audio, src: src, release: release }; state.activeAudio.push(voice)
     audio.addEventListener('ended', release, { once: true })
-    audio.addEventListener('error', release, { once: true })
+    audio.addEventListener('error', failed, { once: true })
 
     var p = audio.play()
     if (p && typeof p.catch === 'function') {
@@ -266,19 +286,30 @@
                   : eff === 'weak'  ? DEFAULT_VOL.hitWeak
                   : eff === 'immune'? DEFAULT_VOL.hitImmune
                   :                   DEFAULT_VOL.hitNormal
-      var delay = lite ? 0 : 80   // tight layered timing
-      setTimeout(function () { playMoveByType(moveType, moveSlug, { volume: moveVol }) }, delay)
+      var delay = lite ? 0 : 80, generation = state.generation   // tight layered timing
+      setTimeout(function () { if (generation === state.generation) playMoveByType(moveType, moveSlug, { volume: moveVol }) }, delay)
     }
   }
 
   // ─── Volume / mute ───────────────────────────────────────────────────
-  function setMute (m) { state.muted = !!m }
+  function setMute (m) {
+    state.muted = !!m
+    if (!state.muted) return
+    state.generation++
+    state.activeAudio.slice().forEach(function (voice) {
+      try { voice.audio.pause(); voice.audio.currentTime = 0 } catch (e) { console.warn('[SFXEngine] stop audio', e) }
+      voice.release()
+    })
+    _cueNodes.slice().forEach(function (node) { try { node.stop() } catch (e) {} })
+    _cueNodes = []
+  }
   function getMute () { return state.muted }
   function setVolume (v) { state.volume = Math.max(0, Math.min(1, +v || 0)) }
   function getVolume () { return state.volume }
 
   // ─── Diagnostics ─────────────────────────────────────────────────────
   function status () {
+    releaseStoppedAudio()
     return {
       ready: state.ready,
       muted: state.muted,
@@ -430,7 +461,7 @@
     crash: 0.7, swoosh: 0.55, whoosh: 0.55
   }
   var _cueFailed = {}      // name → true once the file 404s → synth thereafter
-  var _cueCtx = null
+  var _cueCtx = null, _cueNodes = []
 
   function _cctx () {
     if (_cueCtx) return _cueCtx
@@ -439,6 +470,7 @@
     return _cueCtx
   }
   function _beep (freq, dur, type, vol) {
+    if (state.muted) return
     var c = _cctx(); if (!c) return
     try {
       var o = c.createOscillator(), g = c.createGain()
@@ -447,24 +479,28 @@
       g.gain.linearRampToValueAtTime((vol == null ? 0.15 : vol) * state.volume, c.currentTime + 0.01)
       g.gain.linearRampToValueAtTime(0, c.currentTime + (dur || 0.15))
       o.connect(g); g.connect(c.destination)
+      _cueNodes.push(o)
+      o.onended = function () { var at = _cueNodes.indexOf(o); if (at >= 0) _cueNodes.splice(at, 1) }
       o.start(); o.stop(c.currentTime + (dur || 0.15) + 0.02)
     } catch (e) {}
   }
   function _cueSynth (name) {
     if (state.muted) return
+    var generation = state.generation
+    function later (fn, ms) { setTimeout(function () { if (generation === state.generation && !state.muted) fn() }, ms) }
     if (name === 'correct') {
       _beep(523, 0.1, 'triangle', 0.16)
-      setTimeout(function () { _beep(659, 0.1, 'triangle', 0.16) }, 80)
-      setTimeout(function () { _beep(784, 0.16, 'triangle', 0.18) }, 160)
+      later(function () { _beep(659, 0.1, 'triangle', 0.16) }, 80)
+      later(function () { _beep(784, 0.16, 'triangle', 0.18) }, 160)
     } else if (name === 'wrong') {
       _beep(311, 0.14, 'sawtooth', 0.12)
-      setTimeout(function () { _beep(196, 0.22, 'sawtooth', 0.10) }, 100)
+      later(function () { _beep(196, 0.22, 'sawtooth', 0.10) }, 100)
     } else if (name === 'coin') {
       _beep(988, 0.06, 'square', 0.12)
-      setTimeout(function () { _beep(1319, 0.10, 'square', 0.12) }, 55)
+      later(function () { _beep(1319, 0.10, 'square', 0.12) }, 55)
     } else if (name === 'levelup') {
       [523, 659, 784, 1047].forEach(function (f, i) {
-        setTimeout(function () { _beep(f, 0.16, 'triangle', 0.16) }, i * 90)
+        later(function () { _beep(f, 0.16, 'triangle', 0.16) }, i * 90)
       })
     } else if (name === 'star') {
       _beep(1047, 0.12, 'triangle', 0.16)
@@ -481,16 +517,17 @@
     if (!file || _cueFailed[name]) { _cueSynth(name); return null }
     var src = CUE_BASE + file
     var vol = (opts.volume == null) ? (CUE_VOL[name] || 0.7) : opts.volume
-    var a = playAudio(src, vol)
+    var a = playAudio(src, vol, function () { _cueFailed[name] = true; _cueSynth(name) })
     // Pooled <audio> elements are long-lived and reused. A fresh {once:true}
     // 'error' listener per cue never fires on the success path, so it is never
     // removed: the element accumulates one dead closure per sound played, and a
     // single later error would fire ALL of them in one tick (hundreds of
-    // _cueSynth() calls = oscillator storm). Hook each element exactly once.
+    // _cueSynth() calls = oscillator storm). Cache source failures once per element;
+    // playback-scoped fallback lives in playAudio and is invalidated on release/mute.
     if (a && !a.__cueErrHooked) {
       a.__cueErrHooked = true
       a.addEventListener('error', function () {
-        _cueFailed[name] = true; _cueSynth(name)
+        _cueFailed[name] = true
       })
     }
     return a

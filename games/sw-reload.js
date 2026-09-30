@@ -28,12 +28,22 @@
       }
     } catch (e) {}
     var flag = 'dunia-sw-reloaded-' + (tag || '')
-    if (sessionStorage.getItem(flag)) return
-    sessionStorage.setItem(flag, '1')
+    try {
+      if (sessionStorage.getItem(flag)) return
+      sessionStorage.setItem(flag, '1')
+    } catch (e) {
+      // Private/blocked storage must not prevent an update. The in-page guard
+      // still combines the message and controllerchange into a single reload.
+      console.warn('[Dunia PWA] Penyimpanan sesi tidak tersedia; pembaruan tetap dimuat.')
+    }
     reloaded = true
     location.reload()
   }
+  var ctlAtLoad = !!navigator.serviceWorker.controller
   navigator.serviceWorker.addEventListener('message', function (e) {
+    // A page that loaded with no SW (the first visit) is already running fresh bytes:
+    // the first activation's SW_UPDATED broadcast is not a deploy, so don't reload mid-play.
+    if (!ctlAtLoad) return
     if (e.data && e.data.type === 'SW_UPDATED') reloadOnce(e.data.version)
   })
   // A page opened directly (bookmark, shared link, home-screen shortcut) may never have seen index.html,

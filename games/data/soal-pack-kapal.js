@@ -42,6 +42,9 @@
     topics: ['matematika', 'umum', 'logika', 'islam', 'arab'],
     // owner 2026-09-29: "jangan banyak soal kata Arab, matematika 50%"
     weights: { matematika: 50, umum: 15, logika: 15, islam: 12, arab: 8 },
+    maxShare: { arab: 0.08 },     // actual mixed picks, including Islam-off and one-card action challenges
+    topicGap: { arab: 4 },        // no more than one Arabic item in any four mixed picks
+    exclusionOverrides: { islam: { weights: { matematika: 50, umum: 21, logika: 21, islam: 0, arab: 8 } } },
     themes: ['kapal'],
     packs: ['kapal'],            // fase A content rules are stricter than the general pools (see the standard)
     general: false,
