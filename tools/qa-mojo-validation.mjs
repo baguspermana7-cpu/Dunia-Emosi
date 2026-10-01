@@ -8,7 +8,7 @@ const clean=c.fill(dirty);check(!Object.hasOwn(clean.lv,'t1')&&!Object.hasOwn(cl
 const lv=c.ML.byId('s1'),w=c.PG.prep(c.PG.world(lv),lv,0),sol=c.PG.solve(w,lv.beats[0]),end=c.PG.run(w,sol,lv.beats[0],{auto:true}).world,cpWorld=c.PG.startBeat(end,lv,1);delete cpWorld.map;delete cpWorld.cap;delete cpWorld.forms;
 const good={id:'s1',beat:1,world:cpWorld,used:[sol.length],ghost:false,elapsed:120010,events:{count:1,last:120000},gotStars:{},starBeat:{},bonus:1};
 const saved=c.fill({cp:good});check(saved.cp?.beat===1&&saved.cp.world.m.form===end.m.form&&saved.cp.world.objs.find(o=>o.id==='api1').st==='out','Real completed checkpoint remains resumable');
-const injected=JSON.parse(JSON.stringify(good));injected.world.objs.find(o=>o.id==='mia').name='<img src=x>';const repaired=c.fill({cp:injected});check(repaired.cp?.world.objs.find(o=>o.id==='mia').name==='Mia','Checkpoint object labels rebuilt from trusted level content');
+const injected=JSON.parse(JSON.stringify(good));injected.world.objs.find(o=>o.id==='mia').name='<img src=x>';const repaired=c.fill({cp:injected});check(repaired.cp?.world.objs.find(o=>o.id==='mia').name==='Oona','Checkpoint object labels rebuilt from trusted level content (s1 rescues Oona; no hijab art, owner rule)');
 const invalid=JSON.parse(JSON.stringify(good));invalid.world.m.r=999;check(c.fill({cp:invalid}).cp===null,'Out-of-grid checkpoint rejected');
 check(dirty.lv.t3.stars===3&&dirty.set.sound==='false','Input object remains unchanged');if(fails)process.exitCode=1;
 const fractional=JSON.parse(JSON.stringify(good));fractional.elapsed=120010.75;fractional.events.last=120000.25;const clock=c.fill({cp:fractional}).cp;check(clock.elapsed===120010.75&&clock.events.last===120000.25,'Valid fractional pacing clocks preserved');

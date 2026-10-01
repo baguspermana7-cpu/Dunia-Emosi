@@ -8,7 +8,7 @@ async function finish(id){await p.evaluate(id=>__mojo.start(id),id);await tap('#
 try{
  await p.goto('http://localhost:8081/games/mojo-swoptops.html?unlock=1',{waitUntil:'networkidle0'});await p.waitForFunction(()=>window.__mojo?.ready&&navigator.serviceWorker.controller);await sleep(500);
  await p.evaluate(()=>__mojo.start('m8'));await tap('#in-go');await tap('#picker-later');
- for(const c of ['swop:dozer','fwd','swop:jumper','jump'])await tap(`[data-cmd="${c}"]`);
+ for(const c of ['swop:dozer','east','swop:jumper','jump'])await tap(`[data-cmd="${c}"]`);
  await tap('[data-slot="1"]');assert.ok(await p.$('[data-cmd="push"]'),'editing earlier slot offers preceding form capability');
  console.log('Editing earlier command follows its preceding SWOP capability PASS');
  await child(0);await finish('t1');assert.ok(await p.evaluate(()=>__mojo.save().lv.t1));

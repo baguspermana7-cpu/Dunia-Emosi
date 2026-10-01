@@ -329,7 +329,7 @@ section('F levels')
 
 /* Alternative predecessor states must propagate beyond one checkpoint. */
 {
-  const lv = { id:'checkpoint-fork', grid:{ rows:2,cols:3,map:['...','...'] }, mojo:{at:[0,0],h:'E'},
+  const lv = { id:'checkpoint-fork', mode:'rel', grid:{ rows:2,cols:3,map:['...','...'] }, mojo:{at:[0,0],h:'E'},
     objects:[{id:'baut',type:'bolt',at:[0,1],n:1}], beats:[
       {objectives:[{do:'reach',at:[0,2]}],slots:8,forms:['normal']},
       {start:{at:[1,0],h:'E'},objectives:[{do:'reach',at:[1,1]}],slots:1,forms:['normal']},
@@ -399,6 +399,40 @@ section('I SoalEngine')
   // every level's math card resolves
   ML.LEVELS.forEach(lv => lv.beats.forEach((b, i) => { if (b.math) { const q = MS.world(b.math.kind, b.math.about); check(q && SE.validate(q).length === 0, `${lv.id} beat ${i + 1}: its SoalEngine world card resolves (${q && q.prompt})`) } }))
   ML.LEVELS.forEach(lv => (lv.objects || []).forEach(o => { if (o.type === 'toolbox') ['id', 'en'].forEach(l => check(!!MS.word(o.tool, l), `${lv.id}: the ${o.tool} word exists in ${l}`)) }))
+}
+
+/* ── J board-absolute arrows (owner bug 2026-10-01: "arrows are read from the board, not the car") ── */
+section('J absolute arrows')
+{
+  const t2 = ML.byId('t2'), w0 = PG.prep(PG.world(t2), t2, 0), beat = t2.beats[0]
+  check(PG.modeOf(w0) === 'abs' && ML.LEVELS.every(l => PG.modeOf(PG.world(l)) === 'abs'), 'every level uses board-absolute arrows (the default mode)')
+  check(ML.LEVELS.every(l => l.beats.every(b => !(b.palette || []).some(c => ['fwd', 'left', 'right'].includes(c)) && !(b.prefill || []).some(c => ['fwd', 'left', 'right'].includes(c)))), 'no level offers relative Maju / Belok commands')
+  const owner = PG.run(w0, ['up', 'up', 'east', 'east'], beat)
+  check(owner.done && owner.world.m.r === 0 && owner.world.m.c === 2, "t2: the owner's plan up, up, right, right reaches the flag")
+  const top = PG.clone(w0); top.m = Object.assign({}, top.m, { r: 0, c: 0, h: 2 })   // Mojo top-left, facing down (the photo)
+  const right = PG.run(top, ['east', 'east'], beat)
+  check(right.done && right.world.m.c === 2 && right.world.m.h === 1, 't2 from the top-left: right, right reaches the flag whatever Mojo faced before')
+  const down = PG.run(top, ['down', 'down'], null)
+  check(!down.stop && down.world.m.r === 2 && down.world.m.c === 0 && down.world.m.h === 2, 't2 from the top-left: down, down goes down the left road')
+  const wall = S(top, 'west')
+  check(wall.status === 'blocked' && wall.reason === 'edge' && wall.world === top, 'an arrow into the edge is a gentle stop that leaves the world unchanged')
+  const tree = S(PG.run(w0, ['up'], null).world, 'east')
+  check(tree.status === 'blocked' && tree.reason === 'terrain', 'an arrow into a building is blocked (debug mode)')
+  const ev = S(top, 'east').events
+  check(ev[0].e === 'turn' && ev[0].h === 1 && ev[1].e === 'move', 'an arrow turns Mojo to face its direction, then moves one tile')
+  // action verbs use the facing (the last move); with nothing in front they turn to the one neighbour that works
+  const fire = W(L(['...', '...'], { at: [1, 1], h: 'E' }, [{ id: 'f', type: 'fire', at: [0, 1] }], { forms: ['fire'], res: { water: 2 }, cap: { water: 5 } }))
+  fire.m.form = 'fire'
+  const sp = S(fire, 'spray')
+  check(sp.status !== 'blocked' && sp.world.m.h === 0 && sp.events[0].e === 'turn', 'spray with the fire beside Mojo turns to it and sprays')
+  const lone = W(L(['...'], { at: [0, 1], h: 'E' }, [], { forms: ['fire'], res: { water: 2 } })); lone.m.form = 'fire'
+  const none = S(lone, 'spray')
+  check(none.status === 'blocked', 'spray with no fire around is still a gentle stop')
+  // relative mode stays available for a later advanced world
+  const rel = PG.world(Object.assign({}, L(['...', '...'], { at: [1, 0], h: 'N' }), { mode: 'rel' }))
+  check(PG.modeOf(rel) === 'rel' && PG.palette({ forms: ['normal'] }, rel).slice(0, 3).join() === 'fwd,left,right' && PG.palette({ forms: ['normal'] }, W(L(['.'], { at: [0, 0] }))).slice(0, 4).join() === 'up,down,west,east', "mode 'rel' keeps Forward / Turn; the default palette is the four arrows")
+  const rr = PG.run(rel, ['fwd', 'right', 'fwd'], null)
+  check(rr.world.m.r === 0 && rr.world.m.c === 1 && PG.modeOf(rr.world) === 'rel', 'relative commands still run and the mode survives cloning')
 }
 
 console.log(`\n${passes} passed, ${fails.length} failed`)

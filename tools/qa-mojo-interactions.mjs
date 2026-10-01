@@ -32,18 +32,18 @@ try{
  assert.equal(await p.evaluate(()=>__mojo.state().fail.reason),'form');
  assert.ok(await p.$('.slot.fail[data-slot="2"]'));await p.screenshot({path:out+'/debug-stop.png'});
  await tap('[data-slot="2"]');await tap('[data-cmd="swop:fire"]');await tap('[data-cmd="spray"]');
- assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['fwd','fwd','swop:fire','spray']);
+ assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['east','east','swop:fire','spray']);
  await tap('#btn-run');await idle();await p.waitForSelector('#ov-card.on #res-map');console.log('Debug wrong capability → repair chosen slot → real recovery PASS');
- await start('t5');await program(['fwd','left','right']);await tap('[data-slot="0"]');await tap('[data-act="r"]');
- assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['left','fwd','right']);await tap('#btn-undo');
- await tap('[data-slot="0"]');await tap('[data-act="x"]');assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['left','right']);await tap('#btn-undo');
+ await start('t5');await program(['up','west','east']);await tap('[data-slot="0"]');await tap('[data-act="r"]');
+ assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['west','up','east']);await tap('#btn-undo');
+ await tap('[data-slot="0"]');await tap('[data-act="x"]');assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['west','east']);await tap('#btn-undo');
  const r=await p.$eval('[data-slot="0"]',e=>{const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}});
  await p.mouse.move(r.x,r.y);await p.mouse.down();await p.mouse.move(600,200,{steps:8});await p.mouse.up();
- assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['fwd','left','right']);console.log('Edit, reorder, delete, undo and outside drag preserve plan PASS');
- await start('m1');await program(['swop:dozer','fwd']);const before=await p.evaluate(()=>__mojo.state().world);await tap('#btn-run');await sleep(450);await auto();await tap('#btn-run');await sleep(1800);
+ assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['up','west','east']);console.log('Edit, reorder, delete, undo and outside drag preserve plan PASS');
+ await start('m1');await program(['swop:dozer','up']);const before=await p.evaluate(()=>__mojo.state().world);await tap('#btn-run');await sleep(450);await auto();await tap('#btn-run');await sleep(1800);
  assert.equal(await p.evaluate(()=>__mojo.state().world),before);assert.equal(await p.evaluate(()=>__mojo.state().running),false);
  assert.equal(await p.$eval('#mojo-mod',e=>getComputedStyle(e).opacity),'1');console.log('Stop during SWOP returns intact checkpoint sprite PASS');
- await start('m2');await program(['fwd']);const rewards=await p.evaluate(()=>__mojo.save().rewardBolts);
+ await start('m2');await program(['up']);const rewards=await p.evaluate(()=>__mojo.save().rewardBolts);
  await p.evaluate(()=>{const now=performance.now.bind(performance);window.__testClock=now;performance.now=()=>now()+120001});
  await tap('#btn-run');await p.waitForFunction(()=>__mojo.mg()?.kind==='event');
  const answer=await p.evaluate(()=>String(__mojo.mg().answer));const water=await p.evaluate(()=>__mojo.state().res.water);
@@ -74,11 +74,11 @@ try{
  for(let n=0;n<250;n++){if(await p.evaluate(()=>__mojo.mg()?.kind==='letters'))break;if(await p.$('#ov-swop.on #sw-skip'))await tap('#sw-skip');await sleep(100)}
  assert.equal(await p.evaluate(()=>__mojo.mg()?.answer),'HAMMER');await p.screenshot({path:out+'/hammer-english.png'});await idle();await p.waitForSelector('#ov-card.on #res-map');
  assert.ok(await p.evaluate(()=>__mojo.state().tools.palu));console.log('PALU mastery keeps separate HAMMER word challenge and grants real tool PASS');
- await p.setViewport({width:390,height:844});await start('m8');await program(['fwd','left']);await tap('[data-slot="0"]');
+ await p.setViewport({width:390,height:844});await start('m8');await program(['east','up']);await tap('[data-slot="0"]');
  const toolbar=await p.$eval('.slot-act',e=>{const r=e.getBoundingClientRect();return{top:r.top,bottom:r.bottom,left:r.left,right:r.right}});
  assert.ok(toolbar.left>=0&&toolbar.right<=390&&toolbar.top>=0&&toolbar.bottom<=844);await tap('[data-act="r"]');
- assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['left','fwd']);const boardWidth=await p.$eval('#board',e=>e.clientWidth);assert.ok(boardWidth>=280,'portrait board stays readable: '+boardWidth);
+ assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['up','east']);const boardWidth=await p.$eval('#board',e=>e.clientWidth);assert.ok(boardWidth>=280,'portrait board stays readable: '+boardWidth);
  await p.screenshot({path:out+'/portrait-edit.png'});await p.setViewport({width:844,height:390});await sleep(350);
- assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['left','fwd']);await p.screenshot({path:out+'/rotated-edit.png'});console.log('Portrait editor touch-size actions and rotation preserve plan PASS');
+ assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['up','east']);await p.screenshot({path:out+'/rotated-edit.png'});console.log('Portrait editor touch-size actions and rotation preserve plan PASS');
  assert.equal(errors.length,0,errors.join('\n'));
 }finally{await browser.close()}

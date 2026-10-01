@@ -22,7 +22,7 @@ try{
  check(JSON.stringify(await p.evaluate(()=>__mojo.state().prog))===JSON.stringify(before),'Plan swipe does not reorder commands');
  await tap('[data-slot="1"]');await tap('[data-act="r"]');const reordered=before.slice();[reordered[1],reordered[2]]=[reordered[2],reordered[1]];
  check(JSON.stringify(await p.evaluate(()=>__mojo.state().prog))===JSON.stringify(reordered),'Touch select and explicit arrow deliberately reorder');await p.screenshot({path:out+'/portrait-native-pan.png'});
- await begin('m2');await program(['fwd']);await p.evaluate(()=>{const n=performance.now.bind(performance);window.__nativeClock=n;performance.now=()=>n()+120001});await tap('#btn-run');await p.waitForFunction(()=>__mojo.mg()?.kind==='event');
+ await begin('m2');await program(['up']);await p.evaluate(()=>{const n=performance.now.bind(performance);window.__nativeClock=n;performance.now=()=>n()+120001});await tap('#btn-run');await p.waitForFunction(()=>__mojo.mg()?.kind==='event');
  const right=await p.evaluate(()=>[...document.querySelectorAll('[data-answer]')].find(e=>e.textContent===String(__mojo.mg().answer)).getAttribute('data-answer'));await tap(`[data-answer="${right}"]`);await sleep(1500);
  check(await p.evaluate(()=>__mojo.mg()?.kind==='event'),'Correct-answer explanation remains until child continues');
  if(await p.$('#ov-mg.on #event-skip')){await p.screenshot({path:out+'/persistent-explanation.png'});await tap('#event-skip')}

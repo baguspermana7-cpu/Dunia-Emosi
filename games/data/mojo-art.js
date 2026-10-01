@@ -26,8 +26,15 @@
   var TOP_NAMES = 'Mojo|Pemadam|Helikopter|Dozer|Derek|Keranjang|Pembalap|Tangki Air|Pelompat|Perahu|Monster|Bak Pasir|Jet|Bola Penghancur|Lampu Sorot|Bengkel Berjalan|Jembatan|Pengaduk Semen|Daur Ulang|Bajak Salju|Traktor|Pemangkas|Bor|Penyelamat|Satelit|Kamera|Forklift|Penarik|Es Krim|Pengantar|Polisi|Ambulans|Pengangkut Sampah|Penyapu|Bahan Bakar|Roket|Kapal Selam|Tangga Udara|Pengangkut Kayu|Pengebor|Pemanen|Balon Udara|Lab Antariksa|Derek Kargo'.split('|')
   function topKey (form) { return form === 'normal' ? 'base' : form === 'cherry' ? 'lift' : form }
   function ownerTop (form, view) { return '<img class="owner-mojo owner-' + view + '" src="' + lib('mojo-top/' + topKey(form)) + '" alt="">' }
-  var catalog = TOPS.map(function (id, i) { return { id: id, name: TOP_NAMES[i], src: lib('mojo-top/' + id) } })
-  var OWNER = { 'char/bo':'mojo-char/bo', 'char/bo-wrench':'mojo-char/bo-tools', 'char/neon':'mojo-char/neon', 'char/grandad':'mojo-char/grandad',
+  // one kid-friendly line per form for the Bengkel showroom ("Derek: mengangkat barang berat")
+  var TOP_ABILITY = ('menolong, mengambil, dan memperbaiki|menyemprot air ke api|terbang tinggi menolong teman|mendorong batu besar|mengangkat barang berat|' +
+    'naik tinggi dengan keranjang|melaju paling cepat|membawa banyak air|melompati lubang dan batu|berlayar di air|melewati jalan berbatu|mengangkut pasir|' +
+    'terbang sangat cepat|merobohkan dinding tua|menerangi tempat gelap|membawa alat bengkel|menjadi jembatan|mengaduk semen|mengumpulkan barang daur ulang|' +
+    'menyingkirkan salju|membajak sawah|merapikan pohon|melubangi tanah keras|menolong saat darurat|mengirim pesan jauh|memotret dan merekam|mengangkat kotak|' +
+    'menarik mobil mogok|membagikan es krim|mengantar paket|menjaga jalan tetap aman|membawa orang sakit|mengangkut sampah|menyapu jalan|membawa bahan bakar|' +
+    'meluncur ke angkasa|menyelam di laut|menjulurkan tangga tinggi|mengangkut kayu|mengebor sumur|memanen padi|melayang di udara|meneliti di angkasa|memindahkan peti kemas').split('|')
+  var catalog = TOPS.map(function (id, i) { return { id: id, name: TOP_NAMES[i], ability: TOP_ABILITY[i] || '', src: lib('mojo-top/' + id) } })
+  var OWNER = { 'char/bo':'mojo-char/bo', 'char/oona':'mojo-char/oona', 'char/mia':'mojo-char/oona', 'char/bo-wrench':'mojo-char/bo-tools', 'char/neon':'mojo-char/neon', 'char/grandad':'mojo-char/grandad',
     'char/cat':'mojo-char/cat', 'obj/rock':'mojo-tile/rock-push', 'obj/fire':'mojo-tile/fire', 'obj/star':'mojo-prop/star', 'obj/toolbox':'mojo-prop/toolbox',
     'obj/tree':'mojo-prop/tree-round', 'obj/lamp':'mojo-prop/lamp-post', 'obj/crate':'mojo-tile/crate', 'obj/bolt':'mojo-prop/bolt',
     'tool/palu':'mojo-prop/hammer', 'tool/obeng':'mojo-prop/screwdriver', 'tool/kunci':'mojo-prop/wrench' }
@@ -50,6 +57,11 @@
     left: '<path d="M34 40 V24 Q34 14 24 14 H12"' + ST + '/><path d="M20 5 L11 14 L20 23"' + ST + '/>',
     right: '<path d="M14 40 V24 Q14 14 24 14 H36"' + ST + '/><path d="M28 5 L37 14 L28 23"' + ST + '/>',
     back: '<path d="M24 8 V38"' + ST + '/><path d="M12 26 L24 39 L36 26"' + ST + '/>',
+    // board-absolute arrows (owner decision 2026-10-01): straight arrows that point where Mojo goes on the board
+    up: '<path d="M24 41 V9"' + ST + '/><path d="M11 21 L24 8 L37 21"' + ST + '/>',
+    down: '<path d="M24 7 V39"' + ST + '/><path d="M11 27 L24 40 L37 27"' + ST + '/>',
+    west: '<path d="M41 24 H9"' + ST + '/><path d="M21 11 L8 24 L21 37"' + ST + '/>',
+    east: '<path d="M7 24 H39"' + ST + '/><path d="M27 11 L40 24 L27 37"' + ST + '/>',
     push: '<rect x="6" y="10" width="8" height="28" rx="3" fill="#fff"/><path d="M18 24 H38"' + ST + '/><path d="M30 15 L40 24 L30 33"' + ST + '/>',
     spray: '<path d="M6 30 H18 L24 24"' + ST + '/><path d="M30 12 q4 6 0 9 q-4 -3 0 -9 Z M40 22 q4 6 0 9 q-4 -3 0 -9 Z M32 32 q4 6 0 9 q-4 -3 0 -9 Z" fill="#fff" stroke="#fff" stroke-width="2"/>',
     raise: '<rect x="10" y="34" width="28" height="7" rx="2" fill="#fff"/><path d="M24 30 V8"' + ST + '/><path d="M14 17 L24 7 L34 17"' + ST + '/>',
@@ -84,7 +96,7 @@
     debug: '<circle cx="21" cy="21" r="12"' + ST + '/><path d="M30 30 L41 41"' + ST + '/>'
   }
   // colour category per command (with the icon, never colour alone — PRD §22.4)
-  var CAT = { fwd: '#1E88E5', left: '#1E88E5', right: '#1E88E5', back: '#1E88E5', push: '#E0A100', spray: '#E53935', raise: '#FB8C00', lower: '#FB8C00',
+  var CAT = { up: '#1E88E5', down: '#1E88E5', west: '#1E88E5', east: '#1E88E5', fwd: '#1E88E5', left: '#1E88E5', right: '#1E88E5', back: '#1E88E5', push: '#E0A100', spray: '#E53935', raise: '#FB8C00', lower: '#FB8C00',
     rescue: '#D81B60', pick: '#6D4C41', drop: '#6D4C41', repair: '#546E7A', jump: '#43A047', takeoff: '#1565C0', land: '#1565C0', hook: '#8D6E63', release: '#8D6E63', swop: '#7B1FA2' }
   function icon (cmd) {
     if (!cmd) return ''
@@ -110,17 +122,19 @@
     'obj/pit': svg('0 0 64 64', '<ellipse cx="32" cy="34" rx="27" ry="22" fill="#6D4C41"/><ellipse cx="32" cy="36" rx="21" ry="16" fill="#3E2723"/><ellipse cx="30" cy="38" rx="12" ry="8" fill="#1B0F0C"/>'),
     'obj/rubble': svg('0 0 64 64', '<ellipse cx="32" cy="36" rx="26" ry="20" fill="#8D6E63"/><circle cx="22" cy="34" r="6" fill="#A1887F"/><circle cx="38" cy="30" r="7" fill="#9E9E9E"/><circle cx="36" cy="42" r="5" fill="#BCAAA4"/>'),
     'obj/ash': svg('0 0 64 64', '<ellipse cx="32" cy="40" rx="22" ry="10" fill="#9E9E9E" opacity=".7"/><path d="M24 34 q4 -10 0 -18 M34 30 q5 -10 1 -20 M42 36 q3 -8 0 -14" stroke="#BDBDBD" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>'),
+    // a nail for Belajar "Pasangkan Alat" (palu -> paku); no owner drawing of a nail exists
+    'obj/paku': svg('0 0 64 64', '<g transform="rotate(35 32 32)"><rect x="18" y="8" width="28" height="8" rx="4" fill="#B0BEC5" stroke="#455A64" stroke-width="3"/><path d="M28 16 H36 V46 L32 58 L28 46 Z" fill="#CFD8DC" stroke="#455A64" stroke-width="3" stroke-linejoin="round"/><path d="M31 19 V44" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>'),
     'ui/bo-hat': svg('0 0 64 64', '<path d="M8 40 Q8 14 32 14 Q56 14 56 40 Z" fill="#FFB300" stroke="#8D6E00" stroke-width="3"/><rect x="4" y="38" width="56" height="8" rx="4" fill="#FFB300" stroke="#8D6E00" stroke-width="3"/>')
   }
   var LIB = {
-    'char/bo': 'tk-char/mechanic-boy', 'char/bo-wrench': 'tk-char/mechanic-boy-wrench', 'char/mia': 'tk-char/hijab-girl-map', 'char/kid': 'tk-char/explorer-kid', 'char/rafi': 'tk-char/lantern-boy',
+    'char/bo': 'tk-char/mechanic-boy', 'char/bo-wrench': 'tk-char/mechanic-boy-wrench', 'char/mia': 'mojo-char/oona', 'char/kid': 'tk-char/explorer-kid', 'char/rafi': 'tk-char/lantern-boy',
     'char/cat': 'animals/cat', 'obj/rock': 'gt/rock', 'obj/fire': 'gt/fx-fire', 'obj/star': 'gt/star-collectible', 'obj/toolbox': 'gt/tool-kit', 'obj/flag': 'game/flag-red',
     'obj/tree': 'park/tree', 'obj/lamp': 'park/street-lamp', 'obj/crate': 'game/crate-wood', 'obj/cone': 'things/traffic-cone', 'obj/bush': 'game/bush', 'obj/bench': 'park/bench',
     'tool/kunci': 'gt/repair', 'tool/tangga': 'game/ladder', 'tool/roda': 'gt/part-tire', 'ui/trophy': 'game/trophy-gold', 'ui/gear': 'game/gear'
   }
   var cache = {}
   function src (key) {
-    if (key.indexOf('mojo:') === 0) key = { 'mojo:palu': 'tool/palu', 'mojo:baut': 'obj/bolt', 'mojo:tetes': 'obj/drop', 'mojo:obeng': 'tool/obeng', 'mojo:kunci': 'tool/kunci', 'mojo:tali': 'tool/tali' }[key] || key
+    if (key.indexOf('mojo:') === 0) key = { 'mojo:palu': 'tool/palu', 'mojo:baut': 'obj/bolt', 'mojo:tetes': 'obj/drop', 'mojo:obeng': 'tool/obeng', 'mojo:kunci': 'tool/kunci', 'mojo:tali': 'tool/tali', 'mojo:paku': 'obj/paku' }[key] || key
     if (OVERRIDE[key]) return BASE + OVERRIDE[key]
     if (cache[key]) return cache[key]
     var s = DRAWN[key] ? url(DRAWN[key]) : LIB[key] ? lib(LIB[key]) : (key.indexOf('/') > 0 ? lib(key) : null)
@@ -128,7 +142,12 @@
     return s
   }
   // every library file the game may show (warmed into the cache by the page for offline play)
-  function libFiles () { var o = []; for (var k in LIB) if (!OVERRIDE[k]) o.push(lib(LIB[k])); Object.keys(OWNER).forEach(function (k) { o.push(lib(OWNER[k])) }); catalog.forEach(function (x) { o.push(x.src) }); 'map garage construction garage-street-land garage-street-port beach-dock-land beach-dock-port forest-trail-land forest-trail-port waterfall-land waterfall-port coast-land coast-port'.split(' ').forEach(function (k) { o.push(lib('mojo-bg/' + k)) }); return o }
+  function libFiles () { var o = []; for (var k in LIB) if (!OVERRIDE[k]) o.push(lib(LIB[k])); Object.keys(OWNER).forEach(function (k) { o.push(lib(OWNER[k])) }); catalog.forEach(function (x) { o.push(x.src) }); 'map garage construction garage-street-land garage-street-port beach-dock-land beach-dock-port forest-trail-land forest-trail-port waterfall-land waterfall-port coast-land coast-port'.split(' ').forEach(function (k) { o.push(lib('mojo-bg/' + k)) })
+    // menu art (home icons, map, garage stand, Bo poses) and the Belajar pictures
+    ;('mojo-char/bo-think mojo-char/bo-celebrate mojo-prop/swap-stand mojo-prop/star mojo-ui/chevron-left-sheet15 mojo-ui/chevron-right-sheet15 mojo-ui/play-sheet15 ' +
+      'mojo-ui/ico-peta mojo-ui/ico-bengkel mojo-ui/ico-koleksi mojo-ui/ico-episode mojo-ui/bo-profile-sheet11 mojo-ui/back-sheet15 mojo-prop/hammer mojo-prop/wrench ' +
+      'mojo-prop/drill mojo-prop/logs mojo-prop/magnet mojo-prop/gear mojo-prop/lamp-post mojo-prop/waterdrop-sheet15 mojo-tile/road mojo-tile/fire game/ladder gt/part-tire').split(' ').forEach(function (k) { if (o.indexOf(lib(k)) < 0) o.push(lib(k)) })
+    return o }
 
   W.MojoArt = { chassis: chassis, module: module, mojo: mojo, icon: icon, src: src,
     catalog: catalog, lib: lib, CAT: CAT, FORM: FORM, TOP_VB: TOP_VB, SIDE_VB: SIDE_VB, OVERRIDE: OVERRIDE, libFiles: libFiles, hasOverride: function (k) { return !!OVERRIDE[k] } }

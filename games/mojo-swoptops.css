@@ -405,13 +405,9 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
   .btn,.cmd,.chip,.slot,.tile,.choice{transition:opacity .2s}
 }
 
-/* Owner's illustrated scenes and cyan Mojo; pictures remain upright with a heading marker. */
+/* Owner's illustrated scenes and cyan Mojo; pictures stay upright and mirror for left/right (arrows are board-absolute). */
 .owner-mojo{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 4px 2px rgba(23,50,77,.2))}
 #mojo-ch:empty{display:none}.mj-rot{transform:none!important}.mj-mod{inset:-5%}
-.mojo::after{content:'';position:absolute;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:14px solid #fff;filter:drop-shadow(0 1px 2px #17324d);top:-13%;left:calc(50% - 9px)}
-.mojo[data-heading="1"]::after{top:calc(50% - 7px);left:auto;right:-13%;transform:rotate(90deg)}
-.mojo[data-heading="2"]::after{top:auto;bottom:-13%;transform:rotate(180deg)}
-.mojo[data-heading="3"]::after{top:calc(50% - 7px);left:-13%;transform:rotate(-90deg)}
 .home-mojo img{width:100%;height:100%;object-fit:contain}
 .town,.menu-scene{background:#80cefa url('../assets/db/lib/mojo-bg/garage-street-land.webp') center/cover no-repeat}
 .town>*{display:none}.home-brand{top:10%;left:4%;right:auto}.home-stage{right:40%;bottom:8%;height:45%}

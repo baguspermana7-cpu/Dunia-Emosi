@@ -18,19 +18,48 @@
     var port = W.matchMedia('(orientation:portrait)').matches
     return A.lib(key + (key === 'mojo-bg/construction' ? '' : port ? '-port' : '-land'))
   }
+  // Peta Swoppiton (owner mockup "World Map"): the painted map with six numbered pins where its own
+  // blue circles are drawn, and a region card per place. Two regions are open; the other four are
+  // honest "Segera" cards that answer a tap instead of doing nothing.
+  var PINS = { kota:[27.4,36.5], pelabuhan:[34.5,57.6], hutan:[65,49.5], gunung:[83,32.1], konstruksi:[81.7,87], pulau:[52.8,80.1] }
+  function regionStats (r) {
+    var s = API.save(), done = 0, stars = 0
+    r.levels.forEach(function (id) { var rec = s.lv[id]; if (rec) { done++; stars += rec.stars || 0 } })
+    return { done: done, stars: stars, total: r.levels.length }
+  }
   function map () {
-    var c = screen('scr-regions', 'Peta Swoppiton'), positions = [[25,27],[20,70],[56,20],[76,42],[77,75],[46,84]]
+    var c = screen('scr-regions', 'Peta Swoppiton'), nextRegion = W.MojoLevels.region(API.next()).id
     c.classList.add('region-map')
+    var art = node('div', 'wmap'), cards = node('div', 'wcards'), stage = node('div', 'wmap-box')
+    var pic = node('img', 'wmap-img'); pic.src = A.lib('mojo-bg/map'); pic.alt = ''; stage.appendChild(pic)
+    art.appendChild(stage); c.appendChild(art); c.appendChild(cards)
+    var head = D.querySelector('#scr-regions .topbar'), total = 0, max = 0
     W.MojoLevels.REGIONS.forEach(function (r, i) {
-      var ready = r.open && r.levels.length > 0
-      var b = ready ? button('', function () { activeRegion = r.id; API.episodes(r.id) },'region open') : node('div','region region-place')
+      var ready = r.open && r.levels.length > 0, st = regionStats(r)
+      total += st.stars; max += st.total * 3
+      var go = function () { if (ready) { activeRegion = r.id; API.cue(); API.episodes(r.id) } else { API.cue(); API.toast(r.title + ' segera dibuka. Selesaikan misi di Kota Pusat dan Pelabuhan dulu!') } }
+      // the pin on the painted map
+      var pin = node('button', 'map-pin' + (ready ? '' : ' locked') + (r.id === nextRegion ? ' next' : ''))
+      pin.type = 'button'; pin.setAttribute('data-pin', r.id); pin.setAttribute('aria-label', r.title + (ready ? '' : ' (segera)'))
+      pin.style.left = PINS[r.id][0] + '%'; pin.style.top = PINS[r.id][1] + '%'
+      pin.innerHTML = ready ? '<b class="fk">' + (i + 1) + '</b>' : '<i class="ico">' + A.icon('lock') + '</i>'
+      bind(pin, go); stage.appendChild(pin)
+      // the region card
+      var b = ready ? node('button', 'region open') : node('div', 'region region-place locked')
+      if (ready) b.type = 'button'; else { b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-disabled', 'true'); b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go() } }) }
+      if (r.id === nextRegion) b.classList.add('next')
       b.setAttribute('data-region', r.id)
-      b.style.left = positions[i][0] + '%'; b.style.top = positions[i][1] + '%'
-      if (ready) { var img = node('img'); img.src = backdrop(r.bg); img.alt = ''; b.appendChild(img) }
+      var th = node('img', 'rthumb'); th.src = backdrop(r.bg); th.alt = ''; b.appendChild(th)
+      var num = node('i', 'rnum fk'); num.textContent = String(i + 1); b.appendChild(num)
       b.appendChild(node('strong', '', r.title))
-      if (ready) b.appendChild(node('span','',r.levels.length + ' misi'))
-      c.appendChild(b)
+      var sub = node('span', 'rsub')
+      if (ready) sub.innerHTML = '<img src="' + A.src('obj/star') + '" alt="">' + st.stars + '/' + (st.total * 3) + '<em class="rcount"> · ' + st.done + '/' + st.total + ' misi</em>'
+      else sub.innerHTML = '<i class="ico">' + A.icon('lock') + '</i>Segera'
+      b.appendChild(sub)
+      bind(b, go); cards.appendChild(b)
     })
+    var pill = node('span', 'starpill fk'); pill.innerHTML = '<img src="' + A.src('obj/star') + '" alt=""><b>' + total + '/' + max + '</b>'
+    head.appendChild(node('span', 'sp')); head.appendChild(pill)
   }
   function info (item) {
     API.overlay('ov-card', '<div class="card collection-detail"><h2 class="fk">' + item.name + '</h2><img src="' + item.src + '" alt="' + item.name + '"><p>' +
@@ -52,34 +81,45 @@
       grid.appendChild(b)
     }); c.appendChild(grid)
   }
+  // Bengkel (owner mockup "Garage"): Mojo on the swap stand, a carousel of the 44 forms, the form's
+  // one-line ability, its commands as icons, and a friendly badge for forms that have no mission yet.
+  function formOf (id) { return id === 'base' ? 'normal' : id === 'lift' ? 'cherry' : id }
   function workshop () {
-    var c = screen('scr-workshop', 'Bengkel Swoptops'), stage = node('div', 'workshop-stage'), index = 0
-    stage.innerHTML = A.mojo('normal','side'); c.appendChild(stage)
-    var label = node('h2','fk','Mojo'); c.appendChild(label)
-    var availability = node('p','menu-lead'); availability.id = 'workshop-availability'; availability.setAttribute('role','status'); c.appendChild(availability)
-    function describe () { availability.textContent = playable(A.catalog[index].id) ? 'Ada di misi penyelamatan.' : 'Gambar bengkel. Misi khusus wujud ini belum tersedia.' }
-    describe()
-    var row = node('div','row')
-    function pick (offset) { index = (index + offset + A.catalog.length) % A.catalog.length; stage.innerHTML = A.mojo(A.catalog[index].id, 'side'); label.textContent = A.catalog[index].name; describe(); API.cue() }
-    row.appendChild(button('Sebelumnya', function () { pick(-1) }, 'btn b-soft fk'))
-    var next = button('Ganti Wujud', function () { pick(1) }); next.id = 'workshop-next'; row.appendChild(next)
-    var missions = button('Lihat Misi', map); missions.id = 'workshop-missions'; row.appendChild(missions)
-    c.appendChild(row)
-  }
-  function learn () {
-    var c = screen('scr-learn', 'Belajar Bersama Mojo'), data = W.MojoSoal.words, index = 0
-    var card = node('div','learn-card'); c.appendChild(card)
+    var c = screen('scr-workshop', 'Bengkel Swoptops'), index = 0
+    c.classList.add('ws')
+    var show = node('div', 'ws-show'), stage = node('div', 'ws-stage'), stand = node('img', 'ws-stand'), car = node('div', 'ws-car')
+    stand.src = A.lib('mojo-prop/swap-stand'); stand.alt = ''
+    stage.appendChild(stand); stage.appendChild(car)
+    var prev = button('', function () { pick(-1) }, 'ws-arrow l'), next = button('', function () { pick(1) }, 'ws-arrow r')
+    prev.innerHTML = '<img src="' + A.lib('mojo-ui/chevron-left-sheet15') + '" alt="">'; prev.setAttribute('aria-label', 'Wujud sebelumnya'); prev.id = 'workshop-prev'
+    next.innerHTML = '<img src="' + A.lib('mojo-ui/chevron-right-sheet15') + '" alt="">'; next.setAttribute('aria-label', 'Wujud berikutnya'); next.id = 'workshop-next'
+    show.appendChild(prev); show.appendChild(stage); show.appendChild(next)
+    var info = node('div', 'ws-info'), name = node('h2', 'fk ws-name'), ability = node('p', 'ws-ability'), verbs = node('div', 'ws-verbs'), count = node('span', 'ws-count')
+    var badge = node('p', 'ws-badge'); badge.id = 'workshop-availability'; badge.setAttribute('role', 'status')
+    info.appendChild(count); info.appendChild(name); info.appendChild(ability); info.appendChild(verbs); info.appendChild(badge)
+    var row = node('div', 'row ws-row')
+    var missions = button('Lihat Misi', map); missions.id = 'workshop-missions'
+    var coll = button('Koleksi', API.collection || collection, 'btn b-soft fk'); coll.id = 'workshop-collection'
+    row.appendChild(coll); row.appendChild(missions); info.appendChild(row)
+    c.appendChild(show); c.appendChild(info)
     function draw () {
-      var w = data[index], q = W.MojoSoal.word(w.tool, 'id')
-      card.innerHTML = '<img src="' + A.src(q.pic) + '" alt=""><h2 class="fk">' + w.id + '</h2><p class="word-en">' + w.en + '</p><p>' + q.use + '</p>'
-      card.appendChild(button('Dengarkan Indonesia', function () { API.say(w.id, 'id', true) }, 'btn b-soft fk'))
-      card.appendChild(button('Dengarkan Inggris', function () { API.say(w.en, 'en', true) }, 'btn b-soft fk'))
+      var f = A.catalog[index], form = formOf(f.id), def = W.MojoLevels.FORMS[form], ok = playable(f.id)
+      car.innerHTML = A.mojo(f.id === 'base' ? 'normal' : f.id, 'side')
+      name.textContent = f.id === 'base' ? 'Mojo' : 'Mojo ' + f.name
+      ability.textContent = f.ability.charAt(0).toUpperCase() + f.ability.slice(1) + '.'
+      count.textContent = (index + 1) + ' / ' + A.catalog.length
+      verbs.innerHTML = ''
+      ;(def ? def.verbs : []).forEach(function (v) { var i = node('i', 'ws-verb'); i.style.background = A.CAT[v] || '#546E7A'; i.innerHTML = A.icon(v); i.setAttribute('title', v); verbs.appendChild(i) })
+      badge.className = 'ws-badge ' + (ok ? 'ready' : 'soon')
+      badge.textContent = ok ? 'Ada di misi penyelamatan!' : 'Segera di misi baru!'
+      anim(car, [{ transform: 'translateY(-10px) scale(.96)', opacity: 0 }, { transform: 'translateY(0) scale(1)', opacity: 1 }], 220)
     }
+    function pick (offset) { index = (index + offset + A.catalog.length) % A.catalog.length; draw(); API.cue() }
     draw()
-    var row = node('div','row')
-    row.appendChild(button('Sebelumnya',function () { index = (index + data.length - 1) % data.length; draw() },'btn b-soft fk'))
-    row.appendChild(button('Berikutnya',function () { index = (index + 1) % data.length; draw() }))
-    c.appendChild(row)
+  }
+  function anim (e, frames, ms) { try { if (W.matchMedia('(prefers-reduced-motion: reduce)').matches) return null; return e.animate(frames, { duration: ms, easing: 'cubic-bezier(.23,1,.32,1)' }) } catch (x) { return null } }
+  function learn () {
+    W.MojoLearn.open({ screen: screen, say: API.say, cue: API.cue, save: API.save, award: API.award, home: API.home })
   }
   function profile () {
     var c = screen('scr-profile', 'Petualang Hebat!'), s = API.save(), ids = Object.keys(s.lv), stars = ids.reduce(function (n,k) { return n + s.lv[k].stars },0)
@@ -140,5 +180,5 @@
     c.innerHTML = '<h1 class="logo fk"><span class="l1">Mojo</span><span class="l2">Swoptops</span></h1><p class="tag fk">Swop · Rencana · Selamatkan</p><div class="splash-art"><img src="' + A.src('char/bo') + '" alt="Bo">' + A.mojo('normal','side') + '</div>'
     c.appendChild(button('Ayo Main!', API.home))
   }
-  W.MojoMenu = { setup:setup, map:map, picker:picker, parentGate:parentGate, region:function () { return activeRegion }, background:backdrop, collection:collection }
+  W.MojoMenu = { setup:setup, map:map, workshop:workshop, learn:learn, picker:picker, parentGate:parentGate, region:function () { return activeRegion }, background:backdrop, collection:collection }
 })(window,document)

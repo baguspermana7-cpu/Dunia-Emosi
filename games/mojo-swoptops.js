@@ -101,9 +101,9 @@
   W.addEventListener('storage',function (e) { if (e.key === 'dunia-emosi-sound' || e.key === null) syncSound() })
 
   /* ── words ──────────────────────────────────────────────────────────── */
-  var LABEL = { fwd: 'Maju', left: 'Kiri', right: 'Kanan', push: 'Dorong', spray: 'Semprot', raise: 'Naik', lower: 'Turun', rescue: 'Tolong', pick: 'Ambil', drop: 'Taruh',
+  var LABEL = { up: 'Atas', down: 'Bawah', west: 'Kiri', east: 'Kanan', fwd: 'Maju', left: 'Kiri', right: 'Kanan', push: 'Dorong', spray: 'Semprot', raise: 'Naik', lower: 'Turun', rescue: 'Tolong', pick: 'Ambil', drop: 'Taruh',
     repair: 'Perbaiki', jump: 'Lompat', takeoff: 'Terbang', land: 'Mendarat', hook: 'Kait', release: 'Lepas' }
-  var EN = { fwd: 'Forward', left: 'Left', right: 'Right', push: 'Push', spray: 'Spray', raise: 'Lift', lower: 'Lower', rescue: 'Rescue', pick: 'Pick up', drop: 'Drop', repair: 'Fix', jump: 'Jump', takeoff: 'Take off', land: 'Land' }
+  var EN = { up: 'Up', down: 'Down', west: 'Left', east: 'Right', fwd: 'Forward', left: 'Left', right: 'Right', push: 'Push', spray: 'Spray', raise: 'Lift', lower: 'Lower', rescue: 'Rescue', pick: 'Pick up', drop: 'Drop', repair: 'Fix', jump: 'Jump', takeoff: 'Take off', land: 'Land' }
   var DOES = { push: 'mendorong batu', spray: 'menyemprot air', raise: 'naik ke atas', lower: 'turun', rescue: 'menolong teman', pick: 'mengambil barang', drop: 'menaruh barang',
     repair: 'memperbaiki', jump: 'melompat', takeoff: 'terbang', land: 'mendarat', hook: 'mengait', release: 'melepas' }
   var SHORT = { normal: 'Mojo', dozer: 'Dozer', fire: 'Pemadam', cherry: 'Keranjang', jumper: 'Lompat', crane: 'Derek', chopper: 'Heli' }
@@ -181,8 +181,15 @@
     }
     $('home-mojo').innerHTML = MA.mojo('normal', 'side')
     $('home-bo').src = MA.src('char/bo')
+    homeCounters()
     var cp = S.cp && ML.byId(S.cp.id)
     $('play-t').textContent = cp ? 'Lanjutkan!' : Object.keys(S.lv).length ? 'Main Lagi!' : 'Ayo Main!'
+  }
+  function homeCounters () {
+    var st = 0; for (var k in S.lv) st += S.lv[k].stars || 0
+    var a = $('home-stars'), b = $('home-bolts')
+    if (a) a.querySelector('b').textContent = String(st)
+    if (b) b.querySelector('b').textContent = String(S.rewardBolts || 0)
   }
   function nextLevelId () {
     if (S.cp && ML.byId(S.cp.id)) return S.cp.id
@@ -200,37 +207,47 @@
   }
   function starImg (on) { return '<i style="background-image:url(' + MA.src('obj/star') + ');' + (on ? '' : 'opacity:.25;filter:grayscale(1)') + '"></i>' }
   function levelPic (lv) {
-    var k = lv.icon || 'cmd/fwd', p = k.split('/')
+    var k = lv.icon || 'cmd/east', p = k.split('/')
     if (p[0] === 'form') return MA.module(p[1], 'top').replace('<svg ', '<svg style="width:52px;height:52px" ')
     if (p[0] === 'cmd' || p[0] === 'ui') return '<i class="cmdico" style="background:' + cmdColor(p[1]) + '">' + MA.icon(p[1]) + '</i>'
     return '<img src="' + MA.src(k) + '" alt="">'
   }
+  // Level select (owner mockup "Episode Selection"): the region's painted scene, a region banner, and
+  // each episode (tutorial, chapter, big mission) as a row of big numbered tiles with three stars.
   function map (regionId) {
     cancelPlayback(); hush()
     regionId = regionId || W.MojoMenu.region()
+    var region = ML.REGIONS.filter(function (r) { return r.id === regionId })[0] || ML.REGIONS[0]
     show('scr-map')
-    var tot = 0, box = $('chapters'); box.innerHTML = ''
-    for (var k in S.lv) tot += S.lv[k].stars || 0
+    $('scr-map').style.backgroundImage = 'url(' + W.MojoMenu.background(region.bg) + ')'
+    var tot = 0, max = 0, box = $('chapters'); box.innerHTML = ''
+    region.levels.forEach(function (id) { tot += (S.lv[id] && S.lv[id].stars) || 0; max += 3 })
+    $('map-title').textContent = region.title
     $('map-stars').innerHTML = '<i class="ico"><img src="' + MA.src('obj/star') + '" alt="" style="width:100%;height:100%"></i>'
-    var total = el('b'); total.textContent = String(tot); $('map-stars').appendChild(total)
-    var nextId = nextLevelId()
+    var total = el('b'); total.textContent = tot + '/' + max; $('map-stars').appendChild(total)
+    var nextId = nextLevelId(), ep = 0
     ML.CHAPTERS.forEach(function (ch) {
       var c = el('section', 'chap'), row = el('div', 'lvls')
-      c.innerHTML = '<h2 class="fk">' + ch.title + ' <small>' + ch.sub + '</small></h2>'
       ML.LEVELS.forEach(function (lv, i) {
         if (lv.ch !== ch.id || ML.region(lv.id).id !== regionId) return
-        var ok = unlocked(i), rec = S.lv[lv.id], b = el('button', 'lvl' + (rec ? ' done' : '') + (ok ? '' : ' lock') + (ok && lv.id === nextId && !rec ? ' next' : ''))
+        var ok = unlocked(i), rec = S.lv[lv.id], isNext = ok && lv.id === nextId && !rec
+        var b = el('button', 'lvl' + (rec ? ' done' : '') + (ok ? '' : ' lock') + (isNext ? ' next' : ''))
         b.type = 'button'; b.setAttribute('data-level', lv.id)
-        b.setAttribute('aria-label', lv.title + (ok ? '' : ' (terkunci)'))
+        b.setAttribute('aria-label', 'Misi ' + (i + 1) + ': ' + lv.title + (ok ? '' : ' (terkunci)'))
         var st = ''; for (var s = 1; s <= 3; s++) st += starImg(rec && rec.stars >= s)
-        b.innerHTML = '<span class="n fk">' + (i + 1) + '</span><div class="pic">' + levelPic(lv) + '</div><b>' + lv.title + '</b><div class="st">' + st + '</div>' +
-          (ok ? '' : '<i class="lk">' + MA.icon('lock') + '</i>')
+        b.innerHTML = '<span class="tile"><span class="n fk">' + (i + 1) + '</span>' + (ok ? '' : '<i class="lk">' + MA.icon('lock') + '</i>') + '</span>' +
+          '<div class="st">' + st + '</div><b>' + lv.title + '</b>'
         if (ok) tap(b, function () { SND.place(); start(lv.id) })
         else tap(b, function () { toast('Selesaikan misi sebelumnya dulu, ya!') })
         row.appendChild(b)
       })
-      if (row.children.length) { c.appendChild(row); box.appendChild(c) }
+      if (!row.children.length) return
+      ep++
+      c.innerHTML = '<h2 class="fk"><span class="ep">Episode ' + ep + '</span> ' + ch.title + ' <small>' + ch.sub + '</small></h2>'
+      c.appendChild(row); box.appendChild(c)
     })
+    var nx = box.querySelector('.lvl.next')
+    if (nx) later(function () { if (nx.isConnected) nx.scrollIntoView({ block: 'nearest' }) }, 0)
   }
 
   /* ── PLAY: state ────────────────────────────────────────────────────── */
@@ -308,8 +325,11 @@
     paint(G.w)
     placeAll(G.w)
   }
-  var tileImages = {}
-  ;['road','grass','water','indoor-floor'].forEach(function (key) { var im = new Image(); im.onload = function () { if (G) paint(G.w) }; im.src = MA.lib('mojo-tile/' + key); tileImages[key] = im })
+  var tileImages = {}, BOARD_BUILDINGS = ['house', 'shop', 'hospital', 'factory', 'garage', 'school']
+  ;['road','grass','water','indoor-floor','wall','trap-hole'].concat(BOARD_BUILDINGS.map(function (k) { return 'b:' + k })).forEach(function (key) {
+    var im = new Image(); im.onload = function () { if (G) paint(G.w) }
+    im.src = key.indexOf('b:') === 0 ? MA.lib('mojo-prop/' + key.slice(2)) : MA.lib('mojo-tile/' + key); tileImages[key] = im
+  })
   var THEME = {
     town: { road: '#EADCC2', joint: '#D2BF9E', grass: '#8DCB5F', tuft: '#6DAE44', roofs: ['#E2574C', '#4C8FD6', '#F2B632', '#6BBF59', '#9C6ADE'] },
     park: { road: '#EEDFC4', joint: '#D6C3A2', grass: '#86C95A', tuft: '#62A83E', roofs: ['#E2574C', '#F2B632', '#4C8FD6'] },
@@ -317,49 +337,64 @@
     hill: { road: '#DCC6A0', joint: '#C2A77C', grass: '#8CC063', tuft: '#6B9E44', roofs: ['#A1887F'] }
   }
   function rr (x, c, y, w, h, r) { x.beginPath(); x.moveTo(c + r, y); x.arcTo(c + w, y, c + w, y + h, r); x.arcTo(c + w, y + h, c, y + h, r); x.arcTo(c, y + h, c, y, r); x.arcTo(c, y, c + w, y, r); x.closePath() }
+  // Board ground from the owner's Grid Element Library (sheets 02-03): painted tiles, cropped inside
+  // their bevel so neighbouring cells of one terrain read as continuous ground. Roads orient from their
+  // neighbours: straight (dash) rows turn 90deg, corners / T / crossings use the plain asphalt.
+  var BUILDINGS = BOARD_BUILDINGS
+  function tileImg (key) { var im = tileImages[key]; return im && im.complete && im.naturalWidth ? im : null }
+  function roadShape (ch, r, c) {
+    function rd (a, b) { var k = ch(a, b); return k === '.' || k === '=' }
+    var n = rd(r - 1, c), so = rd(r + 1, c), e = rd(r, c + 1), wv = rd(r, c - 1), v = n || so, h = e || wv
+    if (v && !h) return 'v'
+    if (h && !v) return 'h'
+    return 'plain'
+  }
+  function drawTile (x, im, X, Y, s, inset) {
+    var iw = im.naturalWidth, ih = im.naturalHeight, ix = iw * inset, iy = ih * inset
+    x.drawImage(im, ix, iy, iw - 2 * ix, ih - 2 * iy, X, Y, s, s)
+  }
+  function drawRoad (x, im, X, Y, s, shape) {
+    var iw = im.naturalWidth, ih = im.naturalHeight, ix = iw * 0.07, iy = ih * 0.07
+    if (shape === 'plain') {
+      // the left half of the painted asphalt, mirrored: the same surface without the centre dash
+      var half = iw * 0.42 - ix
+      x.drawImage(im, ix, iy, half, ih - 2 * iy, X, Y, s / 2 + 1, s)
+      x.save(); x.translate(X + s, Y); x.scale(-1, 1); x.drawImage(im, ix, iy, half, ih - 2 * iy, 0, 0, s / 2 + 1, s); x.restore()
+      return
+    }
+    if (shape === 'h') { x.save(); x.translate(X + s / 2, Y + s / 2); x.rotate(Math.PI / 2); x.drawImage(im, ix, iy, iw - 2 * ix, ih - 2 * iy, -s / 2, -s / 2, s, s); x.restore(); return }
+    x.drawImage(im, ix, iy, iw - 2 * ix, ih - 2 * iy, X, Y, s, s)
+  }
   function paint (w) {
     var cv = $('board-bg'), lv = G.lv, R = lv.grid.rows, Cn = lv.grid.cols, dpr = Math.min(2, W.devicePixelRatio || 1)
     cv.width = Math.round(Cn * CELL * dpr); cv.height = Math.round(R * CELL * dpr)
-    var x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0)
-    var T = THEME[lv.grid.theme] || THEME.town, s = CELL
+    var x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.imageSmoothingQuality = 'high'
+    var T = THEME[lv.grid.theme] || THEME.town, s = CELL, indoor = lv.grid.theme === 'school'
     function ch (r, c) { if (r < 0 || c < 0 || r >= R || c >= Cn) return null; return w.fill[r + ',' + c] ? '.' : lv.grid.map[r].charAt(c) }
+    var onCell = {}; (lv.objects || []).forEach(function (o) { onCell[o.at[0] + ',' + o.at[1]] = 1 })   // a building never hides under an object's own art
+    var grass = tileImg('grass'), road = tileImg(indoor ? 'indoor-floor' : 'road'), water = tileImg('water'), wall = tileImg('wall'), hole = tileImg('trap-hole')
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
       var k = ch(r, c), X = c * s, Y = r * s, filled = !!w.fill[r + ',' + c]
-      if (k === ',' || k === 'T') {
-        x.fillStyle = T.grass; x.fillRect(X, Y, s, s)
-        x.fillStyle = T.tuft
-        for (var t = 0; t < 3; t++) { var hx = X + s * (0.2 + ((r * 7 + c * 13 + t * 29) % 60) / 100), hy = Y + s * (0.2 + ((r * 11 + c * 5 + t * 17) % 60) / 100); x.beginPath(); x.arc(hx, hy, s * 0.035, 0, 7); x.fill() }
+      if (k === ',' || k === 'T' || k === 'o' || (k === '#' && !indoor)) {
+        if (grass) drawTile(x, grass, X, Y, s, 0.07); else { x.fillStyle = T.grass; x.fillRect(X, Y, s, s) }
+        if (k === 'o') { if (hole) drawTile(x, hole, X + s * 0.06, Y + s * 0.06, s * 0.88, 0.02); else { x.fillStyle = '#3E2723'; x.beginPath(); x.ellipse(X + s / 2, Y + s / 2, s * 0.36, s * 0.3, 0, 0, 7); x.fill() } }
+        if (k === '#' && !onCell[r + ',' + c]) {
+          var b = tileImg('b:' + BUILDINGS[(r * 3 + c * 5) % BUILDINGS.length])
+          if (b) { var bw = b.naturalWidth, bh = b.naturalHeight, sc = Math.min(s * 0.9 / bw, s * 0.9 / bh); x.drawImage(b, X + (s - bw * sc) / 2, Y + (s - bh * sc) / 2 + s * 0.02, bw * sc, bh * sc) }
+          else { x.fillStyle = T.roofs[(r * 3 + c * 5) % T.roofs.length]; x.fillRect(X + 6, Y + 6, s - 12, s - 12) }
+        }
       } else if (k === '#') {
-        x.fillStyle = T.joint; x.fillRect(X, Y, s, s)
-        var col = T.roofs[(r * 3 + c * 5) % T.roofs.length]
-        var l = ch(r, c - 1) === '#' ? 0 : 3, rt = ch(r, c + 1) === '#' ? 0 : 3, tp = ch(r - 1, c) === '#' ? 0 : 3, bt = ch(r + 1, c) === '#' ? 0 : 7
-        x.fillStyle = 'rgba(0,0,0,.18)'; x.fillRect(X + l, Y + tp + 4, s - l - rt, s - tp - bt)
-        x.fillStyle = col; x.fillRect(X + l, Y + tp, s - l - rt, s - tp - bt)
-        x.fillStyle = 'rgba(255,255,255,.18)'
-        for (var yy = Y + tp + s * 0.14; yy < Y + s - bt; yy += s * 0.2) x.fillRect(X + l, yy, s - l - rt, s * 0.05)
-        if (lv.grid.theme === 'school' && r === 0) { x.fillStyle = 'rgba(0,0,0,.12)'; x.fillRect(X + l, Y + s - bt - s * 0.12, s - l - rt, s * 0.12) }
-      } else if (k === 'o') {
-        x.fillStyle = T.grass; x.fillRect(X, Y, s, s)
-        x.fillStyle = '#7A5A45'; x.beginPath(); x.ellipse(X + s / 2, Y + s / 2, s * 0.44, s * 0.4, 0, 0, 7); x.fill()
-        x.fillStyle = '#3E2723'; x.beginPath(); x.ellipse(X + s / 2, Y + s * 0.53, s * 0.34, s * 0.3, 0, 0, 7); x.fill()
-        x.fillStyle = '#1B0F0C'; x.beginPath(); x.ellipse(X + s / 2, Y + s * 0.56, s * 0.2, s * 0.16, 0, 0, 7); x.fill()
+        if (wall) drawTile(x, wall, X, Y, s, 0.03); else { x.fillStyle = T.joint; x.fillRect(X, Y, s, s) }
       } else if (k === '~') {
-        x.fillStyle = '#4FC3F7'; x.fillRect(X, Y, s, s); x.strokeStyle = 'rgba(255,255,255,.6)'; x.lineWidth = 2
-        x.beginPath(); x.moveTo(X + s * 0.15, Y + s * 0.4); x.quadraticCurveTo(X + s * 0.3, Y + s * 0.3, X + s * 0.45, Y + s * 0.4); x.stroke()
+        if (water) drawTile(x, water, X, Y, s, 0.07); else { x.fillStyle = '#4FC3F7'; x.fillRect(X, Y, s, s) }
       } else {
-        x.fillStyle = T.joint; x.fillRect(X, Y, s, s)
-        x.fillStyle = T.road; rr(x, X + 2, Y + 2, s - 4, s - 4, s * 0.12); x.fill()
-        x.fillStyle = 'rgba(255,255,255,.35)'; rr(x, X + 5, Y + 4, s - 10, s * 0.08, s * 0.04); x.fill()
+        if (road) { if (indoor) drawTile(x, road, X, Y, s, 0.04); else drawRoad(x, road, X, Y, s, roadShape(ch, r, c)) }
+        else { x.fillStyle = T.road; x.fillRect(X, Y, s, s) }
         if (filled) {
           x.fillStyle = '#A1887F'; x.beginPath(); x.ellipse(X + s / 2, Y + s / 2, s * 0.36, s * 0.3, 0, 0, 7); x.fill()
           x.fillStyle = '#8D6E63'; [[0.38, 0.46, 0.08], [0.58, 0.42, 0.1], [0.5, 0.6, 0.07]].forEach(function (p) { x.beginPath(); x.arc(X + s * p[0], Y + s * p[1], s * p[2], 0, 7); x.fill() })
         }
       }
-    }
-    for (var tr = 0; tr < R; tr++) for (var tc = 0; tc < Cn; tc++) {
-      var terrain = ch(tr,tc), tk = terrain === ',' || terrain === 'T' ? 'grass' : terrain === '.' ? (lv.grid.theme === 'school' ? 'indoor-floor' : 'road') : terrain === '~' ? 'water' : null
-      var image = tk && tileImages[tk]
-      if (image && image.complete && image.naturalWidth && !w.fill[tr + ',' + tc]) x.drawImage(image,tc*s+1,tr*s+1,s-2,s-2)
     }
     // cells Mojo must reach are shown by their objects (flag, people), never a path
   }
@@ -369,13 +404,19 @@
     w.objs.forEach(function (o) { var d = OBJ[o.id]; if (d) d.style.transform = tf(o.r, o.c) })
     placeMojo(w.m, true)
   }
+  // The owner's side drawing looks left: mirror it for east, keep the last side for up/down (no rotation)
+  var faceEast = false
+  function faceMojo (h) {
+    if (h === 1) faceEast = true; else if (h === 3) faceEast = false
+    $('mojo').setAttribute('data-heading', h)
+    $('mojo-mod').style.transform = faceEast ? 'scaleX(-1)' : ''
+  }
   function placeMojo (m, snap) {
     var mj = $('mojo')
     mj.style.transform = tf(m.r, m.c)
     if (snap) G.ang = m.h * 90
     $('mojo-rot').style.transform = 'none'
-    $('mojo').setAttribute('data-heading', m.h)
-    $('mojo-mod').style.transform = m.h === 1 ? 'scaleX(-1)' : ''
+    faceMojo(m.h)
     mj.classList.toggle('lifted', m.lift > 0); mj.classList.toggle('air', !!m.air)
     $('mojo-badge').textContent = m.lift > 0 ? m.lift : ''
   }
@@ -473,6 +514,8 @@
     b.scrollTop = 0
     b.classList.remove('say'); void b.offsetWidth; b.classList.add('say')
     b.classList.toggle('alert', !!alert)
+    var pose = MA.lib(alert ? 'mojo-char/bo-think' : 'mojo-char/bo'), bi = $('bo-img')
+    if (bi && bi.getAttribute('src') !== pose) bi.src = pose
     if (!quiet) say(boLine)
   }
 
@@ -485,18 +528,22 @@
     var plannedForm = G.cp.m.form
     G.prog.slice(0,G.sel >= 0 ? G.sel : G.prog.length).forEach(function (c) { if (c.indexOf('swop:') === 0) plannedForm = c.slice(5) })
     cmds = cmds.filter(function (c) { return c.indexOf('swop:') === 0 || PG.can(plannedForm,c) || G.prog.indexOf(c) >= 0 })
-    cmds.forEach(function (c) { if (c.indexOf('swop:') === 0) swops.push(c); else if (c === 'fwd' || c === 'left' || c === 'right') moves.push(c); else verbs.push(c) })
+    cmds.forEach(function (c) { if (c.indexOf('swop:') === 0) swops.push(c); else if (PG.BASE.indexOf(c) >= 0) moves.push(c); else verbs.push(c) })
     p.innerHTML = ''
-    function add (c) {
+    function add (c, host) {
       var btn = el('button', 'cmd' + (c.indexOf('swop:') === 0 ? ' swop' : ''))
       btn.type = 'button'; btn.setAttribute('data-cmd', c); btn.setAttribute('aria-label', cmdLabel(c))
       if (c.indexOf('swop:') === 0) btn.style.setProperty('--fc', cmdColor(c)); else btn.style.background = 'linear-gradient(180deg,' + cmdColor(c) + ',' + shade(cmdColor(c)) + ')'
       btn.innerHTML = cmdIco(c) + '<span>' + cmdLabel(c) + '</span>'
-      p.appendChild(btn)
+      ;(host || p).appendChild(btn)
       bindPaletteBtn(btn, c)
     }
-    moves.forEach(add); verbs.forEach(add)
-    if (swops.length) { p.appendChild(el('div', 'pal-h', 'Swop — ganti bagian atas')); swops.forEach(add) }
+    // board-absolute arrows sit as a d-pad: up on top, left / down / right below (screen directions)
+    var abs = moves.filter(function (c) { return PG.ABS.indexOf(c) >= 0 })
+    if (abs.length) { var pad = el('div', 'dpad n' + abs.length); p.appendChild(pad); abs.forEach(function (c) { add(c, pad) }) }
+    moves.filter(function (c) { return PG.ABS.indexOf(c) < 0 }).forEach(function (c) { add(c) })
+    verbs.forEach(function (c) { add(c) })
+    if (swops.length) { p.appendChild(el('div', 'pal-h', 'Swop — ganti bagian atas')); swops.forEach(function (c) { add(c) }) }
     later(updatePaletteScroll,0)
   }
   function shade (hex) {
@@ -712,7 +759,7 @@
     switch (res.reason) {
       case 'form': return (SHORT[inf.form] || formName(inf.form)) + ' belum bisa ' + (DOES[v] || v) + '. Pilih wujud yang sesuai untuk membantu.'
       case 'not-allowed': return 'Swop itu belum ada di misi ini. Pilih yang lain, ya.'
-      case 'edge': return 'Ups, itu ujung jalan. Mojo perlu belok?'
+      case 'edge': return 'Ups, itu ujung papan. Coba panah yang lain?'
       case 'terrain': return 'Ada ' + (inf.name || 'sesuatu') + ' di depan. Cari jalan lain?'
       case 'object': {
         var o = PG.find(G.w, inf.id) || {}
@@ -723,8 +770,8 @@
         if (o.type === 'toolbox') return 'Itu kotak alat. Coba AMBIL.'
         return 'Ada yang menghalangi di depan.'
       }
-      case 'no-target': return { spray: 'Semprot ke mana? Hadapkan Mojo ke api dulu.', push: 'Tidak ada batu tepat di depan Mojo.', raise: 'Naik untuk apa? Hadapkan Mojo ke tempat yang tinggi.',
-        rescue: 'Siapa yang ditolong? Hadapkan Mojo ke temannya.', pick: 'Tidak ada yang bisa diambil di depan Mojo.', repair: 'Tidak ada yang rusak di depan Mojo.' }[v] || 'Di depan Mojo tidak ada apa-apa.'
+      case 'no-target': return { spray: 'Semprot ke mana? Bawa Mojo ke sebelah api dulu.', push: 'Tidak ada batu di sebelah Mojo. Jalan dulu ke arah batunya.', raise: 'Naik untuk apa? Bawa Mojo ke sebelah tempat yang tinggi.',
+        rescue: 'Siapa yang ditolong? Bawa Mojo ke sebelah temannya.', pick: 'Tidak ada yang bisa diambil di sebelah Mojo.', repair: 'Tidak ada yang rusak di sebelah Mojo.' }[v] || 'Di sebelah Mojo tidak ada apa-apa.'
       case 'no-water': return 'Tangki air kosong! Api masih perlu ' + (inf.need || '') + ' air. Cari tetes air biru.'
       case 'lift-up': return 'Keranjang masih di atas. TURUN dulu, baru jalan.'
       case 'need-tool': return 'Kita perlu ' + (inf.tool || 'alat') + ' dulu. AMBIL dari kotak alat!'
@@ -794,8 +841,7 @@
   function placeMojoFlags () { var m = G.w.m, mj = $('mojo'); mj.classList.toggle('lifted', m.lift > 0); mj.classList.toggle('air', !!m.air); $('mojo-badge').textContent = m.lift > 0 ? m.lift : '' }
   function turnMojo (h, h0) {
     G.ang = h * 90
-    $('mojo').setAttribute('data-heading', h)
-    $('mojo-mod').style.transform = h === 1 ? 'scaleX(-1)' : ''
+    faceMojo(h)
   }
   function pushObj (id, to) {
     var d = OBJ[id], o = PG.find(G.w, id); if (!d) return
@@ -1037,8 +1083,8 @@
   /* ── hint ladder (PRD §9.1) — one rung per tap, never the route ────── */
   function needVerb () {
     var sol = PG.solve(G.cp, beat()) || []
-    for (var i = 0; i < sol.length; i++) { var v = PG.verbOf(sol[i]); if (v !== 'fwd' && v !== 'left' && v !== 'right' && v !== 'swop') return v }
-    return 'fwd'
+    for (var i = 0; i < sol.length; i++) { var v = PG.verbOf(sol[i]); if (PG.BASE.indexOf(v) < 0 && v !== 'swop') return v }
+    return 'east'
   }
   function focusObj () {
     if (G.fail && G.fail.obj) return G.fail.obj
@@ -1166,10 +1212,12 @@
       '<span><i style="background-image:url(' + si + ');' + (gotStar ? '' : 'opacity:.3;filter:grayscale(1)') + '"></i>' + ((lv.optional || []).length ? (gotStar ? 'Bintang ditemukan' : 'Ada bintang tersembunyi di peta') : 'Tanpa bintang tersembunyi') + '</span>' +
       '<span><i style="background-image:url(' + si + ');' + (eff && !G.ghost ? '' : 'opacity:.3;filter:grayscale(1)') + '"></i>' + (G.ghost ? 'Coba lagi tanpa petunjuk langkah' : eff ? 'Rencana hemat' : 'Bisa dengan perintah lebih sedikit') + '</span>'
     var s = ''; for (var k = 1; k <= 3; k++) s += '<i class="' + (k <= stars ? 'on' : '') + '" style="background-image:url(' + si + ')"></i>'
-    overlay('ov-card', '<div class="card result"><h2 class="fk">Hebat!</h2><div class="mojo-side">' + MA.mojo(G.w.m.form, 'side') + '</div><div class="stars" id="res-stars">' + s + '</div><div class="why">' + why + '</div>' +
-      '<div class="row"><button class="btn b-soft fk" id="res-again" type="button"><i class="ico">' + MA.icon('undo') + '</i><span>Ulangi</span></button>' +
-      '<button class="btn b-soft fk" id="res-map" type="button"><i class="ico">' + MA.icon('map') + '</i><span>Peta</span></button>' +
-      (next ? '<button class="btn b-go fk" id="res-next" type="button"><i class="ico">' + MA.icon('run') + '</i><span>Misi Berikutnya</span></button>' : '') + '</div></div>')
+    overlay('ov-card', '<div class="card result"><h2 class="fk">Hebat!</h2><div class="stars" id="res-stars">' + s + '</div>' +
+      '<div class="res-cast"><img class="res-bo" alt="Bo" src="' + MA.lib('mojo-char/bo-celebrate') + '"><div class="mojo-side">' + MA.mojo(G.w.m.form, 'side') + '</div></div>' +
+      '<p class="res-line">Misi <b>' + lv.title.replace(/[!.]+$/, '') + '</b> berhasil!</p><div class="why">' + why + '</div>' +
+      '<div class="row"><button class="btn b-retry fk" id="res-again" type="button"><i class="ico">' + MA.icon('undo') + '</i><span>Main Lagi</span></button>' +
+      '<button class="btn b-map fk" id="res-map" type="button"><i class="ico">' + MA.icon('map') + '</i><span>Peta</span></button>' +
+      (next ? '<button class="btn b-go fk" id="res-next" type="button"><span>Lanjut</span><i class="ico">' + MA.icon('run') + '</i></button>' : '') + '</div></div>')
     confetti()
     say('Misi berhasil! Kamu dapat ' + stars + ' bintang.')
     tap('res-again', function () { closeOv('ov-card'); start(lv.id) })
@@ -1267,6 +1315,7 @@
   tap('btn-sound', toggleSound); tap('btn-sound2', toggleSound)
   tap('btn-settings', settings)
   ;[].forEach.call(D.querySelectorAll('[data-go="home"]'), function (b) { tap(b, home) })
+  tap('map-back', function () { SND.place(); W.MojoMenu.map() })
   tap('btn-quit', function () { if (G && G.run) stopRun(); hush(); W.MojoMenu.map() })
   tap('btn-run', function () { run() })
   tap('btn-undo', function () { if (G.run || !G.hist.length) return; resetView(); G.prog = G.hist.pop(); G.sel = -1; clearFail(); renderStrip(); renderPalette(); SND.place() })
@@ -1283,7 +1332,7 @@
   D.addEventListener('visibilitychange', function () { if (G && G.active) { if (D.hidden) G.elapsed += Math.max(0,performance.now()-G.tick); G.tick=performance.now(); storePacing() } if (D.hidden) { flushAwards(); hush(); if (G && G.run) stopRun() } })
   try { if (W.SFXEngine && SFXEngine.setMute) SFXEngine.setMute(!soundOn()) } catch (e) {}
   // warm every picture the game uses so a level plays offline (the page itself is in sw.js SHELL)
-  var WARM = MA.libFiles().concat(['road','grass','water','indoor-floor'].map(function (k) { return MA.lib('mojo-tile/' + k) }))
+  var WARM = MA.libFiles().concat(['road','grass','water','indoor-floor','wall','trap-hole'].map(function (k) { return MA.lib('mojo-tile/' + k) }), BOARD_BUILDINGS.map(function (k) { return MA.lib('mojo-prop/' + k) }))
   var assetLoad = { ready:false, pending:WARM.length, failed:[] }, warming = false
   function warmAssets () {
     if (warming) return
@@ -1304,7 +1353,8 @@
     } else warmAssets()
   })
   home()
-  W.MojoMenu.setup({ home:home, show:show, toast:toast, episodes:map, start:start, next:nextLevelId, overlay:overlay, close:closeOv, cue:SND.place, say:say, reset:resetProgress, save:function () { return S } })
+  function award (n) { S.rewardBolts = Math.min(1000000, (S.rewardBolts || 0) + (n | 0)); save(); homeCounters() }
+  W.MojoMenu.setup({ home:home, show:show, toast:toast, episodes:map, start:start, next:nextLevelId, overlay:overlay, close:closeOv, cue:SND.place, say:say, reset:resetProgress, award:award, save:function () { return S } })
 
   /* test seam (QA only: reads state, never plays for the child) */
   W.__mojo = {

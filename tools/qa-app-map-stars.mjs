@@ -34,7 +34,7 @@ const check = (ok, msg) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${msg}`); if 
   console.log(`INFO  G30 GAME_ID = ${tkId}${tkId === "'g30'" ? '' : "  (should be 'g30'; the map also reads the numeric row)"}`)
 }
 
-const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
+const browser = await puppeteer.launch({protocolTimeout: 90000,  headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
 const page = await browser.newPage()
 const cdp = await page.createCDPSession()
 await cdp.send('Network.setBypassServiceWorker', { bypass: true })

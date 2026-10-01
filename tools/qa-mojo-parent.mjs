@@ -6,7 +6,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));async function tap(s){const e=a
 async function begin(id){await p.evaluate(id=>__mojo.start(id),id);await tap('#in-go');if(await p.$('#ov-card.on #picker-later'))await tap('#picker-later')}
 async function program(cs){for(const c of cs)await tap(`[data-cmd="${c}"]`)}
 async function child(i){await p.evaluate(i=>{localStorage.setItem('dunia-players',JSON.stringify([{animal:'lion'},{animal:'rabbit'}]));localStorage.setItem('dunia-active-slot',JSON.stringify([i,1]))},i);await p.reload({waitUntil:'networkidle0'});await p.waitForFunction(()=>window.__mojo?.ready)}
-async function win(){await begin('t1');await program(['fwd','fwd']);await tap('#btn-run');await p.waitForSelector('#ov-card.on #res-map')}
+async function win(){await begin('t1');await program(['east','east']);await tap('#btn-run');await p.waitForSelector('#ov-card.on #res-map')}
 async function hold(ms){const e=await p.$('#mojo-parent-hold'),r=await e.boundingBox();await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();await sleep(ms);await p.mouse.up();await sleep(100)}
 try{
  await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);await p.setViewport({width:390,height:844});await p.goto('http://localhost:8081/games/mojo-swoptops.html?unlock=1',{waitUntil:'networkidle0'});await p.waitForFunction(()=>window.__mojo?.ready&&navigator.serviceWorker.controller);await sleep(500);

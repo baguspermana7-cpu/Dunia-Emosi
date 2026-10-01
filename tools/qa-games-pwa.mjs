@@ -50,7 +50,7 @@ async function freshDirect(id){
  const token=await p.evaluate(()=>window.__pwaBoot=Math.random());
  check(await p.evaluate(()=>!navigator.serviceWorker.controller),id+' starts on a fresh direct link before SW claim');
  if(id==='g31'){
-  await p.evaluate(()=>__mojo.start('t1'));await tap(p,'#in-go');await tap(p,'[data-cmd="fwd"]');await tap(p,'#btn-run');
+  await p.evaluate(()=>__mojo.start('t1'));await tap(p,'#in-go');await tap(p,'[data-cmd="east"]');await tap(p,'#btn-run');
  }else await tap(p,'#btn-start');
  await controlled(p);fixture.swDelay=0;await sleep(900);
  check(navigations===1&&(await p.evaluate(()=>window.__pwaBoot))===token,id+' first SW activation does not reload a game already in progress');
@@ -105,7 +105,7 @@ async function hubRoundTrip(p){
 }
 async function controlledUpdate(p,stars){
  await p.goto(fixture.base+'games/mojo-swoptops.html',{waitUntil:'networkidle0'});await ready(p,'g31');await controlled(p);
- await begin(p,'m2');await program(p,['fwd']);await tap(p,'#btn-run');
+ await begin(p,'m2');await program(p,['up']);await tap(p,'#btn-run');
  const prior=await p.evaluate(()=>__mojo.save().lv.t1),token=await p.evaluate(()=>window.__pwaBoot=Math.random());let reloads=0;
  const listener=f=>{if(f===p.mainFrame())reloads++};p.on('framenavigated',listener);fixture.revision=2;
  const next=p.waitForNavigation({waitUntil:'networkidle0',timeout:60000});

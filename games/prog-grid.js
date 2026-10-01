@@ -18,7 +18,13 @@
  *   ProgGrid.verify(level, opts) -> {ok, problems, beats:[…]}               the level is solvable
  *   ProgGrid.lint(level) -> [problems]
  *
- * Commands are strings: 'fwd' 'left' 'right' 'swop:<form>' and verbs ('push' 'spray' 'raise' …).
+ * Commands are strings: moves, 'swop:<form>' and verbs ('push' 'spray' 'raise' …).
+ * Movement modes (owner decision 2026-10-01: arrows are read from the BOARD, not from the car):
+ *   'abs' (default)  'up' 'down' 'west' 'east' move one tile in that screen direction and turn Mojo to
+ *                    face it; the facing is derived, never a separate command. An action verb uses the
+ *                    facing (the last move); if nothing is there it turns to the one adjacent target.
+ *   'rel' (optional) 'fwd' 'left' 'right' relative to Mojo's heading, for a later advanced world.
+ *   A level picks its mode with `mode: 'rel'`; the engine executes both command sets.
  * Blocks: {op:'repeat', n, body:[…]}  {op:'if', cond:'fire'|'rock'|'clear'|'person'|'pickup', body:[…]}.
  * Headings 0 N, 1 E, 2 S, 3 W. Cells [row, col], row 0 at the top.
  * Worlds are never mutated: step() returns a new world.
@@ -27,7 +33,12 @@
   'use strict'
   var DIRS = [[-1, 0], [0, 1], [1, 0], [0, -1]]
   var HEAD = { N: 0, E: 1, S: 2, W: 3 }
-  var BASE = ['fwd', 'left', 'right']
+  var ABS = ['up', 'down', 'west', 'east'], REL = ['fwd', 'left', 'right']
+  var ABS_H = { up: 0, east: 1, down: 2, west: 3 }
+  var MODES = { abs: ABS, rel: REL }
+  var BASE = ABS.concat(REL)      // every movement command (always allowed, whatever the form)
+  function modeOf (w) { return (w && w.mode === 'rel') ? 'rel' : 'abs' }
+  function moves (mode) { return (MODES[mode] || ABS).slice() }
   var FORMS = {}
 
   /* terrain: pass = drivable, fly = can be flown over, jump = can be jumped over, fill = a pushed
@@ -80,7 +91,7 @@
   function world (lv, beatIndex) {
     var gr = lv.grid, m = lv.mojo || {}
     var w = {
-      rows: gr.rows, cols: gr.cols, map: gr.map, fill: {},
+      rows: gr.rows, cols: gr.cols, map: gr.map, fill: {}, mode: lv.mode === 'rel' ? 'rel' : 'abs',
       m: { r: m.at[0], c: m.at[1], h: hd(m.h), form: m.form || 'normal', lift: 0, air: false, carry: null },
       res: copy(lv.res || {}), cap: lv.cap || {}, tools: {}, got: {}, forms: null,
       objs: (lv.objects || []).map(function (o) {
@@ -99,7 +110,7 @@
   function copy (o) { var r = {}; for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) r[k] = o[k]; return r }
   function clone (w) {
     return { rows: w.rows, cols: w.cols, map: w.map, fill: copy(w.fill), m: copy(w.m), res: copy(w.res), cap: w.cap,
-      tools: copy(w.tools), got: copy(w.got), forms: w.forms, beat: w.beat, objs: w.objs.map(copy) }
+      tools: copy(w.tools), got: copy(w.got), forms: w.forms, beat: w.beat, mode: w.mode, objs: w.objs.map(copy) }
   }
   // the world placed at beat i: Mojo moves to the beat's start (a scene cut), the rest carries over
   function startBeat (w, lv, i) {
@@ -170,7 +181,25 @@
   }
 
   /* ── one command ─────────────────────────────────────────────────────── */
+  // abs mode: an action verb that finds nothing in front turns to the one neighbour where it works
+  var FIXED = { swop: 1, takeoff: 1, land: 1, lower: 1 }
   function step (w0, cmd, opts) {
+    var r = core(w0, cmd, opts), verb = verbOf(cmd)
+    if (ok(r.status) || modeOf(w0) === 'rel' || BASE.indexOf(verb) >= 0 || FIXED[verb] || r.status === 'invalid-capability') return r
+    if (r.reason !== 'no-target' || verbOf(cmd) === 'drop') return r
+    var other = null
+    for (var d = 0; d < 4; d++) {
+      if (d === w0.m.h) continue
+      var nr = w0.m.r + DIRS[d][0], nc = w0.m.c + DIRS[d][1]
+      if (!inb(w0, nr, nc) || !objsAt(w0, nr, nc).length) continue   // nothing there to act on
+      var w1 = clone(w0); w1.m.h = d
+      var r1 = core(w1, cmd, opts)
+      if (ok(r1.status)) { r1.events = [{ e: 'turn', h: d }].concat(r1.events || []); return r1 }
+      if (!other && r1.reason !== 'no-target' && r1.status !== 'invalid-capability') { r1.world = w0; other = r1 }
+    }
+    return other || r
+  }
+  function core (w0, cmd, opts) {
     opts = opts || {}
     var verb = verbOf(cmd), arg = typeof cmd === 'string' ? cmd.split(':')[1] : null
     var w = clone(w0), m = w.m, ev = []
@@ -180,21 +209,27 @@
     }
     var a = ahead(w), ar = a[0], ac = a[1]
     switch (verb) {
-      case 'left': m.h = (m.h + 3) % 4; ev.push({ e: 'turn', h: m.h }); break
-      case 'right': m.h = (m.h + 1) % 4; ev.push({ e: 'turn', h: m.h }); break
+      case 'up': case 'down': case 'west': case 'east': {
+        var nh = ABS_H[verb]
+        if (nh !== m.h) { m.h = nh; ev.push({ e: 'turn', h: nh }) }
+        a = ahead(w); ar = a[0]; ac = a[1]
+      }
+      /* falls through: an arrow is a turn to face it plus one step forward */
       case 'fwd': {
-        if (!inb(w, ar, ac)) return res(w0, 'blocked', 'edge', { at: a })
+        if (!inb(w, ar, ac)) return res(w0, 'blocked', 'edge', { at: a, h: m.h })
         if (m.lift > 0) return res(w0, 'blocked', 'lift-up', { lift: m.lift })
         if (!m.air) {
           var t = ter(w, ar, ac)
-          if (!t.pass) return res(w0, 'blocked', 'terrain', { at: a, terrain: terCh(w, ar, ac), name: t.name })
+          if (!t.pass) return res(w0, 'blocked', 'terrain', { at: a, terrain: terCh(w, ar, ac), name: t.name, h: m.h })
           var b = blocker(w, ar, ac)
-          if (b) return res(w0, 'blocked', 'object', { at: a, id: b.id, type: b.type })
+          if (b) return res(w0, 'blocked', 'object', { at: a, id: b.id, type: b.type, h: m.h })
         }
         ev.push({ e: 'move', from: [m.r, m.c], to: a })
         if (m.air) { m.r = ar; m.c = ac; var sa = objsAt(w, ar, ac); for (var s = 0; s < sa.length; s++) if (TYPES[sa[s].type] && TYPES[sa[s].type].star) { sa[s].st = 'got'; w.got[sa[s].id] = true; ev.push({ e: 'star', id: sa[s].id }) } } else enter(w, ar, ac, ev)
         break
       }
+      case 'left': m.h = (m.h + 3) % 4; ev.push({ e: 'turn', h: m.h }); break
+      case 'right': m.h = (m.h + 1) % 4; ev.push({ e: 'turn', h: m.h }); break
       case 'swop': {
         if (!arg || !FORMS[arg]) return res(w0, 'invalid-capability', 'unknown-form', { form: arg })
         if (w.forms && w.forms.indexOf(arg) < 0) return res(w0, 'invalid-capability', 'not-allowed', { form: arg })
@@ -432,7 +467,7 @@
   // the command palette of a beat: its explicit list, else base + the verbs of every allowed form + a Swop per form
   function palette (beat, w) {
     if (beat.palette) return beat.palette.slice()
-    var forms = beat.forms || (w && w.forms) || ['normal'], out = BASE.slice(), seen = {}
+    var forms = beat.forms || (w && w.forms) || ['normal'], out = moves(modeOf(w)), seen = {}
     forms.forEach(function (f) { (FORMS[f] ? FORMS[f].verbs : []).forEach(function (v) { if (!seen[v]) { seen[v] = 1; out.push(v) } }) })
     if (forms.length > 1) forms.forEach(function (f) { out.push('swop:' + f) })
     return out
@@ -568,9 +603,11 @@
     var starts = [prep(world(lv), lv, 0)]
     for (var b = 0; b < lv.beats.length; b++) {
       var beat = lv.beats[b], info = { beat: b, solution: null, count: 0, starts: starts.length, shortest: null, alts: {} }
-      var nextStarts = {}, nn = 0
+      var nextStarts = {}, nn = 0, same = {}
       for (var s = 0; s < starts.length; s++) {
-        var st = b > 0 ? prep(startBeat(starts[s], lv, b), lv, b) : starts[s]
+        var st = b > 0 ? prep(startBeat(starts[s], lv, b), lv, b) : starts[s], sk = key(st)
+        if (same[sk]) continue   // a scene cut (beat.start) can make different endings the same start
+        same[sk] = 1
         var sol = solve(st, beat)
         if (!sol) { problems.push(lv.id + ': beat ' + b + ' unsolvable from start #' + s + ' (' + key(st) + ')'); continue }
         var c = count(st, beat, { maxTerminals: opts.maxTerminals || 60 })
@@ -601,7 +638,7 @@
   }
 
   G.ProgGrid = {
-    VERSION: '1.0.0', DIRS: DIRS, HEAD: HEAD, BASE: BASE, TERRAIN: TERRAIN, TYPES: TYPES,
+    VERSION: '1.1.0', DIRS: DIRS, HEAD: HEAD, BASE: BASE, ABS: ABS, REL: REL, ABS_H: ABS_H, moves: moves, modeOf: modeOf, TERRAIN: TERRAIN, TYPES: TYPES,
     defineForm: defineForm, form: form, forms: function () { return Object.keys(FORMS) }, can: can, formsWith: formsWith, verbOf: verbOf,
     world: world, startBeat: startBeat, prep: prep, clone: clone, key: key, find: find, objsAt: objsAt, blocks: blocks, ahead: ahead, terrain: ter, terrainChar: terCh,
     step: step, stepBeat: stepBeat, ok: ok, met: met, beatDone: beatDone, cond: cond,

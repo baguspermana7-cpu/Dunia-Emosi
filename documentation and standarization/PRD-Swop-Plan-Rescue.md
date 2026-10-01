@@ -134,6 +134,16 @@ workshop floors rather than look like a spreadsheet.
 
 ## 5.2 Mojo Orientation
 
+> **Owner decision 2026-10-01 — arrows are board-absolute.** The owner's plan ↑ ↑ → → was judged
+> wrong in the "Belok!" tutorial because the commands were read from the car's heading. Children read
+> arrows as screen directions (as in Timmy's grid). G31 now uses **↑ Atas, ↓ Bawah, ← Kiri, → Kanan**:
+> each moves one tile in that screen direction and turns Mojo to face it; facing is derived, never a
+> separate command. Action verbs act in the facing (the last move); with nothing there they turn to the
+> one adjacent target. The relative Forward / Turn set below remains in `games/prog-grid.js` as the
+> optional `mode: 'rel'` for a later advanced world; no current level uses it. The original text is kept
+> below as the source scope.
+
+
 Mojo occupies one cell and has a heading. Core movement: **Forward, Turn
 Left, Turn Right**; Backward unlocks later. Turning changes heading
 without moving.

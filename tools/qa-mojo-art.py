@@ -170,6 +170,80 @@ class CropTests(unittest.TestCase):
         self.assertGreaterEqual(image.shape[0], 70)
         self.assertTrue((image[8:-8, 8:-8, 3] == 255).all())
 
+clean_spec = importlib.util.spec_from_file_location('mojo_clean', ROOT / 'tools/clean-mojo-sprites.py')
+clean = importlib.util.module_from_spec(clean_spec)
+clean_spec.loader.exec_module(clean)
+
+
+class SpriteCleanTests(unittest.TestCase):
+    """Published sprites carry no page-coloured slab that was not audited as genuine white art."""
+    @staticmethod
+    def page_components(rgba, page):
+        """Opaque components within 8 levels of the crop's own sheet-background colour, larger than 40 px."""
+        solid = rgba[..., 3] >= 250
+        near = np.abs(rgba[..., :3].astype(np.int16) - page.astype(np.int16)).max(2) <= clean.HOLE_TOL
+        labels, _ = m.ndimage.label(solid & near, structure=np.ones((3, 3)))
+        for index, bounds in enumerate(m.ndimage.find_objects(labels), 1):
+            if bounds is not None and (labels[bounds] == index).sum() >= clean.MIN_AREA:
+                yield labels == index
+
+    @unittest.skipUnless(source_sheets_available('02', '04', '09', '13', '25'), 'owner Mojo source sheets unavailable')
+    def test_no_unaudited_sheet_background_component_over_40px(self):
+        """Every published cut-out: no enclosed slab of its sheet's background colour unless audited as white art."""
+        failures, checked = [], 0
+        for name, a, alpha, bbox, preserve in clean.source_crops():
+            page = clean.page_colour(a, alpha)
+            rgba = np.asarray(Image.open(clean.LIB / (name + '.webp')).convert('RGBA'))
+            checked += 1
+            keep = clean._pts(clean.KEEP_WHITE.get(name, ''))
+            for component in self.page_components(rgba, page):
+                grown = m.ndimage.binary_dilation(component, iterations=4)
+                if not any(0 <= y < grown.shape[0] and 0 <= x < grown.shape[1] and grown[y, x] for x, y in keep):
+                    ys, xs = np.nonzero(component)
+                    failures.append(f'{name} {int(component.sum())}px @ {int(xs.mean())},{int(ys.mean())}')
+        self.assertGreater(checked, 500)
+        self.assertEqual(failures, [], 'sheet-background slabs not audited in tools/clean-mojo-sprites.py:\n' + '\n'.join(failures))
+
+    def test_hole_clearing_never_touches_protected_white_paint(self):
+        source = np.full((60, 60, 3), 254, dtype=np.uint8)
+        source[5:55, 5:55] = (200, 40, 40)
+        source[20:40, 20:40] = 254          # enclosed page-coloured square
+        alpha = np.zeros((60, 60), np.uint8)
+        alpha[5:55, 5:55] = 255
+        seed = {'t/x': '25,25'}
+        with unittest.mock.patch.dict(clean.CLEAR_HOLES, seed, clear=False):
+            cleared = clean.clear_holes('t/x', source, alpha, (0, 0, 60, 60), (), np.float32([254] * 3), [])
+            painted = clean.clear_holes('t/x', source, alpha, (0, 0, 60, 60), [[(18, 18), (42, 18), (42, 42), (18, 42)]],
+                                        np.float32([254] * 3), [])
+        self.assertEqual(cleared[30, 30], 0)
+        self.assertEqual(cleared[10, 10], 255)
+        self.assertEqual(painted[30, 30], 255)
+
+    def test_halo_pass_lowers_light_fringe_but_keeps_outline_and_white_paint(self):
+        source = np.full((40, 40, 3), 254, dtype=np.uint8)
+        source[8:32, 8:32] = (30, 140, 220)   # blue body
+        source[8:32, 8] = (20, 20, 20)         # dark outline column
+        source[8:32, 31] = (246, 248, 250)     # light halo column at the right edge
+        alpha = np.zeros((40, 40), np.uint8)
+        alpha[8:32, 8:32] = 255
+        rgb, out = clean.decontaminate(source, alpha, np.float32([254] * 3))
+        self.assertLess(out[20, 31], 40, 'light halo stays opaque')
+        self.assertEqual(out[20, 8], 255, 'dark outline eroded')
+        self.assertEqual(out[20, 20], 255)
+        white = np.full((40, 40, 3), 254, dtype=np.uint8)
+        white[8:32, 8:32] = 250               # white paint touching the page
+        _, kept = clean.decontaminate(white, alpha, np.float32([254] * 3))
+        self.assertEqual(kept[20, 31], 255, 'white paint at the silhouette eroded')
+
+    def test_audit_seeds_are_well_formed_and_disjoint(self):
+        for table in (clean.CLEAR_HOLES, clean.KEEP_WHITE):
+            for name, value in table.items():
+                self.assertTrue(name.split('/')[0] in clean.CATEGORIES, name)
+                self.assertTrue(clean._pts(value), name)
+        for name in set(clean.CLEAR_HOLES) & set(clean.KEEP_WHITE):
+            self.assertFalse(set(clean._pts(clean.CLEAR_HOLES[name])) & set(clean._pts(clean.KEEP_WHITE[name])), name)
+
+
 class PublicationTests(unittest.TestCase):
     def test_unknown_or_excluded_sheet_fails_before_writing(self):
         with mock.patch.object(sys, 'argv', ['ingest', '--assets-only', '14']), mock.patch.object(m.os, 'makedirs', side_effect=AssertionError('must not write')):

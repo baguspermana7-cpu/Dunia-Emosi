@@ -61,6 +61,66 @@
   })
   SE.registerPack('mojo', { items: function () { return ITEMS }, meta: { theme: 'mojo', grade: 1 } })
 
+  /* ── pack 'mojo-learn': "Belajar Bersama Mojo" (owner 2026-10-01: an activity, not a flashcard) ──
+     [word (ID), English, tool id, tool picture, what it does, job word, job picture]. Only words a
+     grade 1-2 child can spell (3-6 letters); 6-letter words start with their first letter filled in. */
+  var LEARN = [
+    ['PALU', 'HAMMER', 'palu', 'mojo-prop/hammer', 'memukul paku', 'PAKU', 'mojo:paku'],
+    ['KUNCI', 'WRENCH', 'kunci', 'mojo-prop/wrench', 'memutar baut', 'BAUT', 'mojo-prop/bolt'],
+    ['BOR', 'DRILL', 'bor', 'mojo-prop/drill', 'melubangi kayu', 'KAYU', 'mojo-prop/logs'],
+    ['RODA', 'WHEEL', 'roda', 'gt/part-tire', 'berputar di jalan', 'JALAN', 'mojo-tile/road'],
+    ['AIR', 'WATER', 'air', 'mojo-prop/waterdrop-sheet15', 'memadamkan api', 'API', 'mojo-tile/fire'],
+    ['MAGNET', 'MAGNET', 'magnet', 'mojo-prop/magnet', 'menarik besi', 'GIR', 'mojo-prop/gear'],
+    ['TANGGA', 'LADDER', 'tangga', 'game/ladder', 'naik ke tempat tinggi', 'LAMPU', 'mojo-prop/lamp-post']
+  ]
+  var LEARN_ITEMS = []
+  LEARN.forEach(function (x, i) {
+    ;[['id', x[0]], ['en', x[1]]].forEach(function (l) {
+      var word = l[1], item = {
+        id: 'mlearn-' + l[0] + '-' + x[2], topic: 'bahasa', grade: 1, level: word.length > 5 ? 2 : 1, theme: ['mojo'],
+        prompt: l[0] === 'en' ? 'Susun nama alat ini dalam bahasa Inggris.' : 'Susun nama alat ini.',
+        choices: [word].concat(wrongs(word)), answer: word, word: word, letters: word.split(''), lang: l[0],
+        prefill: word.length >= 6 ? 1 : 0, tool: x[2], pic: x[3], meaning: x[0], english: x[1], use: x[4],
+        job: x[5], jobPic: x[6], kind: 'kosakata', easy: true,
+        hint1: 'Huruf pertama: ' + word.charAt(0) + '.', explain: x[0] + ' (' + x[1] + ') dipakai untuk ' + x[4] + '.'
+      }
+      item[l[0] === 'en' ? 'wordEn' : 'wordId'] = true
+      LEARN_ITEMS.push(item)
+    })
+  })
+  SE.registerPack('mojo-learn', { items: function () { return LEARN_ITEMS }, meta: { theme: 'mojo', grade: 1 } })
+  function shuffleWith (a, r) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t } return a }
+  function seeded (seed) { var s = seed | 0; return function () { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff } }
+  var ABC = 'ABCDEFGHIJKLMNOPRSTUW'
+  // one Belajar session: 5 rounds that rotate the four activities; the words come from SoalEngine
+  // (profile g31, context 'learn') with the per-avatar no-repeat history.
+  var ROUNDS = ['susun', 'pasang', 'gambar', 'awal', 'susun']
+  function lesson (opts) {
+    opts = opts || {}
+    var lang = opts.lang === 'id' ? 'id' : 'en', seed = opts.seed != null ? opts.seed : (Date.now() & 0x7fffffff), r = seeded(seed + 11)
+    var picks = SE.pick({ game: 'g31', context: 'learn', count: ROUNDS.length, avatar: opts.avatar, seed: seed, history: opts.history,
+      without: [lang === 'en' ? 'wordId' : 'wordEn'] })
+    var pool = LEARN_ITEMS.filter(function (q) { return q.lang === lang })
+    return picks.map(function (q, i) {
+      var kind = ROUNDS[i % ROUNDS.length], others = shuffleWith(pool.filter(function (o) { return o.tool !== q.tool }), r).slice(0, 2)
+      var round = { kind: kind, id: q.id, word: q.word, lang: lang, tool: q.tool, pic: q.pic, meaning: q.meaning, english: q.english, use: q.use, job: q.job, jobPic: q.jobPic }
+      if (kind === 'susun') {
+        round.prefill = q.prefill; round.slots = q.letters.slice()
+        var rest = q.letters.slice(q.prefill), tiles = shuffleWith(rest, r)
+        if (rest.length > 1 && tiles.join('') === rest.join('')) tiles = tiles.slice(1).concat(tiles[0])
+        round.tiles = tiles
+      } else if (kind === 'pasang') {
+        round.options = shuffleWith([{ pic: q.jobPic, label: q.job, ok: true }].concat(others.map(function (o) { return { pic: o.jobPic, label: o.job, ok: false } })), r)
+      } else if (kind === 'gambar') {
+        round.options = shuffleWith([{ pic: q.pic, label: q.word, ok: true }].concat(others.map(function (o) { return { pic: o.pic, label: o.word, ok: false } })), r)
+      } else {
+        var first = q.word.charAt(0), wrong = shuffleWith(ABC.split('').filter(function (c) { return c !== first }), r).slice(0, 2)
+        round.options = shuffleWith([{ label: first, ok: true }].concat(wrong.map(function (c) { return { label: c, ok: false } })), r)
+      }
+      return round
+    })
+  }
+
   /* ── world-action maths ───────────────────────────────────────────────── */
   function params (about) {
     var o = {}
@@ -125,7 +185,9 @@
       // "susun huruf" at a toolbox: only the pack's own words
       susun: { topics: ['bahasa'], weights: { bahasa: 100 } },
       // world-action maths (collect / height): only the world generator
-      world: { topics: ['matematika'], weights: { matematika: 100 }, generators: ['mojo-world'] }
+      world: { topics: ['matematika'], weights: { matematika: 100 }, generators: ['mojo-world'] },
+      // Belajar Bersama Mojo: only the learn pack (3-6 letter tool words with a job picture)
+      learn: { topics: ['bahasa'], weights: { bahasa: 100 }, packs: ['mojo-learn'] }
     }
   })
 
@@ -140,6 +202,7 @@
     world: function (kind, about) {
       return SE.generate('matematika', { game: 'g31', context: 'world', generator: 'mojo-world', kind: kind, about: about, seed: 7 })
     },
-    words: WORDS.map(function (x) { return { id: x[0], en: x[1], tool: x[2] } })
+    words: WORDS.map(function (x) { return { id: x[0], en: x[1], tool: x[2] } }),
+    lesson: lesson, ROUNDS: ROUNDS.slice(), learnItems: function () { return LEARN_ITEMS.slice() }
   }
 })()
