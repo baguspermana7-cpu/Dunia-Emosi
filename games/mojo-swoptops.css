@@ -689,3 +689,21 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
  .wslots{margin:6px 0}.wslots i{width:48px;height:54px;font-size:28px}
  .tiles .tile{width:56px;height:56px;font-size:30px}
 }
+
+/* ── board VFX (games/mojo-fx.js, owner 2026-10-03): effects live in #fx, above the art, never catching taps ── */
+.mfx{position:absolute;display:block;pointer-events:none;z-index:6;background:no-repeat center/contain;will-change:transform,opacity}
+.mfx.under{z-index:0}
+.mfx-dot{border-radius:50%;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
+.mfx-ring{border:4px solid #fff;border-radius:50%;box-sizing:border-box}
+.mfx-top svg,.mfx-top img{width:100%;height:100%;display:block}
+.mfx-txt{display:flex;align-items:center;justify-content:center;font-family:'Fredoka One','Nunito',sans-serif;font-size:max(18px,calc(var(--cell)*.3));color:#fff;-webkit-text-stroke:3px #fff;paint-order:stroke fill;text-shadow:0 2px 0 rgba(0,0,0,.18);white-space:nowrap}
+.mfx-ladder{border-radius:6px;background:repeating-linear-gradient(180deg,#FFB300 0 5px,#8D6E00 5px 7px,transparent 7px calc(var(--cell)*.16)),linear-gradient(90deg,#8D6E00 0 3px,transparent 3px calc(100% - 3px),#8D6E00 calc(100% - 3px));box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.mfx-tick{display:flex;align-items:center;justify-content:center;border-radius:50%;background:#FFE14D;color:#4A2A00;font-family:'Fredoka One',sans-serif;font-size:max(14px,calc(var(--cell)*.22));box-shadow:0 2px 0 rgba(0,0,0,.25),0 0 0 2px #fff}
+.mfx-jet{border-radius:999px;transform-origin:0 50%;background:linear-gradient(90deg,rgba(179,229,252,.2),#4FC3F7 30%,#E1F5FE 60%,#4FC3F7);box-shadow:0 0 8px rgba(79,195,247,.8)}
+.mfx-drop{border-radius:50% 50% 50% 0;background:#29B6F6;transform:rotate(-45deg);box-shadow:inset -2px -2px 0 rgba(255,255,255,.6)}
+.mfx-conf{position:fixed;z-index:70;pointer-events:none;background:no-repeat center/contain}
+.sw-portal{position:absolute;left:50%;top:48%;width:78%;aspect-ratio:1;background:no-repeat center/contain;opacity:0;transform:translate(-50%,-50%);pointer-events:none}
+.fxg{z-index:6;mix-blend-mode:screen}
+.fxu{z-index:1}
+.mfx-seq.soft,#ov-swop>div[aria-hidden="true"]{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparent);mask-image:radial-gradient(closest-side,#000 62%,transparent)}
+.mfx.steam{filter:drop-shadow(0 2px 2px rgba(23,50,77,.35))}

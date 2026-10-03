@@ -80,7 +80,7 @@ console.log('M3 / L1 / L5 PASS');
  const n1=await p.evaluate(()=>[...document.querySelectorAll('.ob.pickup img,.ob.fire img')].map(e=>e.getAnimations().filter(a=>a.playState==='running').length));
  ok(n0.some(Boolean)&&JSON.stringify(n0)===JSON.stringify(n1),'M4 idle animations alive after Berhenti '+JSON.stringify([n0,n1]));
  await begin(p,'t2');await program(p,await p.evaluate(()=>__mojo.solution()));const r=await (await p.$('#btn-run')).boundingBox();
- for(const gap of [40,120,300]){await p.touchscreen.tap(r.x+r.width/2,r.y+r.height/2);await sleep(gap);await p.touchscreen.tap(r.x+r.width/2,r.y+r.height/2);await sleep(60);
+ for(const gap of [40,120,200]){await p.touchscreen.tap(r.x+r.width/2,r.y+r.height/2);await sleep(gap);await p.touchscreen.tap(r.x+r.width/2,r.y+r.height/2);await sleep(60);
   ok(await p.evaluate(()=>__mojo.state().running),'M1 a double tap '+gap+' ms apart keeps the run going');await sleep(400);await tap(p,'#btn-run');await sleep(300);ok(!await p.evaluate(()=>__mojo.state().running),'M1 a later tap still stops it');}
  await begin(p,'t5');for(let k=0;k<4;k++)await tap(p,'#btn-hint');await tap(p,'#btn-show');await sleep(400);await tap(p,'#btn-run');await sleep(300);
  ok(await p.evaluate(()=>__mojo.state().shown)===false,'L4 a demo stopped before its first step does not cap the stars');

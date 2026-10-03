@@ -133,7 +133,8 @@
     var sw = $('ov-swop'); sw.onclick = null; if (sw.firstChild) { sw.innerHTML = ''; sw.setAttribute('aria-hidden', 'true') }
     MG = null; drag = null
     $('drag-ghost').classList.remove('on')
-    ;[].forEach.call(D.querySelectorAll('.fly,.confetti,#fx .spark,#fx .splash,#fx .pop-ico'),function (n) { n.remove() })   // a cancelled particle would sit at the board corner
+    ;[].forEach.call(D.querySelectorAll('.fly,.confetti,#fx .spark,#fx .splash,#fx .pop-ico'),function (n) { n.remove() })
+    if (W.MojoFX) MojoFX.clear()   // every board effect node and frame timer of the run   // a cancelled particle would sit at the board corner
   }
   var toastT = 0
   function toast (m) { var t = $('toast'); t.textContent = m; t.className = 'toast show'; clearTimeout(toastT); toastT = W.setTimeout(function () { t.className = 'toast' }, 2400) }   // not later(): cancelPlayback must never strand a toast on screen
@@ -805,7 +806,7 @@
       if (R.demo) G.shown = true   // L4: the demo caps the mission at one star only once it has shown a whole step
       var se = slotEl(i); if (se) { se.classList.remove('active'); se.classList.add('done') }
       renderHud()
-      if (res.completed && res.completed.length) { SND.goal(); burst(G.w.m.r, G.w.m.c, '#7CF0A0') }
+      if (res.completed && res.completed.length) { SND.goal(); burst(G.w.m.r, G.w.m.c, '#7CF0A0'); if (res.completed.some(function (k) { var ob = (beat().objectives || [])[k]; return ob && ob['do'] === 'reach' })) fxCall('goal', G.w.m.r, G.w.m.c) }
       function next () { if (G.run !== R) return; if (res.beatDone) return R.demo ? demoDone() : beatComplete(); R.t = later(runStep, R.demo ? 1100 : T.gap) }
       if (R.demo) return next()
       var trigger = (res.events || []).some(function (e) { return ['collect','star','tool','repair','rescue'].indexOf(e.e) >= 0 })
@@ -958,6 +959,7 @@
       return
     }
     anim(mj, [{ transform: base }, { transform: 'translate(' + ((m.c + d[1] * 0.18) * CELL) + 'px,' + ((m.r + d[0] * 0.18) * CELL) + 'px)' }, { transform: base }], 300, EIO, function () { mj.style.transform = base })
+    later(function () { fxCall('bump', m.r, m.c, h) }, 140)
   }
 
   /* ── playback of one command's events ──────────────────────────────── */
@@ -972,22 +974,23 @@
     }
     ev.forEach(function (e) { if (e.e === 'swop') swop = e })
     if (swop) return swopAnim(swop, function () { renderHud(); done() })
+    var pushed = ev.some(function (e) { return e.e === 'push' })
     ev.forEach(function (e) {
       switch (e.e) {
-        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); break
+        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); if (!pushed) fxCall('move', e.from, e.to); break
         case 'turn': turnMojo(e.h, prev.m.h); SND.turn(); wait = Math.max(wait, T.turn); break
-        case 'push': pushObj(e.id, e.to); SND.push(); wait = Math.max(wait, T.move); break
-        case 'fill': later(function () { paint(G.w); renderObj(PG.find(G.w, e.id)) }, T.move); wait = Math.max(wait, T.move + 60); break
-        case 'jump': jumpMojo(e.from, e.to); SND.boing(); wait = Math.max(wait, 560); break
+        case 'push': var pf = PG.find(prev, e.id); pushObj(e.id, e.to); SND.push(); wait = Math.max(wait, T.move); if (pf) fxCall('push', [pf.r, pf.c], e.to, T.move); break
+        case 'fill': later(function () { paint(G.w); renderObj(PG.find(G.w, e.id)); fxCall('fill', e.at[0], e.at[1]); SND.push() }, T.move); wait = Math.max(wait, T.move + 260); break
+        case 'jump': jumpMojo(e.from, e.to); SND.boing(); fxCall('jump', e.from, e.to, 540); wait = Math.max(wait, 620); break
         case 'collect': collect(e, T.move); break
-        case 'star': G.run.stars[e.id] = true; later(function () { flyTo(MA.src('obj/star'), e.id, 'g-star'); SND.star() }, T.move * 0.8); break
+        case 'star': G.run.stars[e.id] = true; later(function () { pickupAt(e.id); flyTo(MA.src('obj/star'), e.id, 'g-star'); SND.star() }, T.move * 0.8); break
         case 'full': later(function () { toast(MSG['cap-full'](e)) }, T.move); break
-        case 'spray': spray(e); wait = Math.max(wait, 760); break
-        case 'raise': raiseAnim(e); wait = Math.max(wait, 600); break
-        case 'lower': placeMojo(m); tone(500, 300, 0.25, 0.06); wait = Math.max(wait, 300); break
-        case 'rescue': rescueAnim(e); wait = Math.max(wait, 800); break
-        case 'tool': toolAnim(e); wait = Math.max(wait, 700); break
-        case 'repair': repairAnim(e); wait = Math.max(wait, 820); break
+        case 'spray': spray(e); wait = Math.max(wait, 900); break
+        case 'raise': wait = Math.max(wait, raiseAnim(e, prev.m.lift || 0) + 120); break
+        case 'lower': wait = Math.max(wait, lowerAnim(prev.m.lift || 0) + 120); break
+        case 'rescue': rescueAnim(e); wait = Math.max(wait, 900); break
+        case 'tool': toolAnim(e); wait = Math.max(wait, 760); break
+        case 'repair': wait = Math.max(wait, repairAnim(e)); break
         case 'pick': case 'drop': renderObj(PG.find(G.w, e.id)); if (e.e === 'drop') OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); wait = Math.max(wait, 300); break
         case 'takeoff': case 'land': placeMojo(m); tone(e.e === 'takeoff' ? 200 : 500, e.e === 'takeoff' ? 500 : 200, 0.4, 0.06); wait = Math.max(wait, 420); break
       }
@@ -997,8 +1000,13 @@
   function moveMojo (from, to, ms) {
     var mj = $('mojo'), a = tf(from[0], from[1]), b = tf(to[0], to[1])
     anim(mj, [{ transform: a }, { transform: b }], ms, EIO, function () { mj.style.transform = b })
+    if (!RM) anim($('mojo-ch'), [{ transform: 'translateY(0)' }, { transform: 'translateY(-3%)', offset: 0.3 }, { transform: 'translateY(0)', offset: 0.6 }, { transform: 'translateY(-2%)', offset: 0.8 }, { transform: 'translateY(0)' }], ms, 'linear', function () { $('mojo-ch').style.transform = '' })   // wheels over the road
     placeMojoFlags()
   }
+  /* board VFX (games/mojo-fx.js): every call is optional and never changes the world */
+  function fxCall (name) { if (!W.MojoFX || !MojoFX[name]) return 0; try { return MojoFX[name].apply(null, [].slice.call(arguments, 1)) || 0 } catch (x) { console.warn('[Mojo] effect failed', name, x); return 0 } }
+  function squash (sx, sy, ms) { var rot = $('mojo-rot'); if (RM) return; anim(rot, [{ transform: 'rotate(' + G.ang + 'deg) scale(1)' }, { transform: 'rotate(' + G.ang + 'deg) scale(' + sx + ',' + sy + ')', offset: 0.4 }, { transform: 'rotate(' + G.ang + 'deg) scale(1)' }], ms || 200, EOUT, function () { rot.style.transform = 'rotate(' + G.ang + 'deg)' }) }
+  function pickupAt (id) { var o = PG.find(G.w, id) || PG.find(G.cp, id); if (o) fxCall('pickup', o.r, o.c); squash(1.06, 0.9, 220) }   // Mojo dips, the item pops up
   function placeMojoFlags () { var m = G.w.m, mj = $('mojo'); mj.classList.toggle('lifted', m.lift > 0); mj.classList.toggle('air', !!m.air); $('mojo-badge').textContent = m.lift > 0 ? m.lift : '' }
   function turnMojo (h, h0) {
     G.ang = h * 90
@@ -1016,12 +1024,12 @@
   }
   function jumpMojo (from, to) {
     var mj = $('mojo'), mr = (from[0] + to[0]) / 2, mc = (from[1] + to[1]) / 2
-    anim(mj, [{ transform: tf(from[0], from[1]) }, { transform: tf(mr, mc, ' scale(1.35)') }, { transform: tf(to[0], to[1]) }], 540, EIO, function () { mj.style.transform = tf(to[0], to[1]) })
+    anim(mj, [{ transform: tf(from[0], from[1]) }, { transform: tf(mr, mc, ' scale(1.35)') }, { transform: tf(to[0], to[1]) }], 540, EIO, function () { mj.style.transform = tf(to[0], to[1]); squash(1.16, 0.84, 220) })
   }
   function collect (e, delay) {
     var o = PG.find(G.w, e.id)
     later(function () {
-      SND.collect()
+      SND.collect(); pickupAt(e.id)
       flyTo(objImg(o), e.id, e.res === 'water' ? 'g-water' : 'g-bolts')
       renderObj(o)
     }, delay * 0.8)
@@ -1031,15 +1039,19 @@
     var f = OBJ[fromId], g = $(gaugeId); if (!f) return
     var a = center(f), b = g ? center(g) : [a[0], 20], fl = el('div', 'fly', '<img alt="" src="' + src + '">')
     D.body.appendChild(fl)
-    anim(fl, [{ transform: 'translate(' + (a[0] - 22) + 'px,' + (a[1] - 22) + 'px) scale(1)', opacity: 1 }, { transform: 'translate(' + (b[0] - 22) + 'px,' + (b[1] - 22) + 'px) scale(.7)', opacity: 0.9 }], 520, EIO, function () {
+    var top = Math.min(a[1], b[1]) - 60   // it rises off the road first, then arcs to its gauge
+    anim(fl, [{ transform: 'translate(' + (a[0] - 22) + 'px,' + (a[1] - 22) + 'px) scale(.8)', opacity: 1 }, { transform: 'translate(' + (a[0] - 22 + (b[0] - a[0]) * 0.25) + 'px,' + (top - 22) + 'px) scale(1.25)', opacity: 1, offset: 0.35 },
+      { transform: 'translate(' + (b[0] - 22) + 'px,' + (b[1] - 22) + 'px) scale(.7)', opacity: 0.9 }], 640, 'cubic-bezier(.45,0,.55,1)', function () {
       fl.remove(); if (g) { g.classList.remove('bump'); void g.offsetWidth; g.classList.add('bump') }
     })
   }
   function cellCenter (r, c) { return [(c + 0.5) * CELL, (r + 0.5) * CELL] }
   function spray (e) {
     SND.spray()
-    var m = G.w.m, a = PG.ahead(G.w), p0 = cellCenter(m.r, m.c), p1 = cellCenter(a[0], a[1]), fx = $('fx')
-    for (var k = 0; k < (RM ? 3 : 9); k++) (function (k) {
+    var m = G.w.m, a = PG.ahead(G.w), p0 = cellCenter(m.r, m.c), p1 = cellCenter(a[0], a[1]), fx = $('fx'), fo = PG.find(G.w, e.id)
+    if (fo) a = [fo.r, fo.c]
+    if (W.MojoFX) { fxCall('spray', [m.r, m.c], a, e.left === 0); later(function () { var d = OBJ[e.id]; if (d && !RM) anim(d.querySelector('img.main'), [{ filter: 'brightness(1)' }, { filter: 'brightness(1.6) saturate(.4)' }, { filter: 'brightness(1)' }], 380, EOUT) }, 360) }
+    else for (var k = 0; k < (RM ? 3 : 9); k++) (function (k) {
       var s = el('i', 'splash'); fx.appendChild(s)
       var jx = (k % 3 - 1) * CELL * 0.14, jy = ((k * 7) % 3 - 1) * CELL * 0.14
       anim(s, [{ transform: 'translate(' + p0[0] + 'px,' + p0[1] + 'px) scale(.6)', opacity: 0 }, { transform: 'translate(' + p0[0] + 'px,' + p0[1] + 'px) scale(.8)', opacity: 1, offset: 0.1 },
@@ -1047,34 +1059,57 @@
     })(k)
     later(function () {
       renderObj(PG.find(G.w, e.id))
-      if (e.left === 0) { burst(a[0], a[1], '#B3E5FC'); SND.goal() } else toast('Api masih perlu ' + e.left + ' air. LEWATI tetes air biru, lalu SEMPROT lagi.')
-    }, 480)
+      if (e.left === 0) { SND.goal(); if (!W.MojoFX) burst(a[0], a[1], '#B3E5FC') } else toast('Api masih perlu ' + e.left + ' air. LEWATI tetes air biru, lalu SEMPROT lagi.')
+    }, 620)
   }
-  function raiseAnim (e) {
-    var mod = $('mojo-mod')
-    anim(mod, [{ transform: 'scale(1)' }, { transform: 'scale(1.22)' }, { transform: 'scale(1.14)' }], 520, EOUT, function () { mod.style.transform = '' })
-    tone(300, 700, 0.5, 0.06, 'triangle')
-    placeMojoFlags()
+  /* NAIK / TURUN: the ladder extends (or retracts) one step per level, the marker ticks and rattles each step,
+     and the top grows a little with every level (it is closer to the camera); the badge number follows the steps */
+  var LIFT_STEP = 240
+  function liftSteps (from, to) {
+    var m = G.w.m, mod = $('mojo-mod'), badge = $('mojo-badge'), n = Math.abs(to - from)
+    if (!n) { placeMojoFlags(); return 0 }
+    $('mojo').classList.add('lifted')
+    var kf = []; for (var k = 0; k <= n; k++) { var v = from + (to > from ? k : -k); kf.push({ transform: 'scale(' + (1 + 0.04 * Math.min(v, 6)) + ')', offset: k / n }) }
+    if (!RM) anim(mod, kf, n * LIFT_STEP, 'steps(' + n + ',end)', function () { mod.style.transform = '' })
+    var ms = fxCall('lift', m.r, m.c, from, to, LIFT_STEP) || n * LIFT_STEP
+    for (var i = 1; i <= n; i++) (function (i) {
+      var v = from + (to > from ? i : -i)
+      later(function () { badge.textContent = v > 0 ? v : ''; tone(to > from ? 360 + v * 40 : 520 - (from - v) * 40, to > from ? 420 + v * 40 : 460 - (from - v) * 40, 0.09, 0.05, 'square') }, (i - 1) * LIFT_STEP + LIFT_STEP * 0.5)
+    })(i)
+    later(placeMojoFlags, n * LIFT_STEP + 40)
+    return ms
   }
+  function raiseAnim (e, from) { return liftSteps(from, e.lift) }
+  function lowerAnim (from) { return liftSteps(from, 0) }
   function rescueAnim (e) {
     var d = OBJ[e.id], m = G.w.m; if (!d) return
     var b = tf(m.r, m.c, ' scale(.5)')
-    anim(d, [{ transform: d.style.transform, opacity: 1 }, { transform: b, opacity: 0 }], 620, EIO, function () { renderObj(PG.find(G.w, e.id)) })
-    later(function () { burst(m.r, m.c, '#FF8FB1'); SND.goal() }, 520)
+    var o0 = PG.find(G.cp, e.id) || PG.find(G.w, e.id)
+    if (o0) fxCall('rescue', o0.r, o0.c)
+    // the friend hops: up, then into Mojo
+    anim(d, [{ transform: d.style.transform, opacity: 1 }, { transform: d.style.transform + ' translateY(-22%) scale(1.08)', opacity: 1, offset: 0.35 }, { transform: b, opacity: 0 }], 760, EIO, function () { renderObj(PG.find(G.w, e.id)) })
+    later(function () { burst(m.r, m.c, '#FF8FB1'); SND.goal(); squash(1.08, 0.9, 200) }, 680)
   }
   function toolAnim (e) {
     SND.clank()
     var o = PG.find(G.w, e.id)
-    later(function () { flyTo(MA.src('tool/' + e.tool), e.id, 'g-tool'); renderObj(o) }, 200)
+    if (o) fxCall('tool', o.r, o.c, MA.src('tool/' + e.tool))   // the lid pops, the tool rises out
+    later(function () { flyTo(MA.src('tool/' + e.tool), e.id, 'g-tool'); renderObj(o) }, 520)
   }
   function repairAnim (e) {
+    var d = OBJ[e.id], o = PG.find(G.w, e.id); if (!d) return 820
+    if (W.MojoFX) {   // three hammer hits with sparks, the object jolts on each, then it shines fixed
+      var hitMs = 260, ms = fxCall('repair', o.r, o.c, hitMs, function (k) { SND.hammer(); if (!RM) anim(d, [{ transform: d.style.transform }, { transform: d.style.transform + ' translateY(4%) scale(1.04,.96)' }, { transform: d.style.transform }], 160, EOUT) }, MA.src('tool/palu'))
+      later(function () { renderObj(o); burst(o.r, o.c, '#FFE14D') }, 3 * hitMs)
+      return ms + 300
+    }
     SND.hammer()
-    var d = OBJ[e.id], o = PG.find(G.w, e.id); if (!d) return
     var p = el('div', 'pop-ico', MA.icon('repair')); p.style.background = cmdColor('repair')
     var c = cellCenter(o.r, o.c); p.style.left = (c[0] - 26) + 'px'; p.style.top = (c[1] - CELL * 0.8) + 'px'
     $('fx').appendChild(p)
     anim(p, [{ transform: 'rotate(-30deg)', opacity: 0 }, { transform: 'rotate(20deg)', opacity: 1, offset: 0.3 }, { transform: 'rotate(-20deg)', opacity: 1, offset: 0.6 }, { transform: 'rotate(10deg)', opacity: 0 }], 760, EIO, function () { p.remove() })
     later(function () { renderObj(o); burst(o.r, o.c, '#FFE14D') }, 520)
+    return 820
   }
   function popIcon (v, r, c, q) {
     var p = el('div', 'pop-ico', MA.icon(v)), cc = cellCenter(r, c)
@@ -1109,23 +1144,26 @@
       anim(mod, [{ opacity: 0 }, { opacity: 1 }], 200, 'ease', function () { mod.style.opacity = ''; SND.clank(); later(done, 150) })
       return
     }
-    // 1 release  2 new module enters  3 align  4 click/lock  5 ability icon  6 ready
-    anim(ghost, [{ transform: 'translateY(0) scale(1)', opacity: 1 }, { transform: 'translateY(-38%) scale(1.12)', opacity: 0 }], 280 * t, EOUT, function () { ghost.remove() })
+    // 1 portal + aura, the old top flies off spinning  2 new module drops in  3 align  4 click-lock (sparks ring,
+    // squash, a short hit-stop)  5 ability icon  6 ready
+    var m0 = G.w.m
+    if (W.MojoFX) { fxCall('swop', m0.r, m0.c); fxCall('topOff', m0.r, m0.c, old); ghost.remove() }
+    else anim(ghost, [{ transform: 'translateY(0) scale(1)', opacity: 1 }, { transform: 'translateY(-38%) scale(1.12)', opacity: 0 }], 280 * t, EOUT, function () { ghost.remove() })
     later(function () {
       anim(mod, [{ transform: 'translateY(-46%) scale(1.18)', opacity: 0 }, { transform: 'translateY(4%) scale(1.02)', opacity: 1, offset: 0.75 }, { transform: 'translateY(0) scale(1)', opacity: 1 }], 380 * t, EOUT, function () {
         mod.style.opacity = ''; SND.clank()
         anim(rot, [{ transform: 'rotate(' + G.ang + 'deg) scale(1)' }, { transform: 'rotate(' + G.ang + 'deg) scale(1.1,.92)' }, { transform: 'rotate(' + G.ang + 'deg) scale(1)' }], 150, EOUT, function () { rot.style.transform = 'rotate(' + G.ang + 'deg)' })
-        burst(G.w.m.r, G.w.m.c, cmdColor('swop:' + e.to))
+        if (W.MojoFX) fxCall('swopLock', G.w.m.r, G.w.m.c, cmdColor('swop:' + e.to)); else burst(G.w.m.r, G.w.m.c, cmdColor('swop:' + e.to))
         var ab = (ML.FORMS[e.to] || {}).ability
         if (ab && !quick) popIcon(ab, G.w.m.r, G.w.m.c)
-        later(done, quick ? 200 : 420)
+        later(done, (quick ? 200 : 420) + 80)   // +80: the hit-stop after the click
       })
     }, 200 * t)
   }
   function showcase (e, done) {
     var o = $('ov-swop'), f = ML.FORMS[e.to] || {}, ab = f.ability, fin = false
     o.innerHTML = '<div class="sw-title fk">Swop! ' + formName(e.to) + '</div>' +
-      '<div class="sw-stage"><div class="layer2" id="sw-ch">' + MA.chassis('side') + '</div><div class="layer2" id="sw-old">' + MA.module(e.from, 'side') + '</div><div class="layer2" id="sw-new" style="opacity:0">' + MA.module(e.to, 'side') + '</div><i class="sw-ring" id="sw-ring"></i></div>' +
+      '<div class="sw-stage"><i class="sw-portal" id="sw-portal" style="background-image:url(' + MA.lib('mojo-fx/portal') + ')"></i><div class="layer2" id="sw-ch">' + MA.chassis('side') + '</div><div class="layer2" id="sw-old">' + MA.module(e.from, 'side') + '</div><div class="layer2" id="sw-new" style="opacity:0">' + MA.module(e.to, 'side') + '</div><i class="sw-ring" id="sw-ring"></i></div>' +
       '<div class="sw-ability" id="sw-ab">' + (ab ? verbIcoBox(ab) : '') + '<span>Sekarang bisa: ' + (LABEL[ab] || '') + '!</span></div>' +
       '<button class="btn b-soft sw-skip fk" id="sw-skip" type="button">Lewati</button>'
     o.classList.add('on'); o.setAttribute('aria-hidden', 'false')
@@ -1142,7 +1180,9 @@
       anim(oldL, [{ opacity: 1 }, { opacity: 0 }], 300, 'ease'); anim(newL, [{ opacity: 0 }, { opacity: 1 }], 300, 'ease'); anim(abEl, [{ opacity: 0 }, { opacity: 1 }], 300, 'ease')
       tm.push(later(finish, 1800)); return
     }
-    anim(oldL, [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-34%) rotate(-6deg)', opacity: 0 }], 520, EOUT)                       // 1 release
+    anim($('sw-portal'), [{ transform: 'translate(-50%,-50%) rotate(0) scale(.4)', opacity: 0 }, { transform: 'translate(-50%,-50%) rotate(200deg) scale(1)', opacity: 0.95, offset: 0.25 }, { transform: 'translate(-50%,-50%) rotate(620deg) scale(1.05)', opacity: 0.9, offset: 0.8 }, { transform: 'translate(-50%,-50%) rotate(760deg) scale(.7)', opacity: 0 }], 1700, 'linear')   // portal swirl
+    if (W.VFX && VFX.domAura) { var aura = VFX.domAura($('sw-ch'), { fx: 'electric-aura', duration: 1300, scale: 0.9, parent: o }); tm.push(later(function () { aura.stop() }, 1400)) }
+    anim(oldL, [{ transform: 'translateY(0) rotate(0)', opacity: 1 }, { transform: 'translateY(-30%) rotate(-12deg)', opacity: 1, offset: 0.45 }, { transform: 'translate(30%,-80%) rotate(-70deg) scale(.6)', opacity: 0 }], 620, EOUT)   // 1 release: the old top lifts and spins away
     tm.push(later(function () { anim(newL, [{ transform: 'translateY(-60%) scale(1.08)', opacity: 0 }, { transform: 'translateY(3%) scale(1)', opacity: 1, offset: 0.8 }, { transform: 'translateY(0)', opacity: 1 }], 700, EOUT) }, 450))   // 2 enter + 3 align
     tm.push(later(function () { SND.clank(); anim(ch, [{ transform: 'scale(1)' }, { transform: 'scale(1.04,.95)' }, { transform: 'scale(1)' }], 180, EOUT)             // 4 lock
       anim(ring, [{ transform: 'translate(-50%,-50%) scale(.6)', opacity: 0.9 }, { transform: 'translate(-50%,-50%) scale(1.3)', opacity: 0 }], 600, EOUT) }, 1180))
@@ -1424,6 +1464,7 @@
     for (var k in R.stars) { G.starBeat[G.bi] = true; G.gotStars[k] = true }
     ;[].forEach.call(D.querySelectorAll('.slot'), function (s) { s.classList.remove('active') })
     SND.win()
+    fxCall('beat', G.w.m.r, G.w.m.c)
     boSay(G.bi + 1 < G.lv.beats.length ? 'Berhasil! Rencanamu bekerja!' : 'Hore! Misi selesai!', false)
     if (G.bi + 1 < G.lv.beats.length) {
       // the next beat (its objective, Bo's line, its world) only appears AFTER this beat's celebration:
@@ -1509,6 +1550,7 @@
   }
   function confetti () {
     if (RM) return
+    if (W.MojoFX) { MojoFX.confetti(D.body, 30); return }   // the owner's confetti sprites
     var cols = ['#FFC83D', '#F2552C', '#1E88E5', '#2FB35E', '#FF8FB1']
     for (var k = 0; k < 36; k++) (function (k) {
       var c = el('i', 'confetti'); c.style.background = cols[k % cols.length]; D.body.appendChild(c)
@@ -1641,7 +1683,8 @@
   D.addEventListener('visibilitychange', function () { if (G && G.active) { if (D.hidden) G.elapsed += Math.max(0,performance.now()-G.tick); G.tick=performance.now(); storePacing() } if (D.hidden) { flushAwards(); hush(); if (G && G.run) stopRun() } })
   try { if (W.SFXEngine && SFXEngine.setMute) SFXEngine.setMute(!soundOn()) } catch (e) {}
   // warm every picture the game uses so a level plays offline (the page itself is in sw.js SHELL)
-  var WARM = MA.libFiles().concat(['road','grass','water','indoor-floor','wall','trap-hole'].map(function (k) { return MA.lib('mojo-tile/' + k) }), BOARD_BUILDINGS.map(function (k) { return MA.lib('mojo-prop/' + k) }))
+  if (W.MojoFX) MojoFX.init({ layer: function () { return $('fx') }, cell: function () { return CELL }, lib: MA.lib, board: function () { return $('board') } })
+  var WARM = MA.libFiles().concat(['road','grass','water','indoor-floor','wall','trap-hole'].map(function (k) { return MA.lib('mojo-tile/' + k) }), BOARD_BUILDINGS.map(function (k) { return MA.lib('mojo-prop/' + k) }), W.MojoFX ? MojoFX.files() : [])
   var assetLoad = { ready:false, pending:WARM.length, failed:[] }, warming = false
   function warmAssets () {
     if (warming) return
