@@ -229,14 +229,21 @@ def main():
             continue
         W = max(f.shape[1] for f in frames)
         H = max(f.shape[0] for f in frames)
+        cans = []
         for i, f in enumerate(frames):
             can = Image.new('RGBA', (W, H), (0, 0, 0, 0))
             ox = W - f.shape[1] if anchor == 'right' else (W - f.shape[1]) // 2
             oy = 0 if anchor == 'top' else (H - f.shape[0]) // 2
             can.alpha_composite(Image.fromarray(f, 'RGBA'), (ox, oy))
+            cans.append(can)
+        # one shared crop = the union of every pose's content (+8 px): the anchor stays put across poses
+        boxes = [cv.getbbox() for cv in cans if cv.getbbox()]
+        ub = (max(0, min(b[0] for b in boxes) - 8), max(0, min(b[1] for b in boxes) - 8), min(W, max(b[2] for b in boxes) + 8), min(H, max(b[3] for b in boxes) + 8))
+        for i, can in enumerate(cans):
+            can = can.crop(ub)
             put(f'vfx/{name}-{i + 1}', can, {}, 88)
             previews.append((f'vfx/{name}-{i + 1}', can))
-        data['seq'][name] = {'n': len(frames), 'w': W, 'h': H, 'anchor': anchor, 'id': id_}
+        data['seq'][name] = {'n': len(frames), 'w': ub[2] - ub[0], 'h': ub[3] - ub[1], 'anchor': anchor, 'id': id_}
     for line in report:
         print('NOTE', line)
     if args.sheets:

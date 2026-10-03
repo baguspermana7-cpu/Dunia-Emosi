@@ -18,7 +18,7 @@
     var o = null; try { o = raw ? JSON.parse(raw) : null } catch (e) { o = null }
     var st = {}, src = o && o.st && typeof o.st === 'object' ? o.st : {}
     ;(W.MojoChases ? W.MojoChases.STAGES : []).forEach(function (s) { var r = src[s.id]; if (r && typeof r.stars === 'number' && r.stars >= 1 && r.stars <= 3) st[s.id] = { stars: Math.floor(r.stars), t: +r.t || 0 } })
-    return { v: 1, st: st }
+    return { v: 1, st: st, form: o && typeof o.form === 'string' ? o.form : null }
   }
   function save (s) {
     try { var j = JSON.stringify(s); if (W.avatarScopedSet) W.avatarScopedSet(KEY, j); else localStorage.setItem(KEY, j); return true } catch (e) { console.warn('[Mojo chase] save failed', e); return false }
@@ -36,7 +36,7 @@
   }
   function run (cfg) {
     var host = el('div', ''); host.id = 'chase-host'; D.body.appendChild(host)
-    cfg = Object.assign({ sound: soundOn, say: function (t) { try { var sv = API.save(); if (sv && sv.set && sv.set.narr && API.say) API.say(t) } catch (e) {} } }, cfg)
+    cfg = Object.assign({ lastForm: load().form, onForm: function (f) { var sv = load(); sv.form = f; save(sv) }, sound: soundOn, say: function (t) { try { var sv = API.save(); if (sv && sv.set && sv.set.narr && API.say) API.say(t) } catch (e) {} } }, cfg)
     return W.MojoChase.mount(host, cfg).then(function (res) { host.remove(); return res })
   }
   function playStage (st) {

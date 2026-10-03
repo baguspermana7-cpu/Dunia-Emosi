@@ -18,7 +18,7 @@
 
   /* ── biome looks (reference: owner track sheets S1-S8, V1-V4, roadside props) ─────────────────────── */
   var BIOME = {
-    coastal: { grass: ['#6cc24a', '#5cb33c'], shoulder: ['#d9c79a', '#cdb98a'], road: ['#5d6470', '#575e69'], kerb: ['#e53935', '#f5f5f5'], line: '#ffffff', rail: 'metal',
+    coastal: { sea: -1, grass: ['#f0d9a2', '#e9d196'], shoulder: ['#f6e7c0', '#efdfb4'], road: ['#5d6470', '#575e69'], kerb: ['#e53935', '#f5f5f5'], line: '#ffffff', rail: 'metal',
       props: [['palm', 4, 2.0, 1000], ['tree-round', 2, 2.4, 1150], ['bush', 2, 1.7, 600], ['rocks', 1, 2.2, 700], ['lamp', 2, 1.45, 330], ['planter', 1, 1.8, 700]] },
     town: { grass: ['#78c850', '#6abb44'], shoulder: ['#c9c2b8', '#bdb6ac'], road: ['#5a606b', '#545a64'], kerb: ['#e53935', '#f5f5f5'], line: '#ffffff', rail: 'none',
       props: [['lamp', 4, 1.4, 330], ['planter', 2, 1.7, 700], ['hedge', 2, 1.8, 800], ['tree-small', 2, 2.0, 800], ['banner-blue', 1, 1.5, 300], ['banner-red', 1, 1.5, 300], ['stone-wall', 1, 1.9, 600]] },
@@ -35,6 +35,42 @@
     city: { grass: ['#33405a', '#2d3950'], shoulder: ['#4a5068', '#444a60'], road: ['#2f3442', '#2b303d'], kerb: ['#e53935', '#e8e8f0'], line: '#e8ecff', rail: 'metal',
       props: [['lamp', 5, 1.4, 330], ['planter', 1, 1.7, 700], ['banner-blue', 1, 1.5, 300], ['hedge', 1, 1.8, 800]] }
   }
+  // looks for the 15 extra owner biomes (ground, shoulder, asphalt, kerb, specks = ground details)
+  var CP = function (n, w, sz) { return [n, w, 0, sz] }
+  BIOME.jungle = { grass: ['#3f8f3a', '#378533'], shoulder: ['#7d5a36', '#735230'], road: ['#555b62', '#50565d'], kerb: ['#f5f5f5', '#3b3b3b'], line: '#ffffff', rail: 'wood',
+    props: [['palm', 5, 0, 1000], ['tree-round', 3, 0, 1150], ['bush', 3, 0, 600], ['flowering-bush', 2, 0, 600], ['rocks', 1, 0, 700]] }
+  BIOME.volcano = { grass: ['#3b3036', '#342a30'], shoulder: ['#4a3a3a', '#433434'], road: ['#4a4a52', '#45454d'], kerb: ['#ff7a1a', '#3b3036'], line: '#ffd23f', rail: 'none',
+    speck: ['#ff7a1a', 0.55, 'crack'], props: [['rocks', 4, 0, 800], ['boulders', 3, 0, 1100], ['rock', 3, 0, 800], ['small-rock', 2, 0, 500]] }
+  BIOME.autumn = { grass: ['#93b84a', '#89ad43'], shoulder: ['#b98a52', '#ae804a'], road: ['#5c6168', '#565b62'], kerb: ['#f5f5f5', '#c0392b'], line: '#ffffff', rail: 'wood',
+    speck: ['#e8702a', 0.6, 'leaf'], props: [['tree-round', 4, 0, 1150], ['hay', 2, 0, 700], ['fence', 2, 0, 900], ['bush', 2, 0, 600], ['rail-wood', 1, 0, 900]] }
+  BIOME.cherry = { grass: ['#86c86a', '#7cbf62'], shoulder: ['#f7cfe0', '#f1c3d7'], road: ['#5e6370', '#585d69'], kerb: ['#ff8fbd', '#ffffff'], line: '#ffffff', rail: 'none',
+    speck: ['#ffb7d5', 0.7, 'leaf'], props: [['flowering-bush', 4, 0, 650], ['planter', 2, 0, 700], ['lamp', 2, 0, 330], ['tree-small', 2, 0, 800], ['hedge', 1, 0, 800]] }
+  BIOME.beach = { sea: -1, grass: ['#f1d99a', '#ead08f'], shoulder: ['#f7e6b8', '#f1deab'], road: ['#5f6670', '#59606a'], kerb: ['#29b6f6', '#ffffff'], line: '#ffffff', rail: 'none',
+    props: [['palm', 6, 0, 1050], ['bush', 2, 0, 600], ['rocks', 1, 0, 700], ['harbor-buoy', 1, 0, 450]] }
+  BIOME.harbour = { grass: ['#9aa3ab', '#929ba3'], shoulder: ['#b9c0c6', '#b1b8be'], road: ['#555c66', '#505760'], kerb: ['#ffc107', '#212121'], line: '#ffffff', rail: 'metal',
+    props: [['construction-pipe', 3, 0, 700], ['harbor-mooring-bollard', 2, 0, 350], ['harbor-buoy', 2, 0, 450], ['wooden-crate', 3, 0, 600], ['barrel-oil', 2, 0, 300], ['lamp', 2, 0, 330]] }
+  BIOME.space = { grass: ['#5a6270', '#535b68'], shoulder: ['#7d8796', '#76808f'], road: ['#2b3140', '#272d3b'], kerb: ['#4ce0ff', '#1b2130'], line: '#7fe7ff', rail: 'metal',
+    speck: ['#7fe7ff', 0.35, 'strip'], props: [['solar-street-light', 3, 0, 380], ['teal-safety-bollard', 3, 0, 300], ['cyan-neon-low-city-building', 2, 0, 1600], ['traffic-light', 1, 0, 350]] }
+  BIOME.candy = { grass: ['#ffc4e0', '#ffbada'], shoulder: ['#fff0f6', '#ffe6f0'], road: ['#7a6a8a', '#736383'], kerb: ['#ff5cbe', '#ffffff'], line: '#fff6c9', rail: 'none',
+    speck: ['#7fe7ff', 0.45, 'leaf'], props: [['lollipop', 4, 0, 600], ['gumdrop', 4, 0, 500], ['flowering-bush', 2, 0, 600], ['planter', 1, 0, 700]] }
+  BIOME.suburb = { grass: ['#7cc350', '#72b948'], shoulder: ['#cdc7bd', '#c3bdb3'], road: ['#5a606b', '#545a64'], kerb: ['#f5f5f5', '#9e9e9e'], line: '#ffffff', rail: 'none',
+    props: [['tree-round', 3, 0, 1150], ['hedge', 3, 0, 800], ['fire-hydrant', 2, 0, 300], ['park-bench', 2, 0, 600], ['fence', 2, 0, 900], ['lamp', 2, 0, 330]] }
+  BIOME.stadium = { grass: ['#4caf50', '#43a047'], shoulder: ['#d7ccc8', '#cfc4c0'], road: ['#555b66', '#4f5560'], kerb: ['#e53935', '#f5f5f5'], line: '#ffffff', rail: 'jersey',
+    props: [['banner-blue', 3, 0, 320], ['banner-red', 3, 0, 320], ['flag-checker', 2, 0, 500], ['billboard', 1, 0, 1300], ['lamp', 2, 0, 330]] }
+  BIOME.ruins = { grass: ['#6a9a4a', '#628f44'], shoulder: ['#a69378', '#9c8a70'], road: ['#5c5f63', '#565a5e'], kerb: ['#cfc7b8', '#8a7f6e'], line: '#ffffff', rail: 'none',
+    props: [['stone-wall', 4, 0, 650], ['boulders', 2, 0, 1000], ['pine', 2, 0, 900], ['tree-round', 2, 0, 1150], ['rocks', 2, 0, 700]] }
+  BIOME.windfarm = { grass: ['#8dcb4f', '#82c046'], shoulder: ['#c8a46a', '#bd995f'], road: ['#5f656e', '#596068'], kerb: ['#f5f5f5', '#43a047'], line: '#ffffff', rail: 'wood',
+    props: [['windmill', 3, 0, 1300], ['windsock', 2, 0, 450], ['hay', 2, 0, 700], ['fence', 2, 0, 900], ['tree-round', 2, 0, 1150]] }
+  BIOME.canyon = { grass: ['#d98f52', '#cf8549'], shoulder: ['#e8b277', '#dea86d'], road: ['#646068', '#5e5a62'], kerb: ['#ffffff', '#c62828'], line: '#ffd23f', rail: 'wood',
+    props: [['boulders', 3, 0, 1100], ['cactus', 3, 0, 600], ['rock', 2, 0, 800], ['cactus-2', 2, 0, 500], ['sign', 1, 0, 700]] }
+  BIOME.rainy = { grass: ['#3d5a48', '#375240'], shoulder: ['#5c6470', '#565e6a'], road: ['#2f3540', '#2b313b'], kerb: ['#e53935', '#e8e8f0'], line: '#e8ecff', rail: 'metal',
+    props: [['lamp', 4, 0, 330], ['palm', 2, 0, 1000], ['hedge', 2, 0, 800], ['planter', 1, 0, 700]] }
+  // more variety for the first 8 biomes (Codex props)
+  BIOME.town.props.push(['yellow-neon-domed-city-building', 1, 0, 1700], ['fire-hydrant', 1, 0, 300], ['park-bench', 1, 0, 600])
+  BIOME.city.props.push(['cyan-neon-low-city-building', 2, 0, 1700], ['pink-neon-stepped-city-building', 2, 0, 1800], ['traffic-light', 1, 0, 350])
+  BIOME.construction.props.push(['construction-worklight', 1, 0, 380], ['construction-pipe', 1, 0, 700])
+  BIOME.snow.props.push(['snow-route-marker', 2, 0, 300])
+  BIOME.farm.props.push(['four-sail-farm-windmill', 1, 0, 1300])
   // prop key -> asset key (owner art; the larger chase-sheet copy wins duplicates)
   var PROP_KEY = { palm: 'mojo-chase/props/palm', 'tree-round': 'mojo-chase/props/tree-round', bush: 'mojo-chase/props/bush', rocks: 'mojo-chase/props/rocks',
     lamp: 'mojo-chase/props/lamp', planter: 'mojo-chase/props/planter', hedge: 'mojo-chase/props/hedge', 'tree-small': 'mojo-chase/props/tree-small',
@@ -45,7 +81,10 @@
     hay: 'mojo-chase/props/hay', windmill: 'mojo-chase/props/windmill', 'rail-wood': 'mojo-chase/props/rail-wood', fence: 'mojo-chase/props/fence',
     'chevron-yellow': 'mojo-chase/signs/chevron-yellow', 'chevron-red': 'mojo-chase/signs/chevron-red', swoppiton: 'mojo-chase/signs/swoppiton',
     billboard: 'mojo-chase/signs/billboard', gantry: 'mojo-chase/signs/gantry', finish: 'mojo-chase/signs/finish', 'flag-checker': 'mojo-chase/signs/flag-checker',
-    guardrail: 'mojo-chase/props/guardrail' }
+    guardrail: 'mojo-chase/props/guardrail', lollipop: 'proc:lollipop', gumdrop: 'proc:gumdrop' }
+  ;['flowering-bush', 'small-rock', 'harbor-buoy', 'construction-pipe', 'harbor-mooring-bollard', 'wooden-crate', 'solar-street-light', 'teal-safety-bollard',
+    'cyan-neon-low-city-building', 'pink-neon-stepped-city-building', 'yellow-neon-domed-city-building', 'traffic-light', 'fire-hydrant', 'park-bench', 'windsock',
+    'construction-worklight', 'snow-route-marker', 'four-sail-farm-windmill'].forEach(function (k) { PROP_KEY[k] = 'mojo-chase/cprops/' + k })
 
   function clamp (v, a, b) { return v < a ? a : v > b ? b : v }
   function easeInOut (a, b, t) { return a + (b - a) * ((-Math.cos(t * Math.PI) / 2) + 0.5) }
@@ -58,7 +97,7 @@
   function create (stage, seed, opts) {
     opts = opts || {}
     var CH = W.MojoChases, seq = CH.sequencer(stage, seed || 1), r = CH.rng((seed || 1) * 7 + 3)
-    var biome = BIOME[stage.biome] || BIOME.coastal, night = !!stage.night
+    var biome = BIOME[stage.look || stage.biome] || BIOME.coastal, night = !!stage.night
     var ring = new Array(RING), made = 0, queue = [], lastY = 0
     var pieceAt = 0, piece = null, pieceStart = 0, pieceY0 = 0
     for (var k = 0; k < RING; k++) ring[k] = { i: -1, curve: 0, y1: 0, y2: 0, p1: { x: 0, y: 0, w: 0, s: 0 }, p2: { x: 0, y: 0, w: 0, s: 0 }, clip: 0, fog: 0,
@@ -68,7 +107,7 @@
       return queue.shift()
     }
     function propSlot (seg, key, side, off, size) {
-      if (seg.nProps >= 4) return
+      if (seg.nProps >= 6) return
       var p = seg.props[seg.nProps] || (seg.props[seg.nProps] = { key: '', side: 0, off: 0, size: 0, flip: false })
       p.key = key; p.side = side; p.off = off; p.size = size; p.flip = side < 0 && /chevron/.test(key) ? false : false
       seg.nProps++
@@ -106,8 +145,11 @@
       if (!seg.tunnel && !seg.bridge) {
         if (seg.chev && i % 6 === 0) propSlot(seg, opts.chevronKey || 'chevron-yellow', seg.chev === 'left' ? 1 : -1, 1.3, 420)
         if (seg.lamp) { propSlot(seg, 'lamp', -1, 1.4, 330); propSlot(seg, 'lamp', 1, 1.4, 330) }
-        if (i % 5 === 0) { var a = pickProp(); propSlot(seg, a[0], r() < 0.5 ? -1 : 1, a[2] + r() * 1.1, a[3] * (0.85 + r() * 0.3)) }
-        if (i % 9 === 4) { var b2 = pickProp(); propSlot(seg, b2[0], r() < 0.5 ? -1 : 1, b2[2] + 1.2 + r() * 2.2, b2[3]) }
+        // three depth rows on both sides: near (just past the rail), mid, far (the far row fills the open ground)
+        if (i % 4 === 0) { var a = pickProp(); propSlot(seg, a[0], (i >> 2) % 2 ? -1 : 1, 1.55 + r() * 0.7, a[3] * (0.85 + r() * 0.3)) }
+        var inland = biome.sea ? -biome.sea : 0
+        if (i % 3 === 1) { var b2 = pickProp(); propSlot(seg, b2[0], inland || (r() < 0.5 ? -1 : 1), 2.6 + r() * 1.8, b2[3] * (1 + r() * 0.3)) }
+        if (i % 2 === 0) { var c3 = pickProp(); propSlot(seg, c3[0], inland || (r() < 0.5 ? -1 : 1), 4.8 + r() * 5, c3[3] * (1.2 + r() * 0.5)) }
         if (i % 160 === 70) propSlot(seg, r() < 0.5 ? 'billboard' : 'swoppiton', r() < 0.5 ? -1 : 1, 2.0, 1500)
       }
       made++
@@ -146,6 +188,8 @@
       road: [ramp(night ? biome.road[0] : biome.road[0], fog), ramp(biome.road[1], fog)], kerb: [ramp(biome.kerb[0], fog), ramp(biome.kerb[1], fog)],
       line: ramp(biome.line, fog), edge: ramp('#f4f4f4', fog), rail: ramp(biome.rail === 'wood' ? '#8d5a2b' : biome.rail === 'snowbank' ? '#ffffff' : biome.rail === 'jersey' ? '#e0ddd5' : '#b9c4cf', fog),
       railDark: ramp(biome.rail === 'wood' ? '#5d3a1a' : biome.rail === 'snowbank' ? '#cfe0f0' : biome.rail === 'jersey' ? '#d32f2f' : '#6d7a88', fog),
+      speck: ramp((biome.speck || ['#ffffff'])[0], fog),
+      foam: ramp('#e8fbff', fog),
       water: [ramp('#2f8fd8', fog), ramp('#2a84cc', fog)], mud: [ramp('#7a5634', fog), ramp('#6f4d2e', fog)], ice: [ramp('#bfe3f5', fog), ramp('#b2daee', fog)],
       tunnelWall: ramp('#4a4038', '#0c0a08'), tunnelRoad: [ramp('#3b3e45', '#101012'), ramp('#363940', '#101012')]
     }
@@ -221,8 +265,23 @@
       s.vis = true
       var alt = s.kerb, surf = s.surface, X1 = p1.x, Y1 = p1.y, W1 = p1.w, X2 = p2.x, Y2 = p2.y, W2 = p2.w
       rect(0, s.bridge ? col.water[alt][fl] : s.tunnel ? col.tunnelWall[fl] : col.grass[alt][fl], 0, Y2 - 1, v.w, Y1 - Y2 + 2)
+      if (track.biome.sea && !s.tunnel && !s.bridge) {   // the sea beside a coastal road: sand beach, then water to the screen edge
+        var sd0 = track.biome.sea, b1 = X1 + sd0 * W1 * 2.3, b2 = X2 + sd0 * W2 * 2.3, e0 = sd0 < 0 ? -v.w : v.w * 2
+        quad(1, col.water[alt][fl], b1, Y1, e0, Y1, e0, Y2, b2, Y2)
+        var f1 = X1 + sd0 * W1 * 2.2, f2 = X2 + sd0 * W2 * 2.2
+        quad(1, col.foam[fl], f1, Y1, b1, Y1, b2, Y2, f2, Y2)
+      }
       if (!s.bridge) { var sw1 = W1 * 1.32, sw2 = W2 * 1.32; quad(1, s.tunnel ? col.tunnelWall[fl] : col.shoulder[alt][fl], X1 - sw1, Y1, X1 + sw1, Y1, X2 + sw2, Y2, X2 - sw2, Y2) }
       else { var dk1 = W1 * 1.18, dk2 = W2 * 1.18; quad(1, '#7b8794', X1 - dk1, Y1, X1 + dk1, Y1, X2 + dk2, Y2, X2 - dk2, Y2) }
+      if (track.biome.speck && !s.tunnel && !s.bridge && (s.i * 7) % 3 === 0) {
+        var spk = track.biome.speck, sc = col.speck[fl]
+        for (var si = 0; si < 3; si++) {
+          var hsh = ((s.i * 131 + si * 977) % 1000) / 1000, side = si % 2 ? 1 : -1, off = 1.4 + hsh * (spk[2] === 'strip' ? 0.2 : 3.5), w0 = spk[2] === 'crack' ? 0.22 : spk[2] === 'strip' ? 0.05 : 0.07
+          var ax1 = X1 + side * W1 * off, ax2 = X2 + side * W2 * off
+          if (spk[2] === 'strip') quad(1, sc, ax1 - W1 * w0, Y1, ax1 + W1 * w0, Y1, ax2 + W2 * w0, Y2, ax2 - W2 * w0, Y2)
+          else if (hsh < spk[1]) quad(1, sc, ax1 - W1 * w0, Y1, ax1 + W1 * w0 * 0.3, Y1, ax2 + W2 * w0, Y2, ax2 - W2 * w0 * 0.2, Y2)
+        }
+      }
       var r1 = W1 * 1.10, r2 = W2 * 1.10, kc = col.kerb[alt][fl]
       quad(2, kc, X1 - r1, Y1, X1 - W1, Y1, X2 - W2, Y2, X2 - r2, Y2)
       quad(2, kc, X1 + r1, Y1, X1 + W1, Y1, X2 + W2, Y2, X2 + r2, Y2)

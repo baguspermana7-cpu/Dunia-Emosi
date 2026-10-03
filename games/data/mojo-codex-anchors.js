@@ -1468,38 +1468,38 @@
  "seq": {
   "boost": {
    "anchor": "right",
-   "h": 724,
+   "h": 167,
    "id": "CHASE_VFX_BOOST_FLAME_8X1",
    "n": 8,
-   "w": 284
+   "w": 270
   },
   "brok": {
    "anchor": "center",
-   "h": 724,
+   "h": 319,
    "id": "CHASE_VFX_BROK_8X1",
    "n": 8,
    "w": 323
   },
   "confetti": {
    "anchor": "top",
-   "h": 793,
+   "h": 334,
    "id": "CHASE_VFX_CONFETTI_8X1",
    "n": 8,
-   "w": 297
+   "w": 253
   },
   "dizzy": {
    "anchor": "center",
-   "h": 724,
+   "h": 171,
    "id": "CHASE_VFX_DIZZY_STARS_8X1",
    "n": 8,
-   "w": 288
+   "w": 253
   },
   "net": {
    "anchor": "center",
-   "h": 724,
+   "h": 337,
    "id": "CHASE_VFX_SAFETY_NET_8X1",
    "n": 8,
-   "w": 350
+   "w": 320
   }
  },
  "sky": {

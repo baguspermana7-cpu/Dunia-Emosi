@@ -62,7 +62,7 @@
 
   /** chase progress. s: {prog, speed (mult), elapsed, seconds, hits, hasRocket, best} -> s.prog */
   function progress (s, dt) {
-    var T = s.seconds * 0.95
+    var T = s.seconds * 1.3   // clean, boosted driving lands near 60 s on a 70 s stage
     var rel = Math.min(1.7, (s.speed - 0.8) / 0.2)         // 1 at normal, 1.7 boosting, < 0 while dizzy
     var assist = 0.12 * Math.min(4, s.hits)                // repeated mistakes slow the target (PRD §7)
     if (s.elapsed > s.seconds) assist += 0.8               // and the clock never lets a chase drag on

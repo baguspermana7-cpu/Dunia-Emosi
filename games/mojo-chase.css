@@ -173,7 +173,7 @@
 /* LANDSCAPE = mockup-landscape.jpg (940x740; --L = height/740): pause + star pill top-left, timer top-right,
    ← → bottom-left, big green ↑ bottom-right. Kept from the chase: the progress bar top-centre (needed for the
    chase), hearts under the star pill, the gadget left of the boost. The mission/location signs show for 5 s. */
-.mc-skip{bottom:auto;left:auto;transform:none;right:calc(14px * var(--u) + env(safe-area-inset-right));top:52%}
+.mc-skip{bottom:auto;left:auto;transform:none;right:calc(14px * var(--u) + env(safe-area-inset-right));top:62%}
 .mc-host.land .mc-pause{left:calc(35px * var(--L) + env(safe-area-inset-left));top:calc(35px * var(--L) + env(safe-area-inset-top));width:max(56px,calc(96px * var(--L)));height:max(56px,calc(92px * var(--L)));border-radius:calc(20px * var(--L));
   background:linear-gradient(180deg,#2f6fd6,#1847a6);box-shadow:inset 0 0 0 calc(5px * var(--L)) #fff,0 calc(5px * var(--L)) 0 #0b2556,0 calc(8px * var(--L)) calc(14px * var(--L)) rgba(0,0,0,.35)}
 .mc-host.land .mc-pause::before,.mc-host.land .mc-pause::after{width:calc(13px * var(--L));height:calc(38px * var(--L));border-radius:calc(4px * var(--L))}
@@ -203,3 +203,28 @@
 .mc-gadget.nope{animation:mcNope .32s ease}
 @keyframes mcNope{0%,100%{transform:translateX(0)}25%{transform:translateX(calc(-4px * var(--u)))}75%{transform:translateX(calc(4px * var(--u)))}}
 @media (prefers-reduced-motion: reduce){.mc-gadget.nope{animation:none;outline:calc(3px * var(--u)) solid #ffd54a;outline-offset:calc(2px * var(--u))}}
+/* form picker in the intro card (owner: "pilih karakter") */
+.mc-pick-h{font-family:'Fredoka One',sans-serif !important;color:#1d4f9c;font-size:20px !important;margin:10px 0 4px !important}
+.mc-forms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 6px}
+.mc-form{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:120px;padding:8px 4px 6px;border-radius:16px;background:#fff;border:3px solid #d8e4f5;box-shadow:0 3px 0 rgba(0,0,0,.12);color:#16336b}
+.mc-form img{height:64px;max-width:100%;object-fit:contain}
+.mc-form b{font-family:'Fredoka One',sans-serif;font-weight:400;font-size:16px}
+.mc-form small{font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;line-height:1.1;color:#54617a;text-align:center}
+.mc-form em{position:absolute;top:-10px;left:50%;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;color:#fff;background:#2fb35e;border-radius:10px;padding:1px 8px}
+.mc-form.on{border-color:#ffb300;background:#fff8e1;box-shadow:0 0 0 3px rgba(255,179,0,.35),0 3px 0 rgba(0,0,0,.12)}
+@media (max-width:560px){.mc-forms{grid-template-columns:repeat(2,minmax(0,1fr))}.mc-card .box{padding:14px 12px 12px}.mc-card p{font-size:16px}}
+/* PORTRAIT re-layout (owner phone 412x915): hearts UNDER the badge, title under the bar, Bo's bubble below the
+   mission board where nothing covers it, no sign posts crossing the bubble */
+.mc-host:not(.land) .mc-tl{flex-direction:column;align-items:center;gap:calc(3px * var(--u))}
+.mc-host:not(.land) .mc-badge{width:calc(60px * var(--u));height:calc(60px * var(--u))}
+.mc-host:not(.land) .mc-hearts img{width:calc(20px * var(--u));height:calc(20px * var(--u))}
+.mc-host:not(.land) .mc-mission{top:calc(108px * var(--u) + env(safe-area-inset-top));width:calc(146px * var(--u))}
+.mc-host:not(.land) .mc-mission .post,.mc-host:not(.land) .mc-place .post{height:calc(26px * var(--u))}
+.mc-host:not(.land) .mc-call{top:calc(212px * var(--u) + env(safe-area-inset-top))}
+.mc-host:not(.land) .mc-edu{top:calc(262px * var(--u) + env(safe-area-inset-top))}
+.mc-host:not(.land) .mc-top{max-width:calc(100% - 2 * (84px * var(--u)))}
+.mc-host:not(.land) .mc-prog{width:calc(150px * var(--u))}
+/* location: a small chip under the progress bar (the wooden sign only slides in during the intro) */
+.mc-loc{font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;line-height:1;color:#fff;background:rgba(78,39,16,.82);border-radius:10px;padding:3px 10px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.mc-sign.hide{opacity:0;transform:translateY(calc(-24px * var(--u)));pointer-events:none}
+.mc-place.hide{transform:translateX(calc(40px * var(--u)))}

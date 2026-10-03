@@ -80,7 +80,7 @@
     try {
       if (far) { var sc = cv(32, 4), sx = sc.getContext('2d'); sx.drawImage(far, 0, 0, far.naturalWidth, 6, 0, 0, 32, 4); var d = sx.getImageData(0, 0, 32, 1).data, rr = 0, gg = 0, bb = 0; for (var i = 0; i < 128; i += 4) { rr += d[i]; gg += d[i + 1]; bb += d[i + 2] } farTop = 'rgb(' + Math.round(rr / 32) + ',' + Math.round(gg / 32) + ',' + Math.round(bb / 32) + ')' }
     } catch (e) {}
-    var midC = mid ? null : silhouette(stage.biome, haze, night), near = nearBand(stage.biome, night)
+    var midC = mid ? null : silhouette(stage.biome, haze, night), near = nearBand(stage.look || stage.biome, night)
     if (mid && mid.naturalWidth) {
       // an opaque owner MID strip carries its own sky: fade its top 45% out so the FAR layer shows through
       var mc0 = cv(mid.naturalWidth, mid.naturalHeight), mx0 = mc0.getContext('2d')
@@ -95,6 +95,14 @@
     for (var k = 0; k < 7; k++) clouds.push({ x: k / 7, y: 0.15 + (k % 3) * 0.12, s: 0.18 + (k % 4) * 0.06, sp: 0.004 + (k % 3) * 0.003 })
     var stars = []
     for (var s = 0; s < 70; s++) stars.push({ x: Math.random(), y: Math.random() * 0.8, p: Math.random() * TAU })
+    // strips are pre-scaled ONCE per size (a scaled drawImage of a 2000 px strip every frame is the dominant raster cost)
+    var SC = {}
+    function scaled (key, src, w, h) {
+      w = Math.max(1, Math.round(w)); h = Math.max(1, Math.round(h))
+      var o = SC[key]; if (o && o.width === w && o.height === h) return o
+      o = cv(w, h); o.getContext('2d').drawImage(src, 0, 0, w, h); SC[key] = o; return o
+    }
+    var skyC = null
     var v = null, skyG = null, hazeG = null, vig = null, cone = null, t = 0
     var S = {
       night: night, haze: haze, grade: GRADE[stage.biome] || null, heat: !!stage.heat,
@@ -118,7 +126,8 @@
       },
       drawBack: function (c, camY, quality) {
         var w = v.w, hy = v.hy, hill = (camY - 950) * 0.012 * v.u
-        c.fillStyle = skyG; c.fillRect(0, 0, w, hy + 2)
+        if (!skyC || skyC.width !== Math.round(w) || skyC.height !== Math.round(hy + 2)) { skyC = cv(Math.round(w), Math.round(hy + 2)); var sk = skyC.getContext('2d'); sk.fillStyle = skyG; sk.fillRect(0, 0, skyC.width, skyC.height) }
+        c.drawImage(skyC, 0, 0)
         if (night) {
           for (var i = 0; i < stars.length; i++) { var st = stars[i], a = 0.5 + 0.5 * Math.sin(t * 2 + st.p); c.globalAlpha = a * 0.9; c.fillStyle = '#fff'; c.fillRect(st.x * w, st.y * hy * 0.6, 2 * v.pr, 2 * v.pr) }
           c.globalAlpha = 1
@@ -144,7 +153,8 @@
           // sits on the screen horizon; tiled, never stretched
           var hf = (stage.cfar && CX && CX.far[stage.cfar] && CX.far[stage.cfar].horizon) || FAR_HORIZON[stage.far] || 0.62, fh = hy / hf, fw = fh * far.naturalWidth / far.naturalHeight, fy = hy - hf * fh + hill * 0.4
           var fx = -(((S.par.far * 0.004 + S.curveOff * 0.9) * v.u) % fw + fw) % fw
-          for (var x = fx; x < w; x += fw) c.drawImage(far, x, fy, fw + 1, fh)
+          var farS = scaled('far', far, fw, fh); fw = farS.width; fx = -(((S.par.far * 0.004 + S.curveOff * 0.9) * v.u) % fw + fw) % fw
+          for (var x = Math.round(fx); x < w; x += fw) c.drawImage(farS, x, Math.round(fy))
           var fg = c.createLinearGradient(0, fy, 0, fy + fh * 0.28); fg.addColorStop(0, farTop); fg.addColorStop(1, 'rgba(0,0,0,0)')
           c.fillStyle = fg; c.fillRect(0, fy - 1, w, fh * 0.28)
         }
@@ -153,14 +163,16 @@
         var mc = mid ? mid.canvas : midC, mw = mh * mc.width / mc.height
         var mxo = -(((S.par.mid * 0.004 + S.curveOff * 2.4) * v.u) % mw + mw) % mw
         c.globalAlpha = mid ? 1 : 0.92
-        for (var x2 = mxo; x2 < w; x2 += mw) c.drawImage(mc, x2, my, mw + 1, mh)
+        var midS = scaled('mid', mc, mw, mh); mw = midS.width; mxo = -(((S.par.mid * 0.004 + S.curveOff * 2.4) * v.u) % mw + mw) % mw
+        for (var x2 = Math.round(mxo); x2 < w; x2 += mw) c.drawImage(midS, x2, Math.round(my))
         c.globalAlpha = 1
         // haze at the horizon
         c.fillStyle = hazeG; c.fillRect(0, hy - v.h * 0.09, w, v.h * 0.09 + 2)
         // ROADSIDE band (0.70x)
         var nh = hy * 0.11, ny = hy - nh + 4 + hill, nw = nh * near.width / near.height
         var nxo = -(((S.par.roadside * 0.004 + S.curveOff * 6) * v.u) % nw + nw) % nw
-        for (var x3 = nxo; x3 < w; x3 += nw) c.drawImage(near, x3, ny, nw + 1, nh)
+        var nearS = scaled('near', near, nw, nh); nw = nearS.width; nxo = -(((S.par.roadside * 0.004 + S.curveOff * 6) * v.u) % nw + nw) % nw
+        for (var x3 = Math.round(nxo); x3 < w; x3 += nw) c.drawImage(nearS, x3, Math.round(ny))
         // lens flare ghosts (day, high/medium)
         if (!night && quality > 0 && !OFF('flare')) {
           c.globalCompositeOperation = 'lighter'
