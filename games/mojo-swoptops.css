@@ -707,3 +707,41 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
 .fxu{z-index:1}
 .mfx-seq.soft,#ov-swop>div[aria-hidden="true"]{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparent);mask-image:radial-gradient(closest-side,#000 62%,transparent)}
 .mfx.steam{filter:drop-shadow(0 2px 2px rgba(23,50,77,.35))}
+
+/* ── polish (owner 2026-10-03 "visualnya kurang di polish"): transform/opacity only, all off for reduced motion ── */
+/* board: a soft inner shadow and vignette over the ground only (objects and Mojo stay crisp above it) */
+.board::after{content:'';position:absolute;inset:0;border-radius:18px;pointer-events:none;z-index:1;box-shadow:inset 0 0 0 1px rgba(23,50,77,.08),inset 0 2px 10px rgba(23,50,77,.18);background:radial-gradient(ellipse at 50% 45%,transparent 62%,rgba(23,50,77,.14))}
+/* Mojo sits on a soft contact shadow (lighter and wider when it flies) */
+.mojo::before{content:'';position:absolute;left:16%;right:16%;bottom:5%;height:16%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.3),rgba(0,0,0,0));z-index:-1;transition:opacity .3s,transform .3s}
+.mojo.air::before{opacity:.45;transform:scale(1.25)}
+/* ambient idle: Mojo breathes, the flag waves, trees sway (individual scale/rotate, so they never fight the
+   playback's own transform animations) */
+.mojo:not(.air) .mj-rot{animation:mjBreathe 2.6s var(--ease-io) infinite}
+@keyframes mjBreathe{0%,100%{scale:1 1}50%{scale:1.015 1.03}}
+.ob.flag img.main{transform-origin:25% 95%;animation:flagWave 1.6s var(--ease-io) infinite alternate}
+@keyframes flagWave{from{rotate:-4deg}to{rotate:4deg}}
+.dec img{transform-origin:50% 92%;animation:treeSway 4.2s var(--ease-io) infinite alternate}
+.dec:nth-child(3n+1) img{animation-delay:-1.4s}.dec:nth-child(3n+2) img{animation-delay:-2.8s}
+@keyframes treeSway{from{rotate:-1.6deg}to{rotate:1.6deg}}
+/* palette: a ripple from the press (games/mojo-swoptops.js ripple(): a fixed layer that outlives a re-render) */
+.cmd-rip{position:fixed;z-index:20;border-radius:18px;overflow:hidden;pointer-events:none}
+.cmd-rip>i{position:absolute;border-radius:50%;background:rgba(255,255,255,.5);opacity:0}
+/* the running chip glows; a step done during the run pops its check */
+.slot.active .chip::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 4px #FFE14D,inset 0 0 16px 6px rgba(255,236,120,.95);pointer-events:none;animation:chipGlow .5s var(--ease-io) infinite alternate}
+@keyframes chipGlow{from{opacity:.3}to{opacity:1}}
+.p-strip.locked .slot.done::after{animation:checkPop .32s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes checkPop{from{transform:scale(0) rotate(-30deg)}to{transform:scale(1) rotate(0)}}
+/* Bo's bubble springs in from its tail with each new line */
+.bubble{transform-origin:0 85%}
+.bubble.say{animation:bubSpringA .38s cubic-bezier(.34,1.56,.64,1)}.bubble.say2{animation:bubSpringB .38s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bubSpringA{from{scale:.94}to{scale:1}}@keyframes bubSpringB{from{scale:.94}to{scale:1}}
+/* screens: a 200 ms fade with a short slide */
+.scr.active{animation:scrSlide .2s var(--ease-out)}
+@keyframes scrSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* Belajar: owner effect sprites */
+.lfx{position:absolute;left:50%;top:50%;width:min(180px,120%);aspect-ratio:1;background:no-repeat center/contain;pointer-events:none;opacity:0}
+.learn-stars{position:relative}
+@media (prefers-reduced-motion:reduce){
+ .mojo .mj-rot,.ob.flag img.main,.dec img,.slot.active .chip::after,.p-strip.locked .slot.done::after,.bubble.say,.bubble.say2{animation:none!important}
+ .scr.active{animation:scrIn .2s ease both}
+}

@@ -168,6 +168,7 @@
     var card = L.host.querySelector('.learn-card')
     card.classList.add('solved')
     sparkle(card.querySelector('.learn-pic'))
+    fxPop(card.querySelector('.learn-pic'), 'collect', 0)   // the owner's collect sparkle bursts behind the picture
     var foot = D.getElementById('learn-foot')
     foot.innerHTML = ''
     var mean = node('p', 'learn-mean')
@@ -178,6 +179,13 @@
     next.id = 'learn-next'
     foot.appendChild(next)
     anim(foot, [{ transform: 'translateY(8px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], 220)
+  }
+  // an owner Mojo effect sprite (assets/db/lib/mojo-fx) popping in the middle of host, then gone
+  function fxPop (host, key, delay) {
+    if (RM || !host) return
+    var s = node('i', 'lfx'); s.style.backgroundImage = 'url(' + MA.lib('mojo-fx/' + key) + ')'; host.appendChild(s)
+    W.setTimeout(function () { anim(s, [{ transform: 'translate(-50%,-50%) scale(.3)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.15)', opacity: 1, offset: 0.4 }, { transform: 'translate(-50%,-50%) scale(1.35)', opacity: 0 }], 700) }, delay || 0)
+    W.setTimeout(function () { s.remove() }, (delay || 0) + 760)
   }
   function sparkle (host) {
     if (RM || !host) return
@@ -211,6 +219,8 @@
     row.appendChild(again); row.appendChild(home); body.appendChild(row)
     card.appendChild(bo); card.appendChild(body)
     L.host.appendChild(card)
+    fxPop(st, 'level-up', 150)   // the owner's level-up badge over the stars, and the owner confetti
+    if (!RM && W.MojoFX) MojoFX.confetti(D.body, 24)
     API.say('Hebat! Kamu dapat ' + stars + ' bintang.', 'id')
   }
 

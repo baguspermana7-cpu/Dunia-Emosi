@@ -155,10 +155,13 @@
       cancelPlayback(); hush()
     }
     // a toast belongs to the screen that raised it (a map "segera dibuka" note never shows during play)
-    if (D.body.getAttribute('data-scr') !== id) { clearTimeout(toastT); $('toast').className = 'toast' }
-    [].forEach.call(D.querySelectorAll('.scr'), function (s) { s.classList.toggle('active', s.id === id) })
+    var fromScr = D.body.getAttribute('data-scr')
+    if (fromScr !== id) { clearTimeout(toastT); $('toast').className = 'toast' }
+    if (fromScr && fromScr !== id && SWOOSH_SCR[id]) cue('swoosh')   // a soft swoosh with the 200 ms screen slide
+    ;[].forEach.call(D.querySelectorAll('.scr'), function (s) { s.classList.toggle('active', s.id === id) })
     D.body.setAttribute('data-scr', id)
   }
+  var SWOOSH_SCR = { 'scr-home': 1, 'scr-regions': 1, 'scr-map': 1, 'scr-play': 1 }
   function overlay (id, html) { var o = $(id); if (html != null) { o.innerHTML = html; icons(o) } o.classList.add('on'); return o }
   function closeOv (id) { $(id).classList.remove('on') }
   function anim (e, frames, ms, ease, done) {
@@ -690,7 +693,20 @@
 
   /* Mouse drag starts after 10 px. Touch pans naturally; tap a slot for explicit reorder/delete controls. */
   var drag = null
+  /* a ripple from the press point. The palette re-renders on every added command, so the ripple lives in its own
+     fixed layer over the button (it outlives the button node) and removes itself */
+  function ripple (btn, e) {
+    if (RM || !btn.getBoundingClientRect) return
+    var r = btn.getBoundingClientRect(), w = el('i', 'cmd-rip'), dot = el('i')
+    w.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px'
+    var d = Math.max(r.width, r.height) * 2.2, x = (e && e.clientX ? e.clientX - r.left : r.width / 2), y = (e && e.clientY ? e.clientY - r.top : r.height / 2)
+    dot.style.cssText = 'left:' + (x - d / 2) + 'px;top:' + (y - d / 2) + 'px;width:' + d + 'px;height:' + d + 'px'
+    w.appendChild(dot); D.body.appendChild(w)
+    try { dot.animate([{ transform: 'scale(.08)', opacity: 0.85 }, { transform: 'scale(1)', opacity: 0 }], { duration: 420, easing: EOUT, fill: 'forwards' }) } catch (x2) {}
+    W.setTimeout(function () { w.remove() }, 460)
+  }
   function bindPaletteBtn (btn, c) {
+    btn.addEventListener('pointerdown', function (e) { if (!G.run) ripple(btn, e) })
     btn.addEventListener('pointerdown', function (e) { if (G.run || e.pointerType !== 'mouse') return; drag = { cmd: c, from: -1, x: e.clientX, y: e.clientY, on: false, src: btn } })
     btn.addEventListener('click', function () { if (btn.__dragged) { btn.__dragged = false; return } addCmd(c) })
   }
@@ -1045,6 +1061,16 @@
       fl.remove(); if (g) { g.classList.remove('bump'); void g.offsetWidth; g.classList.add('bump') }
     })
   }
+  /* the event question's bonus: a sparkle pops on the right answer and a bolt badge flies to the line that says so */
+  function bonusFly (fromEl, toEl) {
+    if (RM || !fromEl || !toEl) return
+    var a = center(fromEl), b = center(toEl)
+    var pop = el('div', 'fly', '<img alt="" src="' + MA.lib('mojo-fx/collect') + '">'); D.body.appendChild(pop)
+    anim(pop, [{ transform: 'translate(' + (a[0] - 22) + 'px,' + (a[1] - 22) + 'px) scale(.4)', opacity: 0 }, { transform: 'translate(' + (a[0] - 22) + 'px,' + (a[1] - 22) + 'px) scale(1.6)', opacity: 1, offset: 0.4 }, { transform: 'translate(' + (a[0] - 22) + 'px,' + (a[1] - 22) + 'px) scale(2)', opacity: 0 }], 520, EOUT, function () { pop.remove() })
+    var fl = el('div', 'fly', '<img alt="" src="' + MA.src('obj/bolt') + '">'); D.body.appendChild(fl)
+    anim(fl, [{ transform: 'translate(' + (a[0] - 22) + 'px,' + (a[1] - 22) + 'px) scale(.6)', opacity: 0 }, { transform: 'translate(' + (a[0] - 22) + 'px,' + (a[1] - 70) + 'px) scale(1.3)', opacity: 1, offset: 0.35 },
+      { transform: 'translate(' + (b[0] - 22) + 'px,' + (b[1] - 22) + 'px) scale(.8)', opacity: 1, offset: 0.9 }, { transform: 'translate(' + (b[0] - 22) + 'px,' + (b[1] - 22) + 'px) scale(.8)', opacity: 0 }], 820, 'cubic-bezier(.45,0,.55,1)', function () { fl.remove() })
+  }
   function cellCenter (r, c) { return [(c + 0.5) * CELL, (r + 0.5) * CELL] }
   function spray (e) {
     SND.spray()
@@ -1245,6 +1271,7 @@
         if (resolved || answered) return
         if (String(q.choices[+b.getAttribute('data-answer')]) === String(q.answer)) {
           answered = true; G.bonus++; S.rewardBolts++; save(); storePacing(); SND.goal(); b.disabled = true
+          bonusFly(b, $('event-feedback'))
           $('event-feedback').textContent = 'Hebat! Ada ' + q.n + ' ' + q.noun + '. Satu lencana baut masuk ke Profil.'
           $('event-skip').className = 'btn b-go fk'
           ;[].forEach.call(o.querySelectorAll('[data-answer]'),function (choice) { choice.disabled = true })
@@ -1316,7 +1343,8 @@
         later(function () {
           if (String(v) === q.answer) {
             b.classList.add('ok'); SND.goal(); $('mg-pair').textContent = 'Pas! Tinggi ' + v + '.'
-            later(function () { MG = null; closeOv('ov-mg'); done(v) }, 700)
+            MG = null   // answered: nothing is asked during the 0.7 s "Pas!" moment
+            later(function () { closeOv('ov-mg'); done(v) }, 700)
           } else {
             b.classList.add('off'); SND.think()
             $('mg-pair').textContent = v > mg.target ? 'Terlalu tinggi. ' + q.hint1 : 'Belum sampai. ' + q.hint1

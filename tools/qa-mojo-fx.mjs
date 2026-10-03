@@ -90,6 +90,41 @@ console.log('reduced motion PASS');
  await p._ctx.close()}
 console.log('performance PASS',JSON.stringify(globalThis.__perf||''));
 
+// ── 7. polish: idle life, palette ripple, running chip glow, check pop, bubble spring, screen slide, extras ──
+{const p=await page(1280,800);
+ const anims=(sel,name)=>p.evaluate((sel,name)=>[...document.querySelectorAll(sel)].some(e=>e.getAnimations().some(a=>a.animationName===name&&a.playState==='running')),sel,name);
+ const pseudo=name=>p.evaluate(name=>document.getAnimations().some(a=>a.animationName===name),name);
+ await p.evaluate(()=>__mojo.start('t1'));await sleep(300);await intro(p);
+ ok(await anims('#mojo .mj-rot','mjBreathe'),'Mojo breathes while idle');ok(await anims('.ob.flag img.main','flagWave'),'the flag waves');ok(await anims('.dec img','treeSway'),'the trees sway');
+ const slide=await p.evaluate(()=>{__mojo.home();const a=document.querySelector('.scr.active').getAnimations().find(x=>x.animationName==='scrSlide');return a&&a.effect.getTiming().duration});
+ ok(slide===200,'screens change with a 200 ms slide ('+slide+')');
+ await p.evaluate(()=>__mojo.start('t2'));await sleep(300);await intro(p);
+ const cmd=await p.$('#palette [data-cmd]');const r=await cmd.boundingBox();await p.touchscreen.tap(r.x+r.width/2,r.y+r.height/2);await sleep(30);
+ ok(await p.evaluate(()=>{const w=document.querySelector('.cmd-rip>i');return!!w&&w.getAnimations().length>0}),'a palette press ripples');
+ await p.evaluate(()=>document.getElementById('btn-hint').click());await sleep(50);ok(await pseudo('bubSpringA')||await pseudo('bubSpringB'),'Bo\'s bubble springs in with a new line');
+ await p.evaluate(sol=>{document.getElementById('btn-clear').click();document.getElementById('cl-yes').click();for(const c of sol)document.querySelector(`#palette [data-cmd="${c}"]`).click();document.getElementById('btn-run').click()},await p.evaluate(()=>__mojo.solution()));
+ let glow=false,check=false;for(let i=0;i<60&&!(glow&&check);i++){glow=glow||await pseudo('chipGlow');check=check||await pseudo('checkPop');await sleep(60)}
+ ok(glow,'the running chip glows');ok(check,'a finished step pops its check');
+ // event question: the right answer bursts and a bolt flies to the line that says so
+ await p.evaluate(()=>__mojo.start('m2'));await sleep(300);await intro(p);
+ await p.evaluate(()=>{document.querySelector('#palette [data-cmd="up"]').click();const n=performance.now.bind(performance);window.__nc=n;performance.now=()=>n()+130000;document.getElementById('btn-run').click()});
+ for(let i=0;i<40&&!(await p.evaluate(()=>__mojo.mg()?.kind==='event'));i++)await sleep(150);await p.evaluate(()=>{performance.now=window.__nc});
+ await p.evaluate(()=>{const a=__mojo.mg().answer;const b=[...document.querySelectorAll('#ov-mg.on [data-answer]')].find(x=>x.textContent===String(a));b.click()});await sleep(200);
+ ok(await p.evaluate(()=>[...document.querySelectorAll('.fly img')].map(i=>i.getAttribute('src')).some(s=>/mojo-fx\/collect/.test(s))&&[...document.querySelectorAll('.fly img')].some(i=>/bolt/.test(i.getAttribute('src')))),'event question: a collect burst and a bolt fly-in');
+ await p.evaluate(()=>document.getElementById('event-skip').click());await sleep(300);
+ // Belajar: a solved word bursts with the owner sparkle; the reward card gets the level-up badge and confetti
+ await p.evaluate(()=>__mojo.home());await sleep(300);await p.evaluate(()=>document.getElementById('btn-learn').click());await sleep(500);
+ for(let r=0;r<5;r++){const st=await p.evaluate(()=>MojoLearn.state());
+  if(st.kind==='susun'){for(const ch of st.word.slice(await p.$$eval('#learn-slots .lslot.fixed',a=>a.length)))await p.evaluate(ch=>{const t=[...document.querySelectorAll('#learn-tiles .ltile')].find(t=>!t.disabled&&t.dataset.l===ch);t.click()},ch)}
+  else await p.evaluate(()=>document.querySelector('#learn-opts .lopt[data-ok="1"]').click());
+  await sleep(120);if(r===0)ok(await p.evaluate(()=>!!document.querySelector('.learn-pic .lfx')),'Belajar: a solved word bursts with the owner sparkle');
+  await sleep(300);await p.evaluate(()=>document.getElementById('learn-next').click());await sleep(300)}
+ await sleep(250);ok(await p.evaluate(()=>!!document.querySelector('.learn-stars .lfx')&&MojoFX.names().includes('confetti')),'Belajar reward: level-up badge and owner confetti');
+ await p._ctx.close()}
+{const p=await page(1280,800,{reduced:true});await p.evaluate(()=>__mojo.start('t1'));await sleep(300);await intro(p);
+ ok(await p.evaluate(()=>!document.getAnimations().some(a=>['mjBreathe','flagWave','treeSway','chipGlow'].includes(a.animationName))),'reduced motion: no idle loops');await p._ctx.close()}
+console.log('polish PASS');
+
 await browser.close();
 assert.deepEqual(errors,[],'page errors: '+errors.join(' | '));
 console.log('qa-mojo-fx: '+passed+' checks PASS');
