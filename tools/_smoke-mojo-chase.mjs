@@ -17,8 +17,10 @@ await p.waitForSelector('#mc-go',{timeout:15000}); await sleep(400); await p.scr
 await p.click('#mc-go'); await sleep(1500); await p.screenshot({path:`${out}/${W}-${stage}-start.png`});
 await p.evaluate(m=>__mojoChase.auto({mode:m,boost:true}),process.env.M||'clean');
 if(process.env.OFF)await p.evaluate(o=>localStorage.off=o,process.env.OFF);
-if(process.env.Q){await p.evaluate(q=>{__mojoChase.quality(+q,true);window.__mcOff=JSON.parse(localStorage.off||'{}');window.__mcFlush=1;__mojoChase.profile(true)},process.env.Q)}
-for(let i=0;i<(+process.env.N||40);i++){ await sleep(2500); if(i<14)await p.screenshot({path:`${out}/${W}-${stage}-t${i}.png`}); const s=await p.evaluate(()=>__mojoChase.state()); console.log(i, s.state, s.prog.toFixed(2), 'hits',s.hits,'stars',s.stars,'rocket',s.rocket,'q',s.quality,'fm',s.frameMedian.toFixed(1),'work',JSON.stringify(s.workMedian), 'miss',s.missing.join(','), s.prof?JSON.stringify(Object.fromEntries(Object.entries(s.prof).map(([k,v])=>[k,+v.toFixed(1)]))):''); if(s.state==='result'||s.state==='done')break }
+if(process.env.HIDE)await p.evaluate(h=>{const st=document.createElement('style');st.textContent=h+'{display:none!important}';document.head.appendChild(st)},process.env.HIDE);
+if(process.env.Q){await p.evaluate(q=>{__mojoChase.quality(+q,true);window.__mcOff=JSON.parse(localStorage.off||'{}');__mojoChase.profile(true)},process.env.Q)}
+for(let i=0;i<(+process.env.N||40);i++){ await sleep(2500); if(i<14&&!process.env.NOSHOT)await p.screenshot({path:`${out}/${W}-${stage}-t${i}.png`}); const s=await p.evaluate(()=>__mojoChase.state()); console.log(i, s.state, s.prog.toFixed(2), 'hits',s.hits,'stars',s.stars,'rocket',s.rocket,'q',s.quality,'fm',s.frameMedian.toFixed(1),'work',JSON.stringify(s.workMedian), 'miss',s.missing.join(','),'parts',s.particles, s.prof?JSON.stringify(Object.fromEntries(Object.entries(s.prof).map(([k,v])=>[k,+v.toFixed(1)]))):''); if(s.state==='result'||s.state==='done')break }
 await p.screenshot({path:`${out}/${W}-${stage}-end.png`});
+const ft=await p.evaluate(()=>__mojoChase.state().frameTimes).catch(()=>null); if(ft){const a=ft.slice().sort((x,y)=>x-y),q=f=>a[Math.floor(a.length*f)];console.log('p50',q(.5),'p95',q(.95),'p99',q(.99),'n',a.length)}
 console.log('errors',errs.slice(0,10));
 await b.close();

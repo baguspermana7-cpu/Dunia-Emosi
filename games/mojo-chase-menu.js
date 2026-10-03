@@ -73,11 +73,12 @@
       var b = el('button', 'race-card' + (ok ? '' : ' lock')); b.type = 'button'; b.setAttribute('data-stage', st.id)
       b.setAttribute('aria-label', st.title + (ok ? '' : ' (terkunci)'))
       var stars = ''; for (var k = 1; k <= 3; k++) stars += '<img class="' + (rec && rec.stars >= k ? '' : 'off') + '" alt="" src="' + lib('mojo-chase/items/star') + '">'
-      b.innerHTML = '<span class="pic" style="background-image:url(' + lib('mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + lib('mojo-chase/vehicles/' + st.target) + '"><span class="num fk">' + (i + 1) + '</span></span>' +
-        '<span class="meta"><strong class="fk">' + st.title + '</strong><span class="sub">' + st.place + '</span><span class="st">' + stars + '</span></span>'
+      b.innerHTML = '<span class="pic" style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + lib('mojo-chase/vehicles/' + st.target) + '"><span class="num fk">' + (i + 1) + '</span></span>' +
+        (ok ? '' : '<span class="lk"><i class="ico">' + (W.MojoArt && W.MojoArt.icon ? W.MojoArt.icon('lock') : '') + '</i></span>') +
+        '<span class="meta"><strong class="fk">' + st.title + '</strong><span class="sub">' + st.place + '</span>' + (ok ? '<span class="st">' + stars + '</span>' : '<span class="hint">Selesaikan tahap ' + (i - OPEN_AHEAD + 1) + ' dulu</span>') + '</span>'
       b.addEventListener('click', function () {
         API.cue()
-        if (!ok) { API.toast('Selesaikan balapan ' + (i - OPEN_AHEAD + 1) + ' dulu, ya!'); return }
+        if (!ok) { API.toast('Selesaikan tahap ' + (i - OPEN_AHEAD + 1) + ' dulu, ya!'); return }
         playStage(st)
       })
       grid.appendChild(b)

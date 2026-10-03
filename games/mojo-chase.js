@@ -65,7 +65,8 @@
         } catch (e) {}
       },
       whoosh: function () { noise(0.22, 0.12, 1800, true) },
-      chime: function () { tone(1046, 1568, 0.16, 0.09, 'triangle'); tone(1568, 2093, 0.18, 0.06, 'sine', 0.06) },
+      chime: function (combo) { var k = Math.pow(1.122, combo || 0); tone(1046 * k, 1568 * k, 0.16, 0.09, 'triangle'); tone(1568 * k, 2093 * k, 0.18, 0.06, 'sine', 0.06) },
+      clack: function () { tone(1800, 900, 0.05, 0.12, 'square'); tone(600, 300, 0.08, 0.1, 'triangle', 0.03) },
       brok: function () { tone(140, 60, 0.28, 0.32, 'sine'); noise(0.18, 0.28, 700); tone(420, 300, 0.07, 0.12, 'square', 0.02) },   // a soft clunk, never a buzzer
       box: function () { tone(523, 1046, 0.12, 0.1, 'triangle'); tone(784, 1318, 0.16, 0.08, 'triangle', 0.08); tone(1046, 2093, 0.2, 0.06, 'sine', 0.16) },
       boost: function () { noise(0.5, 0.14, 2400, true); tone(220, 660, 0.45, 0.06, 'sawtooth') },
@@ -133,12 +134,14 @@
     for (var hi = 0; hi < 3; hi++) { var hImg = el('img'); hImg.alt = ''; hImg.src = lib('mojo-chase/items/heart'); H.hearts.appendChild(hImg) }
 
     /* images */
-    var img = {}, need = {}
+    var img = {}, need = {}, imgP = {}
     function want (name, key) { need[name] = key }
     want('rear', 'mojo-rear/' + rearKey); want('target', 'mojo-chase/vehicles/' + targetName); want('police', 'mojo-chase/vehicles/police-van')
     want('robber', 'mojo-chase/robbers/robber-beanie')
     Object.keys(OBJ).forEach(function (k) { want('o:' + k, OBJ[k].k) })
-    want('far/' + stage.far, 'mojo-chase/far/' + stage.far); if (stage.mid) want('far/' + stage.mid, 'mojo-chase/far/' + stage.mid)
+    // FAR / MID strips: the Codex strip when the stage has one (key-based: a better delivery replaces it by re-ingest)
+    want('FAR', stage.cfar ? 'mojo-chase/cfar/' + stage.cfar : 'mojo-chase/far/' + stage.far)
+    if (stage.cmid) want('MID', 'mojo-chase/cmid/' + stage.cmid); else if (stage.mid) want('MID', 'mojo-chase/far/' + stage.mid)
     TR.BIOME[stage.biome].props.forEach(function (p) { want('p:' + p[0], TR.PROP_KEY[p[0]]) })
     ;['lamp', 'chevron-yellow', 'chevron-red', 'billboard', 'swoppiton', 'gantry', 'finish', 'flag-checker'].forEach(function (k) { want('p:' + k, TR.PROP_KEY[k]) })
     FX_KEYS.forEach(function (k) { want('fx/' + k, 'mojo-fx/' + k) })
@@ -148,8 +151,11 @@
         var t = setTimeout(res, 9000)
         names.forEach(function (n) {
           var im = new Image(); im.decoding = 'async'
-          im.onload = im.onerror = function () { if (im.naturalWidth) img[n] = im; left--; bar.style.width = Math.round(100 * (1 - left / names.length)) + '%'; if (!left) { clearTimeout(t); res() } }
+          var fin = function () { if (im.naturalWidth) img[n] = im; left--; bar.style.width = Math.round(100 * (1 - left / names.length)) + '%'; if (!left) { clearTimeout(t); res() } }
           im.src = lib(need[n])
+          // a stage never starts until every sprite is DECODED (no first-draw decode hitch mid-chase)
+          if (im.decode) im.decode().then(fin, function () { if (im.complete && im.naturalWidth) fin(); else { im.onload = fin; im.onerror = fin } })
+          else { im.onload = im.onerror = fin }
         })
       })
     }
@@ -157,14 +163,14 @@
     /* view */
     var v = { w: 0, h: 0, pr: 1, u: 1, cx: 0, hy: 0, hw: 0, vh: 0, port: false, playerY: 0 }, base = { hw: 0, vh: 0, hy: 0 }
     var quality = RM ? 1 : 2, drawN = 200
-    var QUAL = [{ pr: 0.6, n: 110, cap: 0.35 }, { pr: 0.85, n: 160, cap: 0.6 }, { pr: 1.35, n: 210, cap: 1 }]
+    // effects drop first (draw distance, particle cap, sky effects), resolution last and never below 0.8x DPR-1 (audit C1)
+    var QUAL = [{ pr: 0.8, n: 120, cap: 0.35 }, { pr: 0.9, n: 160, cap: 0.6 }, { pr: 1, n: 210, cap: 1 }]
     function resize () {
       var cw = host.clientWidth || W.innerWidth, chh = host.clientHeight || W.innerHeight, Q = QUAL[quality]
       v.port = chh > cw * 1.1
       host.classList.toggle('land', !v.port)
       var u = clamp(Math.min(cw, chh) / 390, 0.92, 1.6); host.style.setProperty('--u', u.toFixed(3))
-      v.pr = Math.min(W.devicePixelRatio || 1, 2) * Q.pr / 1.35 * (quality === 2 ? 1 : 1)
-      v.pr = Math.min(v.pr, 2)
+      v.pr = Math.max(0.8, Math.min(W.devicePixelRatio || 1, 2) * Q.pr)
       canvas.width = Math.round(cw * v.pr); canvas.height = Math.round(chh * v.pr)
       v.w = canvas.width; v.h = canvas.height; v.u = v.pr * u; v.css = cw / canvas.width
       v.cx = v.w / 2
@@ -182,7 +188,7 @@
     var track = null, scene = null, seed = (cfg.seed || (Date.now() & 0xffff)) | 0, rr = R.rng(seed + 5)
     var S = { state: 'load', t: 0, z: 0, speed: 0, lane: 1, lanePos: 1, laneFrom: 1, laneT: 1, laneDur: LANE_MS, laneStart: 0, lastLaneMs: 0,
       boost: 0, boostCharge: 1, recover: 0, hits: 0, hearts: 3, stars: 0, boxes: 0, rocket: 0, prog: 0, best: 0, elapsed: 0, seconds: cfg.seconds || stage.seconds,
-      hasRocket: false, rocketBoxAlive: false, shield: 0, magnet: 0, slow: 0, spin: 0, slide: 0, shake: 0, flash: 0, strobe: 0, stop: 1, hitStop: 0,
+      hasRocket: false, rocketBoxAlive: false, shield: 0, magnet: 0, slow: 0, spin: 0, slide: 0, shake: 0, flash: 0, strobe: 0, stop: 1, hitStop: 0, hitScale: 0.22,
       punch: 0, tunnel: 0, eduDone: false, edu: null, eduSeg: -1, eduResult: null, gadgetUsed: false, lockT: 0, cap: null, resolveT: 0,
       targetLane: 1, targetLanePos: 1, targetNext: 3, nextRow: 30, rows: 0, starsSpawned: 0, tutorial: 0, brok: 0, recoveryMs: [], lastHitAt: 0,
       frames: [], tierFrames: { 0: [], 1: [], 2: [] }, auto: null, paused: false, policeZ: 0, finishSeg: -1, heartT: 0, comets: [], rings: [], bursts: [] }
@@ -211,10 +217,11 @@
     /* input */
     function laneTo (d) {
       if (!(S.state === 'active' || S.state === 'tutorial' || S.state === 'lock')) return
+      if (S.laneT < 1) { S.qLane = d; return }          // one buffered input during a transition
       var nl = S.lane + d
       if (nl < 0 || nl > 2) { scrape(d); return }
       S.laneFrom = S.lanePos; S.lane = nl; S.laneT = 0; S.laneDur = LANE_MS * Math.max(0.7, Math.abs(nl - S.lanePos)); S.laneStart = performance.now()
-      AU.whoosh(); skid()
+      AU.whoosh(); skid(); S.laneFx = 0.4; S.laneFxLane = nl
     }
     function boost () {
       if (!(S.state === 'active' || S.state === 'lock')) return
@@ -279,7 +286,6 @@
       for (var i = 0; i < 3; i++) {
         var p = FX.spawn(img['fx/tire-smoke'] || TEX.puff, m.x + (i - 1) * cp * 0.35, m.y - cp * 0.02, (Math.random() - 0.5) * 40 * v.u, 10 * v.u, 0.7, cp * 0.22, false); if (p) { p.grow = cp * 0.5; p.a = 0.5; p.flow = 1 }
       }
-      if (img['fx/skid']) for (var j = -1; j <= 1; j += 2) { var s = FX.spawn(img['fx/skid'], m.x + j * cp * 0.3, m.y + cp * 0.05, 0, 0, 0.6, cp * 0.35, false); if (s) { s.a = 0.45; s.flow = 1 } }
     }
     function scrape (d) {
       var m = mojoXY(), cp = carPx(), x = m.x + d * cp * 0.5
@@ -301,7 +307,9 @@
       var cp = carPx(), t = o.type
       if (t === 'star' || t === 'coin') {
         S.stars += t === 'coin' ? 2 : 1; S.prog += 0.003; S.boostCharge = Math.min(1, S.boostCharge + 0.12)
-        AU.chime(); ring(sx, sy, 0); comet(sx, sy)
+        S.combo = S.t - (S.lastPick || -9) < 1.2 ? Math.min(6, (S.combo || 0) + 1) : 0; S.lastPick = S.t
+        AU.chime(S.combo); ring(sx, sy, S.combo >= 3 ? 1 : 0); comet(sx, sy)
+        if (S.combo >= 2 && S.state === 'active') call('Kombo ' + (S.combo + 1) + '!', 700, 'combo')
         burst(sx, sy, 10, TEX.sparkle, 520 * v.u, 0.55, cp * 0.16, true)
         var g = FX.spawn(TEX.glowY, sx, sy, 0, 0, 0.35, cp * 0.9, true); if (g) g.grow = cp * 1.2
         if (img['fx/collect']) { var cpop = FX.spawn(img['fx/collect'], sx, sy, 0, -60 * v.u, 0.45, cp * 0.4, false); if (cpop) cpop.grow = cp * 0.6 }
@@ -320,6 +328,10 @@
       else { S.boost = 1.5; AU.boost() }
       H.crateBox.classList.remove('bump'); void H.crateBox.offsetWidth; H.crateBox.classList.add('bump')
     }
+    function recovered () {   // control fully back: a quick shimmer ring around Mojo
+      var m = mojoXY(), cp = carPx(); ring(m.x, m.y - cp * 0.4, 1)
+      for (var i = 0; i < 10; i++) { var a = i * TAU / 10, p = FX.spawn(TEX.sparkle, m.x + Math.cos(a) * cp * 0.5, m.y - cp * 0.4 + Math.sin(a) * cp * 0.25, Math.cos(a) * 120 * v.u, Math.sin(a) * 60 * v.u - 40 * v.u, 0.5, cp * 0.12, true); if (p) p.drag = 2 }
+    }
     function hit (o, sx, sy) {
       o.taken = true
       var info = OBJ[o.type], cp = carPx()
@@ -334,12 +346,12 @@
         return
       }
       S.hits++; S.brok++; S.hearts = Math.max(0, S.hearts - 1); S.heartT = 0
-      S.recover = 1.4; S.recoverMax = 1.4; S.lastHitAt = performance.now(); S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
+      S.recover = 1.4; S.recoverMax = 1.4; S.lastHitAt = performance.now(); if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
       if (!RM) S.shake = 0.55
       S.squash = 0.2; AU.brok()
       for (var i = 0; i < S.bursts.length; i++) if (!S.bursts[i].on) { var b = S.bursts[i]; b.on = true; b.x = sx; b.y = sy - cp * 0.2; b.t = 0; break }
       burst(sx, sy - cp * 0.1, 14, TEX.chunk, 900 * v.u, 0.9, cp * 0.16, false)
-      for (var k = 0; k < FX.MAX && k < 18; k++) { var p = FX.spawn(TEX.chunk, sx, sy, (Math.random() - 0.5) * 1100 * v.u, -(300 + Math.random() * 700) * v.u, 1.0, cp * 0.14, false); if (p) { p.ay = 2200 * v.u; p.vr = (Math.random() - 0.5) * 14; p.rot = 1 } }
+      for (var k = 0; k < FX.MAX && k < 18; k++) { var p = FX.spawn(TEX.chunk, sx, sy, (Math.random() - 0.5) * 1100 * v.u, -(300 + Math.random() * 700) * v.u, 1.2, cp * 0.14, false); if (p) { p.ay = 2200 * v.u; p.vr = (Math.random() - 0.5) * 14; p.rot = 1; p.floor = sy + cp * 0.15 } }   // chunky debris arcs and bounces
       if (img['fx/explosion']) { var e = FX.spawn(img['fx/explosion'], sx, sy - cp * 0.15, 0, 0, 0.4, cp * 0.7, true); if (e) e.grow = cp * 1.6 }
       burst(sx, sy, 10, TEX.puff, 400 * v.u, 0.8, cp * 0.4, false)
       if (W.VFX && W.VFX.dom && !RM) { try { var hr = host.getBoundingClientRect(); W.VFX.dom(hr.left + sx * v.css, hr.top + (sy - cp * 0.2) * v.css, { fx: 'boom', size: cp * v.css * 1.1 }) } catch (e2) {} }
@@ -408,7 +420,7 @@
         '<div class="cast"><img alt="" src="' + lib('mojo-char/bo-celebrate') + '"><img alt="" src="' + lib('mojo-chase/vehicles/police-van') + '"></div>' +
         '<p>' + (cfg.story_outro || stage.outro) + '</p><div class="why"><span>Bintang terkumpul: ' + S.stars + '</span><span>' +
         (S.hits <= 2 ? 'Menyetir dengan rapi!' : 'Tabrakan: ' + S.hits + '. Lain kali lebih rapi, ya!') + '</span>' +
-        (e ? '<span>' + (e.correct ? 'Jalur ' + e.answer + ' tepat sekali!' : 'Jawabannya jalur ' + e.answer + '.') + '</span>' : '') + '</div>',
+        (e ? '<span>' + (e.correct ? 'Soal jalur: ' + e.prompt.replace(/[!?]$/, '') + '. Kamu memilih jalur ' + e.answer + '. Tepat sekali!' : 'Soal jalur: ' + e.prompt.replace(/[!?]$/, '') + '. Jalur yang benar: ' + e.answer + '. Kamu memilih jalur ' + e.chose + '. Lain kali pasti bisa!') + '</span>' : '') + '</div>',
         [{ t: cfg.again ? 'Main Lagi' : 'Lanjut', id: 'mc-done', fn: function () { finish(true, false) } }].concat(cfg.again ? [{ t: 'Lanjut', id: 'mc-next', soft: true, fn: function () { finish(true, false); res2() } }] : []))
       function res2 () {}
     }
@@ -428,15 +440,26 @@
       if (S.paused || S.state === 'result' || S.state === 'load' || S.state === 'done') return
       var t0 = performance.now()
       if (!S.qLock) adapt(dtr)
-      var ts = S.hitStop > 0 ? 0.22 : 1
+      // FIXED-STEP simulation at 120 Hz + interpolated rendering: motion never stutters when frame times vary.
+      // Hit-stop / slow-mo scale simulated time; a tab switch is capped (dtr <= 50 ms, at most 8 steps).
+      var ts = S.hitStop > 0 ? S.hitScale : 1
       S.hitStop = Math.max(0, S.hitStop - dtr)
-      var dt = dtr * ts
-      update(dt, dtr)
+      acc += dtr * ts
+      var steps = 0
+      while (acc >= STEP && steps < 8) { prevZ = S.z; prevLane = S.lanePos; prevCamX = camX; update(STEP, STEP / ts); acc -= STEP; steps++ }
+      if (steps >= 8) acc = 0
+      var al = acc / STEP, rz = S.z, rl = S.lanePos
+      S.z = prevZ + (rz - prevZ) * al; S.lanePos = prevLane + (rl - prevLane) * al
+      FDT = dtr
       render(dtr)
+      S.z = rz; S.lanePos = rl
       var ft = performance.now() - t0
-      S.frames.push(dtr * 1000); if (S.frames.length > 900) S.frames.shift()
-      var tf = S.tierFrames[quality]; tf.push(ft); if (tf.length > 600) tf.shift()
+      FR[frN % FR.length] = dtr * 1000; frN++
+      var tr = TF[quality]; tr.a[tr.n % tr.a.length] = ft; tr.n++
     }
+    var STEP = 1 / 120, acc = 0, prevZ = 0, prevLane = 1, prevCamX = 0, FDT = 1 / 60
+    var FR = new Float32Array(1200), frN = 0, TF = [{ a: new Float32Array(600), n: 0 }, { a: new Float32Array(600), n: 0 }, { a: new Float32Array(600), n: 0 }]
+    function ringArr (r, n) { var len = Math.min(n, r.length), o = []; for (var i = 0; i < len; i++) o.push(r[i]); return o }
 
     function update (dt, dtr) {
       S.t += dtr
@@ -449,13 +472,14 @@
       if (S.laneT < 1) {
         S.laneT = Math.min(1, S.laneT + dt * 1000 / S.laneDur)
         var e = 1 - Math.pow(1 - S.laneT, 3); S.lanePos = S.laneFrom + (S.lane - S.laneFrom) * e
-        if (S.laneT >= 1) { S.lastLaneMs = performance.now() - S.laneStart; S.lanePos = S.lane }
+        if (S.laneT >= 1) { S.lastLaneMs = performance.now() - S.laneStart; S.lanePos = S.lane; if (S.qLane) { var qd = S.qLane; S.qLane = 0; laneTo(qd) } }
       }
       if (S.slide > 0) { S.slide -= dt; S.lanePos += Math.sin(S.t * 14) * dt * 0.6 }
       if (S.spin > 0) S.spin -= dt
+      if (S.laneFx > 0) S.laneFx -= dt
       // speed
       var mult = 1
-      if (S.recover > 0) { var k = S.recover / (S.recoverMax || 1.4); mult = 1 - 0.32 * k; S.recover -= dt; if (S.recover <= 0 && S.recoverMax >= 1.4) S.recoveryMs.push(Math.round(performance.now() - S.lastHitAt)) }
+      if (S.recover > 0) { var k = S.recover / (S.recoverMax || 1.4); mult = 1 - 0.32 * k; S.recover -= dt; if (S.recover <= 0 && S.recoverMax >= 1.4) { S.recoveryMs.push(Math.round(performance.now() - S.lastHitAt)); recovered() } }
       if (S.boost > 0) { S.boost -= dt; mult *= 1.32 }
       var seg = track.seg(Math.floor((S.z + Z_P) / TR.SEG))
       if (seg && seg.surface === 'mud') mult *= 0.9
@@ -479,7 +503,7 @@
         if (S.slow > 0) S.slow -= dt
         if (S.magnet > 0) S.magnet -= dt
         if (!S.eduDone && S.prog > 0.32 && !S.edu) startEdu(Math.floor((S.z + Z_P) / TR.SEG) + 75)
-        if (S.prog >= 1 && S.hasRocket && S.state === 'active') { S.state = 'lock'; S.lockT = 0; call('Roket siap! Ketuk roketnya!', 2000, 'lock'); H.ret.classList.add('on') }
+        if (S.prog >= 1 && S.hasRocket && S.state === 'active') { S.state = 'lock'; S.lockT = 0; call('Roket siap! Ketuk roketnya!', 2000, 'lock'); H.ret.classList.add('on'); AU.clack() }
         if (!S.hasRocket && S.prog >= 0.9 && S.rocketBoxAlive && S.rocketSeg < baseI) S.rocketBoxAlive = false   // missed: another comes
         if (S.prog > 0.84 && S.prog < 0.9) call('Hampir sampai!', 1500, 'close')
       }
@@ -507,7 +531,7 @@
         var choice = S.edu.choices[Math.round(S.lanePos)], ok = choice === S.edu.answer
         S.eduResult = { asked: true, prompt: S.edu.prompt, answer: S.edu.answer, chose: choice, correct: ok }
         if (ok) { S.stars += 3; S.prog += 0.03; AU.cue('correct'); var m = mojoXY(); burst(m.x, m.y - carPx() * 0.6, 24, TEX.sparkle, 900 * v.u, 0.9, carPx() * 0.2, true); ring(m.x, m.y - carPx() * 0.5, 0); call('Benar! Jalur ' + S.edu.answer + '! Bonus bintang!', 1800, 'eduok') }
-        else call('Jawabannya ' + S.edu.answer + '. Ayo terus kejar!', 1800, 'eduno')
+        else call('Jalur yang benar ' + S.edu.answer + '. Ayo terus kejar!', 1800, 'eduno')
       }
       // target weaving
       S.targetNext -= dt
@@ -527,7 +551,7 @@
       hudUpdate()
       if (S.auto) autopilot()
     }
-    function gap () { return 2000 + (1 - Math.min(1, S.prog)) * 11000 }
+    function gap () { return 1900 + (1 - Math.min(1, S.prog)) * 6200 }   // the robber stays readable on screen (mockup)
     function laneX (lanePos) { return TR.LANES[0] * TR.ROADW + (TR.LANES[2] - TR.LANES[0]) * TR.ROADW * lanePos / 2 }
     var tmpP = { x: 0, y: 0, w: 0, s: 0 }
     function laneScreen (lane, z) {
@@ -547,7 +571,7 @@
         var s1 = FX.spawn(TEX.puff, CAP.x, CAP.y, (Math.random() - 0.5) * 30, 20, 0.9, cp * 0.14, false); if (s1) { s1.grow = cp * 0.35; s1.a = 0.75 }
         var f1 = FX.spawn(TEX.glowO, CAP.x, CAP.y, 0, 0, 0.18, cp * 0.35, true); if (f1) f1.grow = -cp * 0.6
         if (CAP.t > 0.95 || Math.abs(CAP.x - tp.x) + Math.abs(CAP.y - ty) < 12 * v.u) {
-          CAP.hit = true; CAP.netT = 0; S.hitStop = RM ? 0 : 0.45; S.flash = RM ? 0 : 0.6; AU.net()
+          CAP.hit = true; CAP.netT = 0; S.hitStop = RM ? 0 : 0.6; S.hitScale = 0.3; S.flash = RM ? 0 : 0.6; AU.net()
           burst(tp.x, ty, 40, TEX.sparkle, 1200 * v.u, 1.1, cp * 0.2, true)
           var cols = [TEX.glowY, TEX.glowR, TEX.glowB, TEX.glowC, TEX.glowP]
           for (var i = 0; i < 70; i++) { var p = FX.spawn(img['fx/confetti'] || cols[i % 5], tp.x, ty, (Math.random() - 0.5) * 1400 * v.u, -(400 + Math.random() * 900) * v.u, 2.2, cp * 0.09, false); if (p) { p.ay = 900 * v.u; p.drag = 1.2; p.vr = (Math.random() - 0.5) * 12; p.rot = 1 } }
@@ -572,32 +596,33 @@
         if (d) { d.grow = cp * 0.3; d.a = stage.biome === 'desert' ? 0.55 : 0.32; d.flow = 0.8 }
       }
       // speed lines from the vanishing point (boost) + edge motion streaks
-      if ((S.boost > 0 || S.speed > 1.08) && Math.random() < dt * 60 * q) {
+      if ((S.boost > 0 || S.speed > 1.08 || S.prog > 0.55) && Math.random() < dt * (S.boost > 0 ? 60 : 30 * Math.max(0, S.prog - 0.5)) * q) {
         var ang = Math.random() * TAU, r0 = v.w * 0.12, sx = v.cx + Math.cos(ang) * r0, sy = v.hy + Math.sin(ang) * r0 * 0.6
         var l = FX.spawn(TEX.speed, sx, sy, Math.cos(ang) * v.w * 1.6, Math.sin(ang) * v.w * 1.0, 0.35, v.h * 0.12, true); if (l) { l.stretch = 1.2; l.a = 0.55 }
       }
-      if (S.state === 'active' || S.state === 'lock' || S.state === 'tutorial') scene.weather(dt, FX, 1, q)
+      if (S.state === 'active' || S.state === 'lock' || S.state === 'tutorial') { scene.weather(dt, FX, 1, q); scene.biomeFx(dt, FX, q) }
     }
     function bob () { return Math.sin(S.t * 17) * 1.1 * v.u + (S.recover > 0 ? Math.abs(Math.sin(S.t * 9)) * -6 * v.u * (S.recover / 1.4) : 0) }
 
     /* render */
+    function OFFK (k) { return W.__mcOff && W.__mcOff[k] }
     var cam = { x: 0, y: 0, z: 0, depth: 1 }
     function render () {
       var fov = 1 - 0.08 * Math.min(1, Math.max(0, S.boost) / 0.4)
       if (S.state === 'swop') fov = 1 + 0.25 * Math.max(0, 1 - S.phaseT / 1.2)
       v.hw = base.hw * fov; v.vh = base.vh * fov; v.hy = base.hy - (1 - fov) * v.h * 0.04
       var pz = S.z + Z_P
-      cam.z = S.z; camX += (laneX(S.lanePos) * 0.55 - camX) * 0.12; cam.x = camX
+      cam.z = S.z; camX += (laneX(S.lanePos) * 0.55 - camX) * (1 - Math.exp(-FDT * 7)); cam.x = camX
       cam.y = TR.CAM_H + track.yAt(pz) + (S.state === 'swop' ? (1 - S.phaseT / 1.2) * 900 : 0)
       var P = S.prof, pt = P ? performance.now() : 0
-      function mark (k) { if (!P) return; var n = performance.now(); P[k] = (P[k] || 0) * 0.95 + (n - pt) * 0.05; pt = n }
+      function mark (k) { if (!P) return; if (W.__mcFlush) c.getImageData(0, 0, 1, 1); var n = performance.now(); P[k] = (P[k] || 0) * 0.95 + (n - pt) * 0.05; pt = n }
       c.save()
       if (S.shake > 0 && !RM) c.translate((Math.random() - 0.5) * S.shake * 26 * v.u, (Math.random() - 0.5) * S.shake * 18 * v.u)
-      scene.drawBack(c, cam.y, quality); mark('back')
+      if (!OFFK('bk')) { scene.drawBack(c, cam.y, quality); scene.biomeLight(c) } mark('back')
       var night = scene.night
-      TR.renderRoad(c, track, cam, v, drawN, function (s, j) { drawSegSprites(s, j, night) }, null); mark('road')
-      scene.shimmer(c, canvas, quality); drawPlayer(night); mark('player')
-      FX.draw(c, false); FX.draw(c, true); mark('fx')
+      TR.renderRoad(c, track, cam, v, drawN, function (s, j) { if (!OFFK('sp')) drawSegSprites(s, j, night) }, null); mark('road')
+      if (!(W.__mcOff && W.__mcOff.sh)) scene.shimmer(c, canvas, quality); drawLaneFx(); if (!(W.__mcOff && W.__mcOff.pl)) drawPlayer(night); mark('player')
+      if (!OFFK('fx')) { FX.draw(c, false); FX.draw(c, true) } mark('fx')
       drawOverlays()
       c.restore()
       scene.post(c, { quality: quality, boost: Math.min(1, Math.max(0, S.boost)), flash: S.flash, strobe: S.strobe, tunnel: S.tunnel }); mark('post')
@@ -606,19 +631,21 @@
       if (!im) return
       var a = anchor, k = wpx / (a ? (a.right != null ? a.right - a.left + 1 : a.bw) : im.naturalWidth), ax = a ? a.cx : im.naturalWidth / 2, ay = a ? a.base : im.naturalHeight
       if (alpha != null) c.globalAlpha = alpha
-      c.drawImage(im, x - ax * k, y - ay * k, im.naturalWidth * k, im.naturalHeight * k)
+      c.drawImage(im, Math.round(x - ax * k), Math.round(y - ay * k), Math.round(im.naturalWidth * k), Math.round(im.naturalHeight * k))
       c.globalAlpha = 1
     }
     function famA (fam, name) { var F = fam === 'track' ? TA && TA.families : CA && CA.families; if (!F) return null; for (var f in F) if (F[f].sprites[name]) return F[f].sprites[name]; return null }
-    function propA (key) { var n = key.split('/').pop(); return (CA && CA.families.props.sprites[n]) || (CA && CA.families.items.sprites[n]) || (TA && (TA.families.trackprops.sprites[n] || TA.families.signs.sprites[n])) || null }
+    var PROPA = {}
+    function propA (key) { var h = PROPA[key]; if (h !== undefined) return h; return (PROPA[key] = propA0(key)) }
+    function propA0 (key) { var n = key.split('/').pop(); return (CA && CA.families.props.sprites[n]) || (CA && CA.families.items.sprites[n]) || (TA && (TA.families.trackprops.sprites[n] || TA.families.signs.sprites[n])) || null }
     function drawSegSprites (s, j, night) {
       var p1 = s.p1, scale = p1.s, clip = s.clip, fog = s.fog / 24
       if (p1.y <= v.hy - 2 || j < 5) return
       var alpha = fog > 0.6 ? Math.max(0, 1 - (fog - 0.6) * 2.4) : 1
-      c.save(); c.beginPath(); c.rect(0, 0, v.w, clip); c.clip()
+      if (p1.y > clip + 2 || alpha <= 0.02) return   // hidden behind a nearer hill crest, or still inside the fog
       // roadside props
       for (var i = 0; i < s.nProps; i++) {
-        var pr = s.props[i], im = img['p:' + pr.key]; if (!im) continue
+        var pr = s.props[i], im = imgP[pr.key]; if (!im) continue
         var wx = pr.side * TR.ROADW * pr.off, x = p1.x + scale * wx * v.hw, wpx = scale * pr.size * v.hw
         if (wpx < 2) continue
         var an = propA(TR.PROP_KEY[pr.key])
@@ -631,7 +658,7 @@
         var tx = p1.x + sd * p1.w * 1.3, th = scale * 5200 * v.vh, tw = Math.max(2, scale * 160 * v.hw)
         c.globalAlpha = alpha; c.fillStyle = '#c62828'; c.fillRect(tx - tw / 2, p1.y - th, tw, th); c.fillStyle = '#8e1b1b'; c.fillRect(tx - tw / 2, p1.y - th * 0.82, tw * 1.0, tw * 0.6); c.globalAlpha = 1
       }
-      if (s.bridge && s.p2.y < p1.y) { c.strokeStyle = 'rgba(200,40,40,' + alpha + ')'; c.lineWidth = Math.max(1, scale * 40 * v.hw); for (var sd2 = -1; sd2 <= 1; sd2 += 2) { var h1 = scale * (1400 + 2400 * Math.abs(Math.sin(s.i * 0.07))) * v.vh; c.beginPath(); c.moveTo(p1.x + sd2 * p1.w * 1.3, p1.y - h1); c.lineTo(s.p2.x + sd2 * s.p2.w * 1.3, s.p2.y - s.p2.s * (1400 + 2400 * Math.abs(Math.sin((s.i + 1) * 0.07))) * v.vh); c.stroke() } }
+      // (bridge cables were drawn per segment as strokes and streaked across the sky: removed, towers carry the look)
       // tunnel ceiling lights (passing light, additive)
       if (s.tunnel && s.i % 4 === 0) { c.globalCompositeOperation = 'lighter'; var lw = p1.w * 0.9; c.globalAlpha = 0.8 * alpha; c.drawImage(TEX.glowY, p1.x - lw / 2, p1.y - scale * 2550 * v.vh - lw * 0.25, lw, lw * 0.5); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
       // gantry (education lane hint) + the number boards
@@ -646,13 +673,12 @@
         }
       }
       // lane objects
-      for (var o = 0; o < s.objs.length; o++) drawObj(s.objs[o], s, alpha)
+      for (var o = 0; o < s.objs.length; o++) drawObj(s.objs[o], s, alpha, j)
       // the robber vehicle and the police van ride on their segment
       var tz = S.z + Z_P + gap(), ti = Math.floor(tz / TR.SEG)
       if (ti === s.i && S.state !== 'load') drawTarget(s, tz)
       if (S.state === 'resolve' && Math.floor(S.policeZ / TR.SEG) === s.i) drawPolice(s)
       if (s.finish) spr(img['p:finish'], p1.x, p1.y, p1.w * 2.8, propA(TR.PROP_KEY.finish), alpha)
-      c.restore()
     }
     function roundRect (x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath() }
     function lampLight (x, y, wpx, an, scale) {
@@ -663,21 +689,30 @@
       if (stage.wet) { c.globalAlpha = 0.3; c.drawImage(TEX.glowY, x - wpx * 0.4, y, wpx * 0.8, hh * 0.9) }   // wet reflection streak
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
     }
-    function drawObj (o, s, alpha) {
+    var HUES = null
+    function drawObj (o, s, alpha, j) {
       if (!o.on || o.taken) return
       var info = OBJ[o.type], p1 = s.p1, scale = p1.s, x = p1.x + scale * laneX(o.lane) * v.hw, wpx = scale * info.w * v.hw
       if (wpx < 1.5) return
-      var im = img['o:' + o.type], an = CA && (CA.families.items.sprites[info.k.split('/').pop()] || CA.families.props.sprites[info.k.split('/').pop()])
+      var im = img['o:' + o.type], an = propA(info.k)
       var y = p1.y - (info.fy ? scale * info.fy * v.vh * (1 + 0.12 * Math.sin(S.t * 4 + o.lane)) : 0)
       if (info.kind === 'pick' || info.kind === 'box') {
         // shadow + glow
         c.globalAlpha = 0.25 * alpha; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x, p1.y, wpx * 0.35, wpx * 0.08, 0, 0, TAU); c.fill(); c.globalAlpha = 1
         c.globalCompositeOperation = 'lighter'
         if (info.kind === 'box') {
-          var hue = [TEX.glowC, TEX.glowP, TEX.glowY, TEX.glowR][Math.floor(S.t * 4 + o.lane) % 4]
+          if (!HUES) HUES = [TEX.glowC, TEX.glowP, TEX.glowY, TEX.glowR]
+          var hue = HUES[Math.floor(S.t * 4 + o.lane) % 4]
+          // a rainbow PILLAR of light, visible from far away so children steer toward the box
+          c.globalAlpha = 0.55 * Math.max(alpha, 0.6); c.drawImage(hue, x - wpx * 0.35, y - wpx * 7, wpx * 0.7, wpx * 7.4)
           c.globalAlpha = 0.85 * alpha; c.drawImage(hue, x - wpx * 1.1, y - wpx * 1.6, wpx * 2.2, wpx * 2.2)
           c.save(); c.translate(x, y - wpx * 0.5); c.rotate(S.t * 0.8); c.globalAlpha = 0.45 * alpha; c.drawImage(TEX.rays, -wpx * 1.4, -wpx * 1.4, wpx * 2.8, wpx * 2.8); c.restore()
-        } else { c.globalAlpha = 0.6 * alpha; c.drawImage(TEX.glowY, x - wpx * 0.8, y - wpx * 1.3, wpx * 1.6, wpx * 1.6) }
+        } else {
+          // gold shimmer: a soft glow that breathes, plus a twinkle that sweeps around the pickup
+          c.globalAlpha = (0.45 + 0.2 * Math.sin(S.t * 6 + o.seg)) * alpha; c.drawImage(TEX.glowY, x - wpx * 0.8, y - wpx * 1.3, wpx * 1.6, wpx * 1.6)
+          var ta = S.t * 3 + o.seg, tw = wpx * 0.28 * (0.6 + 0.4 * Math.sin(S.t * 9 + o.seg))
+          c.globalAlpha = 0.9 * alpha; c.drawImage(TEX.sparkle, x + Math.cos(ta) * wpx * 0.45 - tw / 2, y - wpx * 0.5 + Math.sin(ta) * wpx * 0.35 - tw / 2, tw, tw)
+        }
         c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
         if (info.kind === 'box') {
           // the glass box (rounded square, rainbow rim, rotating) with the gadget inside
@@ -694,6 +729,13 @@
         return
       }
       if (info.kind === 'pad') { spr(im, x, p1.y + wpx * 0.05, wpx, an, alpha * 0.95); c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.4 * alpha; c.drawImage(TEX.glowC, x - wpx * 0.6, p1.y - wpx * 0.5, wpx * 1.2, wpx * 0.7); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; return }
+      // HAZARD TELEGRAPH: inside reaction range a soft red ground glow pulses in the hazard's lane
+      if (j > 6 && j < 70 && !RM) {
+        var pulse = 0.5 + 0.5 * Math.sin(S.t * 9 - j * 0.15), gw = wpx * 2.2
+        c.globalCompositeOperation = 'lighter'; c.globalAlpha = (0.28 + 0.22 * pulse) * alpha
+        c.drawImage(TEX.glowR, x - gw / 2, p1.y - gw * 0.22, gw, gw * 0.44)
+        c.globalCompositeOperation = 'source-over'
+      }
       c.globalAlpha = 0.3 * alpha; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x, p1.y, wpx * 0.5, wpx * 0.09, 0, 0, TAU); c.fill(); c.globalAlpha = 1
       spr(im, x, p1.y, wpx, an, alpha)
     }
@@ -708,14 +750,14 @@
       var L = A && A.lights.length ? A.lights : null
       for (var i = 0; i < 2; i++) {
         var lx = L ? x + (L[i][0] - A.cx) * k : x + (i ? 1 : -1) * wpx * 0.36, ly = L ? y - bounce + (L[i][1] - A.base) * k : y - wpx * 0.3
-        var gs = wpx * (scene.night ? 0.55 : 0.32)
+        var gs = wpx * (scene.night ? 0.55 : 0.32) * (0.8 + 0.7 * Math.min(1, S.prog))
         c.globalAlpha = 0.9; c.drawImage(TEX.glowR, lx - gs / 2, ly - gs / 2, gs, gs)
         if (scene.night || stage.wet) { c.globalAlpha = 0.35; c.drawImage(TEX.glowR, lx - gs * 0.15, ly, gs * 0.3, gs * 2.2) }
       }
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
       // the net (capture): expands over the target and stays
       if (S.state === 'capture' && CAP.hit || S.state === 'resolve') {
-        var nt = Math.min(1, (S.state === 'resolve' ? 2 : CAP.netT) / 0.5), ns = wpx * (0.4 + 1.0 * (1 - Math.pow(1 - nt, 3)))
+        var tt = S.state === 'resolve' ? 3 : CAP.netT, ns = wpx * (0.35 + 1.05 * (1 - Math.exp(-tt * 7) * Math.cos(tt * 13)))   // the net unfurls on a spring
         c.save(); c.translate(x, y - wpx * 0.45); c.rotate(S.t * 0.6); c.globalAlpha = 0.95; c.drawImage(TEX.net, -ns / 2, -ns / 2, ns, ns); c.restore(); c.globalAlpha = 1
       }
       // lock-on reticle follows the target
@@ -732,6 +774,19 @@
         c.globalAlpha = 0.95; c.drawImage(on ? TEX.glowR : TEX.glowB, x + (on ? -1 : 1) * wpx * 0.18 - gs / 2, y - wpx * 0.86 - gs / 2, gs, gs)
         c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
       }
+    }
+    function drawLaneFx () {
+      // the lane Mojo is entering lights up with a chevron sweep (instant feedback on every input)
+      if (!(S.laneFx > 0)) return
+      var a = S.laneFx / 0.4, pz = S.z + Z_P
+      c.globalCompositeOperation = 'lighter'; c.fillStyle = '#5fe0ff'
+      for (var k = 1; k <= 5; k++) {
+        var z = pz + k * 520 + (1 - a) * 900, p = laneScreen(S.laneFxLane, z), w = p.w * 0.16, h = w * 0.55
+        if (p.y >= v.h || p.y <= v.hy) continue
+        c.globalAlpha = a * (1 - k * 0.15) * 0.8
+        c.beginPath(); c.moveTo(p.x - w, p.y + h * 0.5); c.lineTo(p.x, p.y - h * 0.5); c.lineTo(p.x + w, p.y + h * 0.5); c.lineTo(p.x + w * 0.6, p.y + h * 0.5); c.lineTo(p.x, p.y - h * 0.05); c.lineTo(p.x - w * 0.6, p.y + h * 0.5); c.closePath(); c.fill()
+      }
+      c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
     }
     function drawPlayer (night) {
       var m = mojoXY(), cp = carPx(), a = rearA || { cx: 140, base: 234, bw: 168, lights: [], kind: 'ground' }, im = img.rear
@@ -774,7 +829,7 @@
       // BROK bursts
       for (var i = 0; i < S.bursts.length; i++) {
         var b = S.bursts[i]; if (!b.on) continue
-        b.t += 1 / 60; if (b.t > 0.75) { b.on = false; continue }
+        b.t += FDT; if (b.t > 0.75) { b.on = false; continue }
         var k = b.t < 0.12 ? b.t / 0.12 * 1.15 : 1.15 - (b.t - 0.12) * 0.25, sz = cp * 1.25 * k
         c.globalAlpha = b.t > 0.5 ? 1 - (b.t - 0.5) / 0.25 : 1
         c.drawImage(TEX.brok, b.x - sz / 2, b.y - sz / 2, sz, sz); c.globalAlpha = 1
@@ -782,7 +837,7 @@
       // ring shockwaves
       for (var r = 0; r < S.rings.length; r++) {
         var g = S.rings[r]; if (!g.on) continue
-        g.t += 1 / 60; if (g.t > 0.45) { g.on = false; continue }
+        g.t += FDT; if (g.t > 0.45) { g.on = false; continue }
         c.strokeStyle = (g.col === 1 ? 'rgba(120,230,255,' : g.col === 2 ? 'rgba(255,90,110,' : 'rgba(255,230,120,') + (1 - g.t / 0.45).toFixed(2) + ')'; c.lineWidth = cp * 0.05 * (1 - g.t / 0.45) + 1
         c.beginPath(); c.arc(g.x, g.y, cp * (0.1 + g.t * 1.6), 0, TAU); c.stroke()
       }
@@ -790,7 +845,7 @@
       var hp = cometTarget || (cometTarget = hudPoint(H.starBox))
       for (var k2 = 0; k2 < S.comets.length; k2++) {
         var cm = S.comets[k2]; if (!cm.on) continue
-        cm.t += 1 / 60 / 0.55
+        cm.t += FDT / 0.55
         var e = cm.t * cm.t * (3 - 2 * cm.t), x = cm.x0 + (hp.x - cm.x0) * e, y = cm.y0 + (hp.y - cm.y0) * e - Math.sin(e * Math.PI) * cp * 0.6
         c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.9; c.drawImage(TEX.glowY, x - cp * 0.2, y - cp * 0.2, cp * 0.4, cp * 0.4); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
         var tp = FX.spawn(TEX.sparkle, x, y, 0, 0, 0.3, cp * 0.1, true); if (tp) tp.grow = -cp * 0.2
@@ -811,16 +866,16 @@
     function setTxt (k, elm, val) { if (last2[k] !== val) { last2[k] = val; elm.textContent = val } }
     function hudUpdate () {
       var p = Math.round(Math.min(1, S.prog) * 1000) / 10
-      if (last2.p !== p) { last2.p = p; H.fill.style.width = p + '%'; H.car.style.left = 'calc(' + p + '% - ' + (p / 100 * 14) + 'px)' }
+      if (last2.p !== p) { last2.p = p; H.fill.style.width = p + '%'; H.car.style.left = 'calc(' + p + '% - ' + (p / 100 * 14) + 'px)'; H.car.parentNode.style.setProperty('--carx', p + '%') }
       setTxt('s', H.star, String(S.stars)); setTxt('c', H.crate, String(S.boxes)); setTxt('r', H.gadN, String(S.rocket))
       var sec = Math.floor(S.elapsed), tt = (sec / 60 < 10 ? '0' : '') + Math.floor(sec / 60) + ':' + (sec % 60 < 10 ? '0' : '') + (sec % 60)
       setTxt('t', H.timer, tt)
       if (last2.h !== S.hearts) { last2.h = S.hearts; [].forEach.call(H.hearts.children, function (im, i) { var off = i >= S.hearts; if (im.classList.contains('off') && !off) { im.classList.remove('pop'); void im.offsetWidth; im.classList.add('pop') } im.classList.toggle('off', off) }) }
-      var gs = S.rocket > 0 ? (S.state === 'lock' ? 'ready' : '') : 'empty'
-      if (last2.g !== gs) { last2.g = gs; H.gad.classList.toggle('empty', gs === 'empty'); H.gad.classList.toggle('ready', gs === 'ready') }
+      var gs = S.rocket > 0 ? (S.state === 'lock' ? 'ready' : 'have') : 'empty'
+      if (last2.g !== gs) { last2.g = gs; H.gad.classList.toggle('empty', gs === 'empty'); H.gad.classList.toggle('ready', gs === 'ready'); H.gad.classList.toggle('have', gs !== 'empty') }
+      var hot = S.prog > 0.7 && S.state !== 'result'; if (last2.hot !== hot) { last2.hot = hot; H.car.parentNode.classList.toggle('hot', hot) }
       var ch = Math.round(S.boostCharge * 20) * 5
       if (last2.b !== ch) { last2.b = ch; H.up.style.setProperty('--charge', ch + '%') }
-      if (S.elapsed > 6 && !last2.signs) { last2.signs = 1; H.mission.classList.add('hide'); H.place.classList.add('hide') }
     }
 
     /* autopilot (QA test seam; never used for the child) */
@@ -873,6 +928,7 @@
     }
     loadAll().then(function () {
       if (finished) return
+      for (var nm in img) if (nm.indexOf('p:') === 0) imgP[nm.slice(2)] = img[nm]
       track = TR.create(stage, seed, { fog: (TA && TA.sky[stage.sky] || ['', '', '#cfe6ff'])[2] })
       scene = SCN.create(stage, img)
       resize(); load.remove()
@@ -888,7 +944,7 @@
         var med = function (a) { if (!a.length) return 0; var b = a.slice().sort(function (x, y) { return x - y }); return b[Math.floor(b.length / 2)] }
         return { state: S.state, paused: S.paused, prog: S.prog, lane: S.lane, lanePos: S.lanePos, lastLaneMs: S.lastLaneMs, hits: S.hits, brok: S.brok, recover: S.recover,
           recoveryMs: S.recoveryMs.slice(), stars: S.stars, boxes: S.boxes, rocket: S.rocket, hasRocket: S.hasRocket, elapsed: S.elapsed, quality: quality,
-          frameMedian: med(S.frames), workMedian: { 0: med(S.tierFrames[0]), 1: med(S.tierFrames[1]), 2: med(S.tierFrames[2]) }, frames: S.frames.length,
+          frameMedian: med(ringArr(FR, frN)), frameTimes: ringArr(FR, frN), workMedian: { 0: med(ringArr(TF[0].a, TF[0].n)), 1: med(ringArr(TF[1].a, TF[1].n)), 2: med(ringArr(TF[2].a, TF[2].n)) }, frames: frN,
           par: scene ? { far: scene.par.far, mid: scene.par.mid, roadside: scene.par.roadside, road: scene.par.road } : null,
           ring: track ? track.ring.length : 0, made: track ? track.made() : 0, chevrons: track ? track.chevronAudit() : null,
           edu: S.eduResult, eduPrompt: S.edu ? S.edu.prompt : null, particles: FX.live(), cap: FX.cap(), stage: stage.id, target: targetName, rear: rearKey,

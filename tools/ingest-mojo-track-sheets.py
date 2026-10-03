@@ -47,6 +47,13 @@ PILL = 26
 FAR2 = {'castle': (11, 885, 221, 973), 'lighthouse': (227, 885, 437, 973), 'forest-lake': (442, 885, 654, 973),
         'mesas': (661, 885, 871, 973), 'aurora': (877, 885, 1087, 973), 'night-city': (1093, 885, 1302, 973)}
 FAR1 = {'swoppiton': (0, 30, 1312, 166), 'swoppiton-mid': (0, 197, 1312, 287), 'swoppiton-roadside': (0, 318, 1312, 392)}
+# the owner's 25-biome sheet (track-biomes-25-sheet.png): measured cell boxes; the label pill (top 34 px) is cut off
+# and the card is centre-cropped to 4:3, Lanczos 2x + mild unsharp -> biome25/<nn>-<name>
+S25 = DIR / 'track-biomes-25-sheet.png'
+B25_COLS = [(0, 264), (266, 529), (533, 777), (782, 1045), (1049, 1312)]
+B25_ROWS = [(82, 310), (311, 533), (536, 744), (746, 926), (929, 1140)]
+B25 = ('town coastal forest desert snow bridge tunnel construction farm city-night jungle volcano night-highway autumn cherry-blossom '
+       'rain beach-resort canyon-railway wind-farm space-base suburb harbor-port stadium ruins-temple candy-land').split()
 SKY = ['clear', 'sunset', 'night', 'cloudy', 'rain', 'snow']
 SKY_ROW = (738, 1110, 1306, 1162)     # six swatches side by side
 
@@ -227,6 +234,18 @@ def main():
         im = upscale(a2.crop((x0 + 2, y0 + PILL, x1 - 2, y1 - 2)), 2)
         put(f'biome/{name}', im, {})
         data['biome'][name] = {'w': im.width, 'h': im.height}
+    if S25.exists():
+        a25 = Image.open(S25).convert('RGB')
+        for i, name in enumerate(B25):
+            (x0, x1), (y0, y1) = B25_COLS[i % 5], B25_ROWS[i // 5]
+            y0 += 34
+            h = y1 - 2 - y0
+            w = min(x1 - x0 - 4, int(h * 4 / 3))
+            cx = (x0 + x1) // 2
+            im = upscale(a25.crop((cx - w // 2, y0, cx + w // 2, y1 - 2)), 2)
+            key = 'biome25/%02d-%s' % (i + 1, name)
+            put(key, im, {})
+            data.setdefault('biome25', {})[name] = {'key': key, 'w': im.width, 'h': im.height}
     for src, table, k in ((a1, FAR1, 2), (a2, FAR2, 4)):
         for name, box in table.items():
             x0, y0, x1, y1 = box

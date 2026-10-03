@@ -75,6 +75,11 @@
     x.translate(20, 20); x.rotate(0.6); x.fillStyle = '#e8902a'; x.beginPath(); x.ellipse(0, 0, 16, 8, 0, 0, TAU); x.fill()
     x.strokeStyle = '#9a4f10'; x.lineWidth = 2; x.beginPath(); x.moveTo(-15, 0); x.lineTo(15, 0); x.stroke(); TEX.leaf = c
   }
+  function petal () {
+    var s = 32, c = cv(s, s), x = c.getContext('2d')
+    x.translate(16, 16); x.rotate(0.4); x.fillStyle = '#ffb7d5'; x.beginPath(); x.ellipse(0, 0, 13, 7, 0, 0, TAU); x.fill()
+    x.fillStyle = '#ff8fbd'; x.beginPath(); x.ellipse(4, 0, 6, 3, 0, 0, TAU); x.fill(); TEX.petal = c
+  }
   function puff () {
     var s = 96, c = cv(s, s), x = c.getContext('2d')
     for (var i = 0; i < 6; i++) {
@@ -100,14 +105,14 @@
     if (TEX.ready) return TEX
     glow('glowW', '255,255,255', 128); glow('glowY', '255,214,90', 128); glow('glowR', '255,40,30', 128, true); glow('glowB', '40,120,255', 128, true)
     glow('glowO', '255,140,40', 128); glow('glowC', '90,220,255', 128); glow('glowP', '200,120,255', 128)
-    sparkle(); rays(); brok(); net(); streak('rain', 4, 64, '200,220,255'); streak('speed', 6, 128, '255,255,255'); flake(); leaf(); puff(); chunk(); lightbar()
+    sparkle(); rays(); brok(); net(); streak('rain', 4, 64, '200,220,255'); streak('speed', 6, 128, '255,255,255'); flake(); leaf(); petal(); puff(); chunk(); lightbar()
     TEX.ready = true
     return TEX
   }
 
   /* ── particle pool ────────────────────────────────────────────────────────────────────────────── */
   var MAX = 900, P = [], cap = MAX, live = 0
-  for (var i = 0; i < MAX; i++) P.push({ on: false, tex: null, x: 0, y: 0, vx: 0, vy: 0, ax: 0, ay: 0, drag: 0, life: 0, max: 1, size: 1, grow: 0, rot: 0, vr: 0, a: 1, add: false, fade: 1, stretch: 0, flow: 0 })
+  for (var i = 0; i < MAX; i++) P.push({ floor: 0, on: false, tex: null, x: 0, y: 0, vx: 0, vy: 0, ax: 0, ay: 0, drag: 0, life: 0, max: 1, size: 1, grow: 0, rot: 0, vr: 0, a: 1, add: false, fade: 1, stretch: 0, flow: 0 })
   var cursor = 0
   function alloc () {
     if (live >= cap) return null
@@ -118,7 +123,7 @@
   function spawn (tex, x, y, vx, vy, life, size, add) {
     var p = alloc(); if (!p) return null
     p.tex = tex; p.x = x; p.y = y; p.vx = vx; p.vy = vy; p.ax = 0; p.ay = 0; p.drag = 0; p.life = life; p.max = life; p.size = size; p.grow = 0
-    p.rot = 0; p.vr = 0; p.a = 1; p.add = !!add; p.fade = 1; p.stretch = 0; p.flow = 0
+    p.rot = 0; p.vr = 0; p.a = 1; p.add = !!add; p.fade = 1; p.stretch = 0; p.flow = 0; p.floor = 0
     return p
   }
   function update (dt, flow) {
@@ -129,6 +134,7 @@
       p.vx += p.ax * dt; p.vy += p.ay * dt
       if (p.drag) { var k = Math.max(0, 1 - p.drag * dt); p.vx *= k; p.vy *= k }
       p.x += p.vx * dt; p.y += (p.vy + p.flow * flow) * dt
+      if (p.floor && p.y > p.floor && p.vy > 0) { p.y = p.floor; p.vy = -p.vy * 0.42; p.vx *= 0.7; p.vr *= 0.6 }
       p.size += p.grow * dt; p.rot += p.vr * dt
     }
   }

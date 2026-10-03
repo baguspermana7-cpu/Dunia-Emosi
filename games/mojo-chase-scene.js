@@ -73,8 +73,8 @@
   function create (stage, img, opts) {
     opts = opts || {}
     var A = W.MojoTrackAnchors || { sky: {} }, pal = A.sky[stage.sky] || ['#3f8fe6', '#8cc8ff', '#d9eeff']
-    var night = !!stage.night, FX = W.MojoChaseFX, T = FX.build()
-    var far = img['far/' + stage.far], mid = stage.mid ? img['far/' + stage.mid] : null
+    var night = !!stage.night || stage.fx === 'space', FX = W.MojoChaseFX, T = FX.build()
+    var CX = W.MojoCodexAnchors, far = img.FAR, mid = img.MID || null
     var haze = pal[2], farTop = pal[1]
     // the sky gradient's lower colour = the FAR strip's own top row, so the strip blends into the sky
     try {
@@ -85,7 +85,7 @@
       // an opaque owner MID strip carries its own sky: fade its top 45% out so the FAR layer shows through
       var mc0 = cv(mid.naturalWidth, mid.naturalHeight), mx0 = mc0.getContext('2d')
       mx0.drawImage(mid, 0, 0)
-      if (!/CHASE_BG_MID/.test(mid.src)) {
+      if (!stage.cmid) {
         var fg0 = mx0.createLinearGradient(0, 0, 0, mc0.height * 0.5); fg0.addColorStop(0, 'rgba(0,0,0,1)'); fg0.addColorStop(1, 'rgba(0,0,0,0)')
         mx0.globalCompositeOperation = 'destination-out'; mx0.fillStyle = fg0; mx0.fillRect(0, 0, mc0.width, mc0.height * 0.5)
       }
@@ -97,7 +97,7 @@
     for (var s = 0; s < 70; s++) stars.push({ x: Math.random(), y: Math.random() * 0.8, p: Math.random() * TAU })
     var v = null, skyG = null, hazeG = null, vig = null, cone = null, t = 0
     var S = {
-      night: night, haze: haze, grade: GRADE[stage.biome] || null, shimmer: !!stage.heat,
+      night: night, haze: haze, grade: GRADE[stage.biome] || null, heat: !!stage.heat,
       par: { far: 0, mid: 0, roadside: 0, road: 0 }, curveOff: 0,
       resize: function (view) {
         v = view
@@ -126,9 +126,9 @@
         // sun / moon bloom + god rays + lens flare (additive)
         var sx = w * 0.74 - S.curveOff * w * 0.002 % w, sy = hy * (stage.sky === 'sunset' ? 0.62 : 0.26)
         c.globalCompositeOperation = 'lighter'
-        if (!night && quality > 0 && !OFF('rays')) {
+        if (!night && quality > 1 && !OFF('rays')) {
           c.globalAlpha = 0.16 + 0.04 * Math.sin(t * 0.7); c.save(); c.translate(sx, sy); c.rotate(t * 0.03)
-          var rs = w * 1.1; c.drawImage(T.rays, -rs / 2, -rs / 2, rs, rs); c.restore()
+          var rs = w * 0.85; c.drawImage(T.rays, -rs / 2, -rs / 2, rs, rs); c.restore()
         }
         c.globalAlpha = night ? 0.5 : 0.95; var gs = (night ? 0.14 : 0.32) * w; c.drawImage(stage.sky === 'sunset' ? T.glowO : T.glowW, sx - gs / 2, sy - gs / 2, gs, gs)
         c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
@@ -142,14 +142,14 @@
         if (far) {
           // Codex contract: uniform scale so the strip's horizon line (62% for Codex strips; measured per owner crop)
           // sits on the screen horizon; tiled, never stretched
-          var hf = FAR_HORIZON[stage.far] || 0.62, fh = hy / hf, fw = fh * far.naturalWidth / far.naturalHeight, fy = hy - hf * fh + hill * 0.4
+          var hf = (stage.cfar && CX && CX.far[stage.cfar] && CX.far[stage.cfar].horizon) || FAR_HORIZON[stage.far] || 0.62, fh = hy / hf, fw = fh * far.naturalWidth / far.naturalHeight, fy = hy - hf * fh + hill * 0.4
           var fx = -(((S.par.far * 0.004 + S.curveOff * 0.9) * v.u) % fw + fw) % fw
           for (var x = fx; x < w; x += fw) c.drawImage(far, x, fy, fw + 1, fh)
           var fg = c.createLinearGradient(0, fy, 0, fy + fh * 0.28); fg.addColorStop(0, farTop); fg.addColorStop(1, 'rgba(0,0,0,0)')
           c.fillStyle = fg; c.fillRect(0, fy - 1, w, fh * 0.28)
         }
         // MID (0.20x)
-        var mh = hy * (mid ? 0.45 : 0.30), my = hy + v.h * (mid ? 0.02 : 0.004) - mh + hill * 0.7
+        var mh = hy * (mid ? 0.45 : 0.30), my = hy + v.h * (mid ? 0.02 : 0.004) - mh + hill * 0.7   // Codex contract: MID bottom at horizon + 2% of the view, height 45% of the horizon
         var mc = mid ? mid.canvas : midC, mw = mh * mc.width / mc.height
         var mxo = -(((S.par.mid * 0.004 + S.curveOff * 2.4) * v.u) % mw + mw) % mw
         c.globalAlpha = mid ? 1 : 0.92
@@ -191,19 +191,34 @@
         } else if (kind === 'leaves') {
           n = Math.random() < dt * 9 * q ? 1 : 0
           for (var l = 0; l < n; l++) { var lf = fx.spawn(T.leaf, Math.random() * w, -10, (Math.random() - 0.3) * w * 0.15, h * 0.22, 4, h * 0.03, false); if (lf) { lf.vr = 3 * (Math.random() - 0.5); lf.rot = 0.1; lf.flow = 0.5 } }
+        } else if (kind === 'petals') {
+          if (Math.random() < dt * 14 * q) { var pt = fx.spawn(T.petal, Math.random() * w, -10, (Math.random() - 0.2) * w * 0.12, h * 0.18, 5, h * 0.022, false); if (pt) { pt.vr = 4 * (Math.random() - 0.5); pt.rot = 0.1; pt.flow = 0.4 } }
         } else if (kind === 'dust') {
           if (Math.random() < dt * 6 * q) { var side = Math.random() < 0.5 ? 0.12 : 0.88, d = fx.spawn(T.puff, w * side, v.hy + (h - v.hy) * 0.25, (Math.random() - 0.5) * 30, -h * 0.02, 1.6, h * 0.04, false); if (d) { d.grow = h * 0.08; d.a = 0.45; d.vr = 2; d.rot = 0.1; d.flow = 0.6 } }
         }
       },
+      /** biome effects: volcano embers, candy sugar dust, space twinkle + planet glow, beach glare, stadium flashbulbs */
+      biomeFx: function (dt, fx, q) {
+        var w = v.w, h = v.h, k = stage.fx
+        if (k === 'embers' && Math.random() < dt * 30 * q) { var e = fx.spawn(T.glowO, Math.random() * w, v.hy + Math.random() * (h - v.hy) * 0.5, (Math.random() - 0.5) * 40, -h * (0.08 + Math.random() * 0.1), 2.2, h * (0.008 + Math.random() * 0.01), true); if (e) e.flow = 0.2 }
+        if (k === 'sugar' && Math.random() < dt * 24 * q) { var g = fx.spawn(T.sparkle, Math.random() * w, Math.random() * v.hy * 1.3, 0, h * 0.03, 1.6, h * 0.016, true); if (g) { g.vr = 2; g.rot = 0.1; g.flow = 0.3 } }
+        if (k === 'flash' && Math.random() < dt * 8 * q) { var f = fx.spawn(T.glowW, Math.random() * w, v.hy * (0.55 + Math.random() * 0.4), 0, 0, 0.15, h * 0.05, true); if (f) f.grow = h * 0.1 }
+      },
+      biomeLight: function (c) {
+        var k = stage.fx
+        if (k === 'space') { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; var ps = v.w * 0.28; c.drawImage(T.glowC, v.w * 0.12 - ps / 2, v.hy * 0.25 - ps / 2, ps, ps); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
+        if (k === 'glare') { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.18 + 0.06 * Math.sin(t * 1.3); c.drawImage(T.glowW, v.w * 0.45, -v.h * 0.3, v.w * 0.9, v.h * 0.9); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
+        if (k === 'embers') { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.22 + 0.08 * Math.sin(t * 2); c.drawImage(T.glowO, v.w * 0.2, v.hy * 0.4, v.w * 0.6, v.hy * 0.9); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
+      },
       /** heat shimmer on desert: re-draw thin horizon slices with a sine offset (high/medium only) */
       shimmer: function (c, canvas, q) {
-        if (!S.shimmer || q < 1) return
+        if (!(S.heat || stage.heat) || q < 2) return
         var y0 = Math.round(v.hy - v.h * 0.05), sh = Math.max(2, Math.round(v.h * 0.008)), n = Math.round(v.h * 0.1 / sh)
         for (var i = 0; i < n; i++) { var y = y0 + i * sh, off = Math.sin(t * 9 + i * 0.9) * v.u * 2.2; c.drawImage(canvas, 0, y, v.w, sh, off, y, v.w, sh) }
       },
       post: function (c, st) {
         var w = v.w, h = v.h
-        if (S.grade && st.quality > 1 && !OFF('grade')) { c.globalCompositeOperation = 'soft-light'; c.fillStyle = S.grade; c.globalAlpha = 1; c.fillRect(0, 0, w, h); c.globalCompositeOperation = 'source-over' }
+        if (S.grade && st.quality > 0 && !OFF('grade')) { c.fillStyle = S.grade; c.globalAlpha = 0.55; c.fillRect(0, 0, w, h); c.globalAlpha = 1 }   // a plain tint: soft-light cost ~10 ms on a software rasteriser
         if (st.strobe > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.16 * st.strobe; c.fillStyle = (Math.floor(t * 8) % 2) ? '#ff2a2a' : '#2a6bff'; c.fillRect(0, 0, w, h); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
         if (st.tunnel > 0) { c.globalAlpha = 0.35 * st.tunnel; c.fillStyle = '#05040a'; c.fillRect(0, 0, w, h); c.globalAlpha = 1 }
         if (!OFF('vig')) c.globalAlpha = 0.7 + 0.3 * st.boost, c.drawImage(vig, -w * 0.05 * st.boost, -h * 0.05 * st.boost, w * (1 + 0.1 * st.boost), h * (1 + 0.1 * st.boost))

@@ -170,16 +170,47 @@
     c.fillStyle = col; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.lineTo(x3, y3); c.lineTo(x4, y4); c.closePath(); c.fill()
   }
 
-  /** draw the road ring near->far (clip by max y), then call spriteFn(seg) far->near. */
+  /* ── batched fills: every road quad is queued into a (layer, colour) bucket and each bucket is filled with ONE
+     path per frame (owner perf audit C1: a fill per quad per segment was ~150 ms/s on a software rasteriser).
+     Segments never overlap vertically (painter clip by max y), so ordering by layer keeps the picture identical.
+     Storage is preallocated and reused: no per-frame allocation. ── */
+  var CID = new Map(), CSTR = [], BUCKET = {}, TOUCH = new Int32Array(4096), nTouch = 0, LAYERS = 12, MAXQ = 640
+  function bucket (layer, col) {
+    var id = CID.get(col)
+    if (id === undefined) { id = CSTR.length; CSTR.push(col); CID.set(col, id) }
+    var key = id * LAYERS + layer, b = BUCKET[key]
+    if (!b) { b = BUCKET[key] = { q: new Float32Array(MAXQ * 8), n: 0, on: false, col: col, layer: layer } }
+    if (!b.on) { b.on = true; TOUCH[nTouch++] = layer * 100000 + key }
+    return b
+  }
+  function quad (layer, col, x1, y1, x2, y2, x3, y3, x4, y4) {
+    var b = bucket(layer, col); if (b.n >= MAXQ) return
+    var o = b.n * 8, q = b.q
+    q[o] = x1; q[o + 1] = y1 + 0.6; q[o + 2] = x2; q[o + 3] = y2 + 0.6; q[o + 4] = x3; q[o + 5] = y3 - 0.6; q[o + 6] = x4; q[o + 7] = y4 - 0.6
+    b.n++
+  }
+  function rect (layer, col, x, y, w, h) { quad(layer, col, x, y + h, x + w, y + h, x + w, y, x, y) }
+  function flush (c) {
+    for (var a = 1; a < nTouch; a++) { var v0 = TOUCH[a], j = a - 1; while (j >= 0 && TOUCH[j] > v0) { TOUCH[j + 1] = TOUCH[j]; j-- } TOUCH[j + 1] = v0 }   // insertion sort, no allocation
+    for (var i = 0; i < nTouch; i++) {
+      var b = BUCKET[TOUCH[i] % 100000], q = b.q
+      c.fillStyle = b.col; c.beginPath()
+      for (var k = 0, o = 0; k < b.n; k++, o += 8) { c.moveTo(q[o], q[o + 1]); c.lineTo(q[o + 2], q[o + 3]); c.lineTo(q[o + 4], q[o + 5]); c.lineTo(q[o + 6], q[o + 7]); c.closePath() }
+      c.fill(); b.n = 0; b.on = false
+    }
+    nTouch = 0
+  }
+
+  /** project the ring near->far (clip by max y), fill the road in batches, then call spriteFn(seg) far->near. */
   function renderRoad (c, track, cam, v, drawN, spriteFn, overlayFn) {
     var baseI = Math.floor(cam.z / SEG), basePct = (cam.z % SEG) / SEG, base = track.seg(baseI)
     if (!base) return
-    var x = 0, dx = -(base.curve * basePct), maxy = v.h, col = track.col
+    var x = 0, dx = -(base.curve * basePct), maxy = v.h, col = track.col, rail = track.biome.rail
     var n = Math.min(drawN, RING - 2)
     for (var k = 0; k < n; k++) {
       var s = track.seg(baseI + k); if (!s) break
       var fl = Math.min(FOG_LEVELS - 1, Math.floor(Math.pow(k / n, 0.9) * FOG_LEVELS))
-      s.fog = fl
+      s.fog = fl; s.vis = false
       project(s.p1, -x, s.y1, (baseI + k) * SEG, cam, v)
       project(s.p2, -x - dx, s.y2, (baseI + k + 1) * SEG, cam, v)
       s.screenOffset = x
@@ -187,59 +218,47 @@
       s.clip = maxy
       var p1 = s.p1, p2 = s.p2
       if (p1.s * cam.depth <= 0 || p2.y >= p1.y || p2.y >= maxy) continue
-      var alt = s.kerb, surf = s.surface
-      // ground across the screen
-      var g = s.bridge ? col.water[alt][fl] : s.tunnel ? col.tunnelWall[fl] : col.grass[alt][fl]
-      c.fillStyle = g; c.fillRect(0, p2.y - 1, v.w, p1.y - p2.y + 2)
-      // shoulder (sand / snow bank / pavement)
-      var sw1 = p1.w * 1.32, sw2 = p2.w * 1.32
-      if (!s.bridge) poly(c, p1.x - sw1, p1.y, p1.x + sw1, p1.y, p2.x + sw2, p2.y, p2.x - sw2, p2.y, s.tunnel ? col.tunnelWall[fl] : col.shoulder[alt][fl])
-      else { c.fillStyle = '#c62828'; var dk1 = p1.w * 1.18, dk2 = p2.w * 1.18; poly(c, p1.x - dk1, p1.y, p1.x + dk1, p1.y, p2.x + dk2, p2.y, p2.x - dk2, p2.y, '#7b8794') }
-      // kerbs (red/white rumble)
-      var r1 = p1.w * 1.10, r2 = p2.w * 1.10, kc = col.kerb[alt][fl]
-      poly(c, p1.x - r1, p1.y, p1.x - p1.w, p1.y, p2.x - p2.w, p2.y, p2.x - r2, p2.y, kc)
-      poly(c, p1.x + r1, p1.y, p1.x + p1.w, p1.y, p2.x + p2.w, p2.y, p2.x + r2, p2.y, kc)
-      // asphalt (surface variants: mud / ice / snow tint / tunnel)
+      s.vis = true
+      var alt = s.kerb, surf = s.surface, X1 = p1.x, Y1 = p1.y, W1 = p1.w, X2 = p2.x, Y2 = p2.y, W2 = p2.w
+      rect(0, s.bridge ? col.water[alt][fl] : s.tunnel ? col.tunnelWall[fl] : col.grass[alt][fl], 0, Y2 - 1, v.w, Y1 - Y2 + 2)
+      if (!s.bridge) { var sw1 = W1 * 1.32, sw2 = W2 * 1.32; quad(1, s.tunnel ? col.tunnelWall[fl] : col.shoulder[alt][fl], X1 - sw1, Y1, X1 + sw1, Y1, X2 + sw2, Y2, X2 - sw2, Y2) }
+      else { var dk1 = W1 * 1.18, dk2 = W2 * 1.18; quad(1, '#7b8794', X1 - dk1, Y1, X1 + dk1, Y1, X2 + dk2, Y2, X2 - dk2, Y2) }
+      var r1 = W1 * 1.10, r2 = W2 * 1.10, kc = col.kerb[alt][fl]
+      quad(2, kc, X1 - r1, Y1, X1 - W1, Y1, X2 - W2, Y2, X2 - r2, Y2)
+      quad(2, kc, X1 + r1, Y1, X1 + W1, Y1, X2 + W2, Y2, X2 + r2, Y2)
       var rc = s.tunnel ? col.tunnelRoad[alt][fl] : surf === 'mud' ? col.mud[alt][fl] : surf === 'ice' ? col.ice[alt][fl] : col.road[alt][fl]
-      poly(c, p1.x - p1.w, p1.y, p1.x + p1.w, p1.y, p2.x + p2.w, p2.y, p2.x - p2.w, p2.y, rc)
-      // solid edge lines
-      var e1 = p1.w * 0.035, e2 = p2.w * 0.035, ec = col.edge[fl]
-      poly(c, p1.x - p1.w * 0.94, p1.y, p1.x - p1.w * 0.94 + e1, p1.y, p2.x - p2.w * 0.94 + e2, p2.y, p2.x - p2.w * 0.94, p2.y, ec)
-      poly(c, p1.x + p1.w * 0.94 - e1, p1.y, p1.x + p1.w * 0.94, p1.y, p2.x + p2.w * 0.94, p2.y, p2.x + p2.w * 0.94 - e2, p2.y, ec)
-      // dashed lane lines between the 3 lanes
+      quad(3, rc, X1 - W1, Y1, X1 + W1, Y1, X2 + W2, Y2, X2 - W2, Y2)
+      var e1 = W1 * 0.035, e2 = W2 * 0.035, ec = col.edge[fl]
+      quad(4, ec, X1 - W1 * 0.94, Y1, X1 - W1 * 0.94 + e1, Y1, X2 - W2 * 0.94 + e2, Y2, X2 - W2 * 0.94, Y2)
+      quad(4, ec, X1 + W1 * 0.94 - e1, Y1, X1 + W1 * 0.94, Y1, X2 + W2 * 0.94, Y2, X2 + W2 * 0.94 - e2, Y2)
       if (((baseI + k) >> 1) % 2 === 0) {
-        var lw1 = p1.w * 0.03, lw2 = p2.w * 0.03, lc = col.line[fl]
-        for (var L = -1; L <= 1; L += 2) {
-          var lx1 = p1.x + L * p1.w * 0.31, lx2 = p2.x + L * p2.w * 0.31
-          poly(c, lx1 - lw1, p1.y, lx1 + lw1, p1.y, lx2 + lw2, p2.y, lx2 - lw2, p2.y, lc)
-        }
+        var lw1 = W1 * 0.03, lw2 = W2 * 0.03, lc = col.line[fl]
+        for (var L = -1; L <= 1; L += 2) { var lx1 = X1 + L * W1 * 0.31, lx2 = X2 + L * W2 * 0.31; quad(5, lc, lx1 - lw1, Y1, lx1 + lw1, Y1, lx2 + lw2, Y2, lx2 - lw2, Y2) }
       }
       if (surf === 'crosswalk' && (baseI + k) % 30 < 4) {
-        c.fillStyle = col.edge[fl]
-        for (var q = -4; q <= 4; q++) { var cx1 = p1.x + q * p1.w * 0.2, cx2 = p2.x + q * p2.w * 0.2; poly(c, cx1 - p1.w * 0.06, p1.y, cx1 + p1.w * 0.06, p1.y, cx2 + p2.w * 0.06, p2.y, cx2 - p2.w * 0.06, p2.y, col.edge[fl]) }
+        for (var q2 = -4; q2 <= 4; q2++) { var cx1 = X1 + q2 * W1 * 0.2, cx2 = X2 + q2 * W2 * 0.2; quad(6, ec, cx1 - W1 * 0.06, Y1, cx1 + W1 * 0.06, Y1, cx2 + W2 * 0.06, Y2, cx2 - W2 * 0.06, Y2) }
       }
-      // guardrail band on posts (metal / wood fence / snow bank / jersey)
-      if (track.biome.rail !== 'none' && !s.tunnel) {
-        var rh1 = p1.s * 260 * v.vh, rh2 = p2.s * 260 * v.vh, gx1 = p1.w * 1.24, gx2 = p2.w * 1.24
-        var rcol = col.rail[fl], rdk = col.railDark[fl]
+      if (rail !== 'none' && !s.tunnel) {
+        var rh1 = p1.s * 260 * v.vh, rh2 = p2.s * 260 * v.vh, gx1 = W1 * 1.24, gx2 = W2 * 1.24, rcol = col.rail[fl], rdk = col.railDark[fl]
         for (var sd = -1; sd <= 1; sd += 2) {
-          var ax = p1.x + sd * gx1, bx = p2.x + sd * gx2
-          if (track.biome.rail === 'snowbank') { poly(c, ax, p1.y, bx, p2.y, bx, p2.y - rh2 * 0.9, ax, p1.y - rh1 * 0.9, rcol); continue }
-          poly(c, ax, p1.y - rh1 * 0.55, bx, p2.y - rh2 * 0.55, bx, p2.y - rh2, ax, p1.y - rh1, rcol)
-          poly(c, ax, p1.y - rh1 * 0.45, bx, p2.y - rh2 * 0.45, bx, p2.y - rh2 * 0.55, ax, p1.y - rh1 * 0.55, rdk)
-          if ((baseI + k) % 3 === 0) { c.fillStyle = rdk; var pw = Math.max(1, p1.w * 0.025); c.fillRect(ax - pw / 2, p1.y - rh1, pw, rh1) }
+          var ax = X1 + sd * gx1, bx = X2 + sd * gx2
+          if (rail === 'snowbank') { quad(7, rcol, ax, Y1, bx, Y2, bx, Y2 - rh2 * 0.9, ax, Y1 - rh1 * 0.9); continue }
+          quad(7, rcol, ax, Y1 - rh1 * 0.55, bx, Y2 - rh2 * 0.55, bx, Y2 - rh2, ax, Y1 - rh1)
+          quad(8, rdk, ax, Y1 - rh1 * 0.45, bx, Y2 - rh2 * 0.45, bx, Y2 - rh2 * 0.55, ax, Y1 - rh1 * 0.55)
+          if ((baseI + k) % 3 === 0) { var pw = Math.max(1, W1 * 0.025); rect(9, rdk, ax - pw / 2, Y1 - rh1, pw, rh1) }
         }
       }
       if (overlayFn) overlayFn(s, k)
-      maxy = p2.y
+      maxy = Y2
     }
+    flush(c)
     // tunnel walls / ceiling / portals and sprites: far -> near (painter)
     for (var j = n - 1; j > 0; j--) {
       var t = track.seg(baseI + j); if (!t || !t.p1) continue
-      if (t.tunnel) drawTunnel(c, t, v, col, cam)
+      if (t.tunnel && t.vis) drawTunnel(c, t, v, col, cam)
       spriteFn(t, j)
     }
-    return { x: x }
+    return x
   }
   function drawTunnel (c, s, v, col, cam) {
     var p1 = s.p1, p2 = s.p2

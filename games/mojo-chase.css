@@ -147,3 +147,24 @@
 .home-cta #btn-race~#btn-profile,.home-cta #btn-profile{grid-column:auto}
 #chase-host{position:fixed;inset:0;z-index:40}
 #scr-race .topbar .starpill img{width:26px;height:26px}
+/* polish 2026-10-03: intuitive feedback */
+.mc-gadget.have::before,.mc-gadget.have::after{content:'';position:absolute;left:50%;top:50%;width:calc(9px * var(--u));height:calc(9px * var(--u));margin:calc(-4.5px * var(--u));border-radius:50%;background:#ffe36b;box-shadow:0 0 calc(10px * var(--u)) #ffd54a;animation:mcOrbit 1.6s linear infinite;pointer-events:none}
+.mc-gadget.have::after{background:#7fe7ff;box-shadow:0 0 calc(10px * var(--u)) #4ce0ff;animation-delay:-.8s}
+.mc-reticle.on{animation:mcClack .32s cubic-bezier(.34,1.56,.64,1),mcSpin 2.4s linear .32s infinite}
+.mc-prog.hot .car{filter:drop-shadow(0 0 calc(6px * var(--u)) #ffd54a) drop-shadow(0 calc(2px * var(--u)) 0 rgba(0,0,0,.35))}
+.mc-prog.hot .car::after{content:''}
+.mc-prog.hot::after{content:'';position:absolute;left:var(--carx,50%);top:50%;width:calc(16px * var(--u));height:calc(4px * var(--u));border-radius:3px;background:linear-gradient(90deg,rgba(255,213,74,0),#ffd54a);animation:mcSpark .35s linear infinite}
+@keyframes mcBump{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes mcOrbit{from{transform:rotate(0) translateX(calc(44px * var(--u)))}to{transform:rotate(360deg) translateX(calc(44px * var(--u)))}}
+@keyframes mcClack{0%{transform:scale(1.8);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes mcSpark{0%{opacity:1;transform:translate(-120%,-50%)}100%{opacity:0;transform:translate(-220%,-50%)}}
+.race-card .lk{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2}
+.race-card .lk img{width:64px;height:64px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
+.race-card .hint{font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;color:#b5651d}
+@media (prefers-reduced-motion: reduce){.mc-gadget.have::before,.mc-gadget.have::after,.mc-prog.hot::after{animation:none}.mc-reticle.on{animation:none}}
+.race-card .lk .ico{width:60px;height:60px;display:block;border-radius:50%;background:rgba(10,20,40,.55);padding:10px;color:#fff}
+.race-card .lk .ico svg{width:100%;height:100%}
+/* mockup match pass: bigger hearts beside the badge, filled blue arrow buttons with a light arrow (portrait) */
+.mc-hearts img{width:calc(30px * var(--u));height:calc(30px * var(--u))}
+.mc-host:not(.land) .mc-btn{background:radial-gradient(circle at 50% 30%,#4a8fe8 0,#2563c4 55%,#1a4a9c 80%)}
+.mc-btn svg path{fill:#eaf4ff}

@@ -22,7 +22,7 @@ const report = {}
 
 /* ── B. headless rules ─────────────────────────────────────────────────────────────────────────── */
 globalThis.window = globalThis
-for (const f of ['games/data/mojo-chases.js', 'games/mojo-chase-rules.js', 'games/mojo-chase-track.js', 'games/data/mojo-rear-anchors.js', 'games/data/mojo-chase-anchors.js', 'games/data/mojo-track-anchors.js']) (0, eval)(fs.readFileSync(path.join(root, f), 'utf8'))
+for (const f of ['games/data/mojo-chases.js', 'games/mojo-chase-rules.js', 'games/mojo-chase-track.js', 'games/data/mojo-rear-anchors.js', 'games/data/mojo-chase-anchors.js', 'games/data/mojo-track-anchors.js', 'games/data/mojo-codex-anchors.js']) (0, eval)(fs.readFileSync(path.join(root, f), 'utf8'))
 const R = globalThis.MojoChaseRules, CH = globalThis.MojoChases, TR = globalThis.MojoChaseTrack
 for (const tier of ['A', 'B', 'C', 'D', 'E']) {
   const s = R.sim(2000, 7 + tier.charCodeAt(0), tier, 0)
@@ -63,14 +63,17 @@ for (const n of Object.keys(TA.biome)) chaseKeys.push('mojo-chase/biome/' + n)
 const gameSrc = ['games/mojo-chase.js', 'games/mojo-chase-track.js', 'games/mojo-chase-scene.js', 'games/mojo-chase-menu.js', 'games/data/mojo-chases.js'].map(f => fs.readFileSync(path.join(root, f), 'utf8')).join('\n')
 for (const bad of CA.denylist) check(!new RegExp(`['"/]${bad}['"/.]`).test(gameSrc), `kid-safe: excluded asset "${bad}" is never referenced`)
 for (const st of CH.STAGES) {
-  check(TA.far[st.far], `stage ${st.id}: FAR strip resolves (${st.far})`)
-  if (st.mid) check(TA.far[st.mid], `stage ${st.id}: MID strip resolves`)
+  const CX = globalThis.MojoCodexAnchors
+  if (st.cfar) { check(CX.far[st.cfar] && CX.far[st.cfar].horizon > 0.4, `stage ${st.id}: Codex FAR strip + horizon anchor resolve (${st.cfar})`); chaseKeys.push('mojo-chase/cfar/' + st.cfar) } else check(TA.far[st.far], `stage ${st.id}: FAR strip resolves (${st.far})`)
+  if (st.cmid) { check(CX.mid[st.cmid], `stage ${st.id}: Codex MID strip resolves (${st.cmid})`); chaseKeys.push('mojo-chase/cmid/' + st.cmid) } else if (st.mid) check(TA.far[st.mid], `stage ${st.id}: MID strip resolves`)
+  if (st.cardKey) chaseKeys.push('mojo-chase/' + st.cardKey)
   check(TA.sky[st.sky], `stage ${st.id}: sky palette resolves (${st.sky})`)
-  check(TA.biome[st.card], `stage ${st.id}: stage card resolves`)
+  check(st.cardKey ? TA.biome25[st.cardKey.split('/')[1].replace(/^\d+-/, '')] : TA.biome[st.card], `stage ${st.id}: stage card resolves`)
   check(CA.families.vehicles.sprites[st.target] && !CA.denylist.includes(st.target), `stage ${st.id}: target vehicle resolves and is kid-safe (${st.target})`)
   for (const p of TR.BIOME[st.biome].props) check(TR.PROP_KEY[p[0]], `stage ${st.id}: prop ${p[0]} has a key`)
 }
-check(CH.STAGES.filter(s => s.night).every(s => s.night === true), 'night stages flagged for headlights')
+check(CH.STAGES.length === 25, `25 stages, one per owner biome (${CH.STAGES.length})`)
+check(['malam', 'tol-malam', 'antariksa'].every(id => CH.stage(id).night === true), 'night stages turn the headlights on')
 
 const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-gpu-blocklist'].concat(GPU ? ['--use-angle=vulkan', '--enable-gpu'] : []) })
 try {
@@ -223,6 +226,33 @@ try {
       check(await p.evaluate(() => !document.getElementById('chase-host') && MojoChaseFX.live() === 0), `replay ${k}: host removed and particle pool reset`)
     }
     check(!errors.length, `replays: no console errors, warnings or 404s (${errors.slice(0, 3)})`)
+    await p.close()
+  }
+
+  /* ── F. every stage loads and renders its start frame without errors (contact sheet of 25) + perf ───────── */
+  {
+    const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 }); const errors = []
+    p.on('pageerror', e => errors.push(e.message)); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu)
+    fs.mkdirSync(out + '/stages', { recursive: true })
+    for (const st of CH.STAGES) {
+      const done = p.evaluate(id => MojoChaseMenu.run(MojoChases.config(id)), st.id)
+      await p.waitForSelector('#mc-go', { timeout: 20000 }); await p.click('#mc-go'); await sleep(3200)
+      const s = await state(p)
+      check(!s.missing.length && s.state !== 'load', `stage ${st.id}: all art decoded and running (${s.missing})`)
+      await p.screenshot({ path: `${out}/stages/${st.id}.png` })
+      await p.click('.mc-pause'); await sleep(150); await p.click('#mc-exit'); await done
+    }
+    check(!errors.length, `25 stages: no page errors or 404s (${errors.slice(0, 3)})`)
+    // perf: 10 s of chase, frame-interval percentiles + main-thread work per frame (deterministic, load-independent)
+    const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai')))
+    await p.waitForSelector('#mc-go'); await p.click('#mc-go'); await sleep(1500)
+    await p.evaluate(() => __mojoChase.auto({ mode: 'clean', boost: true })); await sleep(10000)
+    const s = await state(p), a = s.frameTimes.slice(-600).sort((x, y) => x - y), pq = f => a[Math.floor(a.length * f)]
+    report.perf = { p50: pq(0.5), p95: pq(0.95), p99: pq(0.99), dropped: a.filter(x => x > 25).length, frames: a.length, workMedianPerTier: s.workMedian, quality: s.quality }
+    check(Math.max(...Object.values(s.workMedian)) <= 12, `perf: main-thread work per frame <= 12 ms at every tier (${JSON.stringify(s.workMedian)})`)
+    if (process.env.QA_PERF_STRICT) check(pq(0.95) <= 16.8, `perf: p95 frame <= 16.7 ms (${pq(0.95)})`)
+    await p.click('.mc-pause'); await sleep(150); await p.click('#mc-exit'); await done
     await p.close()
   }
 

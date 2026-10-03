@@ -9777,6 +9777,2988 @@
    "w": 506,
    "h": 290
   },
+  "mojo-chase/biome25/01-town": {
+   "file": "assets/db/lib/mojo-chase/biome25/01-town.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "01",
+    "town",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 512,
+   "h": 384
+  },
+  "mojo-chase/biome25/02-coastal": {
+   "file": "assets/db/lib/mojo-chase/biome25/02-coastal.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "02",
+    "coastal",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 512,
+   "h": 384
+  },
+  "mojo-chase/biome25/03-forest": {
+   "file": "assets/db/lib/mojo-chase/biome25/03-forest.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "03",
+    "forest",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 480,
+   "h": 384
+  },
+  "mojo-chase/biome25/04-desert": {
+   "file": "assets/db/lib/mojo-chase/biome25/04-desert.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "04",
+    "desert",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 512,
+   "h": 384
+  },
+  "mojo-chase/biome25/05-snow": {
+   "file": "assets/db/lib/mojo-chase/biome25/05-snow.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "05",
+    "snow",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 512,
+   "h": 384
+  },
+  "mojo-chase/biome25/06-bridge": {
+   "file": "assets/db/lib/mojo-chase/biome25/06-bridge.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "06",
+    "bridge",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 496,
+   "h": 372
+  },
+  "mojo-chase/biome25/07-tunnel": {
+   "file": "assets/db/lib/mojo-chase/biome25/07-tunnel.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "07",
+    "tunnel",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 496,
+   "h": 372
+  },
+  "mojo-chase/biome25/08-construction": {
+   "file": "assets/db/lib/mojo-chase/biome25/08-construction.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "08",
+    "construction",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 480,
+   "h": 372
+  },
+  "mojo-chase/biome25/09-farm": {
+   "file": "assets/db/lib/mojo-chase/biome25/09-farm.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "09",
+    "farm",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 496,
+   "h": 372
+  },
+  "mojo-chase/biome25/10-city-night": {
+   "file": "assets/db/lib/mojo-chase/biome25/10-city-night.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "10",
+    "city",
+    "night",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 496,
+   "h": 372
+  },
+  "mojo-chase/biome25/11-jungle": {
+   "file": "assets/db/lib/mojo-chase/biome25/11-jungle.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "11",
+    "jungle",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 456,
+   "h": 344
+  },
+  "mojo-chase/biome25/12-volcano": {
+   "file": "assets/db/lib/mojo-chase/biome25/12-volcano.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "12",
+    "volcano",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 456,
+   "h": 344
+  },
+  "mojo-chase/biome25/13-night-highway": {
+   "file": "assets/db/lib/mojo-chase/biome25/13-night-highway.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "13",
+    "night",
+    "highway",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 456,
+   "h": 344
+  },
+  "mojo-chase/biome25/14-autumn": {
+   "file": "assets/db/lib/mojo-chase/biome25/14-autumn.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "14",
+    "autumn",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 456,
+   "h": 344
+  },
+  "mojo-chase/biome25/15-cherry-blossom": {
+   "file": "assets/db/lib/mojo-chase/biome25/15-cherry-blossom.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "15",
+    "cherry",
+    "blossom",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 456,
+   "h": 344
+  },
+  "mojo-chase/biome25/16-rain": {
+   "file": "assets/db/lib/mojo-chase/biome25/16-rain.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "16",
+    "rain",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 384,
+   "h": 288
+  },
+  "mojo-chase/biome25/17-beach-resort": {
+   "file": "assets/db/lib/mojo-chase/biome25/17-beach-resort.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "17",
+    "beach",
+    "resort",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 384,
+   "h": 288
+  },
+  "mojo-chase/biome25/18-canyon-railway": {
+   "file": "assets/db/lib/mojo-chase/biome25/18-canyon-railway.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "18",
+    "canyon",
+    "railway",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 384,
+   "h": 288
+  },
+  "mojo-chase/biome25/19-wind-farm": {
+   "file": "assets/db/lib/mojo-chase/biome25/19-wind-farm.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "19",
+    "wind",
+    "farm",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 384,
+   "h": 288
+  },
+  "mojo-chase/biome25/20-space-base": {
+   "file": "assets/db/lib/mojo-chase/biome25/20-space-base.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "20",
+    "space",
+    "base",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 384,
+   "h": 288
+  },
+  "mojo-chase/biome25/21-suburb": {
+   "file": "assets/db/lib/mojo-chase/biome25/21-suburb.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "21",
+    "suburb",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 464,
+   "h": 350
+  },
+  "mojo-chase/biome25/22-harbor-port": {
+   "file": "assets/db/lib/mojo-chase/biome25/22-harbor-port.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "22",
+    "harbor",
+    "port",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 464,
+   "h": 350
+  },
+  "mojo-chase/biome25/23-stadium": {
+   "file": "assets/db/lib/mojo-chase/biome25/23-stadium.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "23",
+    "stadium",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 464,
+   "h": 350
+  },
+  "mojo-chase/biome25/24-ruins-temple": {
+   "file": "assets/db/lib/mojo-chase/biome25/24-ruins-temple.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "24",
+    "ruins",
+    "temple",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 464,
+   "h": 350
+  },
+  "mojo-chase/biome25/25-candy-land": {
+   "file": "assets/db/lib/mojo-chase/biome25/25-candy-land.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "25",
+    "candy",
+    "land",
+    "mojo",
+    "chase",
+    "biome25"
+   ],
+   "w": 464,
+   "h": 350
+  },
+  "mojo-chase/card/coastal-01": {
+   "file": "assets/db/lib/mojo-chase/card/coastal-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/coastal-01",
+   "tags": [
+    "card",
+    "coastal",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/construction-01": {
+   "file": "assets/db/lib/mojo-chase/card/construction-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/construction-01",
+   "tags": [
+    "card",
+    "construction",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/country-straight-c": {
+   "file": "assets/db/lib/mojo-chase/card/country-straight-c.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/country-straight-c",
+   "tags": [
+    "card",
+    "country",
+    "straight",
+    "c",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/desert-01": {
+   "file": "assets/db/lib/mojo-chase/card/desert-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/desert-01",
+   "tags": [
+    "card",
+    "desert",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/farm-01": {
+   "file": "assets/db/lib/mojo-chase/card/farm-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/farm-01",
+   "tags": [
+    "card",
+    "farm",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/forest-01": {
+   "file": "assets/db/lib/mojo-chase/card/forest-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/forest-01",
+   "tags": [
+    "card",
+    "forest",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/mountain-01": {
+   "file": "assets/db/lib/mojo-chase/card/mountain-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/mountain-01",
+   "tags": [
+    "card",
+    "mountain",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/night-outage-01": {
+   "file": "assets/db/lib/mojo-chase/card/night-outage-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/night-outage-01",
+   "tags": [
+    "card",
+    "night",
+    "outage",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/rain-01": {
+   "file": "assets/db/lib/mojo-chase/card/rain-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/rain-01",
+   "tags": [
+    "card",
+    "rain",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/snow-01": {
+   "file": "assets/db/lib/mojo-chase/card/snow-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/snow-01",
+   "tags": [
+    "card",
+    "snow",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/town-straight-a": {
+   "file": "assets/db/lib/mojo-chase/card/town-straight-a.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/town-straight-a",
+   "tags": [
+    "card",
+    "town",
+    "straight",
+    "a",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/card/town-straight-b": {
+   "file": "assets/db/lib/mojo-chase/card/town-straight-b.webp",
+   "cat": "mojo-chase",
+   "source": "codex card/town-straight-b",
+   "tags": [
+    "card",
+    "town",
+    "straight",
+    "b",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 800,
+   "h": 513
+  },
+  "mojo-chase/cfar/autumn": {
+   "file": "assets/db/lib/mojo-chase/cfar/autumn.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/autumn",
+   "tags": [
+    "cfar",
+    "autumn",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1910,
+   "h": 725,
+   "horizon": 0.69,
+   "seamless": true
+  },
+  "mojo-chase/cfar/beach-resort": {
+   "file": "assets/db/lib/mojo-chase/cfar/beach-resort.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/beach-resort",
+   "tags": [
+    "cfar",
+    "beach",
+    "resort",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1911,
+   "h": 724,
+   "horizon": 0.63,
+   "seamless": true
+  },
+  "mojo-chase/cfar/bridge": {
+   "file": "assets/db/lib/mojo-chase/cfar/bridge.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/bridge",
+   "tags": [
+    "cfar",
+    "bridge",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.65,
+   "seamless": true
+  },
+  "mojo-chase/cfar/candy-land": {
+   "file": "assets/db/lib/mojo-chase/cfar/candy-land.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/candy-land",
+   "tags": [
+    "cfar",
+    "candy",
+    "land",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.65,
+   "seamless": true
+  },
+  "mojo-chase/cfar/canyon-railway": {
+   "file": "assets/db/lib/mojo-chase/cfar/canyon-railway.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/canyon-railway",
+   "tags": [
+    "cfar",
+    "canyon",
+    "railway",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1910,
+   "h": 725,
+   "horizon": 0.74,
+   "seamless": true
+  },
+  "mojo-chase/cfar/cherry-blossom": {
+   "file": "assets/db/lib/mojo-chase/cfar/cherry-blossom.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/cherry-blossom",
+   "tags": [
+    "cfar",
+    "cherry",
+    "blossom",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.68,
+   "seamless": true
+  },
+  "mojo-chase/cfar/city-night": {
+   "file": "assets/db/lib/mojo-chase/cfar/city-night.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/city-night",
+   "tags": [
+    "cfar",
+    "city",
+    "night",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.665,
+   "seamless": true
+  },
+  "mojo-chase/cfar/coast": {
+   "file": "assets/db/lib/mojo-chase/cfar/coast.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/coast",
+   "tags": [
+    "cfar",
+    "coast",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.66,
+   "seamless": true
+  },
+  "mojo-chase/cfar/construction": {
+   "file": "assets/db/lib/mojo-chase/cfar/construction.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/construction",
+   "tags": [
+    "cfar",
+    "construction",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.62,
+   "seamless": true
+  },
+  "mojo-chase/cfar/desert": {
+   "file": "assets/db/lib/mojo-chase/cfar/desert.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/desert",
+   "tags": [
+    "cfar",
+    "desert",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.66,
+   "seamless": true
+  },
+  "mojo-chase/cfar/farm": {
+   "file": "assets/db/lib/mojo-chase/cfar/farm.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/farm",
+   "tags": [
+    "cfar",
+    "farm",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.67,
+   "seamless": true
+  },
+  "mojo-chase/cfar/forest": {
+   "file": "assets/db/lib/mojo-chase/cfar/forest.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/forest",
+   "tags": [
+    "cfar",
+    "forest",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.72,
+   "seamless": true
+  },
+  "mojo-chase/cfar/harbor-port": {
+   "file": "assets/db/lib/mojo-chase/cfar/harbor-port.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/harbor-port",
+   "tags": [
+    "cfar",
+    "harbor",
+    "port",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1911,
+   "h": 724,
+   "horizon": 0.62,
+   "seamless": true
+  },
+  "mojo-chase/cfar/jungle": {
+   "file": "assets/db/lib/mojo-chase/cfar/jungle.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/jungle",
+   "tags": [
+    "cfar",
+    "jungle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1911,
+   "h": 724,
+   "horizon": 0.73,
+   "seamless": true
+  },
+  "mojo-chase/cfar/night-highway": {
+   "file": "assets/db/lib/mojo-chase/cfar/night-highway.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/night-highway",
+   "tags": [
+    "cfar",
+    "night",
+    "highway",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1910,
+   "h": 725,
+   "horizon": 0.66,
+   "seamless": true
+  },
+  "mojo-chase/cfar/rain": {
+   "file": "assets/db/lib/mojo-chase/cfar/rain.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/rain",
+   "tags": [
+    "cfar",
+    "rain",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1910,
+   "h": 725,
+   "horizon": 0.69,
+   "seamless": true
+  },
+  "mojo-chase/cfar/ruins-temple": {
+   "file": "assets/db/lib/mojo-chase/cfar/ruins-temple.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/ruins-temple",
+   "tags": [
+    "cfar",
+    "ruins",
+    "temple",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1910,
+   "h": 725,
+   "horizon": 0.7,
+   "seamless": true
+  },
+  "mojo-chase/cfar/snow": {
+   "file": "assets/db/lib/mojo-chase/cfar/snow.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/snow",
+   "tags": [
+    "cfar",
+    "snow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.62,
+   "seamless": true
+  },
+  "mojo-chase/cfar/space-base": {
+   "file": "assets/db/lib/mojo-chase/cfar/space-base.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/space-base",
+   "tags": [
+    "cfar",
+    "space",
+    "base",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1911,
+   "h": 724,
+   "horizon": 0.66,
+   "seamless": true
+  },
+  "mojo-chase/cfar/stadium": {
+   "file": "assets/db/lib/mojo-chase/cfar/stadium.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/stadium",
+   "tags": [
+    "cfar",
+    "stadium",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.65,
+   "seamless": true
+  },
+  "mojo-chase/cfar/suburb": {
+   "file": "assets/db/lib/mojo-chase/cfar/suburb.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/suburb",
+   "tags": [
+    "cfar",
+    "suburb",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1910,
+   "h": 725,
+   "horizon": 0.71,
+   "seamless": true
+  },
+  "mojo-chase/cfar/town": {
+   "file": "assets/db/lib/mojo-chase/cfar/town.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/town",
+   "tags": [
+    "cfar",
+    "town",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 724,
+   "horizon": 0.71,
+   "seamless": true
+  },
+  "mojo-chase/cfar/volcano": {
+   "file": "assets/db/lib/mojo-chase/cfar/volcano.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/volcano",
+   "tags": [
+    "cfar",
+    "volcano",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1911,
+   "h": 724,
+   "horizon": 0.65,
+   "seamless": true
+  },
+  "mojo-chase/cfar/wind-farm": {
+   "file": "assets/db/lib/mojo-chase/cfar/wind-farm.webp",
+   "cat": "mojo-chase",
+   "source": "codex cfar/wind-farm",
+   "tags": [
+    "cfar",
+    "wind",
+    "farm",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1910,
+   "h": 725,
+   "horizon": 0.68,
+   "seamless": true
+  },
+  "mojo-chase/cmid/autumn": {
+   "file": "assets/db/lib/mojo-chase/cmid/autumn.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/autumn",
+   "tags": [
+    "cmid",
+    "autumn",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 347,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/beach-resort": {
+   "file": "assets/db/lib/mojo-chase/cmid/beach-resort.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/beach-resort",
+   "tags": [
+    "cmid",
+    "beach",
+    "resort",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 454,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/bridge": {
+   "file": "assets/db/lib/mojo-chase/cmid/bridge.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/bridge",
+   "tags": [
+    "cmid",
+    "bridge",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 538,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/candy-land": {
+   "file": "assets/db/lib/mojo-chase/cmid/candy-land.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/candy-land",
+   "tags": [
+    "cmid",
+    "candy",
+    "land",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 260,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/canyon-railway": {
+   "file": "assets/db/lib/mojo-chase/cmid/canyon-railway.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/canyon-railway",
+   "tags": [
+    "cmid",
+    "canyon",
+    "railway",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 356,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/cherry-blossom": {
+   "file": "assets/db/lib/mojo-chase/cmid/cherry-blossom.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/cherry-blossom",
+   "tags": [
+    "cmid",
+    "cherry",
+    "blossom",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 394,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/city-night": {
+   "file": "assets/db/lib/mojo-chase/cmid/city-night.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/city-night",
+   "tags": [
+    "cmid",
+    "city",
+    "night",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 440,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/coast": {
+   "file": "assets/db/lib/mojo-chase/cmid/coast.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/coast",
+   "tags": [
+    "cmid",
+    "coast",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 521,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/construction": {
+   "file": "assets/db/lib/mojo-chase/cmid/construction.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/construction",
+   "tags": [
+    "cmid",
+    "construction",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 586,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/desert": {
+   "file": "assets/db/lib/mojo-chase/cmid/desert.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/desert",
+   "tags": [
+    "cmid",
+    "desert",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 293,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/farm": {
+   "file": "assets/db/lib/mojo-chase/cmid/farm.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/farm",
+   "tags": [
+    "cmid",
+    "farm",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 537,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/forest": {
+   "file": "assets/db/lib/mojo-chase/cmid/forest.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/forest",
+   "tags": [
+    "cmid",
+    "forest",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 424,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/harbor-port": {
+   "file": "assets/db/lib/mojo-chase/cmid/harbor-port.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/harbor-port",
+   "tags": [
+    "cmid",
+    "harbor",
+    "port",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 472,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/jungle": {
+   "file": "assets/db/lib/mojo-chase/cmid/jungle.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/jungle",
+   "tags": [
+    "cmid",
+    "jungle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 457,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/night-highway": {
+   "file": "assets/db/lib/mojo-chase/cmid/night-highway.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/night-highway",
+   "tags": [
+    "cmid",
+    "night",
+    "highway",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 251,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/rain": {
+   "file": "assets/db/lib/mojo-chase/cmid/rain.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/rain",
+   "tags": [
+    "cmid",
+    "rain",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 332,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/ruins-temple": {
+   "file": "assets/db/lib/mojo-chase/cmid/ruins-temple.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/ruins-temple",
+   "tags": [
+    "cmid",
+    "ruins",
+    "temple",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 391,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/snow": {
+   "file": "assets/db/lib/mojo-chase/cmid/snow.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/snow",
+   "tags": [
+    "cmid",
+    "snow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 399,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/space-base": {
+   "file": "assets/db/lib/mojo-chase/cmid/space-base.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/space-base",
+   "tags": [
+    "cmid",
+    "space",
+    "base",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 328,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/stadium": {
+   "file": "assets/db/lib/mojo-chase/cmid/stadium.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/stadium",
+   "tags": [
+    "cmid",
+    "stadium",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 362,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/suburb": {
+   "file": "assets/db/lib/mojo-chase/cmid/suburb.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/suburb",
+   "tags": [
+    "cmid",
+    "suburb",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 282,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/town": {
+   "file": "assets/db/lib/mojo-chase/cmid/town.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/town",
+   "tags": [
+    "cmid",
+    "town",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 430,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/tunnel": {
+   "file": "assets/db/lib/mojo-chase/cmid/tunnel.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/tunnel",
+   "tags": [
+    "cmid",
+    "tunnel",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 345,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/volcano": {
+   "file": "assets/db/lib/mojo-chase/cmid/volcano.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/volcano",
+   "tags": [
+    "cmid",
+    "volcano",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 251,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cmid/wind-farm": {
+   "file": "assets/db/lib/mojo-chase/cmid/wind-farm.webp",
+   "cat": "mojo-chase",
+   "source": "codex cmid/wind-farm",
+   "tags": [
+    "cmid",
+    "wind",
+    "farm",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1912,
+   "h": 433,
+   "baseline": 1.0,
+   "seamless": true
+  },
+  "mojo-chase/cprops/barrel": {
+   "file": "assets/db/lib/mojo-chase/cprops/barrel.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/barrel",
+   "tags": [
+    "cprops",
+    "barrel",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 146,
+   "h": 212
+  },
+  "mojo-chase/cprops/blank-billboard": {
+   "file": "assets/db/lib/mojo-chase/cprops/blank-billboard.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/blank-billboard",
+   "tags": [
+    "cprops",
+    "blank",
+    "billboard",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 212,
+   "h": 197
+  },
+  "mojo-chase/cprops/blank-town-welcome-sign": {
+   "file": "assets/db/lib/mojo-chase/cprops/blank-town-welcome-sign.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/blank-town-welcome-sign",
+   "tags": [
+    "cprops",
+    "blank",
+    "town",
+    "welcome",
+    "sign",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 211,
+   "h": 195
+  },
+  "mojo-chase/cprops/boulder": {
+   "file": "assets/db/lib/mojo-chase/cprops/boulder.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/boulder",
+   "tags": [
+    "cprops",
+    "boulder",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 226,
+   "h": 211
+  },
+  "mojo-chase/cprops/cactus": {
+   "file": "assets/db/lib/mojo-chase/cprops/cactus.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/cactus",
+   "tags": [
+    "cprops",
+    "cactus",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 202,
+   "h": 218
+  },
+  "mojo-chase/cprops/checkered-finish-arch": {
+   "file": "assets/db/lib/mojo-chase/cprops/checkered-finish-arch.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/checkered-finish-arch",
+   "tags": [
+    "cprops",
+    "checkered",
+    "finish",
+    "arch",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 214,
+   "h": 164
+  },
+  "mojo-chase/cprops/checkered-flag-pole": {
+   "file": "assets/db/lib/mojo-chase/cprops/checkered-flag-pole.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/checkered-flag-pole",
+   "tags": [
+    "cprops",
+    "checkered",
+    "flag",
+    "pole",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 191,
+   "h": 231
+  },
+  "mojo-chase/cprops/concrete-barrier": {
+   "file": "assets/db/lib/mojo-chase/cprops/concrete-barrier.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/concrete-barrier",
+   "tags": [
+    "cprops",
+    "concrete",
+    "barrier",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 245,
+   "h": 177
+  },
+  "mojo-chase/cprops/concrete-drainage-ring": {
+   "file": "assets/db/lib/mojo-chase/cprops/concrete-drainage-ring.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/concrete-drainage-ring",
+   "tags": [
+    "cprops",
+    "concrete",
+    "drainage",
+    "ring",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 199,
+   "h": 150
+  },
+  "mojo-chase/cprops/cone": {
+   "file": "assets/db/lib/mojo-chase/cprops/cone.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/cone",
+   "tags": [
+    "cprops",
+    "cone",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 177,
+   "h": 211
+  },
+  "mojo-chase/cprops/construction-pipe": {
+   "file": "assets/db/lib/mojo-chase/cprops/construction-pipe.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/construction-pipe",
+   "tags": [
+    "cprops",
+    "construction",
+    "pipe",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 233,
+   "h": 181
+  },
+  "mojo-chase/cprops/construction-worklight": {
+   "file": "assets/db/lib/mojo-chase/cprops/construction-worklight.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/construction-worklight",
+   "tags": [
+    "cprops",
+    "construction",
+    "worklight",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 147,
+   "h": 223
+  },
+  "mojo-chase/cprops/curve-symbol-sign": {
+   "file": "assets/db/lib/mojo-chase/cprops/curve-symbol-sign.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/curve-symbol-sign",
+   "tags": [
+    "cprops",
+    "curve",
+    "symbol",
+    "sign",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 170,
+   "h": 247
+  },
+  "mojo-chase/cprops/cyan-neon-low-city-building": {
+   "file": "assets/db/lib/mojo-chase/cprops/cyan-neon-low-city-building.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/cyan-neon-low-city-building",
+   "tags": [
+    "cprops",
+    "cyan",
+    "neon",
+    "low",
+    "city",
+    "building",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 204,
+   "h": 204
+  },
+  "mojo-chase/cprops/empty-bus-shelter": {
+   "file": "assets/db/lib/mojo-chase/cprops/empty-bus-shelter.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/empty-bus-shelter",
+   "tags": [
+    "cprops",
+    "empty",
+    "bus",
+    "shelter",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 224,
+   "h": 202
+  },
+  "mojo-chase/cprops/fire-hydrant": {
+   "file": "assets/db/lib/mojo-chase/cprops/fire-hydrant.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/fire-hydrant",
+   "tags": [
+    "cprops",
+    "fire",
+    "hydrant",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 141,
+   "h": 208
+  },
+  "mojo-chase/cprops/flowering-bush": {
+   "file": "assets/db/lib/mojo-chase/cprops/flowering-bush.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/flowering-bush",
+   "tags": [
+    "cprops",
+    "flowering",
+    "bush",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 219,
+   "h": 193
+  },
+  "mojo-chase/cprops/four-sail-farm-windmill": {
+   "file": "assets/db/lib/mojo-chase/cprops/four-sail-farm-windmill.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/four-sail-farm-windmill",
+   "tags": [
+    "cprops",
+    "four",
+    "sail",
+    "farm",
+    "windmill",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 176,
+   "h": 226
+  },
+  "mojo-chase/cprops/harbor-buoy": {
+   "file": "assets/db/lib/mojo-chase/cprops/harbor-buoy.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/harbor-buoy",
+   "tags": [
+    "cprops",
+    "harbor",
+    "buoy",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 151,
+   "h": 196
+  },
+  "mojo-chase/cprops/harbor-mooring-bollard": {
+   "file": "assets/db/lib/mojo-chase/cprops/harbor-mooring-bollard.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/harbor-mooring-bollard",
+   "tags": [
+    "cprops",
+    "harbor",
+    "mooring",
+    "bollard",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 168,
+   "h": 183
+  },
+  "mojo-chase/cprops/hay-bale": {
+   "file": "assets/db/lib/mojo-chase/cprops/hay-bale.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/hay-bale",
+   "tags": [
+    "cprops",
+    "hay",
+    "bale",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 230,
+   "h": 181
+  },
+  "mojo-chase/cprops/lamp-post": {
+   "file": "assets/db/lib/mojo-chase/cprops/lamp-post.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/lamp-post",
+   "tags": [
+    "cprops",
+    "lamp",
+    "post",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 142,
+   "h": 240
+  },
+  "mojo-chase/cprops/lane-gantry-with-three-empty-panels": {
+   "file": "assets/db/lib/mojo-chase/cprops/lane-gantry-with-three-empty-panels.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/lane-gantry-with-three-empty-panels",
+   "tags": [
+    "cprops",
+    "lane",
+    "gantry",
+    "with",
+    "three",
+    "empty",
+    "panels",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 231,
+   "h": 173
+  },
+  "mojo-chase/cprops/leafy-tree": {
+   "file": "assets/db/lib/mojo-chase/cprops/leafy-tree.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/leafy-tree",
+   "tags": [
+    "cprops",
+    "leafy",
+    "tree",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 207,
+   "h": 237
+  },
+  "mojo-chase/cprops/left-chevron-sign": {
+   "file": "assets/db/lib/mojo-chase/cprops/left-chevron-sign.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/left-chevron-sign",
+   "tags": [
+    "cprops",
+    "left",
+    "chevron",
+    "sign",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 169,
+   "h": 197
+  },
+  "mojo-chase/cprops/metal-guardrail": {
+   "file": "assets/db/lib/mojo-chase/cprops/metal-guardrail.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/metal-guardrail",
+   "tags": [
+    "cprops",
+    "metal",
+    "guardrail",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 219,
+   "h": 183
+  },
+  "mojo-chase/cprops/palm": {
+   "file": "assets/db/lib/mojo-chase/cprops/palm.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/palm",
+   "tags": [
+    "cprops",
+    "palm",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 210,
+   "h": 235
+  },
+  "mojo-chase/cprops/park-bench": {
+   "file": "assets/db/lib/mojo-chase/cprops/park-bench.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/park-bench",
+   "tags": [
+    "cprops",
+    "park",
+    "bench",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 228,
+   "h": 167
+  },
+  "mojo-chase/cprops/pine": {
+   "file": "assets/db/lib/mojo-chase/cprops/pine.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/pine",
+   "tags": [
+    "cprops",
+    "pine",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 189,
+   "h": 239
+  },
+  "mojo-chase/cprops/pink-neon-stepped-city-building": {
+   "file": "assets/db/lib/mojo-chase/cprops/pink-neon-stepped-city-building.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/pink-neon-stepped-city-building",
+   "tags": [
+    "cprops",
+    "pink",
+    "neon",
+    "stepped",
+    "city",
+    "building",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 198,
+   "h": 221
+  },
+  "mojo-chase/cprops/planter": {
+   "file": "assets/db/lib/mojo-chase/cprops/planter.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/planter",
+   "tags": [
+    "cprops",
+    "planter",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 224,
+   "h": 199
+  },
+  "mojo-chase/cprops/red-suspension-bridge-tower": {
+   "file": "assets/db/lib/mojo-chase/cprops/red-suspension-bridge-tower.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/red-suspension-bridge-tower",
+   "tags": [
+    "cprops",
+    "red",
+    "suspension",
+    "bridge",
+    "tower",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 220,
+   "h": 198
+  },
+  "mojo-chase/cprops/red-white-work-barrier": {
+   "file": "assets/db/lib/mojo-chase/cprops/red-white-work-barrier.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/red-white-work-barrier",
+   "tags": [
+    "cprops",
+    "red",
+    "white",
+    "work",
+    "barrier",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 220,
+   "h": 198
+  },
+  "mojo-chase/cprops/right-chevron-sign": {
+   "file": "assets/db/lib/mojo-chase/cprops/right-chevron-sign.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/right-chevron-sign",
+   "tags": [
+    "cprops",
+    "right",
+    "chevron",
+    "sign",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 155,
+   "h": 193
+  },
+  "mojo-chase/cprops/rounded-tunnel-portal": {
+   "file": "assets/db/lib/mojo-chase/cprops/rounded-tunnel-portal.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/rounded-tunnel-portal",
+   "tags": [
+    "cprops",
+    "rounded",
+    "tunnel",
+    "portal",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 236,
+   "h": 177
+  },
+  "mojo-chase/cprops/shrub": {
+   "file": "assets/db/lib/mojo-chase/cprops/shrub.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/shrub",
+   "tags": [
+    "cprops",
+    "shrub",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 221,
+   "h": 196
+  },
+  "mojo-chase/cprops/small-rock": {
+   "file": "assets/db/lib/mojo-chase/cprops/small-rock.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/small-rock",
+   "tags": [
+    "cprops",
+    "small",
+    "rock",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 175,
+   "h": 139
+  },
+  "mojo-chase/cprops/snow-route-marker": {
+   "file": "assets/db/lib/mojo-chase/cprops/snow-route-marker.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/snow-route-marker",
+   "tags": [
+    "cprops",
+    "snow",
+    "route",
+    "marker",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 84,
+   "h": 224
+  },
+  "mojo-chase/cprops/snowy-pine": {
+   "file": "assets/db/lib/mojo-chase/cprops/snowy-pine.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/snowy-pine",
+   "tags": [
+    "cprops",
+    "snowy",
+    "pine",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 174,
+   "h": 237
+  },
+  "mojo-chase/cprops/solar-street-light": {
+   "file": "assets/db/lib/mojo-chase/cprops/solar-street-light.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/solar-street-light",
+   "tags": [
+    "cprops",
+    "solar",
+    "street",
+    "light",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 160,
+   "h": 223
+  },
+  "mojo-chase/cprops/stone-wall": {
+   "file": "assets/db/lib/mojo-chase/cprops/stone-wall.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/stone-wall",
+   "tags": [
+    "cprops",
+    "stone",
+    "wall",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 238,
+   "h": 112
+  },
+  "mojo-chase/cprops/teal-safety-bollard": {
+   "file": "assets/db/lib/mojo-chase/cprops/teal-safety-bollard.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/teal-safety-bollard",
+   "tags": [
+    "cprops",
+    "teal",
+    "safety",
+    "bollard",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 101,
+   "h": 205
+  },
+  "mojo-chase/cprops/tire-stack": {
+   "file": "assets/db/lib/mojo-chase/cprops/tire-stack.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/tire-stack",
+   "tags": [
+    "cprops",
+    "tire",
+    "stack",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 168,
+   "h": 218
+  },
+  "mojo-chase/cprops/traffic-light": {
+   "file": "assets/db/lib/mojo-chase/cprops/traffic-light.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/traffic-light",
+   "tags": [
+    "cprops",
+    "traffic",
+    "light",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 73,
+   "h": 227
+  },
+  "mojo-chase/cprops/warning-symbol-sign": {
+   "file": "assets/db/lib/mojo-chase/cprops/warning-symbol-sign.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/warning-symbol-sign",
+   "tags": [
+    "cprops",
+    "warning",
+    "symbol",
+    "sign",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 171,
+   "h": 237
+  },
+  "mojo-chase/cprops/windsock": {
+   "file": "assets/db/lib/mojo-chase/cprops/windsock.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/windsock",
+   "tags": [
+    "cprops",
+    "windsock",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 193,
+   "h": 239
+  },
+  "mojo-chase/cprops/wooden-crate": {
+   "file": "assets/db/lib/mojo-chase/cprops/wooden-crate.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/wooden-crate",
+   "tags": [
+    "cprops",
+    "wooden",
+    "crate",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 214
+  },
+  "mojo-chase/cprops/wooden-fence": {
+   "file": "assets/db/lib/mojo-chase/cprops/wooden-fence.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/wooden-fence",
+   "tags": [
+    "cprops",
+    "wooden",
+    "fence",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 204
+  },
+  "mojo-chase/cprops/workshop-facade": {
+   "file": "assets/db/lib/mojo-chase/cprops/workshop-facade.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/workshop-facade",
+   "tags": [
+    "cprops",
+    "workshop",
+    "facade",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 241,
+   "h": 213
+  },
+  "mojo-chase/cprops/yellow-neon-domed-city-building": {
+   "file": "assets/db/lib/mojo-chase/cprops/yellow-neon-domed-city-building.webp",
+   "cat": "mojo-chase",
+   "source": "codex cprops/yellow-neon-domed-city-building",
+   "tags": [
+    "cprops",
+    "yellow",
+    "neon",
+    "domed",
+    "city",
+    "building",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 139,
+   "h": 234
+  },
+  "mojo-chase/croadside/left-01": {
+   "file": "assets/db/lib/mojo-chase/croadside/left-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex croadside/left-01",
+   "tags": [
+    "croadside",
+    "left",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 2149,
+   "h": 470
+  },
+  "mojo-chase/croadside/right-01": {
+   "file": "assets/db/lib/mojo-chase/croadside/right-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex croadside/right-01",
+   "tags": [
+    "croadside",
+    "right",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 2162,
+   "h": 493
+  },
+  "mojo-chase/csky/clear-day-01": {
+   "file": "assets/db/lib/mojo-chase/csky/clear-day-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex csky/clear-day-01",
+   "tags": [
+    "csky",
+    "clear",
+    "day",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1600,
+   "h": 800
+  },
+  "mojo-chase/csky/cloudy-01": {
+   "file": "assets/db/lib/mojo-chase/csky/cloudy-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex csky/cloudy-01",
+   "tags": [
+    "csky",
+    "cloudy",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1600,
+   "h": 800
+  },
+  "mojo-chase/csky/night-01": {
+   "file": "assets/db/lib/mojo-chase/csky/night-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex csky/night-01",
+   "tags": [
+    "csky",
+    "night",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1600,
+   "h": 800
+  },
+  "mojo-chase/csky/rain-01": {
+   "file": "assets/db/lib/mojo-chase/csky/rain-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex csky/rain-01",
+   "tags": [
+    "csky",
+    "rain",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1600,
+   "h": 800
+  },
+  "mojo-chase/csky/snow-02": {
+   "file": "assets/db/lib/mojo-chase/csky/snow-02.webp",
+   "cat": "mojo-chase",
+   "source": "codex csky/snow-02",
+   "tags": [
+    "csky",
+    "snow",
+    "02",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1600,
+   "h": 800
+  },
+  "mojo-chase/csky/sunset-01": {
+   "file": "assets/db/lib/mojo-chase/csky/sunset-01.webp",
+   "cat": "mojo-chase",
+   "source": "codex csky/sunset-01",
+   "tags": [
+    "csky",
+    "sunset",
+    "01",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 1600,
+   "h": 800
+  },
+  "mojo-chase/edu/blank-circular-counter-token": {
+   "file": "assets/db/lib/mojo-chase/edu/blank-circular-counter-token.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blank-circular-counter-token",
+   "tags": [
+    "edu",
+    "blank",
+    "circular",
+    "counter",
+    "token",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 200,
+   "h": 199
+  },
+  "mojo-chase/edu/blank-cyan-letter-card": {
+   "file": "assets/db/lib/mojo-chase/edu/blank-cyan-letter-card.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blank-cyan-letter-card",
+   "tags": [
+    "edu",
+    "blank",
+    "cyan",
+    "letter",
+    "card",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 195,
+   "h": 191
+  },
+  "mojo-chase/edu/blank-cyan-math-lane-panel": {
+   "file": "assets/db/lib/mojo-chase/edu/blank-cyan-math-lane-panel.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blank-cyan-math-lane-panel",
+   "tags": [
+    "edu",
+    "blank",
+    "cyan",
+    "math",
+    "lane",
+    "panel",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 151,
+   "h": 236
+  },
+  "mojo-chase/edu/blank-green-letter-card": {
+   "file": "assets/db/lib/mojo-chase/edu/blank-green-letter-card.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blank-green-letter-card",
+   "tags": [
+    "edu",
+    "blank",
+    "green",
+    "letter",
+    "card",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 190,
+   "h": 234
+  },
+  "mojo-chase/edu/blank-green-math-lane-panel": {
+   "file": "assets/db/lib/mojo-chase/edu/blank-green-math-lane-panel.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blank-green-math-lane-panel",
+   "tags": [
+    "edu",
+    "blank",
+    "green",
+    "math",
+    "lane",
+    "panel",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 146,
+   "h": 236
+  },
+  "mojo-chase/edu/blank-orange-letter-card": {
+   "file": "assets/db/lib/mojo-chase/edu/blank-orange-letter-card.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blank-orange-letter-card",
+   "tags": [
+    "edu",
+    "blank",
+    "orange",
+    "letter",
+    "card",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 200,
+   "h": 190
+  },
+  "mojo-chase/edu/blank-orange-math-lane-panel": {
+   "file": "assets/db/lib/mojo-chase/edu/blank-orange-math-lane-panel.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blank-orange-math-lane-panel",
+   "tags": [
+    "edu",
+    "blank",
+    "orange",
+    "math",
+    "lane",
+    "panel",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 149,
+   "h": 236
+  },
+  "mojo-chase/edu/blue-circle": {
+   "file": "assets/db/lib/mojo-chase/edu/blue-circle.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blue-circle",
+   "tags": [
+    "edu",
+    "blue",
+    "circle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 194,
+   "h": 192
+  },
+  "mojo-chase/edu/blue-rectangle": {
+   "file": "assets/db/lib/mojo-chase/edu/blue-rectangle.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blue-rectangle",
+   "tags": [
+    "edu",
+    "blue",
+    "rectangle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 226,
+   "h": 123
+  },
+  "mojo-chase/edu/blue-square": {
+   "file": "assets/db/lib/mojo-chase/edu/blue-square.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blue-square",
+   "tags": [
+    "edu",
+    "blue",
+    "square",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 186,
+   "h": 235
+  },
+  "mojo-chase/edu/blue-triangle": {
+   "file": "assets/db/lib/mojo-chase/edu/blue-triangle.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/blue-triangle",
+   "tags": [
+    "edu",
+    "blue",
+    "triangle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 194,
+   "h": 173
+  },
+  "mojo-chase/edu/green-diamond": {
+   "file": "assets/db/lib/mojo-chase/edu/green-diamond.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/green-diamond",
+   "tags": [
+    "edu",
+    "green",
+    "diamond",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 193,
+   "h": 194
+  },
+  "mojo-chase/edu/left-arrow": {
+   "file": "assets/db/lib/mojo-chase/edu/left-arrow.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/left-arrow",
+   "tags": [
+    "edu",
+    "left",
+    "arrow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 198,
+   "h": 161
+  },
+  "mojo-chase/edu/num-0": {
+   "file": "assets/db/lib/mojo-chase/edu/num-0.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-0",
+   "tags": [
+    "edu",
+    "num",
+    "0",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 227
+  },
+  "mojo-chase/edu/num-1": {
+   "file": "assets/db/lib/mojo-chase/edu/num-1.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-1",
+   "tags": [
+    "edu",
+    "num",
+    "1",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 227,
+   "h": 227
+  },
+  "mojo-chase/edu/num-10": {
+   "file": "assets/db/lib/mojo-chase/edu/num-10.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-10",
+   "tags": [
+    "edu",
+    "num",
+    "10",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 230
+  },
+  "mojo-chase/edu/num-11": {
+   "file": "assets/db/lib/mojo-chase/edu/num-11.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-11",
+   "tags": [
+    "edu",
+    "num",
+    "11",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 249,
+   "h": 232
+  },
+  "mojo-chase/edu/num-12": {
+   "file": "assets/db/lib/mojo-chase/edu/num-12.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-12",
+   "tags": [
+    "edu",
+    "num",
+    "12",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 227,
+   "h": 233
+  },
+  "mojo-chase/edu/num-13": {
+   "file": "assets/db/lib/mojo-chase/edu/num-13.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-13",
+   "tags": [
+    "edu",
+    "num",
+    "13",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 248,
+   "h": 233
+  },
+  "mojo-chase/edu/num-14": {
+   "file": "assets/db/lib/mojo-chase/edu/num-14.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-14",
+   "tags": [
+    "edu",
+    "num",
+    "14",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 225,
+   "h": 230
+  },
+  "mojo-chase/edu/num-15": {
+   "file": "assets/db/lib/mojo-chase/edu/num-15.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-15",
+   "tags": [
+    "edu",
+    "num",
+    "15",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 227
+  },
+  "mojo-chase/edu/num-16": {
+   "file": "assets/db/lib/mojo-chase/edu/num-16.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-16",
+   "tags": [
+    "edu",
+    "num",
+    "16",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 249,
+   "h": 227
+  },
+  "mojo-chase/edu/num-17": {
+   "file": "assets/db/lib/mojo-chase/edu/num-17.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-17",
+   "tags": [
+    "edu",
+    "num",
+    "17",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 229,
+   "h": 227
+  },
+  "mojo-chase/edu/num-18": {
+   "file": "assets/db/lib/mojo-chase/edu/num-18.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-18",
+   "tags": [
+    "edu",
+    "num",
+    "18",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 248,
+   "h": 230
+  },
+  "mojo-chase/edu/num-19": {
+   "file": "assets/db/lib/mojo-chase/edu/num-19.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-19",
+   "tags": [
+    "edu",
+    "num",
+    "19",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 224,
+   "h": 229
+  },
+  "mojo-chase/edu/num-2": {
+   "file": "assets/db/lib/mojo-chase/edu/num-2.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-2",
+   "tags": [
+    "edu",
+    "num",
+    "2",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 225,
+   "h": 227
+  },
+  "mojo-chase/edu/num-20": {
+   "file": "assets/db/lib/mojo-chase/edu/num-20.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-20",
+   "tags": [
+    "edu",
+    "num",
+    "20",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 228
+  },
+  "mojo-chase/edu/num-3": {
+   "file": "assets/db/lib/mojo-chase/edu/num-3.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-3",
+   "tags": [
+    "edu",
+    "num",
+    "3",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 226,
+   "h": 227
+  },
+  "mojo-chase/edu/num-4": {
+   "file": "assets/db/lib/mojo-chase/edu/num-4.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-4",
+   "tags": [
+    "edu",
+    "num",
+    "4",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 227
+  },
+  "mojo-chase/edu/num-5": {
+   "file": "assets/db/lib/mojo-chase/edu/num-5.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-5",
+   "tags": [
+    "edu",
+    "num",
+    "5",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 243
+  },
+  "mojo-chase/edu/num-6": {
+   "file": "assets/db/lib/mojo-chase/edu/num-6.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-6",
+   "tags": [
+    "edu",
+    "num",
+    "6",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 248,
+   "h": 243
+  },
+  "mojo-chase/edu/num-7": {
+   "file": "assets/db/lib/mojo-chase/edu/num-7.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-7",
+   "tags": [
+    "edu",
+    "num",
+    "7",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 228,
+   "h": 243
+  },
+  "mojo-chase/edu/num-8": {
+   "file": "assets/db/lib/mojo-chase/edu/num-8.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-8",
+   "tags": [
+    "edu",
+    "num",
+    "8",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 248,
+   "h": 244
+  },
+  "mojo-chase/edu/num-9": {
+   "file": "assets/db/lib/mojo-chase/edu/num-9.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-9",
+   "tags": [
+    "edu",
+    "num",
+    "9",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 223,
+   "h": 244
+  },
+  "mojo-chase/edu/num-minus": {
+   "file": "assets/db/lib/mojo-chase/edu/num-minus.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-minus",
+   "tags": [
+    "edu",
+    "num",
+    "minus",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 231,
+   "h": 227
+  },
+  "mojo-chase/edu/num-plus": {
+   "file": "assets/db/lib/mojo-chase/edu/num-plus.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/num-plus",
+   "tags": [
+    "edu",
+    "num",
+    "plus",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 249,
+   "h": 229
+  },
+  "mojo-chase/edu/orange-hexagon": {
+   "file": "assets/db/lib/mojo-chase/edu/orange-hexagon.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/orange-hexagon",
+   "tags": [
+    "edu",
+    "orange",
+    "hexagon",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 198,
+   "h": 176
+  },
+  "mojo-chase/edu/pink-star": {
+   "file": "assets/db/lib/mojo-chase/edu/pink-star.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/pink-star",
+   "tags": [
+    "edu",
+    "pink",
+    "star",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 202,
+   "h": 187
+  },
+  "mojo-chase/edu/purple-heart": {
+   "file": "assets/db/lib/mojo-chase/edu/purple-heart.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/purple-heart",
+   "tags": [
+    "edu",
+    "purple",
+    "heart",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 205,
+   "h": 173
+  },
+  "mojo-chase/edu/red-circle": {
+   "file": "assets/db/lib/mojo-chase/edu/red-circle.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/red-circle",
+   "tags": [
+    "edu",
+    "red",
+    "circle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 195,
+   "h": 188
+  },
+  "mojo-chase/edu/red-square": {
+   "file": "assets/db/lib/mojo-chase/edu/red-square.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/red-square",
+   "tags": [
+    "edu",
+    "red",
+    "square",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 185,
+   "h": 185
+  },
+  "mojo-chase/edu/red-triangle": {
+   "file": "assets/db/lib/mojo-chase/edu/red-triangle.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/red-triangle",
+   "tags": [
+    "edu",
+    "red",
+    "triangle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 195,
+   "h": 172
+  },
+  "mojo-chase/edu/right-arrow": {
+   "file": "assets/db/lib/mojo-chase/edu/right-arrow.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/right-arrow",
+   "tags": [
+    "edu",
+    "right",
+    "arrow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 196,
+   "h": 225
+  },
+  "mojo-chase/edu/straight-up-arrow": {
+   "file": "assets/db/lib/mojo-chase/edu/straight-up-arrow.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/straight-up-arrow",
+   "tags": [
+    "edu",
+    "straight",
+    "up",
+    "arrow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 167,
+   "h": 189
+  },
+  "mojo-chase/edu/teal-oval": {
+   "file": "assets/db/lib/mojo-chase/edu/teal-oval.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/teal-oval",
+   "tags": [
+    "edu",
+    "teal",
+    "oval",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 215,
+   "h": 147
+  },
+  "mojo-chase/edu/yellow-circle": {
+   "file": "assets/db/lib/mojo-chase/edu/yellow-circle.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/yellow-circle",
+   "tags": [
+    "edu",
+    "yellow",
+    "circle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 189,
+   "h": 188
+  },
+  "mojo-chase/edu/yellow-square": {
+   "file": "assets/db/lib/mojo-chase/edu/yellow-square.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/yellow-square",
+   "tags": [
+    "edu",
+    "yellow",
+    "square",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 196,
+   "h": 235
+  },
+  "mojo-chase/edu/yellow-triangle": {
+   "file": "assets/db/lib/mojo-chase/edu/yellow-triangle.webp",
+   "cat": "mojo-chase",
+   "source": "codex edu/yellow-triangle",
+   "tags": [
+    "edu",
+    "yellow",
+    "triangle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 191,
+   "h": 173
+  },
   "mojo-chase/far/aurora": {
    "file": "assets/db/lib/mojo-chase/far/aurora.webp",
    "cat": "mojo-chase",
@@ -10984,6 +13966,396 @@
    "cx": 220.5,
    "bw": 90
   },
+  "mojo-chase/ui/blank-letter-panel": {
+   "file": "assets/db/lib/mojo-chase/ui/blank-letter-panel.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/blank-letter-panel",
+   "tags": [
+    "ui",
+    "blank",
+    "letter",
+    "panel",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 231,
+   "h": 176
+  },
+  "mojo-chase/ui/blank-math-panel": {
+   "file": "assets/db/lib/mojo-chase/ui/blank-math-panel.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/blank-math-panel",
+   "tags": [
+    "ui",
+    "blank",
+    "math",
+    "panel",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 230,
+   "h": 175
+  },
+  "mojo-chase/ui/blank-mission-card": {
+   "file": "assets/db/lib/mojo-chase/ui/blank-mission-card.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/blank-mission-card",
+   "tags": [
+    "ui",
+    "blank",
+    "mission",
+    "card",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 210,
+   "h": 203
+  },
+  "mojo-chase/ui/blank-result-card": {
+   "file": "assets/db/lib/mojo-chase/ui/blank-result-card.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/blank-result-card",
+   "tags": [
+    "ui",
+    "blank",
+    "result",
+    "card",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 224,
+   "h": 225
+  },
+  "mojo-chase/ui/blank-speech-bubble": {
+   "file": "assets/db/lib/mojo-chase/ui/blank-speech-bubble.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/blank-speech-bubble",
+   "tags": [
+    "ui",
+    "blank",
+    "speech",
+    "bubble",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 226,
+   "h": 183
+  },
+  "mojo-chase/ui/boost": {
+   "file": "assets/db/lib/mojo-chase/ui/boost.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/boost",
+   "tags": [
+    "ui",
+    "boost",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 204,
+   "h": 203
+  },
+  "mojo-chase/ui/chase-progress-bar": {
+   "file": "assets/db/lib/mojo-chase/ui/chase-progress-bar.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/chase-progress-bar",
+   "tags": [
+    "ui",
+    "chase",
+    "progress",
+    "bar",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 246,
+   "h": 85
+  },
+  "mojo-chase/ui/contextual-tap-action": {
+   "file": "assets/db/lib/mojo-chase/ui/contextual-tap-action.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/contextual-tap-action",
+   "tags": [
+    "ui",
+    "contextual",
+    "tap",
+    "action",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 203,
+   "h": 201
+  },
+  "mojo-chase/ui/continue": {
+   "file": "assets/db/lib/mojo-chase/ui/continue.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/continue",
+   "tags": [
+    "ui",
+    "continue",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 221,
+   "h": 199
+  },
+  "mojo-chase/ui/correct-feedback": {
+   "file": "assets/db/lib/mojo-chase/ui/correct-feedback.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/correct-feedback",
+   "tags": [
+    "ui",
+    "correct",
+    "feedback",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 200,
+   "h": 199
+  },
+  "mojo-chase/ui/gadget-slot": {
+   "file": "assets/db/lib/mojo-chase/ui/gadget-slot.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/gadget-slot",
+   "tags": [
+    "ui",
+    "gadget",
+    "slot",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 200,
+   "h": 182
+  },
+  "mojo-chase/ui/gentle-incorrect-feedback": {
+   "file": "assets/db/lib/mojo-chase/ui/gentle-incorrect-feedback.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/gentle-incorrect-feedback",
+   "tags": [
+    "ui",
+    "gentle",
+    "incorrect",
+    "feedback",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 198,
+   "h": 194
+  },
+  "mojo-chase/ui/left-arrow": {
+   "file": "assets/db/lib/mojo-chase/ui/left-arrow.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/left-arrow",
+   "tags": [
+    "ui",
+    "left",
+    "arrow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 201,
+   "h": 200
+  },
+  "mojo-chase/ui/lock-on-reticle": {
+   "file": "assets/db/lib/mojo-chase/ui/lock-on-reticle.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/lock-on-reticle",
+   "tags": [
+    "ui",
+    "lock",
+    "on",
+    "reticle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 209,
+   "h": 204
+  },
+  "mojo-chase/ui/pause": {
+   "file": "assets/db/lib/mojo-chase/ui/pause.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/pause",
+   "tags": [
+    "ui",
+    "pause",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 198,
+   "h": 199
+  },
+  "mojo-chase/ui/replay": {
+   "file": "assets/db/lib/mojo-chase/ui/replay.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/replay",
+   "tags": [
+    "ui",
+    "replay",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 206,
+   "h": 203
+  },
+  "mojo-chase/ui/right-arrow": {
+   "file": "assets/db/lib/mojo-chase/ui/right-arrow.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/right-arrow",
+   "tags": [
+    "ui",
+    "right",
+    "arrow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 200,
+   "h": 200
+  },
+  "mojo-chase/ui/safe-net-capture-gadget": {
+   "file": "assets/db/lib/mojo-chase/ui/safe-net-capture-gadget.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/safe-net-capture-gadget",
+   "tags": [
+    "ui",
+    "safe",
+    "net",
+    "capture",
+    "gadget",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 207,
+   "h": 202
+  },
+  "mojo-chase/ui/shield": {
+   "file": "assets/db/lib/mojo-chase/ui/shield.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/shield",
+   "tags": [
+    "ui",
+    "shield",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 199,
+   "h": 200
+  },
+  "mojo-chase/ui/star-counter-frame": {
+   "file": "assets/db/lib/mojo-chase/ui/star-counter-frame.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/star-counter-frame",
+   "tags": [
+    "ui",
+    "star",
+    "counter",
+    "frame",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 245,
+   "h": 116
+  },
+  "mojo-chase/ui/success-star": {
+   "file": "assets/db/lib/mojo-chase/ui/success-star.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/success-star",
+   "tags": [
+    "ui",
+    "success",
+    "star",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 221,
+   "h": 190
+  },
+  "mojo-chase/ui/target-distance-frame": {
+   "file": "assets/db/lib/mojo-chase/ui/target-distance-frame.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/target-distance-frame",
+   "tags": [
+    "ui",
+    "target",
+    "distance",
+    "frame",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 231,
+   "h": 107
+  },
+  "mojo-chase/ui/three-hearts-status-frame": {
+   "file": "assets/db/lib/mojo-chase/ui/three-hearts-status-frame.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/three-hearts-status-frame",
+   "tags": [
+    "ui",
+    "three",
+    "hearts",
+    "status",
+    "frame",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 246,
+   "h": 114
+  },
+  "mojo-chase/ui/three-panel-lane-choice-card": {
+   "file": "assets/db/lib/mojo-chase/ui/three-panel-lane-choice-card.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/three-panel-lane-choice-card",
+   "tags": [
+    "ui",
+    "three",
+    "panel",
+    "lane",
+    "choice",
+    "card",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 246,
+   "h": 174
+  },
+  "mojo-chase/ui/three-star-result-frame": {
+   "file": "assets/db/lib/mojo-chase/ui/three-star-result-frame.webp",
+   "cat": "mojo-chase",
+   "source": "codex ui/three-star-result-frame",
+   "tags": [
+    "ui",
+    "three",
+    "star",
+    "result",
+    "frame",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 246,
+   "h": 130
+  },
   "mojo-chase/vehicles/army": {
    "file": "assets/db/lib/mojo-chase/vehicles/army.webp",
    "cat": "mojo-chase",
@@ -11756,6 +15128,995 @@
    "baseline": 239,
    "cx": 137.0,
    "bw": 187
+  },
+  "mojo-chase/vfx/boost-1": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-1.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-1",
+   "tags": [
+    "vfx",
+    "boost",
+    "1",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-2": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-2.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-2",
+   "tags": [
+    "vfx",
+    "boost",
+    "2",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-3": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-3.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-3",
+   "tags": [
+    "vfx",
+    "boost",
+    "3",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-4": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-4.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-4",
+   "tags": [
+    "vfx",
+    "boost",
+    "4",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-5": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-5.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-5",
+   "tags": [
+    "vfx",
+    "boost",
+    "5",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-6": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-6.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-6",
+   "tags": [
+    "vfx",
+    "boost",
+    "6",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-7": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-7.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-7",
+   "tags": [
+    "vfx",
+    "boost",
+    "7",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-8": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-8.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-8",
+   "tags": [
+    "vfx",
+    "boost",
+    "8",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 284,
+   "h": 724
+  },
+  "mojo-chase/vfx/boost-glow-flame": {
+   "file": "assets/db/lib/mojo-chase/vfx/boost-glow-flame.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/boost-glow-flame",
+   "tags": [
+    "vfx",
+    "boost",
+    "glow",
+    "flame",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 204,
+   "h": 137
+  },
+  "mojo-chase/vfx/brake-dust": {
+   "file": "assets/db/lib/mojo-chase/vfx/brake-dust.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brake-dust",
+   "tags": [
+    "vfx",
+    "brake",
+    "dust",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 233,
+   "h": 160
+  },
+  "mojo-chase/vfx/brok-1": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-1.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-1",
+   "tags": [
+    "vfx",
+    "brok",
+    "1",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-2": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-2.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-2",
+   "tags": [
+    "vfx",
+    "brok",
+    "2",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-3": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-3.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-3",
+   "tags": [
+    "vfx",
+    "brok",
+    "3",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-4": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-4.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-4",
+   "tags": [
+    "vfx",
+    "brok",
+    "4",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-5": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-5.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-5",
+   "tags": [
+    "vfx",
+    "brok",
+    "5",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-6": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-6.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-6",
+   "tags": [
+    "vfx",
+    "brok",
+    "6",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-7": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-7.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-7",
+   "tags": [
+    "vfx",
+    "brok",
+    "7",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-8": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-8.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-8",
+   "tags": [
+    "vfx",
+    "brok",
+    "8",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 323,
+   "h": 724
+  },
+  "mojo-chase/vfx/brok-burst": {
+   "file": "assets/db/lib/mojo-chase/vfx/brok-burst.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/brok-burst",
+   "tags": [
+    "vfx",
+    "brok",
+    "burst",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 220,
+   "h": 226
+  },
+  "mojo-chase/vfx/confetti-1": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-1.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-1",
+   "tags": [
+    "vfx",
+    "confetti",
+    "1",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/confetti-2": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-2.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-2",
+   "tags": [
+    "vfx",
+    "confetti",
+    "2",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/confetti-3": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-3.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-3",
+   "tags": [
+    "vfx",
+    "confetti",
+    "3",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/confetti-4": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-4.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-4",
+   "tags": [
+    "vfx",
+    "confetti",
+    "4",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/confetti-5": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-5.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-5",
+   "tags": [
+    "vfx",
+    "confetti",
+    "5",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/confetti-6": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-6.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-6",
+   "tags": [
+    "vfx",
+    "confetti",
+    "6",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/confetti-7": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-7.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-7",
+   "tags": [
+    "vfx",
+    "confetti",
+    "7",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/confetti-8": {
+   "file": "assets/db/lib/mojo-chase/vfx/confetti-8.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/confetti-8",
+   "tags": [
+    "vfx",
+    "confetti",
+    "8",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 297,
+   "h": 793
+  },
+  "mojo-chase/vfx/dizzy-1": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-1.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-1",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "1",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-2": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-2.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-2",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "2",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-3": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-3.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-3",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "3",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-4": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-4.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-4",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "4",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-5": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-5.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-5",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "5",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-6": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-6.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-6",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "6",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-7": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-7.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-7",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "7",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-8": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-8.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-8",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "8",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 288,
+   "h": 724
+  },
+  "mojo-chase/vfx/dizzy-star-ring": {
+   "file": "assets/db/lib/mojo-chase/vfx/dizzy-star-ring.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dizzy-star-ring",
+   "tags": [
+    "vfx",
+    "dizzy",
+    "star",
+    "ring",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 217,
+   "h": 182
+  },
+  "mojo-chase/vfx/dust-puff": {
+   "file": "assets/db/lib/mojo-chase/vfx/dust-puff.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/dust-puff",
+   "tags": [
+    "vfx",
+    "dust",
+    "puff",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 196,
+   "h": 166
+  },
+  "mojo-chase/vfx/gadget-pickup-burst": {
+   "file": "assets/db/lib/mojo-chase/vfx/gadget-pickup-burst.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/gadget-pickup-burst",
+   "tags": [
+    "vfx",
+    "gadget",
+    "pickup",
+    "burst",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 203,
+   "h": 194
+  },
+  "mojo-chase/vfx/inflatable-barrier": {
+   "file": "assets/db/lib/mojo-chase/vfx/inflatable-barrier.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/inflatable-barrier",
+   "tags": [
+    "vfx",
+    "inflatable",
+    "barrier",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 231,
+   "h": 127
+  },
+  "mojo-chase/vfx/lock-on-pulse": {
+   "file": "assets/db/lib/mojo-chase/vfx/lock-on-pulse.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/lock-on-pulse",
+   "tags": [
+    "vfx",
+    "lock",
+    "on",
+    "pulse",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 186,
+   "h": 186
+  },
+  "mojo-chase/vfx/magnet-sparkle": {
+   "file": "assets/db/lib/mojo-chase/vfx/magnet-sparkle.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/magnet-sparkle",
+   "tags": [
+    "vfx",
+    "magnet",
+    "sparkle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 214,
+   "h": 192
+  },
+  "mojo-chase/vfx/magnetic-clamp": {
+   "file": "assets/db/lib/mojo-chase/vfx/magnetic-clamp.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/magnetic-clamp",
+   "tags": [
+    "vfx",
+    "magnetic",
+    "clamp",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 199,
+   "h": 168
+  },
+  "mojo-chase/vfx/medium-debris": {
+   "file": "assets/db/lib/mojo-chase/vfx/medium-debris.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/medium-debris",
+   "tags": [
+    "vfx",
+    "medium",
+    "debris",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 201,
+   "h": 180
+  },
+  "mojo-chase/vfx/mission-success-confetti-burst": {
+   "file": "assets/db/lib/mojo-chase/vfx/mission-success-confetti-burst.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/mission-success-confetti-burst",
+   "tags": [
+    "vfx",
+    "mission",
+    "success",
+    "confetti",
+    "burst",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 241,
+   "h": 204
+  },
+  "mojo-chase/vfx/net-1": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-1.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-1",
+   "tags": [
+    "vfx",
+    "net",
+    "1",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/net-2": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-2.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-2",
+   "tags": [
+    "vfx",
+    "net",
+    "2",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/net-3": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-3.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-3",
+   "tags": [
+    "vfx",
+    "net",
+    "3",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/net-4": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-4.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-4",
+   "tags": [
+    "vfx",
+    "net",
+    "4",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/net-5": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-5.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-5",
+   "tags": [
+    "vfx",
+    "net",
+    "5",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/net-6": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-6.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-6",
+   "tags": [
+    "vfx",
+    "net",
+    "6",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/net-7": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-7.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-7",
+   "tags": [
+    "vfx",
+    "net",
+    "7",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/net-8": {
+   "file": "assets/db/lib/mojo-chase/vfx/net-8.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/net-8",
+   "tags": [
+    "vfx",
+    "net",
+    "8",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 350,
+   "h": 724
+  },
+  "mojo-chase/vfx/pickup-sparkle": {
+   "file": "assets/db/lib/mojo-chase/vfx/pickup-sparkle.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/pickup-sparkle",
+   "tags": [
+    "vfx",
+    "pickup",
+    "sparkle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 177,
+   "h": 170
+  },
+  "mojo-chase/vfx/police-light-glow": {
+   "file": "assets/db/lib/mojo-chase/vfx/police-light-glow.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/police-light-glow",
+   "tags": [
+    "vfx",
+    "police",
+    "light",
+    "glow",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 244,
+   "h": 185
+  },
+  "mojo-chase/vfx/recovery-sparkle": {
+   "file": "assets/db/lib/mojo-chase/vfx/recovery-sparkle.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/recovery-sparkle",
+   "tags": [
+    "vfx",
+    "recovery",
+    "sparkle",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 177,
+   "h": 188
+  },
+  "mojo-chase/vfx/safe-capture-rocket-trail-only": {
+   "file": "assets/db/lib/mojo-chase/vfx/safe-capture-rocket-trail-only.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/safe-capture-rocket-trail-only",
+   "tags": [
+    "vfx",
+    "safe",
+    "capture",
+    "rocket",
+    "trail",
+    "only",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 197,
+   "h": 222
+  },
+  "mojo-chase/vfx/safety-net-deployment": {
+   "file": "assets/db/lib/mojo-chase/vfx/safety-net-deployment.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/safety-net-deployment",
+   "tags": [
+    "vfx",
+    "safety",
+    "net",
+    "deployment",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 232,
+   "h": 176
+  },
+  "mojo-chase/vfx/shield-impact": {
+   "file": "assets/db/lib/mojo-chase/vfx/shield-impact.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/shield-impact",
+   "tags": [
+    "vfx",
+    "shield",
+    "impact",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 253,
+   "h": 172
+  },
+  "mojo-chase/vfx/single-dizzy-star": {
+   "file": "assets/db/lib/mojo-chase/vfx/single-dizzy-star.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/single-dizzy-star",
+   "tags": [
+    "vfx",
+    "single",
+    "dizzy",
+    "star",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 139,
+   "h": 118
+  },
+  "mojo-chase/vfx/skid-streak": {
+   "file": "assets/db/lib/mojo-chase/vfx/skid-streak.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/skid-streak",
+   "tags": [
+    "vfx",
+    "skid",
+    "streak",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 216,
+   "h": 156
+  },
+  "mojo-chase/vfx/small-wood-debris": {
+   "file": "assets/db/lib/mojo-chase/vfx/small-wood-debris.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/small-wood-debris",
+   "tags": [
+    "vfx",
+    "small",
+    "wood",
+    "debris",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 174,
+   "h": 146
+  },
+  "mojo-chase/vfx/speed-streak": {
+   "file": "assets/db/lib/mojo-chase/vfx/speed-streak.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/speed-streak",
+   "tags": [
+    "vfx",
+    "speed",
+    "streak",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 222,
+   "h": 140
+  },
+  "mojo-chase/vfx/star-collection-burst": {
+   "file": "assets/db/lib/mojo-chase/vfx/star-collection-burst.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/star-collection-burst",
+   "tags": [
+    "vfx",
+    "star",
+    "collection",
+    "burst",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 221,
+   "h": 219
+  },
+  "mojo-chase/vfx/sticky-foam": {
+   "file": "assets/db/lib/mojo-chase/vfx/sticky-foam.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/sticky-foam",
+   "tags": [
+    "vfx",
+    "sticky",
+    "foam",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 207,
+   "h": 195
+  },
+  "mojo-chase/vfx/tire-smoke": {
+   "file": "assets/db/lib/mojo-chase/vfx/tire-smoke.webp",
+   "cat": "mojo-chase",
+   "source": "codex vfx/tire-smoke",
+   "tags": [
+    "vfx",
+    "tire",
+    "smoke",
+    "mojo",
+    "chase",
+    "codex"
+   ],
+   "w": 215,
+   "h": 195
   },
   "mojo-fx/boost-flame-sheet13": {
    "file": "assets/db/lib/mojo-fx/boost-flame-sheet13.webp",

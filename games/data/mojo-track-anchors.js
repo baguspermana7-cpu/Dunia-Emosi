@@ -44,6 +44,133 @@
    "w": 506
   }
  },
+ "biome25": {
+  "autumn": {
+   "h": 344,
+   "key": "biome25/14-autumn",
+   "w": 456
+  },
+  "beach-resort": {
+   "h": 288,
+   "key": "biome25/17-beach-resort",
+   "w": 384
+  },
+  "bridge": {
+   "h": 372,
+   "key": "biome25/06-bridge",
+   "w": 496
+  },
+  "candy-land": {
+   "h": 350,
+   "key": "biome25/25-candy-land",
+   "w": 464
+  },
+  "canyon-railway": {
+   "h": 288,
+   "key": "biome25/18-canyon-railway",
+   "w": 384
+  },
+  "cherry-blossom": {
+   "h": 344,
+   "key": "biome25/15-cherry-blossom",
+   "w": 456
+  },
+  "city-night": {
+   "h": 372,
+   "key": "biome25/10-city-night",
+   "w": 496
+  },
+  "coastal": {
+   "h": 384,
+   "key": "biome25/02-coastal",
+   "w": 512
+  },
+  "construction": {
+   "h": 372,
+   "key": "biome25/08-construction",
+   "w": 480
+  },
+  "desert": {
+   "h": 384,
+   "key": "biome25/04-desert",
+   "w": 512
+  },
+  "farm": {
+   "h": 372,
+   "key": "biome25/09-farm",
+   "w": 496
+  },
+  "forest": {
+   "h": 384,
+   "key": "biome25/03-forest",
+   "w": 480
+  },
+  "harbor-port": {
+   "h": 350,
+   "key": "biome25/22-harbor-port",
+   "w": 464
+  },
+  "jungle": {
+   "h": 344,
+   "key": "biome25/11-jungle",
+   "w": 456
+  },
+  "night-highway": {
+   "h": 344,
+   "key": "biome25/13-night-highway",
+   "w": 456
+  },
+  "rain": {
+   "h": 288,
+   "key": "biome25/16-rain",
+   "w": 384
+  },
+  "ruins-temple": {
+   "h": 350,
+   "key": "biome25/24-ruins-temple",
+   "w": 464
+  },
+  "snow": {
+   "h": 384,
+   "key": "biome25/05-snow",
+   "w": 512
+  },
+  "space-base": {
+   "h": 288,
+   "key": "biome25/20-space-base",
+   "w": 384
+  },
+  "stadium": {
+   "h": 350,
+   "key": "biome25/23-stadium",
+   "w": 464
+  },
+  "suburb": {
+   "h": 350,
+   "key": "biome25/21-suburb",
+   "w": 464
+  },
+  "town": {
+   "h": 384,
+   "key": "biome25/01-town",
+   "w": 512
+  },
+  "tunnel": {
+   "h": 372,
+   "key": "biome25/07-tunnel",
+   "w": 496
+  },
+  "volcano": {
+   "h": 344,
+   "key": "biome25/12-volcano",
+   "w": 456
+  },
+  "wind-farm": {
+   "h": 288,
+   "key": "biome25/19-wind-farm",
+   "w": 384
+  }
+ },
  "families": {
   "signs": {
    "size": {
