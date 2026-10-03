@@ -120,6 +120,7 @@
       '<button class="mc-btn l" type="button" aria-label="Pindah ke kiri">' + ARROW.replace('<svg', '<svg style="transform:rotate(-90deg)"') + '</button>' +
       '<button class="mc-btn u" type="button" aria-label="Ngebut"><i class="ring"></i>' + ARROW + '</button>' +
       '<button class="mc-btn r" type="button" aria-label="Pindah ke kanan">' + ARROW.replace('<svg', '<svg style="transform:rotate(90deg)"') + '</button>' +
+      '<button class="mc-skip" type="button">Lewati</button>' +
       '<button class="mc-gadget empty" type="button" aria-label="Roket jaring"><img alt="" src="' + lib('mojo-chase/items/rocket') + '"><b class="ol">0</b></button>'
     host.appendChild(hud)
     var card = el('div', 'mc-card'); host.appendChild(card)
@@ -128,7 +129,7 @@
     function q (s) { return host.querySelector(s) }
     var H = { hearts: q('.mc-hearts'), fill: q('.mc-prog .bar i'), car: q('.mc-prog .car'), dist: q('.mc-dist'), star: q('.mc-cnt.star b'), crate: q('.mc-cnt.crate b'),
       starBox: q('.mc-cnt.star'), crateBox: q('.mc-cnt.crate'), timer: q('.mc-timer b'), call: q('.mc-call'), callT: q('.mc-call span'), edu: q('.mc-edu'), ret: q('.mc-reticle'),
-      gad: q('.mc-gadget'), gadN: q('.mc-gadget b'), up: q('.mc-btn.u'), mission: q('.mc-mission'), place: q('.mc-place') }
+      gad: q('.mc-gadget'), skip: q('.mc-skip'), gadN: q('.mc-gadget b'), up: q('.mc-btn.u'), mission: q('.mc-mission'), place: q('.mc-place') }
     q('.mc-mission span').textContent = cfg.mission || stage.mission
     q('.mc-place span').textContent = (stage.place || '').toUpperCase()
     for (var hi = 0; hi < 3; hi++) { var hImg = el('img'); hImg.alt = ''; hImg.src = lib('mojo-chase/items/heart'); H.hearts.appendChild(hImg) }
@@ -137,14 +138,18 @@
     var img = {}, need = {}, imgP = {}
     function want (name, key) { need[name] = key }
     want('rear', 'mojo-rear/' + rearKey); want('target', 'mojo-chase/vehicles/' + targetName); want('police', 'mojo-chase/vehicles/police-van')
-    want('robber', 'mojo-chase/robbers/robber-beanie')
+    want('robber', 'mojo-chase/robbers/robber-beanie'); want('p:bridge-tower', 'mojo-chase/cprops/red-suspension-bridge-tower')
     Object.keys(OBJ).forEach(function (k) { want('o:' + k, OBJ[k].k) })
     // FAR / MID strips: the Codex strip when the stage has one (key-based: a better delivery replaces it by re-ingest)
     want('FAR', stage.cfar ? 'mojo-chase/cfar/' + stage.cfar : 'mojo-chase/far/' + stage.far)
     if (stage.cmid) want('MID', 'mojo-chase/cmid/' + stage.cmid); else if (stage.mid) want('MID', 'mojo-chase/far/' + stage.mid)
-    TR.BIOME[stage.biome].props.forEach(function (p) { want('p:' + p[0], TR.PROP_KEY[p[0]]) })
+    TR.BIOME[stage.look || stage.biome].props.forEach(function (p) { if (TR.PROP_KEY[p[0]].indexOf('proc:') < 0) want('p:' + p[0], TR.PROP_KEY[p[0]]) })
     ;['lamp', 'chevron-yellow', 'chevron-red', 'billboard', 'swoppiton', 'gantry', 'finish', 'flag-checker'].forEach(function (k) { want('p:' + k, TR.PROP_KEY[k]) })
     FX_KEYS.forEach(function (k) { want('fx/' + k, 'mojo-fx/' + k) })
+    // Codex 8-pose effect sequences (one canvas per sequence, registered anchor): BROK, safety net, dizzy stars, boost flame, confetti
+    var SEQ = { brok: [], net: [], dizzy: [], boost: [], confetti: [] }
+    for (var sq in SEQ) for (var fi = 1; fi <= 8; fi++) want('seq:' + sq + '-' + fi, 'mojo-chase/vfx/' + sq + '-' + fi)
+    function seqImg (name, f) { var a = SEQ[name]; return a.length ? a[Math.max(0, Math.min(a.length - 1, f | 0))] : null }
     function loadAll () {
       var names = Object.keys(need), left = names.length, bar = load.querySelector('b')
       return new Promise(function (res) {
@@ -170,6 +175,7 @@
       v.port = chh > cw * 1.1
       host.classList.toggle('land', !v.port)
       var u = clamp(Math.min(cw, chh) / 390, 0.92, 1.6); host.style.setProperty('--u', u.toFixed(3))
+      host.style.setProperty('--L', clamp(Math.min(chh / 740, cw / 1000), 0.5, 1.4).toFixed(3))   // landscape mockup scale (mockup-landscape.jpg is 940x740)
       v.pr = Math.max(0.8, Math.min(W.devicePixelRatio || 1, 2) * Q.pr)
       canvas.width = Math.round(cw * v.pr); canvas.height = Math.round(chh * v.pr)
       v.w = canvas.width; v.h = canvas.height; v.u = v.pr * u; v.css = cw / canvas.width
@@ -206,9 +212,12 @@
 
     /* callouts */
     var callT = 0, callCool = {}
-    function call (text, ms, key) {
+    function call (text, ms, key, force) {
       key = key || text
-      if (callCool[key] && S.t < callCool[key]) return
+      /* `force` is for feedback the PLAYER asked for by tapping. The 4s cooldown is right for
+         ambient coaching that would otherwise spam, but throttling the answer to a direct tap is
+         indistinguishable from a dead button — which is exactly how it was reported. */
+      if (!force && callCool[key] && S.t < callCool[key]) return
       callCool[key] = S.t + 4
       H.callT.textContent = text; H.call.classList.add('on'); callT = (ms || 1300) / 1000
       if (cfg.say) try { cfg.say(text) } catch (e) {}
@@ -229,7 +238,14 @@
       S.boostCharge = 0; S.boost = 1.5; AU.boost()
     }
     function fire () {
-      if (S.state !== 'lock') { if (!S.hasRocket) call('Cari kotak roket!', 1200, 'need'); else call('Dekati pencurinya dulu!', 1200, 'near'); return }
+      if (S.state !== 'lock') {
+        /* answer every tap: the bubble (forced past the cooldown) AND a nudge on the button itself,
+           so the feedback survives even if the bubble is covered or missed */
+        if (!S.hasRocket) call('Cari kotak roket!', 1200, 'need', true)
+        else call('Dekati pencurinya dulu!', 1200, 'near', true)
+        if (H.gad) { H.gad.classList.remove('nope'); void H.gad.offsetWidth; H.gad.classList.add('nope') }
+        return
+      }
       startCapture()
     }
     function bindBtn (b, fn) {
@@ -239,6 +255,7 @@
     bindBtn(q('.mc-btn.l'), function () { laneTo(-1) }); bindBtn(q('.mc-btn.r'), function () { laneTo(1) }); bindBtn(H.up, boost); bindBtn(H.gad, fire)
     H.ret.addEventListener('pointerdown', function (e) { e.preventDefault(); fire() })
     q('.mc-pause').addEventListener('click', function () { pause(true) })
+    H.skip.addEventListener('click', function () { endCut() })
     var sw = null
     canvas.addEventListener('pointerdown', function (e) { sw = { x: e.clientX, y: e.clientY, t: performance.now() } })
     canvas.addEventListener('pointerup', function (e) {
@@ -269,7 +286,7 @@
     function hideCard () { card.classList.remove('on'); card.innerHTML = '' }
     function pause (on) {
       if (on) {
-        if (S.paused || !(S.state === 'swop' || S.state === 'tutorial' || S.state === 'active' || S.state === 'lock' || S.state === 'capture' || S.state === 'resolve')) return
+        if (S.paused || !(S.state === 'cut' || S.state === 'swop' || S.state === 'tutorial' || S.state === 'active' || S.state === 'lock' || S.state === 'capture' || S.state === 'resolve')) return
         S.paused = true; AU.engine(0); AU.siren(false)
         showCard('<h2 class="fk">Istirahat Sebentar</h2><p>Pencuri ikut berhenti. Siap lanjut?</p>', [
           { t: 'Lanjut', id: 'mc-resume', fn: function () { hideCard(); S.paused = false; last = performance.now() } },
@@ -278,7 +295,8 @@
     }
 
     /* effects helpers */
-    function carPx () { return CAR_W * (TR.CAM_H / Z_P) * v.hw / TR.CAM_H * 1 }
+    // Mojo's on-screen body width: lower ~25-30% of the screen (PRD §4), so the road and the robber ahead stay readable
+    function carPx () { return v.port ? v.w * 0.42 : v.h * 0.29 }
     function mojoXY () { var s = TR.CAM_H / Z_P / TR.CAM_H, wx = TR.LANES[0] * TR.ROADW + (TR.LANES[2] - TR.LANES[0]) * TR.ROADW * S.lanePos / 2; return { x: v.cx + (Z_P > 0 ? (TR.CAM_H / Z_P) : 0) * (wx - camX) * v.hw / TR.CAM_H * TR.CAM_H / TR.CAM_H, y: v.playerY } }
     var camX = 0
     function skid () {
@@ -346,7 +364,7 @@
         return
       }
       S.hits++; S.brok++; S.hearts = Math.max(0, S.hearts - 1); S.heartT = 0
-      S.recover = 1.4; S.recoverMax = 1.4; S.lastHitAt = performance.now(); if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
+      S.recover = 1.4; S.recoverMax = 1.4; S.lastHitAt = performance.now(); S.lastHitT = S.t; if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
       if (!RM) S.shake = 0.55
       S.squash = 0.2; AU.brok()
       for (var i = 0; i < S.bursts.length; i++) if (!S.bursts[i].on) { var b = S.bursts[i]; b.on = true; b.x = sx; b.y = sy - cp * 0.2; b.t = 0; break }
@@ -404,7 +422,7 @@
     function finish (completed, exited) {
       if (finished) return
       finished = true; S.state = 'done'
-      var starsR = 1 + (S.stars >= Math.max(6, Math.round(S.starsSpawned * 0.5)) ? 1 : 0) + (S.hits <= 2 ? 1 : 0)
+      var starsR = 1 + (S.stars >= starGoal() ? 1 : 0) + (S.hits <= 2 ? 1 : 0)
       var res = { completed: !!completed, exited: !!exited, stars_collected: S.stars, collisions: S.hits, gadget_used: S.gadgetUsed,
         education_result: S.eduResult || { asked: false }, optional_objectives: { low_collisions: S.hits <= 2, star_goal: starsR >= 2 },
         reward_result: { stars: completed ? starsR : 0, bolts: completed ? 2 : 0 }, elapsed: Math.round(S.elapsed * 10) / 10, chase_id: cfg.chase_id || '' }
@@ -413,7 +431,7 @@
     }
     function result () {
       S.state = 'result'; AU.siren(false); AU.engine(0)
-      var starsR = 1 + (S.stars >= Math.max(6, Math.round(S.starsSpawned * 0.5)) ? 1 : 0) + (S.hits <= 2 ? 1 : 0), st = ''
+      var starsR = 1 + (S.stars >= starGoal() ? 1 : 0) + (S.hits <= 2 ? 1 : 0), st = ''
       for (var i = 1; i <= 3; i++) st += '<img class="' + (i <= starsR ? '' : 'off') + '" alt="" src="' + lib('mojo-chase/items/star') + '">'
       var e = S.eduResult
       showCard('<h2 class="fk">Pencuri Tertangkap!</h2><div class="stars">' + st + '</div>' +
@@ -464,6 +482,15 @@
     function update (dt, dtr) {
       S.t += dtr
       // phases
+      if (S.state === 'cut') {
+        S.cutT += dtr
+        var ct = S.cutT
+        S.robLane = ct < 1.7 ? 2.9 - 1.9 * (ct / 1.7) : 1
+        if (ct > 2.1) { var e2 = Math.min(1, (ct - 2.1) / 1.3); S.cutGap = 2600 + (gap0() - 2600) * e2 * e2 }
+        if (ct > 2.1 && !S.cutCalled) { S.cutCalled = 1; call('Dia kabur! Ayo kejar!', 1400, 'cut2'); AU.whoosh() }
+        if (ct > 2.1 && Math.random() < dtr * 30) { var tp0 = laneScreen(1, S.z + Z_P + S.cutGap); var pf = FX.spawn(TEX.puff, tp0.x + (Math.random() - 0.5) * tp0.w * 0.3, tp0.y - tp0.w * 0.05, (Math.random() - 0.5) * 30, -10, 0.6, tp0.w * 0.08, false); if (pf) { pf.grow = tp0.w * 0.12; pf.a = 0.4 } }
+        if (ct > 3.5) endCut()
+      }
       if (S.state === 'swop') { S.phaseT += dtr; if (S.phaseT > 1.2) { S.state = 'tutorial'; S.phaseT = 0; call('Ikuti bintang: kiri, tengah, kanan!', 2200, 'tut') } }
       else if (S.state === 'tutorial') { S.phaseT += dtr; if (S.phaseT > 3) { S.state = 'active'; call('Kejar!', 900, 'go') } }
       var playing = S.state === 'active' || S.state === 'lock' || S.state === 'tutorial'
@@ -479,12 +506,13 @@
       if (S.laneFx > 0) S.laneFx -= dt
       // speed
       var mult = 1
-      if (S.recover > 0) { var k = S.recover / (S.recoverMax || 1.4); mult = 1 - 0.32 * k; S.recover -= dt; if (S.recover <= 0 && S.recoverMax >= 1.4) { S.recoveryMs.push(Math.round(performance.now() - S.lastHitAt)); recovered() } }
+      if (S.recover > 0) { var k = S.recover / (S.recoverMax || 1.4); mult = 1 - 0.32 * k; S.recover -= dt; if (S.recover <= 0 && S.recoverMax >= 1.4) { S.recoveryMs.push(Math.round((S.t - S.lastHitT) * 1000)); /* game time: a stalled test machine must not count */ recovered() } }
       if (S.boost > 0) { S.boost -= dt; mult *= 1.32 }
       var seg = track.seg(Math.floor((S.z + Z_P) / TR.SEG))
       if (seg && seg.surface === 'mud') mult *= 0.9
       if (S.state === 'capture' || S.state === 'resolve') mult = S.stop
       if (S.state === 'swop') mult = 0.5 + S.phaseT * 0.4
+      if (S.state === 'cut') { mult = 0; S.speed = 0 }
       S.speed += (mult - S.speed) * Math.min(1, dt * 4)
       if (!S.boost || S.boost <= 0) S.boostCharge = Math.min(1, S.boostCharge + dt / 5)
       var dz = BASE_SPEED * S.speed * dt, prevPZ = S.z + Z_P
@@ -539,7 +567,7 @@
       S.targetLanePos += (S.targetLane - S.targetLanePos) * Math.min(1, dt * 1.6)
       // capture sequence
       if (S.state === 'capture') updateCapture(dt)
-      if (S.state === 'resolve') { S.resolveT += dt; S.strobe = Math.min(1, S.strobe + dt * 2); S.policeZ += (pz + gap() - 400 - S.policeZ) * Math.min(1, dt * 1.2); if (S.resolveT > 4.2 && S.state === 'resolve') result() }
+      if (S.state === 'resolve') { S.resolveT += dt; S.strobe = Math.min(1, S.strobe + dt * 2); S.policeZ += (pz + gap() + 260 - S.policeZ) * Math.min(1, dt * 1.2); if (S.resolveT > 4.2 && S.state === 'resolve') result() }
       // fx timers
       S.shake = Math.max(0, S.shake - dt * 1.6); S.flash = Math.max(0, S.flash - dt * 2.4); S.squash = Math.max(0, (S.squash || 0) - dt)
       if (S.punch > 0) { S.punch -= dt; canvas.classList.toggle('punch', S.punch > 0) }
@@ -549,9 +577,12 @@
       FX.update(dt, (v.h - v.hy) * S.speed * 1.6)
       AU.engine(S.state === 'result' ? 0 : S.speed)
       hudUpdate()
+      if (!v.port && S.elapsed > 5 && !last2.lsigns) { last2.lsigns = 1; H.mission.classList.add('hide'); H.place.classList.add('hide') }
       if (S.auto) autopilot()
     }
-    function gap () { return 1900 + (1 - Math.min(1, S.prog)) * 6200 }   // the robber stays readable on screen (mockup)
+    function starGoal () { return Math.max(6, Math.round(S.seconds / 7)) }   // the 'n/10' goal in the HUD = the second result star
+    function gap0 () { return 1700 + (1 - Math.min(1, S.prog)) * 3600 }
+    function gap () { return S.state === 'cut' ? S.cutGap : gap0() }   // the robber stays readable on screen (mockup)
     function laneX (lanePos) { return TR.LANES[0] * TR.ROADW + (TR.LANES[2] - TR.LANES[0]) * TR.ROADW * lanePos / 2 }
     var tmpP = { x: 0, y: 0, w: 0, s: 0 }
     function laneScreen (lane, z) {
@@ -620,24 +651,60 @@
       if (S.shake > 0 && !RM) c.translate((Math.random() - 0.5) * S.shake * 26 * v.u, (Math.random() - 0.5) * S.shake * 18 * v.u)
       if (!OFFK('bk')) { scene.drawBack(c, cam.y, quality); scene.biomeLight(c) } mark('back')
       var night = scene.night
-      TR.renderRoad(c, track, cam, v, drawN, function (s, j) { if (!OFFK('sp')) drawSegSprites(s, j, night) }, null); mark('road')
+      if (!OFFK('road')) TR.renderRoad(c, track, cam, v, drawN, function (s, j) { if (!OFFK('sp')) drawSegSprites(s, j, night) }, null); mark('road')
       if (!(W.__mcOff && W.__mcOff.sh)) scene.shimmer(c, canvas, quality); drawLaneFx(); if (!(W.__mcOff && W.__mcOff.pl)) drawPlayer(night); mark('player')
       if (!OFFK('fx')) { FX.draw(c, false); FX.draw(c, true) } mark('fx')
       drawOverlays()
       c.restore()
-      scene.post(c, { quality: quality, boost: Math.min(1, Math.max(0, S.boost)), flash: S.flash, strobe: S.strobe, tunnel: S.tunnel }); mark('post')
+      if (!OFFK('post')) scene.post(c, { quality: quality, boost: Math.min(1, Math.max(0, S.boost)), flash: S.flash, strobe: S.strobe, tunnel: S.tunnel }); mark('post')
+    }
+    // MIP levels: each sprite keeps half/quarter/eighth copies; a far sprite is drawn from the smallest level that is
+    // still >= its screen size, so the rasteriser never downsamples a 600 px image to 20 px every frame
+    var MIP = new Map()
+    function mip (im, dw) {
+      var L = MIP.get(im)
+      if (!L) {
+        L = [im]; var w0 = im.naturalWidth || im.width, h0 = im.naturalHeight || im.height
+        for (var k = 2; w0 / k >= 24; k *= 2) { var cc = D.createElement('canvas'); cc.width = Math.round(w0 / k); cc.height = Math.round(h0 / k); cc.getContext('2d').drawImage(L[L.length - 1], 0, 0, cc.width, cc.height); L.push(cc) }
+        MIP.set(im, L)
+      }
+      var best = L[0]
+      for (var i = 1; i < L.length; i++) if (L[i].width >= dw) best = L[i]; else break
+      return best
     }
     function spr (im, x, y, wpx, anchor, alpha) {
       if (!im) return
-      var a = anchor, k = wpx / (a ? (a.right != null ? a.right - a.left + 1 : a.bw) : im.naturalWidth), ax = a ? a.cx : im.naturalWidth / 2, ay = a ? a.base : im.naturalHeight
+      var a = anchor, nw = im.naturalWidth || im.width, nh = im.naturalHeight || im.height, k = wpx / (a ? (a.right != null ? a.right - a.left + 1 : a.bw) : nw), ax = a ? a.cx : nw / 2, ay = a ? a.base : nh
       if (alpha != null) c.globalAlpha = alpha
-      c.drawImage(im, Math.round(x - ax * k), Math.round(y - ay * k), Math.round(im.naturalWidth * k), Math.round(im.naturalHeight * k))
+      var dw = Math.round(nw * k)
+      c.drawImage(mip(im, dw), Math.round(x - ax * k), Math.round(y - ay * k), dw, Math.round(nh * k))
       c.globalAlpha = 1
+    }
+    // candy props drawn once into canvases (no owner sprite exists): a striped lollipop and a sugared gumdrop
+    function procProp (kind) {
+      var cvs = D.createElement('canvas'), x = cvs.getContext('2d')
+      if (kind === 'lollipop') {
+        cvs.width = 120; cvs.height = 260
+        x.fillStyle = '#f5f5f5'; x.fillRect(56, 100, 8, 156); x.strokeStyle = '#d0d0d0'; x.lineWidth = 2; x.strokeRect(56, 100, 8, 156)
+        var cols = ['#ff5cbe', '#ffd54a', '#4ce0ff', '#ffffff']
+        for (var r = 56; r > 4; r -= 9) { x.fillStyle = cols[(r / 9 | 0) % 4]; x.beginPath(); x.arc(60, 60, r, 0, TAU); x.fill() }
+        x.strokeStyle = 'rgba(120,20,80,.6)'; x.lineWidth = 4; x.beginPath(); x.arc(60, 60, 56, 0, TAU); x.stroke()
+        x.fillStyle = 'rgba(255,255,255,.55)'; x.beginPath(); x.ellipse(40, 38, 14, 8, -0.6, 0, TAU); x.fill()
+      } else {
+        cvs.width = 140; cvs.height = 120
+        var g = x.createLinearGradient(0, 10, 0, 118); g.addColorStop(0, '#7fe7ff'); g.addColorStop(1, '#2a8fd8')
+        x.fillStyle = g; x.beginPath(); x.moveTo(10, 116); x.quadraticCurveTo(10, 10, 70, 10); x.quadraticCurveTo(130, 10, 130, 116); x.closePath(); x.fill()
+        x.strokeStyle = '#1b5f99'; x.lineWidth = 4; x.stroke()
+        x.fillStyle = '#ffffff'; for (var k = 0; k < 26; k++) x.fillRect(22 + (k * 37) % 96, 26 + (k * 53) % 80, 4, 4)
+        x.fillStyle = 'rgba(255,255,255,.5)'; x.beginPath(); x.ellipse(48, 38, 16, 9, -0.5, 0, TAU); x.fill()
+      }
+      cvs.naturalWidth = cvs.width; cvs.naturalHeight = cvs.height
+      return cvs
     }
     function famA (fam, name) { var F = fam === 'track' ? TA && TA.families : CA && CA.families; if (!F) return null; for (var f in F) if (F[f].sprites[name]) return F[f].sprites[name]; return null }
     var PROPA = {}
     function propA (key) { var h = PROPA[key]; if (h !== undefined) return h; return (PROPA[key] = propA0(key)) }
-    function propA0 (key) { var n = key.split('/').pop(); return (CA && CA.families.props.sprites[n]) || (CA && CA.families.items.sprites[n]) || (TA && (TA.families.trackprops.sprites[n] || TA.families.signs.sprites[n])) || null }
+    function propA0 (key) { var n = key.split('/').pop(), CX = W.MojoCodexAnchors, cpa = key.indexOf('/cprops/') > 0 && CX && CX.families.cprops[n]; if (cpa) return { cx: cpa.w / 2, base: cpa.h - 4, bw: cpa.w - 8 }; return (CA && CA.families.props.sprites[n]) || (CA && CA.families.items.sprites[n]) || (TA && (TA.families.trackprops.sprites[n] || TA.families.signs.sprites[n])) || null }
     function drawSegSprites (s, j, night) {
       var p1 = s.p1, scale = p1.s, clip = s.clip, fog = s.fog / 24
       if (p1.y <= v.hy - 2 || j < 5) return
@@ -654,9 +721,9 @@
         if (pr.key === 'lamp' && (night || S.tunnel > 0.3)) lampLight(x, p1.y, wpx, an, scale)
       }
       // bridge towers + cables (procedural, red)
-      if (s.tower) for (var sd = -1; sd <= 1; sd += 2) {
-        var tx = p1.x + sd * p1.w * 1.3, th = scale * 5200 * v.vh, tw = Math.max(2, scale * 160 * v.hw)
-        c.globalAlpha = alpha; c.fillStyle = '#c62828'; c.fillRect(tx - tw / 2, p1.y - th, tw, th); c.fillStyle = '#8e1b1b'; c.fillRect(tx - tw / 2, p1.y - th * 0.82, tw * 1.0, tw * 0.6); c.globalAlpha = 1
+      if (s.tower) {   // the Codex red suspension tower spans the road (a gate the car drives through)
+        var tw0 = imgP['bridge-tower']
+        if (tw0) spr(tw0, p1.x, p1.y, p1.w * 2.9, propA('mojo-chase/cprops/red-suspension-bridge-tower'), alpha)
       }
       // (bridge cables were drawn per segment as strokes and streaked across the sky: removed, towers carry the look)
       // tunnel ceiling lights (passing light, additive)
@@ -676,7 +743,16 @@
       for (var o = 0; o < s.objs.length; o++) drawObj(s.objs[o], s, alpha, j)
       // the robber vehicle and the police van ride on their segment
       var tz = S.z + Z_P + gap(), ti = Math.floor(tz / TR.SEG)
-      if (ti === s.i && S.state !== 'load') drawTarget(s, tz)
+      if (ti === s.i && S.state !== 'load') {
+        var rob = S.state === 'cut' && S.cutT < 2.1 && img.robber
+        if (rob) {   // the running robber: bobbing stride, then a hop into the car
+          var ct2 = S.cutT, rw = p1.s * 560 * v.hw, rx = p1.x + p1.s * laneX(S.robLane) * v.hw, hop = ct2 > 1.7 ? Math.sin((ct2 - 1.7) / 0.4 * Math.PI) * rw * 0.7 : Math.abs(Math.sin(ct2 * 14)) * rw * 0.08
+          var sc2 = ct2 > 1.7 ? 1 - (ct2 - 1.7) / 0.4 * 0.5 : 1
+          drawTarget(s, tz)
+          c.globalAlpha = 0.3; c.fillStyle = '#000'; c.beginPath(); c.ellipse(rx, p1.y, rw * 0.35, rw * 0.07, 0, 0, TAU); c.fill(); c.globalAlpha = 1
+          spr(img.robber, rx, p1.y - hop, rw * sc2, CA && CA.families.robbers.sprites['robber-beanie'], 1)
+        } else drawTarget(s, tz)
+      }
       if (S.state === 'resolve' && Math.floor(S.policeZ / TR.SEG) === s.i) drawPolice(s)
       if (s.finish) spr(img['p:finish'], p1.x, p1.y, p1.w * 2.8, propA(TR.PROP_KEY.finish), alpha)
     }
@@ -758,7 +834,11 @@
       // the net (capture): expands over the target and stays
       if (S.state === 'capture' && CAP.hit || S.state === 'resolve') {
         var tt = S.state === 'resolve' ? 3 : CAP.netT, ns = wpx * (0.35 + 1.05 * (1 - Math.exp(-tt * 7) * Math.cos(tt * 13)))   // the net unfurls on a spring
-        c.save(); c.translate(x, y - wpx * 0.45); c.rotate(S.t * 0.6); c.globalAlpha = 0.95; c.drawImage(TEX.net, -ns / 2, -ns / 2, ns, ns); c.restore(); c.globalAlpha = 1
+        var ni = seqImg('net', tt / 0.7 * 8)
+        if (ni) { var nh = ns * ni.naturalHeight / ni.naturalWidth; c.drawImage(ni, x - ns / 2, y - wpx * 0.45 - nh / 2, ns, nh) }
+        else { c.save(); c.translate(x, y - wpx * 0.45); c.rotate(S.t * 0.6); c.globalAlpha = 0.95; c.drawImage(TEX.net, -ns / 2, -ns / 2, ns, ns); c.restore(); c.globalAlpha = 1 }
+        var ci = S.state === 'capture' && seqImg('confetti', tt / 1.4 * 8)
+        if (ci && tt < 1.4) { var cw2 = wpx * 2.4, ch2 = cw2 * ci.naturalHeight / ci.naturalWidth; c.drawImage(ci, x - cw2 / 2, y - wpx * 1.1, cw2, ch2) }
       }
       // lock-on reticle follows the target
       if (S.state === 'lock') { H.ret.style.transform = 'translate(' + (x * v.css) + 'px,' + ((y - wpx * 0.45) * v.css) + 'px)' }
@@ -767,7 +847,8 @@
     function drawPolice (s) {
       var scale = s.p1.s, wpx = scale * 1150 * v.hw
       for (var i = -1; i <= 1; i += 2) {
-        var x = s.p1.x + scale * laneX(1 + i * 0.95) * v.hw, y = s.p1.y
+        var rl = Math.round(S.targetLanePos), pl = rl === 1 ? 1 + i : rl === 0 ? (i < 0 ? 1 : 2) : (i < 0 ? 0 : 1)   // the two lanes beside the robber
+        var x = s.p1.x + scale * laneX(pl) * v.hw, y = s.p1.y
         spr(img.police, x, y, wpx, CA && CA.families.vehicles.sprites['police-van'], 1)
         c.globalCompositeOperation = 'lighter'
         var on = Math.floor(S.t * 8) % 2, gs = wpx * 0.9
@@ -808,8 +889,14 @@
       for (var i = 0; i < lights.length; i++) { c.globalAlpha = 0.85; c.drawImage(TEX.glowR, (lights[i][0] - a.cx) * k - gl / 2, (lights[i][1] - a.base) * k - gl / 2, gl, gl) }
       // boost flame from the exhaust points
       if (S.boost > 0) {
-        var fl = img['fx/boost-flame-sheet13']
+        var fl = img['fx/boost-flame-sheet13'], bf = seqImg('boost', S.t * 20 % 8)
         for (var e = 0; e < a.exhaust.length; e++) {
+          if (bf) {   // Codex flame: points LEFT with the exhaust ring on its right edge -> rotate to point at the camera (down)
+            var fx0 = (a.exhaust[e][0] - a.cx) * k, fy0 = (a.exhaust[e][1] - a.base) * k, fw = cp * 0.55, fh = fw * bf.naturalHeight / bf.naturalWidth
+            c.globalAlpha = 0.95; c.drawImage(TEX.glowO, fx0 - fw * 0.3, fy0 - fw * 0.1, fw * 0.6, fw * 0.6)
+            c.save(); c.translate(fx0, fy0); c.rotate(-Math.PI / 2); c.drawImage(bf, -fw, -fh / 2, fw, fh); c.restore()
+            continue
+          }
           var ex = (a.exhaust[e][0] - a.cx) * k, ey = (a.exhaust[e][1] - a.base) * k, fs = cp * (0.32 + Math.random() * 0.08)
           c.globalAlpha = 0.95; c.drawImage(TEX.glowO, ex - fs / 2, ey - fs * 0.2, fs, fs)
           if (fl) { c.save(); c.translate(ex, ey); c.rotate(Math.PI / 2); c.drawImage(fl, -fs * 0.1, -fs * 0.3, fs * 1.1, fs * 0.6); c.restore() }
@@ -819,7 +906,9 @@
       if (S.tunnel > 0.3) { c.globalAlpha = 0.25 * (Math.sin(S.z / 160) * 0.5 + 0.5); c.drawImage(TEX.glowY, -cp * 0.6, -cp * 1.1, cp * 1.2, cp * 0.9) }   // passing ceiling-light strobe
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
       // dizzy stars orbit the cabin
-      if (S.recover > 0 && S.recoverMax >= 1.4 && img['o:star']) {
+      var di = S.recover > 0 && S.recoverMax >= 1.4 && seqImg('dizzy', S.t * 14 % 8)
+      if (di) { var dw = cp * 0.95, dh = dw * di.naturalHeight / di.naturalWidth; c.drawImage(di, -dw / 2, -a.base * k * 0.95 - dh / 2, dw, dh) }
+      else if (S.recover > 0 && S.recoverMax >= 1.4 && img['o:star']) {
         for (var d = 0; d < 3; d++) { var an = S.t * 6 + d * TAU / 3, sx = Math.cos(an) * cp * 0.36, sy = -a.base * k * 0.92 + Math.sin(an) * cp * 0.08, ss = cp * 0.16 * (0.8 + 0.2 * Math.sin(an)); c.drawImage(img['o:star'], sx - ss / 2, sy - ss / 2, ss, ss) }
       }
       c.restore()
@@ -830,9 +919,9 @@
       for (var i = 0; i < S.bursts.length; i++) {
         var b = S.bursts[i]; if (!b.on) continue
         b.t += FDT; if (b.t > 0.75) { b.on = false; continue }
-        var k = b.t < 0.12 ? b.t / 0.12 * 1.15 : 1.15 - (b.t - 0.12) * 0.25, sz = cp * 1.25 * k
-        c.globalAlpha = b.t > 0.5 ? 1 - (b.t - 0.5) / 0.25 : 1
-        c.drawImage(TEX.brok, b.x - sz / 2, b.y - sz / 2, sz, sz); c.globalAlpha = 1
+        var bi = seqImg('brok', b.t / 0.75 * 8)
+        if (bi) { var bw = cp * 2.3, bh = bw * bi.naturalHeight / bi.naturalWidth; c.drawImage(bi, b.x - bw / 2, b.y - cp * 0.35 - bh / 2, bw, bh) }
+        else { var k = b.t < 0.12 ? b.t / 0.12 * 1.15 : 1.15 - (b.t - 0.12) * 0.25, sz = cp * 1.25 * k; c.globalAlpha = b.t > 0.5 ? 1 - (b.t - 0.5) / 0.25 : 1; c.drawImage(TEX.brok, b.x - sz / 2, b.y - sz / 2, sz, sz); c.globalAlpha = 1 }
       }
       // ring shockwaves
       for (var r = 0; r < S.rings.length; r++) {
@@ -867,7 +956,7 @@
     function hudUpdate () {
       var p = Math.round(Math.min(1, S.prog) * 1000) / 10
       if (last2.p !== p) { last2.p = p; H.fill.style.width = p + '%'; H.car.style.left = 'calc(' + p + '% - ' + (p / 100 * 14) + 'px)'; H.car.parentNode.style.setProperty('--carx', p + '%') }
-      setTxt('s', H.star, String(S.stars)); setTxt('c', H.crate, String(S.boxes)); setTxt('r', H.gadN, String(S.rocket))
+      setTxt('s', H.star, v.port || S.stars >= starGoal() ? String(S.stars) : S.stars + '/' + starGoal()); setTxt('c', H.crate, String(S.boxes)); setTxt('r', H.gadN, String(S.rocket))
       var sec = Math.floor(S.elapsed), tt = (sec / 60 < 10 ? '0' : '') + Math.floor(sec / 60) + ':' + (sec % 60 < 10 ? '0' : '') + (sec % 60)
       setTxt('t', H.timer, tt)
       if (last2.h !== S.hearts) { last2.h = S.hearts; [].forEach.call(H.hearts.children, function (im, i) { var off = i >= S.hearts; if (im.classList.contains('off') && !off) { im.classList.remove('pop'); void im.offsetWidth; im.classList.add('pop') } im.classList.toggle('off', off) }) }
@@ -917,9 +1006,18 @@
       S.state = 'intro'
       showCard('<h2 class="fk">' + (cfg.title || stage.title) + '</h2><div class="cast"><img alt="" src="' + lib('mojo-chase/robbers/robber-beanie') + '"><img alt="" src="' + lib('mojo-chase/vehicles/' + targetName) + '"><img alt="Bo" src="' + lib('mojo-char/bo-excited') + '"></div>' +
         '<p>' + (cfg.story_intro || stage.intro) + '</p><p style="font-size:16px;color:#54617a">Geser atau tekan panah untuk pindah jalur. Ambil kotak roket, lalu tangkap pencurinya!</p>',
-        [{ t: 'Ayo Kejar!', id: 'mc-go', fn: function () { hideCard(); go() } }])
+        [{ t: 'Ayo Kejar!', id: 'mc-go', fn: function () { hideCard(); cut() } }])
       if (cfg.say) try { cfg.say(cfg.story_intro || stage.intro) } catch (e) {}
     }
+    /* intro cutscene (PRD §2, skippable): the robber runs from the pavement to the getaway car, hops in, and it
+       speeds off; Mojo waits, then the Swop starts. Everything is drawn in the live scene. */
+    function cut () {
+      if (RM) { go(); return }
+      S.state = 'cut'; S.cutT = 0; S.robLane = 2.9; S.cutGap = 2600; S.targetLanePos = S.targetLane = 1
+      H.skip.classList.add('on'); call('Itu pencurinya!', 1400, 'cut1')
+      last = performance.now()
+    }
+    function endCut () { if (S.state !== 'cut') return; H.skip.classList.remove('on'); go() }
     function go () {
       S.state = 'swop'; S.phaseT = 0; S.speed = 0.4; S.flash = RM ? 0 : 0.8
       var m = mojoXY(); burst(m.x, m.y - carPx() * 0.4, 30, TEX.sparkle, 900 * v.u, 0.8, carPx() * 0.2, true)
@@ -929,7 +1027,21 @@
     loadAll().then(function () {
       if (finished) return
       for (var nm in img) if (nm.indexOf('p:') === 0) imgP[nm.slice(2)] = img[nm]
-      track = TR.create(stage, seed, { fog: (TA && TA.sky[stage.sky] || ['', '', '#cfe6ff'])[2] })
+      for (var sq2 in SEQ) for (var fj = 1; fj <= 8; fj++) if (img['seq:' + sq2 + '-' + fj]) SEQ[sq2].push(img['seq:' + sq2 + '-' + fj])
+      imgP.lollipop = procProp('lollipop'); imgP.gumdrop = procProp('gumdrop')
+      // the ground fades into the MID strip's own bottom colour at the horizon (no hard band)
+      var fogC = (TA && TA.sky[stage.sky] || ['', '', '#cfe6ff'])[2]
+      try {
+        var mi = img.MID || img.FAR
+        if (mi) {
+          var sc = D.createElement('canvas'); sc.width = 64; sc.height = 8; var sx = sc.getContext('2d')
+          sx.drawImage(mi, 0, mi.naturalHeight * (img.MID ? 0.9 : 0.97), mi.naturalWidth, mi.naturalHeight * (img.MID ? 0.1 : 0.03), 0, 0, 64, 8)
+          var dd = sx.getImageData(0, 0, 64, 8).data, R0 = 0, G0 = 0, B0 = 0, N0 = 0
+          for (var q = 0; q < dd.length; q += 4) if (dd[q + 3] > 200) { R0 += dd[q]; G0 += dd[q + 1]; B0 += dd[q + 2]; N0++ }
+          if (N0 > 20) fogC = '#' + [R0, G0, B0].map(function (z) { var h = Math.round(z / N0).toString(16); return h.length < 2 ? '0' + h : h }).join('')
+        }
+      } catch (e) {}
+      track = TR.create(stage, seed, { fog: fogC })
       scene = SCN.create(stage, img)
       resize(); load.remove()
       S.state = 'intro0'

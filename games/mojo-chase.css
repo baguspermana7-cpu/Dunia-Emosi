@@ -73,7 +73,7 @@
 .mc-gadget.ready{animation:mcReady .8s ease-in-out infinite}
 
 /* Bo callout, education prompt, lock reticle */
-.mc-call{position:absolute;left:50%;top:calc(112px * var(--u) + env(safe-area-inset-top));transform:translateX(-50%) scale(.8);opacity:0;display:flex;align-items:center;gap:calc(8px * var(--u));padding:calc(6px * var(--u)) calc(14px * var(--u)) calc(6px * var(--u)) calc(6px * var(--u));border-radius:calc(26px * var(--u));background:#fff;color:#16336b;box-shadow:0 calc(4px * var(--u)) 0 rgba(0,0,0,.2);transition:opacity .18s,transform .25s cubic-bezier(.23,1,.32,1);font-size:max(16px,calc(20px * var(--u)));white-space:nowrap}
+.mc-call{position:absolute;z-index:3;max-width:calc(100% - 28px * var(--u));left:50%;top:calc(112px * var(--u) + env(safe-area-inset-top));transform:translateX(-50%) scale(.8);opacity:0;display:flex;align-items:center;gap:calc(8px * var(--u));padding:calc(6px * var(--u)) calc(14px * var(--u)) calc(6px * var(--u)) calc(6px * var(--u));border-radius:calc(26px * var(--u));background:#fff;color:#16336b;box-shadow:0 calc(4px * var(--u)) 0 rgba(0,0,0,.2);transition:opacity .18s,transform .25s cubic-bezier(.23,1,.32,1);font-size:max(16px,calc(20px * var(--u)));white-space:nowrap}
 .mc-call img{width:calc(40px * var(--u));height:calc(40px * var(--u));border-radius:50%;object-fit:cover;object-position:50% 20%;background:#bfe3ff}
 .mc-call.on{opacity:1;transform:translateX(-50%) scale(1)}
 .mc-edu{position:absolute;left:50%;top:calc(168px * var(--u) + env(safe-area-inset-top));transform:translateX(-50%);padding:calc(8px * var(--u)) calc(18px * var(--u));border-radius:calc(16px * var(--u));background:linear-gradient(180deg,#ffe36b,#ffb300);color:#4a2a00;font-size:max(18px,calc(24px * var(--u)));box-shadow:0 calc(4px * var(--u)) 0 #b87900;display:none;white-space:nowrap}
@@ -168,3 +168,38 @@
 .mc-hearts img{width:calc(30px * var(--u));height:calc(30px * var(--u))}
 .mc-host:not(.land) .mc-btn{background:radial-gradient(circle at 50% 30%,#4a8fe8 0,#2563c4 55%,#1a4a9c 80%)}
 .mc-btn svg path{fill:#eaf4ff}
+.mc-skip{position:absolute;left:50%;bottom:calc(120px * var(--u) + env(safe-area-inset-bottom));transform:translateX(-50%);min-width:120px;min-height:56px;padding:0 22px;border-radius:28px;background:rgba(10,24,52,.72) !important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6);font-size:18px;display:none}
+.mc-skip.on{display:block}
+/* LANDSCAPE = mockup-landscape.jpg (940x740; --L = height/740): pause + star pill top-left, timer top-right,
+   ← → bottom-left, big green ↑ bottom-right. Kept from the chase: the progress bar top-centre (needed for the
+   chase), hearts under the star pill, the gadget left of the boost. The mission/location signs show for 5 s. */
+.mc-skip{bottom:auto;left:auto;transform:none;right:calc(14px * var(--u) + env(safe-area-inset-right));top:52%}
+.mc-host.land .mc-pause{left:calc(35px * var(--L) + env(safe-area-inset-left));top:calc(35px * var(--L) + env(safe-area-inset-top));width:max(56px,calc(96px * var(--L)));height:max(56px,calc(92px * var(--L)));border-radius:calc(20px * var(--L));
+  background:linear-gradient(180deg,#2f6fd6,#1847a6);box-shadow:inset 0 0 0 calc(5px * var(--L)) #fff,0 calc(5px * var(--L)) 0 #0b2556,0 calc(8px * var(--L)) calc(14px * var(--L)) rgba(0,0,0,.35)}
+.mc-host.land .mc-pause::before,.mc-host.land .mc-pause::after{width:calc(13px * var(--L));height:calc(38px * var(--L));border-radius:calc(4px * var(--L))}
+.mc-host.land .mc-tl{left:calc(158px * var(--L) + env(safe-area-inset-left));top:calc(118px * var(--L) + env(safe-area-inset-top))}
+.mc-host.land .mc-badge{display:none}
+.mc-host.land .mc-hearts img{width:max(18px,calc(26px * var(--L)));height:max(18px,calc(26px * var(--L)))}
+.mc-host.land .mc-counters{left:calc(146px * var(--L) + env(safe-area-inset-left));right:auto;top:calc(44px * var(--L) + env(safe-area-inset-top));flex-direction:row}
+.mc-host.land .mc-cnt.crate{display:none}
+.mc-host.land .mc-cnt{min-width:calc(190px * var(--L));height:max(40px,calc(64px * var(--L)));padding:0 calc(22px * var(--L)) 0 calc(80px * var(--L));border-radius:calc(16px * var(--L));
+  background:linear-gradient(180deg,rgba(28,58,120,.88),rgba(18,40,92,.86));box-shadow:none;font-size:max(18px,calc(40px * var(--L)));justify-content:flex-start}
+.mc-host.land .mc-cnt img{left:calc(-6px * var(--L));width:calc(86px * var(--L));height:calc(86px * var(--L))}
+.mc-host.land .mc-timer{right:calc(28px * var(--L) + env(safe-area-inset-right));top:calc(44px * var(--L) + env(safe-area-inset-top));min-width:calc(196px * var(--L));height:max(40px,calc(66px * var(--L)));padding:0 calc(24px * var(--L)) 0 calc(80px * var(--L));
+  border-radius:calc(16px * var(--L));background:linear-gradient(180deg,rgba(28,58,120,.88),rgba(18,40,92,.86));box-shadow:none;font-size:max(18px,calc(40px * var(--L)))}
+.mc-host.land .mc-timer i{left:calc(-6px * var(--L));width:calc(76px * var(--L));height:calc(76px * var(--L))}
+.mc-host.land .mc-top{top:calc(40px * var(--L) + env(safe-area-inset-top))}
+.mc-host.land .mc-btn{width:max(64px,calc(140px * var(--L)));height:max(64px,calc(140px * var(--L)));bottom:calc(36px * var(--L) + env(safe-area-inset-bottom))}
+.mc-host.land .mc-btn.l{left:calc(34px * var(--L) + env(safe-area-inset-left))}
+.mc-host.land .mc-btn.r{left:calc(190px * var(--L) + env(safe-area-inset-left))}
+.mc-host.land .mc-btn.u{width:max(72px,calc(176px * var(--L)));height:max(72px,calc(176px * var(--L)));right:calc(56px * var(--L) + env(safe-area-inset-right));bottom:calc(22px * var(--L) + env(safe-area-inset-bottom))}
+.mc-host.land .mc-gadget{right:calc(250px * var(--L) + env(safe-area-inset-right));bottom:calc(40px * var(--L) + env(safe-area-inset-bottom))}
+.mc-host.land .mc-mission{top:calc(160px * var(--L) + env(safe-area-inset-top))}
+.mc-host.land .mc-place{top:calc(130px * var(--L) + env(safe-area-inset-top))}
+
+/* v63.x — a tap that cannot fire still has to answer. The bubble alone was not enough: it sat
+   behind the MISI plank (z-index:1) and call() throttles a repeated key for 4s, so a second tap
+   looked like a dead button. */
+.mc-gadget.nope{animation:mcNope .32s ease}
+@keyframes mcNope{0%,100%{transform:translateX(0)}25%{transform:translateX(calc(-4px * var(--u)))}75%{transform:translateX(calc(4px * var(--u)))}}
+@media (prefers-reduced-motion: reduce){.mc-gadget.nope{animation:none;outline:calc(3px * var(--u)) solid #ffd54a;outline-offset:calc(2px * var(--u))}}
