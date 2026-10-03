@@ -7949,6 +7949,34 @@
    "h": 239,
    "psnr": 43.6
   },
+  "mojo-bg/beach-cove-land": {
+   "file": "assets/db/lib/mojo-bg/beach-cove-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "beach",
+    "cove",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1126,
+   "h": 670
+  },
+  "mojo-bg/beach-cove-port": {
+   "file": "assets/db/lib/mojo-bg/beach-cove-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "beach",
+    "cove",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 496,
+   "h": 924
+  },
   "mojo-bg/beach-dock-land": {
    "file": "assets/db/lib/mojo-bg/beach-dock-land.webp",
    "cat": "mojo-bg",
@@ -7989,6 +8017,34 @@
    "w": 402,
    "h": 222
   },
+  "mojo-bg/broken-bridge-land": {
+   "file": "assets/db/lib/mojo-bg/broken-bridge-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "broken",
+    "bridge",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1117,
+   "h": 668
+  },
+  "mojo-bg/broken-bridge-port": {
+   "file": "assets/db/lib/mojo-bg/broken-bridge-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "broken",
+    "bridge",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 501,
+   "h": 923
+  },
   "mojo-bg/canyon": {
    "file": "assets/db/lib/mojo-bg/canyon.webp",
    "cat": "mojo-bg",
@@ -8000,6 +8056,34 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 402,
    "h": 219
+  },
+  "mojo-bg/canyon-bridge-land": {
+   "file": "assets/db/lib/mojo-bg/canyon-bridge-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "canyon",
+    "bridge",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1125,
+   "h": 670
+  },
+  "mojo-bg/canyon-bridge-port": {
+   "file": "assets/db/lib/mojo-bg/canyon-bridge-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "canyon",
+    "bridge",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 495,
+   "h": 924
   },
   "mojo-bg/canyon-road-land": {
    "file": "assets/db/lib/mojo-bg/canyon-road-land.webp",
@@ -8096,6 +8180,34 @@
    "w": 520,
    "h": 1007
   },
+  "mojo-bg/coastal-road-land": {
+   "file": "assets/db/lib/mojo-bg/coastal-road-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "coastal",
+    "road",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1042,
+   "h": 672
+  },
+  "mojo-bg/coastal-road-port": {
+   "file": "assets/db/lib/mojo-bg/coastal-road-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "coastal",
+    "road",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 461,
+   "h": 1010
+  },
   "mojo-bg/construction": {
    "file": "assets/db/lib/mojo-bg/construction.webp",
    "cat": "mojo-bg",
@@ -8121,6 +8233,62 @@
    "w": 304,
    "h": 201
   },
+  "mojo-bg/desert-arch-land": {
+   "file": "assets/db/lib/mojo-bg/desert-arch-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "desert",
+    "arch",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1124,
+   "h": 672
+  },
+  "mojo-bg/desert-arch-port": {
+   "file": "assets/db/lib/mojo-bg/desert-arch-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "desert",
+    "arch",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 496,
+   "h": 924
+  },
+  "mojo-bg/desert-road-land": {
+   "file": "assets/db/lib/mojo-bg/desert-road-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "desert",
+    "road",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1130,
+   "h": 672
+  },
+  "mojo-bg/desert-road-port": {
+   "file": "assets/db/lib/mojo-bg/desert-road-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "desert",
+    "road",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 491,
+   "h": 924
+  },
   "mojo-bg/desert-sheet16": {
    "file": "assets/db/lib/mojo-bg/desert-sheet16.webp",
    "cat": "mojo-bg",
@@ -8133,6 +8301,144 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 302,
    "h": 201
+  },
+  "mojo-bg/fairground-land": {
+   "file": "assets/db/lib/mojo-bg/fairground-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "fairground",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1124,
+   "h": 670
+  },
+  "mojo-bg/fairground-port": {
+   "file": "assets/db/lib/mojo-bg/fairground-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "fairground",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 494,
+   "h": 924
+  },
+  "mojo-bg/fallen-tree-land": {
+   "file": "assets/db/lib/mojo-bg/fallen-tree-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "fallen",
+    "tree",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1131,
+   "h": 676
+  },
+  "mojo-bg/fallen-tree-port": {
+   "file": "assets/db/lib/mojo-bg/fallen-tree-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "fallen",
+    "tree",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 493,
+   "h": 925
+  },
+  "mojo-bg/fire-station-land": {
+   "file": "assets/db/lib/mojo-bg/fire-station-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "fire",
+    "station",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1036,
+   "h": 658
+  },
+  "mojo-bg/fire-station-port": {
+   "file": "assets/db/lib/mojo-bg/fire-station-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "fire",
+    "station",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 465,
+   "h": 1010
+  },
+  "mojo-bg/flood-street-land": {
+   "file": "assets/db/lib/mojo-bg/flood-street-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "flood",
+    "street",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1138,
+   "h": 673
+  },
+  "mojo-bg/flood-street-port": {
+   "file": "assets/db/lib/mojo-bg/flood-street-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "flood",
+    "street",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 494,
+   "h": 926
+  },
+  "mojo-bg/forest-fire-land": {
+   "file": "assets/db/lib/mojo-bg/forest-fire-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "forest",
+    "fire",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1139,
+   "h": 672
+  },
+  "mojo-bg/forest-fire-port": {
+   "file": "assets/db/lib/mojo-bg/forest-fire-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "forest",
+    "fire",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 493,
+   "h": 924
   },
   "mojo-bg/forest-trail-land": {
    "file": "assets/db/lib/mojo-bg/forest-trail-land.webp",
@@ -8173,6 +8479,34 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 403,
    "h": 288
+  },
+  "mojo-bg/garage-harbour-land": {
+   "file": "assets/db/lib/mojo-bg/garage-harbour-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "garage",
+    "harbour",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1041,
+   "h": 706
+  },
+  "mojo-bg/garage-harbour-port": {
+   "file": "assets/db/lib/mojo-bg/garage-harbour-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "garage",
+    "harbour",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 459,
+   "h": 1010
   },
   "mojo-bg/garage-interior-sheet16": {
    "file": "assets/db/lib/mojo-bg/garage-interior-sheet16.webp",
@@ -8216,6 +8550,34 @@
    "w": 539,
    "h": 1005
   },
+  "mojo-bg/ice-floes-land": {
+   "file": "assets/db/lib/mojo-bg/ice-floes-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "ice",
+    "floes",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1126,
+   "h": 672
+  },
+  "mojo-bg/ice-floes-port": {
+   "file": "assets/db/lib/mojo-bg/ice-floes-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "ice",
+    "floes",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 495,
+   "h": 924
+  },
   "mojo-bg/map": {
    "file": "assets/db/lib/mojo-bg/map.webp",
    "cat": "mojo-bg",
@@ -8227,6 +8589,62 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 346,
    "h": 286
+  },
+  "mojo-bg/mud-road-land": {
+   "file": "assets/db/lib/mojo-bg/mud-road-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "mud",
+    "road",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1131,
+   "h": 683
+  },
+  "mojo-bg/mud-road-port": {
+   "file": "assets/db/lib/mojo-bg/mud-road-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "mud",
+    "road",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 496,
+   "h": 924
+  },
+  "mojo-bg/night-highway-land": {
+   "file": "assets/db/lib/mojo-bg/night-highway-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "night",
+    "highway",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1125,
+   "h": 672
+  },
+  "mojo-bg/night-highway-port": {
+   "file": "assets/db/lib/mojo-bg/night-highway-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "night",
+    "highway",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 495,
+   "h": 924
   },
   "mojo-bg/panel-canyon": {
    "file": "assets/db/lib/mojo-bg/panel-canyon.webp",
@@ -8280,6 +8698,62 @@
    "w": 224,
    "h": 192
   },
+  "mojo-bg/pirate-pier-land": {
+   "file": "assets/db/lib/mojo-bg/pirate-pier-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "pirate",
+    "pier",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1124,
+   "h": 672
+  },
+  "mojo-bg/pirate-pier-port": {
+   "file": "assets/db/lib/mojo-bg/pirate-pier-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "pirate",
+    "pier",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 496,
+   "h": 924
+  },
+  "mojo-bg/river-rapids-land": {
+   "file": "assets/db/lib/mojo-bg/river-rapids-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "river",
+    "rapids",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1124,
+   "h": 678
+  },
+  "mojo-bg/river-rapids-port": {
+   "file": "assets/db/lib/mojo-bg/river-rapids-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "river",
+    "rapids",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 495,
+   "h": 923
+  },
   "mojo-bg/road-track-sheet11": {
    "file": "assets/db/lib/mojo-bg/road-track-sheet11.webp",
    "cat": "mojo-bg",
@@ -8293,6 +8767,88 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 182,
    "h": 196
+  },
+  "mojo-bg/rockslide-land": {
+   "file": "assets/db/lib/mojo-bg/rockslide-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "rockslide",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1130,
+   "h": 669
+  },
+  "mojo-bg/rockslide-port": {
+   "file": "assets/db/lib/mojo-bg/rockslide-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "rockslide",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 499,
+   "h": 927
+  },
+  "mojo-bg/rooftop-cat-land": {
+   "file": "assets/db/lib/mojo-bg/rooftop-cat-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "rooftop",
+    "cat",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1127,
+   "h": 673
+  },
+  "mojo-bg/rooftop-cat-port": {
+   "file": "assets/db/lib/mojo-bg/rooftop-cat-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "rooftop",
+    "cat",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 496,
+   "h": 925
+  },
+  "mojo-bg/snow-road-land": {
+   "file": "assets/db/lib/mojo-bg/snow-road-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "snow",
+    "road",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1125,
+   "h": 671
+  },
+  "mojo-bg/snow-road-port": {
+   "file": "assets/db/lib/mojo-bg/snow-road-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "snow",
+    "road",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 496,
+   "h": 924
   },
   "mojo-bg/snow-road-sheet15": {
    "file": "assets/db/lib/mojo-bg/snow-road-sheet15.webp",
@@ -8320,6 +8876,88 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 278,
    "h": 201
+  },
+  "mojo-bg/space-road-land": {
+   "file": "assets/db/lib/mojo-bg/space-road-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "space",
+    "road",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1125,
+   "h": 669
+  },
+  "mojo-bg/space-road-port": {
+   "file": "assets/db/lib/mojo-bg/space-road-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "space",
+    "road",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 495,
+   "h": 922
+  },
+  "mojo-bg/title-clean-land": {
+   "file": "assets/db/lib/mojo-bg/title-clean-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "title",
+    "clean",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1062,
+   "h": 599
+  },
+  "mojo-bg/title-clean-port": {
+   "file": "assets/db/lib/mojo-bg/title-clean-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "title",
+    "clean",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 439,
+   "h": 832
+  },
+  "mojo-bg/title-land": {
+   "file": "assets/db/lib/mojo-bg/title-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "title",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1062,
+   "h": 717
+  },
+  "mojo-bg/title-port": {
+   "file": "assets/db/lib/mojo-bg/title-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "title",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 439,
+   "h": 1009
   },
   "mojo-bg/title-town": {
    "file": "assets/db/lib/mojo-bg/title-town.webp",
@@ -8359,6 +8997,32 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 256,
    "h": 201
+  },
+  "mojo-bg/underwater-land": {
+   "file": "assets/db/lib/mojo-bg/underwater-land.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "underwater",
+    "land",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 1125,
+   "h": 671
+  },
+  "mojo-bg/underwater-port": {
+   "file": "assets/db/lib/mojo-bg/underwater-port.webp",
+   "cat": "mojo-bg",
+   "tags": [
+    "underwater",
+    "port",
+    "mojo",
+    "background"
+   ],
+   "source": "owner mojo backgrounds 2026-10-03",
+   "w": 495,
+   "h": 924
   },
   "mojo-bg/waterfall-land": {
    "file": "assets/db/lib/mojo-bg/waterfall-land.webp",
@@ -8982,6 +9646,2117 @@
    "w": 63,
    "h": 69
   },
+  "mojo-chase/biome/bridge": {
+   "file": "assets/db/lib/mojo-chase/biome/bridge.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "bridge",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 522,
+   "h": 290
+  },
+  "mojo-chase/biome/city-night": {
+   "file": "assets/db/lib/mojo-chase/biome/city-night.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "city",
+    "night",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 512,
+   "h": 290
+  },
+  "mojo-chase/biome/coastal": {
+   "file": "assets/db/lib/mojo-chase/biome/coastal.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "coastal",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 506,
+   "h": 270
+  },
+  "mojo-chase/biome/construction": {
+   "file": "assets/db/lib/mojo-chase/biome/construction.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "construction",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 498,
+   "h": 290
+  },
+  "mojo-chase/biome/desert": {
+   "file": "assets/db/lib/mojo-chase/biome/desert.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "desert",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 500,
+   "h": 270
+  },
+  "mojo-chase/biome/farm": {
+   "file": "assets/db/lib/mojo-chase/biome/farm.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "farm",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 500,
+   "h": 290
+  },
+  "mojo-chase/biome/forest": {
+   "file": "assets/db/lib/mojo-chase/biome/forest.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "forest",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 498,
+   "h": 270
+  },
+  "mojo-chase/biome/snow": {
+   "file": "assets/db/lib/mojo-chase/biome/snow.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "snow",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 512,
+   "h": 270
+  },
+  "mojo-chase/biome/town": {
+   "file": "assets/db/lib/mojo-chase/biome/town.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "town",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 522,
+   "h": 270
+  },
+  "mojo-chase/biome/tunnel": {
+   "file": "assets/db/lib/mojo-chase/biome/tunnel.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "tunnel",
+    "mojo",
+    "chase",
+    "biome"
+   ],
+   "w": 506,
+   "h": 290
+  },
+  "mojo-chase/far/aurora": {
+   "file": "assets/db/lib/mojo-chase/far/aurora.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "aurora",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 726,
+   "h": 336,
+   "seamless": true
+  },
+  "mojo-chase/far/castle": {
+   "file": "assets/db/lib/mojo-chase/far/castle.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "castle",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 726,
+   "h": 336,
+   "seamless": true
+  },
+  "mojo-chase/far/forest-lake": {
+   "file": "assets/db/lib/mojo-chase/far/forest-lake.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "forest",
+    "lake",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 733,
+   "h": 336,
+   "seamless": true
+  },
+  "mojo-chase/far/lighthouse": {
+   "file": "assets/db/lib/mojo-chase/far/lighthouse.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "lighthouse",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 726,
+   "h": 336,
+   "seamless": true
+  },
+  "mojo-chase/far/mesas": {
+   "file": "assets/db/lib/mojo-chase/far/mesas.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "mesas",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 726,
+   "h": 336,
+   "seamless": true
+  },
+  "mojo-chase/far/night-city": {
+   "file": "assets/db/lib/mojo-chase/far/night-city.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "night",
+    "city",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 722,
+   "h": 336,
+   "seamless": true
+  },
+  "mojo-chase/far/swoppiton": {
+   "file": "assets/db/lib/mojo-chase/far/swoppiton.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "swoppiton",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 2303,
+   "h": 264,
+   "seamless": true
+  },
+  "mojo-chase/far/swoppiton-mid": {
+   "file": "assets/db/lib/mojo-chase/far/swoppiton-mid.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "swoppiton",
+    "mid",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 2303,
+   "h": 172,
+   "seamless": true
+  },
+  "mojo-chase/far/swoppiton-roadside": {
+   "file": "assets/db/lib/mojo-chase/far/swoppiton-roadside.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "swoppiton",
+    "roadside",
+    "mojo",
+    "chase",
+    "far"
+   ],
+   "w": 2303,
+   "h": 140,
+   "seamless": true
+  },
+  "mojo-chase/items/banana": {
+   "file": "assets/db/lib/mojo-chase/items/banana.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "banana",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 68
+  },
+  "mojo-chase/items/barrel": {
+   "file": "assets/db/lib/mojo-chase/items/barrel.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "barrel",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 138
+  },
+  "mojo-chase/items/barrier": {
+   "file": "assets/db/lib/mojo-chase/items/barrier.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "barrier",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.0,
+   "bw": 195
+  },
+  "mojo-chase/items/boost-pad": {
+   "file": "assets/db/lib/mojo-chase/items/boost-pad.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "boost",
+    "pad",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 226
+  },
+  "mojo-chase/items/bridge": {
+   "file": "assets/db/lib/mojo-chase/items/bridge.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "bridge",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 140
+  },
+  "mojo-chase/items/coin": {
+   "file": "assets/db/lib/mojo-chase/items/coin.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "coin",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 112
+  },
+  "mojo-chase/items/cone": {
+   "file": "assets/db/lib/mojo-chase/items/cone.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "cone",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 150
+  },
+  "mojo-chase/items/crate": {
+   "file": "assets/db/lib/mojo-chase/items/crate.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "crate",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 161.0,
+   "bw": 173
+  },
+  "mojo-chase/items/heart": {
+   "file": "assets/db/lib/mojo-chase/items/heart.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "heart",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.0,
+   "bw": 49
+  },
+  "mojo-chase/items/magnet": {
+   "file": "assets/db/lib/mojo-chase/items/magnet.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "magnet",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.0,
+   "bw": 107
+  },
+  "mojo-chase/items/mystery": {
+   "file": "assets/db/lib/mojo-chase/items/mystery.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "mystery",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 180
+  },
+  "mojo-chase/items/oil": {
+   "file": "assets/db/lib/mojo-chase/items/oil.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "oil",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 161.0,
+   "bw": 91
+  },
+  "mojo-chase/items/pothole": {
+   "file": "assets/db/lib/mojo-chase/items/pothole.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "pothole",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 161.0,
+   "bw": 145
+  },
+  "mojo-chase/items/ramp": {
+   "file": "assets/db/lib/mojo-chase/items/ramp.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "ramp",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 210
+  },
+  "mojo-chase/items/rocket": {
+   "file": "assets/db/lib/mojo-chase/items/rocket.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "rocket",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.0,
+   "bw": 149
+  },
+  "mojo-chase/items/shield": {
+   "file": "assets/db/lib/mojo-chase/items/shield.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "shield",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 86
+  },
+  "mojo-chase/items/star": {
+   "file": "assets/db/lib/mojo-chase/items/star.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "star",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 136
+  },
+  "mojo-chase/items/stopwatch": {
+   "file": "assets/db/lib/mojo-chase/items/stopwatch.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "stopwatch",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 108
+  },
+  "mojo-chase/items/tyres-2": {
+   "file": "assets/db/lib/mojo-chase/items/tyres-2.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "tyres",
+    "2",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.5,
+   "bw": 172
+  },
+  "mojo-chase/items/tyres-3": {
+   "file": "assets/db/lib/mojo-chase/items/tyres-3.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "tyres",
+    "3",
+    "mojo",
+    "chase",
+    "items",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 321,
+   "h": 227,
+   "baseline": 220,
+   "cx": 160.0,
+   "bw": 179
+  },
+  "mojo-chase/props/banner-blue": {
+   "file": "assets/db/lib/mojo-chase/props/banner-blue.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "banner",
+    "blue",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 54
+  },
+  "mojo-chase/props/banner-red": {
+   "file": "assets/db/lib/mojo-chase/props/banner-red.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "banner",
+    "red",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 40
+  },
+  "mojo-chase/props/barrel-oil": {
+   "file": "assets/db/lib/mojo-chase/props/barrel-oil.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "barrel",
+    "oil",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 66
+  },
+  "mojo-chase/props/boulders": {
+   "file": "assets/db/lib/mojo-chase/props/boulders.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "boulders",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 148
+  },
+  "mojo-chase/props/bush": {
+   "file": "assets/db/lib/mojo-chase/props/bush.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "bush",
+    "mojo",
+    "chase",
+    "props",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 269,
+   "h": 274,
+   "baseline": 267,
+   "cx": 135.0,
+   "bw": 207
+  },
+  "mojo-chase/props/cactus": {
+   "file": "assets/db/lib/mojo-chase/props/cactus.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "cactus",
+    "mojo",
+    "chase",
+    "props",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 269,
+   "h": 274,
+   "baseline": 267,
+   "cx": 134.0,
+   "bw": 141
+  },
+  "mojo-chase/props/cactus-2": {
+   "file": "assets/db/lib/mojo-chase/props/cactus-2.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "cactus",
+    "2",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 74
+  },
+  "mojo-chase/props/fence": {
+   "file": "assets/db/lib/mojo-chase/props/fence.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "fence",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 26
+  },
+  "mojo-chase/props/guardrail": {
+   "file": "assets/db/lib/mojo-chase/props/guardrail.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "guardrail",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 80
+  },
+  "mojo-chase/props/guardrail-2": {
+   "file": "assets/db/lib/mojo-chase/props/guardrail-2.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "guardrail",
+    "2",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 42
+  },
+  "mojo-chase/props/hay": {
+   "file": "assets/db/lib/mojo-chase/props/hay.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "hay",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.0,
+   "bw": 111
+  },
+  "mojo-chase/props/hedge": {
+   "file": "assets/db/lib/mojo-chase/props/hedge.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "hedge",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.0,
+   "bw": 99
+  },
+  "mojo-chase/props/jersey": {
+   "file": "assets/db/lib/mojo-chase/props/jersey.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "jersey",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 88
+  },
+  "mojo-chase/props/jersey-2": {
+   "file": "assets/db/lib/mojo-chase/props/jersey-2.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "jersey",
+    "2",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 132
+  },
+  "mojo-chase/props/lamp": {
+   "file": "assets/db/lib/mojo-chase/props/lamp.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "lamp",
+    "mojo",
+    "chase",
+    "props",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 269,
+   "h": 274,
+   "baseline": 267,
+   "cx": 134.5,
+   "bw": 74
+  },
+  "mojo-chase/props/palm": {
+   "file": "assets/db/lib/mojo-chase/props/palm.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "palm",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 90
+  },
+  "mojo-chase/props/pine": {
+   "file": "assets/db/lib/mojo-chase/props/pine.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "pine",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.0,
+   "bw": 97
+  },
+  "mojo-chase/props/planter": {
+   "file": "assets/db/lib/mojo-chase/props/planter.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "planter",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 96
+  },
+  "mojo-chase/props/rail-wood": {
+   "file": "assets/db/lib/mojo-chase/props/rail-wood.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "rail",
+    "wood",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 174
+  },
+  "mojo-chase/props/rock": {
+   "file": "assets/db/lib/mojo-chase/props/rock.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "rock",
+    "mojo",
+    "chase",
+    "props",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 269,
+   "h": 274,
+   "baseline": 267,
+   "cx": 134.5,
+   "bw": 212
+  },
+  "mojo-chase/props/rocks": {
+   "file": "assets/db/lib/mojo-chase/props/rocks.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "rocks",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 154.0,
+   "bw": 103
+  },
+  "mojo-chase/props/sign": {
+   "file": "assets/db/lib/mojo-chase/props/sign.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "sign",
+    "mojo",
+    "chase",
+    "props",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 269,
+   "h": 274,
+   "baseline": 267,
+   "cx": 134.5,
+   "bw": 206
+  },
+  "mojo-chase/props/snow-pine": {
+   "file": "assets/db/lib/mojo-chase/props/snow-pine.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "snow",
+    "pine",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 84
+  },
+  "mojo-chase/props/stone-wall": {
+   "file": "assets/db/lib/mojo-chase/props/stone-wall.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "stone",
+    "wall",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 96
+  },
+  "mojo-chase/props/tree-round": {
+   "file": "assets/db/lib/mojo-chase/props/tree-round.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "tree",
+    "round",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.0,
+   "bw": 109
+  },
+  "mojo-chase/props/tree-small": {
+   "file": "assets/db/lib/mojo-chase/props/tree-small.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "tree",
+    "small",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 78
+  },
+  "mojo-chase/props/windmill": {
+   "file": "assets/db/lib/mojo-chase/props/windmill.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "windmill",
+    "mojo",
+    "chase",
+    "props"
+   ],
+   "w": 307,
+   "h": 199,
+   "baseline": 192,
+   "cx": 153.5,
+   "bw": 68
+  },
+  "mojo-chase/robbers/robber-beanie": {
+   "file": "assets/db/lib/mojo-chase/robbers/robber-beanie.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "robber",
+    "beanie",
+    "mojo",
+    "chase",
+    "robbers",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 283,
+   "h": 265,
+   "baseline": 258,
+   "cx": 141.5,
+   "bw": 40
+  },
+  "mojo-chase/robbers/robber-cap": {
+   "file": "assets/db/lib/mojo-chase/robbers/robber-cap.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "robber",
+    "cap",
+    "mojo",
+    "chase",
+    "robbers",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 283,
+   "h": 265,
+   "baseline": 258,
+   "cx": 141.0,
+   "bw": 39
+  },
+  "mojo-chase/robbers/robber-cowboy": {
+   "file": "assets/db/lib/mojo-chase/robbers/robber-cowboy.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "robber",
+    "cowboy",
+    "mojo",
+    "chase",
+    "robbers",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 283,
+   "h": 265,
+   "baseline": 258,
+   "cx": 142.0,
+   "bw": 59
+  },
+  "mojo-chase/robbers/robber-helmet": {
+   "file": "assets/db/lib/mojo-chase/robbers/robber-helmet.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "robber",
+    "helmet",
+    "mojo",
+    "chase",
+    "robbers",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 283,
+   "h": 265,
+   "baseline": 258,
+   "cx": 141.0,
+   "bw": 59
+  },
+  "mojo-chase/signs/banner-gear": {
+   "file": "assets/db/lib/mojo-chase/signs/banner-gear.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "banner",
+    "gear",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.5,
+   "bw": 48
+  },
+  "mojo-chase/signs/banners": {
+   "file": "assets/db/lib/mojo-chase/signs/banners.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "banners",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.0,
+   "bw": 85
+  },
+  "mojo-chase/signs/billboard": {
+   "file": "assets/db/lib/mojo-chase/signs/billboard.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "billboard",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.0,
+   "bw": 123
+  },
+  "mojo-chase/signs/caution": {
+   "file": "assets/db/lib/mojo-chase/signs/caution.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "caution",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.0,
+   "bw": 29
+  },
+  "mojo-chase/signs/chevron-board": {
+   "file": "assets/db/lib/mojo-chase/signs/chevron-board.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "chevron",
+    "board",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.5,
+   "bw": 102
+  },
+  "mojo-chase/signs/chevron-red": {
+   "file": "assets/db/lib/mojo-chase/signs/chevron-red.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "chevron",
+    "red",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.0,
+   "bw": 111
+  },
+  "mojo-chase/signs/chevron-yellow": {
+   "file": "assets/db/lib/mojo-chase/signs/chevron-yellow.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "chevron",
+    "yellow",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.5,
+   "bw": 16
+  },
+  "mojo-chase/signs/finish": {
+   "file": "assets/db/lib/mojo-chase/signs/finish.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "finish",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 219.5,
+   "bw": 240
+  },
+  "mojo-chase/signs/flag-checker": {
+   "file": "assets/db/lib/mojo-chase/signs/flag-checker.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "flag",
+    "checker",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.0,
+   "bw": 115
+  },
+  "mojo-chase/signs/gantry": {
+   "file": "assets/db/lib/mojo-chase/signs/gantry.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "gantry",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.0,
+   "bw": 397
+  },
+  "mojo-chase/signs/sign-60": {
+   "file": "assets/db/lib/mojo-chase/signs/sign-60.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "sign",
+    "60",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.5,
+   "bw": 62
+  },
+  "mojo-chase/signs/swoppiton": {
+   "file": "assets/db/lib/mojo-chase/signs/swoppiton.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "swoppiton",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.0,
+   "bw": 155
+  },
+  "mojo-chase/signs/warning": {
+   "file": "assets/db/lib/mojo-chase/signs/warning.webp",
+   "cat": "mojo-chase",
+   "source": "owner mojo chase track sheets 2026-10-03",
+   "tags": [
+    "warning",
+    "mojo",
+    "chase",
+    "signs"
+   ],
+   "w": 440,
+   "h": 162,
+   "baseline": 155,
+   "cx": 220.5,
+   "bw": 90
+  },
+  "mojo-chase/vehicles/army": {
+   "file": "assets/db/lib/mojo-chase/vehicles/army.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "army",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 216
+  },
+  "mojo-chase/vehicles/bad1": {
+   "file": "assets/db/lib/mojo-chase/vehicles/bad1.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "bad1",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 191
+  },
+  "mojo-chase/vehicles/big": {
+   "file": "assets/db/lib/mojo-chase/vehicles/big.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "big",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 219
+  },
+  "mojo-chase/vehicles/cash": {
+   "file": "assets/db/lib/mojo-chase/vehicles/cash.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "cash",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 213
+  },
+  "mojo-chase/vehicles/chaos": {
+   "file": "assets/db/lib/mojo-chase/vehicles/chaos.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "chaos",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 204
+  },
+  "mojo-chase/vehicles/fuel": {
+   "file": "assets/db/lib/mojo-chase/vehicles/fuel.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "fuel",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 202
+  },
+  "mojo-chase/vehicles/joke": {
+   "file": "assets/db/lib/mojo-chase/vehicles/joke.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "joke",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 207
+  },
+  "mojo-chase/vehicles/junk": {
+   "file": "assets/db/lib/mojo-chase/vehicles/junk.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "junk",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 215
+  },
+  "mojo-chase/vehicles/logs": {
+   "file": "assets/db/lib/mojo-chase/vehicles/logs.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "logs",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 200
+  },
+  "mojo-chase/vehicles/loot": {
+   "file": "assets/db/lib/mojo-chase/vehicles/loot.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "loot",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 205
+  },
+  "mojo-chase/vehicles/police-van": {
+   "file": "assets/db/lib/mojo-chase/vehicles/police-van.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "police",
+    "van",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 201
+  },
+  "mojo-chase/vehicles/rich": {
+   "file": "assets/db/lib/mojo-chase/vehicles/rich.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "rich",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 208
+  },
+  "mojo-chase/vehicles/speed": {
+   "file": "assets/db/lib/mojo-chase/vehicles/speed.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "speed",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 216
+  },
+  "mojo-chase/vehicles/steal": {
+   "file": "assets/db/lib/mojo-chase/vehicles/steal.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "steal",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 208
+  },
+  "mojo-chase/vehicles/striped-01": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-01.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "01",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 200
+  },
+  "mojo-chase/vehicles/striped-02": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-02.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "02",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 218
+  },
+  "mojo-chase/vehicles/striped-03": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-03.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "03",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 210
+  },
+  "mojo-chase/vehicles/striped-04": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-04.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "04",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 217
+  },
+  "mojo-chase/vehicles/striped-05": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-05.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "05",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 223
+  },
+  "mojo-chase/vehicles/striped-06": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-06.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "06",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 178
+  },
+  "mojo-chase/vehicles/striped-07": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-07.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "07",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 207
+  },
+  "mojo-chase/vehicles/striped-08": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-08.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "08",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 217
+  },
+  "mojo-chase/vehicles/striped-09": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-09.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "09",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 213
+  },
+  "mojo-chase/vehicles/striped-10": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-10.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "10",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 229
+  },
+  "mojo-chase/vehicles/striped-11": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-11.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "11",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 218
+  },
+  "mojo-chase/vehicles/striped-12": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-12.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "12",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 213
+  },
+  "mojo-chase/vehicles/striped-13": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-13.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "13",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 191
+  },
+  "mojo-chase/vehicles/striped-14": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-14.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "14",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 218
+  },
+  "mojo-chase/vehicles/striped-15": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-15.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "15",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 221
+  },
+  "mojo-chase/vehicles/striped-16": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-16.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "16",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 195
+  },
+  "mojo-chase/vehicles/striped-17": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-17.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "17",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 222
+  },
+  "mojo-chase/vehicles/striped-18": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-18.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "18",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 220
+  },
+  "mojo-chase/vehicles/striped-19": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-19.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "19",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 181
+  },
+  "mojo-chase/vehicles/striped-20": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-20.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "20",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 223
+  },
+  "mojo-chase/vehicles/striped-21": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-21.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "21",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 190
+  },
+  "mojo-chase/vehicles/striped-22": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-22.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "22",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 217
+  },
+  "mojo-chase/vehicles/striped-24": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-24.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "24",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 226
+  },
+  "mojo-chase/vehicles/striped-25": {
+   "file": "assets/db/lib/mojo-chase/vehicles/striped-25.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "striped",
+    "25",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 214
+  },
+  "mojo-chase/vehicles/sweet": {
+   "file": "assets/db/lib/mojo-chase/vehicles/sweet.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "sweet",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 186
+  },
+  "mojo-chase/vehicles/thief": {
+   "file": "assets/db/lib/mojo-chase/vehicles/thief.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "thief",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.0,
+   "bw": 203
+  },
+  "mojo-chase/vehicles/trash": {
+   "file": "assets/db/lib/mojo-chase/vehicles/trash.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "trash",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 207
+  },
+  "mojo-chase/vehicles/vroom": {
+   "file": "assets/db/lib/mojo-chase/vehicles/vroom.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "vroom",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 207
+  },
+  "mojo-chase/vehicles/work": {
+   "file": "assets/db/lib/mojo-chase/vehicles/work.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "work",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 136.5,
+   "bw": 194
+  },
+  "mojo-chase/vehicles/yum": {
+   "file": "assets/db/lib/mojo-chase/vehicles/yum.webp",
+   "cat": "mojo-chase",
+   "tags": [
+    "yum",
+    "mojo",
+    "chase",
+    "vehicles",
+    "cartoon"
+   ],
+   "source": "owner mojo chase sheets 2026-10-03",
+   "w": 273,
+   "h": 246,
+   "baseline": 239,
+   "cx": 137.0,
+   "bw": 187
+  },
   "mojo-fx/boost-flame-sheet13": {
    "file": "assets/db/lib/mojo-fx/boost-flame-sheet13.webp",
    "cat": "mojo-fx",
@@ -9443,6 +12218,376 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 84,
    "h": 60
+  },
+  "mojo-hero/base-1": {
+   "file": "assets/db/lib/mojo-hero/base-1.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "base",
+    "1",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 199,
+   "h": 183,
+   "facing": "r"
+  },
+  "mojo-hero/base-2": {
+   "file": "assets/db/lib/mojo-hero/base-2.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "base",
+    "2",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 205,
+   "h": 179,
+   "facing": "r"
+  },
+  "mojo-hero/base-bo": {
+   "file": "assets/db/lib/mojo-hero/base-bo.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "base",
+    "bo",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 210,
+   "h": 209,
+   "facing": "r"
+  },
+  "mojo-hero/base-bo-front": {
+   "file": "assets/db/lib/mojo-hero/base-bo-front.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "base",
+    "bo",
+    "front",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 217,
+   "h": 214,
+   "facing": "f"
+  },
+  "mojo-hero/base-front": {
+   "file": "assets/db/lib/mojo-hero/base-front.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "base",
+    "front",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 221,
+   "h": 212,
+   "facing": "f"
+  },
+  "mojo-hero/boat": {
+   "file": "assets/db/lib/mojo-hero/boat.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "boat",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 224,
+   "h": 192,
+   "facing": "r"
+  },
+  "mojo-hero/cargo": {
+   "file": "assets/db/lib/mojo-hero/cargo.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "cargo",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 217,
+   "h": 206,
+   "facing": "l"
+  },
+  "mojo-hero/chopper-1": {
+   "file": "assets/db/lib/mojo-hero/chopper-1.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "chopper",
+    "1",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 209,
+   "h": 229,
+   "facing": "f"
+  },
+  "mojo-hero/chopper-2": {
+   "file": "assets/db/lib/mojo-hero/chopper-2.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "chopper",
+    "2",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 205,
+   "h": 226,
+   "facing": "f"
+  },
+  "mojo-hero/chopper-3": {
+   "file": "assets/db/lib/mojo-hero/chopper-3.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "chopper",
+    "3",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 183,
+   "h": 221,
+   "facing": "f"
+  },
+  "mojo-hero/chopper-4": {
+   "file": "assets/db/lib/mojo-hero/chopper-4.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "chopper",
+    "4",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 222,
+   "h": 224,
+   "facing": "f"
+  },
+  "mojo-hero/dozer-1": {
+   "file": "assets/db/lib/mojo-hero/dozer-1.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "dozer",
+    "1",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 229,
+   "h": 193,
+   "facing": "l"
+  },
+  "mojo-hero/dozer-2": {
+   "file": "assets/db/lib/mojo-hero/dozer-2.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "dozer",
+    "2",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 229,
+   "h": 214,
+   "facing": "l"
+  },
+  "mojo-hero/dozer-3": {
+   "file": "assets/db/lib/mojo-hero/dozer-3.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "dozer",
+    "3",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 206,
+   "h": 216,
+   "facing": "r"
+  },
+  "mojo-hero/jet-1": {
+   "file": "assets/db/lib/mojo-hero/jet-1.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "jet",
+    "1",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 226,
+   "h": 203,
+   "facing": "r"
+  },
+  "mojo-hero/jet-2": {
+   "file": "assets/db/lib/mojo-hero/jet-2.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "jet",
+    "2",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 233,
+   "h": 167,
+   "facing": "r"
+  },
+  "mojo-hero/jet-3": {
+   "file": "assets/db/lib/mojo-hero/jet-3.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "jet",
+    "3",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 230,
+   "h": 174,
+   "facing": "r"
+  },
+  "mojo-hero/jet-4": {
+   "file": "assets/db/lib/mojo-hero/jet-4.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "jet",
+    "4",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 225,
+   "h": 205,
+   "facing": "r"
+  },
+  "mojo-hero/monster-1": {
+   "file": "assets/db/lib/mojo-hero/monster-1.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "monster",
+    "1",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 227,
+   "h": 219,
+   "facing": "f"
+  },
+  "mojo-hero/monster-2": {
+   "file": "assets/db/lib/mojo-hero/monster-2.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "monster",
+    "2",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 230,
+   "h": 197,
+   "facing": "f"
+  },
+  "mojo-hero/monster-3": {
+   "file": "assets/db/lib/mojo-hero/monster-3.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "monster",
+    "3",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 225,
+   "h": 225,
+   "facing": "r"
+  },
+  "mojo-hero/offroad": {
+   "file": "assets/db/lib/mojo-hero/offroad.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "offroad",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 207,
+   "h": 214,
+   "facing": "f"
+  },
+  "mojo-hero/racer": {
+   "file": "assets/db/lib/mojo-hero/racer.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "racer",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 220,
+   "h": 221,
+   "facing": "r"
+  },
+  "mojo-hero/rescue": {
+   "file": "assets/db/lib/mojo-hero/rescue.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "rescue",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 201,
+   "h": 213,
+   "facing": "f"
+  },
+  "mojo-hero/van": {
+   "file": "assets/db/lib/mojo-hero/van.webp",
+   "cat": "mojo-hero",
+   "tags": [
+    "van",
+    "mojo",
+    "hero",
+    "cartoon"
+   ],
+   "source": "owner mojo primary sheet 2026-10-03",
+   "w": 198,
+   "h": 199,
+   "facing": "r"
   },
   "mojo-prop/apple-cart": {
    "file": "assets/db/lib/mojo-prop/apple-cart.webp",
@@ -13432,6 +16577,463 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 72,
    "h": 71
+  },
+  "mojo-rear/ambulance": {
+   "file": "assets/db/lib/mojo-rear/ambulance.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "ambulance",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.0,
+   "bw": 161,
+   "kind": "ground"
+  },
+  "mojo-rear/base": {
+   "file": "assets/db/lib/mojo-rear/base.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "base",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 168,
+   "kind": "ground"
+  },
+  "mojo-rear/base-neon": {
+   "file": "assets/db/lib/mojo-rear/base-neon.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "base",
+    "neon",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 141.0,
+   "bw": 169,
+   "kind": "ground"
+  },
+  "mojo-rear/boat": {
+   "file": "assets/db/lib/mojo-rear/boat.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "boat",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 141.0,
+   "bw": 135,
+   "kind": "water"
+  },
+  "mojo-rear/cargo": {
+   "file": "assets/db/lib/mojo-rear/cargo.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "cargo",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 160,
+   "kind": "ground"
+  },
+  "mojo-rear/chopper": {
+   "file": "assets/db/lib/mojo-rear/chopper.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "chopper",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.0,
+   "bw": 193,
+   "kind": "air"
+  },
+  "mojo-rear/chopper-2": {
+   "file": "assets/db/lib/mojo-rear/chopper-2.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "chopper",
+    "2",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 141.0,
+   "bw": 175,
+   "kind": "air"
+  },
+  "mojo-rear/chopper-3": {
+   "file": "assets/db/lib/mojo-rear/chopper-3.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "chopper",
+    "3",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.0,
+   "bw": 175,
+   "kind": "air"
+  },
+  "mojo-rear/crane": {
+   "file": "assets/db/lib/mojo-rear/crane.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "crane",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 144,
+   "kind": "ground"
+  },
+  "mojo-rear/crane-2": {
+   "file": "assets/db/lib/mojo-rear/crane-2.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "crane",
+    "2",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 150,
+   "kind": "ground"
+  },
+  "mojo-rear/delivery": {
+   "file": "assets/db/lib/mojo-rear/delivery.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "delivery",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 172,
+   "kind": "ground"
+  },
+  "mojo-rear/digger": {
+   "file": "assets/db/lib/mojo-rear/digger.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "digger",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 176,
+   "kind": "ground"
+  },
+  "mojo-rear/dumper": {
+   "file": "assets/db/lib/mojo-rear/dumper.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "dumper",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.0,
+   "bw": 155,
+   "kind": "ground"
+  },
+  "mojo-rear/excavator": {
+   "file": "assets/db/lib/mojo-rear/excavator.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "excavator",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 160,
+   "kind": "ground"
+  },
+  "mojo-rear/hover": {
+   "file": "assets/db/lib/mojo-rear/hover.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "hover",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.0,
+   "bw": 175,
+   "kind": "water"
+  },
+  "mojo-rear/jet": {
+   "file": "assets/db/lib/mojo-rear/jet.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "jet",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 136,
+   "kind": "air"
+  },
+  "mojo-rear/jet-2": {
+   "file": "assets/db/lib/mojo-rear/jet-2.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "jet",
+    "2",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.0,
+   "bw": 131,
+   "kind": "air"
+  },
+  "mojo-rear/ladder": {
+   "file": "assets/db/lib/mojo-rear/ladder.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "ladder",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 146,
+   "kind": "ground"
+  },
+  "mojo-rear/loader": {
+   "file": "assets/db/lib/mojo-rear/loader.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "loader",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 141.0,
+   "bw": 187,
+   "kind": "ground"
+  },
+  "mojo-rear/monster": {
+   "file": "assets/db/lib/mojo-rear/monster.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "monster",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 198,
+   "kind": "ground"
+  },
+  "mojo-rear/monster-2": {
+   "file": "assets/db/lib/mojo-rear/monster-2.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "monster",
+    "2",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 198,
+   "kind": "ground"
+  },
+  "mojo-rear/plane": {
+   "file": "assets/db/lib/mojo-rear/plane.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "plane",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 141.0,
+   "bw": 135,
+   "kind": "air"
+  },
+  "mojo-rear/prop-plane": {
+   "file": "assets/db/lib/mojo-rear/prop-plane.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "prop",
+    "plane",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 141.0,
+   "bw": 107,
+   "kind": "air"
+  },
+  "mojo-rear/snow": {
+   "file": "assets/db/lib/mojo-rear/snow.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "snow",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 178,
+   "kind": "ground"
+  },
+  "mojo-rear/tow": {
+   "file": "assets/db/lib/mojo-rear/tow.webp",
+   "cat": "mojo-rear",
+   "tags": [
+    "tow",
+    "mojo",
+    "rear",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo rear-view sheet 2026-10-03",
+   "w": 281,
+   "h": 241,
+   "baseline": 234,
+   "cx": 140.5,
+   "bw": 184,
+   "kind": "ground"
   },
   "mojo-tile/barrier": {
    "file": "assets/db/lib/mojo-tile/barrier.webp",

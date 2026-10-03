@@ -80,5 +80,125 @@ try{
  assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['up','east']);const boardWidth=await p.$eval('#board',e=>e.clientWidth);assert.ok(boardWidth>=280,'portrait board stays readable: '+boardWidth);
  await p.screenshot({path:out+'/portrait-edit.png'});await p.setViewport({width:844,height:390});await sleep(350);
  assert.deepEqual(await p.evaluate(()=>__mojo.state().prog),['up','east']);await p.screenshot({path:out+'/rotated-edit.png'});console.log('Portrait editor touch-size actions and rotation preserve plan PASS');
+ // ── ONE rule, real taps (owner 2026-10-03, LEWATI vs SEBELAH) ──
+ await p.setViewport({width:1280,height:800});await sleep(300);
+ // forget the PALU mastery earned above, so the word game must open again
+ await p.evaluate(()=>{const k='dunia-g31-mojo',v=JSON.parse(avatarScopedGet(k));v.mg={};avatarScopedSet(k,JSON.stringify(v))});await p.reload({waitUntil:'networkidle0'});await p.waitForFunction(()=>window.__mojo?.ready);await sleep(400);
+ await start('m5');await program(await p.evaluate(()=>__mojo.solution()));await tap('#btn-run');
+ let mgAt=null;for(let n=0;n<250;n++){const mg=await p.evaluate(()=>__mojo.mg());if(mg?.kind==='letters'){mgAt=await p.evaluate(()=>({cmd:__mojo.state().prog[+document.querySelector('.slot.active').dataset.slot],pos:__mojo.state().position}));break}await sleep(80)}
+ assert.ok(mgAt&&['up','down','west','east'].includes(mgAt.cmd),'driving ONTO the toolbox (an arrow, not Ambil) opens the letters microgame: '+JSON.stringify(mgAt));
+ await p.screenshot({path:out+'/walk-over-toolbox.png'});await idle();await p.waitForSelector('#ov-card.on #res-map');
+ assert.ok(await p.evaluate(()=>__mojo.state().tools.palu&&__mojo.state().objects.find(o=>o.id==='kotak').st==='got'));console.log('Walk onto the toolbox → letters microgame → hammer, box gone PASS');
+ // spray from each of the four sides, Mojo facing away: he turns to the fire himself
+ for(let side=0;side<4;side++){
+  const id=await p.evaluate(side=>{const D=ProgGrid.DIRS,at=[2-D[side][0],2-D[side][1]],id='qa-side'+side;
+   if(!MojoLevels.byId(id))MojoLevels.LEVELS.push({id,ch:'qa',place:'Uji sisi',title:'Sisi '+side,icon:'cmd/east',grid:{rows:5,cols:5,map:['.....','.....','.....','.....','.....'],theme:'town'},mojo:{at,h:(side+2)%4,form:'fire'},res:{water:2},cap:{water:5},
+    objects:[{id:'api',type:'fire',at:[2,2],str:1}],beats:[{title:'Sisi',story:'Uji sisi.',bo:'Semprot.',objectives:[{do:'extinguish',id:'api'}],slots:3,budget:1,forms:['fire'],palette:['up','down','west','east','spray']}]});return id},side);
+  await start(id);await program(['spray']);await tap('#btn-run');await idle();
+  assert.equal(await p.evaluate(()=>__mojo.state().objects.find(o=>o.id==='api').st),'out','side '+side);
+  assert.equal(await p.evaluate(()=>__mojo.state().position.h),side,'Mojo turned to the fire from side '+side);
+  if(await p.$('#ov-card.on #res-map'))await tap('#res-map');
+ }
+ await p.evaluate(()=>{MojoLevels.LEVELS.splice(MojoLevels.LEVELS.findIndex(l=>l.ch==='qa'))});
+ console.log('Spray from each of the four sides with real taps; Mojo turns to the fire PASS');
+ // an arrow into a burning fire: one specific message that names the fix
+ await start('t4');await program(['east','east','east']);await tap('#btn-run');await idle();
+ const msg=await p.evaluate(()=>document.getElementById('bo-text').textContent+'|'+__mojo.state().fail.reason);
+ assert.ok(/^Ada api di depan!/.test(msg)&&msg.endsWith('|object'),'fire bump message: '+msg);
+ await tap('#bo-details');assert.match(await p.$eval('#bo-full',e=>e.textContent),/Swop jadi Pemadam, lalu SEMPROT dari sebelahnya/);await tap('#bo-close');console.log('Arrow into fire names the form and the action PASS');
+ // the Cara Main rule card: in the t1 briefing, and reopened from the ? button
+ await p.evaluate(()=>__mojo.start('t1'));await p.waitForSelector('#ov-card.on #rule-card');await p.screenshot({path:out+'/rule-card-t1.png'});await tap('#in-go');if(await p.$('#ov-card.on #picker-later'))await tap('#picker-later');
+ await tap('#btn-rule');await p.waitForSelector('#ov-card.on #rule-close');assert.equal(await p.$$eval('#ov-card.on .rule-p',e=>e.length),2);await p.screenshot({path:out+'/rule-card-reopen.png'});await tap('#rule-close');
+ assert.equal(await p.$('#ov-card.on'),null);console.log('Cara Main card on t1 and reopenable from the ? button PASS');
+ // ── ROAD rule (owner 2026-10-03, m5 photo): grass is park scenery; a real tap onto it stops with the grass message ──
+ await start('m5');await program(['west']);await tap('#btn-run');await idle();
+ assert.equal(await p.evaluate(()=>__mojo.state().fail.reason),'grass');
+ assert.equal(await p.$eval('#bo-text',e=>e.textContent),'Itu rumput taman.');
+ await tap('#bo-details');assert.equal(await p.$eval('#bo-full',e=>e.textContent),'Itu rumput taman. Mojo jalan di jalan raya saja.');await p.screenshot({path:out+'/grass-stop.png'});await tap('#bo-close');
+ console.log('Real tap onto grass: Mojo stops with "Itu rumput taman. Mojo jalan di jalan raya saja." PASS');
+ // ── hint ladder: four distinct, concrete rungs; never exhausted (owner 2026-10-03, m6 photo) ──
+ for(const id of await p.evaluate(()=>__mojo.levels())){
+  await start(id);const texts=[];
+  for(let k=1;k<=5;k++){await tap('#btn-hint');texts.push(await p.evaluate(()=>__mojo.state().hintText))}
+  const [r1,r2,r3,r4,r5]=texts;
+  assert.ok(/^.*Tugasnya: /.test(r1),id+' rung 1 names the task: '+r1);
+  assert.ok(/Urutannya|Lalu:|Cukup panah|LEWATI dulu/.test(r2),id+' rung 2 names the forms / actions: '+r2);
+  assert.ok(/^Langkah berikutnya, kotak \d+: /.test(r3),id+' rung 3 names the next command: '+r3);
+  assert.ok([r4,r5].every(t=>/^(Dua langkah berikutnya|Tinggal satu langkah)/.test(t)),id+' rung 4 (and every later tap) shows the next steps: '+r4+' / '+r5);
+  assert.equal(new Set([r1,r2,r3,r4]).size,4,id+' four distinct rungs');
+  assert.ok(await p.$('.cell-mark')&&await p.$('.cmd.cand')&&await p.$('.slot.ghost'),id+' rung 4 marks the target cells, the palette buttons and the slot');
+  assert.equal(await p.$eval('#btn-show',e=>e.hidden),false,id+' after the last rung "Tunjukkan Caranya" is offered');
+  assert.equal(await p.$eval('#hint-lv',e=>e.textContent),'4/4');
+ }
+ await p.screenshot({path:out+'/hint-rung4.png'});console.log('Hint ladder: 4 distinct concrete rungs on all levels, then Tunjukkan Caranya PASS');
+ // "Tunjukkan Caranya" after two stopped runs
+ await start('t2');await program(['west']);for(let k=0;k<2;k++){assert.equal(await p.$eval('#btn-show',e=>e.hidden),true);await tap('#btn-run');await idle()}
+ assert.equal(await p.$eval('#btn-show',e=>e.hidden),false,'offered after two stopped runs');console.log('Tunjukkan Caranya offered after two stopped runs PASS');
+ // ── show me: fills a solvable plan for EVERY beat of EVERY level, narrates it, the child runs it, 1 star ──
+ for(const id of await p.evaluate(()=>__mojo.levels())){
+  await start(id);const beats=await p.evaluate(()=>__mojo.state().beats);
+  for(let bi=0;bi<beats;bi++){
+   await p.waitForFunction(b=>__mojo.state().beat===b&&!__mojo.state().trans&&!document.getElementById('btn-run').disabled,{},bi);
+   if(await p.$('#ov-card.on #in-go')){await tap('#in-go');if(await p.$('#ov-card.on #picker-later'))await tap('#picker-later')}
+   // the bubble is THIS beat's objective line, the task chip its pending objective
+   const bub=await p.evaluate(()=>{const s=__mojo.state(),lv=MojoLevels.byId(s.id),bo=lv.beats[s.beat].bo,first=(bo.match(/^.*?[.!?](?:\s|$)/)||[bo])[0].trim();return{text:document.getElementById('bo-text').textContent,first,task:document.getElementById('bo-task').textContent}});
+   assert.equal(bub.text,bub.first,id+':'+bi+' bubble shows this beat\'s own line');assert.ok(bub.task&&bub.task!=='Tugas selesai!',id+':'+bi+' task chip names a pending objective');
+   const sol=await p.evaluate(()=>__mojo.solution());
+   await tap('#bo-details');await tap('#bo-show');
+   let narrated=false;for(let n=0;n<400;n++){const s=await p.evaluate(()=>({run:__mojo.state().running,line:__mojo.state().boLine}));if(/^Langkah 1: /.test(s.line))narrated=true;if(!s.run&&/giliranmu/.test(s.line))break;await sleep(80)}
+   assert.ok(narrated,id+':'+bi+' the demo names each step');
+   const st=await p.evaluate(()=>__mojo.state());assert.equal(st.beat,bi,id+':'+bi+' the demo does not complete the beat for the child');assert.deepEqual(st.prog,sol,id+':'+bi+' the strip holds the plan');assert.equal(st.shown,true);
+   await tap('#btn-run');await idle();
+  }
+  await p.waitForSelector('#ov-card.on #res-map');
+  assert.equal(await p.$$eval('#res-stars i.on',e=>e.length),1,id+' a mission finished after the demo earns one star');
+  assert.match(await p.$eval('#ov-card',e=>e.textContent),/bersama Bo/);
+ }
+ await p.screenshot({path:out+'/show-me-result.png'});console.log('Tunjukkan Caranya: every beat of every level filled, narrated, run by the child, 1 star PASS');
+ // ── event questions: drawn, counted, about this level (owner 2026-10-03, m6 photo) ──
+ let asked=0;
+ for(const id of await p.evaluate(()=>__mojo.levels())){
+  for(const evs of [[{e:'collect',res:'bolts'}],[{e:'bump',reason:'object'}],[{e:'ended'}]]){
+   await start(id);await p.evaluate(()=>{const real=window.__qaReal||(window.__qaReal=performance.now.bind(performance));window.__qaShift=(window.__qaShift||0)+130000;performance.now=()=>real()+window.__qaShift});
+   const ok=await p.evaluate(e=>__mojo.eventQuestion(()=>{},e),evs);if(!ok)continue;asked++;
+   const q=await p.evaluate(()=>({mg:__mojo.mg(),themes:__mojo.themes(),imgs:document.querySelectorAll('#ov-mg.on #eq-scene img').length,why:document.querySelector('#ov-mg.on .eq-why').textContent,sizes:[...document.querySelectorAll('#ov-mg.on [data-answer]')].map(b=>Math.min(b.offsetWidth,b.offsetHeight))}));
+   if(/berapa/.test(q.mg.prompt))assert.ok(q.imgs>=1&&String(q.imgs)===q.mg.answer,id+' a counting question draws exactly its answer: '+q.imgs+' vs '+q.mg.answer);
+   assert.ok(q.themes.includes(q.mg.noun),id+' asks only about things in the level: '+q.mg.noun+' / '+q.themes.join(','));
+   assert.ok(/Jawab dulu untuk bonus/.test(q.why),id+' the moment is explained: '+q.why);
+   assert.ok(q.sizes.every(s=>s>=56),id+' answers keep 56px targets '+q.sizes);
+   if(evs[0].e==='collect'&&q.themes.includes('baut'))assert.equal(q.mg.noun,'baut',id+' a bolt pickup asks about bolts');
+   await tap('#event-skip');
+  }
+ }
+ assert.ok(asked>=20,'event questions checked: '+asked);await p.evaluate(()=>{if(window.__qaReal)performance.now=window.__qaReal});
+ console.log('Event questions: '+asked+' drawn scenes, nouns from the level, moment explained, 56px answers PASS');
+ // ── a map toast never shows during play ──
+ await p.evaluate(()=>__mojo.home());await tap('#btn-levels');await tap('[data-region="pulau"]');
+ assert.ok(await p.$eval('#toast',e=>e.classList.contains('show')),'the locked-region toast shows on the map');
+ await p.evaluate(()=>__mojo.start('m6'));assert.equal(await p.$eval('#toast',e=>e.classList.contains('show')),false,'entering play clears the map toast');
+ await sleep(2600);assert.equal(await p.$eval('#toast',e=>e.classList.contains('show')),false);console.log('Map toast never shows during play PASS');
+ // ── explore-friendly unlocks (owner 2026-10-03): finishing level k with ANY stars opens k+1..k+3 ──
+ {
+  const q=await browser.newPage();await q.setViewport({width:1280,height:800});
+  await q.goto('http://localhost:8081/games/mojo-swoptops.html',{waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);
+  await q.evaluate(()=>avatarScopedRemove('dunia-g31-mojo'));await q.reload({waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);await sleep(400);
+  const open=async()=>{await q.evaluate(()=>__mojo.map('kota'));await sleep(200);return q.$$eval('.lvl',bs=>bs.map(b=>b.classList.contains('lock')?0:1).join(''))};
+  assert.equal(await open(),'111000000000','the first three levels are open from the start');
+  assert.match(await q.$eval('[data-level="t4"]',e=>e.getAttribute('aria-label')),/selesaikan level 1 dulu/);
+  const qt=async s=>{const e=await q.$(s);await e.click();await sleep(60)};
+  await qt('[data-level="t4"]');assert.match(await q.$eval('#toast',e=>e.textContent),/^Selesaikan level 1 dulu/);
+  assert.ok(await q.evaluate(()=>document.getAnimations().some(a=>a.effect?.target?.dataset?.level==='t4')),'a locked tile shakes');
+  // finish t1 the "show me" way: one star
+  await q.evaluate(()=>__mojo.start('t1'));await qt('#in-go');if(await q.$('#ov-card.on #picker-later'))await qt('#picker-later');
+  await qt('#bo-details');await qt('#bo-show');await q.waitForFunction(()=>!__mojo.state().running&&/giliranmu/.test(__mojo.state().boLine),{timeout:30000});
+  await qt('#btn-run');await q.waitForSelector('#ov-card.on #res-map',{timeout:30000});
+  assert.equal(await q.evaluate(()=>__mojo.save().lv.t1.stars),1);
+  assert.equal(await open(),'111100000000','finishing level 1 with ONE star opens levels 2, 3 and 4');
+  // a save that finished level 6 (any stars) opens 7..9, across the episode boundary into Bab 1
+  await q.evaluate(()=>{const k='dunia-g31-mojo',v=JSON.parse(avatarScopedGet(k));v.lv.t6={stars:1,t:1};avatarScopedSet(k,JSON.stringify(v))});await q.reload({waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);await sleep(300);
+  assert.equal(await open(),'111111111000','finishing level 6 with one star opens 7, 8 and 9 across the episode boundary; nothing earlier closes');
+  await q.screenshot({path:out+'/unlock-ahead.png'});await q.close();
+  console.log('Finishing a level with 1 star opens the next 3; locked tiles name the exact level and shake PASS');
+ }
  assert.equal(errors.length,0,errors.join('\n'));
 }finally{await browser.close()}

@@ -138,10 +138,31 @@ workshop floors rather than look like a spreadsheet.
 > wrong in the "Belok!" tutorial because the commands were read from the car's heading. Children read
 > arrows as screen directions (as in Timmy's grid). G31 now uses **↑ Atas, ↓ Bawah, ← Kiri, → Kanan**:
 > each moves one tile in that screen direction and turns Mojo to face it; facing is derived, never a
-> separate command. Action verbs act in the facing (the last move); with nothing there they turn to the
-> one adjacent target. The relative Forward / Turn set below remains in `games/prog-grid.js` as the
+> separate command. The relative Forward / Turn set below remains in `games/prog-grid.js` as the
 > optional `mode: 'rel'` for a later advanced world; no current level uses it. The original text is kept
 > below as the source scope.
+>
+> **Owner decision 2026-10-03 — one interaction rule, "LEWATI vs SEBELAH".** The owner found the game
+> confusing: some goals had to be stood ON, others only NEXT TO, and facing was hidden. One rule now holds
+> in the engine (`games/prog-grid.js` v1.2.0), the levels, the UI and the tutorial:
+> 1. **LEWATI** (walk-over, never blocks): star, bolt, water drop, toolbox, flag. Driving onto the cell
+>    takes it; the toolbox runs its letters microgame on entry (no "Ambil" from the side any more). A full
+>    tank or bolt box leaves the item in place with a toast.
+> 2. **SEBELAH** (blockers): rock/log, fire, person, repair point, crate. Mojo stops beside it and uses the
+>    action; the action targets the ONE adjacent object of the right kind whatever Mojo faces, and Mojo
+>    visibly turns to it. Two candidates use the facing one, else "ambiguous"; the level lint forbids a
+>    road cell that touches two targets of the same verb.
+> 3. **Resolved things never block** (put-out fire, fixed repair, rescued friend, carried crate), except a
+>    rock pushed onto ground (still a rock); a rock pushed into a pit fills it and becomes road.
+> 4. Arrows move one tile in screen direction; an arrow into a blocker is a gentle bump whose message names
+>    the fix ("Ada api di depan! Swop jadi Pemadam, lalu SEMPROT dari sebelahnya.").
+> 5. Height: Naik needs an adjacent raised target, Turun needs Mojo raised; the basket resets at every beat
+>    start. A raised target names the fix ("Swop jadi Keranjang, lalu NAIK ke 6").
+> 6. The Chopper in the air takes every walk-over item and rescues a neighbour at any height.
+> 7. Jump goes over exactly one rock, log, crate, pit or water cell; never a fire, a friend or a repair point.
+> 8. IF `pickup` reads Mojo's own cell.
+> No SEBELAH target stands on a building or tree; raised friends stand on a drawn balcony / tree perch. The
+> "Cara Main" two-panel card teaches the rule on t1 and t3 and reopens from the play-screen (i) button.
 
 
 Mojo occupies one cell and has a heading. Core movement: **Forward, Turn

@@ -244,6 +244,136 @@ class SpriteCleanTests(unittest.TestCase):
             self.assertFalse(set(clean._pts(clean.CLEAR_HOLES[name])) & set(clean._pts(clean.KEEP_WHITE[name])), name)
 
 
+hspec = importlib.util.spec_from_file_location('mojo_hero', ROOT / 'tools/ingest-mojo-hero.py')
+hero = importlib.util.module_from_spec(hspec)
+hspec.loader.exec_module(hero)
+bspec = importlib.util.spec_from_file_location('mojo_bg', ROOT / 'tools/ingest-mojo-bg.py')
+bgs = importlib.util.module_from_spec(bspec)
+bspec.loader.exec_module(bgs)
+
+
+def thin_light_ring(rgba):
+    """Opaque near-white silhouette pixels whose nearest interior (> 4 px deep) is NOT light: a page halo."""
+    a = rgba.astype(int)
+    al = a[..., 3]
+    edge = (al >= 200) & m.ndimage.binary_dilation(al == 0)
+    light = edge & (a[..., :3].min(2) >= 235)
+    core = m.ndimage.distance_transform_edt(al > 0) > 4
+    if not core.any():
+        return 0, int(edge.sum())
+    _, (iy, ix) = m.ndimage.distance_transform_edt(~core, return_indices=True)
+    return int((light & (a[iy, ix, :3].min(2) < 200)).sum()), int(edge.sum())
+
+
+class HeroArtTests(unittest.TestCase):
+    """mojo-hero/*: the owner's primary film Mojo sheet (30), cut by tools/ingest-mojo-hero.py."""
+    @unittest.skipUnless(hero.SHEET.exists(), 'owner primary Mojo sheet 30 unavailable')
+    def test_every_cell_audited_fresh_and_tight(self):
+        report, stale, seen = [], [], 0
+        for name, _, box, cell in hero.sources():
+            im, _, _, trim = hero.build(name, cell, report)
+            seen += 1
+            path = hero.LIB / hero.CAT / (name + '.webp')
+            if not path.exists() or path.read_bytes() != hero.encode(im):
+                stale.append(name)
+            self.assertLessEqual(im.width, box[2] - box[0], name)
+            alpha = np.asarray(im)[..., 3]
+            self.assertTrue(alpha[0].any() and alpha[-1].any() and alpha[:, 0].any() and alpha[:, -1].any(), name + ' bounds not tight')
+        self.assertEqual(seen, 25)
+        self.assertEqual(report, [], 'unaudited holes / stale seeds in tools/ingest-mojo-hero.py:\n' + '\n'.join(report))
+        self.assertEqual(stale, [], 'published mojo-hero sprites differ from a fresh ingest (re-run the tool)')
+
+    def test_audit_tables_name_real_cells_and_are_disjoint(self):
+        names = {n for n, _ in hero.CELLS}
+        self.assertEqual(len(names), 25)
+        for table in (hero.CLEAR_HOLES, hero.KEEP_WHITE):
+            for name, value in table.items():
+                self.assertIn(name, names)
+                self.assertTrue(clean._pts(value), name)
+        for name in set(hero.CLEAR_HOLES) & set(hero.KEEP_WHITE):
+            self.assertFalse(set(clean._pts(hero.CLEAR_HOLES[name])) & set(clean._pts(hero.KEEP_WHITE[name])), name)
+
+    def test_published_hero_sprites_have_no_page_halo(self):
+        """White PAINT at the silhouette (roof strips, skids, wings) is allowed; a thin light ring around dark
+        or coloured art is not. Measured 2026-10-03: worst 10.6% (chopper-1: white skid tubes and rotor blades at the edge)."""
+        worst = []
+        for path in sorted((hero.LIB / hero.CAT).glob('*.webp')):
+            ring, edge = thin_light_ring(np.asarray(Image.open(path).convert('RGBA')))
+            worst.append((ring / max(edge, 1), path.stem))
+        self.assertEqual(len(worst), 25)
+        self.assertLess(max(worst)[0], 0.12, max(worst))
+
+    def test_published_hero_sprites_have_no_page_coloured_slab(self):
+        """No opaque component of page colour > 40 px unless it is audited white art."""
+        if not hero.SHEET.exists():
+            self.skipTest('owner primary Mojo sheet 30 unavailable')
+        failures = []
+        for name, _, _, cell in hero.sources():
+            _, _, page, trim = hero.build(name, cell, [])
+            rgba = np.asarray(Image.open(hero.LIB / hero.CAT / (name + '.webp')).convert('RGBA'))
+            keep = [(x - trim[0], y - trim[1]) for x, y in clean._pts(hero.KEEP_WHITE.get(name, ''))]
+            for component in SpriteCleanTests.page_components(rgba, page):
+                grown = m.ndimage.binary_dilation(component, iterations=4)
+                if not any(0 <= y < grown.shape[0] and 0 <= x < grown.shape[1] and grown[y, x] for x, y in keep):
+                    ys, xs = np.nonzero(component)
+                    failures.append(f'{name} {int(component.sum())}px @ {int(xs.mean())},{int(ys.mean())}')
+        self.assertEqual(failures, [])
+
+    def test_floor_shadow_keeps_a_white_tube_and_softens_the_floor(self):
+        """A shaded white tube lying on a soft grey shadow: the tube stays opaque, the shadow turns translucent."""
+        h, w = 80, 90
+        page = np.float32([254] * 3)
+        a = np.full((h, w, 3), 254, np.uint8)
+        for y in range(44, 70):           # soft shadow, darkest at y=56
+            a[y, 5:85] = int(254 - 40 * (1 - abs(y - 56) / 13))
+        for y, v in zip(range(40, 52), (200, 232, 240, 242, 238, 232, 226, 214, 196, 176, 150, 120)):
+            a[y, 15:75] = v                # shaded white tube (highlight on top, dark rim below)
+        a[40:52, 14] = a[40:52, 75] = 140  # its anti-aliased end caps (a rendered tube is outlined all round)
+        a[30:40, 10:80] = (200, 30, 30)   # red body above
+        alpha = np.where(np.abs(a.astype(int) - 254).max(2) > 8, 255, 0).astype(np.uint8)
+        rgb, out = hero.floor_shadow(a, a.copy(), alpha, page, 5, hero.SHADOW_SMOOTH)
+        self.assertTrue((out[41:50, 20:70] == 255).all(), 'white tube eroded into shadow')
+        self.assertTrue((out[60:66, 20:70] < 60).all(), 'floor shadow left opaque')
+
+
+class SceneBackgroundTests(unittest.TestCase):
+    """mojo-bg scene paintings from sheets 31-55 (tools/ingest-mojo-bg.py) and their use in mojo-art.js."""
+    def test_every_scene_in_the_theme_map_exists_in_both_orientations_within_budget(self):
+        js = (ROOT / 'games/data/mojo-art.js').read_text(encoding='utf-8')
+        block = js[js.index('var SCENE = {'):js.index('}', js.index('var SCENE = {'))]
+        import re
+        names = set(re.findall(r":\s*'([a-z-]+)'", block))
+        self.assertGreaterEqual(len(names), 22)
+        for name in names:
+            for kind, budget in (('land', 250 * 1024), ('port', 200 * 1024)):
+                path = ROOT / 'assets/db/lib/mojo-bg' / f'{name}-{kind}.webp'
+                self.assertTrue(path.exists(), path)
+                self.assertLessEqual(path.stat().st_size, budget, path)
+                w, h = Image.open(path).size
+                self.assertTrue(w > h if kind == 'land' else h > w, path)
+
+    @unittest.skipUnless(any(Path(bgs.SRC).glob('55-*')), 'owner sheet 55 unavailable')
+    def test_pirate_flag_emblem_is_painted_out(self):
+        """CHILD SAFETY: no skull on the shipwreck flag, in the source fix AND in both published files."""
+        fixed = bgs.paint_out_emblems(bgs.sheet('55'), bgs.RETOUCH['55'])
+        rects = bgs.rects(bgs.sheet('55'))
+        for (x0, y0, x1, y1) in bgs.RETOUCH['55']:
+            sub = fixed[y0:y1, x0:x1].astype(int)
+            cloth = sub.mean(2) < 95
+            flag = m.ndimage.binary_fill_holes(m.ndimage.binary_closing(np.pad(cloth, 6), iterations=4))[6:-6, 6:-6]
+            neutral_light = (sub.min(2) > 120) & (sub.max(2) - sub.min(2) < 30)
+            self.assertEqual(int((flag & neutral_light).sum()), 0)
+            for kind, (rx0, ry0, rx1, ry1) in rects.items():
+                if rx0 <= x0 and x1 <= rx1 and ry0 <= y0 and y1 <= ry1:
+                    pub = np.asarray(Image.open(ROOT / f'assets/db/lib/mojo-bg/pirate-pier-{kind}.webp').convert('RGB')).astype(int)
+                    p = pub[y0 - ry0:y1 - ry0, x0 - rx0:x1 - rx0]
+                    self.assertEqual(int((flag & (p.min(2) > 175) & (p.max(2) - p.min(2) < 30)).sum()), 0, kind)
+
+    def test_duplicate_sheets_are_registered_once(self):
+        self.assertEqual(set(bgs.DUPLICATES), {'50', '52'})
+        self.assertFalse(set(bgs.DUPLICATES) & set(bgs.SHEETS))
+
+
 class PublicationTests(unittest.TestCase):
     def test_unknown_or_excluded_sheet_fails_before_writing(self):
         with mock.patch.object(sys, 'argv', ['ingest', '--assets-only', '14']), mock.patch.object(m.os, 'makedirs', side_effect=AssertionError('must not write')):

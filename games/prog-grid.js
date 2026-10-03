@@ -14,17 +14,28 @@
  *   ProgGrid.run(world, program, beat, opts) -> {steps, world, done, stop}   whole program, headless
  *   ProgGrid.solve(world, beat, opts) -> shortest flat program | null        BFS over states
  *   ProgGrid.count(world, beat, opts) -> {count, shortest, terminals}        every solution <= slots
- *   ProgGrid.hint(world, beat, program, opts) -> {at, cmd} | null           the next correct command
+ *   ProgGrid.hint(world, beat, program, opts) -> {at, cmd, steps} | null    the next correct command (+ the rest)
  *   ProgGrid.verify(level, opts) -> {ok, problems, beats:[…]}               the level is solvable
  *   ProgGrid.lint(level) -> [problems]
  *
  * Commands are strings: moves, 'swop:<form>' and verbs ('push' 'spray' 'raise' …).
  * Movement modes (owner decision 2026-10-01: arrows are read from the BOARD, not from the car):
  *   'abs' (default)  'up' 'down' 'west' 'east' move one tile in that screen direction and turn Mojo to
- *                    face it; the facing is derived, never a separate command. An action verb uses the
- *                    facing (the last move); if nothing is there it turns to the one adjacent target.
+ *                    face it; the facing is derived, never a separate command.
  *   'rel' (optional) 'fwd' 'left' 'right' relative to Mojo's heading, for a later advanced world.
  *   A level picks its mode with `mode: 'rel'`; the engine executes both command sets.
+ * ONE interaction rule (owner decision 2026-10-03, "LEWATI vs SEBELAH"), abs mode:
+ *   LEWATI   star, bolt, water drop, toolbox, flag: driving ONTO the cell takes / reaches it; never blocks.
+ *            The toolbox asks for its letters microgame on entry (status waiting-for-microgame).
+ *   SEBELAH  rock/log, fire, person, repair point, crate: Mojo stops BESIDE it and uses the action. The
+ *            action targets the ONE adjacent object of the right kind, whatever Mojo faces, and Mojo
+ *            visibly turns to it (event {e:'turn', auto:true}). Two candidates: the facing one, else
+ *            'ambiguous' (the level lint forbids it). Resolved things never block, except a rock pushed
+ *            onto ground (it is still a rock); a rock in a pit fills it and becomes road.
+ *   Jump picks the one adjacent obstacle the same way (pits / water are ground: facing decides a tie).
+ * ROAD rule (owner 2026-10-03): Mojo drives ONLY on road tiles ('.' road / indoor floor, '=' bridge). Grass ',' is
+ *   park scenery: an arrow onto it stops with reason 'grass', a jump never lands on it. LEWATI items lie ON the road;
+ *   SEBELAH targets stand on road or grass with a road cell beside them; lint() proves the road network is one piece.
  * Blocks: {op:'repeat', n, body:[…]}  {op:'if', cond:'fire'|'rock'|'clear'|'person'|'pickup', body:[…]}.
  * Headings 0 N, 1 E, 2 S, 3 W. Cells [row, col], row 0 at the top.
  * Worlds are never mutated: step() returns a new world.
@@ -42,32 +53,40 @@
   var FORMS = {}
 
   /* terrain: pass = drivable, fly = can be flown over, jump = can be jumped over, fill = a pushed
-     rock fills it (becomes drivable) */
+     rock fills it (becomes drivable), road = part of the visible road network.
+     ROAD RULE (owner 2026-10-03): Mojo drives ONLY on road ('.' road / indoor floor, '=' bridge). Grass ','
+     is park scenery: it blocks with its own reason 'grass', and a jump never lands on it. */
   var TERRAIN = {
-    '.': { pass: 1, fly: 1, jump: 1, name: 'jalan' },
-    '=': { pass: 1, fly: 1, jump: 1, name: 'jalan' },
-    ',': { pass: 1, fly: 1, jump: 1, name: 'rumput' },
+    '.': { pass: 1, fly: 1, jump: 1, road: 1, name: 'jalan' },
+    '=': { pass: 1, fly: 1, jump: 1, road: 1, name: 'jembatan' },
+    ',': { pass: 0, fly: 1, jump: 0, grass: 1, name: 'rumput' },
     '#': { pass: 0, fly: 1, jump: 0, name: 'gedung' },
     'T': { pass: 0, fly: 1, jump: 0, name: 'pohon' },
     '~': { pass: 0, fly: 1, jump: 1, name: 'air' },
     'o': { pass: 0, fly: 1, jump: 1, fill: 1, name: 'lubang' }
   }
-  /* object types: block = stops ground movement, push = a Dozer can push it, jump = can be
-     jumped over, pickup = collected on entering (res: which resource it adds) */
+  /* object types: block = stops ground movement while unresolved, walk = LEWATI (taken by driving onto it),
+     verb = the SEBELAH action that resolves it, push = a Dozer can push it, jump = can be jumped over,
+     pickup = collected on entering (res: which resource it adds) */
   var TYPES = {
-    rock: { block: 1, push: 1, jump: 1 },
-    log: { block: 1, push: 1, jump: 1 },
-    fire: { block: 1 },
-    person: { block: 1 },
-    toolbox: { block: 1 },
-    repair: { block: 1 },
-    crate: { block: 1, jump: 1 },
-    flag: {},
-    zone: {},
-    bolt: { pickup: 1, res: 'bolts' },
-    drop: { pickup: 1, res: 'water' },
-    star: { pickup: 1, star: 1 }
+    rock: { block: 1, push: 1, jump: 1, verb: 'push' },
+    log: { block: 1, push: 1, jump: 1, verb: 'push' },
+    fire: { block: 1, verb: 'spray' },
+    person: { block: 1, verb: 'rescue' },
+    repair: { block: 1, verb: 'repair' },
+    crate: { block: 1, jump: 1, verb: 'pick' },
+    toolbox: { walk: 1, trigger: 'letters' },
+    flag: { walk: 1 },
+    zone: { walk: 1 },
+    bolt: { walk: 1, pickup: 1, res: 'bolts' },
+    drop: { walk: 1, pickup: 1, res: 'water' },
+    star: { walk: 1, pickup: 1, star: 1 }
   }
+  /* every failure reason the engine can return (the UI gate proves each has its own message) */
+  var REASONS = ['empty', 'grass', 'form', 'unknown-form', 'not-allowed', 'unknown-verb', 'edge', 'terrain', 'object', 'lift-up', 'in-air',
+    'carrying', 'no-target', 'ambiguous', 'push-edge', 'push-wall', 'push-object', 'too-tall', 'jump-fire', 'jump-person',
+    'jump-repair', 'land', 'no-water', 'height', 'not-raised', 'too-high', 'need-form', 'hands-full', 'too-heavy', 'microgame',
+    'hands-empty', 'drop-here', 'on-ground', 'no-landing', 'need-tool', 'need-bolts', 'need-water', 'cap-full']
 
   function defineForm (id, def) {
     def = def || {}
@@ -121,8 +140,9 @@
       if (b.start.at) { n.m.r = b.start.at[0]; n.m.c = b.start.at[1] }
       if (b.start.h != null) n.m.h = hd(b.start.h)
       if (b.start.form) n.m.form = b.start.form
-      n.m.lift = 0; n.m.air = false
+      n.m.air = false
     }
+    if (n.m.lift) { n.m = copy(n.m); n.m.lift = 0 }   // the basket is always down when a beat begins
     return n
   }
   function key (w) {
@@ -150,12 +170,15 @@
     for (var i = 0; i < w.objs.length; i++) { var x = w.objs[i]; if (x.r === r && x.c === c && !gone(x)) o.push(x) }
     return o
   }
+  // one rule: an unresolved SEBELAH object blocks; a resolved one never does (a pushed rock is still a rock)
   function blocks (o) {
     var t = TYPES[o.type] || {}
     if (!t.block) return false
     if (o.type === 'fire') return o.st !== 'out'
-    if (o.type === 'repair') return !(o.st === 'fixed' && o.opens)
-    return true
+    if (o.type === 'repair') return o.st !== 'fixed'
+    if (o.type === 'person') return o.st !== 'rescued'
+    if (o.type === 'crate') return o.st === 'idle'
+    return !gone(o)
   }
   function blocker (w, r, c) { var a = objsAt(w, r, c); for (var i = 0; i < a.length; i++) if (blocks(a[i])) return a[i]; return null }
   function ahead (w, n) { var d = DIRS[w.m.h]; n = n || 1; return [w.m.r + d[0] * n, w.m.c + d[1] * n] }
@@ -164,16 +187,28 @@
   function res (w, status, reason, info, events) {
     return { world: w, status: status, reason: reason || null, info: info || null, events: events || [] }
   }
-  // enter a cell: collect pickups (a resource stops at its cap; the pickup then stays)
+  // a closed toolbox on the cell Mojo is about to enter asks for its microgame first (LEWATI trigger)
+  function boxAt (w, r, c) { return objsAt(w, r, c).filter(function (o) { return o.type === 'toolbox' && o.st === 'closed' })[0] || null }
+  function enterGate (w0, w, r, c, opts) {
+    var tb = inb(w, r, c) ? boxAt(w, r, c) : null
+    if (!tb || !tb.mg) return null
+    var mv = opts.auto ? true : opts.mg
+    if (mv == null) return res(w0, 'waiting-for-microgame', null, { mg: { kind: tb.mg.kind || 'letters', id: tb.mg.id || ('mg-' + tb.id), spec: tb.mg, obj: tb.id, tool: tb.tool } })
+    if (!mv) return res(w0, 'blocked', 'microgame', { id: tb.id, at: [r, c] })
+    return null
+  }
+  // enter a cell (driving, landing, or flying over it): take every LEWATI item there.
+  // A resource stops at its cap; that pickup then stays on the ground (event full, reason cap-full).
   function enter (w, r, c, ev) {
     w.m.r = r; w.m.c = c
     var a = objsAt(w, r, c)
     for (var i = 0; i < a.length; i++) {
       var o = a[i], t = TYPES[o.type] || {}
+      if (o.type === 'toolbox' && o.st === 'closed') { o.st = 'got'; w.tools[o.tool] = true; ev.push({ e: 'tool', id: o.id, tool: o.tool }); continue }
       if (!t.pickup) continue
       if (t.star) { o.st = 'got'; w.got[o.id] = true; ev.push({ e: 'star', id: o.id }); continue }
       var k = o.res || t.res, cap = w.cap[k], cur = w.res[k] || 0, add = o.n || 1
-      if (cap != null && cur >= cap) { ev.push({ e: 'full', id: o.id, res: k }); continue }
+      if (cap != null && cur >= cap) { ev.push({ e: 'full', id: o.id, res: k, reason: 'cap-full' }); continue }
       w.res[k] = cap != null ? Math.min(cap, cur + add) : cur + add
       o.st = 'got'
       ev.push({ e: 'collect', id: o.id, res: k, value: w.res[k] })
@@ -181,28 +216,67 @@
   }
 
   /* ── one command ─────────────────────────────────────────────────────── */
-  // abs mode: an action verb that finds nothing in front turns to the one neighbour where it works
-  var FIXED = { swop: 1, takeoff: 1, land: 1, lower: 1 }
-  function step (w0, cmd, opts) {
-    var r = core(w0, cmd, opts), verb = verbOf(cmd)
-    if (ok(r.status) || modeOf(w0) === 'rel' || BASE.indexOf(verb) >= 0 || FIXED[verb] || r.status === 'invalid-capability') return r
-    if (r.reason !== 'no-target' || verbOf(cmd) === 'drop') return r
-    var other = null
-    for (var d = 0; d < 4; d++) {
-      if (d === w0.m.h) continue
-      var nr = w0.m.r + DIRS[d][0], nc = w0.m.c + DIRS[d][1]
-      if (!inb(w0, nr, nc) || !objsAt(w0, nr, nc).length) continue   // nothing there to act on
-      var w1 = clone(w0); w1.m.h = d
-      var r1 = core(w1, cmd, opts)
-      if (ok(r1.status)) { r1.events = [{ e: 'turn', h: d }].concat(r1.events || []); return r1 }
-      if (!other && r1.reason !== 'no-target' && r1.status !== 'invalid-capability') { r1.world = w0; other = r1 }
+  // SEBELAH targeting: which neighbour cells hold something this verb can act on
+  function unresolved (o) {
+    if (o.type === 'person') return o.st !== 'rescued'
+    if (o.type === 'repair') return o.st !== 'fixed'
+    return !gone(o)
+  }
+  var AIM = {
+    spray: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'fire' && o.st !== 'out' }) },
+    push: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return (TYPES[o.type] || {}).push && blocks(o) }) },
+    raise: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.elev > 0 && unresolved(o) }) },
+    rescue: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'person' && o.st !== 'rescued' }) },
+    repair: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'repair' && o.st !== 'fixed' }) },
+    pick: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'crate' && o.st === 'idle' }) },
+    jump: function (w, r, c) {
+      if (objsAt(w, r, c).some(function (o) { return (TYPES[o.type] || {}).jump && blocks(o) })) return true
+      var ch = terCh(w, r, c); return ch === 'o' || ch === '~'
     }
-    return other || r
+  }
+  AIM.hook = AIM.pick
+  // the directions (0 N .. 3 W) whose neighbour this verb can act on
+  function aim (w, verb) {
+    var f = AIM[verb], out = []
+    if (!f) return out
+    for (var d = 0; d < 4; d++) {
+      var nr = w.m.r + DIRS[d][0], nc = w.m.c + DIRS[d][1]
+      if (inb(w, nr, nc) && f(w, nr, nc)) out.push(d)
+    }
+    return out
+  }
+  // abs mode: an action uses the ONE adjacent target (Mojo turns to it). Two: the facing one, else ambiguous.
+  function step (w0, cmd, opts) {
+    var verb = verbOf(cmd)
+    if (modeOf(w0) === 'rel' || !AIM[verb] || !can(w0.m.form, verb)) return core(w0, cmd, opts)
+    var dirs = aim(w0, verb), d = w0.m.h
+    if (dirs.length === 1) d = dirs[0]
+    else if (dirs.length > 1) {
+      if (dirs.indexOf(w0.m.h) < 0) return res(w0, 'blocked', 'ambiguous', { verb: verb, dirs: dirs })
+    }
+    if (d === w0.m.h) return core(w0, cmd, opts)
+    var w1 = clone(w0); w1.m.h = d
+    var r = core(w1, cmd, opts)
+    if (ok(r.status)) { r.events = [{ e: 'turn', h: d, auto: true }].concat(r.events || []); r.turned = true; return r }
+    r.world = w0
+    r.info = Object.assign({}, r.info || {}, { turn: d })
+    return r
+  }
+  // a raised target (person, repair point) the current form cannot reach
+  function heightBlock (w0, w, o, verb) {
+    var m = w.m, el = o.elev || 0, flyer = m.air && FORMS[m.form] && FORMS[m.form].fly
+    if (el <= 0) return m.lift > 0 ? res(w0, 'blocked', 'lift-up', { lift: m.lift, id: o.id }) : null
+    if (m.lift === el || (flyer && verb === 'rescue')) return null
+    if (can(m.form, 'raise')) return res(w0, 'blocked', 'too-high', { id: o.id, elev: el, lift: m.lift })
+    var forms = formsWith('raise', w.forms)
+    if (verb === 'rescue') forms = forms.concat(formsWith('takeoff', w.forms).filter(function (f) { return FORMS[f].fly && forms.indexOf(f) < 0 }))
+    if (FORMS[m.form] && FORMS[m.form].fly && verb === 'rescue') return res(w0, 'blocked', 'too-high', { id: o.id, elev: el, lift: m.lift, fly: true })
+    return res(w0, 'blocked', 'need-form', { id: o.id, elev: el, verb: verb, forms: forms })
   }
   function core (w0, cmd, opts) {
     opts = opts || {}
     var verb = verbOf(cmd), arg = typeof cmd === 'string' ? cmd.split(':')[1] : null
-    var w = clone(w0), m = w.m, ev = []
+    var w = clone(w0), m = w.m, ev = [], g
     if (!verb) return res(w0, 'blocked', 'empty')
     if (verb !== 'swop' && BASE.indexOf(verb) < 0 && !can(m.form, verb)) {
       return res(w0, 'invalid-capability', 'form', { verb: verb, form: m.form, forms: formsWith(verb, w.forms) })
@@ -220,12 +294,14 @@
         if (m.lift > 0) return res(w0, 'blocked', 'lift-up', { lift: m.lift })
         if (!m.air) {
           var t = ter(w, ar, ac)
+          if (t.grass) return res(w0, 'blocked', 'grass', { at: a, terrain: ',', name: t.name, h: m.h })
           if (!t.pass) return res(w0, 'blocked', 'terrain', { at: a, terrain: terCh(w, ar, ac), name: t.name, h: m.h })
           var b = blocker(w, ar, ac)
           if (b) return res(w0, 'blocked', 'object', { at: a, id: b.id, type: b.type, h: m.h })
         }
+        if ((g = enterGate(w0, w, ar, ac, opts))) return g
         ev.push({ e: 'move', from: [m.r, m.c], to: a })
-        if (m.air) { m.r = ar; m.c = ac; var sa = objsAt(w, ar, ac); for (var s = 0; s < sa.length; s++) if (TYPES[sa[s].type] && TYPES[sa[s].type].star) { sa[s].st = 'got'; w.got[sa[s].id] = true; ev.push({ e: 'star', id: sa[s].id }) } } else enter(w, ar, ac, ev)
+        enter(w, ar, ac, ev)   // flying over a cell takes its items too (the Chopper collects everything)
         break
       }
       case 'left': m.h = (m.h + 3) % 4; ev.push({ e: 'turn', h: m.h }); break
@@ -261,16 +337,26 @@
         break
       }
       case 'jump': {
+        if (!inb(w, ar, ac)) return res(w0, 'blocked', 'no-target', { verb: 'jump' })
+        var ot = ter(w, ar, ac), ob = blocker(w, ar, ac)
+        if (ob) {
+          if (ob.type === 'fire') return res(w0, 'blocked', 'jump-fire', { at: a, id: ob.id, type: ob.type })
+          if (ob.type === 'person') return res(w0, 'blocked', 'jump-person', { at: a, id: ob.id, type: ob.type })
+          if (ob.type === 'repair') return res(w0, 'blocked', 'jump-repair', { at: a, id: ob.id, type: ob.type })
+          if (!(TYPES[ob.type] || {}).jump) return res(w0, 'blocked', 'too-tall', { at: a, id: ob.id, type: ob.type })
+        } else {
+          if (ot.grass) return res(w0, 'blocked', 'no-target', { verb: 'jump', at: a, terrain: ',' })   // nothing to jump over
+          if (!ot.jump) return res(w0, 'blocked', 'too-tall', { at: a, terrain: terCh(w, ar, ac), name: ot.name })
+          if (ot.pass) return res(w0, 'blocked', 'no-target', { verb: 'jump', at: a })
+        }
         var l = ahead(w, 2)
-        if (!inb(w, ar, ac) || !inb(w, l[0], l[1])) return res(w0, 'blocked', 'edge', { at: l })
-        var ot = ter(w, ar, ac)
-        if (!ot.jump) return res(w0, 'blocked', 'too-tall', { at: a, terrain: terCh(w, ar, ac), name: ot.name })
-        var ob = blocker(w, ar, ac)
-        if (ob && !(TYPES[ob.type] || {}).jump) return res(w0, 'blocked', 'too-tall', { at: a, id: ob.id, type: ob.type })
+        if (!inb(w, l[0], l[1])) return res(w0, 'blocked', 'edge', { at: l })
         var lt = ter(w, l[0], l[1])
+        if (lt.grass) return res(w0, 'blocked', 'grass', { at: l, terrain: ',', name: lt.name, land: true })
         if (!lt.pass) return res(w0, 'blocked', 'land', { at: l, terrain: terCh(w, l[0], l[1]) })
         var lb = blocker(w, l[0], l[1])
         if (lb) return res(w0, 'blocked', 'land', { at: l, id: lb.id, type: lb.type })
+        if ((g = enterGate(w0, w, l[0], l[1], opts))) return g
         ev.push({ e: 'jump', from: [m.r, m.c], to: l, over: a })
         enter(w, l[0], l[1], ev)
         break
@@ -287,7 +373,7 @@
         break
       }
       case 'raise': {
-        var hi = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.elev > 0 && o.st !== 'rescued' && o.st !== 'fixed' })[0] : null
+        var hi = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.elev > 0 && unresolved(o) })[0] : null
         if (!hi) return res(w0, 'blocked', 'no-target', { verb: 'raise' })
         var mg = { kind: 'height', target: hi.elev, id: (hi.mg && hi.mg.id) || ('h-' + hi.id), spec: hi.mg || null, obj: hi.id }
         var v = opts.auto ? hi.elev : opts.mg
@@ -297,32 +383,21 @@
         ev.push({ e: 'raise', lift: m.lift, id: hi.id })
         break
       }
-      case 'lower': m.lift = 0; ev.push({ e: 'lower' }); break
+      case 'lower':
+        if (!(m.lift > 0)) return res(w0, 'blocked', 'not-raised')
+        m.lift = 0; ev.push({ e: 'lower' }); break
       case 'rescue': {
         var pp = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.type === 'person' && o.st !== 'rescued' })[0] : null
         if (!pp) return res(w0, 'blocked', 'no-target', { verb: 'rescue' })
-        var el = pp.elev || 0
-        if (el > 0 && !(m.lift === el || (m.air && FORMS[m.form] && FORMS[m.form].fly))) return res(w0, 'blocked', 'too-high', { id: pp.id, elev: el, lift: m.lift })
-        if (el === 0 && m.lift > 0) return res(w0, 'blocked', 'lift-up', { lift: m.lift })
+        if ((g = heightBlock(w0, w, pp, 'rescue'))) return g
         pp.st = 'rescued'
         ev.push({ e: 'rescue', id: pp.id })
         break
       }
       case 'pick': case 'hook': {
         if (m.carry) return res(w0, 'blocked', 'hands-full', { id: m.carry })
-        var tg = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return (o.type === 'toolbox' && o.st === 'closed') || o.type === 'crate' })[0] : null
+        var tg = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.type === 'crate' && o.st === 'idle' })[0] : null
         if (!tg) return res(w0, 'blocked', 'no-target', { verb: verb })
-        if (tg.type === 'toolbox') {
-          if (verb === 'hook') return res(w0, 'blocked', 'no-target', { verb: verb })
-          if (tg.mg) {
-            var mv = opts.auto ? true : opts.mg
-            if (mv == null) return res(w0, 'waiting-for-microgame', null, { mg: { kind: tg.mg.kind || 'letters', id: tg.mg.id || ('mg-' + tg.id), spec: tg.mg, obj: tg.id, tool: tg.tool } })
-            if (!mv) return res(w0, 'blocked', 'microgame', { id: tg.id })
-          }
-          tg.st = 'open'; w.tools[tg.tool] = true
-          ev.push({ e: 'tool', id: tg.id, tool: tg.tool })
-          break
-        }
         if (tg.heavy && verb !== 'hook') return res(w0, 'blocked', 'too-heavy', { id: tg.id })
         tg.st = 'carried'; m.carry = tg.id
         ev.push({ e: 'pick', id: tg.id })
@@ -355,7 +430,7 @@
           if (rk === 'tool') continue
           if ((w.res[rk] || 0) < nd[rk]) return res(w0, 'blocked', 'need-' + rk, { id: rp.id, res: rk, need: nd[rk], have: w.res[rk] || 0 })
         }
-        if (rp.elev > 0 && m.lift !== rp.elev) return res(w0, 'blocked', 'too-high', { id: rp.id, elev: rp.elev, lift: m.lift })
+        if ((g = heightBlock(w0, w, rp, 'repair'))) return g
         for (var rk2 in nd) if (rk2 !== 'tool') w.res[rk2] -= nd[rk2]
         rp.st = 'fixed'
         ev.push({ e: 'repair', id: rp.id })
@@ -401,8 +476,10 @@
   }
   function ok (st) { return st === 'success' || st === 'objective-completed' }
 
-  /* ── program cursor: REPEAT ×N, IF <cond> (icon-led, checked against the cell ahead) ── */
+  /* ── program cursor: REPEAT ×N, IF <cond> (icon-led; checked against the cell ahead, except 'pickup',
+     which reads Mojo's own cell: LEWATI items are taken by standing on them) ── */
   function cond (w, c) {
+    if (c === 'pickup') return objsAt(w, w.m.r, w.m.c).some(function (o) { return (TYPES[o.type] || {}).pickup })
     var a = ahead(w)
     if (!inb(w, a[0], a[1])) return c === 'edge'
     var os = objsAt(w, a[0], a[1])
@@ -410,7 +487,6 @@
       case 'fire': return os.some(function (o) { return o.type === 'fire' && o.st !== 'out' })
       case 'rock': return os.some(function (o) { return (o.type === 'rock' || o.type === 'log') && blocks(o) })
       case 'person': return os.some(function (o) { return o.type === 'person' && o.st !== 'rescued' })
-      case 'pickup': return os.some(function (o) { return (TYPES[o.type] || {}).pickup })
       case 'clear': return ter(w, a[0], a[1]).pass && !blocker(w, a[0], a[1])
       default: return false
     }
@@ -558,7 +634,7 @@
     }
     for (var k = states.length - 1; k >= 0; k--) {
       var s = solve(states[k], beat, { maxLen: slots - k, forbid: opts.forbid })
-      if (s && s.length) return { at: k, cmd: s[0], keep: k, rest: s.length }
+      if (s && s.length) return { at: k, cmd: s[0], keep: k, rest: s.length, steps: s }
     }
     return null
   }
@@ -574,17 +650,21 @@
     var ids = {}, cells = {}
     var at = lv.mojo && lv.mojo.at
     if (!at || !(at[0] >= 0 && at[0] < gr.rows && at[1] >= 0 && at[1] < gr.cols)) p.push(lv.id + ': mojo start')
-    else if ((gr.map[at[0]] || '').charAt(at[1]) !== '.' && (gr.map[at[0]] || '').charAt(at[1]) !== '=' && (gr.map[at[0]] || '').charAt(at[1]) !== ',') p.push(lv.id + ': mojo starts off the road')
+    else if (!(TERRAIN[(gr.map[at[0]] || '').charAt(at[1])] || {}).road) p.push(lv.id + ': mojo starts off the road')
     ;(lv.objects || []).forEach(function (o) {
       if (ids[o.id]) p.push(lv.id + ': duplicate id ' + o.id); ids[o.id] = 1
       if (!TYPES[o.type]) p.push(lv.id + ': unknown type ' + o.type)
       if (!o.at || !(o.at[0] >= 0 && o.at[0] < gr.rows && o.at[1] >= 0 && o.at[1] < gr.cols)) { p.push(lv.id + ': ' + o.id + ' out of the grid'); return }
       var k = o.at[0] + ',' + o.at[1], t = TYPES[o.type] || {}
       if (at && at[0] === o.at[0] && at[1] === o.at[1] && t.block) p.push(lv.id + ': ' + o.id + ' on the mojo start')
-      if (t.block || t.pickup) { if (cells[k]) p.push(lv.id + ': ' + o.id + ' shares a cell with ' + cells[k]); cells[k] = o.id }
+      if (t.block || t.pickup || o.type === 'toolbox') { if (cells[k]) p.push(lv.id + ': ' + o.id + ' shares a cell with ' + cells[k]); cells[k] = o.id }
       var ch = (gr.map[o.at[0]] || '').charAt(o.at[1]), tr = TERRAIN[ch] || {}
-      if (!tr.pass && (t.pickup || o.type === 'rock' || o.type === 'crate' || o.type === 'flag' || (o.type === 'person' && !o.elev))) p.push(lv.id + ': ' + o.id + ' stands on ' + (tr.name || ch))
+      // LEWATI items, pushables and crates (Mojo enters or carries from that cell) sit ON the road;
+      // other SEBELAH targets may stand on road or on park grass beside it
+      var onRoad = t.walk || t.push || o.type === 'crate'
+      if (onRoad ? !tr.road : !(tr.road || tr.grass)) p.push(lv.id + ': ' + o.id + ' stands on ' + (tr.name || ch) + (onRoad && tr.grass ? ' (it must sit ON the road)' : ''))
     })
+    p = p.concat(lintRule(lv))
     ;(lv.beats || []).forEach(function (b, bi) {
       if (!b.objectives || !b.objectives.length) p.push(lv.id + ': beat ' + bi + ' has no objective')
       ;(b.objectives || []).forEach(function (ob) { if (ob.id && !ids[ob.id]) p.push(lv.id + ': beat ' + bi + ' objective names ' + ob.id) })
@@ -592,6 +672,63 @@
       ;(b.palette || []).forEach(function (c) { var v = verbOf(c); if (v === 'swop') { if (!FORMS[c.split(':')[1]]) p.push(lv.id + ': palette swop ' + c) } else if (BASE.indexOf(v) < 0 && !formsWith(v).length) p.push(lv.id + ': palette verb ' + c) })
       if (!(b.slots > 0)) p.push(lv.id + ': beat ' + bi + ' slots')
     })
+    return p
+  }
+  /* the LEWATI / SEBELAH rule and the ROAD rule, statically:
+     - the road network ('.' '=' plus the gaps a rock fills or a jump crosses: pit 'o', water '~') is ONE piece
+       joined to Mojo's start, and no road cell stands alone;
+     - every LEWATI item lies on a road cell of that network;
+     - every SEBELAH target has a ROAD neighbour on that network (it can be reached and acted on);
+     - no road cell ever touches two targets of the same verb (an action is never ambiguous). Jump counts objects
+       only: pits and water are ground, the facing decides between an object and a pit. */
+  function lintRule (lv) {
+    var p = [], gr = lv.grid || {}, map = gr.map || [], R = gr.rows, C = gr.cols
+    function tr (r, c) { return r >= 0 && c >= 0 && r < R && c < C ? TERRAIN[(map[r] || '').charAt(c)] || {} : {} }
+    function road (r, c) { return !!tr(r, c).road }
+    // a pit (a pushed rock fills it) or water (jumped) joins two road pieces
+    function link (r, c) { var t = tr(r, c); return !!(t.road || t.fill || (t.jump && !t.pass && !t.grass)) }
+    var at = lv.mojo && lv.mojo.at, seen = {}, q = []
+    if (at && road(at[0], at[1])) { seen[at[0] + ',' + at[1]] = 1; q.push(at) }
+    for (var h = 0; h < q.length; h++) for (var d0 = 0; d0 < 4; d0++) {
+      var nr = q[h][0] + DIRS[d0][0], nc = q[h][1] + DIRS[d0][1], nk = nr + ',' + nc
+      if (!seen[nk] && link(nr, nc)) { seen[nk] = 1; q.push([nr, nc]) }
+    }
+    var lone = [], cut = []
+    for (var r0 = 0; r0 < R; r0++) for (var c0 = 0; c0 < C; c0++) {
+      if (!road(r0, c0)) continue
+      var nb0 = 0
+      for (var d1 = 0; d1 < 4; d1++) if (link(r0 + DIRS[d1][0], c0 + DIRS[d1][1])) nb0++
+      if (!nb0) lone.push(r0 + ',' + c0)
+      if (!seen[r0 + ',' + c0]) cut.push(r0 + ',' + c0)
+    }
+    if (lone.length) p.push(lv.id + ': isolated road cell ' + lone.join(' '))
+    if (cut.length) p.push(lv.id + ': road not connected to the start at ' + cut.join(' '))
+    var targets = {}   // verb -> [obj]
+    function add (v, o) { (targets[v] = targets[v] || []).push(o) }
+    ;(lv.objects || []).forEach(function (o) {
+      var t = TYPES[o.type] || {}
+      if (!o.at) return
+      if (t.walk && !seen[o.at[0] + ',' + o.at[1]]) p.push(lv.id + ': ' + o.id + ' is not on the road network from the start')
+      if (t.block) {
+        var nb = 0, reach = 0
+        for (var d = 0; d < 4; d++) {
+          var rr = o.at[0] + DIRS[d][0], rc = o.at[1] + DIRS[d][1]
+          if (road(rr, rc)) { nb++; if (seen[rr + ',' + rc]) reach++ }
+        }
+        if (!nb) p.push(lv.id + ': ' + o.id + ' cannot be reached from any road beside it')
+        else if (!reach) p.push(lv.id + ': ' + o.id + ' has no road neighbour connected to the start')
+      }
+      if (t.verb) add(t.verb, o)
+      if (t.jump) add('jump', o)
+      if (o.elev > 0) add('raise', o)
+    })
+    for (var r = 0; r < R; r++) for (var c = 0; c < C; c++) {
+      if (!link(r, c)) continue
+      for (var v in targets) {
+        var near = targets[v].filter(function (o) { return Math.abs(o.at[0] - r) + Math.abs(o.at[1] - c) === 1 })
+        if (near.length > 1) p.push(lv.id + ': cell ' + r + ',' + c + ' touches two ' + v + ' targets (' + near.map(function (o) { return o.id }).join(', ') + ')')
+      }
+    }
     return p
   }
   function prep (w, lv, b) { var n = clone(w); n.forms = lv.beats[b].forms || null; return n }
@@ -638,11 +775,11 @@
   }
 
   G.ProgGrid = {
-    VERSION: '1.1.0', DIRS: DIRS, HEAD: HEAD, BASE: BASE, ABS: ABS, REL: REL, ABS_H: ABS_H, moves: moves, modeOf: modeOf, TERRAIN: TERRAIN, TYPES: TYPES,
+    VERSION: '1.2.0', REASONS: REASONS, AIM_VERBS: Object.keys(AIM), aim: aim, unresolved: unresolved, DIRS: DIRS, HEAD: HEAD, BASE: BASE, ABS: ABS, REL: REL, ABS_H: ABS_H, moves: moves, modeOf: modeOf, TERRAIN: TERRAIN, TYPES: TYPES,
     defineForm: defineForm, form: form, forms: function () { return Object.keys(FORMS) }, can: can, formsWith: formsWith, verbOf: verbOf,
     world: world, startBeat: startBeat, prep: prep, clone: clone, key: key, find: find, objsAt: objsAt, blocks: blocks, ahead: ahead, terrain: ter, terrainChar: terCh,
     step: step, stepBeat: stepBeat, ok: ok, met: met, beatDone: beatDone, cond: cond,
     cursor: cursor, size: size, flat: flat, run: run,
-    palette: palette, solve: solve, count: count, hint: hint, lint: lint, verify: verify
+    palette: palette, solve: solve, count: count, hint: hint, lint: lint, lintRule: lintRule, verify: verify
   }
 })(typeof window !== 'undefined' ? window : globalThis)

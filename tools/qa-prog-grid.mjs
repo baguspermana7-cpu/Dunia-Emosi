@@ -10,6 +10,14 @@
 //   G  hint: the ladder's last rung (ghost the next command) always leads to a solution, one command at a time
 //   H  lint catches broken levels
 //   I  the SoalEngine 'mojo' pack + 'mojo-world' generator + 'g31' profile
+//   J  board-absolute arrows
+//   K  konsistensi: the ONE rule (owner 2026-10-03, LEWATI vs SEBELAH) for every object type — walk-over vs
+//      blocker, every action from all 4 sides whatever Mojo faces (and Mojo turns), resolved things never block
+//      (except a rock on ground), no no-target while a target is beside Mojo (over every level's state space),
+//      ambiguity, jump / lower / height reasons, the lift resets per beat, the Chopper takes everything
+//   L  level lint for the rule + the ROAD rule (owner 2026-10-03: grass is scenery, Mojo drives only on road; items ON
+//      the road, targets beside it, one connected road network) + Bo's beat line names the beat's objective +
+//      a static scan: every engine failure reason has its own UI message
 // Run: node tools/qa-prog-grid.mjs
 import fs from 'node:fs'
 import vm from 'node:vm'
@@ -50,7 +58,7 @@ const deepFreeze = o => { if (o && typeof o === 'object' && !Object.isFrozen(o))
 section('A determinism')
 {
   const lv = ML.byId('s1'), w0 = PG.prep(PG.world(lv), lv, 0)
-  const prog = ['swop:dozer', 'fwd', 'push', 'push', 'left', 'fwd', 'swop:fire', 'spray']
+  const prog = ['east', 'swop:dozer', 'push', 'push', 'swop:fire', 'spray']
   const a = PG.run(w0, prog, lv.beats[0]), b = PG.run(w0, prog, lv.beats[0])
   check(JSON.stringify(a.steps) === JSON.stringify(b.steps) && PG.key(a.world) === PG.key(b.world), 'same program + same start = same trace and end state')
   check(a.done, 'the slice beat 1 Dozer program completes the beat')
@@ -129,8 +137,9 @@ section('B verbs')
   jw2 = W(L(['.T...'], { at: [0, 0], h: 'E', form: 'jumper' }))
   check(S(jw2, 'jump').reason === 'too-tall', 'a tree is too tall to jump')
   jw2 = W(L(['.....'], { at: [0, 0], h: 'E', form: 'jumper' }, [{ id: 'f', type: 'fire', at: [0, 1] }]))
-  check(S(jw2, 'jump').reason === 'too-tall', 'a fire cannot be jumped (it must be put out)')
-  check(S(W(L(['..'], { at: [0, 0], h: 'E', form: 'jumper' })), 'jump').reason === 'edge', 'a jump off the map = blocked edge')
+  check(S(jw2, 'jump').reason === 'jump-fire', 'a fire cannot be jumped (jump-fire: put it out first)')
+  check(S(W(L(['..'], { at: [0, 0], h: 'E', form: 'jumper' }, [{ id: 'r', type: 'rock', at: [0, 1] }])), 'jump').reason === 'edge', 'a jump off the map = blocked edge')
+  check(S(W(L(['...'], { at: [0, 0], h: 'E', form: 'jumper' })), 'jump').reason === 'no-target', 'a jump with nothing to jump over = no-target')
 
   // raise / lower / rescue height (cherry picker) + the height microgame
   const hl = L(['.#', '..'], { at: [1, 1], h: 'N', form: 'cherry' }, [{ id: 'mia', type: 'person', at: [0, 1], elev: 6, mg: { id: 'tinggi', step: 2 } }])
@@ -153,27 +162,28 @@ section('B verbs')
   check(PG.find(S(gr, 'rescue').world, 'k').st === 'rescued', 'Normal Mojo rescues a friend on the ground')
   check(S(W(L(['..'], { at: [0, 0], h: 'E', form: 'fire' }, [{ id: 'k', type: 'person', at: [0, 1] }])), 'rescue').status === 'invalid-capability', 'Mojo Api cannot rescue (invalid capability)')
 
-  // pick (toolbox + letters microgame), repair (tool, bolts, opens)
-  const rl = L(['.#.', '...', '...'], { at: [1, 1], h: 'N', form: 'normal' }, [
-    { id: 'kotak', type: 'toolbox', at: [0, 1], tool: 'palu', mg: { kind: 'letters', id: 'palu' } },
-    { id: 'gate', type: 'repair', at: [1, 2], needs: { tool: 'palu', bolts: 3 }, opens: true },
-    { id: 'b1', type: 'bolt', at: [2, 1] }], { res: { bolts: 2 }, cap: { bolts: 3 } })
+  // toolbox = LEWATI (driving onto it asks for the letters microgame), repair (tool, bolts); a fixed gate is road
+  const rl = L(['...', '...', '...'], { at: [1, 0], h: 'E', form: 'normal' }, [
+    { id: 'kotak', type: 'toolbox', at: [1, 1], tool: 'palu', mg: { kind: 'letters', id: 'palu' } },
+    { id: 'gate', type: 'repair', at: [0, 2], needs: { tool: 'palu', bolts: 3 }, what: 'gate' },
+    { id: 'b1', type: 'bolt', at: [2, 2] }], { res: { bolts: 2 }, cap: { bolts: 3 } })
   w = W(rl)
-  let rr = S(S(w, 'right').world, 'repair')
-  check(rr.reason === 'need-tool' && rr.info.tool === 'palu', 'repair without the hammer = need-tool')
-  r = S(w, 'pick')
-  check(r.status === 'waiting-for-microgame' && r.info.mg.kind === 'letters' && r.info.mg.tool === 'palu', 'pick at the toolbox pauses for the letters microgame')
-  const tw = S(w, 'pick', { mg: true }).world
-  check(tw.tools.palu && PG.find(tw, 'kotak').st === 'open', 'the solved word puts the hammer in the toolbox')
-  rr = S(S(tw, 'right').world, 'repair')
+  let rr = PG.run(w, ['up', 'east', 'repair'], null).stop
+  check(rr && rr.reason === 'need-tool' && rr.info.tool === 'palu', 'repair without the hammer = need-tool')
+  r = S(w, 'east')
+  check(r.status === 'waiting-for-microgame' && r.info.mg.kind === 'letters' && r.info.mg.tool === 'palu' && r.world === w, 'driving onto the toolbox pauses for the letters microgame (world unchanged)')
+  check(S(w, 'east', { mg: false }).reason === 'microgame', 'an unsolved word leaves Mojo where he was (microgame)')
+  const tw = S(w, 'east', { mg: true }).world
+  check(tw.tools.palu && PG.find(tw, 'kotak').st === 'got' && tw.m.c === 1, 'the solved word gives the hammer, the box is gone and Mojo stands on its cell')
+  check(S(S(tw, 'west').world, 'east').status === 'success', 'an emptied toolbox never blocks')
+  rr = S(S(tw, 'east').world, 'repair')
   check(rr.reason === 'need-bolts' && rr.info.need === 3 && rr.info.have === 2, 'repair with 2 of 3 bolts = need-bolts (need 3, have 2)')
-  const bw = S(S(S(S(tw, 'right').world, 'right').world, 'fwd').world, 'left').world   // collect b1, face east? no: back to row 1
+  const bw = PG.run(tw, ['down', 'east'], null).world
   check(bw.res.bolts === 3, 'driving over a bolt adds it')
-  const fx = PG.run(tw, ['right', 'right', 'fwd', 'left', 'left', 'fwd', 'right', 'repair'], { objectives: [{ do: 'repair', id: 'gate' }] })
+  const fx = PG.run(tw, ['down', 'east', 'up', 'repair'], { objectives: [{ do: 'repair', id: 'gate' }] })
   check(fx.done && fx.world.res.bolts === 0 && PG.find(fx.world, 'gate').st === 'fixed', 'repair with the tool and 3 bolts: fixed, bolts used')
-  check(S(S(fx.world, 'right').world, 'fwd').status !== 'blocked' || true, 'fixed gate')
-  const through = PG.run(fx.world, ['fwd'], null)
-  check(through.world.m.c === 2, 'a repaired gate that opens can be driven through')
+  const through = PG.run(fx.world, ['up'], null)
+  check(!through.stop && through.world.m.r === 0, 'a repaired gate can be driven through (resolved things never block)')
 
   // crate: pick / drop / deliver; heavy needs the crane hook
   const cl = L(['....'], { at: [0, 0], h: 'E', form: 'normal' }, [{ id: 'c', type: 'crate', at: [0, 1] }, { id: 'z', type: 'zone', at: [0, 3], accepts: 'crate' }])
@@ -215,7 +225,7 @@ section('B verbs')
 section('C swop')
 {
   const lv = ML.byId('t7'), w0 = PG.prep(PG.world(lv), lv, 0)
-  const run = PG.run(w0, ['swop:dozer', 'push', 'swop:fire', 'fwd', 'spray'], lv.beats[0])
+  const run = PG.run(w0, ['swop:dozer', 'push', 'swop:fire', 'fwd', 'fwd', 'spray'], lv.beats[0])
   const sw = run.steps.filter(s => s.events.some(e => e.e === 'swop')).map(s => s.events.find(e => e.e === 'swop').to)
   check(run.done && sw.join(',') === 'dozer,fire', 'two Swops inside one program (Dozer then Fire) complete the mission')
   const na = PG.step(w0, 'swop:chopper')
@@ -323,7 +333,7 @@ section('F levels')
   check(s1.beats.length >= 2, 'slice: more than one beat (a checkpoint after the first)')
   // the bolt count matters: the column-1 route collects only 2 bolts
   const w2 = starts(s1)[2]
-  const short = PG.run(w2, ['swop:normal', 'right', 'fwd', 'left', 'fwd', 'fwd', 'right', 'pick', 'left', 'repair'], s1.beats[2], { auto: true })
+  const short = PG.run(w2, ['swop:normal', 'up', 'up', 'east', 'repair'], s1.beats[2], { auto: true })
   check(!short.done && short.stop && short.stop.reason === 'need-bolts' && short.stop.info.have === 7, 'slice: a route with only 2 more bolts stops at the gate (need 8, have 7)')
 }
 
@@ -424,7 +434,7 @@ section('J absolute arrows')
   const fire = W(L(['...', '...'], { at: [1, 1], h: 'E' }, [{ id: 'f', type: 'fire', at: [0, 1] }], { forms: ['fire'], res: { water: 2 }, cap: { water: 5 } }))
   fire.m.form = 'fire'
   const sp = S(fire, 'spray')
-  check(sp.status !== 'blocked' && sp.world.m.h === 0 && sp.events[0].e === 'turn', 'spray with the fire beside Mojo turns to it and sprays')
+  check(sp.status !== 'blocked' && sp.world.m.h === 0 && sp.events[0].e === 'turn' && sp.events[0].auto && sp.turned, 'spray with the fire beside Mojo turns to it (auto turn event) and sprays')
   const lone = W(L(['...'], { at: [0, 1], h: 'E' }, [], { forms: ['fire'], res: { water: 2 } })); lone.m.form = 'fire'
   const none = S(lone, 'spray')
   check(none.status === 'blocked', 'spray with no fire around is still a gentle stop')
@@ -433,6 +443,155 @@ section('J absolute arrows')
   check(PG.modeOf(rel) === 'rel' && PG.palette({ forms: ['normal'] }, rel).slice(0, 3).join() === 'fwd,left,right' && PG.palette({ forms: ['normal'] }, W(L(['.'], { at: [0, 0] }))).slice(0, 4).join() === 'up,down,west,east', "mode 'rel' keeps Forward / Turn; the default palette is the four arrows")
   const rr = PG.run(rel, ['fwd', 'right', 'fwd'], null)
   check(rr.world.m.r === 0 && rr.world.m.c === 1 && PG.modeOf(rr.world) === 'rel', 'relative commands still run and the mode survives cloning')
+}
+
+/* ── K konsistensi: the ONE rule (LEWATI vs SEBELAH) ──────────────── */
+section('K konsistensi')
+{
+  const VERB = { fire: ['fire', 'spray'], person: ['normal', 'rescue'], repair: ['normal', 'repair'], rock: ['dozer', 'push'], log: ['dozer', 'push'], crate: ['normal', 'pick'] }
+  const grid5 = ['.....', '.....', '.....', '.....', '.....']
+  const objOf = type => ({ id: 'x', type, at: [2, 2], str: 1, needs: {} })
+  for (const [type, t] of Object.entries(PG.TYPES)) {
+    // walk-over vs blocker: an arrow onto it
+    const w = W(L(['...'], { at: [0, 0], h: 'E' }, [objOf(type)].map(o => ({ ...o, at: [0, 1] }))))
+    const r = S(w, 'east', { auto: true })
+    if (t.walk) check(PG.ok(r.status) && r.world.m.c === 1, `${type}: LEWATI — driving onto it works (${r.status} ${r.reason || ''})`)
+    else check(r.status === 'blocked' && r.reason === 'object' && r.info.type === type, `${type}: SEBELAH — an arrow into it is a gentle bump naming it (${r.reason})`)
+    check(!!t.walk !== !!t.block, `${type}: is exactly one of walk-over or blocker`)
+    if (!t.block) continue
+    check(!!VERB[type] && t.verb === VERB[type][1], `${type}: has its SEBELAH action ${t.verb}`)
+    const [form, verb] = VERB[type]
+    // the action works from all four sides, whatever Mojo faces, and Mojo turns to the target
+    for (let side = 0; side < 4; side++) for (let h = 0; h < 4; h++) {
+      const at = [2 - PG.DIRS[side][0], 2 - PG.DIRS[side][1]]   // Mojo on the cell `side` of the target... target lies in direction `side`
+      const ww = W(L(grid5, { at, h, form }, [objOf(type)], { res: { water: 3 }, cap: { water: 5 } }))
+      const rs = S(ww, verb)
+      const okSide = PG.ok(rs.status) && rs.world.m.h === side && (h === side ? !rs.turned : rs.turned && rs.events[0].e === 'turn' && rs.events[0].auto)
+      if (!okSide) check(false, `${type}: ${verb} from side ${side} facing ${h} (${rs.status} ${rs.reason} h=${rs.world.m.h})`)
+      else passes++
+      if (side === 1 && h === 0) {
+        // after resolving it, the cell is road again — except a pushed rock/log, which is still a rock
+        const next = PG.run(rs.world, [['up', 'east', 'down', 'west'][side]], null)
+        if (type === 'rock' || type === 'log') check(next.stop && next.stop.reason === 'object', `${type}: pushed onto ground it is still a ${type} and blocks`)
+        else check(!next.stop, `${type}: resolved (${PG.find(rs.world, 'x').st}) it never blocks`)
+      }
+    }
+  }
+  // a rock pushed into a pit fills it: road
+  { const r = PG.run(W(L(['...o.'], { at: [0, 1], h: 'W', form: 'dozer' }, [{ id: 'r', type: 'rock', at: [0, 2] }])), ['push', 'east', 'east'], null)
+    check(!r.stop && r.world.m.c === 4, 'a rock pushed into a pit fills it and becomes road') }
+  // ambiguity: two fires beside Mojo
+  { const w = W(L(['...', '...'], { at: [1, 1], h: 'N', form: 'fire' }, [{ id: 'a', type: 'fire', at: [1, 0] }, { id: 'b', type: 'fire', at: [1, 2] }], { res: { water: 2 }, cap: { water: 5 } }))
+    const r = S(w, 'spray'); check(r.reason === 'ambiguous' && r.info.dirs.join() === '1,3', 'two fires beside Mojo and facing neither = ambiguous')
+    const e = PG.clone(w); e.m.h = 1; const r2 = S(e, 'spray')
+    check(PG.ok(r2.status) && PG.find(r2.world, 'b').st === 'out', 'two fires: the one Mojo faces is sprayed') }
+  // specific reasons
+  { const w = W(L(['....'], { at: [0, 0], h: 'E', form: 'jumper' }, [{ id: 'p', type: 'person', at: [0, 1] }]))
+    check(S(w, 'jump').reason === 'jump-person', 'a friend cannot be jumped over (jump-person)')
+    const g = W(L(['....'], { at: [0, 0], h: 'E', form: 'jumper' }, [{ id: 'g', type: 'repair', at: [0, 1], needs: {} }]))
+    check(S(g, 'jump').reason === 'jump-repair', 'a repair point cannot be jumped over (jump-repair)')
+    const c = W(L(['...'], { at: [0, 0], h: 'E', form: 'cherry' }))
+    check(S(c, 'lower').reason === 'not-raised', 'lower while the basket is down = not-raised (symmetric with raise no-target)')
+    check(S(c, 'raise').reason === 'no-target', 'raise with nothing high beside Mojo = no-target')
+    const hi = W(L(['..', '..'], { at: [1, 0], h: 'E', form: 'normal' }, [{ id: 'p', type: 'person', at: [0, 0], elev: 4 }], { forms: ['normal', 'cherry'] }))
+    hi.forms = ['normal', 'cherry']
+    const nf = S(hi, 'rescue'); check(nf.reason === 'need-form' && nf.info.forms.includes('cherry') && nf.info.elev === 4 && nf.info.turn === 0, 'Normal Mojo beside a friend up high = need-form naming Mojo Keranjang (and Mojo turns to the friend)')
+    const ch = PG.clone(hi); ch.m = { ...ch.m, form: 'cherry' }
+    check(S(ch, 'rescue').reason === 'too-high', 'Mojo Keranjang not raised yet = too-high') }
+  // lift resets at every beat start
+  { const m6 = ML.byId('m6'), st = starts(m6)
+    const end = PG.run(st[0], PG.solve(st[0], m6.beats[0]), m6.beats[0], { auto: true }).world
+    check(end.m.lift === 4 && PG.startBeat(end, m6, 1).m.lift === 0 && st[1].m.lift === 0, 'the lift (4 after the lamp) resets to 0 when the next beat begins') }
+  // the Chopper in the air takes every LEWATI item
+  { const w = W(L(['......'], { at: [0, 0], h: 'E', form: 'chopper' }, [{ id: 's', type: 'star', at: [0, 1] }, { id: 'b', type: 'bolt', at: [0, 2] }, { id: 'd', type: 'drop', at: [0, 3] }, { id: 't', type: 'toolbox', at: [0, 4], tool: 'palu' }], { res: { bolts: 0, water: 0 }, cap: { bolts: 3, water: 3 } }))
+    const r = PG.run(w, ['takeoff', 'east', 'east', 'east', 'east'], null, { auto: true })
+    check(!r.stop && r.world.got.s && r.world.res.bolts === 1 && r.world.res.water === 1 && r.world.tools.palu, 'flying over star, bolt, drop and toolbox takes all four') }
+  // a full tank: the drop stays, the event names cap-full; IF pickup reads Mojo's own cell
+  { const w = W(L(['...'], { at: [0, 0], h: 'E', form: 'fire' }, [{ id: 'd', type: 'drop', at: [0, 1] }], { res: { water: 2 }, cap: { water: 2 } }))
+    const r = S(w, 'east'); check(r.events.some(e => e.e === 'full' && e.reason === 'cap-full'), 'a full tank leaves the drop with reason cap-full')
+    check(PG.cond(r.world, 'pickup') && !PG.cond(w, 'pickup'), 'IF pickup reads the cell Mojo stands on (not the cell ahead)') }
+  // ROAD rule: grass is scenery — never driven onto, never landed on, never jumped "over" as an obstacle
+  { const g = W(L(['.,.', '...'], { at: [0, 0], h: 'E' }))
+    const r = S(g, 'east'); check(r.status === 'blocked' && r.reason === 'grass' && r.world === g, 'an arrow onto grass is a gentle stop with its own reason (grass)')
+    check(PG.REASONS.includes('grass') && !PG.TERRAIN[','].pass && PG.TERRAIN['.'].road && PG.TERRAIN['='].road, 'grass is not drivable; road and bridge are')
+    const j = W(L(['..,'], { at: [0, 0], h: 'E', form: 'jumper' }, [{ id: 'r', type: 'rock', at: [0, 1] }]))
+    const jr = S(j, 'jump'); check(jr.reason === 'grass' && jr.info.land, 'a jump never lands on grass (grass, land)')
+    check(S(W(L(['.,.'], { at: [0, 0], h: 'E', form: 'jumper' })), 'jump').reason === 'no-target', 'a lawn is nothing to jump over (no-target)')
+    const pr = W(L(['..,'], { at: [0, 0], h: 'E', form: 'dozer' }, [{ id: 'r', type: 'rock', at: [0, 1] }]))
+    const pp = S(pr, 'push'); check(pp.reason === 'push-wall' && pp.info.terrain === ',', 'a rock cannot be pushed onto grass (push-wall, terrain grass)')
+    const ch = W(L(['.,'], { at: [0, 0], h: 'E', form: 'chopper' }))
+    const air = PG.run(ch, ['takeoff', 'east'], null).world
+    check(air.m.c === 1 && S(air, 'land').reason === 'no-landing', 'the Chopper may fly over grass but never lands on it')
+    // no level solution ever stands Mojo on grass
+    let onGrass = []
+    for (const lv of ML.LEVELS) { let w = PG.prep(PG.world(lv), lv, 0)
+      lv.beats.forEach((b, bi) => { if (bi) w = PG.prep(PG.startBeat(w, lv, bi), lv, bi); const sol = PG.solve(w, b) || []
+        for (const c of sol) { w = PG.step(w, c, { auto: true }).world; if (lv.grid.map[w.m.r][w.m.c] === ',' && !w.m.air) onGrass.push(lv.id) } }) }
+    check(onGrass.length === 0, 'no level route ever puts Mojo on grass ' + onGrass.join(',')) }
+  // no no-target while a valid target is beside Mojo — over the reachable states of every level
+  let probes = 0, bad = []
+  for (const lv of ML.LEVELS) for (const [bi, w0] of starts(lv).entries()) {
+    const beat = lv.beats[bi], cmds = PG.palette(beat, w0), seen = new Set([PG.key(w0)]), q = [w0]
+    for (let h = 0; h < q.length && h < 1500; h++) {
+      const w = q[h]
+      for (const v of Object.keys(PG.TYPES).map(t => PG.TYPES[t].verb).concat(['raise', 'jump', 'hook']).filter((x, i, a) => x && a.indexOf(x) === i)) {
+        if (!PG.can(w.m.form, v)) continue
+        const n = PG.aim(w, v).length, r = S(w, v, { auto: true }); probes++
+        if (n && r.reason === 'no-target') bad.push(`${lv.id}:${bi} ${v}`)
+        if (n === 1 && r.reason === 'ambiguous') bad.push(`${lv.id}:${bi} ${v} ambiguous`)
+      }
+      for (const c of cmds) { const r = S(w, c, { auto: true }); if (!PG.ok(r.status)) continue; const k = PG.key(r.world); if (!seen.has(k)) { seen.add(k); q.push(r.world) } }
+    }
+  }
+  check(bad.length === 0, `no no-target while a target is beside Mojo (${probes} probes over every level) ${bad.slice(0, 5).join(' | ')}`)
+}
+
+/* ── L level lint for the rule + every reason has its own message ─── */
+section('L rule lint + messages')
+{
+  for (const lv of ML.LEVELS) check(PG.lintRule(lv).length === 0 && PG.lint(lv).length === 0, `${lv.id}: no SEBELAH target on a wall, every target approachable, no cell beside two same-verb targets ${PG.lint(lv).join(' | ')}`)
+  const lvl = (map, objects) => ({ id: 'z', grid: { rows: map.length, cols: map[0].length, map }, mojo: { at: [0, 0] }, objects, beats: [{ objectives: [{ do: 'reach', at: [0, 0] }], slots: 3 }] })
+  check(PG.lint(lvl(['..#'], [{ id: 'f', type: 'fire', at: [0, 2] }])).some(p => p.includes('stands on')), 'lint: a fire on a building is refused')
+  check(PG.lint(lvl(['.T.', 'T.T', '.T.'].map(r => r.replace(/^\./, '.')), [{ id: 'p', type: 'person', at: [1, 1] }])).some(p => p.includes('cannot be reached')), 'lint: a friend walled in on all four sides is refused')
+  check(PG.lint(lvl(['.....'], [{ id: 'a', type: 'fire', at: [0, 1] }, { id: 'b', type: 'fire', at: [0, 3] }])).some(p => p.includes('touches two spray')), 'lint: one road cell beside two fires is refused')
+  check(PG.lint(lvl(['....'], [{ id: 't', type: 'toolbox', at: [0, 1], tool: 'palu' }, { id: 'b', type: 'bolt', at: [0, 1] }])).some(p => p.includes('shares a cell')), 'lint: a toolbox shares its cell with nothing')
+  // the ROAD rule (owner 2026-10-03), one synthetic bad level per rule
+  const has = (lv, k) => PG.lint(lv).some(p => p.includes(k))
+  for (const type of ['star', 'bolt', 'drop', 'toolbox', 'flag']) check(has(lvl(['...', ',,,'], [{ id: 'x', type, at: [1, 1], tool: 'palu' }]), 'must sit ON the road'), `lint: a ${type} on grass is refused (walk-over items sit ON the road)`)
+  check(has(lvl(['...', ',,,'], [{ id: 'r', type: 'rock', at: [1, 1] }]), 'must sit ON the road'), 'lint: a rock on grass is refused (pushing it would put Mojo on grass)')
+  check(!has(lvl(['...', ',,,'], [{ id: 'f', type: 'fire', at: [1, 1] }]), 'stands on'), 'lint: a fire on the lawn beside the road is fine (SEBELAH target on decor)')
+  check(has(lvl(['...', ',,,', ',,,'], [{ id: 'f', type: 'fire', at: [2, 1] }]), 'cannot be reached from any road'), 'lint: a target with no ROAD neighbour is refused')
+  check(has(lvl(['..,.'], [{ id: 's', type: 'star', at: [0, 3] }]), 'not on the road network'), 'lint: a pickup on a road piece cut off from the start is refused')
+  check(has(lvl(['..,.', ',,,.'], [{ id: 'p', type: 'person', at: [1, 2] }]), 'no road neighbour connected'), 'lint: a target whose only road neighbour is cut off from the start is refused')
+  check(has(lvl(['..,.'], []), 'isolated road cell'), 'lint: a lone road cell is refused')
+  check(has(lvl(['..,..', ',,,..'], []), 'road not connected'), 'lint: a second road piece not joined to the start is refused')
+  check(!has(lvl(['..o..'], []), 'not connected'), 'lint: a pit inside the road joins the two halves (a rock fills it)')
+  check(has({ ...lvl([',..'], []), mojo: { at: [0, 0] } }, 'off the road'), 'lint: Mojo never starts on grass')
+  // Bo's beat line (owner 2026-10-03, m6 photo): the bubble shows the FIRST sentence, so it must name THIS beat's
+  // objective and fit the bubble; and Bo never names an action the beat cannot use
+  const WHATN = { swing: 'ayunan', lamp: 'lampu', gate: 'gerbang' }
+  const ACT = { DORONG: 'push', SEMPROT: 'spray', NAIK: 'raise', TURUN: 'lower', TOLONG: 'rescue', PERBAIKI: 'repair', LOMPAT: 'jump', AMBIL: 'pick', TERBANG: 'takeoff' }
+  for (const lv of ML.LEVELS) lv.beats.forEach((b, bi) => {
+    const first = (b.bo.match(/^.*?[.!?](?:\s|$)/) || [b.bo])[0].trim().toLowerCase()
+    const nouns = (b.objectives || []).map(ob => { const o = (lv.objects || []).find(x => x.id === ob.id)
+      return ob.do === 'reach' ? 'bendera' : ob.do === 'extinguish' ? 'api' : ob.do === 'rescue' ? (o.name || '').toLowerCase() : ob.do === 'repair' ? WHATN[o.what] : ob.id })
+    check(first.length <= 64 && nouns.some(n => n && first.includes(n)), `${lv.id} beat ${bi + 1}: Bo's bubble line "${first}" names the objective (${nouns.join('/')}) and fits the bubble (${first.length}/64)`)
+    const verbs = new Set((b.palette || PG.palette(b)).map(c => PG.verbOf(c)))
+    const named = Object.keys(ACT).filter(k => new RegExp('\\b' + k + '\\b').test(b.bo))
+    check(named.every(k => verbs.has(ACT[k])), `${lv.id} beat ${bi + 1}: every action Bo names is in the beat's palette (${named.join(',')})`)
+  })
+  // static scan: every reason the engine can return has its own message in the game (no generic fallback)
+  const eng = fs.readFileSync(path.join(ROOT, 'games/prog-grid.js'), 'utf8'), ui = fs.readFileSync(path.join(ROOT, 'games/mojo-swoptops.js'), 'utf8')
+  const used = new Set([...eng.matchAll(/'(?:blocked|invalid-capability)', '([a-z-]+)'/g)].map(m => m[1]).concat([...eng.matchAll(/reason: '([a-z-]+)'/g)].map(m => m[1])))
+  ;(ML.LEVELS.flatMap(l => l.objects || [])).forEach(o => Object.keys(o.needs || {}).forEach(k => { if (k !== 'tool') used.add('need-' + k) }))
+  used.delete('need-')   // 'need-' + resource: the level scan above adds the real names
+  const missingList = [...used].filter(r => !PG.REASONS.includes(r))
+  check(missingList.length === 0, 'every reason the engine returns is listed in ProgGrid.REASONS ' + missingList.join(','))
+  const block = ui.slice(ui.indexOf('var MSG = {'), ui.indexOf('\n  }', ui.indexOf('var MSG = {')))
+  const keys = new Set([...block.matchAll(/^\s{4}'?([a-z-]+)'?\s*:/gm)].map(m => m[1]))
+  const noMsg = PG.REASONS.filter(r => !keys.has(r))
+  check(block.length > 20 && noMsg.length === 0, `every engine reason has its own message in mojo-swoptops.js MSG (${keys.size} keys) ${noMsg.join(',')}`)
+  check(!/Hmm, Mojo berhenti/.test(ui) && !/Coba AMBIL/.test(ui), 'the generic "Mojo berhenti" fallback and the toolbox "Coba AMBIL" text are gone')
 }
 
 console.log(`\n${passes} passed, ${fails.length} failed`)

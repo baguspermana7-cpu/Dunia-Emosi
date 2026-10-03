@@ -37,7 +37,7 @@
     W.MojoLevels.REGIONS.forEach(function (r, i) {
       var ready = r.open && r.levels.length > 0, st = regionStats(r)
       total += st.stars; max += st.total * 3
-      var go = function () { if (ready) { activeRegion = r.id; API.cue(); API.episodes(r.id) } else { API.cue(); API.toast(r.title + ' segera dibuka. Selesaikan misi di Kota Pusat dan Pelabuhan dulu!') } }
+      var go = function () { if (ready) { activeRegion = r.id; API.cue(); API.episodes(r.id) } else { API.cue(); API.toast(r.title + ': segera hadir — misi baru sedang dibuat!') } }
       // the pin on the painted map
       var pin = node('button', 'map-pin' + (ready ? '' : ' locked') + (r.id === nextRegion ? ' next' : ''))
       pin.type = 'button'; pin.setAttribute('data-pin', r.id); pin.setAttribute('aria-label', r.title + (ready ? '' : ' (segera)'))
@@ -49,12 +49,12 @@
       if (ready) b.type = 'button'; else { b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-disabled', 'true'); b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go() } }) }
       if (r.id === nextRegion) b.classList.add('next')
       b.setAttribute('data-region', r.id)
-      var th = node('img', 'rthumb'); th.src = backdrop(r.bg); th.alt = ''; b.appendChild(th)
+      var th = node('img', 'rthumb'); th.src = backdrop(A.regionScene(r)); th.alt = ''; th.loading = 'lazy'; b.appendChild(th)
       var num = node('i', 'rnum fk'); num.textContent = String(i + 1); b.appendChild(num)
       b.appendChild(node('strong', '', r.title))
       var sub = node('span', 'rsub')
       if (ready) sub.innerHTML = '<img src="' + A.src('obj/star') + '" alt="">' + st.stars + '/' + (st.total * 3) + '<em class="rcount"> · ' + st.done + '/' + st.total + ' misi</em>'
-      else sub.innerHTML = '<i class="ico">' + A.icon('lock') + '</i>Segera'
+      else sub.innerHTML = '<i class="ico">' + A.icon('lock') + '</i>Segera hadir — misi baru sedang dibuat!'   // honest: no content yet, not a progress lock
       b.appendChild(sub)
       bind(b, go); cards.appendChild(b)
     })
@@ -74,9 +74,11 @@
   }
   function collection () {
     var c = screen('scr-collection', 'Koleksi Swoptops'), grid = node('div', 'form-gallery')
-    c.appendChild(node('p', 'menu-lead', '44 wujud Mojo dari buku gambar bengkel. Ketuk untuk melihat.'))
-    A.catalog.forEach(function (f) {
-      var b = button('', function () { info(f) }, 'form-card')
+    // the owner's film Mojo first (sheet 30), then the 44 forms from the workshop drawing book
+    c.appendChild(node('p', 'menu-lead', A.heroCatalog.length + ' gaya Mojo versi film, lalu ' + A.catalog.length + ' wujud dari buku gambar bengkel. Ketuk untuk melihat.'))
+    A.showcase.forEach(function (f, i) {
+      if (i === 0 || i === A.heroCatalog.length) grid.appendChild(node('h2', 'form-gallery-head fk', i === 0 ? 'Mojo Versi Film' : 'Buku Gambar Bengkel'))
+      var b = button('', function () { info(f) }, 'form-card' + (f.film ? ' film' : ''))
       b.innerHTML = '<img loading="lazy" src="' + f.src + '" alt=""><strong>' + f.name + '</strong>'
       grid.appendChild(b)
     }); c.appendChild(grid)
@@ -103,18 +105,20 @@
     row.appendChild(coll); row.appendChild(missions); info.appendChild(row)
     c.appendChild(show); c.appendChild(info)
     function draw () {
-      var f = A.catalog[index], form = formOf(f.id), def = W.MojoLevels.FORMS[form], ok = playable(f.id)
-      car.innerHTML = A.mojo(f.id === 'base' ? 'normal' : f.id, 'side')
+      var f = A.showcase[index], form = formOf(f.id), def = W.MojoLevels.FORMS[form], ok = playable(f.id)
+      // film poses lead the carousel; the workshop drawings follow with their own (previous) art
+      car.innerHTML = '<img class="owner-mojo' + (f.film ? ' owner-hero' : '') + ' owner-side" src="' + f.src + '" alt="">'
+      car.classList.toggle('film', !!f.film)
       name.textContent = f.id === 'base' ? 'Mojo' : 'Mojo ' + f.name
       ability.textContent = f.ability.charAt(0).toUpperCase() + f.ability.slice(1) + '.'
-      count.textContent = (index + 1) + ' / ' + A.catalog.length
+      count.textContent = (f.film ? 'Versi Film · ' : '') + (index + 1) + ' / ' + A.showcase.length
       verbs.innerHTML = ''
       ;(def ? def.verbs : []).forEach(function (v) { var i = node('i', 'ws-verb'); i.style.background = A.CAT[v] || '#546E7A'; i.innerHTML = A.icon(v); i.setAttribute('title', v); verbs.appendChild(i) })
       badge.className = 'ws-badge ' + (ok ? 'ready' : 'soon')
       badge.textContent = ok ? 'Ada di misi penyelamatan!' : 'Segera di misi baru!'
       anim(car, [{ transform: 'translateY(-10px) scale(.96)', opacity: 0 }, { transform: 'translateY(0) scale(1)', opacity: 1 }], 220)
     }
-    function pick (offset) { index = (index + offset + A.catalog.length) % A.catalog.length; draw(); API.cue() }
+    function pick (offset) { index = (index + offset + A.showcase.length) % A.showcase.length; draw(); API.cue() }
     draw()
   }
   function anim (e, frames, ms) { try { if (W.matchMedia('(prefers-reduced-motion: reduce)').matches) return null; return e.animate(frames, { duration: ms, easing: 'cubic-bezier(.23,1,.32,1)' }) } catch (x) { return null } }
@@ -149,7 +153,7 @@
         API.cue()
       }, 'form-card')
       bt.setAttribute('data-form',f)
-      bt.innerHTML = '<img src="' + meta.src + '" alt=""><strong>' + meta.name + '</strong>' + (best || alt ? '<span class="form-badge ' + (best ? 'best' : 'alt') + '">' + (best ? 'Paling Tepat' : 'Bisa Juga') + '</span>' : '')
+      bt.innerHTML = '<img src="' + (A.heroKey(f) ? A.lib(A.heroKey(f)) : meta.src) + '" alt=""><strong>' + meta.name + '</strong>' + (best || alt ? '<span class="form-badge ' + (best ? 'best' : 'alt') + '">' + (best ? 'Paling Tepat' : 'Bisa Juga') + '</span>' : '')
       D.getElementById('picker-forms').appendChild(bt)
     })
     bind(go,function () { if (!chosen) return; API.close('ov-card'); done(chosen === current ? null : chosen) })
@@ -177,7 +181,9 @@
     API = api; A = W.MojoArt
     ;[['btn-levels',map],['btn-workshop',workshop],['btn-collection',collection],['btn-learn',learn],['btn-profile',profile]].forEach(function (x) { bind(D.getElementById(x[0]),x[1]) })
     var c = screen('scr-splash','',API.home); c.classList.add('splash-stage')
-    c.innerHTML = '<h1 class="logo fk"><span class="l1">Mojo</span><span class="l2">Swoptops</span></h1><p class="tag fk">Swop · Rencana · Selamatkan</p><div class="splash-art"><img src="' + A.src('char/bo') + '" alt="Bo">' + A.mojo('normal','side') + '</div>'
+    // the owner's title painting (logo + film Mojo) cut ABOVE its painted buttons, so the only buttons
+    // on screen are the real ones; the HTML logo stays for screen readers
+    c.innerHTML = '<h1 class="logo fk sr-only"><span class="l1">Mojo</span><span class="l2">Swoptops</span></h1><p class="tag fk sr-only">Swop · Rencana · Selamatkan</p>'
     c.appendChild(button('Ayo Main!', API.home))
   }
   W.MojoMenu = { setup:setup, map:map, workshop:workshop, learn:learn, picker:picker, parentGate:parentGate, region:function () { return activeRegion }, background:backdrop, collection:collection }

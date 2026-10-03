@@ -2,7 +2,7 @@
 (function (W) {
   'use strict'
   var MAX_ELAPSED = 31 * 24 * 60 * 60 * 1000, MAX_REWARDS = 1000000
-  var STATES = { rock:['block','pushed','cleared'], log:['block','pushed','cleared'], fire:['burning','sprayed','out'], person:['waiting','rescued'], toolbox:['closed','open'], repair:['broken','fixed'], crate:['idle','carried','delivered','delivered-gone'], flag:['idle'], zone:['idle'], bolt:['here','got'], drop:['here','got'], star:['here','got'] }
+  var STATES = { rock:['block','pushed','cleared'], log:['block','pushed','cleared'], fire:['burning','sprayed','out'], person:['waiting','rescued'], toolbox:['closed','open','got'], repair:['broken','fixed'], crate:['idle','carried','delivered','delivered-gone'], flag:['idle'], zone:['idle'], bolt:['here','got'], drop:['here','got'], star:['here','got'] }
   function record (v) { return v && typeof v === 'object' && !Array.isArray(v) ? v : {} }
   function integer (v, min, max) { return typeof v === 'number' && isFinite(v) && Math.floor(v) === v && v >= min && v <= max }
   function bounded (v, max, fallback) { return integer(v,0,max) ? v : fallback }
@@ -42,15 +42,35 @@
     delete w.map; delete w.cap; delete w.forms
     return w
   }
+  // a checkpoint saved under an older layout (level rev changed, owner rule 2026-10-03) is rebuilt at its beat:
+  // the earlier beats are replayed with the solver, so no object lands on a wall. Its own record must still be sane.
+  function sane (raw, lv, ML) {
+    var m = record(record(raw).m), g = lv.grid
+    return integer(m.r,0,g.rows-1) && integer(m.c,0,g.cols-1) && integer(m.h,0,3) && typeof m.form === 'string' && Object.prototype.hasOwnProperty.call(ML.FORMS,m.form)
+  }
+  function rebuild (lv, beat, PG) {
+    try {
+      var w = PG.prep(PG.world(lv),lv,0)
+      for (var i = 0; i < beat; i++) {
+        var sol = PG.solve(w,lv.beats[i]); if (!sol) return null
+        var run = PG.run(w,sol,lv.beats[i],{auto:true}); if (!run.done) return null
+        w = PG.prep(PG.startBeat(run.world,lv,i+1),lv,i+1)
+      }
+      var o = PG.clone(w); delete o.map; delete o.cap; delete o.forms
+      return o
+    } catch (e) { return null }
+  }
   function checkpoint (raw, ML, PG) {
     raw = record(raw)
     var lv = ML.byId(raw.id)
     if (!lv || !integer(raw.beat,1,lv.beats.length-1)) return null
-    var w = world(raw.world,lv,raw.beat,PG,ML)
+    var rev = lv.rev || 1, w
+    if ((raw.rev || 1) === rev) w = world(raw.world,lv,raw.beat,PG,ML)
+    else w = sane(raw.world,lv,ML) ? rebuild(lv,raw.beat,PG) : null
     if (!w) return null
     var used = [], prior = Array.isArray(raw.used) ? raw.used : [], beats = lv.beats.map(function (_,i) { return String(i) }), events = record(raw.events)
     for (var i = 0; i < raw.beat; i++) used.push(bounded(prior[i],1024,lv.beats[i].slots+1))
-    return {id:lv.id,beat:raw.beat,world:w,used:used,ghost:raw.ghost === true,starBeat:flags(raw.starBeat,beats),gotStars:flags(raw.gotStars,(lv.optional || []).map(function (o) { return o.id })),bonus:bounded(raw.bonus,3,0),elapsed:duration(raw.elapsed),events:{count:bounded(events.count,3,0),last:duration(events.last)}}
+    return {id:lv.id,rev:rev,beat:raw.beat,world:w,used:used,ghost:raw.ghost === true,shown:raw.shown === true,starBeat:flags(raw.starBeat,beats),gotStars:flags(raw.gotStars,(lv.optional || []).map(function (o) { return o.id })),bonus:bounded(raw.bonus,3,0),elapsed:duration(raw.elapsed),events:{count:bounded(events.count,3,0),last:duration(events.last)}}
   }
   /** Return a new safe save; invalid records never discard valid sibling progress. */
   function clean (raw, ML, PG) {

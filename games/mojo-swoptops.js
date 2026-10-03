@@ -4,6 +4,9 @@
  *
  * The rules live in games/prog-grid.js (headless, shared): this file only draws the world, edits the
  * program, plays each command's result back as animation, runs the microgames and keeps the save.
+ * ONE interaction rule (owner 2026-10-03, "LEWATI vs SEBELAH"): small things are taken by driving OVER them
+ * (ground ring), blockers are handled from BESIDE them (action badge; Mojo turns to the one target). The
+ * Cara Main card teaches it on t1/t3 and reopens from #btn-rule. Every engine reason has its own MSG line.
  * Owner rules: no emoji, no failure words, no route preview before RUN (the only help is the PRD §9.1
  * hint ladder, one rung per tap on Petunjuk; its last rung caps the stars at 2), per-avatar save,
  * global mute ('dunia-emosi-sound' === 'off'), narration opt-in (speechSynthesis id-ID).
@@ -130,7 +133,7 @@
     ;[].forEach.call(D.querySelectorAll('.fly,.confetti'),function (n) { n.remove() })
   }
   var toastT = 0
-  function toast (m) { var t = $('toast'); t.textContent = m; t.className = 'toast show'; clearTimeout(toastT); toastT = later(function () { t.className = 'toast' }, 2400) }
+  function toast (m) { var t = $('toast'); t.textContent = m; t.className = 'toast show'; clearTimeout(toastT); toastT = W.setTimeout(function () { t.className = 'toast' }, 2400) }   // not later(): cancelPlayback must never strand a toast on screen
   function tap (id, fn) { var e = typeof id === 'string' ? $(id) : id; if (e) e.addEventListener('click', function (ev) { fn(ev) }) }
   function storePacing () {
     if (!G) return
@@ -147,6 +150,8 @@
       if (G.run) endRunUi()
       cancelPlayback(); hush()
     }
+    // a toast belongs to the screen that raised it (a map "segera dibuka" note never shows during play)
+    if (D.body.getAttribute('data-scr') !== id) { clearTimeout(toastT); $('toast').className = 'toast' }
     [].forEach.call(D.querySelectorAll('.scr'), function (s) { s.classList.toggle('active', s.id === id) })
     D.body.setAttribute('data-scr', id)
   }
@@ -199,12 +204,19 @@
 
   /* ── MISSION MAP ────────────────────────────────────────────────────── */
   var UNLOCK_ALL = /[?&]unlock=1/.test(location.search)
+  /* Owner rule 2026-10-03 "let them explore": finishing a level with ANY stars opens the next three, in order and
+     across episodes; the first three are open from the start; star totals never gate. Unlocks only grow (an old
+     save keeps everything it had and gains the new opens). */
+  var OPEN_AHEAD = 3
+  function maxDone () { var m = -1; ML.LEVELS.forEach(function (l, i) { if (S.lv[l.id]) m = i }); return m }
   function unlocked (i) {
-    if (UNLOCK_ALL || i === 0) return true
+    if (UNLOCK_ALL || i < OPEN_AHEAD) return true
     var lv = ML.LEVELS[i]
-    if (lv.ch === 'misi') return !!S.lv.t7 || !!S.lv[ML.LEVELS[i - 1].id]
-    return !!S.lv[ML.LEVELS[i - 1].id] || !!S.lv[lv.id]
+    if (S.lv[lv.id] || i <= maxDone() + OPEN_AHEAD) return true
+    return lv.ch === 'misi' && !!S.lv.t7   // the earlier rule's open, kept so no save ever loses a level
   }
+  // the exact level whose finish opens level i (1-based, as the tiles are numbered)
+  function opener (i) { return i - OPEN_AHEAD + 1 }
   function starImg (on) { return '<i style="background-image:url(' + MA.src('obj/star') + ');' + (on ? '' : 'opacity:.25;filter:grayscale(1)') + '"></i>' }
   function levelPic (lv) {
     var k = lv.icon || 'cmd/east', p = k.split('/')
@@ -219,7 +231,7 @@
     regionId = regionId || W.MojoMenu.region()
     var region = ML.REGIONS.filter(function (r) { return r.id === regionId })[0] || ML.REGIONS[0]
     show('scr-map')
-    $('scr-map').style.backgroundImage = 'url(' + W.MojoMenu.background(region.bg) + ')'
+    $('scr-map').style.backgroundImage = 'url(' + W.MojoMenu.background(MA.regionScene(region)) + ')'
     var tot = 0, max = 0, box = $('chapters'); box.innerHTML = ''
     region.levels.forEach(function (id) { tot += (S.lv[id] && S.lv[id].stars) || 0; max += 3 })
     $('map-title').textContent = region.title
@@ -233,12 +245,15 @@
         var ok = unlocked(i), rec = S.lv[lv.id], isNext = ok && lv.id === nextId && !rec
         var b = el('button', 'lvl' + (rec ? ' done' : '') + (ok ? '' : ' lock') + (isNext ? ' next' : ''))
         b.type = 'button'; b.setAttribute('data-level', lv.id)
-        b.setAttribute('aria-label', 'Misi ' + (i + 1) + ': ' + lv.title + (ok ? '' : ' (terkunci)'))
+        b.setAttribute('aria-label', 'Misi ' + (i + 1) + ': ' + lv.title + (ok ? '' : ' (terkunci: selesaikan level ' + opener(i) + ' dulu)'))
         var st = ''; for (var s = 1; s <= 3; s++) st += starImg(rec && rec.stars >= s)
         b.innerHTML = '<span class="tile"><span class="n fk">' + (i + 1) + '</span>' + (ok ? '' : '<i class="lk">' + MA.icon('lock') + '</i>') + '</span>' +
           '<div class="st">' + st + '</div><b>' + lv.title + '</b>'
         if (ok) tap(b, function () { SND.place(); start(lv.id) })
-        else tap(b, function () { toast('Selesaikan misi sebelumnya dulu, ya!') })
+        else tap(b, function () {
+          toast('Selesaikan level ' + opener(i) + ' dulu, ya!')
+          anim(b, [{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(-5px)' }, { transform: 'translateX(0)' }], 360, EIO)
+        })
         row.appendChild(b)
       })
       if (!row.children.length) return
@@ -266,15 +281,15 @@
     if (G && G.run) endRunUi()
     cancelPlayback(); hush()
     var resume = S.cp && S.cp.id === id && S.cp.beat > 0 && S.cp.beat < lv.beats.length
-    G = { lv: lv, idx: ML.index(id), bi: 0, cp: null, w: null, prog: [], hist: [], sel: -1, run: null, used: [], starBeat: {}, ghost: false, hint: 0, fail: null, dirty: false, ang: 0, gotStars: {} }
+    G = { lv: lv, idx: ML.index(id), bi: 0, cp: null, w: null, prog: [], hist: [], sel: -1, run: null, used: [], starBeat: {}, ghost: false, shown: false, fails: 0, trans: false, hint: 0, fail: null, dirty: false, ang: 0, gotStars: {} }
     if (resume) {
-      try { G.bi = S.cp.beat; G.cp = unpackWorld(S.cp.world, lv, G.bi); G.used = S.cp.used || []; G.ghost = !!S.cp.ghost; G.starBeat = S.cp.starBeat || {}; G.gotStars = S.cp.gotStars || {} } catch (e) { resume = false }
+      try { G.bi = S.cp.beat; G.cp = unpackWorld(S.cp.world, lv, G.bi); G.used = S.cp.used || []; G.ghost = !!S.cp.ghost; G.shown = !!S.cp.shown; G.starBeat = S.cp.starBeat || {}; G.gotStars = S.cp.gotStars || {} } catch (e) { resume = false }
     }
     if (!resume) { G.bi = 0; G.cp = newWorld(lv, 0) }
     G.w = G.cp
     G.runId = 0; G.elapsed = resume ? W.MojoEvents.resumeElapsed(S.cp.events,S.cp.elapsed) : 0; G.tick = performance.now(); G.active = true; G.bonus = resume && S.cp.bonus || 0
     G.eventGate = W.MojoEvents.create(lv.ch === 'belajar' && !S.lv[id], resume && S.cp.events)
-    $('scr-play').style.backgroundImage = 'url(' + W.MojoMenu.background(ML.region(id).bg) + ')'
+    $('scr-play').style.backgroundImage = 'url(' + W.MojoMenu.background(MA.scene(lv, G.bi, ML.region(id))) + ')'
     show('scr-play')
     $('p-title').textContent = lv.title
     $('bo-img').src = MA.src('char/bo')
@@ -283,10 +298,13 @@
   }
   function beginBeat (resumed) {
     var b = beat()
+    $('scr-play').style.backgroundImage = 'url(' + W.MojoMenu.background(MA.scene(G.lv, G.bi, ML.region(G.lv.id))) + ')'
     $('btn-run').disabled = false
-    G.prog = (b.prefill || []).slice(); G.hist = []; G.sel = -1; G.hint = 0; G.fail = null; G.dirty = false; G.w = G.cp
+    G.prog = (b.prefill || []).slice(); G.hist = []; G.sel = -1; G.hint = 0; G.fails = 0; G.fail = null; G.dirty = false; G.w = G.cp; G.trans = false
+    clearMarks(); hideGhost(); $('hint-lv').textContent = ''
     renderPalette(); $('palette').scrollTop = 0; renderStrip(); renderHud(); renderWorld(G.w, true); beatDots()
-    boSay(b.bo, true)
+    boSay(b.bo, true)   // the beat's own line: it opens with THIS beat's objective (gate: qa-prog-grid L)
+    helpUi()
     introCard(resumed)
   }
 
@@ -297,8 +315,10 @@
     board.style.setProperty('--cols', lv.grid.cols); board.style.setProperty('--rows', lv.grid.rows)
     $('objs').innerHTML = ''; $('decor').innerHTML = ''; $('fx').innerHTML = ''; OBJ = {}
     ;(lv.objects || []).forEach(function (o) {
-      var d = el('div', 'ob ' + o.type + (TYPE_PICKUP[o.type] ? ' pickup' : '') + (o.elev ? ' elev' : ''))
-      d.innerHTML = '<img alt="">'
+      var t = PG.TYPES[o.type] || {}
+      var d = el('div', 'ob ' + o.type + (TYPE_PICKUP[o.type] ? ' pickup' : '') + (o.elev ? ' elev' : '') + (t.walk && o.type !== 'zone' ? ' walk' : '') + (o.perch ? ' perch-' + o.perch : ''))
+      d.innerHTML = (t.walk && o.type !== 'zone' ? '<i class="ring" aria-hidden="true"></i>' : '') + (o.perch === 'tree' ? '<img class="perch" alt="" src="' + MA.src('obj/tree') + '">' : '') + '<img class="main" alt="">' +
+        (t.verb ? '<i class="act" aria-hidden="true" style="background:' + cmdColor(t.verb) + '">' + MA.icon(t.verb) + '</i>' : '')
       d.setAttribute('data-id', o.id)
       $('objs').appendChild(d); OBJ[o.id] = d
     })
@@ -315,7 +335,7 @@
   var TYPE_PICKUP = { bolt: 1, drop: 1, star: 1 }
   function layout () {
     if (!G) return
-    $('scr-play').style.backgroundImage = 'url(' + W.MojoMenu.background(ML.region(G.lv.id).bg) + ')'
+    $('scr-play').style.backgroundImage = 'url(' + W.MojoMenu.background(MA.scene(G.lv, G.bi, ML.region(G.lv.id))) + ')'
     var wrap = $('board-wrap'), lv = G.lv, pad = 26
     var w = wrap.clientWidth - pad, h = wrap.clientHeight - pad
     if (w <= 0 || h <= 0) return
@@ -343,7 +363,7 @@
   var BUILDINGS = BOARD_BUILDINGS
   function tileImg (key) { var im = tileImages[key]; return im && im.complete && im.naturalWidth ? im : null }
   function roadShape (ch, r, c) {
-    function rd (a, b) { var k = ch(a, b); return k === '.' || k === '=' }
+    function rd (a, b) { var k = ch(a, b); return k === '.' || k === '=' || k === 'o' }   // a pit is a gap IN the road
     var n = rd(r - 1, c), so = rd(r + 1, c), e = rd(r, c + 1), wv = rd(r, c - 1), v = n || so, h = e || wv
     if (v && !h) return 'v'
     if (h && !v) return 'h'
@@ -375,9 +395,8 @@
     var grass = tileImg('grass'), road = tileImg(indoor ? 'indoor-floor' : 'road'), water = tileImg('water'), wall = tileImg('wall'), hole = tileImg('trap-hole')
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
       var k = ch(r, c), X = c * s, Y = r * s, filled = !!w.fill[r + ',' + c]
-      if (k === ',' || k === 'T' || k === 'o' || (k === '#' && !indoor)) {
+      if (k === ',' || k === 'T' || (k === '#' && !indoor)) {
         if (grass) drawTile(x, grass, X, Y, s, 0.07); else { x.fillStyle = T.grass; x.fillRect(X, Y, s, s) }
-        if (k === 'o') { if (hole) drawTile(x, hole, X + s * 0.06, Y + s * 0.06, s * 0.88, 0.02); else { x.fillStyle = '#3E2723'; x.beginPath(); x.ellipse(X + s / 2, Y + s / 2, s * 0.36, s * 0.3, 0, 0, 7); x.fill() } }
         if (k === '#' && !onCell[r + ',' + c]) {
           var b = tileImg('b:' + BUILDINGS[(r * 3 + c * 5) % BUILDINGS.length])
           if (b) { var bw = b.naturalWidth, bh = b.naturalHeight, sc = Math.min(s * 0.9 / bw, s * 0.9 / bh); x.drawImage(b, X + (s - bw * sc) / 2, Y + (s - bh * sc) / 2 + s * 0.02, bw * sc, bh * sc) }
@@ -390,13 +409,34 @@
       } else {
         if (road) { if (indoor) drawTile(x, road, X, Y, s, 0.04); else drawRoad(x, road, X, Y, s, roadShape(ch, r, c)) }
         else { x.fillStyle = T.road; x.fillRect(X, Y, s, s) }
+        if (k === 'o') { if (hole) drawTile(x, hole, X + s * 0.06, Y + s * 0.06, s * 0.88, 0.02); else { x.fillStyle = '#3E2723'; x.beginPath(); x.ellipse(X + s / 2, Y + s / 2, s * 0.36, s * 0.3, 0, 0, 7); x.fill() } }
         if (filled) {
           x.fillStyle = '#A1887F'; x.beginPath(); x.ellipse(X + s / 2, Y + s / 2, s * 0.36, s * 0.3, 0, 0, 7); x.fill()
           x.fillStyle = '#8D6E63'; [[0.38, 0.46, 0.08], [0.58, 0.42, 0.1], [0.5, 0.6, 0.07]].forEach(function (p) { x.beginPath(); x.arc(X + s * p[0], Y + s * p[1], s * p[2], 0, 7); x.fill() })
         }
       }
     }
+    if (!indoor) kerbs(x, ch, R, Cn, s)
     // cells Mojo must reach are shown by their objects (flag, people), never a path
+  }
+  // ROAD rule (2026-10-03): a stone kerb wherever road meets grass / trees / buildings, so the drivable road reads
+  // as one network and the lawn as scenery. Road cells: '.', '=', a pit inside the road.
+  function kerbs (x, ch, R, Cn, s) {
+    function isRoad (k) { return k === '.' || k === '=' || k === 'o' }
+    var kw = Math.max(2, s * 0.055)
+    for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
+      if (!isRoad(ch(r, c))) continue
+      var X = c * s, Y = r * s
+      ;[[-1, 0], [0, 1], [1, 0], [0, -1]].forEach(function (d, i) {
+        var k = ch(r + d[0], c + d[1])
+        if (k == null || isRoad(k) || k === '~') return
+        var rx = i === 1 ? X + s - kw : X, ry = i === 2 ? Y + s - kw : Y, rw = i % 2 ? kw : s, rh = i % 2 ? s : kw
+        x.fillStyle = '#EDE6D3'; x.fillRect(rx, ry, rw, rh)
+        x.fillStyle = 'rgba(70,60,40,.28)'
+        if (i === 0) x.fillRect(X, Y + kw, s, 1.5); else if (i === 2) x.fillRect(X, Y + s - kw - 1.5, s, 1.5)
+        else if (i === 1) x.fillRect(X + s - kw - 1.5, Y, 1.5, s); else x.fillRect(X + kw, Y, 1.5, s)
+      })
+    }
   }
   function tf (r, c, extra) { return 'translate(' + (c * CELL) + 'px,' + (r * CELL) + 'px)' + (extra || '') }
   function placeAll (w) {
@@ -436,7 +476,7 @@
     }
   }
   function objTag (o, lv0) {
-    if (o.type === 'fire' && o.st !== 'out') return '<img src="' + MA.src('obj/drop') + '" alt="">' + o.str
+    if (o.type === 'fire' && o.st !== 'out') return '<img src="' + MA.src('obj/drop') + '" alt="">' + o.str   // the water it still needs
     if (o.type === 'person' && o.elev && o.st !== 'rescued') return '<img src="' + MA.src('tool/tangga') + '" alt="">' + o.elev
     if (o.type === 'repair' && o.st !== 'fixed') {
       var n = o.needs || {}, t = ''
@@ -450,10 +490,11 @@
   }
   function renderObj (o) {
     var d = OBJ[o.id]; if (!d) return
-    var img = d.querySelector('img'), s = objImg(o)
+    var img = d.querySelector('img.main'), s = objImg(o)
     if (img.getAttribute('src') !== s) img.src = s
     var gone = o.st === 'got' || o.st === 'rescued' || o.st === 'cleared' || o.st === 'carried'
     d.classList.toggle('gone', gone)
+    d.classList.toggle('resolved', !PG.blocks(o))   // a resolved SEBELAH object: its action badge goes away
     d.classList.toggle('done', o.st === 'open' || (o.type === 'fire' && o.st === 'out'))
     var tg = d.querySelector('.tag'), t = objTag(o)
     if (t) { if (!tg) { tg = el('span', 'tag'); d.appendChild(tg) } if (tg.innerHTML !== t) tg.innerHTML = t } else if (tg) tg.remove()
@@ -607,6 +648,10 @@
   }
   function clearFail () {
     G.fail = null
+    clearMarks()
+  }
+  function clearMarks () {
+    ;[].forEach.call(D.querySelectorAll('.cell-mark'), function (d) { d.remove() })
     ;[].forEach.call(D.querySelectorAll('.ob.focus'), function (d) { d.classList.remove('focus') })
     ;[].forEach.call(D.querySelectorAll('.need'), function (d) { d.remove() })
     ;[].forEach.call(D.querySelectorAll('.cmd.cand'), function (d) { d.classList.remove('cand') })
@@ -615,6 +660,7 @@
   function resetView () {
     if (!G.dirty) return
     G.dirty = false; G.w = G.cp
+    boSay(beat().bo, true)   // the stop is fixed: Bo's line is this beat's objective again, never the stale clue
     var mj = $('mojo')
     anim(mj, [{ opacity: 1 }, { opacity: 0 }], 120, EOUT, function () {
       renderWorld(G.w, true)
@@ -672,8 +718,9 @@
 
   /* ── RUN ────────────────────────────────────────────────────────────── */
   var T = { move: 430, turn: 260, act: 560, gap: 170 }
-  function run () {
+  function run (demo) {
     if (G.run) { stopRun(); return }
+    if (G.trans) return
     if (!G.prog.length) { boSay('Isi rencana dulu. Ketuk perintah, lalu tekan JALAN!', false, true); SND.think(); return }
     closeOv('ov-card')
     G.sel = -1; clearFail(); hideGhost()
@@ -681,11 +728,11 @@
     renderStrip()
     ;[].forEach.call(D.querySelectorAll('.slot'), function (s) { s.classList.remove('done', 'active', 'fail') })
     G.runId++
-    G.run = { cur: PG.cursor(G.prog), t: 0, n: 0, stars: {} }
+    G.run = { cur: PG.cursor(G.prog), t: 0, n: 0, stars: {}, demo: demo === true }
     $('run-t').textContent = 'Berhenti'; $('btn-run').classList.add('stop')
     D.querySelector('.p-strip').classList.add('locked')
-    $('btn-undo').disabled = true; $('btn-clear').disabled = true; $('btn-hint').disabled = true
-    boSay('Ayo, Mojo!', true)
+    $('btn-undo').disabled = true; $('btn-clear').disabled = true; $('btn-hint').disabled = true; helpUi()
+    boSay(demo === true ? 'Lihat caranya bersama Bo, langkah demi langkah.' : 'Ayo, Mojo!', true)
     SND.run()
     G.run.t = later(runStep, 280)
   }
@@ -697,6 +744,7 @@
     $('btn-hint').disabled = false
     $('bo-details').disabled = false
     renderStripKeep()
+    helpUi()
   }
   function renderStripKeep () {
     var marks = [].map.call(D.querySelectorAll('.slot'), function (s) { return s.className })
@@ -712,7 +760,7 @@
     var i = x.path[0]
     ;[].forEach.call(D.querySelectorAll('.slot.active'), function (s) { s.classList.remove('active') })
     var se = slotEl(i); if (se) { se.classList.add('active'); if (se.scrollIntoView) se.scrollIntoView({block:'nearest',inline:'center'}) }
-    var res = PG.stepBeat(G.w, x.cmd, beat(), {})
+    var res = PG.stepBeat(G.w, x.cmd, beat(), R.demo ? { auto: true } : {})   // the demo never asks the child
     if (res.status === 'waiting-for-microgame') {
       var mg = res.info.mg
       if (S.mg[mg.id + ':' + (mg.kind === 'letters' ? S.set.lang : '')]) {
@@ -732,14 +780,16 @@
     var R = G.run; if (!R) return
     if (!PG.ok(res.status)) return failAt(i, cmd, res)
     var prev = G.w; G.w = res.world; R.n++
+    if (R.demo) boSay('Langkah ' + R.n + ': ' + stepLine(cmd, res, prev), false)
     play(prev, res, cmd, function () {
       if (G.run !== R) return
       var se = slotEl(i); if (se) { se.classList.remove('active'); se.classList.add('done') }
       renderHud()
       if (res.completed && res.completed.length) { SND.goal(); burst(G.w.m.r, G.w.m.c, '#7CF0A0') }
-      function next () { if (G.run !== R) return; if (res.beatDone) return beatComplete(); R.t = later(runStep, T.gap) }
+      function next () { if (G.run !== R) return; if (res.beatDone) return R.demo ? demoDone() : beatComplete(); R.t = later(runStep, R.demo ? 1100 : T.gap) }
+      if (R.demo) return next()
       var trigger = (res.events || []).some(function (e) { return ['collect','star','tool','repair','rescue'].indexOf(e.e) >= 0 })
-      if (trigger && eventQuestion(next)) return
+      if (trigger && eventQuestion(next, res.events)) return
       next()
     })
   }
@@ -749,56 +799,140 @@
     var t = miss ? obInfo(miss).t.toLowerCase() : ''
     SND.think()
     boSay('Semua perintah sudah jalan, tapi ' + (t || 'tugasnya') + ' belum selesai. Tambah perintah lagi?', false, true)
-    G.fail = { index: G.prog.length, reason: 'ended', obj: miss && miss.id }; eventQuestion(function () {})
+    G.fails++; helpUi()
+    G.fail = { index: G.prog.length, reason: 'ended', obj: miss && miss.id }; eventQuestion(function () {}, [{ e: 'ended' }])
+  }
+  /* "Tunjukkan Caranya" (owner 2026-10-03, G31 only): the solver's plan for this beat from where Mojo stands now
+     fills the strip and plays with Bo naming every step; then the world resets and the child presses JALAN.
+     A mission finished after a demo earns one star (said gently on the result card). */
+  function stepLine (cmd, res, prev) {
+    var v = PG.verbOf(cmd), id = null
+    ;(res.events || []).forEach(function (e) { if (!id && e.id && e.e !== 'turn') id = e.id })
+    var o = id ? PG.find(prev, id) : null
+    if (v === 'swop') return 'Jadi ' + SHORT[cmd.slice(5)] + '.'
+    if (DIRW[cmd]) return 'Jalan ke ' + DIRW[cmd] + '.' + (o ? ' LEWATI ' + low(o) + '.' : '')
+    if (v === 'raise') return 'NAIK ke ' + res.world.m.lift + '.'
+    return up(v) + (o ? ' ' + low(o) : '') + '.'
+  }
+  function showMe () {
+    if (!G || G.run || G.trans) return
+    var sol = PG.solve(G.cp, beat())
+    if (!sol) { boSay('Hmm, Bo juga perlu berpikir. Hapus rencananya, lalu coba lagi.', false, true); return }
+    closeOv('ov-card'); hideGhost()
+    G.hist.push(G.prog.slice()); if (G.hist.length > 40) G.hist.shift()
+    G.prog = sol.slice(0, beat().slots); G.sel = -1; G.shown = true
+    clearFail(); renderPalette(); renderStrip()
+    SND.place()
+    run(true)
+  }
+  function demoDone () {
+    endRunUi()
+    G.demoed = true
+    later(function () {
+      if (G.run) return
+      G.dirty = false; G.w = G.cp; renderWorld(G.w, true); renderHud()
+      ;[].forEach.call(D.querySelectorAll('.slot'), function (s) { s.classList.remove('done', 'active', 'fail') })
+      boSay('Begitu caranya! Sekarang giliranmu: tekan JALAN!', false)
+    }, 900)
   }
 
   /* ── debug mode (PRD §9): pause, highlight command + object, one Bo clue, sequence intact ── */
   function objAt (r, c, type) { var a = PG.objsAt(G.w, r, c); for (var k = 0; k < a.length; k++) if (!type || a[k].type === type) return a[k]; return null }
-  function clue (res, cmd) {
-    var inf = res.info || {}, v = PG.verbOf(cmd)
-    switch (res.reason) {
-      case 'form': return (SHORT[inf.form] || formName(inf.form)) + ' belum bisa ' + (DOES[v] || v) + '. Pilih wujud yang sesuai untuk membantu.'
-      case 'not-allowed': return 'Swop itu belum ada di misi ini. Pilih yang lain, ya.'
-      case 'edge': return 'Ups, itu ujung papan. Coba panah yang lain?'
-      case 'terrain': return 'Ada ' + (inf.name || 'sesuatu') + ' di depan. Cari jalan lain?'
-      case 'object': {
-        var o = PG.find(G.w, inf.id) || {}
-        if (o.type === 'rock') return 'Batu besar menghalangi! Siapa yang bisa mengatasi batu?'
-        if (o.type === 'fire') return 'Ada api di depan! Padamkan dulu, ya.'
-        if (o.type === 'person') return 'Ada ' + (o.name || 'teman') + ' di depan. Tolong dia!'
-        if (o.type === 'repair') return 'Yang di depan masih rusak. Perbaiki dulu!'
-        if (o.type === 'toolbox') return 'Itu kotak alat. Coba AMBIL.'
-        return 'Ada yang menghalangi di depan.'
-      }
-      case 'no-target': return { spray: 'Semprot ke mana? Bawa Mojo ke sebelah api dulu.', push: 'Tidak ada batu di sebelah Mojo. Jalan dulu ke arah batunya.', raise: 'Naik untuk apa? Bawa Mojo ke sebelah tempat yang tinggi.',
-        rescue: 'Siapa yang ditolong? Bawa Mojo ke sebelah temannya.', pick: 'Tidak ada yang bisa diambil di sebelah Mojo.', repair: 'Tidak ada yang rusak di sebelah Mojo.' }[v] || 'Di sebelah Mojo tidak ada apa-apa.'
-      case 'no-water': return 'Tangki air kosong! Api masih perlu ' + (inf.need || '') + ' air. Cari tetes air biru.'
-      case 'lift-up': return 'Keranjang masih di atas. TURUN dulu, baru jalan.'
-      case 'need-tool': return 'Kita perlu ' + (inf.tool || 'alat') + ' dulu. AMBIL dari kotak alat!'
-      case 'need-bolts': return 'Perlu ' + inf.need + ' baut, baru ada ' + inf.have + '. Kurang berapa lagi?'
-      case 'too-high': { var p = PG.find(G.w, inf.id) || {}; return (p.name || 'Itu') + ' ada di atas, tinggi ' + inf.elev + '. Mojo perlu naik ke atas!' }
-      case 'push-edge': case 'push-wall': case 'push-object': return 'Batunya tidak bisa didorong ke sana. Coba arah lain?'
-      case 'land': return 'Mojo tidak bisa mendarat di situ.'
-      case 'too-tall': return 'Terlalu tinggi untuk dilompati.'
-      case 'in-air': return 'Mendarat dulu, baru Swop.'
-      case 'carrying': return 'Taruh barangnya dulu, baru Swop.'
-      case 'hands-full': return 'Mojo sudah membawa barang.'
-      default: return 'Hmm, Mojo berhenti di sini. Coba lihat perintahnya.'
+  /* ONE message per engine reason (tools/qa-prog-grid.mjs section L proves every ProgGrid.REASONS key is here).
+     Every line names the next move or the form that helps; nothing falls back to a generic sentence. */
+  var OBJ_VERB = { rock: 'push', log: 'push', fire: 'spray', person: 'rescue', repair: 'repair', crate: 'pick' }
+  var WHAT = { gate: 'Gerbang', swing: 'Ayunan', lamp: 'Lampu' }
+  var TOOL = { palu: 'palu' }
+  function up (v) { return (LABEL[v] || v).toUpperCase() }
+  function nameOf (o) {
+    if (!o) return 'Itu'
+    if (o.type === 'person') return o.name || 'Teman'
+    if (o.type === 'repair') return WHAT[o.what] || 'Yang rusak'
+    return { fire: 'Api', rock: 'Batu', log: 'Kayu', crate: 'Peti', toolbox: 'Kotak alat', flag: 'Bendera' }[o.type] || 'Itu'
+  }
+  // "Swop jadi Pemadam, lalu SEMPROT dari sebelahnya." / "Berhenti di sebelahnya, lalu SEMPROT."
+  function actLine (verb) {
+    if (G && !PG.can(G.w.m.form, verb)) {
+      var fs = PG.formsWith(verb, beat().forms)
+      if (fs.length) return 'Swop jadi ' + SHORT[fs[0]] + ', lalu ' + up(verb) + ' dari sebelahnya.'
     }
+    return 'Berhenti di sebelahnya, lalu ' + up(verb) + '.'
+  }
+  function findO (id) { return id ? PG.find(G.w, id) : null }
+  var MSG = {
+    'empty': 'Kotak itu kosong. Pilih perintah dulu, ya.',
+    'form': function (inf, v) { var fs = inf.forms || []; return (SHORT[inf.form] || formName(inf.form)) + ' belum bisa ' + (DOES[v] || v) + '. ' + (fs.length ? 'Swop jadi ' + SHORT[fs[0]] + ' dulu.' : 'Pilih wujud yang sesuai.') },
+    'unknown-form': 'Wujud itu belum ada. Pilih Swop yang lain, ya.',
+    'not-allowed': 'Swop itu belum ada di misi ini. Pilih yang lain, ya.',
+    'unknown-verb': 'Perintah itu belum dikenal Mojo. Pilih perintah dari daftar, ya.',
+    'edge': 'Ups, itu ujung papan. Coba panah yang lain?',
+    'grass': function (inf) { return inf.land ? 'Mojo tidak boleh mendarat di rumput taman. Mojo jalan di jalan raya saja.' : 'Itu rumput taman. Mojo jalan di jalan raya saja.' },
+    'terrain': function (inf) { return inf.terrain === 'o' ? 'Ada lubang di sana. Isi dengan batu, atau LOMPAT dari sebelahnya.' : 'Ada ' + (inf.name || 'tembok') + ' di sana. Mojo tidak bisa lewat. Cari jalan lain?' },
+    'object': function (inf) {
+      var o = findO(inf.id) || { type: inf.type }, v = OBJ_VERB[o.type]
+      var head = o.type === 'fire' ? 'Ada api di depan! ' : o.type === 'rock' ? 'Batu besar menghalangi! ' : o.type === 'person' ? nameOf(o) + ' ada di sana. ' : o.type === 'repair' ? nameOf(o) + ' masih rusak. ' : nameOf(o) + ' menghalangi. '
+      return head + (v ? actLine(v) : 'Cari jalan lain?')
+    },
+    'lift-up': 'Keranjang masih di atas. TURUN dulu, baru jalan.',
+    'in-air': 'Mojo masih terbang. MENDARAT dulu, baru Swop.',
+    'carrying': 'Taruh barangnya dulu, baru Swop.',
+    'no-target': function (inf, v) {
+      return { spray: 'Tidak ada api di sebelah Mojo. Berhenti di SEBELAH api, lalu SEMPROT.', push: 'Tidak ada batu di sebelah Mojo. Berhenti di SEBELAH batu, lalu DORONG.',
+        raise: 'Tidak ada yang tinggi di sebelah Mojo. Berhenti di SEBELAH pohon, balkon atau lampu, lalu NAIK.', rescue: 'Tidak ada teman di sebelah Mojo. Berhenti di SEBELAH temannya, lalu TOLONG.',
+        repair: 'Tidak ada yang rusak di sebelah Mojo. Berhenti di SEBELAH yang rusak, lalu PERBAIKI.', pick: 'Tidak ada peti di sebelah Mojo. Berhenti di SEBELAH peti, lalu AMBIL.',
+        hook: 'Tidak ada peti di sebelah Mojo. Berhenti di SEBELAH peti, lalu KAIT.', jump: 'Tidak ada batu atau lubang di sebelah Mojo. LOMPAT hanya melewati satu rintangan.' }[v] || 'Di sebelah Mojo belum ada yang bisa dibantu. Jalan dulu ke SEBELAH-nya.'
+    },
+    'ambiguous': function (inf, v) { return 'Ada dua yang bisa di-' + (LABEL[v] || v).toLowerCase() + ' di sebelah Mojo. Pindah ke tempat yang hanya di sebelah satu, ya.' },
+    'push-edge': 'Batunya tidak bisa keluar papan. Dorong dari sisi lain?',
+    'push-wall': function (inf) { return inf.terrain === ',' ? 'Batu tidak boleh masuk rumput taman. Dorong dari sisi lain?' : 'Ada tembok di belakang batu. Dorong dari sisi lain?' },
+    'push-object': 'Ada benda di belakang batu. Dorong dari sisi lain?',
+    'too-tall': 'Itu terlalu tinggi untuk dilompati. Cari jalan lain?',
+    'jump-fire': 'Api tidak bisa dilompati. Padamkan dulu: SEMPROT dari sebelahnya!',
+    'jump-person': function (inf) { return nameOf(findO(inf.id)) + ' tidak boleh dilompati. TOLONG dari sebelahnya!' },
+    'jump-repair': function (inf) { return nameOf(findO(inf.id)) + ' tidak bisa dilompati. PERBAIKI dari sebelahnya!' },
+    'land': 'Mojo tidak bisa mendarat di sana. Lompat ke arah lain?',
+    'no-water': function (inf) { return 'Tangki air kosong! Api masih perlu ' + (inf.need || 1) + ' air. LEWATI tetes air biru dulu.' },
+    'height': function (inf) { return 'Belum pas. Tingginya ' + inf.want + '. Coba lagi!' },
+    'not-raised': 'Keranjang sudah di bawah. TURUN dipakai setelah NAIK.',
+    'too-high': function (inf, v) {
+      var o = findO(inf.id)
+      if (inf.fly) return nameOf(o) + ' ada di atas. TERBANG dulu, lalu TOLONG.'
+      return nameOf(o) + ' ada di atas, tinggi ' + inf.elev + '. NAIK ke ' + inf.elev + ' dulu, lalu ' + up(v) + '.'
+    },
+    'need-form': function (inf) { var fs = inf.forms || []; return nameOf(findO(inf.id)) + ' ada di atas, tinggi ' + inf.elev + '. ' + (fs.length ? 'Swop jadi ' + SHORT[fs[0]] + ', lalu NAIK ke ' + inf.elev + '.' : 'Mojo perlu wujud yang bisa naik.') },
+    'hands-full': 'Mojo sudah membawa barang. TARUH dulu, ya.',
+    'too-heavy': 'Petinya terlalu berat. Swop jadi Derek, lalu KAIT.',
+    'microgame': 'Kotak alat belum terbuka. Susun hurufnya untuk mendapat alat!',
+    'hands-empty': 'Mojo belum membawa apa-apa. AMBIL peti dulu.',
+    'drop-here': 'Tidak bisa menaruh di sana. Cari tempat kosong di depan Mojo.',
+    'on-ground': 'Mojo masih di darat. TERBANG dulu, baru MENDARAT.',
+    'no-landing': 'Tidak bisa mendarat di sana. Terbang ke jalan dulu.',
+    'need-tool': function (inf) { return 'Kita perlu ' + (TOOL[inf.tool] || inf.tool || 'alat') + ' dulu. LEWATI kotak alat untuk mengambilnya!' },
+    'need-bolts': function (inf) { return 'Perlu ' + inf.need + ' baut, baru ada ' + inf.have + '. LEWATI baut untuk menambah. Kurang berapa lagi?' },
+    'need-water': function (inf) { return 'Perlu ' + inf.need + ' air, baru ada ' + inf.have + '. LEWATI tetes air biru.' },
+    'cap-full': function (inf) { return inf.res === 'water' ? 'Tangki air sudah penuh! Tetes airnya tetap di sana.' : 'Kotak baut sudah penuh! Bautnya tetap di sana.' }
+  }
+  function clue (res, cmd) {
+    var m = MSG[res.reason]
+    if (m == null) { console.warn('[Mojo] no message for reason', res.reason); return String(res.reason) }
+    return typeof m === 'function' ? m(res.info || {}, PG.verbOf(cmd), res) : m
   }
   function failAt (i, cmd, res) {
     endRunUi()
     SND.think()
     var se = slotEl(i); if (se) { se.classList.remove('active'); se.classList.add('fail') }
     var inf = res.info || {}, a = PG.ahead(G.w), target = inf.id ? PG.find(G.w, inf.id) : objAt(a[0], a[1])
+    if (inf.turn != null && !target) { var t2 = [G.w.m.r + PG.DIRS[inf.turn][0], G.w.m.c + PG.DIRS[inf.turn][1]]; target = objAt(t2[0], t2[1]) }
     G.fail = { index: i, reason: res.reason, status: res.status, verb: PG.verbOf(cmd), forms: inf.forms || null, obj: target && target.id }
     if (target && OBJ[target.id]) OBJ[target.id].classList.add('focus')
     bump(cmd, res)
     boSay(clue(res, cmd), false, true)
-    eventQuestion(function () {})
+    G.fails++; helpUi()
+    eventQuestion(function () {}, [{ e: 'bump', reason: res.reason }])
   }
   function bump (cmd, res) {
-    var m = G.w.m, d = PG.DIRS[m.h], mj = $('mojo'), base = tf(m.r, m.c)
+    var m = G.w.m, inf = res.info || {}, h = inf.turn != null ? inf.turn : m.h, d = PG.DIRS[h], mj = $('mojo'), base = tf(m.r, m.c)
+    if (inf.turn != null) turnAnim(inf.turn)   // Mojo still turns to the one target, then shows why it cannot act
     if (res.status === 'invalid-capability') {
       popIcon(PG.verbOf(cmd) === 'swop' ? 'swop' : PG.verbOf(cmd), m.r, m.c, true)
       return
@@ -809,6 +943,13 @@
   /* ── playback of one command's events ──────────────────────────────── */
   function play (prev, res, cmd, done) {
     var ev = res.events || [], wait = 60, m = G.w.m, swop = null
+    if (ev[0] && ev[0].e === 'turn' && ev[0].auto) {
+      // SEBELAH: Mojo visibly turns to the one target first (150 ms), then acts
+      turnAnim(ev[0].h); SND.turn()
+      var rest = Object.assign({}, res, { events: ev.slice(1) })
+      later(function () { play(prev, rest, cmd, done) }, 170)
+      return
+    }
     ev.forEach(function (e) { if (e.e === 'swop') swop = e })
     if (swop) return swopAnim(swop, function () { renderHud(); done() })
     ev.forEach(function (e) {
@@ -820,7 +961,7 @@
         case 'jump': jumpMojo(e.from, e.to); SND.boing(); wait = Math.max(wait, 560); break
         case 'collect': collect(e, T.move); break
         case 'star': G.run.stars[e.id] = true; later(function () { flyTo(MA.src('obj/star'), e.id, 'g-star'); SND.star() }, T.move * 0.8); break
-        case 'full': later(function () { toast(e.res === 'water' ? 'Tangki air sudah penuh!' : 'Kotak baut sudah penuh!') }, T.move); break
+        case 'full': later(function () { toast(MSG['cap-full'](e)) }, T.move); break
         case 'spray': spray(e); wait = Math.max(wait, 760); break
         case 'raise': raiseAnim(e); wait = Math.max(wait, 600); break
         case 'lower': placeMojo(m); tone(500, 300, 0.25, 0.06); wait = Math.max(wait, 300); break
@@ -842,6 +983,11 @@
   function turnMojo (h, h0) {
     G.ang = h * 90
     faceMojo(h)
+  }
+  function turnAnim (h) {
+    faceMojo(h)
+    var rot = $('mojo-rot')
+    anim(rot, [{ transform: 'scale(1)' }, { transform: 'scale(.84,1.1)', offset: 0.45 }, { transform: 'scale(1)' }], 150, EOUT, function () { rot.style.transform = 'none' })
   }
   function pushObj (id, to) {
     var d = OBJ[id], o = PG.find(G.w, id); if (!d) return
@@ -879,7 +1025,10 @@
       anim(s, [{ transform: 'translate(' + p0[0] + 'px,' + p0[1] + 'px) scale(.6)', opacity: 0 }, { transform: 'translate(' + p0[0] + 'px,' + p0[1] + 'px) scale(.8)', opacity: 1, offset: 0.1 },
         { transform: 'translate(' + (p1[0] + jx) + 'px,' + (p1[1] + jy) + 'px) scale(1.2)', opacity: 0 }], 520 + k * 25, EOUT, function () { s.remove() })
     })(k)
-    later(function () { renderObj(PG.find(G.w, e.id)); if (e.left === 0) { burst(a[0], a[1], '#B3E5FC'); SND.goal() } }, 480)
+    later(function () {
+      renderObj(PG.find(G.w, e.id))
+      if (e.left === 0) { burst(a[0], a[1], '#B3E5FC'); SND.goal() } else toast('Api masih perlu ' + e.left + ' air. LEWATI tetes air biru, lalu SEMPROT lagi.')
+    }, 480)
   }
   function raiseAnim (e) {
     var mod = $('mojo-mod')
@@ -979,17 +1128,51 @@
   }
 
   /* Brief contextual cards: active play only, one per run, two-minute gap, three per mission. */
-  function eventQuestion (done) {
+  /* The things this level really has (owner 2026-10-03: never ask about what is not on the board). Each theme
+     is a noun + the owner sprite it is drawn with; the question shows that many sprites, so it is always answerable. */
+  var THEME_ART = { bolt: ['baut', 'obj/bolt'], drop: ['tetes air', 'obj/drop'], star: ['bintang', 'obj/star'], fire: ['api', 'obj/fire'],
+    tree: ['pohon', 'obj/tree'], flag: ['bendera', 'obj/flag'], rock: ['batu', 'obj/rock'], toolbox: ['kotak alat', 'obj/toolbox'] }
+  function levelThemes (lv) {
+    var t = {}
+    ;(lv.objects || []).forEach(function (o) { if (THEME_ART[o.type]) t[o.type] = 1 })
+    if (lv.cap && lv.cap.bolts != null) t.bolt = 1
+    if (lv.cap && lv.cap.water != null) t.drop = 1
+    if (lv.grid.map.join('').indexOf('T') >= 0) t.tree = 1
+    return Object.keys(t)
+  }
+  // the moment that raised the card, in one line, and the theme it is about (the thing just taken, else the level's)
+  function eventMoment (evs) {
+    var e = (evs || [])[0] || {}, pick = null, why = 'Mojo istirahat sebentar.'
+    ;(evs || []).forEach(function (x) {
+      if (x.e === 'collect') { pick = x.res === 'water' ? 'drop' : 'bolt'; why = x.res === 'water' ? 'Mojo dapat tetes air!' : 'Mojo dapat baut!' }
+      if (x.e === 'star') { pick = 'star'; why = 'Mojo dapat bintang!' }
+      if (x.e === 'tool') { pick = 'toolbox'; why = 'Mojo dapat palu dari kotak alat!' }
+      if (x.e === 'repair') why = 'Berhasil diperbaiki!'
+      if (x.e === 'rescue') why = 'Temannya selamat!'
+    })
+    if (e.e === 'bump') why = 'Mojo menabrak!'
+    if (e.e === 'ended') why = 'Rencana Mojo sudah habis.'
+    return { why: why + ' Jawab dulu untuk bonus lencana baut, atau lanjutkan misi.', pick: pick }
+  }
+  function countQuestion (lv, evs) {
+    var themes = levelThemes(lv), mo = eventMoment(evs)
+    if (!themes.length) return null
+    var key = mo.pick && themes.indexOf(mo.pick) >= 0 ? mo.pick : themes[Math.floor(Math.random() * themes.length)]
+    var n = 2 + Math.floor(Math.random() * 5), art = THEME_ART[key]   // 2..6 things, drawn
+    var opts = [n - 1, n, n + 1].sort(function () { return Math.random() - 0.5 })
+    return { theme: key, noun: art[0], img: MA.src(art[1]), n: n, answer: String(n), choices: opts.map(String), prompt: 'Ada berapa ' + art[0] + '?', why: mo.why }
+  }
+  function eventQuestion (done, evs) {
     if (!G || !G.active || D.hidden || MG || $('ov-card').classList.contains('on')) return false
     var now = performance.now()
     G.elapsed += Math.max(0, now - G.tick); G.tick = now
     if (!G.eventGate.ready(G.elapsed,G.runId)) return false
-    var qs = W.SoalEngine.pick({ game:'g31', context:'challenge', count:1, grade:'mudah', easy:true, topic:'matematika', generators:['mat-a'], seed:Date.now() })
-    var q = qs[0]; if (!q) return false
+    var q = countQuestion(G.lv, evs); if (!q) return false
     G.eventGate.mark(G.elapsed,G.runId); storePacing()
-    MG = { kind:'event', answer:q.answer }
+    MG = { kind:'event', answer:q.answer, theme:q.theme, noun:q.noun, prompt:q.prompt }
     var choices = q.choices.map(function (c,i) { return '<button class="choice" type="button" data-answer="' + i + '">' + c + '</button>' }).join('')
-    var o = overlay('ov-mg','<div class="mg event-question"><div class="mg-h"><img class="event-bo" src="' + MA.src('char/bo') + '" alt="Bo"><div><h2 class="fk">Ide untuk Mojo</h2><p>' + q.prompt + '</p></div></div><div class="event-choices">' + choices + '</div><p id="event-feedback">Tidak perlu terburu-buru.</p><div class="row"><button class="btn b-soft fk" id="event-skip">Lanjutkan Misi</button></div></div>')
+    var scene = ''; for (var k = 0; k < q.n; k++) scene += '<img alt="" src="' + q.img + '">'
+    var o = overlay('ov-mg','<div class="mg event-question"><div class="mg-h"><img class="event-bo" src="' + MA.src('char/bo') + '" alt="Bo"><div><h2 class="fk">Ide untuk Mojo</h2><p class="eq-why">' + q.why + '</p><p>' + q.prompt + '</p></div></div><div class="eq-scene" id="eq-scene" role="img" aria-label="' + q.n + ' ' + q.noun + '">' + scene + '</div><div class="event-choices">' + choices + '</div><p id="event-feedback">Hitung gambarnya satu per satu. Tidak perlu terburu-buru.</p><div class="row"><button class="btn b-soft fk" id="event-skip">Lanjutkan Misi</button></div></div>')
     var resolved = false, answered = false
     function finish () { if (resolved) return; resolved = true; MG = null; closeOv('ov-mg'); done() }
     tap('event-skip',finish)
@@ -998,10 +1181,10 @@
         if (resolved || answered) return
         if (String(q.choices[+b.getAttribute('data-answer')]) === String(q.answer)) {
           answered = true; G.bonus++; S.rewardBolts++; save(); storePacing(); SND.goal(); b.disabled = true
-          $('event-feedback').textContent = 'Hebat! Satu lencana baut masuk ke Profil. ' + (q.explain || '')
+          $('event-feedback').textContent = 'Hebat! Ada ' + q.n + ' ' + q.noun + '. Satu lencana baut masuk ke Profil.'
           $('event-skip').className = 'btn b-go fk'
           ;[].forEach.call(o.querySelectorAll('[data-answer]'),function (choice) { choice.disabled = true })
-        } else { SND.think(); b.disabled = true; $('event-feedback').textContent = q.hint1 || 'Coba hitung lagi. Kamu boleh lanjutkan misi kapan saja.' }
+        } else { SND.think(); b.disabled = true; $('event-feedback').textContent = 'Coba hitung gambarnya lagi, satu per satu. Kamu boleh lanjutkan misi kapan saja.' }
       })
     })
     return true
@@ -1080,12 +1263,11 @@
     })
   }
 
-  /* ── hint ladder (PRD §9.1) — one rung per tap, never the route ────── */
-  function needVerb () {
-    var sol = PG.solve(G.cp, beat()) || []
-    for (var i = 0; i < sol.length; i++) { var v = PG.verbOf(sol[i]); if (PG.BASE.indexOf(v) < 0 && v !== 'swop') return v }
-    return 'east'
-  }
+  /* ── hint ladder (owner 2026-10-03): four rungs, each a full sentence and more concrete than the last.
+     1 the goal and where it is, 2 the forms and actions it needs, 3 the next command (palette + cell),
+     4 the next two commands. The counter never runs out: after rung 4 "Tunjukkan Caranya" is offered and
+     further taps repeat rung 4 for the plan as it is now. ───────────────────────────────────────── */
+  var HINT_MAX = 4, DIRW = { up: 'atas', down: 'bawah', west: 'kiri', east: 'kanan' }
   function focusObj () {
     if (G.fail && G.fail.obj) return G.fail.obj
     var miss = (beat().objectives || []).filter(function (o) { return !PG.met(G.cp, o) })[0]
@@ -1093,43 +1275,103 @@
     if (miss && miss.at) { var f = (G.lv.objects || []).filter(function (o) { return o.type === 'flag' && o.at[0] === miss.at[0] && o.at[1] === miss.at[1] })[0]; return f && f.id }
     return null
   }
-  function hint () {
-    if (G.run) return
-    SND.place()
-    G.hint++
-    var lvl = G.hint
-    if (lvl === 1 && !(G.fail && G.fail.index < G.prog.length)) lvl = 2
-    $('hint-lv').textContent = Math.min(lvl, 5) + '/5'
-    if (lvl === 1) {
-      var se = slotEl(G.fail.index); if (se) { se.classList.remove('fail'); void se.offsetWidth; se.classList.add('fail') }
-      boSay('Lihat perintah yang berkedip. Perlu diganti?', false)
-      return
-    }
-    var id = focusObj()
-    if (lvl === 2) {
-      if (id && OBJ[id]) OBJ[id].classList.add('focus')
-      boSay('Lihat yang bersinar di peta. Apa yang dibutuhkan di sana?')
-      return
-    }
-    var v = (G.fail && G.fail.status === 'invalid-capability' && G.fail.verb) || needVerb()
-    if (lvl === 3) {
-      if (id && OBJ[id]) { var n = el('div', 'need', verbIcoBox(v)); OBJ[id].appendChild(n); OBJ[id].classList.add('focus') }
-      boSay('Di sana Mojo perlu: ' + (LABEL[v] || v) + '.')
-      return
-    }
-    if (lvl === 4) {
-      var forms = PG.formsWith(v, beat().forms), any = false
-      ;[].forEach.call(D.querySelectorAll('.cmd'), function (b) { var c = b.getAttribute('data-cmd'); if (c.indexOf('swop:') === 0 && forms.indexOf(c.slice(5)) >= 0) { b.classList.add('cand'); any = true } })
-      boSay(any ? 'Swop yang bisa ' + (DOES[v] || v) + ' sedang bersinar!' : 'Mojo yang sekarang sudah bisa. Susun langkahnya!')
-      return
-    }
-    // rung 6 of the PRD ladder: ghost-place the NEXT correct command (one command; stars capped at 2)
-    var h = PG.hint(G.cp, beat(), G.prog, {})
-    if (!h || h.done) { boSay('Rencanamu sudah bisa! Tekan JALAN.'); return }
-    G.ghost = true
-    showGhost(h)
-    boSay(h.at < G.prog.length ? 'Coba ganti mulai kotak ' + (h.at + 1) + ' dengan perintah yang bersinar. Ketuk untuk memakainya.' : 'Perintah berikutnya bersinar di kotak ' + (h.at + 1) + '. Ketuk untuk memakainya.')
+  function low (o) { var n = nameOf(o); return o && o.type === 'person' ? n : n.toLowerCase() }
+  function where (o) {
+    var m = G.cp.m, v = o.r < m.r ? 'atas' : o.r > m.r ? 'bawah' : '', h = o.c < m.c ? 'kiri' : o.c > m.c ? 'kanan' : ''
+    return h && v ? h + ' ' + v : (h || v || 'dekat')
   }
+  // the solver's route for this beat, played headless: the actions in order and what it drives over
+  function routeInfo () {
+    var b = beat(), w = G.cp, sol = PG.solve(w, b) || [], acts = [], takes = { tool: 0, bolts: 0, water: 0 }
+    for (var i = 0; i < sol.length; i++) {
+      var c = sol[i], r = PG.stepBeat(w, c, b, { auto: true }), v = PG.verbOf(c)
+      if (!PG.ok(r.status)) break
+      if (v === 'swop') acts.push({ cmd: c })
+      else if (PG.BASE.indexOf(v) < 0) {
+        var id = null; (r.events || []).forEach(function (e) { if (!id && e.id && e.e !== 'turn') id = e.id })
+        acts.push({ cmd: c, verb: v, id: id })
+      }
+      ;(r.events || []).forEach(function (e) { if (e.e === 'tool') takes.tool++; if (e.e === 'collect') takes[e.res] = (takes[e.res] || 0) + 1 })
+      w = r.world
+    }
+    return { sol: sol, acts: acts, takes: takes }
+  }
+  // the next n commands from the plan as it is now (keeps the longest prefix that still works)
+  function lookAhead (n) {
+    var b = beat(), h = PG.hint(G.cp, b, G.prog, {})
+    if (!h || h.done) return h
+    var w = G.cp, pre = PG.flat(G.prog).slice(0, h.at), out = []
+    for (var i = 0; i < pre.length; i++) w = PG.stepBeat(w, pre[i], b, { auto: true }).world
+    for (var k = 0; k < Math.min(n, h.steps.length); k++) {
+      var r = PG.stepBeat(w, h.steps[k], b, { auto: true }), cell = [r.world.m.r, r.world.m.c]
+      ;(r.events || []).forEach(function (e) { if (e.id && ['spray', 'push', 'raise', 'rescue', 'repair', 'pick'].indexOf(e.e) >= 0) { var o = PG.find(w, e.id); if (o) cell = [o.r, o.c] } })
+      out.push({ cmd: h.steps[k], cell: cell }); w = r.world
+    }
+    return { at: h.at, steps: out, rest: h.steps.length }
+  }
+  function markCell (r, c, n) {
+    var d = el('div', 'cell-mark', n ? '<b>' + n + '</b>' : ''); d.style.left = (c * CELL) + 'px'; d.style.top = (r * CELL) + 'px'; $('fx').appendChild(d)   // left/top: the pulse animates transform
+  }
+  function candCmd (c) { var b = D.querySelector('.cmd[data-cmd="' + c + '"]'); if (b) b.classList.add('cand') }
+  function hintText (rung) {
+    var b = beat(), ri = routeInfo(), id = focusObj(), o = id ? PG.find(G.cp, id) : null
+    var miss = (b.objectives || []).filter(function (x) { return !PG.met(G.cp, x) })[0] || (b.objectives || [])[0]
+    if (rung === 1) {
+      var t = (G.fail && G.fail.index < G.prog.length ? 'Rencanamu berhenti di kotak ' + (G.fail.index + 1) + '. ' : '') + 'Tugasnya: ' + obInfo(miss).t.toLowerCase() + '. '
+      if (o) {
+        if (OBJ[o.id]) OBJ[o.id].classList.add('focus')
+        t += nameOf(o) + ' ada di ' + where(o) + ' Mojo. ' + (o.type === 'flag' ? 'Ikuti jalan abu-abu dan LEWATI sampai ke bendera.' : 'Mojo harus berhenti di SEBELAH ' + low(o) + '.')
+      }
+      var first = ri.acts.filter(function (a) { return a.id && a.id !== id })[0], fo = first && PG.find(G.cp, first.id)
+      if (fo && (!o || fo.type !== o.type)) { t += ' Di jalan ada ' + low(fo) + ' di ' + where(fo) + ': berhenti di SEBELAH-nya dulu.'; if (OBJ[fo.id]) OBJ[fo.id].classList.add('focus') }
+      else if (fo) t += ' Ada ' + low(fo) + ' lain juga, di ' + where(fo) + '.'
+      return t
+    }
+    if (rung === 2) {
+      var take = [], acts = [], pre = ''
+      if (ri.takes.tool) take.push('kotak alat')
+      if (ri.takes.bolts) take.push(ri.takes.bolts + ' baut')
+      if (ri.takes.water) take.push(ri.takes.water + ' tetes air')
+      ri.acts.forEach(function (a) {
+        if (a.cmd.indexOf('swop:') === 0) { acts.push('jadi ' + SHORT[a.cmd.slice(5)]); candCmd(a.cmd); return }
+        var x = a.id ? PG.find(G.cp, a.id) : null
+        if (a.verb === 'raise' && x && !pre) pre = nameOf(x) + ' tinggi ' + x.elev + '. '
+        acts.push(up(a.verb) + (a.verb === 'raise' && x ? ' ke ' + x.elev : '')); candCmd(a.cmd)
+      })
+      var s = pre + (take.length ? 'LEWATI dulu ' + take.join(' dan ') + ' di jalan. ' : '')
+      if (acts.length) s += (take.length ? 'Lalu' : 'Urutannya') + ': ' + acts.join(', lalu ') + '. Tombolnya bersinar.'
+      else s += 'Tidak perlu Swop. Cukup panah: ' + ri.sol.length + ' langkah di jalan abu-abu.'
+      return s
+    }
+    var la = lookAhead(rung === 3 ? 1 : 2)
+    if (la && la.done) return 'Rencanamu sudah benar! Tekan JALAN.'
+    if (!la || !la.steps.length) return 'Hapus rencananya dulu, lalu tekan TUNJUKKAN CARANYA.'
+    G.ghost = true
+    showGhost({ at: la.at, cmd: la.steps[0].cmd })
+    la.steps.forEach(function (st, k) {
+      candCmd(st.cmd)
+      var prev = k && la.steps[k - 1].cell, same = prev && prev[0] === st.cell[0] && prev[1] === st.cell[1]
+      if (same) { var lb = $('fx').lastChild && $('fx').lastChild.querySelector('b'); if (lb) lb.textContent += ' ' + (k + 1) }   // a Swop stays on the same cell
+      else markCell(st.cell[0], st.cell[1], rung === 4 ? k + 1 : 0)
+    })
+    var fix = la.at < G.prog.length ? 'Kotak ' + (la.at + 1) + ' perlu diganti. ' : ''
+    if (rung === 3) return 'Langkah berikutnya, kotak ' + (la.at + 1) + ': ' + cmdLabel(la.steps[0].cmd).toUpperCase() + '. ' + fix + 'Tombolnya bersinar dan tujuannya ditandai di peta. Ketuk kotak yang bersinar untuk memakainya.'
+    var two = la.steps.map(function (st, k) { return (k + 1) + ') ' + cmdLabel(st.cmd).toUpperCase() }).join(', ')
+    return (la.steps.length > 1 ? 'Dua langkah berikutnya: ' + two + '. ' : 'Tinggal satu langkah: ' + two + '. ') + fix + 'Ketuk kotak yang bersinar untuk memakai yang pertama. Masih bingung? Tekan TUNJUKKAN CARANYA.'
+  }
+  function hint () {
+    if (G.run || G.trans) return
+    SND.place()
+    clearMarks(); hideGhost()
+    G.hint = Math.min(HINT_MAX, G.hint + 1)
+    $('hint-lv').textContent = G.hint + '/' + HINT_MAX
+    var t = hintText(G.hint)
+    G.hintText = t
+    boSay(t)
+    helpUi()
+  }
+  // "Tunjukkan Caranya" is offered after two stopped runs or after the last hint rung (always in Pesan Bo)
+  function helpUi () { var b = $('btn-show'); if (b && G) b.hidden = !!G.run || G.trans || !(G.fails >= 2 || G.hint >= HINT_MAX) }
   var GH = null
   function showGhost (h) {
     hideGhost()
@@ -1160,22 +1402,29 @@
     SND.win()
     boSay(G.bi + 1 < G.lv.beats.length ? 'Berhasil! Rencanamu bekerja!' : 'Hore! Misi selesai!', false)
     if (G.bi + 1 < G.lv.beats.length) {
-      var end = G.w
-      G.bi++
-      G.cp = newWorld(G.lv, G.bi, end)
-      // checkpoint: a completed beat is never replayed because of a later mistake (PRD §31)
-      S.cp = { id: G.lv.id, beat: G.bi, world: packWorld(G.cp), used: G.used, ghost: G.ghost, starBeat: G.starBeat, gotStars:G.gotStars, bonus:G.bonus, events:G.eventGate.state(), elapsed:G.elapsed + Math.max(0,performance.now()-G.tick) }; save()
-      later(function () {
+      // the next beat (its objective, Bo's line, its world) only appears AFTER this beat's celebration:
+      // G.bi / G.cp switch inside the timer; the checkpoint is saved now (PRD §31)
+      var nextBi = G.bi + 1, nextCp = newWorld(G.lv, nextBi, G.w)
+      G.trans = true; helpUi()
+      S.cp = { id: G.lv.id, rev: G.lv.rev || 1, beat: nextBi, world: packWorld(nextCp), used: G.used, ghost: G.ghost, shown: G.shown, starBeat: G.starBeat, gotStars:G.gotStars, bonus:G.bonus, events:G.eventGate.state(), elapsed:G.elapsed + Math.max(0,performance.now()-G.tick) }; save()
+      var chaseBi = G.bi
+      later(function () { chaseBeat(chaseBi, function () {
+        G.bi = nextBi; G.cp = nextCp
         var st = beat().start
         if (st) {
           var mj = $('mojo')
           anim(mj, [{ opacity: 1 }, { opacity: 0 }], 220, EOUT, function () { beginBeat(false); anim(mj, [{ opacity: 0 }, { opacity: 1 }], 260, EOUT, function () { mj.style.opacity = '' }) })
         } else beginBeat(false)
-      }, 1300)
+      }) }, 1300)
       return
     }
-    var earned = awardMission()
-    later(function () { finishLevel(earned) }, 1100)
+    var earned = awardMission(), lastBi = G.bi
+    later(function () { chaseBeat(lastBi, function () { finishLevel(earned) }) }, 1100)
+  }
+  // a 'chase' beat (data/mojo-chases.js ADVENTURE) runs after grid beat `bi`, then the level continues
+  function chaseBeat (bi, next) {
+    var g = G
+    if (!W.MojoChaseMenu || !W.MojoChaseMenu.beat(G.lv.id, bi, function (res) { if (G !== g) return; if (res && res.exited) W.MojoMenu.map(); else next() })) next()
   }
   function awardMission () {
     if (G.award) { flushAwards(); return G.award }
@@ -1184,6 +1433,7 @@
     var gotStar = (lv.optional || []).length ? (lv.optional || []).every(function (o) { return G.gotStars[o.id] }) : true
     var stars = 1 + (gotStar ? 1 : 0) + (eff ? 1 : 0)
     if (G.ghost) stars = Math.min(stars, 2)
+    if (G.shown) stars = 1   // finished after "Tunjukkan Caranya": one star, said gently on the card
     var prev = S.lv[lv.id] || {}
     var records = Object.assign({},S.lv); records[lv.id] = { stars: Math.max(prev.stars || 0, stars), t: Date.now() }; S.lv = records
     S.cp = null; saveDirty = true
@@ -1208,9 +1458,14 @@
   }
   function result (stars, gotStar, eff) {
     var lv = G.lv, next = ML.LEVELS[G.idx + 1], si = MA.src('obj/star')
-    var why = '<span><i style="background-image:url(' + si + ')"></i>Misi selesai</span>' +
-      '<span><i style="background-image:url(' + si + ');' + (gotStar ? '' : 'opacity:.3;filter:grayscale(1)') + '"></i>' + ((lv.optional || []).length ? (gotStar ? 'Bintang ditemukan' : 'Ada bintang tersembunyi di peta') : 'Tanpa bintang tersembunyi') + '</span>' +
-      '<span><i style="background-image:url(' + si + ');' + (eff && !G.ghost ? '' : 'opacity:.3;filter:grayscale(1)') + '"></i>' + (G.ghost ? 'Coba lagi tanpa petunjuk langkah' : eff ? 'Rencana hemat' : 'Bisa dengan perintah lebih sedikit') + '</span>'
+    var off = 'opacity:.3;filter:grayscale(1)'
+    var why = G.shown
+      ? '<span><i style="background-image:url(' + si + ')"></i>Misi selesai bersama Bo</span>' +
+        '<span><i style="background-image:url(' + si + ');' + off + '"></i>Sekarang kamu tahu caranya</span>' +
+        '<span><i style="background-image:url(' + si + ');' + off + '"></i>Main lagi sendiri untuk 3 bintang</span>'
+      : '<span><i style="background-image:url(' + si + ')"></i>Misi selesai</span>' +
+      '<span><i style="background-image:url(' + si + ');' + (gotStar ? '' : off) + '"></i>' + ((lv.optional || []).length ? (gotStar ? 'Bintang ditemukan' : 'Ada bintang tersembunyi di peta') : 'Tanpa bintang tersembunyi') + '</span>' +
+      '<span><i style="background-image:url(' + si + ');' + (eff && !G.ghost ? '' : off) + '"></i>' + (G.ghost ? 'Coba lagi tanpa petunjuk langkah' : eff ? 'Rencana hemat' : 'Bisa dengan perintah lebih sedikit') + '</span>'
     var s = ''; for (var k = 1; k <= 3; k++) s += '<i class="' + (k <= stars ? 'on' : '') + '" style="background-image:url(' + si + ')"></i>'
     overlay('ov-card', '<div class="card result"><h2 class="fk">Hebat!</h2><div class="stars" id="res-stars">' + s + '</div>' +
       '<div class="res-cast"><img class="res-bo" alt="Bo" src="' + MA.lib('mojo-char/bo-celebrate') + '"><div class="mojo-side">' + MA.mojo(G.w.m.form, 'side') + '</div></div>' +
@@ -1233,6 +1488,26 @@
       anim(c, [{ transform: 'translate(' + x + 'px,-30px) rotate(0)' }, { transform: 'translate(' + (x + dx) + 'px,' + (W.innerHeight * 0.9) + 'px) rotate(' + (k * 47 % 360 + 180) + 'deg)', opacity: 0.2 }], 1400 + (k % 7) * 120, 'cubic-bezier(.23,1,.32,1)', function () { c.remove() })
     })(k)
   }
+  /* "Cara Main": the one rule, two panels, owner sprites only (shown in the t1 / t3 briefing, reopened by #btn-rule) */
+  var RULE_LEVELS = { t1: 1, t3: 1 }
+  function ruleHtml () {
+    function im (k, cls) { return '<img class="' + (cls || '') + '" alt="" src="' + MA.src(k) + '">' }
+    return '<div class="rule-card" id="rule-card"><h3 class="fk">Cara Main</h3><div class="rule-panels">' +
+      '<div class="rule-p walk"><div class="rule-pic"><span class="rp-ring">' + im('obj/star') + '</span>' + im('obj/bolt', 'sm') + im('obj/toolbox', 'sm') + '</div>' +
+      '<p><b>LEWATI</b> untuk ambil ' + im('obj/star', 'inl') + '</p><small>bintang, baut, air, kotak alat</small></div>' +
+      '<div class="rule-p side"><div class="rule-pic">' + im('obj/fire') + '<i class="cmdico" style="background:' + cmdColor('spray') + '">' + MA.icon('spray') + '</i>' + im('char/neon') + '<i class="cmdico" style="background:' + cmdColor('rescue') + '">' + MA.icon('rescue') + '</i></div>' +
+      '<p>Berhenti di <b>SEBELAH</b>, lalu pakai aksi</p><small>api, batu, teman, yang rusak</small></div>' +
+      '</div></div>'
+  }
+  function ruleCard () {
+    if (!G || G.run) return
+    SND.place()
+    overlay('ov-card', '<div class="card rule-only">' + ruleHtml() + '<div class="row"><button class="btn b-soft fk" id="rule-say" type="button"><i class="ico">' + MA.icon('speak') + '</i><span>Dengar</span></button>' +
+      '<button class="btn b-go fk" id="rule-close" type="button"><i class="ico">' + MA.icon('check') + '</i><span>Kembali ke Rencana</span></button></div></div>')
+    tap('rule-say', function () { say(RULE_SAY, 'id', true) })
+    tap('rule-close', function () { closeOv('ov-card') })
+  }
+  var RULE_SAY = 'Cara main. Bintang, baut, air dan kotak alat: LEWATI untuk mengambilnya. Api, batu, teman dan yang rusak: berhenti di sebelahnya, lalu pakai aksi.'
   function introCard (resumed) {
     var lv = G.lv, b = beat(), math = b.math ? MS.world(b.math.kind, b.math.about) : null
     var goals = (b.objectives || []).map(function (ob) { var i = obInfo(ob); return '<span class="ob-chip"><img alt="" src="' + i.img + '"><span>' + i.t + '</span></span>' }).join('')
@@ -1247,6 +1522,7 @@
     overlay('ov-card', '<div class="card"><div class="intro"><img class="bo-big" alt="Bo" src="' + MA.src('char/bo') + '"><div class="txt">' +
       '<span class="place">' + head + '</span><h2 class="fk">' + (G.bi === 0 ? lv.title : b.title) + '</h2>' +
       (resumed ? '<p>Lanjut dari babak ' + (G.bi + 1) + '. Yang sudah selesai tetap aman!</p>' : '') + '<p>' + b.story + '</p>' + mc +
+      (RULE_LEVELS[lv.id] && G.bi === 0 ? ruleHtml() : '') +
       '<div class="goals">' + goals + '</div>' + (forms ? '<div class="forms-row">' + forms + '</div>' : '') + '</div></div>' +
       '<div class="row"><button class="btn b-soft fk" id="in-say" type="button"><i class="ico">' + MA.icon('speak') + '</i><span>Dengar</span></button><button class="btn b-go big fk" id="in-go" type="button"><i class="ico">' + MA.icon('plan') + '</i><span>Ayo Rencanakan!</span></button></div></div>')
     tap('in-go', function () { SND.place(); closeOv('ov-card'); W.MojoMenu.picker(b,G.cp.m.form,function (f) { if (f) addCmd('swop:' + f) }) })
@@ -1321,12 +1597,16 @@
   tap('btn-undo', function () { if (G.run || !G.hist.length) return; resetView(); G.prog = G.hist.pop(); G.sel = -1; clearFail(); renderStrip(); renderPalette(); SND.place() })
   tap('btn-clear', function () { if (G.run || !G.prog.length) return; confirmClear() })
   tap('btn-hint', hint)
+  tap('btn-rule', ruleCard)
+  tap('btn-show', showMe)
   tap('bo-say', function () { say(boLine, 'id', true) })
   tap('bo-details', function () {
     if (!G || G.run) return
-    overlay('ov-card','<div class="card bo-explanation"><h2 class="fk">Pesan Bo</h2><p id="bo-full"></p><div class="row"><button class="btn b-soft fk" id="bo-full-say">Dengarkan</button><button class="btn b-go fk" id="bo-close">Kembali ke Rencana</button></div></div>')
+    overlay('ov-card','<div class="card bo-explanation"><h2 class="fk">Pesan Bo</h2><p class="bo-goal" id="bo-goal"></p><p id="bo-full"></p><div class="row"><button class="btn b-soft fk" id="bo-full-say">Dengarkan</button><button class="btn b-show fk" id="bo-show" type="button"><i class="ico">' + MA.icon('hint') + '</i><span>Tunjukkan Caranya</span></button><button class="btn b-go fk" id="bo-close">Kembali ke Rencana</button></div></div>')
+    $('bo-goal').textContent = 'Tugas sekarang: ' + $('bo-task').textContent
     $('bo-full').textContent = boLine
     tap('bo-full-say',function () { say(boLine,'id',true) })
+    tap('bo-show',function () { closeOv('ov-card'); showMe() })
     tap('bo-close',function () { closeOv('ov-card') })
   })
   D.addEventListener('visibilitychange', function () { if (G && G.active) { if (D.hidden) G.elapsed += Math.max(0,performance.now()-G.tick); G.tick=performance.now(); storePacing() } if (D.hidden) { flushAwards(); hush(); if (G && G.run) stopRun() } })
@@ -1355,14 +1635,16 @@
   home()
   function award (n) { S.rewardBolts = Math.min(1000000, (S.rewardBolts || 0) + (n | 0)); save(); homeCounters() }
   W.MojoMenu.setup({ home:home, show:show, toast:toast, episodes:map, start:start, next:nextLevelId, overlay:overlay, close:closeOv, cue:SND.place, say:say, reset:resetProgress, award:award, save:function () { return S } })
+  if (W.MojoChaseMenu) W.MojoChaseMenu.setup({ home:home, show:show, toast:toast, cue:SND.place, say:say, award:award, save:function () { return S } })
 
   /* test seam (QA only: reads state, never plays for the child) */
   W.__mojo = {
     ready: true, levels: function () { return ML.LEVELS.map(function (l) { return l.id }) },
-    state: function () { return G ? { id: G.lv.id, beat: G.bi, beats: G.lv.beats.length, prog: G.prog.slice(), running: !!G.run, fail: G.fail, hint: G.hint, ghost: G.ghost, form: G.w.m.form, world: PG.key(G.w), res: G.w.res, tools: G.w.tools, objects:G.w.objs, position:G.w.m, events:G.eventGate.state(), elapsed:G.elapsed, bonus:G.bonus } : null },
+    state: function () { return G ? { id: G.lv.id, beat: G.bi, beats: G.lv.beats.length, prog: G.prog.slice(), running: !!G.run, fail: G.fail, hint: G.hint, hintText: G.hintText || '', fails: G.fails, shown: G.shown, trans: G.trans, boLine: boLine, ghost: G.ghost, form: G.w.m.form, world: PG.key(G.w), res: G.w.res, tools: G.w.tools, objects:G.w.objs, position:G.w.m, events:G.eventGate.state(), elapsed:G.elapsed, bonus:G.bonus } : null },
     solution: function () { return G ? PG.solve(G.cp, beat()) : null },
     alt: function (forbid) { return G ? PG.solve(G.cp, beat(), { forbid: forbid }) : null },
-    mg: function () { return MG ? { kind: MG.kind, answer: MG.answer } : null },
+    mg: function () { return MG ? { kind: MG.kind, answer: MG.answer, theme: MG.theme, noun: MG.noun, prompt: MG.prompt } : null },
+    themes: function (id) { var lv = ML.byId(id || (G && G.lv.id)); return lv ? levelThemes(lv).map(function (k) { return THEME_ART[k][0] }) : [] },
     eventQuestion:eventQuestion, assets:function () { return JSON.parse(JSON.stringify(assetLoad)) },
     save: function () { return JSON.parse(JSON.stringify(S)) }, warm: function () { return WARM.slice() }, start: start, map: map, home: home
   }

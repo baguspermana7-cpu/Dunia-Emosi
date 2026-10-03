@@ -7,6 +7,15 @@ for (const f of ['prog-grid.js', 'data/mojo-levels.js', 'data/mojo-art.js', 'moj
 assert.match(ctx.MojoArt.mojo('fire','side'),/mojo-top\/fire.webp/);
 assert.match(ctx.MojoArt.src('char/bo'),/mojo-char\/bo.webp/);
 assert.equal(ctx.MojoArt.catalog.length,44);
+// owner 2026-10-03: the film Mojo (mojo-hero, 25 poses) leads every selection list; the board keeps mojo-top art
+assert.equal(ctx.MojoArt.heroCatalog.length,25);
+assert.equal(ctx.MojoArt.showcase.length,69);
+assert.ok(ctx.MojoArt.showcase.slice(0,25).every(f=>f.film&&/mojo-hero\//.test(f.src)),'film poses listed first');
+assert.ok(ctx.MojoArt.showcase.slice(25).every(f=>!f.film&&/mojo-top\//.test(f.src)),'workshop forms after the film poses');
+assert.match(ctx.MojoArt.mojo('normal','side'),/mojo-hero\/base-bo.webp/);
+for(const f of ['normal','dozer','fire','cherry','jumper','crane','chopper'])assert.match(ctx.MojoArt.module(f,'top'),/mojo-top\//,'board art unchanged: '+f);
+for(const lv of ctx.MojoLevels.LEVELS)lv.beats.forEach((b,i)=>{const k=ctx.MojoArt.scene(lv,i,ctx.MojoLevels.region(lv.id));for(const o of ['land','port'])assert.ok(k==='mojo-bg/construction'||fs.existsSync(`assets/db/lib/${k}-${o}.webp`),lv.id+' scene '+k)});
+for(const r of ctx.MojoLevels.REGIONS){const k=ctx.MojoArt.regionScene(r);assert.ok(k==='mojo-bg/construction'||fs.existsSync(`assets/db/lib/${k}-land.webp`),r.id)}
 for(const f of ctx.MojoArt.libFiles()) assert.ok(fs.existsSync(f.replace(/^\.\.\//,'').replace(/^\/Dunia-Emosi\//,'')),f);
 const limit = ctx.MojoEvents.create(false);
 assert.equal(limit.ready(119999,1), false);

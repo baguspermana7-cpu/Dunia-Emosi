@@ -16,3 +16,16 @@ let current=c.PG.prep(c.PG.world(lv),lv,0),used=[];for(let i=0;i<lv.beats.length
 if(fails)process.exitCode=1;
 
 const poisoned=JSON.parse(JSON.stringify(good));poisoned.world.m.form={toString:null};let kept;try{kept=c.fill({lv:{t3:{stars:2,t:1}},cp:poisoned})}catch{}check(kept?.lv.t3.stars===2&&kept.cp===null,'Poisoned non-string form rejects checkpoint without losing valid sibling');if(fails)process.exitCode=1;
+
+// LEWATI vs SEBELAH (2026-10-03) moved s1's targets off the walls (rev 2). A checkpoint saved under the old layout
+// is rebuilt at its beat (earlier beats replayed by the solver): nothing lands on a wall, nothing crashes.
+{
+ const old=JSON.parse(JSON.stringify(good));delete old.rev;old.world.objs.find(o=>o.id==='api2').r=0;old.world.objs.find(o=>o.id==='api2').c=3;old.world.objs.find(o=>o.id==='kotak').st='open';old.world.objs.find(o=>o.id==='kotak').r=2;old.world.objs.find(o=>o.id==='kotak').c=2;
+ const cp=c.fill({cp:old}).cp,wall=o=>'#T'.includes(lv.grid.map[o.r][o.c]);
+ check(cp&&cp.beat===1&&cp.rev===lv.rev&&cp.world.objs.every(o=>!wall(o)),'Old-layout (rev 1) checkpoint is rebuilt at its beat on the new layout, no object on a wall');
+ check(cp&&cp.world.objs.find(o=>o.id==='api1').st==='out'&&cp.world.res.water===2,'Rebuilt checkpoint keeps the finished beat (first fire out, 2 water left)');
+ const cur=c.fill({cp:{...good,rev:lv.rev}}).cp;check(cur&&cur.rev===lv.rev&&cur.world.m.r===good.world.m.r,'A current-layout checkpoint is validated as saved, not rebuilt');
+ const bad=JSON.parse(JSON.stringify(old));bad.world.m.c=-4;check(c.fill({cp:bad}).cp===null,'An old-layout checkpoint with a broken position is still rejected');
+ const typo=c.fill({cp:{...good,rev:lv.rev,world:{...good.world,objs:good.world.objs.map(o=>o.id==='kotak'?{...o,st:'opened'}:o)}}}).cp;check(typo===null,'Unknown toolbox state is rejected');
+ if(fails)process.exitCode=1;
+}

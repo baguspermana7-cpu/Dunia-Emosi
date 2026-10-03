@@ -40,6 +40,72 @@
     'tool/palu':'mojo-prop/hammer', 'tool/obeng':'mojo-prop/screwdriver', 'tool/kunci':'mojo-prop/wrench' }
   Object.keys(OWNER).forEach(function (k) { OVERRIDE[k] = 'assets/db/lib/' + OWNER[k] + '.webp' })
 
+  /* ── PRIMARY "film" Mojo art (owner sheet 30, tools/ingest-mojo-hero.py) ───────────────────
+   * Owner 2026-10-03: the new sheet is the true film Mojo. It is listed FIRST and featured on every
+   * selection/showcase surface (splash, home, Bengkel, Koleksi, form picker, result card). The older
+   * mojo-top/* art stays on the gameplay board (Mojo piece, swop module, form chips) and is listed
+   * after the hero entries. Forms the sheet does not draw keep mojo-top art everywhere. */
+  var HERO = ('base-1:base base-2:base racer:racer chopper-1:chopper dozer-1:dozer dozer-2:dozer dozer-3:dozer monster-1:jumper ' +
+    'monster-2:monster monster-3:monster van:delivery base-front:base base-bo:base rescue:rescue offroad:monster base-bo-front:base ' +
+    'boat:boat cargo:delivery jet-1:jet jet-2:jet jet-3:jet jet-4:jet chopper-2:chopper chopper-3:chopper chopper-4:chopper').split(' ')
+  // the crop that reads best at card size for each catalog form (topKey ids)
+  var HERO_BEST = { base: 'base-bo', racer: 'racer', chopper: 'chopper-3', dozer: 'dozer-2', jumper: 'monster-1', monster: 'monster-2',
+    delivery: 'cargo', rescue: 'rescue', boat: 'boat', jet: 'jet-4' }
+  function heroKey (form) { var k = HERO_BEST[topKey(form)]; return k ? 'mojo-hero/' + k : null }
+  var heroCatalog = HERO.map(function (pair) {
+    var p = pair.split(':'), meta = null
+    for (var i = 0; i < TOPS.length; i++) if (TOPS[i] === p[1]) meta = { name: TOP_NAMES[i], ability: TOP_ABILITY[i] }
+    return { id: p[1], hero: p[0], name: meta.name, ability: meta.ability, src: lib('mojo-hero/' + p[0]), film: true }
+  })
+  // selection order: the 25 film poses first, then the 44 workshop forms
+  var showcase = heroCatalog.concat(catalog)
+
+  /* ── scene backdrops (owner sheets 31-55, tools/ingest-mojo-bg.py) ─────────────────────────
+   * theme -> painting. A level picks its scene by id (LEVEL_SCENE, one theme or one per beat), else by
+   * what its beat asks for (sceneTheme), else by its region; new levels pick a scene automatically. */
+  var SCENE = { road: 'coastal-road', town: 'coastal-road', fire: 'fire-station', 'forest-fire': 'forest-fire',
+    gap: 'broken-bridge', jump: 'broken-bridge', bridge: 'broken-bridge', flood: 'flood-street', 'water-rescue': 'flood-street',
+    tree: 'fallen-tree', 'forest-road': 'fallen-tree', forest: 'fallen-tree', rockslide: 'rockslide', mountain: 'rockslide',
+    water: 'river-rapids', boat: 'river-rapids', 'river-rescue': 'river-rapids', height: 'rooftop-cat', 'rescue-high': 'rooftop-cat',
+    mud: 'mud-road', monster: 'mud-road', farm: 'mud-road', fun: 'fairground', festival: 'fairground', celebrate: 'fairground',
+    canyon: 'canyon-bridge', desert: 'desert-road', 'desert-arch': 'desert-arch', speed: 'night-highway', racer: 'night-highway',
+    ice: 'ice-floes', snow: 'snow-road', 'snow-plow': 'snow-road', beach: 'beach-cove', underwater: 'underwater', submarine: 'underwater',
+    space: 'space-road', rocket: 'space-road', 'space-lab': 'space-road', pier: 'pirate-pier', island: 'pirate-pier',
+    harbour: 'garage-harbour', garage: 'garage-harbour', title: 'title-clean' }
+  // levels whose objective matches a painting (mojo-levels.js stays untouched; arrays are per beat)
+  var LEVEL_SCENE = { t1: 'road', t2: 'road', t3: 'road', t4: 'fire', t5: 'road', t6: 'fire', t7: ['rockslide'],
+    m1: 'rockslide', m2: 'fire', m3: 'height', m4: 'fire', m5: 'fun', m6: 'road', m7: 'rockslide', m8: 'gap',
+    s1: ['fire', 'fire', 'garage', 'height'] }
+  var REGION_SCENE = { kota: 'road', pelabuhan: 'harbour', hutan: 'forest-fire', gunung: 'rockslide', pulau: 'beach' }
+  function sceneTheme (lv, b) {
+    if (!b) return null
+    var obj = b.objectives || [], pal = b.palette || [], has = function (c) { return pal.indexOf(c) >= 0 }
+    var byId = {}; (lv.objects || []).forEach(function (o) { byId[o.id] = o })
+    for (var i = 0; i < obj.length; i++) {
+      var o = byId[obj[i].id] || {}
+      if (obj[i]['do'] === 'extinguish') return lv.grid && lv.grid.theme === 'forest' ? 'forest-fire' : 'fire'
+      if (obj[i]['do'] === 'rescue' && o.elev) return 'height'
+    }
+    if (has('swop:boat')) return 'water'
+    if (has('jump') || has('swop:jumper')) return 'gap'
+    if (has('push')) return 'rockslide'
+    if (has('hook')) return 'tree'
+    return null
+  }
+  function sceneKey (theme) { return SCENE[theme] ? 'mojo-bg/' + SCENE[theme] : null }
+  // background key (without -land/-port) for a level's beat; fallback = the region's own painting
+  function scene (lv, beatIndex, region) {
+    var pick = LEVEL_SCENE[lv.id], theme = null
+    if (pick) theme = typeof pick === 'string' ? pick : pick[Math.min(beatIndex || 0, pick.length - 1)]
+    if (!theme) theme = sceneTheme(lv, (lv.beats || [])[beatIndex || 0])
+    return sceneKey(theme) || regionScene(region)
+  }
+  function regionScene (region) { return region ? (sceneKey(REGION_SCENE[region.id]) || region.bg) : sceneKey('road') }
+  function sceneFiles (port) {
+    var o = []; for (var t in SCENE) { var k = 'mojo-bg/' + SCENE[t]; [port !== true && k + '-land', port !== false && k + '-port'].forEach(function (x) { if (x && o.indexOf(lib(x)) < 0) o.push(lib(x)) }) }
+    return o
+  }
+
   var FORM = { normal: '#F2552C', dozer: '#F4B400', fire: '#E53935', cherry: '#FB8C00', jumper: '#43A047', crane: '#8D6E63', chopper: '#1E88E5' }
   var TOP_VB = '-10 -10 120 120', SIDE_VB = '0 0 220 150'
   function svg (vb, inner, cls) { return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '"' + (cls ? ' class="' + cls + '"' : '') + ' aria-hidden="true">' + inner + '</svg>' }
@@ -48,7 +114,11 @@
     if (TOPS.indexOf(topKey(form)) < 0) throw new Error('Unknown Mojo artwork: ' + form)
     return ownerTop(form, view || 'top')
   }
-  function mojo (form, view) { return module(form, view || 'side') }
+  // menus and cards: the film art when the owner drew this form, else the workshop art
+  function mojo (form, view) {
+    var k = heroKey(form)
+    return k ? '<img class="owner-mojo owner-hero owner-' + (view || 'side') + '" src="' + lib(k) + '" alt="">' : module(form, view || 'side')
+  }
 
   /* ── command icons (48×48, drawn in white on the chip colour) ───────── */
   var ST = ' stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"'
@@ -147,8 +217,13 @@
     ;('mojo-char/bo-think mojo-char/bo-celebrate mojo-prop/swap-stand mojo-prop/star mojo-ui/chevron-left-sheet15 mojo-ui/chevron-right-sheet15 mojo-ui/play-sheet15 ' +
       'mojo-ui/ico-peta mojo-ui/ico-bengkel mojo-ui/ico-koleksi mojo-ui/ico-episode mojo-ui/bo-profile-sheet11 mojo-ui/back-sheet15 mojo-prop/hammer mojo-prop/wrench ' +
       'mojo-prop/drill mojo-prop/logs mojo-prop/magnet mojo-prop/gear mojo-prop/lamp-post mojo-prop/waterdrop-sheet15 mojo-tile/road mojo-tile/fire game/ladder gt/part-tire').split(' ').forEach(function (k) { if (o.indexOf(lib(k)) < 0) o.push(lib(k)) })
+    // film Mojo poses (selection surfaces) and every scene painting in BOTH orientations: a tablet rotated
+    // while offline must still find the other cut in the cache (screens only load their own on demand)
+    heroCatalog.forEach(function (x) { if (o.indexOf(x.src) < 0) o.push(x.src) })
+    sceneFiles().forEach(function (u) { if (o.indexOf(u) < 0) o.push(u) })
     return o }
 
   W.MojoArt = { chassis: chassis, module: module, mojo: mojo, icon: icon, src: src,
-    catalog: catalog, lib: lib, CAT: CAT, FORM: FORM, TOP_VB: TOP_VB, SIDE_VB: SIDE_VB, OVERRIDE: OVERRIDE, libFiles: libFiles, hasOverride: function (k) { return !!OVERRIDE[k] } }
+    catalog: catalog, heroCatalog: heroCatalog, showcase: showcase, heroKey: heroKey, scene: scene, regionScene: regionScene,
+    sceneTheme: sceneTheme, SCENE: SCENE, LEVEL_SCENE: LEVEL_SCENE, sceneFiles: sceneFiles, lib: lib, CAT: CAT, FORM: FORM, TOP_VB: TOP_VB, SIDE_VB: SIDE_VB, OVERRIDE: OVERRIDE, libFiles: libFiles, hasOverride: function (k) { return !!OVERRIDE[k] } }
 })()
