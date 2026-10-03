@@ -50,7 +50,16 @@ MIN_AREA = 41         # holes above ~40 px are audited; smaller specks are left 
 BAND = 3.0            # halo band width in px from transparency
 WHITE_FG = 30.0       # |F-B| below this = white paint at the edge -> never touched
 QUALITY = 92
-MIN_MOVED = 10       # a sprite is rewritten only when >= 10 pixels change alpha by >= 32 levels
+HOLE_GROW = 3        # px an audited hole may grow into touching near-page (>= 236, neutral) pixels
+# Audited floor scraps (sprite px boxes x0,y0,x1,y1): light floor beside a foot that the ingest kept opaque.
+FLOOR_REMNANTS = {
+    'mojo-char/bo': [(70, 360, 84, 377)],   # right of the left heel (owner phone test 2026-10-03)
+}
+MIX_DEPTH = 2.0      # mid-tone page mix is looked for only in the outer 2 px (the ingest dilates its ink by 2 px)
+MIX_MIN = 0.15       # ... and only where the pixel is pulled >= 15% of the way from its interior colour to the page
+MIX_LUM = 12.0       # ... and is >= 12 luma levels lighter than that interior colour
+LUMA = np.float32([0.299, 0.587, 0.114])
+MIN_MOVED = 10      # a sprite is rewritten only when >= 10 pixels change alpha by >= 32 levels
 # The halo pass runs where the art has no deliberate white stroke. UI captions/buttons, FX glows and painted
 # tiles DO carry white outlines, which are indistinguishable from page-colour halo at the pixel level (both are
 # ~254 against a 254 page), so those keep the ingest edge and only get hole clearing.
@@ -237,7 +246,7 @@ KEEP_WHITE = {
     'mojo-prop/bird-blue': '116,55',
     'mojo-prop/bush-flowers': '105,72 123,79 90,81 118,96 166,106 154,116 185,120 156,128 176,134',
     'mojo-prop/bush3': '105,55 114,62 100,72 113,72 157,109 148,118 172,121 150,130 168,137',
-    'mojo-prop/cloud': '34,20 44,29 4,28',
+    'mojo-prop/cloud': '34,20 44,29 4,28 31,34',
     'mojo-prop/decal-flag-sheet12': '31,57',
     'mojo-prop/diamond': '117,21',
     'mojo-prop/exhausts': '82,111',
@@ -301,7 +310,7 @@ KEEP_WHITE = {
     'mojo-top/recycling': '259,98 274,108 249,134 269,149 118,224 18,225',
     'mojo-top/rescue': '108,249 11,247',
     'mojo-top/rocket': '211,19 246,27 213,50 125,234 17,236',
-    'mojo-top/satellite': '130,9 104,267 12,258',
+    'mojo-top/satellite': '130,9 104,267 12,258 7,272',
     'mojo-top/searchlight': '201,43 215,51 226,57 125,255 11,255',
     'mojo-top/snow-plow': '113,228 16,228',
     'mojo-top/space-lab': '111,245 17,240',
@@ -421,6 +430,12 @@ def clear_holes(name, a, alpha, bbox, preserve, bg, report):
             report.append(f'{name}: hole seed {x},{y} no longer on page colour (re-audit)')
             continue
         region = labels == label
+        # the page sliver that a slightly darker (>8 levels) seam cut off from the audited hole (Bo's akimbo arm
+        # kept a 3x4 px white fleck at the top of its cleared gap): near-page neutral pixels touching the hole,
+        # grown at most HOLE_GROW px, go with it
+        sub = a.astype(np.int16)
+        paperish = (alpha > 0) & (sub.min(2) >= 236) & (sub.max(2) - sub.min(2) <= 12)
+        region = ndimage.binary_dilation(region, iterations=HOLE_GROW, mask=paperish | region)
         if keep_paint is not None:
             region &= ~keep_paint
         alpha[region] = 0
@@ -511,8 +526,20 @@ def decontaminate(a, alpha, bg, tint_only=False):
     paint = light & (depth >= 3)
     protect = ndimage.binary_dilation(paint, iterations=3, mask=light) | paint
     est[protect[ys, xs]] = 1.0
-    # Only LIGHT pixels can be a page-colour halo; mid-tone edge pixels are the art's own anti-aliasing.
-    est[a[ys, xs].min(1) < 200] = 1.0
+    # A LIGHT pixel (every channel >= 200) at the edge may be a page-colour halo. A MID-TONE pixel may be one too
+    # (2026-10-03, owner: "there's still white here" on Bo's jeans/hair and the film Mojo's body): blue jeans
+    # mixed half-and-half with the white page are (179,225,253), min 179, and the old light-only gate kept that
+    # opaque, so every coloured silhouette carried a pale 1-2 px rim that reads as a white outline when the
+    # sprite is shown 2-3x on a phone. A mid-tone edge pixel is treated as page mix only when it lies within
+    # MIX_DEPTH px of transparency AND is measurably pulled from its interior colour F2 toward the page
+    # (projection of C-F2 onto B-F2 >= MIX_MIN and >= MIX_LUM levels lighter); an outline darker than the
+    # body, or the art's own anti-aliasing against a darker part, is never pulled toward the page and stays.
+    pix = a[ys, xs].astype(np.float32)
+    toward = bg - f2
+    pull = ((pix - f2) * toward).sum(1) / np.maximum((toward ** 2).sum(1), 1.0)
+    lighter = pix @ LUMA - f2 @ LUMA
+    mixed = (depth[ys, xs] <= MIX_DEPTH) & (pull >= MIX_MIN) & (lighter >= MIX_LUM)
+    est[(pix.min(1) < 200) & ~mixed] = 1.0
     if tint_only:
         # Light-blue card page (sheets 02/03): a halo pixel carries the card's blue cast. White/cream art does
         # not, so it is never faded however close its lightness is.
@@ -530,6 +557,11 @@ def decontaminate(a, alpha, bg, tint_only=False):
         fg = np.where((na >= 0.25)[:, None],
                       (af[ly, lx] - (1 - na)[:, None] * bg) / np.maximum(na, 1e-3)[:, None],
                       f1[lower])
+        # recompute the edge colour from the interior: an un-premultiplied colour that is still LIGHTER than the
+        # body behind it would bring the pale rim back at partial alpha, so it takes the interior colour F2
+        f2l = f2[lower]
+        relit = (fg @ LUMA) > (f2l @ LUMA) + 10
+        fg[relit] = f2l[relit]
         out_rgb[ly, lx] = np.clip(np.rint(fg), 0, 255).astype(np.uint8)
         out_alpha[ly, lx] = np.rint(na * 255).astype(np.uint8)
     # A halo is at most 2 px thick (the ingest dilates its ink by 2 px). Where the pass took out a region a 3x3
@@ -566,6 +598,20 @@ def floor_shadow(a, rgb, alpha, bbox, bg):
     return to_shadow(a, rgb, alpha, full, bg)
 
 
+def floor_remnants(name, a, alpha, bbox, preserve):
+    """Audited floor scraps beside a foot (FLOOR_REMNANTS): light floor the ingest kept opaque because it touches a
+    white sole. They become translucent BLACK floor through to_shadow, never a pale smear."""
+    mask = np.zeros(alpha.shape, bool)
+    x0, y0 = bbox[:2]
+    for bx0, by0, bx1, by1 in FLOOR_REMNANTS.get(name, ()):
+        mask[by0 + y0:by1 + y0, bx0 + x0:bx1 + x0] = True
+    sub = a.astype(np.int16)
+    mask &= (alpha > 0) & (sub.min(2) >= 200) & (sub.max(2) - sub.min(2) <= 14)
+    if preserve:
+        mask &= ~preserved(alpha.shape, preserve)
+    return mask
+
+
 def clean(name, a, alpha, bbox, preserve, report):
     card = 'card' in preserve
     preserve = tuple(p for p in preserve if p != 'card')
@@ -581,7 +627,7 @@ def clean(name, a, alpha, bbox, preserve, report):
         rgb, alpha = decontaminate(a, alpha, bg)
     else:
         rgb = a
-    rgb, alpha = to_shadow(a, rgb, alpha, hole_floor, bg)
+    rgb, alpha = to_shadow(a, rgb, alpha, hole_floor | floor_remnants(name, a, alpha, bbox, preserve), bg)
     if name.startswith('mojo-top/'):
         rgb, alpha = floor_shadow(a, rgb, alpha, bbox, bg)
     x0, y0, x1, y1 = bbox

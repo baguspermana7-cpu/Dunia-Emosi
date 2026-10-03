@@ -12937,8 +12937,8 @@
    "w": 321,
    "h": 227,
    "baseline": 220,
-   "cx": 160.0,
-   "bw": 195
+   "cx": 160.5,
+   "bw": 194
   },
   "mojo-chase/items/boost-pad": {
    "file": "assets/db/lib/mojo-chase/items/boost-pad.webp",
@@ -12973,7 +12973,7 @@
    "h": 227,
    "baseline": 220,
    "cx": 160.5,
-   "bw": 140
+   "bw": 146
   },
   "mojo-chase/items/coin": {
    "file": "assets/db/lib/mojo-chase/items/coin.webp",
@@ -12990,7 +12990,7 @@
    "h": 227,
    "baseline": 220,
    "cx": 160.5,
-   "bw": 112
+   "bw": 110
   },
   "mojo-chase/items/cone": {
    "file": "assets/db/lib/mojo-chase/items/cone.webp",
@@ -13023,8 +13023,8 @@
    "w": 321,
    "h": 227,
    "baseline": 220,
-   "cx": 161.0,
-   "bw": 173
+   "cx": 160.5,
+   "bw": 174
   },
   "mojo-chase/items/heart": {
    "file": "assets/db/lib/mojo-chase/items/heart.webp",
@@ -13041,7 +13041,7 @@
    "h": 227,
    "baseline": 220,
    "cx": 160.0,
-   "bw": 49
+   "bw": 45
   },
   "mojo-chase/items/magnet": {
    "file": "assets/db/lib/mojo-chase/items/magnet.webp",
@@ -13057,8 +13057,8 @@
    "w": 321,
    "h": 227,
    "baseline": 220,
-   "cx": 160.0,
-   "bw": 107
+   "cx": 160.5,
+   "bw": 106
   },
   "mojo-chase/items/mystery": {
    "file": "assets/db/lib/mojo-chase/items/mystery.webp",
@@ -13091,8 +13091,8 @@
    "w": 321,
    "h": 227,
    "baseline": 220,
-   "cx": 161.0,
-   "bw": 91
+   "cx": 160.5,
+   "bw": 90
   },
   "mojo-chase/items/pothole": {
    "file": "assets/db/lib/mojo-chase/items/pothole.webp",
@@ -13108,8 +13108,8 @@
    "w": 321,
    "h": 227,
    "baseline": 220,
-   "cx": 161.0,
-   "bw": 145
+   "cx": 160.5,
+   "bw": 144
   },
   "mojo-chase/items/ramp": {
    "file": "assets/db/lib/mojo-chase/items/ramp.webp",
@@ -13176,8 +13176,8 @@
    "w": 321,
    "h": 227,
    "baseline": 220,
-   "cx": 160.5,
-   "bw": 136
+   "cx": 161.0,
+   "bw": 135
   },
   "mojo-chase/items/stopwatch": {
    "file": "assets/db/lib/mojo-chase/items/stopwatch.webp",
@@ -13194,7 +13194,7 @@
    "h": 227,
    "baseline": 220,
    "cx": 160.5,
-   "bw": 108
+   "bw": 106
   },
   "mojo-chase/items/tyres-2": {
    "file": "assets/db/lib/mojo-chase/items/tyres-2.webp",
@@ -13243,11 +13243,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 54
+   "cx": 155.0,
+   "bw": 53
   },
   "mojo-chase/props/banner-red": {
    "file": "assets/db/lib/mojo-chase/props/banner-red.webp",
@@ -13260,11 +13260,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 40
+   "cx": 155.0,
+   "bw": 39
   },
   "mojo-chase/props/barrel-oil": {
    "file": "assets/db/lib/mojo-chase/props/barrel-oil.webp",
@@ -13277,10 +13277,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 154.5,
    "bw": 66
   },
   "mojo-chase/props/boulders": {
@@ -13293,11 +13293,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 148
+   "cx": 155.0,
+   "bw": 145
   },
   "mojo-chase/props/bush": {
    "file": "assets/db/lib/mojo-chase/props/bush.webp",
@@ -13344,11 +13344,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 74
+   "cx": 155.0,
+   "bw": 73
   },
   "mojo-chase/props/fence": {
    "file": "assets/db/lib/mojo-chase/props/fence.webp",
@@ -13360,10 +13360,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 155.5,
    "bw": 26
   },
   "mojo-chase/props/guardrail": {
@@ -13376,11 +13376,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 80
+   "cx": 155.0,
+   "bw": 77
   },
   "mojo-chase/props/guardrail-2": {
    "file": "assets/db/lib/mojo-chase/props/guardrail-2.webp",
@@ -13393,10 +13393,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 154.5,
    "bw": 42
   },
   "mojo-chase/props/hay": {
@@ -13409,11 +13409,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.0,
-   "bw": 111
+   "cx": 154.5,
+   "bw": 110
   },
   "mojo-chase/props/hedge": {
    "file": "assets/db/lib/mojo-chase/props/hedge.webp",
@@ -13425,10 +13425,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.0,
+   "cx": 155.0,
    "bw": 99
   },
   "mojo-chase/props/jersey": {
@@ -13441,10 +13441,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 154.5,
    "bw": 88
   },
   "mojo-chase/props/jersey-2": {
@@ -13458,11 +13458,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 132
+   "cx": 155.0,
+   "bw": 131
   },
   "mojo-chase/props/lamp": {
    "file": "assets/db/lib/mojo-chase/props/lamp.webp",
@@ -13491,11 +13491,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 90
+   "cx": 155.0,
+   "bw": 89
   },
   "mojo-chase/props/pine": {
    "file": "assets/db/lib/mojo-chase/props/pine.webp",
@@ -13507,10 +13507,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.0,
+   "cx": 155.0,
    "bw": 97
   },
   "mojo-chase/props/planter": {
@@ -13523,10 +13523,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 155.5,
    "bw": 96
   },
   "mojo-chase/props/rail-wood": {
@@ -13540,11 +13540,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 174
+   "cx": 155.5,
+   "bw": 172
   },
   "mojo-chase/props/rock": {
    "file": "assets/db/lib/mojo-chase/props/rock.webp",
@@ -13573,10 +13573,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 154.0,
+   "cx": 155.0,
    "bw": 103
   },
   "mojo-chase/props/sign": {
@@ -13607,10 +13607,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 155.5,
    "bw": 84
   },
   "mojo-chase/props/stone-wall": {
@@ -13624,10 +13624,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 155.5,
    "bw": 96
   },
   "mojo-chase/props/tree-round": {
@@ -13641,11 +13641,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.0,
-   "bw": 109
+   "cx": 154.5,
+   "bw": 108
   },
   "mojo-chase/props/tree-small": {
    "file": "assets/db/lib/mojo-chase/props/tree-small.webp",
@@ -13658,10 +13658,10 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
+   "cx": 155.5,
    "bw": 78
   },
   "mojo-chase/props/windmill": {
@@ -13674,11 +13674,11 @@
     "chase",
     "props"
    ],
-   "w": 307,
+   "w": 310,
    "h": 199,
    "baseline": 192,
-   "cx": 153.5,
-   "bw": 68
+   "cx": 155.0,
+   "bw": 67
   },
   "mojo-chase/robbers/robber-beanie": {
    "file": "assets/db/lib/mojo-chase/robbers/robber-beanie.webp",
@@ -13763,11 +13763,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
    "cx": 220.5,
-   "bw": 48
+   "bw": 46
   },
   "mojo-chase/signs/banners": {
    "file": "assets/db/lib/mojo-chase/signs/banners.webp",
@@ -13779,11 +13779,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.0,
-   "bw": 85
+   "cx": 220.5,
+   "bw": 84
   },
   "mojo-chase/signs/billboard": {
    "file": "assets/db/lib/mojo-chase/signs/billboard.webp",
@@ -13795,11 +13795,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.0,
-   "bw": 123
+   "cx": 220.5,
+   "bw": 122
   },
   "mojo-chase/signs/caution": {
    "file": "assets/db/lib/mojo-chase/signs/caution.webp",
@@ -13811,11 +13811,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.0,
-   "bw": 29
+   "cx": 221.0,
+   "bw": 27
   },
   "mojo-chase/signs/chevron-board": {
    "file": "assets/db/lib/mojo-chase/signs/chevron-board.webp",
@@ -13828,11 +13828,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.5,
-   "bw": 102
+   "cx": 221.0,
+   "bw": 101
   },
   "mojo-chase/signs/chevron-red": {
    "file": "assets/db/lib/mojo-chase/signs/chevron-red.webp",
@@ -13845,7 +13845,7 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
    "cx": 220.0,
@@ -13862,11 +13862,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.5,
-   "bw": 16
+   "cx": 221.0,
+   "bw": 15
   },
   "mojo-chase/signs/finish": {
    "file": "assets/db/lib/mojo-chase/signs/finish.webp",
@@ -13878,11 +13878,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 219.5,
-   "bw": 240
+   "cx": 221.0,
+   "bw": 239
   },
   "mojo-chase/signs/flag-checker": {
    "file": "assets/db/lib/mojo-chase/signs/flag-checker.webp",
@@ -13895,11 +13895,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.0,
-   "bw": 115
+   "cx": 220.5,
+   "bw": 112
   },
   "mojo-chase/signs/gantry": {
    "file": "assets/db/lib/mojo-chase/signs/gantry.webp",
@@ -13911,11 +13911,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.0,
-   "bw": 397
+   "cx": 220.5,
+   "bw": 396
   },
   "mojo-chase/signs/sign-60": {
    "file": "assets/db/lib/mojo-chase/signs/sign-60.webp",
@@ -13928,11 +13928,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.5,
-   "bw": 62
+   "cx": 221.0,
+   "bw": 59
   },
   "mojo-chase/signs/swoppiton": {
    "file": "assets/db/lib/mojo-chase/signs/swoppiton.webp",
@@ -13944,7 +13944,7 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
    "cx": 220.0,
@@ -13960,11 +13960,11 @@
     "chase",
     "signs"
    ],
-   "w": 440,
+   "w": 441,
    "h": 162,
    "baseline": 155,
-   "cx": 220.5,
-   "bw": 90
+   "cx": 221.0,
+   "bw": 89
   },
   "mojo-chase/ui/blank-letter-panel": {
    "file": "assets/db/lib/mojo-chase/ui/blank-letter-panel.webp",
@@ -14371,7 +14371,7 @@
    "h": 246,
    "baseline": 239,
    "cx": 136.5,
-   "bw": 216
+   "bw": 214
   },
   "mojo-chase/vehicles/bad1": {
    "file": "assets/db/lib/mojo-chase/vehicles/bad1.webp",
@@ -14404,8 +14404,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 137.0,
-   "bw": 219
+   "cx": 136.5,
+   "bw": 218
   },
   "mojo-chase/vehicles/cash": {
    "file": "assets/db/lib/mojo-chase/vehicles/cash.webp",
@@ -14455,8 +14455,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.5,
-   "bw": 202
+   "cx": 136.0,
+   "bw": 201
   },
   "mojo-chase/vehicles/joke": {
    "file": "assets/db/lib/mojo-chase/vehicles/joke.webp",
@@ -14473,7 +14473,7 @@
    "h": 246,
    "baseline": 239,
    "cx": 136.0,
-   "bw": 207
+   "bw": 205
   },
   "mojo-chase/vehicles/junk": {
    "file": "assets/db/lib/mojo-chase/vehicles/junk.webp",
@@ -14489,8 +14489,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.0,
-   "bw": 215
+   "cx": 136.5,
+   "bw": 214
   },
   "mojo-chase/vehicles/logs": {
    "file": "assets/db/lib/mojo-chase/vehicles/logs.webp",
@@ -14506,8 +14506,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.5,
-   "bw": 200
+   "cx": 137.0,
+   "bw": 199
   },
   "mojo-chase/vehicles/loot": {
    "file": "assets/db/lib/mojo-chase/vehicles/loot.webp",
@@ -14523,8 +14523,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 137.0,
-   "bw": 205
+   "cx": 136.5,
+   "bw": 204
   },
   "mojo-chase/vehicles/police-van": {
    "file": "assets/db/lib/mojo-chase/vehicles/police-van.webp",
@@ -14558,8 +14558,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.5,
-   "bw": 208
+   "cx": 136.0,
+   "bw": 207
   },
   "mojo-chase/vehicles/speed": {
    "file": "assets/db/lib/mojo-chase/vehicles/speed.webp",
@@ -14593,7 +14593,7 @@
    "h": 246,
    "baseline": 239,
    "cx": 136.5,
-   "bw": 208
+   "bw": 206
   },
   "mojo-chase/vehicles/striped-01": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-01.webp",
@@ -14610,8 +14610,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.5,
-   "bw": 200
+   "cx": 136.0,
+   "bw": 199
   },
   "mojo-chase/vehicles/striped-02": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-02.webp",
@@ -14629,7 +14629,7 @@
    "h": 246,
    "baseline": 239,
    "cx": 136.5,
-   "bw": 218
+   "bw": 216
   },
   "mojo-chase/vehicles/striped-03": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-03.webp",
@@ -14664,8 +14664,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 137.0,
-   "bw": 217
+   "cx": 136.5,
+   "bw": 216
   },
   "mojo-chase/vehicles/striped-05": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-05.webp",
@@ -14682,8 +14682,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.0,
-   "bw": 223
+   "cx": 136.5,
+   "bw": 222
   },
   "mojo-chase/vehicles/striped-06": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-06.webp",
@@ -14718,8 +14718,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 137.0,
-   "bw": 207
+   "cx": 136.5,
+   "bw": 206
   },
   "mojo-chase/vehicles/striped-08": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-08.webp",
@@ -14790,8 +14790,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.5,
-   "bw": 218
+   "cx": 136.0,
+   "bw": 217
   },
   "mojo-chase/vehicles/striped-12": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-12.webp",
@@ -14826,8 +14826,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.0,
-   "bw": 191
+   "cx": 136.5,
+   "bw": 190
   },
   "mojo-chase/vehicles/striped-14": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-14.webp",
@@ -14862,8 +14862,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.0,
-   "bw": 221
+   "cx": 136.5,
+   "bw": 220
   },
   "mojo-chase/vehicles/striped-16": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-16.webp",
@@ -14917,7 +14917,7 @@
    "h": 246,
    "baseline": 239,
    "cx": 136.5,
-   "bw": 220
+   "bw": 218
   },
   "mojo-chase/vehicles/striped-19": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-19.webp",
@@ -14934,8 +14934,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 137.0,
-   "bw": 181
+   "cx": 136.5,
+   "bw": 180
   },
   "mojo-chase/vehicles/striped-20": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-20.webp",
@@ -14952,8 +14952,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.0,
-   "bw": 223
+   "cx": 136.5,
+   "bw": 222
   },
   "mojo-chase/vehicles/striped-21": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-21.webp",
@@ -14971,7 +14971,7 @@
    "h": 246,
    "baseline": 239,
    "cx": 136.5,
-   "bw": 190
+   "bw": 188
   },
   "mojo-chase/vehicles/striped-22": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-22.webp",
@@ -15006,8 +15006,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 136.5,
-   "bw": 226
+   "cx": 136.0,
+   "bw": 225
   },
   "mojo-chase/vehicles/striped-25": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-25.webp",
@@ -15025,7 +15025,7 @@
    "h": 246,
    "baseline": 239,
    "cx": 136.5,
-   "bw": 214
+   "bw": 212
   },
   "mojo-chase/vehicles/sweet": {
    "file": "assets/db/lib/mojo-chase/vehicles/sweet.webp",
@@ -15075,8 +15075,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 137.0,
-   "bw": 207
+   "cx": 136.5,
+   "bw": 206
   },
   "mojo-chase/vehicles/vroom": {
    "file": "assets/db/lib/mojo-chase/vehicles/vroom.webp",
@@ -15092,8 +15092,8 @@
    "w": 273,
    "h": 246,
    "baseline": 239,
-   "cx": 137.0,
-   "bw": 207
+   "cx": 136.5,
+   "bw": 206
   },
   "mojo-chase/vehicles/work": {
    "file": "assets/db/lib/mojo-chase/vehicles/work.webp",
@@ -15141,8 +15141,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-2": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-2.webp",
@@ -15156,8 +15156,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-3": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-3.webp",
@@ -15171,8 +15171,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-4": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-4.webp",
@@ -15186,8 +15186,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-5": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-5.webp",
@@ -15201,8 +15201,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-6": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-6.webp",
@@ -15216,8 +15216,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-7": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-7.webp",
@@ -15231,8 +15231,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-8": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-8.webp",
@@ -15246,8 +15246,8 @@
     "chase",
     "codex"
    ],
-   "w": 284,
-   "h": 724
+   "w": 270,
+   "h": 167
   },
   "mojo-chase/vfx/boost-glow-flame": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-glow-flame.webp",
@@ -15293,7 +15293,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-2": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-2.webp",
@@ -15308,7 +15308,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-3": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-3.webp",
@@ -15323,7 +15323,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-4": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-4.webp",
@@ -15338,7 +15338,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-5": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-5.webp",
@@ -15353,7 +15353,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-6": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-6.webp",
@@ -15368,7 +15368,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-7": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-7.webp",
@@ -15383,7 +15383,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-8": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-8.webp",
@@ -15398,7 +15398,7 @@
     "codex"
    ],
    "w": 323,
-   "h": 724
+   "h": 319
   },
   "mojo-chase/vfx/brok-burst": {
    "file": "assets/db/lib/mojo-chase/vfx/brok-burst.webp",
@@ -15427,8 +15427,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/confetti-2": {
    "file": "assets/db/lib/mojo-chase/vfx/confetti-2.webp",
@@ -15442,8 +15442,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/confetti-3": {
    "file": "assets/db/lib/mojo-chase/vfx/confetti-3.webp",
@@ -15457,8 +15457,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/confetti-4": {
    "file": "assets/db/lib/mojo-chase/vfx/confetti-4.webp",
@@ -15472,8 +15472,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/confetti-5": {
    "file": "assets/db/lib/mojo-chase/vfx/confetti-5.webp",
@@ -15487,8 +15487,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/confetti-6": {
    "file": "assets/db/lib/mojo-chase/vfx/confetti-6.webp",
@@ -15502,8 +15502,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/confetti-7": {
    "file": "assets/db/lib/mojo-chase/vfx/confetti-7.webp",
@@ -15517,8 +15517,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/confetti-8": {
    "file": "assets/db/lib/mojo-chase/vfx/confetti-8.webp",
@@ -15532,8 +15532,8 @@
     "chase",
     "codex"
    ],
-   "w": 297,
-   "h": 793
+   "w": 253,
+   "h": 334
   },
   "mojo-chase/vfx/dizzy-1": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-1.webp",
@@ -15547,8 +15547,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-2": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-2.webp",
@@ -15562,8 +15562,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-3": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-3.webp",
@@ -15577,8 +15577,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-4": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-4.webp",
@@ -15592,8 +15592,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-5": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-5.webp",
@@ -15607,8 +15607,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-6": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-6.webp",
@@ -15622,8 +15622,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-7": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-7.webp",
@@ -15637,8 +15637,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-8": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-8.webp",
@@ -15652,8 +15652,8 @@
     "chase",
     "codex"
    ],
-   "w": 288,
-   "h": 724
+   "w": 253,
+   "h": 171
   },
   "mojo-chase/vfx/dizzy-star-ring": {
    "file": "assets/db/lib/mojo-chase/vfx/dizzy-star-ring.webp",
@@ -15807,8 +15807,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/net-2": {
    "file": "assets/db/lib/mojo-chase/vfx/net-2.webp",
@@ -15822,8 +15822,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/net-3": {
    "file": "assets/db/lib/mojo-chase/vfx/net-3.webp",
@@ -15837,8 +15837,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/net-4": {
    "file": "assets/db/lib/mojo-chase/vfx/net-4.webp",
@@ -15852,8 +15852,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/net-5": {
    "file": "assets/db/lib/mojo-chase/vfx/net-5.webp",
@@ -15867,8 +15867,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/net-6": {
    "file": "assets/db/lib/mojo-chase/vfx/net-6.webp",
@@ -15882,8 +15882,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/net-7": {
    "file": "assets/db/lib/mojo-chase/vfx/net-7.webp",
@@ -15897,8 +15897,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/net-8": {
    "file": "assets/db/lib/mojo-chase/vfx/net-8.webp",
@@ -15912,8 +15912,8 @@
     "chase",
     "codex"
    ],
-   "w": 350,
-   "h": 724
+   "w": 320,
+   "h": 337
   },
   "mojo-chase/vfx/pickup-sparkle": {
    "file": "assets/db/lib/mojo-chase/vfx/pickup-sparkle.webp",
@@ -20971,8 +20971,8 @@
    "w": 281,
    "h": 241,
    "baseline": 234,
-   "cx": 140.5,
-   "bw": 168,
+   "cx": 141.0,
+   "bw": 167,
    "kind": "ground"
   },
   "mojo-rear/base-neon": {
@@ -20990,8 +20990,8 @@
    "w": 281,
    "h": 241,
    "baseline": 234,
-   "cx": 141.0,
-   "bw": 169,
+   "cx": 140.5,
+   "bw": 168,
    "kind": "ground"
   },
   "mojo-rear/boat": {
@@ -21027,7 +21027,7 @@
    "h": 241,
    "baseline": 234,
    "cx": 140.5,
-   "bw": 160,
+   "bw": 158,
    "kind": "ground"
   },
   "mojo-rear/chopper": {
@@ -21138,7 +21138,7 @@
    "h": 241,
    "baseline": 234,
    "cx": 140.5,
-   "bw": 172,
+   "bw": 170,
    "kind": "ground"
   },
   "mojo-rear/digger": {
@@ -21155,8 +21155,8 @@
    "w": 281,
    "h": 241,
    "baseline": 234,
-   "cx": 140.5,
-   "bw": 176,
+   "cx": 141.0,
+   "bw": 175,
    "kind": "ground"
   },
   "mojo-rear/dumper": {
@@ -21173,8 +21173,8 @@
    "w": 281,
    "h": 241,
    "baseline": 234,
-   "cx": 140.0,
-   "bw": 155,
+   "cx": 140.5,
+   "bw": 154,
    "kind": "ground"
   },
   "mojo-rear/excavator": {
@@ -21192,7 +21192,7 @@
    "h": 241,
    "baseline": 234,
    "cx": 140.5,
-   "bw": 160,
+   "bw": 158,
    "kind": "ground"
   },
   "mojo-rear/hover": {
@@ -21210,7 +21210,7 @@
    "h": 241,
    "baseline": 234,
    "cx": 140.0,
-   "bw": 175,
+   "bw": 173,
    "kind": "water"
   },
   "mojo-rear/jet": {
@@ -21228,7 +21228,7 @@
    "h": 241,
    "baseline": 234,
    "cx": 140.5,
-   "bw": 136,
+   "bw": 134,
    "kind": "air"
   },
   "mojo-rear/jet-2": {
@@ -21247,7 +21247,7 @@
    "h": 241,
    "baseline": 234,
    "cx": 140.0,
-   "bw": 131,
+   "bw": 129,
    "kind": "air"
   },
   "mojo-rear/ladder": {
@@ -21283,7 +21283,7 @@
    "h": 241,
    "baseline": 234,
    "cx": 141.0,
-   "bw": 187,
+   "bw": 185,
    "kind": "ground"
   },
   "mojo-rear/monster": {
@@ -21392,8 +21392,8 @@
    "w": 281,
    "h": 241,
    "baseline": 234,
-   "cx": 140.5,
-   "bw": 184,
+   "cx": 140.0,
+   "bw": 183,
    "kind": "ground"
   },
   "mojo-tile/barrier": {

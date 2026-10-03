@@ -256,13 +256,16 @@ def thin_light_ring(rgba):
     """Opaque near-white silhouette pixels whose nearest interior (> 4 px deep) is NOT light: a page halo."""
     a = rgba.astype(int)
     al = a[..., 3]
-    edge = (al >= 200) & m.ndimage.binary_dilation(al == 0)
+    rim = (al > 0) & m.ndimage.binary_dilation(al == 0)
+    edge = (al >= 200) & rim
     light = edge & (a[..., :3].min(2) >= 235)
     core = m.ndimage.distance_transform_edt(al > 0) > 4
     if not core.any():
         return 0, int(edge.sum())
     _, (iy, ix) = m.ndimage.distance_transform_edt(~core, return_indices=True)
-    return int((light & (a[iy, ix, :3].min(2) < 200)).sum()), int(edge.sum())
+    # denominator: the whole 1 px rim, soft edges included (after the 2026-10-03 halo pass most rim pixels are
+    # partial-alpha, and an opaque-only denominator inflated the share of the few white-paint pixels left)
+    return int((light & (a[iy, ix, :3].min(2) < 200)).sum()), int(rim.sum())
 
 
 class HeroArtTests(unittest.TestCase):
@@ -334,6 +337,140 @@ class HeroArtTests(unittest.TestCase):
         rgb, out = hero.floor_shadow(a, a.copy(), alpha, page, 5, hero.SHADOW_SMOOTH)
         self.assertTrue((out[41:50, 20:70] == 255).all(), 'white tube eroded into shadow')
         self.assertTrue((out[60:66, 20:70] < 60).all(), 'floor shadow left opaque')
+
+
+LUMA = np.float32([0.299, 0.587, 0.114])
+
+
+def fringe_metrics(rgba):
+    """White-fringe measures for one RGBA sprite (owner phone test 2026-10-03: "the crop isn't perfect, there's
+    still white here" - Bo and the film Mojo on the home screen).
+
+    halo       share of the silhouette rim (edge px) that is PAGE MIX: an opaque pixel <= 2.5 px from transparency
+               pulled >= 35% of the way from its interior colour F toward white and >= 25 luma lighter than F,
+               where F (nearest pixel > 3 px deep) is not itself white (|255-F| >= 60). This is the halo the
+               owner saw: blue jeans mixed with the page are (179,225,253) - min 179, so a "near-white > 225"
+               count misses it (that count is reported as nearwhite). White PAINT at the edge has a white F and is
+               never counted; a dark outline is darker than F and is never counted.
+    nearwhite  opaque-ish pixels within 3 px of the edge with every channel > 225 whose interior is not light.
+    smear      translucent near-white blob pixels (alpha 20-200, min > 200, neutral, 3x3-thick): a pale ground
+               shadow left as a white veil.
+    floor      the largest opaque light-grey neutral component (min >= 150) in the bottom 20% of rows that lies
+               <= 20 px below dark tyre/chassis art and touches the open page beneath it: the sheet's floor shadow
+               left as an opaque slab between the wheels.
+    """
+    a = rgba.astype(np.float32)
+    al, c = a[..., 3], a[..., :3]
+    solid = al > 0
+    depth = m.ndimage.distance_transform_edt(np.pad(solid, 1))[1:-1, 1:-1]
+    rim = solid & (depth <= 1.5)
+    core = depth > 3
+    mn, mx = c.min(2), c.max(2)
+    out = {}
+    if core.any():
+        _, (iy, ix) = m.ndimage.distance_transform_edt(~core, return_indices=True)
+        f = c[iy, ix]
+        d = 255.0 - f
+        n2 = (d ** 2).sum(2)
+        pull = ((c - f) * d).sum(2) / np.maximum(n2, 1.0)
+        mixed = solid & (depth <= 2.5) & (al >= 128) & (np.sqrt(n2) >= 60) & (pull >= 0.35) & ((c - f) @ LUMA >= 25)
+        nearwhite = solid & (depth <= 3) & (mn > 225) & (f.min(2) < 200)
+    else:
+        mixed = nearwhite = np.zeros_like(solid)
+    out['halo'] = float(mixed.sum() / max(int(rim.sum()), 1))
+    out['nearwhite'] = int(nearwhite.sum())
+    veil = (al >= 20) & (al <= 200) & (mn > 200) & (mx - mn < 30)
+    out['smear'] = int(m.ndimage.binary_opening(veil, structure=np.ones((3, 3))).sum())
+    h = al.shape[0]
+    floor = (al >= 200) & (mn >= 150) & (mx - mn <= 16)
+    floor[:int(h * 0.8)] = False
+    dark = solid & (c @ LUMA < 70)
+    near_dark = np.zeros_like(dark)
+    for s in range(1, 21):
+        near_dark[s:] |= dark[:-s]
+    open_below = np.zeros_like(solid)
+    open_below[:-1] = ~solid[1:]
+    open_below[-1] = True
+    lab, n = m.ndimage.label(floor & near_dark, structure=np.ones((3, 3)))
+    out['floor'] = 0
+    if n:
+        touch = np.unique(lab[open_below & (lab > 0)])
+        if len(touch):
+            out['floor'] = int(m.ndimage.sum(np.ones_like(lab), lab, touch).max())
+    return out
+
+
+# Per family: max halo share. Tuned 2026-10-03 on the cleaned sprites (worst clean value in brackets) against
+# the unfixed ones (every unfixed vehicle/character >= 0.18; the owner's two: mojo-char/bo 0.218, mojo-hero/base-bo
+# 0.294). Families with DRAWN pale outlines (mojo-fx glows, mojo-ui captions/buttons, mojo-tile icons, the chase
+# items/props icons, the codex cprops/ui/edu/vfx) are not halo-gated: a painted white stroke is indistinguishable
+# from page mix at the pixel level; they are smear-gated only.
+HALO_MAX = {
+    'mojo-hero': 0.12,            # [0.095 chopper-1: white skid tubes]
+    'mojo-char': 0.12,            # [0.058 race-bot]
+    'mojo-top': 0.10,             # [0.042 jet]
+    'mojo-rear': 0.24,            # [0.20 base/prop-plane: white bumpers and wing tips meet the dark tyres]
+    'mojo-chase/vehicles': 0.20,  # [0.150 loot]
+    'mojo-chase/robbers': 0.15,   # [0.086 robber-cap]
+    'mojo-chase/signs': 0.15,     # [0.104 chevron-red]
+}
+# The element-library animals (light-blue card sheet 02, tint-only cleaning): white/cream fur drawn to the edge.
+HALO_EXEMPT = {'mojo-char/' + n for n in ('bird', 'cat', 'cow', 'dog', 'rabbit', 'sheep')}
+SMEAR_MAX = 80                    # [63 mojo-top/searchlight: its painted light beam]; families below
+SMEAR_FAMILIES = ('mojo-hero', 'mojo-char', 'mojo-top', 'mojo-prop', 'mojo-rear', 'mojo-fx', 'mojo-ui', 'mojo-tile',
+                  'mojo-chase/items', 'mojo-chase/props', 'mojo-chase/robbers', 'mojo-chase/vehicles', 'mojo-chase/signs')
+FLOOR_MAX = 30                    # wheeled film poses [6 offroad/van]; unfixed base-bo 130, van 504
+FLOOR_GATED = {'mojo-hero/' + n for n in hero.WHEELED}
+
+
+def fringe_failures(lib):
+    """Every gated sprite under lib that breaks a fringe limit, as readable lines."""
+    lib = Path(lib)
+    bad, seen = [], 0
+    for fam in SMEAR_FAMILIES:
+        for path in sorted((lib / fam).glob('*.webp')):
+            key = fam + '/' + path.stem
+            f = fringe_metrics(np.asarray(Image.open(path).convert('RGBA')))
+            seen += 1
+            limit = HALO_MAX.get(fam)
+            if limit is not None and key not in HALO_EXEMPT and f['halo'] > limit:
+                bad.append(f'{key}: white edge halo {f["halo"]:.3f} > {limit} of the rim (near-white {f["nearwhite"]} px)')
+            if f['smear'] > SMEAR_MAX:
+                bad.append(f'{key}: translucent white smear {f["smear"]} px > {SMEAR_MAX}')
+            if key in FLOOR_GATED and f['floor'] > FLOOR_MAX:
+                bad.append(f'{key}: opaque light floor slab {f["floor"]} px under the vehicle > {FLOOR_MAX}')
+    return bad, seen
+
+
+class SpriteFringeTests(unittest.TestCase):
+    """No Mojo sprite shows a white edge halo, a white translucent smear or an opaque floor slab."""
+    def test_every_mojo_sprite_is_free_of_white_fringe(self):
+        bad, seen = fringe_failures(ROOT / 'assets/db/lib')
+        self.assertGreater(seen, 780)
+        self.assertEqual(bad, [], 'white fringe (re-run the ingest tool; see tools/clean-mojo-sprites.decontaminate):\n' + '\n'.join(bad))
+
+    def test_metric_flags_page_mix_but_not_white_paint_or_outline(self):
+        img = np.zeros((40, 40, 4), np.uint8)
+        img[8:32, 8:32] = (110, 170, 215, 255)           # blue body
+        img[8:32, 31] = (180, 222, 250, 255)             # page-mixed rim column (min 180: not "near white")
+        self.assertGreater(fringe_metrics(img)['halo'], 0.15)
+        img[8:32, 31] = (20, 30, 40, 255)                # dark outline instead
+        self.assertEqual(fringe_metrics(img)['halo'], 0.0)
+        white = np.zeros((40, 40, 4), np.uint8)
+        white[8:32, 8:32] = (250, 250, 250, 255)         # white paint to the edge
+        self.assertEqual(fringe_metrics(white)['halo'], 0.0)
+
+    def test_metric_flags_floor_slab_and_white_veil(self):
+        img = np.zeros((100, 80, 4), np.uint8)
+        img[20:84, 5:75] = (40, 150, 220, 255)           # body
+        img[70:90, 8:20] = img[70:90, 60:72] = (25, 25, 25, 255)   # tyres
+        img[76:84, 20:60] = (30, 30, 40, 255)            # dark chassis underside
+        img[84:92, 20:60] = (172, 170, 170, 255)         # opaque grey floor between the tyres
+        self.assertGreater(fringe_metrics(img)['floor'], FLOOR_MAX)
+        img[84:92, 20:60] = (0, 0, 0, 60)                # the same floor as a translucent dark shadow
+        self.assertLessEqual(fringe_metrics(img)['floor'], FLOOR_MAX)
+        img[84:96, 20:60] = (240, 240, 240, 120)         # a white veil
+        self.assertGreater(fringe_metrics(img)['smear'], 100)
 
 
 class SceneBackgroundTests(unittest.TestCase):

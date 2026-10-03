@@ -54,53 +54,53 @@ CELLS = [
 
 # Audited enclosed page-colour components, cell-crop px "x,y" (before trimming). Judged by eye at 2-6x zoom,
 # 2026-10-03. CLEAR = page seen through the art (floor between wheels/skids, gaps in racks, rotor mast, lamp
-# stands, wing roots). KEEP = white art with the page value: window glass, roof highlights, wheel-arch rims,
-# white body panels, eye whites, white skid tubes, white tail paint.
+# stands, wing roots, and the far SIDE WINDOW of every cab: re-judged after the owner's phone test, "there's
+# still white here" - it is the white page seen through the cab, exactly 254 like the page, and showed as a
+# white slab on the home screen). KEEP = white art with the page value: roof highlights, roof light plates,
+# wheel-arch rims, white body panels, eye whites, white skid tubes, white tail paint.
 CLEAR_HOLES = {
-    'base-1': '70,203 175,210',
-    'base-2': '90,80 74,203 163,208',
-    'racer': '72,98 97,216',
-    'chopper-1': '90,54 197,198 137,211 67,216',
-    'dozer-2': '133,37',
-    'monster-1': '175,110',
+    'base-1': '70,203 175,210 185,110',
+    'base-2': '90,80 74,203 163,208 191,121',
+    'racer': '72,98 97,216 191,133',
+    'chopper-1': '90,54 197,198 137,211 67,216 65,116',
+    'dozer-2': '133,37 96,78',
+    'monster-1': '175,110 89,78',
     'monster-2': '128,186',
-    'monster-3': '150,180 147,201',
-    'base-front': '38,54',
-    'base-bo': '168,203',
-    'rescue': '78,100 83,194 171,199',
-    'offroad': '136,35 88,202',
-    'base-bo-front': '169,211',
+    'monster-3': '150,180 147,201 164,115',
+    'base-front': '38,54 196,68',
+    'base-bo': '168,203 186,67',
+    'rescue': '78,100 83,194 171,199 191,75',
+    'offroad': '136,35 88,202 85,83',
+    'base-bo-front': '169,211 196,79',
     'boat': '162,139',
-    'cargo': '179,190 87,196',
+    'cargo': '179,190 87,196 59,81',
     'jet-1': '61,154',
     'jet-3': '87,47',
-    'chopper-2': '181,196 70,193 116,201 74,213',
-    'chopper-3': '70,198 177,200 144,203 169,215',
-    'chopper-4': '67,200 170,205 104,208 156,221',
+    'chopper-2': '181,196 70,193 116,201 74,213 73,101',
+    'chopper-3': '70,198 177,200 144,203 169,215 167,110',
+    'chopper-4': '67,200 170,205 104,208 156,221 169,112',
+    'dozer-1': '103,102',
+    'dozer-3': '156,86',
+    'van': '166,67',
+    'jet-4': '186,99',
 }
 KEEP_WHITE = {
-    'base-1': '161,71 185,110 105,182',
-    'base-2': '160,86 191,121',
-    'racer': '151,97 191,133',
-    'chopper-1': '65,116 192,153 157,160 193,162 76,203 169,217',
-    'dozer-1': '103,102',
-    'dozer-2': '96,78',
-    'dozer-3': '156,86',
-    'monster-1': '89,78',
+    'base-1': '161,71 105,182',
+    'base-2': '160,86',
+    'racer': '151,97',
+    'chopper-1': '192,153 157,160 193,162 76,203 169,217',
     'monster-2': '111,65 108,83',
-    'monster-3': '164,115',
-    'van': '175,44 166,67 68,92',
-    'base-front': '196,68 123,67 105,141 63,164',
-    'base-bo': '142,20 186,67 116,141',
-    'rescue': '191,75 118,156',
-    'offroad': '111,42 149,49 85,83 191,126',
-    'base-bo-front': '114,22 196,79 61,172',
-    'cargo': '59,81 136,153',
+    'van': '175,44 68,92',
+    'base-front': '123,67 105,141 63,164',
+    'base-bo': '142,20 178,18 116,141',
+    'rescue': '118,156',
+    'offroad': '111,42 149,49 191,126',
+    'base-bo-front': '114,22 129,21 170,22 61,172',
+    'cargo': '136,153',
     'jet-2': '81,101',
-    'jet-4': '82,76 186,99',
-    'chopper-2': '73,101 127,142 156,156',
-    'chopper-3': '167,110',
-    'chopper-4': '169,112 93,166',
+    'jet-4': '82,76',
+    'chopper-2': '127,142 156,156',
+    'chopper-4': '93,166',
 }
 # Boxes (x0,y0,x1,y1 in cell px) where low white art must never become floor shadow.
 FLOOR_KEEP = {}
@@ -109,6 +109,15 @@ FLOOR_KEEP = {}
 SHADOW_SPAN = {}
 # Smooth-floor test threshold (luma gradient per px) for every sprite: keeps white skids/wings whole.
 SHADOW_SMOOTH = 5.0
+# Wheeled poses with NO white art below the tyre tops (judged by eye 2026-10-03): their cast shadow ends in a
+# steep ramp to the page (177 -> 233 -> 254 over 3 px), steeper than SHADOW_SMOOTH, so the smooth-reach never got
+# into the shadow body and it stayed an OPAQUE light-grey slab under the car (owner phone test, base-bo on the
+# home screen: "there's still white here"). These take the plain floor test (neutral light pixels below the
+# lowest tyre/chassis pixel, connected to the open page under the vehicle). Choppers, jets and the boat keep
+# the smooth test: their white skids, wings and hull sit on the floor.
+SHADOW_SMOOTH_WHEELED = 1e9
+WHEELED = set('base-1 base-2 racer dozer-1 dozer-2 dozer-3 monster-1 monster-2 monster-3 van base-front base-bo '
+              'rescue offroad base-bo-front cargo'.split())
 
 
 def _load(name, file):
@@ -251,7 +260,8 @@ def build(name, s, report):
     hole_floor &= smooth_mask(s, SMOOTH_HOLE_FLOOR)   # a shaded white tube under a gap is art, not floor
     rgb, alpha2 = clean.decontaminate(s, alpha, bg)
     rgb, alpha2 = clean.to_shadow(s, rgb, alpha2, hole_floor, bg)
-    rgb3, alpha3 = floor_shadow(s, rgb, alpha2, bg, SHADOW_SPAN.get(name, 5), SHADOW_SMOOTH)
+    rgb3, alpha3 = floor_shadow(s, rgb, alpha2, bg, SHADOW_SPAN.get(name, 5),
+                               SHADOW_SMOOTH_WHEELED if name in WHEELED else SHADOW_SMOOTH)
     protect = box_mask(alpha.shape, FLOOR_KEEP.get(name, ()))
     rgb3[protect], alpha3[protect] = rgb[protect], alpha2[protect]
     shadow = (alpha3 < alpha2) & (rgb3.max(2) == 0)

@@ -59,6 +59,10 @@ FLOOR_KEEP = {'excavator': [(68, 178, 154, 224)]}
 # through to the white page, roof trims, bumpers, the ambulance panel, white lamp lenses, the life ring, the
 # white engine cowlings and the chopper's white stripe.
 CLEAR_HOLES = {
+    # windscreen seen through the rear window: the white page beside Bo's head (re-judged 2026-10-03 after the
+    # owner's phone test of the film Mojo's side window; the same page-through-glass slab)
+    'base': '82,67 147,67',
+    'base-neon': '77,63 156,58',
     'ladder': '100,29 145,71',
     'chopper': '175,54 149,158 138,206',
     'excavator': '177,107',
@@ -75,8 +79,8 @@ CLEAR_HOLES = {
 KEEP_WHITE = {
     'crane-2': '140,102 117,131 82,184 155,184',
     'ladder': '92,111 129,187',
-    'base-neon': '145,28 77,63 156,58',
-    'base': '82,67 147,67 194,150',
+    'base-neon': '145,28',
+    'base': '194,150',
     'ambulance': '165,42 145,72 107,112 177,116 58,157 177,156',
     'boat': '135,116',
     'delivery': '51,157',

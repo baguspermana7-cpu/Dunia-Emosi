@@ -175,85 +175,85 @@
   "signs": {
    "size": {
     "h": 162,
-    "w": 440
+    "w": 441
    },
    "sprites": {
     "banner-gear": {
      "base": 155,
-     "bw": 48,
+     "bw": 46,
      "cx": 220.5,
      "left": 163,
      "lights": [],
-     "right": 244,
+     "right": 243,
      "top": 6
     },
     "banners": {
      "base": 155,
-     "bw": 85,
-     "cx": 220.0,
-     "left": 178,
+     "bw": 84,
+     "cx": 220.5,
+     "left": 179,
      "lights": [],
-     "right": 289,
-     "top": 16
+     "right": 290,
+     "top": 17
     },
     "billboard": {
      "base": 155,
-     "bw": 123,
-     "cx": 220.0,
-     "left": 136,
+     "bw": 122,
+     "cx": 220.5,
+     "left": 137,
      "lights": [],
      "right": 308,
      "top": 20
     },
     "caution": {
      "base": 155,
-     "bw": 29,
-     "cx": 220.0,
-     "left": 164,
+     "bw": 27,
+     "cx": 221.0,
+     "left": 166,
      "lights": [],
      "right": 282,
      "top": 24
     },
     "chevron-board": {
      "base": 155,
-     "bw": 102,
-     "cx": 220.5,
+     "bw": 101,
+     "cx": 221.0,
      "left": 160,
      "lights": [],
-     "right": 273,
+     "right": 271,
      "top": 60
     },
     "chevron-red": {
      "base": 155,
      "bw": 111,
      "cx": 220.0,
-     "left": 149,
+     "left": 150,
      "lights": [],
      "right": 292,
      "top": 42
     },
     "chevron-yellow": {
      "base": 155,
-     "bw": 16,
-     "cx": 220.5,
-     "left": 179,
+     "bw": 15,
+     "cx": 221.0,
+     "left": 180,
      "lights": [],
-     "right": 265,
+     "right": 264,
      "top": 44
     },
     "finish": {
      "base": 155,
-     "bw": 240,
-     "cx": 219.5,
-     "left": 100,
+     "bw": 239,
+     "cx": 221.0,
+     "left": 102,
      "lights": [],
-     "right": 339,
+     "right": 340,
      "top": 28
     },
     "flag-checker": {
      "base": 155,
-     "bw": 115,
-     "cx": 220.0,
+     "bw": 112,
+     "cx": 220.5,
      "left": 161,
      "lights": [],
      "right": 281,
@@ -261,20 +261,20 @@
     },
     "gantry": {
      "base": 155,
-     "bw": 397,
-     "cx": 220.0,
-     "left": 22,
+     "bw": 396,
+     "cx": 220.5,
+     "left": 23,
      "lights": [],
      "right": 418,
      "top": 21
     },
     "sign-60": {
      "base": 155,
-     "bw": 62,
-     "cx": 220.5,
-     "left": 175,
+     "bw": 59,
+     "cx": 221.0,
+     "left": 177,
      "lights": [],
-     "right": 266,
+     "right": 264,
      "top": 63
     },
     "swoppiton": {
@@ -288,217 +288,217 @@
     },
     "warning": {
      "base": 155,
-     "bw": 90,
-     "cx": 220.5,
-     "left": 176,
+     "bw": 89,
+     "cx": 221.0,
+     "left": 177,
      "lights": [],
-     "right": 266,
-     "top": 67
+     "right": 265,
+     "top": 68
     }
    }
   },
   "trackprops": {
    "size": {
     "h": 199,
-    "w": 307
+    "w": 310
    },
    "sprites": {
     "banner-blue": {
      "base": 192,
-     "bw": 54,
-     "cx": 153.5,
-     "left": 119,
+     "bw": 53,
+     "cx": 155.0,
+     "left": 121,
      "lights": [],
-     "right": 186,
-     "top": 27
+     "right": 187,
+     "top": 29
     },
     "banner-red": {
      "base": 192,
-     "bw": 40,
-     "cx": 153.5,
-     "left": 134,
+     "bw": 39,
+     "cx": 155.0,
+     "left": 136,
      "lights": [],
-     "right": 197,
+     "right": 198,
      "top": 37
     },
     "barrel-oil": {
      "base": 192,
      "bw": 66,
-     "cx": 153.5,
-     "left": 121,
+     "cx": 154.5,
+     "left": 122,
      "lights": [],
-     "right": 186,
+     "right": 187,
      "top": 98
     },
     "boulders": {
      "base": 192,
-     "bw": 148,
-     "cx": 153.5,
-     "left": 71,
+     "bw": 145,
+     "cx": 155.0,
+     "left": 74,
      "lights": [],
-     "right": 232,
+     "right": 235,
      "top": 52
     },
     "cactus-2": {
      "base": 192,
-     "bw": 74,
-     "cx": 153.5,
-     "left": 117,
+     "bw": 73,
+     "cx": 155.0,
+     "left": 119,
      "lights": [],
-     "right": 196,
-     "top": 24
+     "right": 197,
+     "top": 25
     },
     "fence": {
      "base": 192,
      "bw": 26,
-     "cx": 153.5,
-     "left": 50,
+     "cx": 155.5,
+     "left": 52,
      "lights": [],
-     "right": 177,
-     "top": 78
+     "right": 179,
+     "top": 79
     },
     "guardrail": {
      "base": 192,
-     "bw": 80,
-     "cx": 153.5,
-     "left": 110,
+     "bw": 77,
+     "cx": 155.0,
+     "left": 113,
      "lights": [],
-     "right": 298,
+     "right": 301,
      "top": 69
     },
     "guardrail-2": {
      "base": 192,
      "bw": 42,
-     "cx": 153.5,
-     "left": 19,
+     "cx": 154.5,
+     "left": 20,
      "lights": [],
-     "right": 180,
-     "top": 76
+     "right": 181,
+     "top": 77
     },
     "hay": {
      "base": 192,
-     "bw": 111,
-     "cx": 153.0,
-     "left": 98,
+     "bw": 110,
+     "cx": 154.5,
+     "left": 100,
      "lights": [],
-     "right": 215,
-     "top": 67
+     "right": 217,
+     "top": 68
     },
     "hedge": {
      "base": 192,
      "bw": 99,
-     "cx": 153.0,
-     "left": 102,
+     "cx": 155.0,
+     "left": 104,
      "lights": [],
-     "right": 277,
-     "top": 68
+     "right": 279,
+     "top": 69
     },
     "jersey": {
      "base": 192,
      "bw": 88,
-     "cx": 153.5,
-     "left": 46,
+     "cx": 154.5,
+     "left": 47,
      "lights": [],
-     "right": 197,
+     "right": 198,
      "top": 89
     },
     "jersey-2": {
      "base": 192,
-     "bw": 132,
-     "cx": 153.5,
-     "left": 88,
+     "bw": 131,
+     "cx": 155.0,
+     "left": 90,
      "lights": [],
-     "right": 240,
+     "right": 242,
      "top": 102
     },
     "palm": {
      "base": 192,
-     "bw": 90,
-     "cx": 153.5,
-     "left": 74,
+     "bw": 89,
+     "cx": 155.0,
+     "left": 76,
      "lights": [],
-     "right": 225,
+     "right": 226,
      "top": 15
     },
     "pine": {
      "base": 192,
      "bw": 97,
-     "cx": 153.0,
-     "left": 99,
+     "cx": 155.0,
+     "left": 102,
      "lights": [],
-     "right": 206,
+     "right": 208,
      "top": 6
     },
     "planter": {
      "base": 192,
      "bw": 96,
-     "cx": 153.5,
-     "left": 106,
+     "cx": 155.5,
+     "left": 108,
      "lights": [],
-     "right": 239,
+     "right": 240,
      "top": 87
     },
     "rail-wood": {
      "base": 192,
-     "bw": 174,
-     "cx": 153.5,
-     "left": 67,
+     "bw": 172,
+     "cx": 155.5,
+     "left": 70,
      "lights": [],
-     "right": 244,
-     "top": 79
+     "right": 247,
+     "top": 81
     },
     "rocks": {
      "base": 192,
      "bw": 103,
-     "cx": 154.0,
-     "left": 100,
+     "cx": 155.0,
+     "left": 101,
      "lights": [],
-     "right": 213,
+     "right": 214,
      "top": 67
     },
     "snow-pine": {
      "base": 192,
      "bw": 84,
-     "cx": 153.5,
-     "left": 107,
+     "cx": 155.5,
+     "left": 109,
      "lights": [],
-     "right": 224,
+     "right": 225,
      "top": 22
     },
     "stone-wall": {
      "base": 192,
      "bw": 96,
-     "cx": 153.5,
-     "left": 106,
+     "cx": 155.5,
+     "left": 108,
      "lights": [],
-     "right": 201,
+     "right": 203,
      "top": 87
     },
     "tree-round": {
      "base": 192,
-     "bw": 109,
-     "cx": 153.0,
-     "left": 93,
+     "bw": 108,
+     "cx": 154.5,
+     "left": 95,
      "lights": [],
-     "right": 218,
+     "right": 220,
      "top": 6
     },
     "tree-small": {
      "base": 192,
      "bw": 78,
-     "cx": 153.5,
-     "left": 104,
+     "cx": 155.5,
+     "left": 106,
      "lights": [],
-     "right": 205,
-     "top": 29
+     "right": 207,
+     "top": 30
     },
     "windmill": {
      "base": 192,
-     "bw": 68,
-     "cx": 153.5,
-     "left": 120,
+     "bw": 67,
+     "cx": 155.0,
+     "left": 122,
      "lights": [],
-     "right": 201,
+     "right": 203,
      "top": 41
     }
    }
