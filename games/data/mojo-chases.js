@@ -178,7 +178,7 @@
   function config (id, over) {
     var s = stage(id) || STAGES[0], o = over || {}
     return {
-      chase_id: o.chase_id || 'CHASE_' + s.id.toUpperCase(), stage: s.id, environment: s.biome, mojo_form: o.mojo_form || 'racer',
+      chase_id: o.chase_id || 'CHASE_' + s.id.toUpperCase(), stage: s.id, environment: s.biome, mojo_form: o.mojo_form || null,
       target_type: o.target || s.target, speed_profile: o.tier || s.tier, obstacle_set: s.biome, collectible_set: ['star', 'coin', 'heart'],
       gadget: { type: 'capture_rocket', pickup_required: true, auto_lock: true, capture_effect: 'safety_net' },
       education_payload: { enabled: true, type: 'number_lane', difficulty: 'grade_1_2' },

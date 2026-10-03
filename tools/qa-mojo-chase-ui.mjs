@@ -1,0 +1,300 @@
+// G31 chase UI gate: the pre-race picker (games/mojo-chase-picker.js) + the "Kotak Soal" card (games/mojo-chase-quiz.js).
+//   node tools/qa-mojo-chase-ui.mjs        (needs the local server on :8081)
+// H headless: quiz frequency limits over 50 seeded chases, question validity (3 distinct choices with the answer).
+// P picker in a real chase: shown before the countdown, the choice drives the in-race sprite, persists per avatar,
+//   Mulai starts the countdown within 300 ms.
+// Q quiz in a real chase: a forced quiz hit pauses (prog + timer frozen 3 s, Pause disabled, backgrounding keeps
+//   the card), a right answer resumes after "Siap? Jalan!" with +2 stars, two wrong answers never fail.
+// F fit: picker + card on 360x780, 412x915, 844x390, 1280x800 — inside the viewport, no overlapping boxes,
+//   no clipped text, targets >= 56 px (carousel >= 72, answers >= 64).
+// The page's own script tags are used when present; otherwise the gate injects the three files (pre-integration).
+import puppeteer from 'puppeteer'
+import fs from 'node:fs'
+import path from 'node:path'
+const root = path.resolve(import.meta.dirname, '..')
+const BASE = process.env.QA_BASE || 'http://localhost:8081'
+const url = BASE + '/games/mojo-swoptops.html?unlock=1&chase=1'
+const out = process.env.QA_SHOTS || '/tmp/mojo-chase-ui-qa'; fs.mkdirSync(out, { recursive: true })
+const SIZES = [[360, 780], [412, 915], [844, 390], [1280, 800]]
+const sleep = ms => new Promise(r => setTimeout(r, ms))
+const issues = []; let passed = 0
+function check (ok, msg) { if (ok) passed++; else { issues.push(msg); console.error('FAIL', msg) } }
+const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F2FF}]/u
+
+/* ── H. headless ─────────────────────────────────────────────────────────────────────────────── */
+globalThis.window = globalThis
+;(0, eval)(fs.readFileSync(path.join(root, 'games/mojo-chase-quiz.js'), 'utf8'))
+const Q = globalThis.MojoChaseQuiz
+{
+  let bad = [], counts = { 1: 0, 2: 0 }
+  for (let seed = 1; seed <= 50; seed++) { const r = Q.sim(seed, 75); if (r.bad.length) bad.push(seed + ':' + r.bad.join('/')); else counts[r.times.length]++ }
+  check(bad.length === 0, `quiz frequency: 50 seeded chases keep 1-2 boxes, none before ${Q.LIMITS.first}s, >= ${Q.LIMITS.gap}s apart, none in capture range or at the lane event (${bad.slice(0, 3).join(' ') || 'ok'})`)
+  check(counts[1] > 0 && counts[2] > 0, `quiz frequency: both 1 and 2 boxes occur (${counts[1]}/${counts[2]})`)
+  // a short chase that reaches capture range early still never spawns inside it
+  let early = 0; for (let seed = 1; seed <= 50; seed++) { const r = Q.sim(seed, 30); early += r.bad.filter(b => !/^count/.test(b)).length }
+  check(early === 0, `quiz frequency: short chases never break the limits (${early})`)
+  let qb = 0, seen = new Set(), dup = 0
+  const r = Q.rng(11)
+  for (let i = 0; i < 400; i++) {
+    const q = Q.question(r), v = q.choices.map(c => c.v)
+    if (v.length !== 3 || new Set(v).size !== 3 || !v.includes(q.answer) || EMOJI.test(q.text) || /\b(the|how|many|more)\b/i.test(q.text)) qb++
+    if (i < 60) { if (seen.has(q.key)) dup++; seen.add(q.key) }
+  }
+  check(qb === 0, `quiz questions: 3 distinct choices with the answer, Indonesian, no emoji (${qb} bad of 400)`)
+  check(dup === 0, `quiz questions: no repeats within a session (first 60: ${dup})`)
+}
+
+/* ── browser ─────────────────────────────────────────────────────────────────────────────────── */
+const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-gpu-blocklist', '--use-angle=vulkan', '--enable-gpu'] })
+async function page (w, h, slot, p0) {
+  const p = p0 || await browser.newPage()
+  if (!p0) {
+    await p.setBypassServiceWorker(true)
+    await p.setViewport({ width: w, height: h, deviceScaleFactor: 1, hasTouch: w < 900, isMobile: w < 500 })
+    const errors = []; p.on('pageerror', e => errors.push(String(e))); p.__errors = errors
+  }
+  await p.goto(url, { waitUntil: 'networkidle2' })
+  // the game locks the avatar for the session at load: set the slot, then load again
+  if (slot != null) { if (!p0) await p.evaluate(() => localStorage.clear()); await avatar(p, slot); await p.goto(url, { waitUntil: 'networkidle2' }) }
+  await p.waitForFunction(() => window.MojoChaseMenu && window.MojoChase)
+  if (!await p.evaluate(() => !!window.MojoChasePicker)) {
+    await p.addStyleTag({ url: BASE + '/games/mojo-chase-ui.css' })
+    await p.addScriptTag({ url: BASE + '/games/mojo-chase-picker.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-quiz.js' })
+  }
+  // keep the session api so a quiz hit can be forced through the real hook path
+  await p.evaluate(() => {
+    const H = MojoChase.hooks, b = H.beforeStart
+    H.beforeStart = function (c, a) { window.__qaApi = a; return b(c, a) }
+  })
+  return p
+}
+async function avatar (p, slot) { await p.evaluate(s => { localStorage.setItem('dunia-players', JSON.stringify([{ animal: 'kucing', name: 'A' }, { animal: 'anjing', name: 'B' }])); localStorage.setItem('dunia-active-slot', JSON.stringify([s, 1])) }, slot) }
+const st = p => p.evaluate(() => window.__mojoChase && __mojoChase.state())
+async function waitState (p, fn, ms) { const t0 = Date.now(); let s; while (Date.now() - t0 < ms) { s = await st(p); if (s && fn(s)) return s; await sleep(100) } return s }
+// fit audit: every box inside the viewport, no two boxes overlap, no clipped text, minimum target sizes
+async function fit (p, sel, minT) {
+  return p.evaluate((sel, minT) => {
+    const vw = innerWidth, vh = innerHeight, bad = []
+    const boxes = sel.map(s => [s, document.querySelector(s)]).filter(x => x[1]).map(([s, e]) => [s, e.getBoundingClientRect()])
+    for (const [s, r] of boxes) { if (r.left < -1 || r.top < -1 || r.right > vw + 1 || r.bottom > vh + 1) bad.push('out ' + s + ' ' + [r.left, r.top, r.right, r.bottom].map(Math.round)); if (!r.width || !r.height) bad.push('empty ' + s) }
+    for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i][1], b = boxes[j][1], ix = Math.min(a.right, b.right) - Math.max(a.left, b.left), iy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)
+      if (ix > 2 && iy > 2) bad.push('overlap ' + boxes[i][0] + ' / ' + boxes[j][0])
+    }
+    document.querySelectorAll('.mcp b,.mcp span,.mcp h2,.mcp p,.mcp button,.mcq h2,.mcq p,.mcq button').forEach(e => {
+      if (e.offsetParent && (e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 2) && getComputedStyle(e).overflow !== 'visible') bad.push('clip ' + e.className + ':' + e.textContent.slice(0, 20))
+      if (e.offsetParent && e.tagName !== 'BUTTON' && e.scrollWidth > e.clientWidth + 1 && /mcp-(name|perk)|mcq-(q|say)/.test(e.className)) bad.push('clip ' + e.className)
+    })
+    for (const [s, m] of Object.entries(minT)) document.querySelectorAll(s).forEach(e => { const r = e.getBoundingClientRect(); if (r.height < m || r.width < m) bad.push('small ' + s + ' ' + Math.round(r.width) + 'x' + Math.round(r.height)) })
+    const pl = document.querySelector('.mcq-plank'); if (pl && pl.scrollHeight > pl.clientHeight + 2) bad.push('card scrolls ' + pl.scrollHeight + '>' + pl.clientHeight)
+    const txt = (document.querySelector('.mcp') || document.querySelector('.mcq') || document.body).innerText
+    if (/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(txt)) bad.push('emoji')
+    return bad
+  }, sel, minT)
+}
+const FAKE_API = () => { window.__fk = { paused: 0, resumed: 0, reward: null, cleared: 0 }; return { host: document.body, pause () { __fk.paused++ }, resume () { __fk.resumed++ }, reward (o) { __fk.reward = o }, clearAhead (s) { __fk.cleared = s } } }
+
+try {
+  /* ── F. fit on 4 viewports (stand-alone: picker on the pantai stage, the largest cards of each quiz kind) ── */
+  for (const [w, h] of SIZES) {
+    const p = await page(w, h)
+    // the unlock celebration card first (a save that has only seen Pembalap -> three new forms)
+    await p.evaluate(() => { localStorage.removeItem('dunia-g31-chase'); avatarScopedSet('dunia-g31-chase', JSON.stringify({ v: 1, st: {}, formsSeen: ['racer'] })) })
+    await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('desa'), { host: document.body }) })
+    await p.waitForSelector('.mcp-new-ok'); await sleep(450)
+    const cb = await fit(p, ['.mcp-new .art', '.mcp-new h2', '.mcp-new p', '.mcp-new-ok'], { '.mcp-new-ok': 56 })
+    check(cb.length === 0, `${w}x${h} unlock celebration fits: ${cb.slice(0, 4).join('; ') || 'ok'}`)
+    const cov = await p.evaluate(() => { const r = document.querySelector('.mcp-new').getBoundingClientRect(); return r.left <= 1 && r.top <= 1 && r.right >= innerWidth - 1 && r.bottom >= innerHeight - 1 })
+    check(cov, `${w}x${h} unlock celebration covers the whole picker`)
+    if (w === 412) await p.screenshot({ path: `${out}/unlock-${w}.png` })
+    while (await p.$('.mcp-new-ok')) { await p.click('.mcp-new-ok'); await sleep(120) }
+    await sleep(300)
+    const bad = await fit(p, ['.mcp-plank', '.mcp-rear', '.mcp-info', '.mcp-car', '.mcp-go'], { '.mcp-card': 72, '.mcp-nav': 56, '.mcp-go': 56 })
+    check(bad.length === 0, `${w}x${h} picker fits: ${bad.slice(0, 4).join('; ') || 'ok'}`)
+    const vis = await p.evaluate(() => { const c = document.querySelector('.mcp-card.on').getBoundingClientRect(), t = document.querySelector('.mcp-track').getBoundingClientRect(); return c.left >= t.left - 1 && c.right <= t.right + 1 })
+    check(vis, `${w}x${h} picker: the selected form card is fully visible in the strip`)
+    const gap = await p.evaluate(() => { const r = document.querySelector('.mcp-rear').getBoundingClientRect(), l = document.querySelector('.mcp-line').getBoundingClientRect(); return Math.round(r.bottom - r.height * 0.03 - l.top) })
+    check(gap >= -12 && gap <= 2, `${w}x${h} picker: Mojo's wheels stand just behind the start line (${gap} px)`)
+    const perk = await p.evaluate(() => ({ n: document.querySelector('.mcp-name').textContent, l: document.querySelector('.mcp-perk').textContent, hero: [...document.querySelectorAll('.mcp-card img')].filter(i => /mojo-hero\//.test(i.src)).length }))
+    check(perk.l.indexOf(perk.n + ':') !== 0 && perk.hero >= 8, `${w}x${h} picker: perk line without the name prefix, film art on the cards (${perk.l} / ${perk.hero} hero)`)
+    if (w === 412 || w === 1280) await p.screenshot({ path: `${out}/picker-${w}.png` })
+    await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
+    for (const kind of ['add', 'compare', 'sub']) {
+      await p.evaluate(k => { const q = MojoChaseQuiz.question(MojoChaseQuiz.rng(3), k); if (k === 'add') { q.text = q.text.replace(/\d+/, '5').replace(/\d+ lagi/, '5 lagi'); q.groups[0].n = 5; q.groups[2].n = 5 } if (k === 'compare') { q.groups[0].n = 8; q.groups[2].n = 7 } if (k === 'sub') { q.groups[0].n = 10; q.groups[0].gone = 3 } MojoChaseQuiz.open({}, null, { q }) }, kind)
+      await p.waitForSelector('.mcq-btn'); await sleep(450)
+      await p.evaluate(() => { document.querySelector('.mcq-say').textContent = 'Jawabannya Kanan lebih banyak. Kamu sudah berusaha, ayo lanjut!' })
+      const qb = await fit(p, ['.mcq-head', '.mcq-q', '.mcq-pics', '.mcq-say', '.mcq-ans'], { '.mcq-btn': 64 })
+      check(qb.length === 0, `${w}x${h} quiz card (${kind}) fits: ${qb.slice(0, 4).join('; ') || 'ok'}`)
+      if ((w === 412 || w === 1280) && kind === 'add') await p.screenshot({ path: `${out}/quiz-${w}.png` })
+      await p.evaluate(() => { const m = document.querySelector('.mcq'); m.remove(); MojoChaseQuiz.__drop && MojoChaseQuiz.__drop() })
+      await p.close().catch(() => {}); break   // one card per page: a fresh page per kind below
+    }
+    for (const kind of ['compare', 'sub']) {
+      const p2 = await page(w, h)
+      await p2.evaluate(k => { const q = MojoChaseQuiz.question(MojoChaseQuiz.rng(5), k); if (k === 'compare') { q.groups[0].n = 8; q.groups[2].n = 7 } else { q.groups[0].n = 10; q.groups[0].gone = 3 } MojoChaseQuiz.open({}, null, { q }) }, kind)
+      await p2.waitForSelector('.mcq-btn'); await sleep(450)
+      await p2.evaluate(() => { document.querySelector('.mcq-say').textContent = 'Jawabannya Kanan lebih banyak. Kamu sudah berusaha, ayo lanjut!' })
+      const qb = await fit(p2, ['.mcq-head', '.mcq-q', '.mcq-pics', '.mcq-say', '.mcq-ans'], { '.mcq-btn': 64 })
+      check(qb.length === 0, `${w}x${h} quiz card (${kind}) fits: ${qb.slice(0, 4).join('; ') || 'ok'}`)
+      await p2.close()
+    }
+  }
+
+  /* ── stand-alone quiz behaviour (fake api): wrong twice never fails, right rewards ─────────────── */
+  {
+    const p = await page(412, 915)
+    await p.evaluate(`(${FAKE_API})()`).catch(() => {})
+    await p.evaluate(fk => { window.__api = (0, eval)('(' + fk + ')')(); MojoChaseQuiz.open({}, __api, { kind: 'count' }) }, FAKE_API.toString())
+    await p.waitForSelector('.mcq-btn')
+    check(await p.evaluate(() => __fk.paused === 1), 'quiz: opening calls api.pause once')
+    const wrong = await p.evaluate(() => { const a = String(MojoChaseQuiz.state().answer); return [...document.querySelectorAll('.mcq-btn')].map((b, i) => b.dataset.v === a ? -1 : i).filter(i => i >= 0) })
+    await p.click(`.mcq-btn:nth-child(${wrong[0] + 1})`); await sleep(200)
+    const s1 = await p.evaluate(() => ({ s: MojoChaseQuiz.state(), say: document.querySelector('.mcq-say').textContent }))
+    check(s1.s.open && s1.s.phase === 'ask' && s1.s.tries === 1 && /Hampir/.test(s1.say), `quiz: first wrong answer gives a gentle hint and a retry (${s1.say})`)
+    await p.click(`.mcq-btn:nth-child(${wrong[1] + 1})`); await sleep(200)
+    const s2 = await p.evaluate(() => ({ s: MojoChaseQuiz.state(), say: document.querySelector('.mcq-say').textContent, shown: !!document.querySelector('.mcq-btn.show') }))
+    check(s2.s.phase === 'shown' && s2.shown && /Jawabannya/.test(s2.say) && !/salah|gagal|kalah/i.test(s2.say), `quiz: after 2 tries the answer is shown kindly (${s2.say})`)
+    await sleep(3600)
+    const f = await p.evaluate(() => ({ fk: __fk, open: MojoChaseQuiz.state().open }))
+    check(!f.open && f.fk.resumed === 1 && f.fk.cleared === 1.5 && !f.fk.reward, `quiz: after the answer is shown the chase resumes with the road cleared, no penalty (${JSON.stringify(f.fk)})`)
+    await p.close()
+  }
+
+  /* ── U. progressive unlock ───────────────────────────────────────────────────────────────── */
+  {
+    const p = await page(412, 915, 0)
+    const sched = await p.evaluate(() => {
+      const S = MojoChases.STAGES, out = []
+      for (let k = 0; k <= S.length; k++) {
+        const st = {}; S.slice(0, k).forEach(s => { st[s.id] = { stars: 1, t: 1 } })
+        const row = { k, unlocked: MojoChasePicker.available({ v: 1, st }, S[0]).unlocked.length, recOk: true, sel: [] }
+        S.forEach(s => { const a = MojoChasePicker.available({ v: 1, st }, s), rec = MojoChasePicker.recommend(s).rec; if (a.selectable.indexOf(rec) < 0) row.recOk = false; row.sel.push(a.selectable.length) })
+        out.push(row)
+      }
+      return { out, n: MojoChasePicker.FORMS.length, s1: MojoChasePicker.available({ v: 1, st: {} }, S[0]).selectable.length }
+    })
+    check(sched.s1 >= 4 && sched.s1 <= 6, `unlock: stage 1 offers 4-6 selectable forms (${sched.s1})`)
+    check(sched.out.every((r, i) => i === 0 || r.unlocked >= sched.out[i - 1].unlocked), `unlock: the unlocked count grows monotonically (${sched.out.map(r => r.unlocked).join(',')})`)
+    const six = sched.out.find(r => r.unlocked >= 6)
+    check(six && six.k >= 2 && six.k <= 5, `unlock: 6 forms by stage 3-6 (${six && six.k} cleared)`)
+    check(sched.out.filter(r => r.k >= sched.out.length - 6).every(r => r.unlocked === sched.n), `unlock: every form unlocked by the final stages (${sched.out.find(r => r.unlocked === sched.n).k} cleared of ${sched.out.length - 1})`)
+    check(sched.out.every(r => r.recOk), 'unlock: the stage\'s recommended form is always selectable, at every progress level')
+    // DOM: snow stage with nothing cleared -> Bajak Salju as a "Baru!" trial; locked cards cannot be selected
+    await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('salju'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(400)
+    const d = await p.evaluate(() => ({ sel: document.querySelectorAll('.mcp-card:not(.lock)').length, lock: document.querySelectorAll('.mcp-card.lock').length, trial: !!document.querySelector('.mcp-card[data-form="snow-plow"] em.new'), form: MojoChasePicker.state().form, hint: [...document.querySelectorAll('.mcp-card.lock b')].every(b => /^Selesaikan \d+ tahap lagi$/.test(b.textContent)) }))
+    check(d.sel === 5 && d.lock === 4 && d.trial && d.form === 'snow-plow' && d.hint, `unlock: snow stage at the start = 4 unlocked + the "Baru!" trial, 4 locked silhouettes with "Selesaikan N tahap lagi" (${JSON.stringify(d)})`)
+    await p.evaluate(() => document.querySelector('.mcp-card.lock[data-form="jet"]').click()); await sleep(150)
+    const lk = await p.evaluate(() => ({ form: MojoChasePicker.state().form, wig: document.querySelector('.mcp-card[data-form="jet"]').classList.contains('wiggle'), ask: document.querySelector('.mcp-ask').textContent }))
+    check(lk.form === 'snow-plow' && lk.wig && /tahap lagi/.test(lk.ask), `unlock: tapping a locked card wiggles + hints and never selects it (${lk.ask})`)
+    const seen = []
+    for (let i = 0; i < 7; i++) { await p.click('.mcp-nav.next'); await sleep(470); seen.push(await p.evaluate(() => MojoChasePicker.state().form)) }
+    const selIds = await p.evaluate(() => MojoChasePicker.state().selectable)
+    check(seen.every(f => selIds.includes(f)), `unlock: the arrows skip locked forms (${seen.join(',')})`)
+    await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
+    // per avatar: clearing 3 stages unlocks 2 forms -> one celebration each, once
+    await p.evaluate(() => { const sv = MojoChasePicker.readSave(); avatarScopedSet('dunia-g31-chase', JSON.stringify(Object.assign({}, sv, { st: { pantai: { stars: 1, t: 1 }, kota: { stars: 2, t: 2 }, hutan: { stars: 1, t: 3 } } }))) })
+    await page(412, 915, 0, p)
+    await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('pantai'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(400)
+    const cel = []
+    while (await p.$('.mcp-new-ok')) { cel.push(await p.$eval('.mcp-new h2', e => e.textContent)); await p.click('.mcp-new-ok'); await sleep(150) }
+    check(cel.length === 2 && cel.every(t => /^Wujud baru terbuka: .+!$/.test(t)), `unlock: each newly unlocked form gets one celebration card (${cel.join(' | ')})`)
+    const s6 = await p.evaluate(() => MojoChasePicker.state().selectable.length)
+    check(s6 === 6, `unlock: 3 stages cleared -> 6 selectable (${s6})`)
+    await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
+    await page(412, 915, 1, p)
+    await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('pantai'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(300)
+    const other = await p.evaluate(() => ({ n: MojoChasePicker.state().selectable.length, cel: !!document.querySelector('.mcp-new') }))
+    check(other.n === 4 && !other.cel, `unlock per avatar: the second avatar keeps its own progress (${other.n} selectable, celebration ${other.cel})`)
+    await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
+    await page(412, 915, 0, p)
+    await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('pantai'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(300)
+    const back = await p.evaluate(() => ({ n: MojoChasePicker.state().selectable.length, cel: !!document.querySelector('.mcp-new'), seen: MojoChasePicker.readSave().formsSeen }))
+    check(back.n === 6 && !back.cel && back.seen.length === 6, `unlock per avatar: switching back keeps 6 forms and celebrates nothing twice (${JSON.stringify(back)})`)
+    await p.close()
+  }
+
+  /* ── P + Q. a real chase (phone) ───────────────────────────────────────────────────────────── */
+  {
+    const p = await page(412, 915, 0)
+    check(await p.evaluate(() => /^dunia-avatar-/.test(activeAvatarBadgeKey('g31-chase'))), 'per avatar: the chase save resolves to an avatar-scoped key')
+    await p.evaluate(() => { const k = 'dunia-g31-chase'; avatarScopedSet(k, JSON.stringify({ v: 1, st: { pantai: { stars: 2, t: 5 } } })) })
+    const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai')).then(r => (window.__res = r)))
+    await p.waitForSelector('.mcp-go', { timeout: 60000 }); await sleep(400)
+    let s = await st(p)
+    check(s && !['cut', 'swop', 'countdown', 'tutorial', 'active'].includes(s.state) && !await p.$('#mc-go'), `picker appears before the countdown (core state ${s && s.state})`)
+    const pk = await p.evaluate(() => MojoChasePicker.state())
+    check(pk.open && pk.form === 'racer' && pk.rec === 'racer', `picker: pre-selects the stage pick for a new avatar (${pk.form}/${pk.rec})`)
+    check(await p.evaluate(() => document.querySelectorAll('.mcp-card em.gold').length === 1 && /Paling Tepat/.test(document.querySelector('.mcp-card[data-form="racer"]').textContent) && [...document.querySelectorAll('.mcp-card em.alt')].every(e => !e.parentNode.classList.contains('lock'))), 'picker: one "Paling Tepat"; "Bisa Juga" only on selectable forms')
+    // the arrow swops with the portal + click-lock
+    await p.click('.mcp-nav.next'); await sleep(60)
+    check(await p.evaluate(() => document.querySelector('.mcp').classList.contains('locked')), 'picker: the swop locks input while it plays')
+    await sleep(500)
+    check(await p.evaluate(() => MojoChasePicker.state().form === 'monster' && document.querySelector('.mcp-rear').dataset.rear === 'monster-2'), 'picker: next arrow selects the next form and its rear art')
+    // swipe on the preview
+    const sb = await p.$eval('.mcp-stage', e => { const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 } })
+    await p.mouse.move(sb.x + 80, sb.y); await p.mouse.down(); await p.mouse.move(sb.x - 80, sb.y, { steps: 4 }); await p.mouse.up(); await sleep(520)
+    check(await p.evaluate(() => MojoChasePicker.state().form === 'jumper'), 'picker: a swipe on the preview changes the form')
+    await p.evaluate(() => document.querySelector('.mcp-card[data-form="monster"]').click()); await sleep(520)
+    const t0 = await p.evaluate(() => { window.__t0 = performance.now(); document.querySelector('.mcp-go').click(); return 1 })
+    const ms = await p.evaluate(() => new Promise(res => { const tick = () => { const s = __mojoChase.state(); if (['countdown', 'cut', 'swop', 'tutorial', 'active'].includes(s.state)) res(performance.now() - __t0); else if (performance.now() - __t0 > 1500) res(-1); else requestAnimationFrame(tick) }; tick() }))
+    check(ms >= 0 && ms <= 300, `Mulai starts the countdown within 300 ms (${ms < 0 ? 'not started: ' + (await st(p)).state + (await p.$('#mc-go') ? ', core still shows its intro card' : '') : Math.round(ms) + ' ms'})`)
+    if (await p.$('#mc-go')) await p.evaluate(() => document.querySelector('#mc-go').click())
+    await waitState(p, s => s.state === 'cut' || s.state === 'active' || s.state === 'swop', 15000); await p.evaluate(() => { const b = document.querySelector('.mc-skip'); if (b) b.click() })
+    s = await waitState(p, s => s.state === 'active', 30000)
+    check(s && s.form === 'monster' && s.rear === 'monster-2', `the choice changes the in-race sprite key (${s && s.form}/${s && s.rear})`)
+    const sv = await p.evaluate(() => ({ a: MojoChasePicker.readSave(), m: MojoChaseMenu.load() }))
+    check(sv.a.form === 'monster' && sv.m.form === 'monster' && sv.a.st && sv.a.st.pantai && sv.a.st.pantai.stars === 2, `the choice persists per avatar without touching the stage stars (${JSON.stringify(sv.a)})`)
+
+    // Q: a forced quiz hit through the hook path
+    await p.evaluate(() => __mojoChase.auto({ mode: 'clean' }))
+    await sleep(800)
+    await p.evaluate(() => { __mojoChase.auto(null); if (__mojoChase.emitTest) __mojoChase.emitTest('quiz'); if (!MojoChaseQuiz.state().open) MojoChase.hooks.onPickup('quiz', { sx: 0, sy: 0 }, window.__qaApi) })
+    await p.waitForSelector('.mcq-btn', { timeout: 3000 })
+    await sleep(300)
+    const a0 = await st(p)
+    await sleep(3000)
+    const a1 = await st(p)
+    check(a1.paused && a0.prog === a1.prog && a0.elapsed === a1.elapsed && a0.z === a1.z, `a quiz hit pauses: robber progress and timer unchanged for 3 s (${a0.prog.toFixed(4)}=${a1.prog.toFixed(4)}, ${a0.elapsed.toFixed(2)}=${a1.elapsed.toFixed(2)})`)
+    check(await p.evaluate(() => getComputedStyle(document.querySelector('.mc-pause')).pointerEvents === 'none'), 'the Pause button is disabled while the card is open')
+    await p.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }); document.dispatchEvent(new Event('visibilitychange')) })
+    await sleep(300)
+    check(await p.evaluate(() => MojoChaseQuiz.state().open && !document.querySelector('.mc-card.on')), 'backgrounding keeps the card open (no pause card on top)')
+    await p.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => false }); document.dispatchEvent(new Event('visibilitychange')) })
+    // right answer
+    const stars0 = (await p.evaluate(() => __mojoChase.state().stars))
+    await p.evaluate(() => { const a = String(MojoChaseQuiz.state().answer); document.querySelector('.mcq-btn[data-v="' + a + '"]').click() })
+    await sleep(1300)
+    const cd = await p.evaluate(() => ({ t: (document.querySelector('.mcq-go span') || {}).textContent, paused: __mojoChase.state().paused }))
+    check(cd.paused && /Siap|Jalan/.test(cd.t || ''), `a right answer shows "Siap? Jalan!" while still paused (${cd.t})`)
+    const r1 = await waitState(p, s => !s.paused, 3000)
+    await sleep(500); const r2 = await st(p)
+    check(r1 && !r1.paused && r2.elapsed > r1.elapsed && !await p.$('.mcq'), `answering resumes after the countdown (elapsed ${r1 && r1.elapsed.toFixed(2)} -> ${r2.elapsed.toFixed(2)})`)
+    check(r2.stars >= stars0 + 2, `a right answer gives +2 stars (${stars0} -> ${r2.stars})`)
+    // wrong twice in the real chase: never a fail
+    await p.evaluate(() => MojoChase.hooks.onPickup('quiz', { sx: 0, sy: 0 }, window.__qaApi)); await p.waitForSelector('.mcq-btn')
+    const h0 = await p.evaluate(() => document.querySelectorAll('.mc-hearts img.off').length)
+    for (let k = 0; k < 2; k++) await p.evaluate(() => { const a = String(MojoChaseQuiz.state().answer); const b = [...document.querySelectorAll('.mcq-btn')].find(b => b.dataset.v !== a && !b.disabled); b.click() })
+    const w1 = await waitState(p, s => !s.paused, 6000)
+    const h1 = await p.evaluate(() => document.querySelectorAll('.mc-hearts img.off').length)
+    check(w1 && !w1.paused && w1.state === 'active' && h1 === h0 && !await p.$('.mcq'), `a wrong answer never fails: the chase continues, hearts unchanged (${w1 && w1.state}, ${h0}->${h1})`)
+    // per avatar: the other avatar has its own choice
+    await p.evaluate(() => { __mojoChase.force({ prog: 0.99, best: 0.99, hasRocket: true, rocket: 1 }); document.querySelector('.mc-pause').click() }); await sleep(300)
+    await p.evaluate(() => { const b = document.querySelector('#mc-exit'); if (b) b.click() }); await done.catch(() => {})
+    await page(412, 915, 1, p)
+    check(await p.evaluate(() => MojoChasePicker.readSave().form !== 'monster'), 'per avatar: the second avatar does not inherit the first choice')
+    await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('salju'), { host: document.body }) }); await p.waitForSelector('.mcp-go')
+    check(await p.evaluate(() => MojoChasePicker.state().form === 'snow-plow'), 'per avatar: a new avatar starts on the stage pick (snow stage -> Bajak Salju)')
+    await p.evaluate(() => { document.querySelector('.mcp-card[data-form="dozer"]').click() }); await sleep(520); await p.click('.mcp-go')
+    const c2 = await p.evaluate(() => window.__pk)
+    check(c2.mojo_form === 'dozer' && c2.perk === 'recover', `the picker resolves cfg with mojo_form + perk (${c2.mojo_form}/${c2.perk})`)
+    await page(412, 915, 0, p)
+    check(await p.evaluate(() => MojoChasePicker.readSave().form === 'monster'), 'per avatar: switching back restores the first avatar choice')
+    check(p.__errors.length === 0, `no page errors (${p.__errors.slice(0, 2).join(' | ')})`)
+    await p.close()
+  }
+} catch (e) { check(false, 'gate crashed: ' + (e && e.stack || e).toString().split('\n').slice(0, 3).join(' ')) }
+await browser.close()
+fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify({ passed, issues }, null, 1))
+console.log(`\nmojo-chase-ui: ${passed} passed, ${issues.length} failed  (shots ${out})`)
+if (issues.length) console.log('failed: ' + issues.map(s => s.slice(0, 110)).join(' || '))
+process.exit(issues.length ? 1 : 0)

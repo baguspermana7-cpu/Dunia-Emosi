@@ -116,20 +116,46 @@ try {
     check(await p.evaluate(() => document.body.dataset.scr === 'scr-race'), 'the Balapan menu entry opens the stage list')
     const card = await p.$(`.race-card[data-stage="${stage}"]`)
     await card.evaluate(e => e.scrollIntoView({ block: 'center' })); await card.click()
-    await p.waitForSelector('#mc-go', { timeout: 20000 }); await sleep(300)
+    await p.waitForSelector('#mc-go, .mcp-go', { timeout: 20000 }); await sleep(300)
   }
-  async function state (p) { return p.evaluate(() => __mojoChase.state()) }
+  // start a chase: the picker's Mulai when the picker module is loaded (the core then skips its intro card), else the core's card
+  async function go (p, ms = 20000) {
+    await p.waitForSelector('#mc-go, .mcp-go', { timeout: ms }); await sleep(450)
+    if (await p.$('.mcp-go')) await p.evaluate(() => document.querySelector('.mcp-go').click()); else await p.click('#mc-go')
+  }
+  // the picker + quiz modules (games/mojo-chase-picker.js, -quiz.js) are injected when the page does not load them yet,
+  // so the gate always drives the real start path (Mulai) and answers any quiz card the autopilot drives into
+  async function wire (p) {
+    if (process.env.QA_PICKER === '0' || await p.evaluate(() => !!window.MojoChasePicker)) return
+    await p.addStyleTag({ url: BASE + '/games/mojo-chase-ui.css' })
+    await p.addScriptTag({ url: BASE + '/games/mojo-chase-picker.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-quiz.js' })
+  }
+  async function state (p) {
+    return p.evaluate(() => {
+      const Q = window.MojoChaseQuiz
+      if (Q && Q.state().open) { const b = document.querySelector('.mcq-btn[data-v="' + Q.state().answer + '"]'); if (b && !b.disabled) b.click() }
+      return __mojoChase.state()
+    })
+  }
   async function waitState (p, fn, ms) { const t = Date.now(); while (Date.now() - t < ms) { const s = await state(p); if (fn(s)) return s; await sleep(150) } return state(p) }
   for (const [width, height] of sizes) {
     const p = await browser.newPage(); await p.setViewport({ width, height, deviceScaleFactor: 1, hasTouch: width < 900 })
     const errors = []
     p.on('pageerror', e => errors.push(e.message)); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
-    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu && window.__mojo)
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu && window.__mojo); await wire(p)
     await openStage(p, width === 1280 ? 'pantai' : width === 390 ? 'kota' : width === 844 ? 'malam' : 'gurun')
     await p.screenshot({ path: `${out}/${width}-intro.png` })
-    await p.click('#mc-go')
-    let s = await waitState(p, s => s.state === 'active', 16000)
+    await go(p)
+    let s = await waitState(p, s => s.state === 'cut' || s.state === 'countdown', 3000)
+    check(s.state === 'cut' || s.state === 'countdown', `${width}: the start goes straight into the cutscene or the 3-2-1 (${s.state})`)
+    s = await waitState(p, s => s.state === 'countdown', 8000)
+    check(s.state === 'countdown', `${width}: a 3-2-1 countdown runs before the race (${s.state})`)
+    s = await waitState(p, s => s.state === 'active', 16000)
     check(s.state === 'active', `${width}: tutorial hands over to the chase (${s.state})`)
+    const sz = await p.evaluate(() => { const k = __mojoChase.state(), w = innerWidth, h = innerHeight, port = h > w * 1.1; return { car: k.carCss, want: (port ? w * 0.42 : h * 0.29) * 0.85 } })
+    check(Math.abs(sz.car / sz.want - 1) < 0.03, `${width}: Mojo drawn at 85% of the old size (${sz.car.toFixed(1)} vs ${sz.want.toFixed(1)} css px)`)
+    const signs = await p.evaluate(() => ['.mc-mission', '.mc-place'].map(q => +getComputedStyle(document.querySelector(q)).opacity))
+    check(signs.every(o => o < 0.05), `${width}: the MISI board and the location sign are hidden while racing (${signs})`)
     // HUD sizes: targets >= 56 px, text >= 14 px
     const hud = await p.evaluate(() => {
       const r = sel => { const e = document.querySelector(sel); const b = e.getBoundingClientRect(); return [b.width, b.height] }
@@ -145,6 +171,7 @@ try {
     const btn = await p.$(lane0 > 0 ? '.mc-btn.l' : '.mc-btn.r')
     if (width < 900) await btn.tap(); else await btn.click()
     await sleep(500); s = await state(p)
+    check(s.smoke > 0, `${width}: a lane change kicks tyre smoke from the wheels (${s.smoke} puffs)`)
     check(s.lane !== lane0 && s.lastLaneMs > 0 && s.lastLaneMs <= 400, `${width}: tap changes lane in <= 400 ms (${Math.round(s.lastLaneMs)} ms)`)
     // real swipe on the road
     const lane1 = s.lane, dir = lane1 > 0 ? -1 : 1
@@ -154,7 +181,9 @@ try {
     // boost frame sequence + BROK + recovery (a real collision: a crate is put in Mojo's lane)
     await p.evaluate(() => __mojoChase.emitTest('boost'))
     for (let f = 0; f < (width === 1280 || width === 390 ? 20 : 3); f++) { await p.screenshot({ path: `${out}/${width}-boost-${String(f).padStart(2, '0')}.png` }); await sleep(100) }
-    await p.evaluate(() => __mojoChase.emitTest('brok'))
+    await p.evaluate(() => { __mojoChase.force({ tauntAt: -99 }); __mojoChase.emitTest('brok') })   // past the 6 s taunt cooldown (an idle car may have bumped something)
+    const tn = await p.evaluate(() => new Promise(res => setTimeout(() => res(__mojoChase.state()), 350)))
+    check(tn.taunt === 'Kamu jelek!' && tn.tauntBox && tn.tauntBox.fs >= 18 && tn.tauntBox.y + tn.tauntBox.h < tn.playerYCss - tn.carCss, `${width}: a BROK makes the robber taunt "Kamu jelek!" (${tn.taunt}, font ${tn.tauntBox && tn.tauntBox.fs.toFixed(1)} px, clear of Mojo)`)
     for (let f = 0; f < (width === 1280 || width === 390 ? 20 : 3); f++) { await p.screenshot({ path: `${out}/${width}-brok-${String(f).padStart(2, '0')}.png` }); await sleep(100) }
     s = await waitState(p, s => s.recoveryMs.length > 0, 4000)
     check(s.brok >= 1 && s.recoveryMs.length && s.recoveryMs[0] <= 1800 && s.recoveryMs[0] >= 1000, `${width}: BROK then control back in 1.0-1.8 s (${s.recoveryMs})`)
@@ -184,13 +213,13 @@ try {
     if (width === 1280) {
       // the adventure beat: run the m1 chase beat through the parent hook and get the result back
       const got = p.evaluate(() => new Promise(res => MojoChaseMenu.beat('m1', 0, r => res(r))))
-      await p.waitForSelector('#mc-go', { timeout: 20000 }); await p.click('#mc-go'); await sleep(2500)
+      await go(p); await sleep(2500)
       await p.evaluate(() => { __mojoChase.force({ prog: 0.97, best: 0.97, hasRocket: true, rocket: 1 }); __mojoChase.auto({ mode: 'clean' }) })
       await waitState(p, s => s.state === 'result', 40000); await p.click('#mc-done')
       const r = await got
       check(r && r.completed && r.chase_id === 'ADV_M1_ROTI' && r.reward_result.stars >= 1, `adventure beat m1 returns its result to the parent (${JSON.stringify(r).slice(0, 120)})`)
       // night stage start frame
-      await openStage(p, 'malam'); await p.click('#mc-go'); await sleep(4000)
+      await openStage(p, 'malam'); await go(p); await sleep(4000)
       await p.screenshot({ path: `${out}/1280-night.png` })
       for (let f = 0; f < 20; f++) { await p.screenshot({ path: `${out}/1280-night-${String(f).padStart(2, '0')}.png` }); await sleep(100) }
       await p.click('.mc-pause'); await sleep(300); await p.click('#mc-exit'); await sleep(500)
@@ -204,13 +233,13 @@ try {
   {
     const p = await browser.newPage(); await p.setViewport({ width: 1024, height: 768 }); const errors = []
     p.on('pageerror', e => errors.push(e.message)); p.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()) }); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
-    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu)
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
     for (let k = 0; k < 5; k++) {
       const done = p.evaluate(st => MojoChaseMenu.run(MojoChases.config(st)), ['pantai', 'kota', 'hutan', 'malam', 'salju'][k])
-      await p.waitForSelector('#mc-go', { timeout: 20000 })
-      await p.click('.mc-pause'); await sleep(200)
-      check(await p.$('#mc-go'), `replay ${k}: pause during the intro keeps the start button`)
-      await p.click('#mc-go'); await waitState(p, s => s.state === 'active', 16000)
+      await p.waitForSelector('#mc-go, .mcp-go', { timeout: 20000 })
+      await p.evaluate(() => document.querySelector('.mc-pause').click()); await sleep(200)
+      check(await p.$('#mc-go, .mcp-go'), `replay ${k}: pause during the intro keeps the start button`)
+      await go(p); await waitState(p, s => s.state === 'active', 16000)
       for (let i = 0; i < 6; i++) { await p.click(i % 2 ? '.mc-btn.r' : '.mc-btn.l'); await sleep(40) }   // repeated taps mid-transition
       await p.evaluate(() => { __mojoChase.emitTest('brok'); __mojoChase.emitTest('boost'); __mojoChase.emitTest('star') })   // boost while dizzy, pickup + hit together
       await p.setViewport({ width: 768, height: 1024 }); await sleep(400); await p.setViewport({ width: 1024, height: 768 }); await sleep(300)   // rotation mid-chase
@@ -240,12 +269,17 @@ try {
     await p.setUserAgent('Mozilla/5.0 (Linux; Android 14; SM-A546E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36')
     await p.setViewport({ width: 412, height: 915, deviceScaleFactor: 2.625, isMobile: true, hasTouch: true })
     const cdp = await p.target().createCDPSession(); await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 })
-    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu)
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
     const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai')))
-    await p.waitForSelector('#mc-go', { timeout: 60000 })
-    check(await p.$$eval('.mc-form', b => b.length) === 4 && await p.$('.mc-form em'), 'form picker: 4 forms, one marked Paling Tepat')
-    await p.tap('.mc-form[data-form="monster"]'); await p.tap('#mc-go')
-    await waitState(p, s => s.state === 'cut' || s.state === 'active', 20000); await p.tap('.mc-skip').catch(() => {})
+    await p.waitForSelector('#mc-go, .mcp-go', { timeout: 60000 }); await sleep(450)
+    if (await p.$('.mcp-go')) {
+      check(await p.$$eval('.mcp-card', b => b.length) >= 4 && await p.evaluate(() => /Paling Tepat/.test(document.querySelector('.mcp').textContent)), 'form picker: the forms, one marked Paling Tepat')
+      await p.evaluate(() => document.querySelector('.mcp-card[data-form="monster"]').click()); await sleep(550); await p.tap('.mcp-go')
+    } else {
+      check(await p.$$eval('.mc-form', b => b.length) === 4 && await p.$('.mc-form em'), 'form picker: 4 forms, one marked Paling Tepat')
+      await p.tap('.mc-form[data-form="monster"]'); await p.tap('#mc-go')
+    }
+    await waitState(p, s => s.state === 'cut' || s.state === 'countdown' || s.state === 'active', 20000); await p.tap('.mc-skip').catch(() => {})
     let s = await waitState(p, s => s.state === 'active', 30000)
     check(s.form === 'monster' && s.rear === 'monster-2', `form picker: the chosen form drives the rear sprite (${s.form}/${s.rear})`)
     await p.evaluate(() => __mojoChase.force({ hasRocket: true, rocket: 1, prog: 0.6, best: 0.6 })); await sleep(400)
@@ -259,9 +293,9 @@ try {
   }
   for (const [w, h] of [[360, 780], [390, 844], [412, 915], [430, 932], [1280, 800]]) {
     const p = await browser.newPage(); await p.setViewport({ width: w, height: h, hasTouch: true, isMobile: w < 500 })
-    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu)
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
     const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai')))
-    await p.waitForSelector('#mc-go', { timeout: 30000 }); await p.click('#mc-go'); await sleep(600); await p.click('.mc-skip').catch(() => {})
+    await go(p, 30000); await sleep(600); await p.click('.mc-skip').catch(() => {})
     await waitState(p, s => s.state === 'active', 20000)
     const hits = await p.evaluate(() => {
       document.querySelector('.mc-call').classList.add('on'); document.querySelector('.mc-call span').textContent = 'Tidak apa-apa! Pelan-pelan saja.'
@@ -297,11 +331,11 @@ try {
   {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 }); const errors = []
     p.on('pageerror', e => errors.push(e.message)); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
-    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu)
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
     fs.mkdirSync(out + '/stages', { recursive: true })
     for (const st of CH.STAGES) {
       const done = p.evaluate(id => MojoChaseMenu.run(MojoChases.config(id)), st.id)
-      await p.waitForSelector('#mc-go', { timeout: 20000 }); await p.click('#mc-go'); await sleep(1200)
+      await go(p); await sleep(1200)
       if (st.id === 'pantai') await p.screenshot({ path: `${out}/stages/cutscene-pantai.png` })
       await p.click('.mc-skip').catch(() => {}); await sleep(2600)
       const s = await state(p)
@@ -321,9 +355,9 @@ try {
     const [w, h, rate] = perfRuns[ri]
     const p = await browser.newPage(); await p.setViewport({ width: w, height: h })
     const cdp = await p.target().createCDPSession(); await cdp.send('Emulation.setCPUThrottlingRate', { rate })
-    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu)
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
     const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai')))
-    await p.waitForSelector('#mc-go', { timeout: 60000 }); await p.click('#mc-go'); await sleep(1000)
+    await go(p, 60000); await sleep(1000)
     await p.click('.mc-skip').catch(() => {}); await sleep(1500)
     await p.evaluate(() => __mojoChase.auto({ mode: 'clean', boost: true })); await sleep(10000)
     const s = await state(p), a = s.frameTimes.slice(-600).sort((x, y) => x - y), pq = f => +a[Math.floor(a.length * f)].toFixed(1)
@@ -346,9 +380,9 @@ try {
   /* ── D. rubber band: a crashing autopilot still finishes ─────────────────────────────────────── */
   if (!process.env.QA_FAST) {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 })
-    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu)
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
     const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai', { seconds: 70 })))
-    await p.waitForSelector('#mc-go', { timeout: 20000 }); await p.click('#mc-go'); await sleep(2000)
+    await go(p); await sleep(2000)
     await p.evaluate(() => __mojoChase.auto({ mode: 'crash' }))
     const s = await waitState(p, s => s.state === 'result', 200000)
     check(s.state === 'result' && s.hits >= 3, `rubber band: a crashing autopilot (${s.hits} hits) still catches the robber in ${s.elapsed.toFixed(0)} s`)

@@ -29,6 +29,12 @@
 (function (W, D) {
   'use strict'
   var TAU = Math.PI * 2, LANE_MS = 300, BASE_SPEED = 4760,   /* owner 2026-10-03 "terlalu cepat": 85% of 5600; row spacing scaled with it (SPACING) so rows arrive at the same rate in time */ SPACING = 0.85, CAR_W = 980, Z_P = 1250
+  var CAR_K = 0.85      // owner 2026-10-03: Mojo drawn at 85% of the previous on-screen size; the wheel contact line stays put
+  var CD_STEP = 0.8     // the 3-2-1 countdown: seconds per number
+  var CUT_KEY = 'dunia-g31-cut-seen'   // stage ids whose intro cutscene was already watched (it plays once per stage)
+  // every Swop form the picker can offer: its name for the callouts and the perk it brings when cfg.perk is absent
+  var FORM_NAME = { racer: 'Pembalap', monster: 'Monster', jumper: 'Pelompat', 'snow-plow': 'Bajak Salju', dozer: 'Dozer', rescue: 'Penyelamat', boat: 'Perahu', chopper: 'Helikopter', jet: 'Jet' }
+  var FORM_PERK = { racer: 'boost', jet: 'boost', monster: 'grip', jumper: 'jump', 'snow-plow': 'snow', dozer: 'recover', rescue: 'heal', boat: 'splash', chopper: 'fly' }
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
   function lib (k) { return (W.AssetIndex && W.AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') }
   function clamp (v, a, b) { return v < a ? a : v > b ? b : v }
@@ -64,10 +70,12 @@
       try { var t = c.currentTime + (delay || 0), g = c.createGain(), o = c.createOscillator(); o.type = type || 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + d)
         g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + 0.05) } catch (e) {}
     }
-    function noise (d, v, lp, hp) {
+    function noise (d, v, lp, hp, pan) {
       var c = ctx(); if (!c) return
       try { var n = Math.floor(c.sampleRate * d), b = c.createBuffer(1, n, c.sampleRate), ch = b.getChannelData(0); for (var i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * (1 - i / n)
-        var s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = hp ? 'highpass' : 'lowpass'; f.frequency.value = lp; g.gain.value = v; s.connect(f); f.connect(g); g.connect(c.destination); s.start() } catch (e) {}
+        var s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = hp ? 'highpass' : 'lowpass'; f.frequency.value = lp; g.gain.value = v; s.connect(f); f.connect(g)
+        if (pan && c.createStereoPanner) { var sp = c.createStereoPanner(); sp.pan.value = clamp(pan, -1, 1); g.connect(sp); sp.connect(c.destination) } else g.connect(c.destination)
+        s.start() } catch (e) {}
     }
     var A = {
       engine: function (speed) {
@@ -75,10 +83,13 @@
         if (!c) { if (engG) { try { engG.gain.value = 0 } catch (e) {} } return }
         try {
           if (!eng) { eng = c.createOscillator(); engF = c.createBiquadFilter(); engG = c.createGain(); eng.type = 'sawtooth'; engF.type = 'lowpass'; engF.frequency.value = 420; engG.gain.value = 0.0001; eng.connect(engF); engF.connect(engG); engG.connect(c.destination); eng.start() }
-          eng.frequency.setTargetAtTime(62 + speed * 64, c.currentTime, 0.12); engG.gain.setTargetAtTime(speed > 0 ? 0.035 : 0.0001, c.currentTime, 0.2)
+          eng.frequency.setTargetAtTime(62 + speed * 64, c.currentTime, 0.12); engF.frequency.setTargetAtTime(300 + speed * 260, c.currentTime, 0.15); engG.gain.setTargetAtTime(speed > 0 ? 0.035 : 0.0001, c.currentTime, 0.2)   // pitch AND brightness follow the speed
         } catch (e) {}
       },
-      whoosh: function () { noise(0.22, 0.12, 1800, true) },
+      whoosh: function (pan) { noise(0.22, 0.12, 1800, true, pan ? pan * 0.7 : 0) },   // lane change: panned to the side Mojo moves to
+      heh: function () { tone(520, 380, 0.09, 0.05, 'square'); tone(560, 400, 0.1, 0.05, 'square', 0.17) },   // the robber's "heh-heh"
+      squeal: function () { tone(1650, 1380, 0.26, 0.018, 'triangle'); tone(1720, 1440, 0.22, 0.012, 'sine', 0.03) },   // a quiet tyre squeal
+      tick: function (n) { tone(n ? 660 : 990, n ? 660 : 990, 0.14, 0.09, 'triangle') },
       chime: function (combo) { var k = Math.pow(1.122, combo || 0); tone(1046 * k, 1568 * k, 0.16, 0.09, 'triangle'); tone(1568 * k, 2093 * k, 0.18, 0.06, 'sine', 0.06) },
       clack: function () { tone(1800, 900, 0.05, 0.12, 'square'); tone(600, 300, 0.08, 0.1, 'triangle', 0.03) },
       brok: function () { tone(140, 60, 0.28, 0.32, 'sine'); noise(0.18, 0.28, 700); tone(420, 300, 0.07, 0.12, 'square', 0.02) },   // a soft clunk, never a buzzer
@@ -115,7 +126,9 @@
     ]
     var look0 = stage.look || stage.biome
     var recForm = stage.recForm || (look0 === 'snow' ? 'snow-plow' : /forest|farm|jungle|autumn|ruins|windfarm/.test(look0) || stage.weather === 'leaves' ? 'monster' : /construction|harbour/.test(look0) ? 'dozer' : 'racer')
-    var formId = cfg.mojo_form && cfg.mojo_form !== 'racer' ? cfg.mojo_form : (cfg.lastForm && FORMS.some(function (f) { return f.id === cfg.lastForm }) ? cfg.lastForm : recForm)
+    // cfg.mojo_form is honoured as given ('racer' included); without one: the avatar's last form, else the stage pick
+    var formId = cfg.mojo_form && RA && RA.forms[cfg.mojo_form] ? cfg.mojo_form : (cfg.lastForm && FORMS.some(function (f) { return f.id === cfg.lastForm }) ? cfg.lastForm : recForm)
+    var perk = cfg.perk || FORM_PERK[formId] || null
     var rearKey = (RA && RA.forms[formId]) || 'base', rearA = RA ? RA.sprites[rearKey] : null
     var targetName = cfg.target_type || stage.target, targetA = CA ? CA.families.vehicles.sprites[targetName] : null
     var sound = typeof cfg.sound === 'function' ? cfg.sound : function () { return true }
@@ -144,7 +157,7 @@
       '<button class="mc-btn l" type="button" aria-label="Pindah ke kiri">' + ARROW.replace('<svg', '<svg style="transform:rotate(-90deg)"') + '</button>' +
       '<button class="mc-btn u" type="button" aria-label="Ngebut"><i class="ring"></i>' + ARROW + '</button>' +
       '<button class="mc-btn r" type="button" aria-label="Pindah ke kanan">' + ARROW.replace('<svg', '<svg style="transform:rotate(90deg)"') + '</button>' +
-      '<button class="mc-skip" type="button">Lewati</button>' +
+      '<button class="mc-skip" type="button">Lewati</button><div class="mc-count ol" aria-live="polite"></div>' +
       '<button class="mc-gadget empty" type="button" aria-label="Roket jaring"><img alt="" src="' + lib('mojo-chase/items/rocket') + '"><b class="ol">0</b></button>'
     host.appendChild(hud)
     var card = el('div', 'mc-card'); host.appendChild(card)
@@ -153,13 +166,20 @@
     function q (s) { return host.querySelector(s) }
     var H = { hearts: q('.mc-hearts'), fill: q('.mc-prog .bar i'), car: q('.mc-prog .car'), dist: q('.mc-dist'), star: q('.mc-cnt.star b'), crate: q('.mc-cnt.crate b'),
       starBox: q('.mc-cnt.star'), crateBox: q('.mc-cnt.crate'), timer: q('.mc-timer b'), call: q('.mc-call'), callT: q('.mc-call span'), edu: q('.mc-edu'), ret: q('.mc-reticle'),
-      gad: q('.mc-gadget'), skip: q('.mc-skip'), gadN: q('.mc-gadget b'), up: q('.mc-btn.u'), mission: q('.mc-mission'), place: q('.mc-place') }
+      gad: q('.mc-gadget'), skip: q('.mc-skip'), gadN: q('.mc-gadget b'), up: q('.mc-btn.u'), mission: q('.mc-mission'), place: q('.mc-place'), count: q('.mc-count'), callImg: q('.mc-call img') }
     q('.mc-mission span').textContent = cfg.mission || stage.mission
     q('.mc-place span').textContent = (stage.place || '').toUpperCase(); q('.mc-loc').textContent = stage.place || ''
     for (var hi = 0; hi < 3; hi++) { var hImg = el('img'); hImg.alt = ''; hImg.src = lib('mojo-chase/items/heart'); H.hearts.appendChild(hImg) }
 
     /* images */
-    var img = {}, need = {}, imgP = {}
+    var img = {}, need = {}, imgP = {}, RIMG = {}, formLoad = null   // RIMG: decoded rear art by rear key (forms not preloaded load on demand)
+    function loadOne (key) {
+      return new Promise(function (res) {
+        var im = new Image(), fin0 = false, fin = function () { if (fin0) return; fin0 = true; res(im.naturalWidth ? im : null) }
+        setTimeout(fin, 6000); im.decoding = 'async'; im.src = lib(key)
+        if (im.decode) im.decode().then(fin, function () { if (im.complete) fin(); else im.onload = im.onerror = fin }); else im.onload = im.onerror = fin
+      })
+    }
     function want (name, key) { need[name] = key }
     FORMS.forEach(function (f) { want('rear:' + f.id, 'mojo-rear/' + ((RA && RA.forms[f.id]) || 'base')) })
     want('rear', 'mojo-rear/' + rearKey); want('target', 'mojo-chase/vehicles/' + targetName); want('police', 'mojo-chase/vehicles/police-van')
@@ -222,7 +242,11 @@
       hasRocket: false, rocketBoxAlive: false, shield: 0, magnet: 0, slow: 0, spin: 0, slide: 0, shake: 0, flash: 0, strobe: 0, stop: 1, hitStop: 0, hitScale: 0.22,
       punch: 0, tunnel: 0, eduDone: false, edu: null, eduSeg: -1, eduResult: null, gadgetUsed: false, lockT: 0, cap: null, resolveT: 0,
       targetLane: 1, targetLanePos: 1, targetNext: 3, nextRow: 30, rows: 0, starsSpawned: 0, tutorial: 0, brok: 0, recoveryMs: [], lastHitAt: 0,
-      frames: [], tierFrames: { 0: [], 1: [], 2: [] }, auto: null, paused: false, policeZ: 0, finishSeg: -1, heartT: 0, comets: [], rings: [], bursts: [] }
+      frames: [], tierFrames: { 0: [], 1: [], 2: [] }, auto: null, paused: false, policeZ: 0, finishSeg: -1, heartT: 0, comets: [], rings: [], bursts: [],
+      hop: 0, cdT: 0, cdN: 0, smokeAcc: 0, smoke: 0, squealAt: -9, nearAt: -9, near: 0, tauntAt: -9, taunts: 0, robHop: 0, targetSeenT: -9 }
+    // the robber's comic balloon ("Kamu jelek!"), the near-miss pop and the tyre skid marks: fixed records, reused
+    var TN = { on: false, t: 0, text: '', top: 0, gad: null }, NM = { on: false, t: 0, x: 0, y: 0 }, SK = []
+    for (var sk0 = 0; sk0 < 20; sk0++) SK.push({ on: false, x: 0, y: 0, t: 0, w: 0 })
     var rowSt = { tier: cfg.speed_profile || stage.tier, assist: 0, obs: OBS_SET[stage.biome] || OBS_SET.coastal, reach: 7, starLane: 1, row: ['', '', ''] }
     // pooled lane objects
     var POOL = []
@@ -255,7 +279,7 @@
       var nl = S.lane + d
       if (nl < 0 || nl > 2) { scrape(d); return }
       S.laneFrom = S.lanePos; S.lane = nl; S.laneT = 0; S.laneDur = LANE_MS * Math.max(0.7, Math.abs(nl - S.lanePos)); S.laneStart = performance.now(); S.laneSim = S.simT || 0
-      AU.whoosh(); skid(); S.laneFx = 0.4; S.laneFxLane = nl
+      AU.whoosh(d); skid(d); S.laneFx = 0.4; S.laneFxLane = nl
     }
     function boost () {
       if (!(S.state === 'active' || S.state === 'lock')) return
@@ -313,7 +337,7 @@
     function hideCard () { card.classList.remove('on'); card.innerHTML = '' }
     function pause (on) {
       if (on) {
-        if (S.paused || !(S.state === 'cut' || S.state === 'swop' || S.state === 'tutorial' || S.state === 'active' || S.state === 'lock' || S.state === 'capture' || S.state === 'resolve')) return
+        if (S.paused || !(S.state === 'cut' || S.state === 'countdown' || S.state === 'swop' || S.state === 'tutorial' || S.state === 'active' || S.state === 'lock' || S.state === 'capture' || S.state === 'resolve')) return
         S.paused = true; S.pauseReason = 'menu'; AU.engine(0); AU.siren(false)
         showCard('<h2 class="fk">Istirahat Sebentar</h2><p>Pencuri ikut berhenti. Siap lanjut?</p>', [
           { t: 'Lanjut', id: 'mc-resume', fn: function () { hideCard(); S.paused = false; S.pauseReason = null; last = performance.now(); acc = 0 } },
@@ -323,15 +347,10 @@
 
     /* effects helpers */
     // Mojo's on-screen body width: lower ~25-30% of the screen (PRD §4), so the road and the robber ahead stay readable
-    function carPx () { return v.port ? v.w * 0.42 : v.h * 0.29 }
+    function carPx () { return (v.port ? v.w * 0.42 : v.h * 0.29) * CAR_K }
     function mojoXY () { var s = TR.CAM_H / Z_P / TR.CAM_H, wx = TR.LANES[0] * TR.ROADW + (TR.LANES[2] - TR.LANES[0]) * TR.ROADW * S.lanePos / 2; return { x: v.cx + (Z_P > 0 ? (TR.CAM_H / Z_P) : 0) * (wx - camX) * v.hw / TR.CAM_H * TR.CAM_H / TR.CAM_H, y: v.playerY } }
     var camX = 0
-    function skid () {
-      var m = mojoXY(), cp = carPx()
-      for (var i = 0; i < 3; i++) {
-        var p = FX.spawn(img['fx/tire-smoke'] || TEX.puff, m.x + (i - 1) * cp * 0.35, m.y - cp * 0.02, (Math.random() - 0.5) * 40 * v.u, 10 * v.u, 0.7, cp * 0.22, false); if (p) { p.grow = cp * 0.5; p.a = 0.5; p.flow = 1 }
-      }
-    }
+    function skid (d) { for (var i = 0; i < (RM ? 1 : 3); i++) tyrePuff(d, 0.8) }   // the first kick of tyre smoke as the lane change starts
     function scrape (d) {
       var m = mojoXY(), cp = carPx(), x = m.x + d * cp * 0.5
       for (var i = 0; i < 16; i++) { var p = FX.spawn(TEX.glowY, x, m.y - cp * 0.25, -d * (80 + Math.random() * 260) * v.u, -(120 + Math.random() * 220) * v.u, 0.5 + Math.random() * 0.3, cp * 0.06, true); if (p) { p.ay = 900 * v.u; p.stretch = 0 } }
@@ -384,17 +403,23 @@
       var info = OBJ[o.type], cp = carPx()
       if (S.recover > 0) return                                   // repeated hits never stack (PRD §9)
       if (S.shield) { S.shield = 0; ring(sx, sy, 1); burst(sx, sy, 14, TEX.glowC, 600 * v.u, 0.5, cp * 0.14, true); call('Perisai menahan!', 1100, 'shieldhit'); return }
+      // perks: a flyer passes over anything slippery, a jumper hops potholes and rocks
+      if (perk === 'fly' && info.kind === 'slip') return
+      if (perk === 'jump' && (o.type === 'pothole' || o.type === 'rock') && !(S.hop > 0)) { S.hop = 0.5; AU.whoosh(0); call('Hup! Lompat!', 900, 'hop'); return }
+      var immune = false
       if (info.kind === 'slip') {
-        if (S.form === 'monster' || (S.form === 'snow-plow' && (stage.look || stage.biome) === 'snow')) { S.spin = 0; S.slide = 0 }
+        if (perk === 'grip' || (perk === 'snow' && look0 === 'snow') || (perk === 'splash' && (o.type === 'oil' || stage.wet))) { S.spin = 0; S.slide = 0; immune = true }
         else if (info.fx === 'spin') { S.spin = 0.8; call('Wiii, licin!', 1000, 'spin') }
         else if (info.fx === 'slide') { S.slide = 0.8; call('Hati-hati, licin!', 1000, 'slide') }
         else { if (!RM) S.shake = Math.max(S.shake, 0.3); S.squash = 0.18 }
-        S.recover = S.form === 'monster' ? 0.35 : 0.7; S.recoverMax = S.recover; S.hard = false; AU.whoosh()
+        S.recover = perk === 'grip' ? 0.35 : 0.7; S.recoverMax = S.recover; S.hard = false; AU.whoosh()
         burst(sx, sy, 8, TEX.puff, 260 * v.u, 0.6, cp * 0.25, false)
+        if (!immune) taunt('Kamu jelek!')
         return
       }
       S.hits++; S.brok++; S.hearts = Math.max(0, S.hearts - 1); S.heartT = 0
-      S.recover = S.form === 'dozer' ? 1.05 : 1.4; S.recoverMax = S.recover; S.hard = true; S.lastHitAt = performance.now(); S.lastHitT = S.simT || 0; if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
+      taunt('Kamu jelek!')
+      S.recover = perk === 'recover' ? 1.05 : 1.4; S.recoverMax = S.recover; S.hard = true; S.lastHitAt = performance.now(); S.lastHitT = S.simT || 0; if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
       if (!RM) S.shake = 0.55
       S.squash = 0.2; AU.brok()
       for (var i = 0; i < S.bursts.length; i++) if (!S.bursts[i].on) { var b = S.bursts[i]; b.on = true; b.x = sx; b.y = sy - cp * 0.2; b.t = 0; break }
@@ -405,6 +430,57 @@
       if (S.hits >= 3) { rowSt.assist = Math.min(1, 0.4 + (S.hits - 3) * 0.15) }
     }
 
+    /* the robber taunts (owner: "Kamu jelek!"): a comic balloon over its cabin, a laugh hop, a tail-light blink, heh-heh */
+    function taunt (text, force) {
+      if (!force && (S.t - S.tauntAt < 6 || !(S.state === 'active' || S.state === 'tutorial' || S.state === 'lock'))) return
+      S.tauntAt = S.t; S.taunts++; S.robHop = 0.6; AU.heh()
+      TN.on = true; TN.t = 0; TN.text = text
+      // measured once per balloon: the balloon stays under the top HUD and Bo's bubble, and off the rocket button
+      try {
+        var hr = host.getBoundingClientRect(), tb = q('.mc-top').getBoundingClientRect(), cb = H.call.classList.contains('on') ? H.call.getBoundingClientRect() : null, gb = H.gad.getBoundingClientRect()
+        TN.top = (Math.max(tb.bottom, cb ? cb.bottom : 0) - hr.top + 6) / v.css
+        TN.gad = { l: (gb.left - hr.left - 8) / v.css, t: (gb.top - hr.top - 8) / v.css }
+      } catch (e) { TN.top = v.h * 0.12; TN.gad = null }
+    }
+    /* a near miss: a hazard slid past while Mojo was still changing lane */
+    function nearMiss () {
+      if (S.t - S.nearAt < 2.5) return
+      S.nearAt = S.t; S.near++; S.stars += 1
+      var m = mojoXY(), cp = carPx()
+      NM.on = true; NM.t = 0; NM.x = m.x; NM.y = m.y - cp * 1.05
+      AU.chime(2); comet(m.x, m.y - cp * 0.8); burst(m.x, m.y - cp * 0.9, 8, TEX.sparkle, 420 * v.u, 0.5, cp * 0.12, true)
+    }
+    /* tyre smoke: from the rear wheels (per-form emitters), mostly the OUTER wheel of the turn. Rain = water spray,
+       snow = snow spray, dirt biomes = dust; boats/hovercraft spray water; aerial forms emit nothing. */
+    var DIRT = /desert|farm|forest|construction|canyon|jungle|volcano|autumn|windfarm/
+    function tyreKind (a, seg) {
+      if (a.kind === 'air') return null
+      if (a.kind === 'water' || stage.wet || stage.weather === 'rain') return 'water'
+      if (look0 === 'snow' || stage.weather === 'snow') return 'snow'
+      if (DIRT.test(look0) || (seg && (seg.surface === 'mud' || seg.surface === 'dirt'))) return 'dust'
+      return 'smoke'
+    }
+    function tyrePuff (dir, k) {
+      var a = rearA || { cx: 140, base: 234, bw: 168, dust: [], kind: 'ground' }, seg = track && track.seg(Math.floor((S.z + Z_P) / TR.SEG)), kind = tyreKind(a, seg)
+      if (!kind || !a.dust || !a.dust.length) return
+      var cp = carPx(), m = mojoXY(), sc = cp / a.bw, ox = m.x - a.cx * sc, oy = m.y - a.base * sc + bob() - (S.hop > 0 ? Math.sin((1 - S.hop / 0.5) * Math.PI) * cp * 0.35 : 0)
+      // the outer wheel of a right turn is the LEFT one; 72% of the puffs come from it
+      var outer = dir > 0 ? 0 : dir < 0 ? a.dust.length - 1 : Math.floor(Math.random() * a.dust.length), wi = Math.random() < 0.72 ? outer : a.dust.length - 1 - outer, w = a.dust[wi]
+      var side = w[0] < a.cx ? -1 : 1, x = ox + w[0] * sc + (Math.random() - 0.5) * cp * 0.04, y = oy + w[1] * sc
+      var tex = kind === 'water' ? (img['fx/splash'] || TEX.puff) : kind === 'snow' ? (img['fx/snow-spray'] || TEX.puff) : kind === 'dust' ? (img['fx/dust'] || TEX.puff) : TEX.puff
+      // expands, rises and drifts back with the road scroll (a fraction of it: the puff hangs in the air), gone in 0.5-0.7 s
+      var p = FX.spawn(tex, x, y, side * (40 + Math.random() * 80) * v.u, -(60 + Math.random() * 70) * v.u, 0.5 + Math.random() * 0.2, cp * 0.16, false)
+      if (p) { p.grow = cp * (kind === 'smoke' ? 0.6 : 0.45); p.a = (kind === 'smoke' ? 0.55 : 0.62) * Math.min(1, 0.5 + k); p.flow = 0.3; p.drag = 1.4; S.smoke++ }
+      // a brief dark skid mark under the outer wheel (ground only), scrolling with the road
+      if (wi === outer && k > 0.35 && kind !== 'water' && a.kind !== 'water') {
+        for (var i = 0; i < SK.length && i < (quality ? 20 : 8); i++) if (!SK[i].on) { var s = SK[i]; s.on = true; s.t = 0; s.x = x; s.y = y; s.w = cp * 0.07; break }
+      }
+    }
+    function drawSkids () {
+      c.fillStyle = 'rgb(28,26,30)'
+      for (var i = 0; i < SK.length; i++) { var s = SK[i]; if (!s.on) continue; c.globalAlpha = 0.3 * (1 - s.t / 0.6); c.fillRect(s.x - s.w / 2, s.y - s.w * 0.3, s.w, s.w * 2.2) }
+      c.globalAlpha = 1
+    }
     /* spawning */
     function spawnRows () {
       var baseI = Math.floor(S.z / TR.SEG)
@@ -425,7 +501,7 @@
           row[lane] = 'rocket'; S.rocketBoxAlive = true; S.rocketSeg = segI
         } else if (rr() < T.box) { var l2 = row.indexOf('none'); if (l2 >= 0) row[l2] = rr() < 0.75 ? 'mystery' : 'heart' }
         else if (rr() < 0.06) { var l3 = row.indexOf('none'); if (l3 >= 0) row[l3] = 'pad' }
-        for (var k = 0; k < 3; k++) { var ft = row[k] === 'none' ? 'none' : row[k]; try { ft = HK().spawnFilter(row[k], { seg: segI, lane: k, elapsed: S.elapsed, prog: S.prog, state: S.state }) || row[k] } catch (e) {} if (!OBJ[ft] && ft !== 'none') ft = row[k]; row[k] = ft } for (var k = 0; k < 3; k++) if (row[k] !== 'none') { addObj(row[k], k, segI); if (row[k] === 'star') S.starsSpawned++; else if (row[k] === 'coin') S.starsSpawned += 2 }
+        for (var k = 0; k < 3; k++) { var ft = row[k] === 'none' ? 'none' : row[k]; try { ft = HK().spawnFilter(row[k], { seg: segI, lane: k, elapsed: S.elapsed, prog: S.prog, state: S.state, edu: !!(S.edu && !S.eduDone), eduSeg: S.eduSeg, lock: S.state === 'lock' }) || row[k] } catch (e) {} if (!OBJ[ft] && ft !== 'none') ft = row[k]; row[k] = ft } for (var k = 0; k < 3; k++) if (row[k] !== 'none') { addObj(row[k], k, segI); if (row[k] === 'star') S.starsSpawned++; else if (row[k] === 'coin') S.starsSpawned += 2 }
         S.rows++; S.nextRow += Math.round(T.gap * SPACING)
       }
     }
@@ -519,6 +595,13 @@
         if (ct > 2.1 && Math.random() < dtr * 30) { var tp0 = laneScreen(1, S.z + Z_P + S.cutGap); var pf = FX.spawn(TEX.puff, tp0.x + (Math.random() - 0.5) * tp0.w * 0.3, tp0.y - tp0.w * 0.05, (Math.random() - 0.5) * 30, -10, 0.6, tp0.w * 0.08, false); if (pf) { pf.grow = tp0.w * 0.12; pf.a = 0.4 } }
         if (ct > 3.5) endCut()
       }
+      if (S.state === 'countdown') {
+        S.cdT += dtr; S.cutGap += (gap0() - S.cutGap) * Math.min(1, dtr * 2.5)
+        var cdn = 3 - Math.floor(S.cdT / CD_STEP)
+        if (cdn >= 1 && cdn !== S.cdN) { S.cdN = cdn; H.count.textContent = String(cdn); H.count.classList.remove('pop'); void H.count.offsetWidth; H.count.classList.add('on', 'pop'); AU.tick(cdn) }
+        // the countdown never ends on the wrong car: a picker form that was not preloaded finishes decoding first (4 s cap)
+        if (S.cdT >= CD_STEP * 3 && (!formLoad || S.cdT > CD_STEP * 3 + 4)) { H.count.classList.remove('on', 'pop'); AU.tick(0); go() }
+      }
       if (S.state === 'swop') { S.phaseT += dtr; if (S.phaseT > 1.2) { S.state = 'tutorial'; S.phaseT = 0; call('Ikuti bintang: kiri, tengah, kanan!', 2200, 'tut') } }
       else if (S.state === 'tutorial') { S.phaseT += dtr; if (S.phaseT > 3) { S.state = 'active'; call('Kejar!', 900, 'go') } }
       var playing = S.state === 'active' || S.state === 'lock' || S.state === 'tutorial'
@@ -532,18 +615,21 @@
       if (S.slide > 0) { S.slide -= dt; S.lanePos += Math.sin(S.t * 14) * dt * 0.6 }
       if (S.spin > 0) S.spin -= dt
       if (S.laneFx > 0) S.laneFx -= dt
+      if (S.hop > 0) S.hop -= dt
+      if (S.robHop > 0) S.robHop -= dtr
       // speed
       var mult = 1
       if (S.recover > 0) { var k = S.recover / (S.recoverMax || 1.4); mult = 1 - 0.32 * k; S.recover -= dt; if (S.recover <= 0 && S.hard) { S.recoveryMs.push(Math.round((S.simT - S.lastHitT + 0.08) * 1000)); /* simulated time + the 80 ms hit-stop: a stalled test machine must not count */ recovered() } }
-      if (S.boost > 0) { S.boost -= dt; mult *= S.form === 'racer' ? 1.42 : 1.32 }
+      if (S.boost > 0) { S.boost -= dt; mult *= perk === 'boost' ? 1.42 : 1.32 }
       var seg = track.seg(Math.floor((S.z + Z_P) / TR.SEG))
-      if (seg && seg.surface === 'mud' && S.form !== 'monster') mult *= 0.9
-      if (S.form === 'snow-plow' && (stage.look || stage.biome) === 'snow') mult *= 1.06
+      if (seg && seg.surface === 'mud' && perk !== 'grip') mult *= 0.9
+      if (perk === 'snow' && look0 === 'snow') mult *= 1.06
+      if (perk === 'splash' && (stage.wet || stage.weather === 'rain' || (seg && seg.bridge))) mult *= 1.05
       if (S.state === 'capture' || S.state === 'resolve') mult = S.stop
       if (S.state === 'swop') mult = 0.5 + S.phaseT * 0.4
-      if (S.state === 'cut') { mult = 0; S.speed = 0 }
+      if (S.state === 'cut' || S.state === 'countdown') { mult = 0; S.speed = 0 }
       S.speed += (mult - S.speed) * Math.min(1, dt * 4)
-      if (!S.boost || S.boost <= 0) S.boostCharge = Math.min(1, S.boostCharge + dt / (S.form === 'racer' ? 4 : 5))
+      if (!S.boost || S.boost <= 0) S.boostCharge = Math.min(1, S.boostCharge + dt / (perk === 'boost' ? 4 : 5))
       var dz = BASE_SPEED * S.speed * dt, prevPZ = S.z + Z_P
       S.z += dz
       var baseI = Math.floor(S.z / TR.SEG)
@@ -552,7 +638,7 @@
       scene.advance(dz, bseg ? bseg.curve : 0, dt)
       S.tunnel += ((seg && seg.tunnel ? 1 : 0) - S.tunnel) * Math.min(1, dt * 3)
       // hearts refill after clean driving
-      S.heartT += dt; if (S.heartT > 9 && S.hearts < 3) { S.hearts++; S.heartT = 0 }
+      S.heartT += dt; if (S.heartT > (perk === 'heal' ? 5 : 9) && S.hearts < 3) { S.hearts++; S.heartT = 0 }
       // progress + rubber band
       if (S.state === 'active' || S.state === 'lock') {
         var ps = { prog: S.prog, best: S.best, speed: S.speed * (S.slow > 0 ? 1.25 : 1), elapsed: S.elapsed, seconds: S.seconds, hits: S.hits, hasRocket: S.hasRocket }
@@ -575,11 +661,12 @@
         if (o.taken) continue
         var oz = o.seg * TR.SEG + TR.SEG / 2
         if (oz > prevPZ && oz <= pz) {
-          var d = Math.abs(o.lane - S.lanePos), info = OBJ[o.type], reach = info.kind === 'pick' && S.magnet > 0 ? 1.6 : 0.55
+          // hazards collide with the car body (85% size: the box shrank with it); pickups keep their generous reach
+          var d = Math.abs(o.lane - S.lanePos), info = OBJ[o.type], haz = info.kind === 'block' || info.kind === 'slip', reach = haz ? 0.55 * CAR_K : info.kind === 'pick' && S.magnet > 0 ? 1.6 : 0.55
           if (d < reach && S.spin <= 0.6) {
             var sp = laneScreen(o.lane, pz)
-            if (info.kind === 'block' || info.kind === 'slip') hit(o, sp.x, sp.y); else pick(o, sp.x, sp.y)
-          }
+            if (haz) hit(o, sp.x, sp.y); else pick(o, sp.x, sp.y)
+          } else if (info.kind === 'block' && d < 0.95 && S.recover <= 0 && (S.state === 'active' || S.state === 'lock')) nearMiss()
         }
       }
       // the education gate
@@ -605,13 +692,14 @@
       emit(dt)
       if (HK().atmos && HK().atmos.update) try { HK().atmos.update(dt, API.state()) } catch (e) {}
       FX.update(dt, (v.h - v.hy) * S.speed * 1.6)
+      for (var si = 0; si < SK.length; si++) { var sk = SK[si]; if (!sk.on) continue; sk.t += dt; sk.y += (v.h - v.hy) * S.speed * 1.6 * dt; if (sk.t > 0.6 || sk.y > v.h + sk.w) sk.on = false }   // skid marks scroll with the road
       AU.engine(S.state === 'result' ? 0 : S.speed)
       hudUpdate()
       if (S.auto) autopilot()
     }
     function starGoal () { return Math.max(6, Math.round(S.seconds / 7)) }   // the 'n/10' goal in the HUD = the second result star
     function gap0 () { return 1700 + (1 - Math.min(1, S.prog)) * 3600 }
-    function gap () { return S.state === 'cut' ? S.cutGap : gap0() }   // the robber stays readable on screen (mockup)
+    function gap () { return S.state === 'cut' || S.state === 'countdown' ? S.cutGap : gap0() }   // the robber stays readable on screen (mockup)
     function laneX (lanePos) { return TR.LANES[0] * TR.ROADW + (TR.LANES[2] - TR.LANES[0]) * TR.ROADW * lanePos / 2 }
     var tmpP = { x: 0, y: 0, w: 0, s: 0 }
     function laneScreen (lane, z) {
@@ -636,7 +724,8 @@
           var cols = [TEX.glowY, TEX.glowR, TEX.glowB, TEX.glowC, TEX.glowP]
           for (var i = 0; i < 70; i++) { var p = FX.spawn(img['fx/confetti'] || cols[i % 5], tp.x, ty, (Math.random() - 0.5) * 1400 * v.u, -(400 + Math.random() * 900) * v.u, 2.2, cp * 0.09, false); if (p) { p.ay = 900 * v.u; p.drag = 1.2; p.vr = (Math.random() - 0.5) * 12; p.rot = 1 } }
           for (var fw = 0; fw < 4; fw++) { var fx = v.w * (0.2 + fw * 0.2), fy = v.hy * (0.3 + (fw % 2) * 0.2); burst(fx, fy, 26, cols[fw % 5], 700 * v.u, 1.2, cp * 0.1, true); if (img['fx/fireworks']) { var fwp = FX.spawn(img['fx/fireworks'], fx, fy, 0, 0, 1.1, cp * 0.6, true); if (fwp) fwp.grow = cp * 0.8 } }
-          call('Kena! Jaring pengaman!', 1500, 'netok')
+          call('Hore! Kena jaring!', 1500, 'netok', true); taunt(rr() < 0.5 ? 'Waduh!' : 'Ampun!', true)
+          if (H.callImg) { H.callImg.src = lib('mojo-char/bo-celebrate'); H.call.classList.add('cheer') }   // Bo cheers the capture
         }
       } else {
         CAP.netT += dt
@@ -655,6 +744,18 @@
         var d = FX.spawn(tex, ox + dd[0] * k + (Math.random() - 0.5) * cp * 0.1, oy + dd[1] * k, (dd[0] < a.cx ? -1 : 1) * 60 * v.u, 40 * v.u, 0.6, cp * 0.12, false)
         if (d) { d.grow = cp * 0.3; d.a = stage.biome === 'desert' ? 0.55 : 0.32; d.flow = 0.8 }
       }
+      // tyre smoke on lane changes and sharp curves; intensity scales with speed and curve sharpness
+      var tseg = track.seg(Math.floor((S.z + Z_P) / TR.SEG)), tc = tseg ? tseg.curve : 0, turn = 0, tdir = 0
+      if (S.laneT < 1) { turn = 1 - S.laneT * 0.5; tdir = S.lane > S.laneFrom ? 1 : -1 }
+      var ca = Math.abs(tc); if (ca > 1.1) { var ck = Math.min(1, (ca - 1.1) / 1.6); if (ck > turn) { turn = ck; tdir = tc > 0 ? 1 : -1 } }
+      var ti = (S.state === 'active' || S.state === 'lock' || S.state === 'tutorial') && S.speed > 0.35 ? turn * Math.min(1.3, S.speed) : 0
+      if (ti > 0.05) {
+        S.smokeAcc += dt * 60 * ti * q * (RM ? 0.35 : 1)
+
+        for (var tn = 0; S.smokeAcc >= 1 && tn < 3; tn++) { S.smokeAcc -= 1; tyrePuff(tdir, ti) }
+        if (S.smokeAcc > 3) S.smokeAcc = 0
+        if (!RM && ti > 0.55 && S.t - S.squealAt > 0.9 && tyreKind(a, tseg) === 'smoke') { S.squealAt = S.t; AU.squeal() }
+      } else S.smokeAcc = 0
       // speed lines from the vanishing point (boost) + edge motion streaks
       if ((S.boost > 0 || S.speed > 1.08 || S.prog > 0.55) && Math.random() < dt * (S.boost > 0 ? 60 : 30 * Math.max(0, S.prog - 0.5)) * q) {
         var ang = (0.12 + Math.random() * 0.76) * Math.PI, r0 = v.w * 0.16, sx = v.cx + Math.cos(ang) * r0, sy = v.hy + Math.sin(ang) * r0 * 0.6
@@ -695,7 +796,7 @@
       if (!OFFK('bk')) { scene.drawBack(c, cam.y, quality); scene.biomeLight(c); if (HK().atmos && HK().atmos.drawSky) try { HK().atmos.drawSky(c, v) } catch (e) {} } mark('back')
       var night = scene.night
       if (!OFFK('road')) TR.renderRoad(c, track, cam, v, drawN, function (s, j) { if (!OFFK('sp')) drawSegSprites(s, j, night) }, null); mark('road')
-      if (!(W.__mcOff && W.__mcOff.sh)) scene.shimmer(c, canvas, quality); drawLaneFx(); if (!(W.__mcOff && W.__mcOff.pl)) drawPlayer(night); mark('player')
+      if (!(W.__mcOff && W.__mcOff.sh)) scene.shimmer(c, canvas, quality); drawLaneFx(); drawSkids(); if (!(W.__mcOff && W.__mcOff.pl)) drawPlayer(night); mark('player')
       if (!OFFK('fx')) { FX.draw(c, false); FX.draw(c, true) } mark('fx')
       drawOverlays()
       c.restore()
@@ -861,7 +962,7 @@
     }
     function drawTarget (s, tz) {
       var scale = s.p1.s, x = s.p1.x + scale * laneX(S.targetLanePos) * v.hw, y = s.p1.y, wpx = scale * 1150 * v.hw
-      var bounce = Math.abs(Math.sin(S.t * 11)) * wpx * 0.012
+      var bounce = Math.abs(Math.sin(S.t * 11)) * wpx * 0.012 + (S.robHop > 0 ? Math.abs(Math.sin((0.6 - S.robHop) / 0.6 * Math.PI * 2)) * wpx * 0.06 : 0)   // + the laugh hop
       c.globalAlpha = 0.35; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x, y, wpx * 0.48, wpx * 0.07, 0, 0, TAU); c.fill(); c.globalAlpha = 1
       spr(img.target, x, y - bounce, wpx, targetA, 1)
       // tail lights + red trail glows (additive)
@@ -870,8 +971,8 @@
       var L = A && A.lights.length ? A.lights : null
       for (var i = 0; i < 2; i++) {
         var lx = L ? x + (L[i][0] - A.cx) * k : x + (i ? 1 : -1) * wpx * 0.36, ly = L ? y - bounce + (L[i][1] - A.base) * k : y - wpx * 0.3
-        var gs = wpx * (scene.night ? 0.55 : 0.32) * (0.8 + 0.7 * Math.min(1, S.prog))
-        c.globalAlpha = 0.9; c.drawImage(TEX.glowR, lx - gs / 2, ly - gs / 2, gs, gs)
+        var gs = wpx * (scene.night ? 0.55 : 0.32) * (0.8 + 0.7 * Math.min(1, S.prog)), blink = S.robHop > 0 ? (Math.floor(S.t * 12) % 2 ? 1.35 : 0.3) : 1
+        c.globalAlpha = 0.9 * Math.min(1, blink); gs *= Math.max(1, blink); c.drawImage(TEX.glowR, lx - gs / 2, ly - gs / 2, gs, gs)
         if (scene.night || stage.wet) { c.globalAlpha = 0.35; c.drawImage(TEX.glowR, lx - gs * 0.15, ly, gs * 0.3, gs * 2.2) }
       }
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
@@ -886,7 +987,8 @@
       }
       // lock-on reticle follows the target
       if (S.state === 'lock') { H.ret.style.transform = 'translate(' + (x * v.css) + 'px,' + ((y - wpx * 0.45) * v.css) + 'px)' }
-      S.targetScreen = { x: x, y: y, w: wpx }
+      S.targetScreen = { x: x, y: y, w: wpx }; S.targetSeenT = S.t
+      if (targetA && targetA.top != null) S.targetScreen.roof = y - bounce - (targetA.base - targetA.top) * wpx / (targetA.right != null ? targetA.right - targetA.left + 1 : targetA.bw)
     }
     function drawPolice (s) {
       var scale = s.p1.s, wpx = scale * 1150 * v.hw
@@ -922,7 +1024,8 @@
       // soft contact shadow (aerial forms: offset and smaller)
       c.globalAlpha = air ? 0.22 : 0.42; c.fillStyle = '#000'; c.beginPath(); c.ellipse(m.x + (air ? cp * 0.06 : 0), m.y + (air ? cp * 0.04 : 0), cp * (air ? 0.4 : 0.55), cp * 0.09, 0, 0, TAU); c.fill(); c.globalAlpha = 1
       var k = cp / a.bw
-      c.save(); c.translate(m.x, m.y + hover + bob()); c.rotate(lean); c.scale(1 / Math.sqrt(sq), sq)
+      var hopY = S.hop > 0 ? Math.sin((1 - S.hop / 0.5) * Math.PI) * cp * 0.35 : 0   // the jumper's hop over a pothole or rock
+      c.save(); c.translate(m.x, m.y + hover + bob() - hopY); c.rotate(lean); c.scale(1 / Math.sqrt(sq), sq)
       if (im) c.drawImage(im, -a.cx * k, -a.base * k, im.naturalWidth * k, im.naturalHeight * k)
       c.globalAlpha = 1
       // tail lights (additive; brighter while recovering)
@@ -990,8 +1093,51 @@
         if (ri) c.drawImage(ri, -rs / 2, -rs / 2, rs, rs)
         c.restore()
       }
+      drawNear(); drawTaunt()
     }
     var cometTarget = null
+    function uiFont (px) { return '900 ' + Math.round(px) + 'px "Fredoka One",sans-serif' }
+    function uiPx (css) { return (css + 6 * Math.max(0, v.u / v.pr - 1)) / v.css }   // >= css px on phones, a little larger on tablets
+    function drawTaunt () {
+      if (!TN.on) return
+      TN.t += FDT
+      var t = TN.t, IN = 0.22, HOLD = 1.4, OUT = 0.3
+      if (t > IN + HOLD + OUT) { TN.on = false; return }
+      var sc = RM ? 1 : t < 0.12 ? 1.15 * t / 0.12 : t < IN ? 1.15 - 0.15 * (t - 0.12) / (IN - 0.12) : 1   // pop 0 -> 1.15 -> 1
+      var al = t > IN + HOLD ? Math.max(0, 1 - (t - IN - HOLD) / OUT) : RM ? Math.min(1, t / 0.15) : 1
+      var rot = RM ? 0 : Math.sin(t * 22) * 0.08 * Math.max(0, 1 - t / 0.9)                                   // the wobble settles
+      var fs = Math.round(uiPx(20)); c.font = uiFont(fs)
+      var tw = c.measureText(TN.text).width, bw = tw + fs * 1.3, bh = fs * 1.75, tl = fs * 0.95, pad = 10 * v.u
+      var R = S.targetScreen, seen = !!R && S.t - S.targetSeenT < 0.2 && R.x > 0 && R.x < v.w && R.y > 0 && R.y < v.h
+      var ax = seen ? R.x : clamp(R ? R.x : v.cx, pad + bw / 2, v.w - pad - bw / 2), ay = seen ? (R.roof != null ? R.roof + R.w * 0.05 : R.y - R.w * 0.42) : 0
+      var bx = clamp(ax + bw * 0.18, pad + bw / 2, v.w - pad - bw / 2), by = seen ? ay - tl - bh : TN.top + tl * 0.7
+      if (by < TN.top) by = TN.top                                                       // under the top HUD and Bo's bubble
+      var lim = v.playerY - carPx() * 1.6; if (by + bh > lim) by = lim - bh                // never over the road near Mojo
+      if (TN.gad && bx + bw / 2 > TN.gad.l && by + bh > TN.gad.t) by = TN.gad.t - bh     // never over the rocket button
+      // the tail points at the cabin; off screen it becomes an arrow at the top edge pointing at the robber
+      var tx = clamp(ax, bx - bw / 2 + fs * 0.7, bx + bw / 2 - fs * 0.6), edge = 0, tipX = ax, tipY = ay, sd = 0
+      if (!seen) { edge = by; tipX = tx; tipY = by - tl * 0.7; sd = -1 } else if (ay > by + bh + 2) { edge = by + bh; sd = 1 } else if (ay < by - 2) { edge = by; sd = -1 }
+      var px = sd ? tipX : bx, py = sd ? tipY : by + bh / 2, lw = Math.max(2, fs * 0.13), x0 = bx - bw / 2
+      c.save(); c.globalAlpha = al; c.translate(px, py); c.rotate(rot); c.scale(sc, sc); c.translate(-px, -py)
+      c.lineJoin = 'round'; c.lineWidth = lw; c.strokeStyle = '#2b1a12'
+      c.fillStyle = 'rgba(0,0,0,.2)'; roundRect(x0 + lw, by + lw * 1.6, bw, bh, bh * 0.45); c.fill()
+      c.fillStyle = '#ffffff'
+      if (sd) { c.beginPath(); c.moveTo(tx - fs * 0.42, edge); c.lineTo(tipX, tipY); c.lineTo(tx + fs * 0.28, edge); c.closePath(); c.fill(); c.stroke() }
+      roundRect(x0, by, bw, bh, bh * 0.45); c.fill(); c.stroke()
+      if (sd) { c.beginPath(); c.moveTo(tx - fs * 0.42 + lw, edge - sd * lw); c.lineTo(tx + fs * 0.28 - lw, edge - sd * lw); c.lineTo(tipX + (tx - tipX) * 0.2, tipY + (edge - tipY) * 0.2); c.closePath(); c.fill() }   // hide the seam
+      c.fillStyle = '#8e1b3a'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(TN.text, bx, by + bh * 0.54)
+      c.restore()
+      var tb2 = TN.box || (TN.box = {}); tb2.x = bx; tb2.y = by; tb2.w = bw; tb2.h = bh; tb2.fs = fs
+
+    }
+    function drawNear () {
+      if (!NM.on) return
+      NM.t += FDT; if (NM.t > 0.9) { NM.on = false; return }
+      var t = NM.t, sc = RM ? 1 : t < 0.1 ? t / 0.1 * 1.2 : t < 0.2 ? 1.2 - (t - 0.1) * 2 : 1, fs = Math.round(uiPx(22))
+      c.save(); c.globalAlpha = t > 0.6 ? 1 - (t - 0.6) / 0.3 : 1; c.translate(NM.x, NM.y - t * 50 * v.u); c.scale(sc, sc)
+      c.font = uiFont(fs); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = fs * 0.22; c.strokeStyle = '#10264f'
+      c.strokeText('Nyaris!', 0, 0); c.fillStyle = '#ffd54a'; c.fillText('Nyaris!', 0, 0); c.restore()
+    }
 
     /* HUD (writes only on change) */
     var last2 = {}
@@ -1045,9 +1191,13 @@
     }
 
     /* start */
-    function setForm (id) {
-      formId = id; S.form = id; rearKey = (RA && RA.forms[id]) || 'base'; rearA = RA ? RA.sprites[rearKey] : null
-      if (img['rear:' + id]) img.rear = img['rear:' + id]
+    function setForm (id, pk) {
+      formId = id; S.form = id; perk = pk || FORM_PERK[id] || null; rearKey = (RA && RA.forms[id]) || 'base'; rearA = RA ? RA.sprites[rearKey] : null
+      var rk = rearKey
+      if (RIMG[rk]) { img.rear = RIMG[rk]; formLoad = null }
+      else {   // a picker form that was not preloaded (jumper, rescue, boat, chopper, jet...): decode it now; the countdown waits
+        var pl = formLoad = loadOne('mojo-rear/' + rk).then(function (im) { if (im) RIMG[rk] = im; if (im && rearKey === rk) img.rear = im; if (formLoad === pl) formLoad = null })
+      }
       H.car.src = lib('mojo-rear/' + rearKey)
       if (cfg.onForm) try { cfg.onForm(id) } catch (e) {}
     }
@@ -1057,8 +1207,11 @@
       Promise.resolve(p0).then(function (c2) {
         if (finished) return
         var custom = HK().beforeStart !== HOOKS.beforeStart   // a picker module ran: its choice is final (even 'racer')
-        if (custom && c2 && c2.mojo_form && RA && RA.forms[c2.mojo_form]) { setForm(c2.mojo_form); cfg.formChosen = true }
-        intro()
+        c2 = c2 || {}
+        var chosen = !!(c2.picked || c2.formChosen)
+        if ((custom || chosen) && c2.mojo_form && RA && RA.forms[c2.mojo_form]) { setForm(c2.mojo_form, c2.perk || null); cfg.formChosen = true }
+        else if (c2.perk) perk = c2.perk
+        if (chosen) startRun(); else intro()   // the picker already asked: no intro card, straight to the cutscene / countdown
       }, function () { intro() })
     }
     function intro () {
@@ -1070,7 +1223,7 @@
       showCard('<h2 class="fk">' + (cfg.title || stage.title) + '</h2><p>' + (cfg.story_intro || stage.intro) + '</p>' +
         (cfg.formChosen ? '' : '<p class="mc-pick-h">Pilih wujud Mojo!</p><div class="mc-forms">' + cards + '</div>') +
         '<p style="font-size:16px;color:#54617a">Geser atau tekan panah untuk pindah jalur. Ambil kotak roket, lalu tangkap pencurinya!</p>',
-        [{ t: 'Ayo Kejar!', id: 'mc-go', fn: function () { hideCard(); cut() } }])
+        [{ t: 'Ayo Kejar!', id: 'mc-go', fn: function () { hideCard(); startRun() } }])
       ;[].forEach.call(card.querySelectorAll('.mc-form'), function (b) {
         b.addEventListener('click', function () { AU.cue('click'); setForm(b.getAttribute('data-form')); [].forEach.call(card.querySelectorAll('.mc-form'), function (x) { x.classList.toggle('on', x === b) }) })
       })
@@ -1078,24 +1231,36 @@
     }
     /* intro cutscene (PRD §2, skippable): the robber runs from the pavement to the getaway car, hops in, and it
        speeds off; Mojo waits, then the Swop starts. Everything is drawn in the live scene. */
+    function cutSeen () { try { return !!JSON.parse(W.localStorage.getItem(CUT_KEY) || '{}')[stage.id] } catch (e) { return false } }
+    function startRun () { if (RM || cutSeen()) countdown(); else cut() }
     function cut () {
-      if (RM) { go(); return }
+      if (RM) { countdown(); return }
+      try { var cs = JSON.parse(W.localStorage.getItem(CUT_KEY) || '{}'); cs[stage.id] = 1; W.localStorage.setItem(CUT_KEY, JSON.stringify(cs)) } catch (e) {}
       S.state = 'cut'; S.cutT = 0; S.robLane = 2.9; S.cutGap = 2600; S.targetLanePos = S.targetLane = 1
       H.skip.classList.add('on'); call('Itu pencurinya!', 1400, 'cut1'); H.mission.classList.remove('hide'); H.place.classList.remove('hide')
       last = performance.now()
     }
-    function endCut () { if (S.state !== 'cut') return; H.skip.classList.remove('on'); go() }
+    function endCut () { if (S.state !== 'cut') return; H.skip.classList.remove('on'); countdown() }
+    /* 3-2-1: the robber waits ahead, Mojo idles; the boards of the intro are gone before the race starts */
+    function countdown () {
+      H.mission.classList.add('hide'); H.place.classList.add('hide'); H.skip.classList.remove('on')
+      S.state = 'countdown'; S.cdT = 0; S.cdN = 0; S.speed = 0; S.targetLane = S.targetLanePos = 1
+      if (!S.cutGap) S.cutGap = gap0()
+      last = performance.now()
+    }
     function go () {
       H.mission.classList.add('hide'); H.place.classList.add('hide')   // nothing may cover the road while racing (owner)
       S.state = 'swop'; S.phaseT = 0; S.speed = 0.4; S.flash = RM ? 0 : 0.8
       var m = mojoXY(); burst(m.x, m.y - carPx() * 0.4, 30, TEX.sparkle, 900 * v.u, 0.8, carPx() * 0.2, true)
-      AU.cue('swoosh'); call('Swop! Jadi Mojo ' + (FORMS.filter(function (f) { return f.id === formId })[0] || FORMS[0]).name + '!', 1300, 'swop')
+      AU.cue('swoosh'); call('Swop! Jadi Mojo ' + (FORM_NAME[formId] || 'Hebat') + '!', 1300, 'swop')
       last = performance.now()
     }
     loadAll().then(function () {
       if (finished) return
       S.form = formId
       for (var nm in img) if (nm.indexOf('p:') === 0) imgP[nm.slice(2)] = img[nm]
+      FORMS.forEach(function (f) { var rk0 = (RA && RA.forms[f.id]) || 'base'; if (img['rear:' + f.id]) RIMG[rk0] = img['rear:' + f.id] })
+      if (img.rear) RIMG[rearKey] = img.rear
       for (var sq2 in SEQ) for (var fj = 1; fj <= 8; fj++) if (img['seq:' + sq2 + '-' + fj]) SEQ[sq2].push(img['seq:' + sq2 + '-' + fj])
       imgP.lollipop = procProp('lollipop'); imgP.gumdrop = procProp('gumdrop')
       // the ground fades into the MID strip's own bottom colour at the horizon (no hard band)
@@ -1130,13 +1295,15 @@
           par: scene ? { far: scene.par.far, mid: scene.par.mid, roadside: scene.par.roadside, road: scene.par.road } : null,
           ring: track ? track.ring.length : 0, made: track ? track.made() : 0, chevrons: track ? track.chevronAudit() : null,
           edu: S.eduResult, eduPrompt: S.edu ? S.edu.prompt : null, particles: FX.live(), cap: FX.cap(), stage: stage.id, target: targetName, corridor: v.w ? { hy: v.hy * v.css, top: (v.playerY - carPx() * 1.15) * v.css, cx: v.cx * v.css, wTop: v.w * 0.04 * v.css, wBot: TR.ROADW * v.hw / Z_P * 1.1 * v.css } : null, rear: rearKey, form: formId, captureMs: S.captureMs, recForm: recForm,
+          perk: perk, taunt: TN.on ? TN.text : null, tauntBox: TN.on && TN.box ? { x: TN.box.x * v.css, y: TN.box.y * v.css, w: TN.box.w * v.css, h: TN.box.h * v.css, fs: TN.box.fs * v.css } : null, taunts: S.taunts, smoke: S.smoke, near: S.near, carCss: carPx() * v.css, playerYCss: v.playerY * v.css, formLoading: !!formLoad, count: S.state === 'countdown' ? S.cdN : 0,
           imgs: Object.keys(img).length, prof: S.prof, missing: Object.keys(need).filter(function (n) { return !img[n] }), boost: S.boost, z: S.z }
       },
       auto: function (o) { S.auto = o || null },
       tap: function (what) { if (what === 'go') { var b = host.querySelector('#mc-go'); if (b) b.click() } },
       force: function (o) { for (var k in o) S[k] = o[k] },
       quality: function (qv, lock) { quality = qv; S.qLock = !!lock; resize() }, profile: function (on) { S.prof = on ? {} : null },
-      emitTest: function (kind) { var m = mojoXY(); if (kind === 'brok') { var o = { type: 'crate', taken: false }; S.recover = 0; hit(o, m.x, m.y - carPx() * 0.2) } else if (kind === 'star') pick({ type: 'star' }, m.x, m.y - carPx() * 0.8); else if (kind === 'boost') { S.boostCharge = 1; boost() } }
+      emitTest: function (kind) { var m = mojoXY(); if (kind === 'brok') { var o = { type: 'crate', taken: false }; S.recover = 0; hit(o, m.x, m.y - carPx() * 0.2) } else if (kind === 'star') pick({ type: 'star' }, m.x, m.y - carPx() * 0.8); else if (kind === 'boost') { S.boostCharge = 1; boost() } else if (kind === 'quiz') pick({ type: 'quiz', taken: false }, m.x, m.y - carPx() * 0.8) }
+
     }
     return done
   }

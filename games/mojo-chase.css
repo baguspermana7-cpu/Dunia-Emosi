@@ -228,3 +228,13 @@
 .mc-loc{font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;line-height:1;color:#fff;background:rgba(78,39,16,.82);border-radius:10px;padding:3px 10px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .mc-sign.hide{opacity:0;transform:translateY(calc(-24px * var(--u)));pointer-events:none}
 .mc-place.hide{transform:translateX(calc(40px * var(--u)))}
+/* 3-2-1 countdown (after the cutscene or straight after the picker) */
+.mc-count{position:absolute;left:50%;top:36%;z-index:4;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);font-family:'Fredoka One','Fredoka',sans-serif;font-size:calc(118px * var(--u));line-height:1;color:#ffd54a}
+.mc-hud .mc-count.ol{-webkit-text-stroke:calc(5px * var(--u)) #10264f;text-shadow:0 calc(6px * var(--u)) 0 #10264f}
+.mc-count.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.mc-count.pop{animation:mc-count .8s cubic-bezier(.23,1,.32,1) both}
+@keyframes mc-count{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}22%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}40%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+/* Bo cheers the capture */
+.mc-call.cheer img{animation:mc-cheer .45s cubic-bezier(.23,1,.32,1) 4}
+@keyframes mc-cheer{0%,100%{transform:translateY(0)}45%{transform:translateY(calc(-8px * var(--u))) rotate(-6deg)}}
+@media (prefers-reduced-motion:reduce){.mc-count.pop,.mc-call.cheer img{animation:none}}
