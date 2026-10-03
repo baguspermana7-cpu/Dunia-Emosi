@@ -241,8 +241,11 @@
 
   /* level completion that survives levels INSERTED into a world later (a level with `added` is optional):
      sf(levelId) -> stars. worldDone: every original level starred, or every level starred.
-     levelOpen: the first level; the previous one starred; progress beyond it (a later level starred);
-     or an added level whose nearest earlier ORIGINAL level is starred. Nothing a save reached re-locks. */
+     levelOpen (owner 2026-10-03: "don't demand full stars, let them explore — finishing a level even with 1 star
+     opens 2-3 levels ahead"): the first AHEAD levels of an open world; any of the AHEAD levels before it starred
+     (>= 1 star); progress beyond it (a later level starred); or an added level whose nearest earlier ORIGINAL level
+     is starred. Every rule only adds: nothing a save reached re-locks. */
+  var AHEAD = 3
   function worldDoneOf (w, sf) {
     var L = (w && w.levels) || []; if (!L.length) return false
     var orig = L.filter(function (l) { return !l.added })
@@ -250,8 +253,8 @@
   }
   function levelOpenOf (w, k, sf) {
     var L = (w && w.levels) || []
-    if (k <= 0) return true
-    if (sf(L[k - 1].id) > 0) return true
+    if (k < AHEAD || (L[k] && sf(L[k].id) > 0)) return true   // a played level never locks
+    for (var b = 1; b <= AHEAD; b++) if (L[k - b] && sf(L[k - b].id) > 0) return true
     for (var j = k + 1; j < L.length; j++) if (sf(L[j].id) > 0) return true
     // after an added (optional) level: open once the nearest earlier ORIGINAL level is starred
     if (L[k - 1].added) { for (var i = k - 1; i >= 0; i--) if (!L[i].added) return sf(L[i].id) > 0; return true }
@@ -681,7 +684,7 @@
 
   W.TKAtlas = { CHART: CHART, REGIONS: REGIONS, NODES: NODES, EDGES: EDGES, FINALE: FINALE, LEGACY: LEGACY, STARTERS: STARTERS, ROOT: ROOT, MIN_S: MIN_S, MAX_S: MAX_S,
     DECOR: DECOR, signAngle: signAngle, graph: graph, compute: compute, migrate: migrate, legacyOpen: legacyOpen, next: next, hint: hint, path: path, validate: validate, regionOf: regionOf,
-    worldDone: worldDoneOf, levelOpen: levelOpenOf,
+    worldDone: worldDoneOf, levelOpen: levelOpenOf, AHEAD: AHEAD,
     mount: mount, view: function () { return MOUNTED } }
   if (typeof module !== 'undefined' && module.exports) module.exports = W.TKAtlas
 })()

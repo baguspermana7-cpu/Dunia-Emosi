@@ -29,7 +29,12 @@
     'ship/queenmary': L + 'tk-legend/ship-queenmary-clean.webp', 'ship/nautilus': L + 'tk-legend/ship-nautilus-clean.webp',
     // no Missouri on the sheets: the ships-b battleship drawing (not the legend Arizona one)
     'ship/missouri': L + 'tk-ship2/uss-arizona-clean.webp',
-    'ship/pelabuhan': L + 'tk-legend/time-harbor.webp',
+    // A 'ship/<world>' key is the VESSEL the child moves (grid piece, chapter card, medallion, Galeri) and must be a
+    // ship or boat sprite, never a scene / harbour / island picture (owner bug 2026-10-03: Pelabuhan Waktu's grid
+    // piece was tk-legend/time-harbor, a town). Pelabuhan Waktu = "Pulang ke Rumah": Timmy's own sailboat taking him
+    // home; Kamar Timmy = his toy sailboat. Gate: tools/qa-tk-vessels.mjs.
+    'ship/pelabuhan': L + 'tk-ship/sailboat.webp',
+    'ship/kamar': L + 'vehicles/sailboat.webp',
     'ship/rescue': L + 'tk-ship2/arctic-explorer-clean.webp',
     'fx/portal': L + 'tk-key/portal.webp',          // soft-glow vortex; framed gate: tk-legend/time-portal
     'ui/logo': L + 'tk-key/logo.webp'
@@ -177,6 +182,19 @@
     return svgUrl(s + '</svg>')
   }
 
+  // a world's vessel: w.vessel (the moving piece / picture), else w.ship, else 'ship/<id>'. Runtime guard: a key
+  // whose file reads as a scene, harbour, island, building, portal or character falls back to Timmy's sailboat.
+  var NOT_VESSEL = /harbor(?!-tug)|harbour|island|isle|town|port-|scene|building|portal|char\/|tk-key\/timmy/
+  var VESSEL_FALLBACK = 'tk-ship/sailboat'
+  function vesselOk (k) { var u = src(k); return !!u && (u.indexOf('data:') === 0 || !NOT_VESSEL.test(String(u).replace(/^.*assets\/db\/lib\//, ''))) }
+  function vesselKey (w) {
+    var k = w ? (w.vessel || w.ship || (w.id ? 'ship/' + w.id : '')) : ''
+    if (k && vesselOk(k)) return k
+    try { if (k && W.console) console.warn('[TKArt] not a vessel sprite:', k, '-> ' + VESSEL_FALLBACK) } catch (e) {}
+    return VESSEL_FALLBACK
+  }
+  function vessel (w) { return src(vesselKey(w)) }
+
   var CACHE = {}
   function src (k) {
     if (OVERRIDE[k]) return BASE + OVERRIDE[k]
@@ -198,5 +216,5 @@
     }
     return "url('" + sceneSvg(d[1]).replace(/'/g, '%27') + "') center bottom/cover no-repeat, " + d[0]
   }
-  W.TKArt = { src: src, scene: scene, lib: lib, OVERRIDE: OVERRIDE, PROPS: PROPS, CHARS: CHARS, SCENE_ART: SCENE_ART, KIND: KIND, scenes: SCN, BASE: BASE }
+  W.TKArt = { src: src, scene: scene, lib: lib, vessel: vessel, vesselKey: vesselKey, NOT_VESSEL: NOT_VESSEL, OVERRIDE: OVERRIDE, PROPS: PROPS, CHARS: CHARS, SCENE_ART: SCENE_ART, KIND: KIND, scenes: SCN, BASE: BASE }
 })()

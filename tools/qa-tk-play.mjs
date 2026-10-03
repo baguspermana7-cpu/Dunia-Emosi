@@ -240,7 +240,8 @@ async function checkChapterMap (p, tag, expectNext) {
 }
 
 // the per-world LEVEL MAP (every world without chapters): the chapter board in level mode.
-// Save = levels 1-3 starred (Kamar: 1-2), so the next one is current and the rest are locked.
+// Save = levels 1-3 starred (Kamar: 1-2), so the next one is current, the next 3 after the last starred one are
+// open (explore-ahead rule) and the rest are locked.
 async function checkLevelMap (p, tag, wid, rotate) {
   await p.evaluate(id => {
     const all = {}; TKWorlds.WORLDS.forEach(x => { all[x.id] = {}; x.levels.forEach(l => { all[x.id][l.id] = 3 }) })
@@ -267,6 +268,7 @@ async function checkLevelMap (p, tag, wid, rotate) {
       next: nx ? +nx.getAttribute('data-k') : -1, ring: !!(nx && nx.querySelector('.ring')), flag: (nx && nx.querySelector('.flag') || {}).textContent,
       ship: !!ship, shipOnNext: !!(ship && nx && hit(ship.getBoundingClientRect(), nx.querySelector('.md').getBoundingClientRect())),
       locked: ch.filter(c => c.classList.contains('locked')).map(c => /grayscale/.test(getComputedStyle(c.querySelector('.md')).filter) && !!c.querySelector('.lk')),
+      lockedK: ch.filter(c => c.classList.contains('locked')).map(c => +c.getAttribute('data-k')),
       chest: !!document.querySelector('#route .chap.chest'),
       plate: (document.querySelector('.cm-plate b') || {}).textContent, guide: !!document.querySelector('.cm-guide img'),
       fillW: cr ? cr.width / vw : 0, fillH: cr ? (Math.min(cr.bottom, innerHeight) - Math.max(cr.top, tb.bottom)) / (innerHeight - tb.bottom) : 0,
@@ -283,6 +285,9 @@ async function checkLevelMap (p, tag, wid, rotate) {
   check(m.next === (wid === 'kamar' ? 2 : 3) && m.ring && m.flag === 'Main!', `${tag}: the first unplayed level is current: pulse ring + "Main!" flag (${m.next} ${m.ring} ${m.flag})`)
   check(wid === 'kamar' || (m.ship && !m.shipOnNext), `${tag}: the world's ship waits beside the current level`)
   check(m.locked.length >= 1 && m.locked.every(Boolean), `${tag}: locked levels are grey with a lock (${m.locked.join(',')})`)
+  // explore-ahead (owner 2026-10-03): the last starred level opens the next 3, so the first lock sits 3 past the current one
+  const cur = wid === 'kamar' ? 2 : 3
+  check(m.lockedK.length && Math.min(...m.lockedK) === cur + 3 && [0, 1, 2].every(d => !m.lockedK.includes(cur + d)), `${tag}: finishing level ${cur} opens levels ${cur + 1}..${cur + 3}, the first lock is level ${cur + 4} (locked: ${m.lockedK.map(k => k + 1).join(',')})`)
   check(wid === 'kamar' || m.chest, `${tag}: the fragment level is a treasure chest`)
   check(m.plate === 'Peta ' + name && m.guide, `${tag}: "Peta ${name}" plate + guide bubble (${m.plate} / ${m.guide})`)
   check(m.fillW >= 0.85 && m.fillH >= 0.85, `${tag}: the board fills the frame (w ${m.fillW.toFixed(2)} h ${m.fillH.toFixed(2)})`)

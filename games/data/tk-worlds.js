@@ -84,7 +84,7 @@
   ]
 
   var BEDROOM = {
-    id: 'kamar', name: 'Kamar Timmy', ship: null, value: 'Awal petualangan', cat: 'awal', color: '#5B6BD6', scene: 'bedroom-night',
+    id: 'kamar', name: 'Kamar Timmy', ship: null, vessel: 'ship/kamar', value: 'Awal petualangan', cat: 'awal', color: '#5B6BD6', scene: 'bedroom-night',
     captain: { name: 'Timmy', quote: 'Ayo belajar memberi perintah pada perahu!' },
     levels: [
       { id: 'k1', title: 'Mimpi Misterius', type: 'story', story: INTRO },
@@ -114,7 +114,7 @@
   var DECK = ['tk-prop/crate-plain', 'tk-prop/barrels', 'tk-char/officer-boy', 'tk-prop/crate-titanic', 'tk-prop/rope-coil']
   var CAPTAIN = 'char/captain'
   var TITANIC = {
-    id: 'titanic', name: 'RMS Titanic', ship: 'ship/titanic', year: 1912, value: 'Keberanian & Kebaikan', cat: 'tragedi', color: '#1F5FA8', scene: 'harbor-dawn',
+    id: 'titanic', name: 'RMS Titanic', ship: 'ship/titanic', vessel: 'ship/titanic', year: 1912, value: 'Keberanian & Kebaikan', cat: 'tragedi', color: '#1F5FA8', scene: 'harbor-dawn',
     chapters: true, mapTitle: 'Peta Bab', mapSub: 'Perjalanan Ilmu dan Keberanian',
     mapFoot: 'Selesaikan tiap bab untuk membuka ilmu, lencana, dan kisah baru!',
     captain: { name: 'Kapten Smith', quote: 'Mari lakukan yang terbaik, dan baik kepada semua orang di kapal.' },
@@ -251,7 +251,7 @@
     var lvs = arcLevels(o, id)
     if (g.length) lvs = [lvs[0], lvs[1], lvs[2], g[0], lvs[3], g[1], m[0], lvs[4], g[2], m[1], lvs[5]].filter(Boolean)
     return {
-      id: id, name: o.name, ship: 'ship/' + id, year: o.year, value: o.value, cat: o.cat, color: o.color, scene: o.scene,
+      id: id, name: o.name, ship: 'ship/' + id, vessel: 'ship/' + id, year: o.year, value: o.value, cat: o.cat, color: o.color, scene: o.scene,
       captain: o.captain, cards: o.cards,
       levels: lvs
     }

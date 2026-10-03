@@ -422,7 +422,7 @@
   }
 
   /* ── append the worlds + everything a normal world gets from tk-worlds.js ── */
-  NEW.forEach(function (w) { w.ship = 'ship/' + w.id; w.series = 'legenda' })
+  NEW.forEach(function (w) { w.ship = 'ship/' + w.id; w.vessel = 'ship/' + w.id; w.series = 'legenda' })
   var EASY_GRIDS = 3
   NEW.forEach(function (w) {
     var g = 0, st = 0

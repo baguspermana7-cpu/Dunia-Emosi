@@ -109,9 +109,29 @@ check(TA.validate(GL).length === 0, `the chart for the loaded worlds is valid ($
   check(!TA.worldDone(w, sf({ a: 3, b: 2, c: 1 })), 'a world is not done while an original level is unstarred')
   check(TA.levelOpen(w, 3, sf({ a: 3, b: 2 })), 'mid-world: the next ORIGINAL level after an inserted one stays open')
   check(TA.levelOpen(w, 2, sf({ a: 3, b: 2 })), 'an added level opens once its predecessor is starred')
-  check(!TA.levelOpen(w, 2, sf({ a: 3 })), 'an added level stays closed before its predecessor')
   check(TA.levelOpen(w, 4, sf({ a: 3, b: 2, c: 1 })), 'an added level later in the world opens after its predecessor')
   check(TA.levelOpen(w, 1, sf({ c: 2 })), 'progress beyond a level keeps it open')
+  // explore-ahead rule (owner 2026-10-03): the first 3 levels are open; ONE star on level k opens k+1..k+3
+  const long = { id: 'y', levels: 'abcdefghij'.split('').map(id => ({ id })) }
+  check(TA.AHEAD === 3, `TKAtlas.AHEAD is 3 (${TA.AHEAD})`)
+  check([0, 1, 2].every(k => TA.levelOpen(long, k, sf({}))) && !TA.levelOpen(long, 3, sf({})), 'a fresh world: levels 1-3 open, level 4 locked')
+  check(TA.levelOpen(w, 2, sf({})), 'an added level among the first 3 is open too')
+  check(!TA.levelOpen(w, 4, sf({ a: 3 })), 'an added level beyond the window stays closed before its predecessors')
+  for (let k = 0; k < long.levels.length; k++) {
+    const one = sf({ [long.levels[k].id]: 1 })
+    const ahead = [1, 2, 3].map(d => k + d).filter(j => j < long.levels.length)
+    check(ahead.every(j => TA.levelOpen(long, j, one)), `1 star on level ${k + 1} opens levels ${ahead.map(j => j + 1).join(',') || '-'}`)
+    if (k + 4 < long.levels.length && k + 4 >= 3) check(!TA.levelOpen(long, k + 4, one), `1 star on level ${k + 1} does not open level ${k + 5}`)
+  }
+  // the real data, every world: one star on level k opens the next 3 (unlocks only grow: k's own progress keeps 0..k open)
+  {
+    let bad = []
+    for (const x of WD.WORLDS) for (let k = 0; k < x.levels.length; k++) {
+      const one = id => id === x.levels[k].id ? 1 : 0
+      for (let j = 0; j <= Math.min(k + 3, x.levels.length - 1); j++) if (!TA.levelOpen(x, j, one)) bad.push(`${x.id}:${k + 1}->${j + 1}`)
+    }
+    check(!bad.length, `real worlds: one star on any level opens every level before it and the next 3 (${bad.slice(0, 6).join(' ')})`)
+  }
   // the real data: every world with added levels, finished on its original levels only
   const real = WD.WORLDS.filter(x => x.levels.some(l => l.added))
   check(real.every(x => TA.worldDone(x, id => x.levels.find(l => l.id === id && !l.added) ? 3 : 0)), `real worlds (${real.length} with added levels) count as done on their original levels`)

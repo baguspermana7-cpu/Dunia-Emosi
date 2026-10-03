@@ -28,6 +28,8 @@
   function esc (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') }
   function lib (k) { var A = W.TKArt; if (A && A.lib) return A.lib(k); var p = W.AssetIndex && AssetIndex.path && AssetIndex.path(k); return p || '/assets/db/lib/' + k + '.webp' }
   function art (k) { var A = W.TKArt; return A && A.src ? A.src(k) : lib(k) }
+  // a world's vessel picture (TKArt.vessel guards against scene / harbour art); never the world's map art
+  function vart (w) { var A = W.TKArt; return A && A.vessel ? A.vessel(w) : art(w.vessel || w.ship || 'tk-ship/sailboat') }
   function scene (k) { var A = W.TKArt; return A && A.scene ? A.scene(k) : '#15295A' }
   function ico (k, cls) { return '<img class="tkh-i' + (cls ? ' ' + cls : '') + '" src="' + esc(lib(k)) + '" alt="" draggable="false" onerror="this.style.visibility=\'hidden\'">' }
   function img (u, cls) { return '<img class="' + (cls || '') + '" src="' + esc(u) + '" alt="" draggable="false" onerror="this.style.visibility=\'hidden\'">' }
@@ -307,7 +309,7 @@
           '<section class="tkh-card navy gifts"><h2 class="tkh-tab fk">Hadiah</h2>' + gifts.join('') + '</section>' +
         '</div>' +
         '<div class="tkh-row2 b">' +
-          (fact ? '<section class="tkh-card fact"><h2 class="tkh-tab fk">' + ico('tk-legend/journal-book') + 'Fakta Sejarah</h2><div class="photo" style="background:' + esc(scene(w.scene || 'harbor-dawn')).replace(/&quot;/g, '"') + '">' + img(art(w.ship || 'char/timmy')) + '</div>' +
+          (fact ? '<section class="tkh-card fact"><h2 class="tkh-tab fk">' + ico('tk-legend/journal-book') + 'Fakta Sejarah</h2><div class="photo" style="background:' + esc(scene(w.scene || 'harbor-dawn')).replace(/&quot;/g, '"') + '">' + img(vart(w)) + '</div>' +
             '<div class="ft"><b class="fk">' + esc(fact.title) + '</b><p>' + esc(fact.text) + '</p></div></section>' : '') +
           '<div class="tkh-say"><p>' + esc(data.cheer || 'Hebat, Timmy! Kamu belajar, menjelajah, dan membuat sejarah jadi hidup!') + '</p>' + img(art('char/penguin'), 'peng') + '</div>' +
         '</div>' +
@@ -396,7 +398,7 @@
     function card (w) {
       var got = done(w), f = fav(w.id)
       return '<div class="tkh-ship' + (got ? '' : ' no') + (w.id === st.sel ? ' sel' : '') + '" data-sel="' + w.id + '" role="button" tabindex="0" aria-label="' + esc(w.name) + '">' +
-        '<div class="th" style="background:' + esc(scene(w.scene)).replace(/&quot;/g, '"') + '">' + img(art(w.ship), 'sh') + (got ? '' : ico('gt/lock', 'lk')) + '</div>' +
+        '<div class="th" style="background:' + esc(scene(w.scene)).replace(/&quot;/g, '"') + '">' + img(vart(w), 'sh') + (got ? '' : ico('gt/lock', 'lk')) + '</div>' +
         '<button type="button" class="fav' + (f ? ' on' : '') + '" data-fav="' + w.id + '" aria-pressed="' + f + '" aria-label="Favorit ' + esc(w.name) + '">' + ico('tk-ui/heart') + '</button>' +
         '<b class="fk">' + esc(w.name) + '</b>' + starsRow(wStars(w), 3) + '</div>'
     }
@@ -418,12 +420,12 @@
       while (scenes.length < 3) scenes.push(scenes[scenes.length - 1] || 'harbor-day')
       det.innerHTML =
         '<div class="rib fk">' + esc(w.name) + '</div>' +
-        '<div class="hero" style="background:' + esc(scene(w.scene)).replace(/&quot;/g, '"') + '">' + img(art(w.ship)) + '<button type="button" class="fav' + (f ? ' on' : '') + '" data-fav="' + w.id + '" aria-label="Favorit">' + ico('tk-ui/heart') + '</button></div>' +
+        '<div class="hero" style="background:' + esc(scene(w.scene)).replace(/&quot;/g, '"') + '">' + img(vart(w)) + '<button type="button" class="fav' + (f ? ' on' : '') + '" data-fav="' + w.id + '" aria-label="Favorit">' + ico('tk-ui/heart') + '</button></div>' +
         '<div class="tags"><span class="t1">' + esc(CATL[w.cat] || 'Kapal') + '</span>' + (sp.type ? '<span class="t2">' + esc(sp.type) + '</span>' : '') + '<span class="t3">' + (got ? 'Dimiliki' : 'Belum dimiliki') + '</span></div>' +
         '<p class="txt">' + esc(((w.cards || [])[0] || {}).text || w.value || '') + '</p>' +
         '<dl class="spec"><dt>Jenis</dt><dd>' + esc(sp.type || '—') + '</dd><dt>Panjang</dt><dd>' + esc(sp.length || '—') + '</dd><dt>Tahun</dt><dd>' + esc(w.year || '—') + '</dd><dt>Nilai</dt><dd>' + esc(w.value || '—') + '</dd><dt>Terkenal</dt><dd>' + esc(sp.famous || '—') + '</dd></dl>' +
         '<button type="button" class="tkh-btn blue wide" data-story="' + w.id + '">' + ico('tk-legend/journal-book') + 'Baca Kisah</button>' +
-        '<div class="pics">' + scenes.slice(0, 3).map(function (s, i) { return '<div style="background:' + esc(scene(s)).replace(/&quot;/g, '"') + '">' + (i === 0 ? img(art(w.ship)) : '') + '</div>' }).join('') + '</div>' +
+        '<div class="pics">' + scenes.slice(0, 3).map(function (s, i) { return '<div style="background:' + esc(scene(s)).replace(/&quot;/g, '"') + '">' + (i === 0 ? img(vart(w)) : '') + '</div>' }).join('') + '</div>' +
         '<button type="button" class="tkh-btn green wide" data-fav="' + w.id + '">' + ico('tk-ui/heart') + (f ? 'Favoritku' : 'Jadikan Favorit') + '</button>'
     }
     function paint () {
