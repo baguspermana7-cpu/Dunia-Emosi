@@ -126,11 +126,14 @@
   }
   function cancelPlayback () {
     epoch++; timers.forEach(W.clearTimeout); timers = []
-    if (D.getAnimations) D.getAnimations().forEach(function (a) { a.cancel() })
+    // only the playback's own (script) animations: the CSS idle loops on the board (fire flicker, pickup bob)
+    // and transitions keep running (a cancelled CSS animation stays dead until its style changes)
+    if (D.getAnimations) D.getAnimations().forEach(function (a) { if (!(W.CSSAnimation && a instanceof W.CSSAnimation) && !(W.CSSTransition && a instanceof W.CSSTransition)) a.cancel() })
     ;['ov-mg','ov-swop','ov-card'].forEach(closeOv)
+    var sw = $('ov-swop'); sw.onclick = null; if (sw.firstChild) { sw.innerHTML = ''; sw.setAttribute('aria-hidden', 'true') }
     MG = null; drag = null
     $('drag-ghost').classList.remove('on')
-    ;[].forEach.call(D.querySelectorAll('.fly,.confetti'),function (n) { n.remove() })
+    ;[].forEach.call(D.querySelectorAll('.fly,.confetti,#fx .spark,#fx .splash,#fx .pop-ico'),function (n) { n.remove() })   // a cancelled particle would sit at the board corner
   }
   var toastT = 0
   function toast (m) { var t = $('toast'); t.textContent = m; t.className = 'toast show'; clearTimeout(toastT); toastT = W.setTimeout(function () { t.className = 'toast' }, 2400) }   // not later(): cancelPlayback must never strand a toast on screen
@@ -302,7 +305,7 @@
     $('btn-run').disabled = false
     G.prog = (b.prefill || []).slice(); G.hist = []; G.sel = -1; G.hint = 0; G.fails = 0; G.fail = null; G.dirty = false; G.w = G.cp; G.trans = false
     clearMarks(); hideGhost(); $('hint-lv').textContent = ''
-    renderPalette(); $('palette').scrollTop = 0; renderStrip(); renderHud(); renderWorld(G.w, true); beatDots()
+    renderPalette(); W.requestAnimationFrame(function () { $('palette').scrollTop = 0 }); renderStrip(); renderHud(); renderWorld(G.w, true); beatDots()
     boSay(b.bo, true)   // the beat's own line: it opens with THIS beat's objective (gate: qa-prog-grid L)
     helpUi()
     introCard(resumed)
@@ -314,27 +317,33 @@
     var lv = G.lv, board = $('board')
     board.style.setProperty('--cols', lv.grid.cols); board.style.setProperty('--rows', lv.grid.rows)
     $('objs').innerHTML = ''; $('decor').innerHTML = ''; $('fx').innerHTML = ''; OBJ = {}
+    var objsF = D.createDocumentFragment(), decorF = D.createDocumentFragment()   // one insert each (M5)
     ;(lv.objects || []).forEach(function (o) {
       var t = PG.TYPES[o.type] || {}
       var d = el('div', 'ob ' + o.type + (TYPE_PICKUP[o.type] ? ' pickup' : '') + (o.elev ? ' elev' : '') + (t.walk && o.type !== 'zone' ? ' walk' : '') + (o.perch ? ' perch-' + o.perch : ''))
       d.innerHTML = (t.walk && o.type !== 'zone' ? '<i class="ring" aria-hidden="true"></i>' : '') + (o.perch === 'tree' ? '<img class="perch" alt="" src="' + MA.src('obj/tree') + '">' : '') + '<img class="main" alt="">' +
         (t.verb ? '<i class="act" aria-hidden="true" style="background:' + cmdColor(t.verb) + '">' + MA.icon(t.verb) + '</i>' : '')
       d.setAttribute('data-id', o.id)
-      $('objs').appendChild(d); OBJ[o.id] = d
+      objsF.appendChild(d); OBJ[o.id] = d
     })
     lv.grid.map.forEach(function (row, r) {
       for (var c = 0; c < row.length; c++) if (row.charAt(c) === 'T') {
-        var t = el('div', 'dec'); t.innerHTML = '<img alt="" src="' + MA.src('obj/tree') + '">'; t.setAttribute('data-rc', r + ',' + c); $('decor').appendChild(t)
+        var t = el('div', 'dec'); t.innerHTML = '<img alt="" src="' + MA.src('obj/tree') + '">'; t.setAttribute('data-rc', r + ',' + c); decorF.appendChild(t)
       }
     })
+    $('objs').appendChild(objsF); $('decor').appendChild(decorF)
     $('mojo-ch').innerHTML = MA.chassis('top')
     if (ro) ro.disconnect()
-    if (W.ResizeObserver) { ro = new ResizeObserver(function () { layout(); updatePaletteScroll() }); ro.observe($('board-wrap')) } else W.addEventListener('resize', layout)
-    layout()
+    /* No synchronous layout() here (M5: reading the board size forced a full reflow of the fresh screen). The
+       observer's first callback runs after the browser's own layout and before the first paint, so the board is
+       measured and drawn in the same frame; the palette check waits a frame so it reads a clean layout. */
+    if (W.ResizeObserver) { layoutDue = true; ro = new ResizeObserver(function () { layout(); W.requestAnimationFrame(updatePaletteScroll) }); ro.observe($('board-wrap')) } else { W.addEventListener('resize', layout); layout() }
   }
+  var layoutDue = false
   var TYPE_PICKUP = { bolt: 1, drop: 1, star: 1 }
   function layout () {
     if (!G) return
+    layoutDue = false
     $('scr-play').style.backgroundImage = 'url(' + W.MojoMenu.background(MA.scene(G.lv, G.bi, ML.region(G.lv.id))) + ')'
     var wrap = $('board-wrap'), lv = G.lv, pad = 26
     var w = wrap.clientWidth - pad, h = wrap.clientHeight - pad
@@ -506,7 +515,7 @@
     w.objs.forEach(function (o) { if (OBJ[o.id]) OBJ[o.id].style.opacity = ''; renderObj(o) })
     placeAll(w)
     $('mojo-mod').innerHTML = MA.module(w.m.form, 'top')
-    if (snap) paint(w)
+    if (snap && !layoutDue) paint(w)   // a fresh board is painted once, by its first layout()
     renderHud()
   }
 
@@ -545,15 +554,19 @@
   }
 
   /* ── Bo ─────────────────────────────────────────────────────────────── */
-  var boLine = ''
-  function boSay (t, quiet, alert) {
+  var boLine = '', sayFlip = false
+  /* full: a hint rung shows its whole text in the bubble (it may grow to a few lines and scroll); the bubble then
+     drops its bold task line so the objective is never said twice */
+  function boSay (t, quiet, alert, full) {
     boLine = t || ''
     var b = D.querySelector('.bubble'), p = $('bo-text')
     var first = boLine.match(/^.*?[.!?](?:\s|$)/), short = first ? first[0].trim() : boLine
-    p.textContent = short.length <= 64 ? short : 'Lihat pesan Bo untuk penjelasannya.'
+    p.textContent = full ? boLine : short.length <= 64 ? short : 'Lihat pesan Bo untuk penjelasannya.'
     $('bo-details').disabled = !!G.run
-    b.scrollTop = 0
-    b.classList.remove('say'); void b.offsetWidth; b.classList.add('say')
+    W.requestAnimationFrame(function () { b.scrollTop = 0 })   // a scroll write forces layout: do it with the frame's own
+    // restart the line's entrance without a forced layout: two identical keyframes, alternated
+    sayFlip = !sayFlip; b.classList.toggle('say', sayFlip); b.classList.toggle('say2', !sayFlip)
+    b.classList.toggle('full', !!full)
     b.classList.toggle('alert', !!alert)
     var pose = MA.lib(alert ? 'mojo-char/bo-think' : 'mojo-char/bo'), bi = $('bo-img')
     if (bi && bi.getAttribute('src') !== pose) bi.src = pose
@@ -585,13 +598,18 @@
     moves.filter(function (c) { return PG.ABS.indexOf(c) < 0 }).forEach(function (c) { add(c) })
     verbs.forEach(function (c) { add(c) })
     if (swops.length) { p.appendChild(el('div', 'pal-h', 'Swop — ganti bagian atas')); swops.forEach(function (c) { add(c) }) }
-    later(updatePaletteScroll,0)
+    W.requestAnimationFrame(updatePaletteScroll)   // read once the frame's own layout is due, never forced mid-task
   }
   function shade (hex) {
     var n = parseInt(hex.slice(1), 16), r = (n >> 16) * 0.72, g = ((n >> 8) & 255) * 0.72, b = (n & 255) * 0.72
     return 'rgb(' + (r | 0) + ',' + (g | 0) + ',' + (b | 0) + ')'
   }
-  function chipHtml (c) { return '<div class="chip' + (c.indexOf('swop:') === 0 ? ' swop' : '') + '" style="background:' + (c.indexOf('swop:') === 0 ? 'linear-gradient(180deg,' + cmdColor(c) + ',' + shade(cmdColor(c)) + ')' : cmdColor(c)) + '">' + cmdIco(c) + '<span>' + cmdLabel(c) + '</span></div>' }
+  /* M2: a plan chip shows the whole word. A Swop chip says only the form ("Pemadam"): its form picture and the
+     Swop frame already say it is a change of form; the full "Jadi Pemadam" stays in its aria-label. */
+  function chipLabel (c) { return c.indexOf('swop:') === 0 ? SHORT[c.slice(5)] || formName(c.slice(5)) : cmdLabel(c) }
+  // rough set width of a label in "average letters" (m/w wide, i/l/t/r/j narrow): a wide word gets the compact size
+  function labelWidth (t) { var w = 0; for (var k = 0; k < t.length; k++) w += /[mwMW]/.test(t[k]) ? 1.5 : /[iljtrf]/.test(t[k]) ? 0.6 : 1; return w }
+  function chipHtml (c) { var t = chipLabel(c); return '<div class="chip' + (c.indexOf('swop:') === 0 ? ' swop' : '') + '" style="background:' + (c.indexOf('swop:') === 0 ? 'linear-gradient(180deg,' + cmdColor(c) + ',' + shade(cmdColor(c)) + ')' : cmdColor(c)) + '">' + cmdIco(c) + '<span' + (labelWidth(t) > 7.2 ? ' class="long"' : '') + '>' + t + '</span></div>' }
   function renderStrip () {
     var oldActions = D.querySelector('.p-strip > .slot-act'); if (oldActions) oldActions.remove()
     var editing = G.sel >= 0 && !!G.prog[G.sel]
@@ -718,8 +736,9 @@
 
   /* ── RUN ────────────────────────────────────────────────────────────── */
   var T = { move: 430, turn: 260, act: 560, gap: 170 }
+  var STOP_GUARD = 350   // a double tap on JALAN must not start the run and stop it again
   function run (demo) {
-    if (G.run) { stopRun(); return }
+    if (G.run) { if (performance.now() - G.run.at < STOP_GUARD) return; stopRun(); return }
     if (G.trans) return
     if (!G.prog.length) { boSay('Isi rencana dulu. Ketuk perintah, lalu tekan JALAN!', false, true); SND.think(); return }
     closeOv('ov-card')
@@ -728,7 +747,7 @@
     renderStrip()
     ;[].forEach.call(D.querySelectorAll('.slot'), function (s) { s.classList.remove('done', 'active', 'fail') })
     G.runId++
-    G.run = { cur: PG.cursor(G.prog), t: 0, n: 0, stars: {}, demo: demo === true }
+    G.run = { cur: PG.cursor(G.prog), t: 0, n: 0, stars: {}, demo: demo === true, at: performance.now() }
     $('run-t').textContent = 'Berhenti'; $('btn-run').classList.add('stop')
     D.querySelector('.p-strip').classList.add('locked')
     $('btn-undo').disabled = true; $('btn-clear').disabled = true; $('btn-hint').disabled = true; helpUi()
@@ -783,6 +802,7 @@
     if (R.demo) boSay('Langkah ' + R.n + ': ' + stepLine(cmd, res, prev), false)
     play(prev, res, cmd, function () {
       if (G.run !== R) return
+      if (R.demo) G.shown = true   // L4: the demo caps the mission at one star only once it has shown a whole step
       var se = slotEl(i); if (se) { se.classList.remove('active'); se.classList.add('done') }
       renderHud()
       if (res.completed && res.completed.length) { SND.goal(); burst(G.w.m.r, G.w.m.c, '#7CF0A0') }
@@ -820,7 +840,7 @@
     if (!sol) { boSay('Hmm, Bo juga perlu berpikir. Hapus rencananya, lalu coba lagi.', false, true); return }
     closeOv('ov-card'); hideGhost()
     G.hist.push(G.prog.slice()); if (G.hist.length > 40) G.hist.shift()
-    G.prog = sol.slice(0, beat().slots); G.sel = -1; G.shown = true
+    G.prog = sol.slice(0, beat().slots); G.sel = -1   // G.shown is set when the demo has played its first step (apply)
     clearFail(); renderPalette(); renderStrip()
     SND.place()
     run(true)
@@ -1109,9 +1129,13 @@
       '<div class="sw-ability" id="sw-ab">' + (ab ? verbIcoBox(ab) : '') + '<span>Sekarang bisa: ' + (LABEL[ab] || '') + '!</span></div>' +
       '<button class="btn b-soft sw-skip fk" id="sw-skip" type="button">Lewati</button>'
     o.classList.add('on'); o.setAttribute('aria-hidden', 'false')
+    // L3: the showcase opens BELOW the top bar, so Peta / Cara Main / Suara stay tappable; Peta cancels it cleanly
+    // (cancelPlayback empties it). A tap anywhere on the showcase skips it.
+    var bar = D.querySelector('#scr-play .p-top'), hb = bar ? Math.max(0, Math.round(bar.getBoundingClientRect().bottom)) : 0
+    o.style.top = hb + 'px'; o.style.setProperty('--swtop', hb + 'px')
     var tm = []
-    function finish () { if (fin) return; fin = true; tm.forEach(clearTimeout); o.classList.remove('on'); o.setAttribute('aria-hidden', 'true'); o.innerHTML = ''; done() }
-    tap('sw-skip', finish)
+    function finish () { if (fin) return; fin = true; tm.forEach(clearTimeout); o.classList.remove('on'); o.setAttribute('aria-hidden', 'true'); o.innerHTML = ''; o.onclick = null; done() }
+    o.onclick = finish
     say(formName(e.to) + '! Sekarang bisa ' + (LABEL[ab] || '') + '.')
     var oldL = $('sw-old'), newL = $('sw-new'), ch = $('sw-ch'), ring = $('sw-ring'), abEl = $('sw-ab')
     if (RM) {
@@ -1367,7 +1391,7 @@
     $('hint-lv').textContent = G.hint + '/' + HINT_MAX
     var t = hintText(G.hint)
     G.hintText = t
-    boSay(t)
+    boSay(t, false, false, true)
     helpUi()
   }
   // "Tunjukkan Caranya" is offered after two stopped runs or after the last hint rung (always in Pesan Bo)
@@ -1418,13 +1442,17 @@
       }) }, 1300)
       return
     }
+    // the stars are saved the moment the mission is done (quit / reload never loses them: qa-mojo-lifecycle); the
+    // result card that shows them always follows, after a story chase or after leaving it (C3)
     var earned = awardMission(), lastBi = G.bi
     later(function () { chaseBeat(lastBi, function () { finishLevel(earned) }) }, 1100)
   }
-  // a 'chase' beat (data/mojo-chases.js ADVENTURE) runs after grid beat `bi`, then the level continues
+  /* a 'chase' beat (data/mojo-chases.js ADVENTURE) runs after grid beat `bi`, then the level continues. Leaving the
+     chase (Jeda → Keluar) is never a lost mission: after the last beat the result card still shows the grid stars;
+     mid-mission the next beat opens as it would after the chase (the checkpoint is already saved). */
   function chaseBeat (bi, next) {
     var g = G
-    if (!W.MojoChaseMenu || !W.MojoChaseMenu.beat(G.lv.id, bi, function (res) { if (G !== g) return; if (res && res.exited) W.MojoMenu.map(); else next() })) next()
+    if (!W.MojoChaseMenu || !W.MojoChaseMenu.beat(G.lv.id, bi, function () { if (G !== g) return; next() })) next()
   }
   function awardMission () {
     if (G.award) { flushAwards(); return G.award }
@@ -1519,11 +1547,12 @@
       mc = '<div class="mathcard"><p class="q">' + math.prompt + '</p><div class="dots">' + dots + '</div></div>'
     }
     var head = G.lv.beats.length > 1 ? 'Babak ' + (G.bi + 1) + ' dari ' + G.lv.beats.length : (lv.place || ML.CHAPTERS.filter(function (c) { return c.id === lv.ch })[0].title)
-    overlay('ov-card', '<div class="card"><div class="intro"><img class="bo-big" alt="Bo" src="' + MA.src('char/bo') + '"><div class="txt">' +
+    // two groups (story | what to do) so short landscape screens can set them side by side (H1)
+    overlay('ov-card', '<div class="card intro-card"><div class="intro"><img class="bo-big" alt="Bo" src="' + MA.src('char/bo') + '"><div class="txt"><div class="in-story">' +
       '<span class="place">' + head + '</span><h2 class="fk">' + (G.bi === 0 ? lv.title : b.title) + '</h2>' +
-      (resumed ? '<p>Lanjut dari babak ' + (G.bi + 1) + '. Yang sudah selesai tetap aman!</p>' : '') + '<p>' + b.story + '</p>' + mc +
+      (resumed ? '<p>Lanjut dari babak ' + (G.bi + 1) + '. Yang sudah selesai tetap aman!</p>' : '') + '<p>' + b.story + '</p></div><div class="in-extra">' + mc +
       (RULE_LEVELS[lv.id] && G.bi === 0 ? ruleHtml() : '') +
-      '<div class="goals">' + goals + '</div>' + (forms ? '<div class="forms-row">' + forms + '</div>' : '') + '</div></div>' +
+      '<div class="goals">' + goals + '</div>' + (forms ? '<div class="forms-row">' + forms + '</div>' : '') + '</div></div></div>' +
       '<div class="row"><button class="btn b-soft fk" id="in-say" type="button"><i class="ico">' + MA.icon('speak') + '</i><span>Dengar</span></button><button class="btn b-go big fk" id="in-go" type="button"><i class="ico">' + MA.icon('plan') + '</i><span>Ayo Rencanakan!</span></button></div></div>')
     tap('in-go', function () { SND.place(); closeOv('ov-card'); W.MojoMenu.picker(b,G.cp.m.form,function (f) { if (f) addCmd('swop:' + f) }) })
     tap('in-say', function () { say(b.story + ' ' + (math ? math.prompt : ''), 'id', true) })
@@ -1624,7 +1653,30 @@
     })
   }
   W.addEventListener('pagehide', function () { storePacing(); flushAwards(); cancelPlayback(); hush() })
+  /* M5: the first level used to pay ~40 ms of first-use font work inside its layout (the browser builds a font
+     "strike" per family x weight x size the first time one is drawn). While the child is still on the home screen,
+     idle slices lay out one hidden sample of each face and size the game uses, so starting a level stays a short
+     frame. Small batches, only in idle time, stopped as soon as the child leaves home. */
+  var TYPE_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 34, 36]
+  function warmType () {
+    var jobs = []
+    TYPE_SIZES.forEach(function (px) {
+      ;[400, 700, 800, 900].forEach(function (w) { jobs.push('<span style="font-size:' + px + 'px;font-weight:' + w + '">Aa1 › — ‹</span>') })
+      jobs.push('<b class="fk" style="font-size:' + px + 'px">Aa1</b>', '<span class="fk" style="font-size:' + px + 'px">Aa1</span>')
+    })
+    function slice (dl) {
+      if (D.body.getAttribute('data-scr') === 'scr-play') return
+      var d = el('div', 'type-warm'), n = 0
+      d.setAttribute('aria-hidden', 'true'); d.style.cssText = 'position:fixed;left:-9999px;top:0;visibility:hidden;pointer-events:none;white-space:nowrap'
+      while (jobs.length && n < 12 && (!dl || dl.timeRemaining() > 4 || n === 0)) { d.insertAdjacentHTML('beforeend', jobs.shift()); n++ }
+      D.body.appendChild(d); void d.offsetWidth; d.remove()
+      if (jobs.length) idle(slice)
+    }
+    idle(slice)
+  }
+  function idle (fn) { if (W.requestIdleCallback) W.requestIdleCallback(fn, { timeout: 2000 }); else W.setTimeout(fn, 60) }
   W.addEventListener('load', function () {
+    warmType()
     if (navigator.serviceWorker) {
       navigator.serviceWorker.ready.then(function () {
         if (navigator.serviceWorker.controller) warmAssets()

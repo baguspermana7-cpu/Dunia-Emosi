@@ -35,7 +35,7 @@
     'meluncur ke angkasa|menyelam di laut|menjulurkan tangga tinggi|mengangkut kayu|mengebor sumur|memanen padi|melayang di udara|meneliti di angkasa|memindahkan peti kemas').split('|')
   var catalog = TOPS.map(function (id, i) { return { id: id, name: TOP_NAMES[i], ability: TOP_ABILITY[i] || '', src: lib('mojo-top/' + id) } })
   var OWNER = { 'char/bo':'mojo-char/bo', 'char/oona':'mojo-char/oona', 'char/mia':'mojo-char/oona', 'char/bo-wrench':'mojo-char/bo-tools', 'char/neon':'mojo-char/neon', 'char/grandad':'mojo-char/grandad',
-    'char/cat':'mojo-char/cat', 'obj/rock':'mojo-tile/rock-push', 'obj/fire':'mojo-tile/fire', 'obj/star':'mojo-prop/star', 'obj/toolbox':'mojo-prop/toolbox',
+    'char/cat':'mojo-char/cat', 'obj/rock':'mojo-prop/rock-road', 'obj/fire':'mojo-fx/flame-road', 'obj/star':'mojo-prop/star', 'obj/toolbox':'mojo-prop/toolbox',
     'obj/tree':'mojo-prop/tree-round', 'obj/lamp':'mojo-prop/lamp-post', 'obj/crate':'mojo-tile/crate', 'obj/bolt':'mojo-prop/bolt',
     'tool/palu':'mojo-prop/hammer', 'tool/obeng':'mojo-prop/screwdriver', 'tool/kunci':'mojo-prop/wrench' }
   Object.keys(OWNER).forEach(function (k) { OVERRIDE[k] = 'assets/db/lib/' + OWNER[k] + '.webp' })

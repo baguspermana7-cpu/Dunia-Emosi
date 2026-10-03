@@ -607,3 +607,85 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
 #ov-card:has(>.result){background:linear-gradient(rgba(10,30,60,.5),rgba(10,30,60,.5)),#2a6fb0 url('../assets/db/lib/mojo-bg/fairground-land.webp') center/cover no-repeat}
 @media(orientation:portrait){#ov-card:has(>.result){background-image:linear-gradient(rgba(10,30,60,.5),rgba(10,30,60,.5)),url('../assets/db/lib/mojo-bg/fairground-port.webp')}}
 .region-map .region.locked .rsub.rsub{white-space:normal;line-height:1.25;align-items:flex-start}
+
+/* ── audit fixes (2026-10-03, tools/qa-mojo-audit.mjs) ─────────────────────────────────────────────── */
+/* M2: a plan chip shows its whole word (a Swop chip says only the form; its picture says "Swop") */
+.chip span{overflow:visible;text-overflow:clip;max-width:none}
+.chip span.long{font-size:13px;letter-spacing:-.3px}
+@media (orientation:portrait),(max-height:520px){.chip span{font-size:12px}.chip span.long{font-size:12px;letter-spacing:-.4px}}
+@media (orientation:portrait) and (max-width:699px){:root{--slot:62px}}
+@media (orientation:landscape) and (max-height:520px){:root{--slot:62px}}
+/* M3: Cara Main panels stack on narrow screens instead of running off the card */
+.rule-panels{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:520px){.rule-panels{grid-template-columns:minmax(0,1fr)}}
+/* L1: the mission title wraps to two lines and the objective chip may wrap its words; neither is cut hard */
+.p-title b{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.08;max-width:min(26vw,320px);overflow-wrap:break-word}
+@media (max-width:1180px){.p-title b{font-size:17px}}
+.objs .ob-chip{flex:0 1 auto;min-width:0}
+.objs .ob-chip>span{white-space:normal;line-height:1.1;min-width:0}
+/* L5: a hint rung shows its whole text in Bo's bubble (it may grow and scroll); the task line steps aside */
+.bubble.full #bo-task{display:none}
+.bubble.full{max-height:none;overflow:visible;align-items:stretch;padding:10px 12px 6px}
+.bubble.full #bo-text{max-height:min(30vh,190px);overflow-y:auto;overscroll-behavior:contain}
+.bubble.full .bo-copy small{min-height:56px;display:flex;align-items:center;padding-right:64px}
+.bubble.full .spk{top:auto;bottom:6px;right:6px;transform:none}
+@media (orientation:landscape) and (max-height:520px){   /* phones on their side: the palette keeps its row; the hint scrolls */
+ .bubble.full{padding:6px 62px 6px 10px}.bubble.full .spk{top:50%;bottom:auto;transform:translateY(-50%)}
+ .bubble.full .bo-copy small{min-height:0;padding-right:0;display:block}.bubble.full #bo-text{max-height:72px}
+}
+.bubble.say .bo-copy{animation:sayIn .22s var(--ease-out)}
+.bubble.say2 .bo-copy{animation:sayIn2 .22s var(--ease-out)}
+@keyframes sayIn2{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.bubble.say .bo-copy,.bubble.say2 .bo-copy{animation:none}}
+/* L3: the Swop showcase opens below the top bar (JS sets top/--swtop) and fits what is left of the screen */
+#ov-swop .sw-stage{width:min(520px,80vw,calc((100dvh - var(--swtop,0px) - 200px) * 1.46))}
+/* H1: a card's action row is its sticky footer: when the card has to scroll, the buttons stay on screen */
+.card:not(.result):has(>.row:last-child),.mg:has(>.row:last-child){padding-bottom:0}
+.card:not(.result)>.row:last-child,.mg>.row:last-child{position:sticky;bottom:0;z-index:2;padding:6px 0 20px;background:var(--paper)}
+/* short landscape screens (phones on their side): the art and padding shrink, and the intro / count / height
+   cards go two-column, so the whole card usually fits without scrolling at all */
+@media (orientation:landscape) and (max-height:480px){
+ .overlay{padding:8px}
+ .card:not(.result){padding:12px 18px 12px;max-height:calc(100dvh - 16px)}
+ .mg{padding:10px 16px 12px;max-height:calc(100dvh - 16px)}
+ .card:not(.result):has(>.row:last-child),.mg:has(>.row:last-child){padding-bottom:0}
+ .card:not(.result)>.row:last-child,.mg>.row:last-child{margin-top:8px;padding:8px 0 10px}
+ .card:not(.result)>.row:last-child .btn,.mg>.row:last-child .btn{min-height:52px}
+ .card h2{font-size:22px;margin-bottom:2px}
+ .card p{font-size:15px;margin:3px 0;line-height:1.3}
+ /* intro: story | what to do */
+ .card.intro-card{width:min(860px,96vw);max-width:min(860px,96vw)}
+ .intro{align-items:flex-start;gap:12px}
+ .intro .bo-big{width:64px}
+ .intro .txt{display:flex;gap:16px;align-items:flex-start}
+ .intro .in-story{flex:1 1 0;min-width:0}
+ .intro .in-extra{flex:1.15 1 0;min-width:0}
+ .intro .in-extra>:first-child{margin-top:0}
+ .card .place{font-size:13px;padding:2px 10px;margin-bottom:4px}
+ .mathcard{margin:0 0 4px;padding:8px 10px}.mathcard .q{font-size:15px;margin-bottom:6px}.mathcard .dots i{width:32px;height:32px}
+ .goals{margin-top:6px}.goals .ob-chip{font-size:14px}.goals .ob-chip img{width:26px;height:26px}
+ .forms-row{margin-top:6px}.forms-row .fr{width:56px;height:42px}
+ /* count question: scene left, answers right */
+ .mg.event-question{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);column-gap:16px;align-items:center;width:min(820px,96vw)}
+ .event-question>.mg-h{grid-column:1/-1;margin-bottom:4px}
+ .event-question .event-bo{width:52px;height:64px}
+ .event-question .mg-h h2{font-size:20px}.event-question .mg-h p{font-size:14px;margin:0}
+ .event-question>.eq-scene{grid-column:1;grid-row:2/5;margin:0;padding:8px;gap:6px}
+ .event-question .eq-scene img{width:40px;height:40px}
+ .event-question>.event-choices{grid-column:2;grid-row:2;gap:10px}
+ .event-question>.event-choices .choice{min-height:52px;min-width:64px;font-size:28px}
+ .event-question>#event-feedback{grid-column:2;grid-row:3;font-size:14px;margin:4px 0;text-align:center}
+ .event-question>.row{grid-column:2;grid-row:4}
+ /* height game: the scale and its question side by side, the answers in one row */
+ .mg-h .tool{width:56px;height:56px;padding:5px;border-radius:16px}
+ .mg-h h2{font-size:20px}.mg-h p{font-size:14px}
+ .hgt{flex-wrap:nowrap;gap:14px;align-items:center}
+ .hgt .scale{zoom:.7}
+ .hgt .choices{flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px;max-width:420px}
+ .hgt .choices p{flex:1 0 100%;max-width:none;font-size:16px;margin:0}
+ .hgt .choice{min-width:72px;min-height:56px;font-size:28px}
+ .hgt .pair{flex:1 0 100%;font-size:17px;min-height:22px;margin:2px 0}
+ /* letters game */
+ .wslots{margin:6px 0}.wslots i{width:48px;height:54px;font-size:28px}
+ .tiles .tile{width:56px;height:56px;font-size:30px}
+}
