@@ -14,7 +14,7 @@
  * so they offer the same set. The stage's recommended form is always selectable ("Baru!" free trial). Locked
  * forms show as silhouettes ("Selesaikan N tahap lagi"); a tap wiggles and hints. New forms get a celebration card.
  * Save: the chase's per-avatar key 'dunia-g31-chase' ({v:1, st:{..}, form, formsSeen:[..]}); only `form` and the
- * new `formsSeen` field are written and every other field is kept as read. Art: owner sprites only (mojo-hero film art, mojo-rear in-race art,
+ * new `formsSeen` field are written and every other field is kept as read. Art: owner sprites only (card + preview = the SIDE art of MojoChases.FORMS: mojo-hero film art or mojo-top; the race uses the row's mojo-rear sprite,
  * stage card/FAR strip as the blurred backdrop). No emoji. Targets >= 72 px (carousel), Mulai >= 64 px.
  * ==========================================================================*/
 (function (W, D) {
@@ -22,13 +22,13 @@
   var KEY = 'dunia-g31-chase', SWOP_MS = 420
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
 
-  // the offered forms = THE table in data/mojo-chases.js (MojoChases.FORMS): card art, preview and in-race sprite
-  // all come from one row, so the three can never show different transformations (owner 2026-10-04)
+  // the offered forms = THE table in data/mojo-chases.js (MojoChases.FORMS): the card and the big preview show the
+  // row's SIDE art, the race drives the row's REAR sprite of the same machine (owner 2026-10-04)
   var FALLBACK = [
-    { id: 'racer', name: 'Pembalap', perk: 'boost', line: 'Boost lebih cepat!', card: 'mojo-rear/base-neon', rear: 'base-neon', kind: 'ground', unlock: 0 },
-    { id: 'monster', name: 'Monster', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', card: 'mojo-hero/monster-2', rear: 'monster-2', kind: 'ground', unlock: 0 },
-    { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang dan batu!', card: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
-    { id: 'dozer', name: 'Dozer', perk: 'recover', line: 'Cepat pulih setelah BROK!', card: 'mojo-rear/loader', rear: 'loader', kind: 'ground', unlock: 0 }
+    { id: 'racer', name: 'Mojo', perk: 'boost', line: 'Boost lebih cepat!', side: 'mojo-top/base', rear: 'base', kind: 'ground', unlock: 0 },
+    { id: 'monster', name: 'Monster', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', side: 'mojo-hero/monster-2', rear: 'monster-2', kind: 'ground', unlock: 0 },
+    { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang, jalan licin, dan rintangan rendah!', side: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
+    { id: 'excavator', name: 'Ekskavator', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', side: 'mojo-hero/dozer-1', rear: 'excavator', kind: 'ground', unlock: 0 }
   ]
   var FORMS = (W.MojoChases && W.MojoChases.FORMS && W.MojoChases.FORMS.length ? W.MojoChases.FORMS : FALLBACK).filter(function (f) { return f.kind !== 'water' })
   // progressive unlock (owner 2026-10-03: "4-6 early, growing until every character is unlocked"): form -> Balapan
@@ -36,7 +36,7 @@
   var UNLOCK = {}; FORMS.forEach(function (f) { UNLOCK[f.id] = f.unlock || 0 })
   var ALT0 = { racer: ['delivery', 'jet'], monster: ['jumper', 'excavator'], jumper: ['monster', 'racer'], 'snow-plow': ['monster', 'tow'],
     dozer: ['excavator', 'crane'], rescue: ['fire', 'racer'], fire: ['rescue', 'crane'], cargo: ['delivery', 'tow'], chopper: ['plane', 'jet'],
-    tow: ['cargo', 'monster'], crane: ['dozer', 'cargo'], delivery: ['cargo', 'racer'], excavator: ['dozer', 'monster'], plane: ['chopper', 'jet'], jet: ['plane', 'chopper'] }
+    tow: ['cargo', 'monster'], crane: ['dozer', 'cargo'], delivery: ['cargo', 'racer'], excavator: ['monster', 'cargo'], plane: ['chopper', 'jet'], jet: ['plane', 'chopper'] }
   var ALT = {}; FORMS.forEach(function (f) { ALT[f.id] = (ALT0[f.id] || []).filter(function (a) { return UNLOCK.hasOwnProperty(a) }) })
 
   var LOCK_SVG = '<svg viewBox="0 0 40 44" aria-hidden="true"><path d="M11 19 V13 a9 9 0 0 1 18 0 V19" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><rect x="5" y="18" width="30" height="23" rx="6" fill="#ffcf33" stroke="#7a4220" stroke-width="3"/><circle cx="20" cy="29" r="3.5" fill="#7a4220"/></svg>'
@@ -44,7 +44,7 @@
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
   function esc (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] }) }
   // the film hero crop when the owner drew one (data/mojo-art.js), else the listed art
-  function cardArt (f) { return f.card || 'mojo-rear/' + f.rear }
+  function cardArt (f) { return f.side }
   function byId (id) { for (var i = 0; i < FORMS.length; i++) if (FORMS[i].id === id) return FORMS[i]; return null }
   function assign (a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o }
 
@@ -53,11 +53,11 @@
     stage = stage || {}
     var look = String(stage.look || stage.biome || ''), rec = stage.recForm && byId(stage.recForm) ? stage.recForm : null
     if (!rec) {
-      if (look === 'snow' || stage.sky === 'snow') rec = 'snow-plow'
-      else if (/space|sky|air|cloud/.test(look)) rec = 'jet'
-      else if (/forest|farm|jungle|autumn|ruins|windfarm|mud|desert|canyon|volcano/.test(look) || stage.weather === 'leaves') rec = 'monster'
-      else if (/harbour/.test(look)) rec = 'crane'
-      else if (/construction/.test(look)) rec = 'dozer'
+      // no snow-plow (no matching side/rear pair): snow and rough ground both get the grippy Monster
+      if (/space|sky|air|cloud/.test(look)) rec = 'jet'
+      else if (/snow|forest|farm|jungle|autumn|ruins|windfarm|mud|desert|canyon|volcano/.test(look) || stage.sky === 'snow' || stage.weather === 'leaves') rec = 'monster'
+      else if (/harbour/.test(look)) rec = 'cargo'
+      else if (/construction/.test(look)) rec = 'excavator'
       else rec = 'racer'
     }
     return { rec: rec, alt: (ALT[rec] || []).slice() }
@@ -102,24 +102,12 @@
   function soundOn (cfg) { try { return typeof cfg.sound === 'function' ? cfg.sound() !== false : true } catch (e) { return true } }
   function cue (cfg, k) { if (!soundOn(cfg)) return; try { if (W.SFXEngine && W.SFXEngine.cue) W.SFXEngine.cue(k) } catch (e) {} }
 
-  /* rear preview: the in-race sprite with its own anchors (tail lights, exhaust) */
-  function rearInfo (id) {
-    var RA = W.MojoRearAnchors, f = byId(id), key = (f && f.rear) || (RA && RA.forms[id]) || 'base'
-    var a = RA && RA.sprites[key], sz = (RA && RA.size) || { w: 297, h: 254 }
-    return { key: key, src: lib('mojo-rear/' + key), a: a, w: sz.w, h: sz.h }
-  }
-  function pct (v, of) { return (100 * v / of).toFixed(2) + '%' }
+  /* the big preview: the SIDE art of the form (owner: "only the game itself uses the rear view"), wheels on the
+     start line, idle bounce + ground shadow; data-side = the art shown, data-rear = the race sprite of the same machine */
+  function rearKey (id) { var RA = W.MojoRearAnchors, f = byId(id); return (f && f.rear) || (RA && RA.forms[id]) || 'base' }
   function paintRear (box, id) {
-    var r = rearInfo(id), img = box.querySelector('img.rear'), fx = box.querySelector('.fx')
-    img.src = r.src; box.setAttribute('data-rear', r.key)
-    var h = ''
-    if (r.a) {
-      ;(r.a.lights || []).forEach(function (p) { h += '<i class="lamp" style="left:' + pct(p[0], r.w) + ';top:' + pct(p[1], r.h) + '"></i>' })
-      if (r.a.kind !== 'air') (r.a.exhaust || []).forEach(function (p, n) {
-        for (var k = 0; k < 3; k++) h += '<i class="puff" style="left:' + pct(p[0], r.w) + ';top:' + pct(p[1], r.h) + ';animation-delay:' + (k * 0.38 + n * 0.17).toFixed(2) + 's"></i>'
-      })
-    }
-    fx.innerHTML = h
+    var f = byId(id), side = f ? cardArt(f) : 'mojo-top/base', img = box.querySelector('img.side')
+    img.src = lib(side); box.setAttribute('data-side', side); box.setAttribute('data-rear', rearKey(id))
   }
 
   var cur = null   // the open picker (one at a time)
@@ -137,6 +125,10 @@
     return new Promise(function (resolve) {
       var formId = start, lock = false, closed = false
       var bgKey = stage.cardKey ? 'mojo-chase/' + stage.cardKey : stage.cfar ? 'mojo-chase/cfar/' + stage.cfar : 'mojo-chase/far/' + (stage.far || 'swoppiton')
+      // the board never reads "Ngarai Batu Merah / Ngarai Batu Merah": a title equal to the place becomes the mission line
+      var title0 = cfg.title || stage.title || 'Kejar Pencuri!', place = stage.place || ''
+      var head = place && title0.trim().toLowerCase() === place.trim().toLowerCase() ? 'Kejar Pencuri!' : title0
+      if (head === place) place = ''
       var root = el('div', 'mcp' + (RM ? ' rm' : ''))
       root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', 'Pilih wujud Mojo')
       var cards = FORMS.map(function (f) {
@@ -151,10 +143,10 @@
       }).join('')
       root.innerHTML =
         '<div class="mcp-bg" style="background-image:url(' + lib(bgKey) + ')"></div><div class="mcp-shade"></div>' +
-        '<header class="mcp-head"><div class="mcp-plank"><b>' + esc(cfg.title || stage.title || 'Kejar Pencuri!') + '</b><span>' + esc(stage.place || '') + '</span></div></header>' +
+        '<header class="mcp-head"><div class="mcp-plank"><b>' + esc(head) + '</b>' + (place ? '<span>' + esc(place) + '</span>' : '') + '</div></header>' +
         '<div class="mcp-main">' +
           '<div class="mcp-stage"><div class="mcp-line"></div><div class="mcp-portal"></div>' +
-            '<div class="mcp-rear"><div class="bob"><img class="rear" alt="" draggable="false"><div class="fx"></div></div><i class="shadow"></i></div></div>' +
+            '<div class="mcp-rear"><div class="bob"><img class="side" alt="" draggable="false"></div><i class="shadow"></i></div></div>' +
           '<div class="mcp-side">' +
             '<div class="mcp-info"><p class="mcp-ask">Pilih wujud Mojo!</p><h2 class="mcp-name"></h2><p class="mcp-perk"></p><span class="mcp-badge"></span></div>' +
             '<div class="mcp-car"><button type="button" class="mcp-nav prev" aria-label="Sebelumnya"><svg viewBox="0 0 40 40"><path d="M26 6 L10 20 L26 34" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
@@ -241,15 +233,19 @@
       cur = { root: root, get: function () { return formId }, rec: R.rec, go: go, av: AV, fresh: fresh.slice() }
       show(formId, false)
       celebrate(fresh.slice())
-      // "Wujud baru terbuka: Jet!" one card per new form, film art + sparkle; tap to continue
+      // "Wujud baru terbuka: Jet!" - ONE card for everything that unlocked since the last picker (owner 2026-10-04: 2-3
+      // forms open per stage): one form = its big art, several = a row of their side art, each with its name; tap to continue
       function celebrate (list) {
         if (!list.length) return
-        var f = byId(list[0]), c = el('div', 'mcp-new')
-        c.innerHTML = '<div class="box"><div class="art"><i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i><i class="spark s4"></i>' +
-          '<img alt="" draggable="false" src="' + lib(cardArt(f)) + '"></div><h2>Wujud baru terbuka: ' + esc(f.name) + '!</h2><p>' + esc(f.line) + '</p>' +
+        var fs = list.map(byId).filter(Boolean); if (!fs.length) return
+        var names = fs.map(function (f) { return f.name }), joined = names.length < 2 ? names[0] : names.slice(0, -1).join(', ') + ' dan ' + names[names.length - 1]
+        var c = el('div', 'mcp-new'), spk = '<i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i><i class="spark s4"></i>'
+        var art = fs.length === 1 ? '<div class="art">' + spk + '<img alt="" draggable="false" src="' + lib(cardArt(fs[0])) + '"></div>'
+          : '<div class="art many">' + spk + fs.map(function (f) { return '<figure><img alt="" draggable="false" data-form="' + f.id + '" src="' + lib(cardArt(f)) + '"><figcaption>' + esc(f.name) + '</figcaption></figure>' }).join('') + '</div>'
+        c.innerHTML = '<div class="box">' + art + '<h2>Wujud baru terbuka: ' + esc(joined) + '!</h2><p>' + esc(fs.length === 1 ? fs[0].line : 'Coba semuanya di balapan!') + '</p>' +
           '<button type="button" class="mcp-new-ok">Hore!</button></div>'
         root.appendChild(c); cue(cfg, 'levelup')
-        c.querySelector('.mcp-new-ok').addEventListener('click', function () { cue(cfg, 'click'); c.remove(); celebrate(list.slice(1)) })
+        c.querySelector('.mcp-new-ok').addEventListener('click', function () { cue(cfg, 'click'); c.remove() })
       }
       if (cfg.say) try { cfg.say('Pilih wujud Mojo, lalu tekan Mulai!') } catch (e) {}
     })

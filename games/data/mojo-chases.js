@@ -216,31 +216,43 @@
     return q || chaseGen(1, rng(qSeed++), null, { kind: kind })
   }
 
-  /* ── THE Swop form table (owner 2026-10-04: "the rear view must change with the selector"). One row per offered
-     form; the picker card, the big rear preview and the in-race sprite ALL read this row, nothing else.
-       card  lib key on the picker card: the film hero ONLY where it depicts the same machine as the rear sprite
-             (chosen by looking at the mojo-rear contact sheet), otherwise the rear sprite itself
-       rear  assets/db/lib/mojo-rear/<rear>.webp = preview + race sprite (anchors in data/mojo-rear-anchors.js)
-       kind  ground | air (air hovers over the road with a shadow). No water forms: every stage is a road.
-       unlock  Balapan stages cleared (>= 1 star) before it can be picked: 4 at start, 6 by 3 cleared, all by 14.
-     Not offered: boat/hover (no water stage), offroad (no rear sprite). Racer has no rear art of its own: it is
-     the neon-trim rear, and its card shows that same rear sprite. ───────────────────────────────────── */
+  /* ── THE Swop form table (owner 2026-10-04). One row per offered form, read by the picker AND the race:
+       side  lib key of the SIDE / 3-4 front art: the picker card and the big picker preview (owner: "the preview and
+             the selection use the side or front view, only the game itself uses the rear view"). mojo-hero film art
+             first, the mojo-top Bengkel art when no hero exists for that machine.
+       rear  assets/db/lib/mojo-rear/<rear>.webp = the in-race sprite (anchors in data/mojo-rear-anchors.js)
+       side and rear MUST depict the SAME machine (owner: "don't let the front view show transformation 4 while the game
+       uses transformation 5"). Each pair was checked feature by feature on one side-next-to-rear sheet (2026-10-04);
+       the justification is on each row. A form without a pair that matches feature by feature is NOT offered:
+       snow-plow (side: plow blade + flags, small wheels / rear: roll bars + monster tyres), tow (hook arm / pole rig),
+       crane (boom / pole rig), plane (no side plane art), dumper (yellow bed / red bed), boat + hover (no water stage),
+       dozer (every side art with a loader bucket also carries the backhoe arm, and the 'loader' rear has no arm:
+       that side art IS the excavator), offroad (no rear), the film racer (big spoiler no rear sprite shows) -> the default form is plain Mojo.
+       kind  ground | air (air hovers over the road with a shadow)
+       unlock  Balapan stages cleared (>= 1 star) before it can be picked (owner 2026-10-04: every stage opens 2-3
+               forms): 4 at start, 7 after 1 stage, 9 after 2, all 10 after 3. ─ */
   var FORMS = [
-    { id: 'racer', name: 'Pembalap', perk: 'boost', line: 'Boost lebih cepat!', card: 'mojo-rear/base-neon', rear: 'base-neon', kind: 'ground', unlock: 0 },
-    { id: 'monster', name: 'Monster', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', card: 'mojo-hero/monster-2', rear: 'monster-2', kind: 'ground', unlock: 0 },
-    { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang dan batu!', card: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
-    { id: 'dozer', name: 'Dozer', perk: 'recover', line: 'Cepat pulih setelah BROK!', card: 'mojo-rear/loader', rear: 'loader', kind: 'ground', unlock: 0 },
-    { id: 'rescue', name: 'Ambulans', perk: 'heal', line: 'Semangat cepat terisi lagi!', card: 'mojo-rear/ambulance', rear: 'ambulance', kind: 'ground', unlock: 2 },
-    { id: 'snow-plow', name: 'Bajak Salju', perk: 'snow', line: 'Kuat dan cepat di jalan salju!', card: 'mojo-rear/snow', rear: 'snow', kind: 'ground', unlock: 3 },
-    { id: 'fire', name: 'Pemadam', perk: 'heal', line: 'Semangat cepat terisi lagi!', card: 'mojo-rear/ladder', rear: 'ladder', kind: 'ground', unlock: 4 },
-    { id: 'cargo', name: 'Truk Kargo', perk: 'recover', line: 'Kuat, cepat pulih setelah BROK!', card: 'mojo-hero/cargo', rear: 'cargo', kind: 'ground', unlock: 5 },
-    { id: 'chopper', name: 'Helikopter', perk: 'fly', line: 'Terbang melewati rintangan!', card: 'mojo-hero/chopper-3', rear: 'chopper-3', kind: 'air', unlock: 6 },
-    { id: 'tow', name: 'Mobil Derek', perk: 'recover', line: 'Cepat pulih setelah BROK!', card: 'mojo-rear/tow', rear: 'tow', kind: 'ground', unlock: 7 },
-    { id: 'crane', name: 'Truk Crane', perk: 'recover', line: 'Kokoh, cepat pulih setelah BROK!', card: 'mojo-rear/crane-2', rear: 'crane-2', kind: 'ground', unlock: 8 },
-    { id: 'delivery', name: 'Mobil Boks', perk: 'boost', line: 'Boost lebih cepat!', card: 'mojo-rear/delivery', rear: 'delivery', kind: 'ground', unlock: 9 },
-    { id: 'excavator', name: 'Ekskavator', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', card: 'mojo-rear/excavator', rear: 'excavator', kind: 'ground', unlock: 10 },
-    { id: 'plane', name: 'Pesawat', perk: 'fly', line: 'Terbang melewati rintangan!', card: 'mojo-rear/prop-plane', rear: 'prop-plane', kind: 'air', unlock: 12 },
-    { id: 'jet', name: 'Jet', perk: 'boost', line: 'Melesat sangat cepat!', card: 'mojo-hero/jet-4', rear: 'jet', kind: 'air', unlock: 14 }
+    // base: plain blue cab, small wheels, no attachment in both
+    { id: 'racer', name: 'Mojo', perk: 'boost', line: 'Boost lebih cepat!', side: 'mojo-top/base', rear: 'base', kind: 'ground', unlock: 0 },
+    // monster-2: monster tyres + red shock springs + twin yellow roof lamps in both (spare wheel sits on the back)
+    { id: 'monster', name: 'Monster', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', side: 'mojo-hero/monster-2', rear: 'monster-2', kind: 'ground', unlock: 0 },
+    // monster-1 / monster: monster tyres + red shocks + twin roof lamps + white roll bars, no spare wheel, in both
+    { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang, jalan licin, dan rintangan rendah!', side: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
+    // ambulance: white box with the red cross + blue cab in both
+    { id: 'rescue', name: 'Ambulans', perk: 'heal', line: 'Semangat cepat terisi lagi!', side: 'mojo-top/ambulance', rear: 'ambulance', kind: 'ground', unlock: 1 },
+    // aerial-ladder / ladder: white ladder boom on the roof with red-white trim in both
+    { id: 'fire', name: 'Pemadam', perk: 'heal', line: 'Semangat cepat terisi lagi!', side: 'mojo-top/aerial-ladder', rear: 'ladder', kind: 'ground', unlock: 1 },
+    // cargo: tall red cargo box behind a blue cab in both
+    { id: 'cargo', name: 'Truk Kargo', perk: 'recover', line: 'Kuat, cepat pulih setelah BROK!', side: 'mojo-hero/cargo', rear: 'cargo', kind: 'ground', unlock: 1 },
+    // chopper-3: red-white rotor + red-white landing skids in both
+    { id: 'chopper', name: 'Helikopter', perk: 'fly', line: 'Terbang melewati rintangan!', side: 'mojo-hero/chopper-3', rear: 'chopper-3', kind: 'air', unlock: 2 },
+    // delivery: tall white box body (rear = its roller door) behind a blue cab in both
+    { id: 'delivery', name: 'Mobil Boks', perk: 'boost', line: 'Boost lebih cepat!', side: 'mojo-top/delivery', rear: 'delivery', kind: 'ground', unlock: 2 },
+    // dozer-1 / excavator: crawler TRACKS with white rollers + yellow digging arm with its bucket in both (the front
+    // bucket is no wider than the cab, so the rear view hides it). NOT 'digger': that rear rolls on tyres, not tracks
+    { id: 'excavator', name: 'Ekskavator', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', side: 'mojo-hero/dozer-1', rear: 'excavator', kind: 'ground', unlock: 0 },
+    // jet-4 / jet: red tail fin + white wings with blue-red trim + twin jet engines in both
+    { id: 'jet', name: 'Jet', perk: 'boost', line: 'Melesat sangat cepat!', side: 'mojo-hero/jet-4', rear: 'jet', kind: 'air', unlock: 3 }
   ]
   function form (id) { for (var i = 0; i < FORMS.length; i++) if (FORMS[i].id === id) return FORMS[i]; return null }
   function formRear (id) { var f = form(id); return f ? f.rear : null }

@@ -352,6 +352,35 @@ try {
     await p.close()
   }
 
+  /* ── J. the jumper clears HOLES (owner 2026-10-04 "Pelompat bisa lompat batu tapi tidak bisa lompat lubang"): every
+     spawned lane becomes a pothole, so Mojo must drive into pothole rows back to back (also while still airborne);
+     each one is a hop, never a BROK, a slip or a slowdown. ───────────────────────────────────────────────────── */
+  {
+    const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 }); const errors = []
+    p.on('pageerror', e => errors.push(e.message))
+    await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
+    const form0 = await p.evaluate(() => MojoChasePicker.readSave().form || null)   // restored at the end: later sections share this profile
+    const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('kota')).catch(() => null))
+    await p.waitForSelector('.mcp-go', { timeout: 30000 }); await sleep(400)
+    while (await p.$('.mcp-new-ok')) { await p.click('.mcp-new-ok'); await sleep(100) }
+    await p.evaluate(() => document.querySelector('.mcp-card[data-form="jumper"]').click()); await sleep(520)
+    await p.evaluate(() => document.querySelector('.mcp-go').click()); await sleep(600); await p.click('.mc-skip').catch(() => {})
+    let s = await waitState(p, s => s.state === 'active', 30000)
+    const line = await p.evaluate(() => MojoChases.form('jumper').line)
+    await p.evaluate(() => { window.__hk0 = MojoChase.hooks; MojoChase.hooks = Object.assign({}, MojoChase.hooks, { spawnFilter: () => 'pothole' }) })
+    await sleep(3500)   // rows spawned before the filter have passed
+    const s0 = await state(p), rec = []
+    for (let i = 0; i < 50; i++) { const k = await state(p); rec.push(k.recover); await sleep(120) }
+    const s1 = await state(p)
+    await p.evaluate(() => { MojoChase.hooks = window.__hk0 })
+    check(s.form === 'jumper' && s1.jumps - s0.jumps >= 2 && s1.hits === s0.hits && s1.brok === s0.brok && rec.every(r => !(r > 0)), `jumper: pothole rows back to back are hopped, no BROK, no slip, no slowdown (${s1.jumps - s0.jumps} hops, hits ${s0.hits}->${s1.hits}, recover max ${Math.max(...rec).toFixed(2)})`)
+    check(/lubang/.test(line), `jumper: the perk line promises the holes it clears ("${line}")`)
+    check(!errors.length, `jumper run: no page errors (${errors.slice(0, 2).join(' | ')})`)
+    await p.click('.mc-pause').catch(() => {}); await sleep(200); await p.click('#mc-exit').catch(() => {}); await done
+    await p.evaluate(f => { const sv = MojoChasePicker.readSave(); if (f) sv.form = f; else delete sv.form; avatarScopedSet('dunia-g31-chase', JSON.stringify(sv)) }, form0)
+    await p.close()
+  }
+
   /* ── F. every stage loads and renders its start frame without errors (contact sheet of 25) + perf ───────── */
   {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 }); const errors = []

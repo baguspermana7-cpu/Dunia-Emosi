@@ -46,7 +46,7 @@
   var CUT_KEY = 'dunia-g31-cut-seen'   // stage ids whose intro cutscene was already watched (it plays once per stage)
   // every Swop form the picker can offer: its name for the callouts and the perk it brings when cfg.perk is absent
   // name / perk / rear sprite come from THE form table (MojoChases.FORMS); these literals are only the fallback
-  var FORM_NAME = { racer: 'Pembalap', monster: 'Monster', jumper: 'Pelompat', 'snow-plow': 'Bajak Salju', dozer: 'Dozer', rescue: 'Ambulans', chopper: 'Helikopter', jet: 'Jet' }
+  var FORM_NAME = { racer: 'Mojo', monster: 'Monster', jumper: 'Pelompat', 'snow-plow': 'Bajak Salju', dozer: 'Dozer', rescue: 'Ambulans', chopper: 'Helikopter', jet: 'Jet' }
   var FORM_PERK = { racer: 'boost', jet: 'boost', monster: 'grip', jumper: 'jump', 'snow-plow': 'snow', dozer: 'recover', rescue: 'heal', boat: 'splash', chopper: 'fly' }
   function formRow (id) { try { return (W.MojoChases && W.MojoChases.form && W.MojoChases.form(id)) || null } catch (e) { return null } }
   function formName (id) { var f = formRow(id); return f ? f.name : FORM_NAME[id] }
@@ -78,6 +78,9 @@
   var OBS_SET = { coastal: ['crate', 'barrel', 'cone', 'barrier', 'tyres'], town: ['cone', 'barrier', 'crate', 'barrel'], forest: ['rock', 'crate', 'barrel', 'tyres'],
     desert: ['barrel', 'rock', 'crate', 'tyres'], snow: ['rock', 'crate', 'barrel'], construction: ['cone', 'barrier', 'tyres', 'barrel'],
     farm: ['hay', 'crate', 'cone'], city: ['cone', 'barrier', 'barrel', 'crate'] }
+  // what the jumper hops (perk 'jump', line in data/mojo-chases.js): holes, slippery patches and LOW obstacles; the
+  // tall barrier is not jumpable
+  var JUMPABLE = { pothole: 1, oil: 1, banana: 1, rock: 1, crate: 1, barrel: 1, tyres: 1, cone: 1, hay: 1 }
   var FX_KEYS = ['explosion', 'dust', 'skid', 'speed-trail', 'sparks', 'confetti', 'fireworks', 'collect', 'boost-flame-sheet13', 'tire-smoke', 'sparkle', 'splash', 'snow-spray']
 
   /* ── audio: local WebAudio tones + the shared SFXEngine cues; mute = parent's sound() ─────────────── */
@@ -137,13 +140,13 @@
     var stage = CH.stage(cfg.stage) || CH.STAGES[0], TEX = FX.build()
     var RA = W.MojoRearAnchors, CA = W.MojoChaseAnchors, TA = W.MojoTrackAnchors
     // the Swop forms a child can race with (owner: "pilih karakter"): film art on the card, rear art in the race, one perk each
-    // fallback intro chooser (no picker module): the table's starter forms; card art = the table's card key
-    var FORMS = ['racer', 'monster', 'snow-plow', 'dozer'].map(function (id) {
-      var f = formRow(id) || { name: FORM_NAME[id], card: 'mojo-rear/' + rearOf(id), line: '' }
-      return { id: id, name: f.name, art: f.card, perk: String(f.line || '').replace(/!$/, '') }
+    // fallback intro chooser (no picker module): the table's starter forms; card art = the table's SIDE art
+    var FORMS = ['racer', 'monster', 'jumper', 'excavator'].map(function (id) {
+      var f = formRow(id) || { name: FORM_NAME[id], side: 'mojo-rear/' + rearOf(id), line: '' }
+      return { id: id, name: f.name, art: f.side, perk: String(f.line || '').replace(/!$/, '') }
     })
     var look0 = stage.look || stage.biome
-    var recForm = stage.recForm || (look0 === 'snow' ? 'snow-plow' : /forest|farm|jungle|autumn|ruins|windfarm/.test(look0) || stage.weather === 'leaves' ? 'monster' : /construction|harbour/.test(look0) ? 'dozer' : 'racer')
+    var recForm = stage.recForm || (/snow|forest|farm|jungle|autumn|ruins|windfarm/.test(look0) || stage.weather === 'leaves' ? 'monster' : /construction/.test(look0) ? 'excavator' : /harbour/.test(look0) ? 'cargo' : 'racer')
     // cfg.mojo_form is honoured as given ('racer' included); without one: the avatar's last form, else the stage pick
     var formId = knownForm(cfg.mojo_form) ? cfg.mojo_form : (cfg.lastForm && FORMS.some(function (f) { return f.id === cfg.lastForm }) ? cfg.lastForm : recForm)
     var perk = cfg.perk || formPerk(formId) || null
@@ -262,7 +265,7 @@
       punch: 0, tunnel: 0, eduDone: false, edu: null, eduSeg: -1, eduResult: null, gadgetUsed: false, lockT: 0, cap: null, resolveT: 0,
       targetLane: 1, targetLanePos: 1, targetNext: 3, nextRow: 30, rows: 0, starsSpawned: 0, tutorial: 0, brok: 0, recoveryMs: [], lastHitAt: 0,
       frames: [], tierFrames: { 0: [], 1: [], 2: [] }, auto: null, paused: false, policeZ: 0, finishSeg: -1, heartT: 0, comets: [], rings: [], bursts: [],
-      hop: 0, cdT: 0, cdN: 0, smokeAcc: 0, smoke: 0, squealAt: -9, nearAt: -9, near: 0, tauntAt: -9, taunts: 0, robHop: 0, targetSeenT: -9 }
+      hop: 0, jumps: 0, cdT: 0, cdN: 0, smokeAcc: 0, smoke: 0, squealAt: -9, nearAt: -9, near: 0, tauntAt: -9, taunts: 0, robHop: 0, targetSeenT: -9 }
     // the robber's comic balloon ("Kamu jelek!"), the near-miss pop and the tyre skid marks: fixed records, reused
     var TN = { on: false, t: 0, text: '', top: 0, gad: null }, NM = { on: false, t: 0, x: 0, y: 0 }, SK = []
     for (var sk0 = 0; sk0 < 20; sk0++) SK.push({ on: false, x: 0, y: 0, t: 0, w: 0 })
@@ -417,14 +420,21 @@
       var m = mojoXY(), cp = carPx(); ring(m.x, m.y - cp * 0.4, 1)
       for (var i = 0; i < 10; i++) { var a = i * TAU / 10, p = FX.spawn(TEX.sparkle, m.x + Math.cos(a) * cp * 0.5, m.y - cp * 0.4 + Math.sin(a) * cp * 0.25, Math.cos(a) * 120 * v.u, Math.sin(a) * 60 * v.u - 40 * v.u, 0.5, cp * 0.12, true); if (p) p.drag = 2 }
     }
+    // the jumper's landing / take-off dust at the wheels
+    function hopDust () { var m = mojoXY(), cp = carPx(); burst(m.x, m.y, 8, img['fx/dust'] || TEX.puff, 300 * v.u, 0.5, cp * 0.22, false) }
     function hit (o, sx, sy) {
       o.taken = true
       var info = OBJ[o.type], cp = carPx()
       if (S.recover > 0) return                                   // repeated hits never stack (PRD §9)
       if (S.shield) { S.shield = 0; ring(sx, sy, 1); burst(sx, sy, 14, TEX.glowC, 600 * v.u, 0.5, cp * 0.14, true); call('Perisai menahan!', 1100, 'shieldhit'); return }
-      // perks: a flyer passes over anything slippery, a jumper hops potholes and rocks
+      // perks: a flyer passes over anything slippery; a jumper hops every hole, slippery patch and low obstacle
+      // (JUMPABLE). Owner 2026-10-04 "Pelompat bisa lompat batu tapi tidak bisa lompat lubang": a hazard met while
+      // ALREADY airborne used to fall through to BROK (two holes in a row) - an airborne jumper now clears it too
       if (perk === 'fly' && info.kind === 'slip') return
-      if (perk === 'jump' && (o.type === 'pothole' || o.type === 'rock') && !(S.hop > 0)) { S.hop = 0.5; AU.whoosh(0); call('Hup! Lompat!', 900, 'hop'); return }
+      if (perk === 'jump' && JUMPABLE[o.type]) {
+        if (!(S.hop > 0)) { S.hop = 0.5; S.jumps++; AU.whoosh(0); hopDust(); call('Hup! Lompat!', 900, 'hop') }
+        return
+      }
       var immune = false
       if (info.kind === 'slip') {
         if (perk === 'grip' || (perk === 'snow' && look0 === 'snow') || (perk === 'splash' && (o.type === 'oil' || stage.wet))) { S.spin = 0; S.slide = 0; immune = true }
@@ -637,7 +647,7 @@
       if (S.slide > 0) { S.slide -= dt; S.lanePos += Math.sin(S.t * 14) * dt * 0.6 }
       if (S.spin > 0) S.spin -= dt
       if (S.laneFx > 0) S.laneFx -= dt
-      if (S.hop > 0) S.hop -= dt
+      if (S.hop > 0) { S.hop -= dt; if (S.hop <= 0) hopDust() }   // landing dust
       if (S.robHop > 0) S.robHop -= dtr
       // speed
       var mult = 1
@@ -1352,7 +1362,7 @@
     W.__mojoChase = { host: host, active: true, view: API.view, robber: API.robber,   // QA seams (canvas px; multiply by view().css)
       state: function () {
         var med = function (a) { if (!a.length) return 0; var b = a.slice().sort(function (x, y) { return x - y }); return b[Math.floor(b.length / 2)] }
-        return { state: S.state, paused: S.paused, prog: S.prog, lane: S.lane, lanePos: S.lanePos, lastLaneMs: S.lastLaneMs, hits: S.hits, brok: S.brok, recover: S.recover,
+        return { jumps: S.jumps, state: S.state, paused: S.paused, prog: S.prog, lane: S.lane, lanePos: S.lanePos, lastLaneMs: S.lastLaneMs, hits: S.hits, brok: S.brok, recover: S.recover,
           recoveryMs: S.recoveryMs.slice(), stars: S.stars, boxes: S.boxes, rocket: S.rocket, hasRocket: S.hasRocket, elapsed: S.elapsed, quality: quality,
           frameMedian: med(ringArr(FR, frN)), frameTimes: ringArr(FR, frN), workMedian: { 0: med(ringArr(TF[0].a, TF[0].n)), 1: med(ringArr(TF[1].a, TF[1].n)), 2: med(ringArr(TF[2].a, TF[2].n)) }, frames: frN,
           par: scene ? { far: scene.par.far, mid: scene.par.mid, roadside: scene.par.roadside, road: scene.par.road } : null,
