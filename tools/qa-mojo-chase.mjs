@@ -123,12 +123,18 @@ try {
     await p.waitForSelector('#mc-go, .mcp-go', { timeout: ms }); await sleep(450)
     if (await p.$('.mcp-go')) await p.evaluate(() => document.querySelector('.mcp-go').click()); else await p.click('#mc-go')
   }
-  // the picker + quiz modules (games/mojo-chase-picker.js, -quiz.js) are injected when the page does not load them yet,
+  // the picker + quiz (+ atmosphere) modules are injected when the page does not load them yet,
   // so the gate always drives the real start path (Mulai) and answers any quiz card the autopilot drives into
   async function wire (p) {
-    if (process.env.QA_PICKER === '0' || await p.evaluate(() => !!window.MojoChasePicker)) return
-    await p.addStyleTag({ url: BASE + '/games/mojo-chase-ui.css' })
-    await p.addScriptTag({ url: BASE + '/games/mojo-chase-picker.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-quiz.js' })
+    const has = await p.evaluate(() => ({ picker: !!window.MojoChasePicker, atmos: !!window.MojoChaseAtmos }))
+    if (process.env.QA_PICKER !== '0' && !has.picker) {
+      await p.addStyleTag({ url: BASE + '/games/mojo-chase-ui.css' })
+      await p.addScriptTag({ url: BASE + '/games/mojo-chase-picker.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-quiz.js' })
+    }
+    // the atmosphere module (hooks v2) the same way: QA_ATMOS=0 runs the core alone
+    if (process.env.QA_ATMOS !== '0' && !has.atmos) {
+      await p.addScriptTag({ url: BASE + '/games/data/mojo-chase-atmos-data.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-atmos.js' })
+    }
   }
   async function state (p) {
     return p.evaluate(() => {

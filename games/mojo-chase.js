@@ -24,7 +24,19 @@
  *   beforeStart(cfg, api) -> Promise<cfg>   after art is loaded, before the intro (picker: resolve with mojo_form)
  *   onPickup(type, info, api) -> true if handled ('quiz' box: open the question card; info = {sx, sy})
  *   spawnFilter(type, info) -> type | 'none'   info = {seg, lane, elapsed, prog, state}; may swap a pickup for 'quiz'
- *   atmos = { init(ctx, stage, rng), update(dt, state), drawSky(ctx, view), drawOverlay(ctx, view), lightsOn(), timeOfDay() }
+ *   atmos (hooks v2; every member optional, all no-ops when absent):
+ *     init(ctx, stage, rng, api) -> {owns:{sky, weather, stars, sun, clouds}, night0}|undefined   rng = MojoChaseRules.rng(seed + 11);
+ *          owned parts are skipped by the core (the scene/track are built from a stage copy: weather 'none', night = night0).
+ *          URL ?seed=N seeds the chase; ?atmos=time,weather[,trans] is passed to MojoChaseAtmos.force() before init.
+ *     update(dt, api.state())
+ *     drawSky(ctx, view, 'pre') right after the sky gradient blit, before FAR (MojoChase.atmosPre = true);
+ *          (no 'late' call: the sky is drawn once); view = {w, h, hy, css, port, u, pr, cx, playerY, curveOff, quality, skyPre}
+ *     drawOverlay(ctx, view)  after the particles, before post
+ *     roadSeg(ctx, seg, k, view)  renderRoad's per-segment overlay
+ *     tint() -> {c, a}|null  one fill over the FAR/MID band before ROADSIDE
+ *     lightsOn() -> 0..1  headlights, tail lights, lamps (and the biome grade fades by 0.8 x lights)
+ *     telegraph() 0..1 hazard-glow contrast boost;  sway() 0..1 roadside tree sway;  calm() true = no new hazard rows
+ *     say  set by the core to api.call(text, ms) (Bo callouts);  timeOfDay() -> label for api.state()
  * ==========================================================================*/
 (function (W, D) {
   'use strict'
@@ -236,7 +248,8 @@
     }
 
     /* world state */
-    var track = null, scene = null, seed = (cfg.seed || (Date.now() & 0xffff)) | 0, rr = R.rng(seed + 5)
+    var urlSeed = +((/[?&]seed=(\d+)/.exec(location.search) || [])[1] || 0)
+    var track = null, scene = null, seed = (cfg.seed || urlSeed || (Date.now() & 0xffff)) | 0, rr = R.rng(seed + 5)
     var S = { state: 'load', t: 0, z: 0, speed: 0, lane: 1, lanePos: 1, laneFrom: 1, laneT: 1, laneDur: LANE_MS, laneStart: 0, lastLaneMs: 0,
       boost: 0, boostCharge: 1, recover: 0, hits: 0, hearts: 3, stars: 0, boxes: 0, rocket: 0, prog: 0, best: 0, elapsed: 0, seconds: cfg.seconds || stage.seconds,
       hasRocket: false, rocketBoxAlive: false, shield: 0, magnet: 0, slow: 0, spin: 0, slide: 0, shake: 0, flash: 0, strobe: 0, stop: 1, hitStop: 0, hitScale: 0.22,
@@ -495,6 +508,7 @@
         // education gate: no hazards around it
         rowSt.noHazard = S.eduSeg > 0 && Math.abs(segI - S.eduSeg) < T.gap * 2.5
         var row = R.genRow(rr, rowSt)
+        if (atmCalm()) for (var ck = 0; ck < 3; ck++) if (OBJ[row[ck]] && (OBJ[row[ck]].kind === 'block' || OBJ[row[ck]].kind === 'slip')) row[ck] = 'none'   // the atmosphere asked for a calm moment
         // gadget boxes: the capture rocket after 55% (centre lane after 3 hits), a mystery box sometimes
         if (!S.hasRocket && !S.rocketBoxAlive && S.prog > 0.7) {
           var lane = S.hits >= 3 ? 1 : row.indexOf('none'); if (lane < 0) lane = 1
@@ -767,13 +781,32 @@
 
     /* render */
     function HK () { return W.MojoChase.hooks }
-    function lightsOn () { try { return !!(HK().atmos && HK().atmos.lightsOn && HK().atmos.lightsOn()) } catch (e) { return false } }
+    function AT () { var h = HK(); return (h && h.atmos) || null }
+    function atmCalm () { var A = AT(); try { return !!(A && A.calm && A.calm()) } catch (e) { return false } }
+    // hooks v2 values read ONCE per rendered frame; AV = the view handed to the atmosphere (one object, refreshed)
+    var atm = { L: 0, tint: null, tg: 0, sw: 0 }, AV = { w: 0, h: 0, hy: 0, css: 1, port: false, u: 1, pr: 1, cx: 0, playerY: 0, curveOff: 0, quality: 2, skyPre: true }
+    var BK = { pre: null, tint: null }
+    function atmFrame () {
+      var A = AT(); atm.L = 0; atm.tint = null; atm.tg = 0; atm.sw = 0; BK.pre = null; BK.tint = null
+      if (!A) return null
+      try {
+        atm.L = A.lightsOn ? clamp(+A.lightsOn() || 0, 0, 1) : 0
+        var tn = A.tint ? A.tint() : null; atm.tint = tn && tn.a > 0 ? tn : null
+        atm.tg = A.telegraph ? clamp(+A.telegraph() || 0, 0, 1) : 0; atm.sw = A.sway ? clamp(+A.sway() || 0, 0, 1) : 0
+      } catch (e) {}
+      AV.w = v.w; AV.h = v.h; AV.hy = v.hy; AV.css = v.css; AV.port = v.port; AV.u = v.u; AV.pr = v.pr; AV.cx = v.cx; AV.playerY = v.playerY; AV.curveOff = scene.curveOff || 0; AV.quality = quality
+      BK.pre = A.drawSky ? skyPre : null; BK.tint = atm.tint
+      return A
+    }
+    function skyPre () { try { AT().drawSky(c, AV, 'pre') } catch (e) {} }
+    function roadOv (s, k) { try { AT().roadSeg(c, s, k, AV) } catch (e) {} }
+    function laneObjsNear () { var n = 0, s0 = Math.floor((S.z + Z_P) / TR.SEG); for (var i = 0; i < POOL.length; i++) { var o = POOL[i]; if (o.on && !o.taken && o.seg >= s0 && o.seg < s0 + 60) n++ } return n }
     var API = {
       host: host, stage: stage,
       rng: function () { return rr() },
       pause: function (reason) { if (S.paused) return; S.paused = true; S.pauseReason = reason || 'hook'; AU.engine(0); AU.siren(false) },
       resume: function () { if (!S.paused || S.pauseReason === 'menu') return; S.paused = false; S.pauseReason = null; last = performance.now(); acc = 0 },
-      state: function () { var tod = null; try { tod = HK().atmos && HK().atmos.timeOfDay ? HK().atmos.timeOfDay() : null } catch (e) {} return { state: S.state, speed: S.speed, prog: S.prog, elapsed: S.elapsed, lane: S.lane, z: S.z, stage: stage.id, form: formId, timeOfDay: tod, paused: S.paused, pauseReason: S.pauseReason, night: !!stage.night } },
+      state: function () { var tod = null; try { tod = HK().atmos && HK().atmos.timeOfDay ? HK().atmos.timeOfDay() : null } catch (e) {} return { state: S.state, speed: S.speed, prog: S.prog, elapsed: S.elapsed, lane: S.lane, z: S.z, stage: stage.id, form: formId, timeOfDay: tod, paused: S.paused, pauseReason: S.pauseReason, night: !!(scene ? scene.night : stage.night), quality: quality, tunnel: S.tunnel, laneObjsNear: laneObjsNear(), t: S.t } },
       view: function () { return { w: v.w, h: v.h, hy: v.hy, css: v.css, port: v.port, u: v.u } },
       robber: function () { return S.targetScreen || null },
       reward: function (o) { o = o || {}; if (o.stars) S.stars += o.stars; if (o.boost) S.boost = Math.max(S.boost, o.boost); if (o.rocket) { S.rocket += o.rocket; S.hasRocket = true } },
@@ -793,16 +826,20 @@
       function mark (k) { if (!P) return; if (W.__mcFlush) c.getImageData(0, 0, 1, 1); var n = performance.now(); P[k] = (P[k] || 0) * 0.95 + (n - pt) * 0.05; pt = n }
       c.save()
       if (S.shake > 0 && !RM) c.translate((Math.random() - 0.5) * S.shake * 26 * v.u, (Math.random() - 0.5) * S.shake * 18 * v.u)
-      if (!OFFK('bk')) { scene.drawBack(c, cam.y, quality); scene.biomeLight(c); if (HK().atmos && HK().atmos.drawSky) try { HK().atmos.drawSky(c, v) } catch (e) {} } mark('back')
+      var A5 = atmFrame()
+      if (!OFFK('bk')) { scene.drawBack(c, cam.y, quality, BK); scene.biomeLight(c) }   // (the atmosphere's sky is drawn once, at the 'pre' point inside drawBack: a 'late' call would paint over FAR/MID) mark('back')
       var night = scene.night
-      if (!OFFK('road')) TR.renderRoad(c, track, cam, v, drawN, function (s, j) { if (!OFFK('sp')) drawSegSprites(s, j, night) }, null); mark('road')
+      if (!OFFK('road')) TR.renderRoad(c, track, cam, v, drawN, segSpr, A5 && A5.roadSeg ? roadOv : null); mark('road')
       if (!(W.__mcOff && W.__mcOff.sh)) scene.shimmer(c, canvas, quality); drawLaneFx(); drawSkids(); if (!(W.__mcOff && W.__mcOff.pl)) drawPlayer(night); mark('player')
       if (!OFFK('fx')) { FX.draw(c, false); FX.draw(c, true) } mark('fx')
       drawOverlays()
       c.restore()
-      if (HK().atmos && HK().atmos.drawOverlay) try { HK().atmos.drawOverlay(c, v) } catch (e) {}
-      if (!OFFK('post')) scene.post(c, { quality: quality, boost: Math.min(1, Math.max(0, S.boost)), flash: S.flash, strobe: S.strobe, tunnel: S.tunnel }); mark('post')
+      if (A5 && A5.drawOverlay) try { A5.drawOverlay(c, AV) } catch (e) {}
+      PST.quality = quality; PST.boost = Math.min(1, Math.max(0, S.boost)); PST.flash = S.flash; PST.strobe = S.strobe; PST.tunnel = S.tunnel; PST.atmosLight = atm.L
+      if (!OFFK('post')) scene.post(c, PST); mark('post')
     }
+    var PST = { quality: 2, boost: 0, flash: 0, strobe: 0, tunnel: 0, atmosLight: 0 }
+    function segSpr (s, j) { if (!OFFK('sp')) drawSegSprites(s, j, scene.night) }
     // MIP levels: each sprite keeps half/quarter/eighth copies; a far sprite is drawn from the smallest level that is
     // still >= its screen size, so the rasteriser never downsamples a 600 px image to 20 px every frame
     var MIP = new Map()
@@ -862,8 +899,10 @@
         if (wpx < 2) continue
         var an = propA(TR.PROP_KEY[pr.key])
         if (/chevron/.test(pr.key) && pr.side > 0) { c.save(); c.translate(x, 0); c.scale(-1, 1); spr(im, 0, p1.y, wpx, an, alpha); c.restore() }   // left-curve chevrons point left
-        else spr(im, x, p1.y, wpx, an, alpha)
-        if (pr.key === 'lamp' && (night || S.tunnel > 0.3)) lampLight(x, p1.y, wpx, an, scale)
+        else if (atm.sw > 0.05 && j < 120 && swayOk(pr.key)) {   // wind: trees lean from the base (skew), each with its own phase
+          c.save(); c.translate(x, p1.y); c.transform(1, 0, Math.sin(S.t * 1.7 + s.i * 0.7 + i) * 0.07 * atm.sw, 1, 0, 0); spr(im, 0, 0, wpx, an, alpha); c.restore()
+        } else spr(im, x, p1.y, wpx, an, alpha)
+        if (pr.key === 'lamp' && (night || S.tunnel > 0.3 || atm.L > 0.1)) lampLight(x, p1.y, wpx, an, scale, night || S.tunnel > 0.3 ? 1 : atm.L)
       }
       // bridge towers + cables (procedural, red)
       if (s.tower) {   // the Codex red suspension tower spans the road (a gate the car drives through)
@@ -902,12 +941,15 @@
       if (s.finish) spr(img['p:finish'], p1.x, p1.y, p1.w * 2.8, propA(TR.PROP_KEY.finish), alpha)
     }
     function roundRect (x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath() }
-    function lampLight (x, y, wpx, an, scale) {
+    var SWAY = {}
+    function swayOk (key) { var h = SWAY[key]; if (h === undefined) h = SWAY[key] = /tree|palm|pine|bush|cactus|bamboo|sakura|cherry|reed|grass|flower|birch|maple|oak|fern/.test(key + ' ' + (TR.PROP_KEY[key] || '')); return h }
+    function lampLight (x, y, wpx, an, scale, k) {
+      k = k == null ? 1 : k
       c.globalCompositeOperation = 'lighter'
       var hh = an ? (an.base - an.top) * wpx / (an.bw || 1) : wpx * 3
-      c.globalAlpha = 0.9; c.drawImage(TEX.glowY, x - wpx * 1.1, y - hh - wpx * 0.9, wpx * 2.2, wpx * 2.2)
-      c.globalAlpha = 0.35; c.drawImage(TEX.glowY, x - wpx * 3, y - wpx * 0.5, wpx * 6, wpx * 1.4)               // the light pool on the road
-      if (stage.wet) { c.globalAlpha = 0.3; c.drawImage(TEX.glowY, x - wpx * 0.4, y, wpx * 0.8, hh * 0.9) }   // wet reflection streak
+      c.globalAlpha = 0.9 * k; c.drawImage(TEX.glowY, x - wpx * 1.1, y - hh - wpx * 0.9, wpx * 2.2, wpx * 2.2)
+      c.globalAlpha = 0.35 * k; c.drawImage(TEX.glowY, x - wpx * 3, y - wpx * 0.5, wpx * 6, wpx * 1.4)               // the light pool on the road
+      if (stage.wet) { c.globalAlpha = 0.3 * k; c.drawImage(TEX.glowY, x - wpx * 0.4, y, wpx * 0.8, hh * 0.9) }   // wet reflection streak
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
     }
     var HUES = null
@@ -952,8 +994,8 @@
       if (info.kind === 'pad') { spr(im, x, p1.y + wpx * 0.05, wpx, an, alpha * 0.95); c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.4 * alpha; c.drawImage(TEX.glowC, x - wpx * 0.6, p1.y - wpx * 0.5, wpx * 1.2, wpx * 0.7); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; return }
       // HAZARD TELEGRAPH: inside reaction range a soft red ground glow pulses in the hazard's lane
       if (j > 6 && j < 70 && !RM) {
-        var pulse = 0.5 + 0.5 * Math.sin(S.t * 9 - j * 0.15), gw = wpx * 2.2
-        c.globalCompositeOperation = 'lighter'; c.globalAlpha = (0.28 + 0.22 * pulse) * alpha
+        var pulse = 0.5 + 0.5 * Math.sin(S.t * 9 - j * 0.15), gw = wpx * 2.2 * (1 + 0.3 * atm.tg)   // fog/rain/night: the atmosphere boosts the contrast
+        c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, (0.28 + 0.22 * pulse) * alpha * (1 + 0.9 * atm.tg))
         c.drawImage(TEX.glowR, x - gw / 2, p1.y - gw * 0.22, gw, gw * 0.44)
         c.globalCompositeOperation = 'source-over'
       }
@@ -971,9 +1013,9 @@
       var L = A && A.lights.length ? A.lights : null
       for (var i = 0; i < 2; i++) {
         var lx = L ? x + (L[i][0] - A.cx) * k : x + (i ? 1 : -1) * wpx * 0.36, ly = L ? y - bounce + (L[i][1] - A.base) * k : y - wpx * 0.3
-        var gs = wpx * (scene.night ? 0.55 : 0.32) * (0.8 + 0.7 * Math.min(1, S.prog)), blink = S.robHop > 0 ? (Math.floor(S.t * 12) % 2 ? 1.35 : 0.3) : 1
+        var gs = wpx * (scene.night ? 0.55 : 0.32 + 0.23 * atm.L) * (0.8 + 0.7 * Math.min(1, S.prog)), blink = S.robHop > 0 ? (Math.floor(S.t * 12) % 2 ? 1.35 : 0.3) : 1
         c.globalAlpha = 0.9 * Math.min(1, blink); gs *= Math.max(1, blink); c.drawImage(TEX.glowR, lx - gs / 2, ly - gs / 2, gs, gs)
-        if (scene.night || stage.wet) { c.globalAlpha = 0.35; c.drawImage(TEX.glowR, lx - gs * 0.15, ly, gs * 0.3, gs * 2.2) }
+        if (scene.night || stage.wet || atm.L > 0.5) { c.globalAlpha = 0.35; c.drawImage(TEX.glowR, lx - gs * 0.15, ly, gs * 0.3, gs * 2.2) }
       }
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
       // the net (capture): expands over the target and stays
@@ -1020,7 +1062,7 @@
       var air = a.kind === 'air', hover = air ? -cp * 0.14 + Math.sin(S.t * 3) * cp * 0.02 : 0
       var lean = (S.lane - S.lanePos) * -0.12 + (S.spin > 0 ? (0.8 - S.spin) / 0.8 * TAU : 0), sq = S.squash > 0 ? 1 - S.squash * 0.4 : 1
       // headlight cone at night / in tunnels
-      scene.headlights(c, m.x, m.y - cp * 0.3, cp, night || S.tunnel > 0.4 || lightsOn())
+      scene.headlights(c, m.x, m.y - cp * 0.3, cp, night || S.tunnel > 0.4 ? 1 : atm.L)
       // soft contact shadow (aerial forms: offset and smaller)
       c.globalAlpha = air ? 0.22 : 0.42; c.fillStyle = '#000'; c.beginPath(); c.ellipse(m.x + (air ? cp * 0.06 : 0), m.y + (air ? cp * 0.04 : 0), cp * (air ? 0.4 : 0.55), cp * 0.09, 0, 0, TAU); c.fill(); c.globalAlpha = 1
       var k = cp / a.bw
@@ -1031,7 +1073,7 @@
       // tail lights (additive; brighter while recovering)
       c.globalCompositeOperation = 'lighter'
       var lights = a.lights && a.lights.length ? a.lights : [[a.cx - a.bw * 0.33, a.base - 70], [a.cx + a.bw * 0.33, a.base - 70]]
-      var gl = cp * (S.recover > 0 ? 0.42 + 0.12 * Math.sin(S.t * 20) : night ? 0.34 : 0.2)
+      var gl = cp * (S.recover > 0 ? 0.42 + 0.12 * Math.sin(S.t * 20) : night ? 0.34 : 0.2 + 0.14 * atm.L)
       for (var i = 0; i < lights.length; i++) { c.globalAlpha = 0.85; c.drawImage(TEX.glowR, (lights[i][0] - a.cx) * k - gl / 2, (lights[i][1] - a.base) * k - gl / 2, gl, gl) }
       // boost flame from the exhaust points
       if (S.boost > 0) {
@@ -1275,9 +1317,22 @@
           if (N0 > 20) fogC = '#' + [R0, G0, B0].map(function (z) { var h = Math.round(z / N0).toString(16); return h.length < 2 ? '0' + h : h }).join('')
         }
       } catch (e) {}
-      track = TR.create(stage, seed, { fog: fogC })
-      scene = SCN.create(stage, img)
-      try { if (HK().atmos && HK().atmos.init) HK().atmos.init(c, stage, rr) } catch (e) { console.warn('[Mojo chase] atmos.init', e) }
+      // hooks v2: the atmosphere starts first; what it owns (sky parts, weather, the night) the scene and track leave out
+      var A0 = AT(), owns = null, night0 = null
+      W.MojoChase.atmosPre = !!(A0 && A0.drawSky)   // the atmosphere's sky is drawn at the 'pre' point (before FAR)
+      if (A0) {
+        try { A0.say = API.call } catch (e) {}
+        try {
+          var am = /[?&]atmos=([^&]+)/.exec(location.search), MA = W.MojoChaseAtmos
+          if (am && MA && MA.force) { var ap = decodeURIComponent(am[1]).split(','); MA.force({ time: isNaN(+ap[0]) ? ap[0] : +ap[0], weather: ap[1] || null, trans: ap[2] || null }) }
+        } catch (e) {}
+        try { var ir = A0.init ? A0.init(c, stage, R.rng(seed + 11), API) : null; if (ir && typeof ir === 'object') { owns = ir.owns || null; if (ir.night0 != null) night0 = !!ir.night0 } } catch (e) { console.warn('[Mojo chase] atmos.init', e) }
+      }
+      var st2 = stage
+      if (owns && (owns.weather || night0 != null)) { st2 = {}; for (var sk2 in stage) st2[sk2] = stage[sk2]; if (owns.weather) st2.weather = 'none'; if (night0 != null) st2.night = night0 }
+      track = TR.create(st2, seed, { fog: fogC })
+      scene = SCN.create(st2, img, { owns: owns })
+
       resize(); load.remove()
       S.state = 'intro0'
       render()

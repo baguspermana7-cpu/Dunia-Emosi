@@ -72,6 +72,7 @@
 
   function create (stage, img, opts) {
     opts = opts || {}
+    var OW = opts.owns || {}   // parts of the sky an atmosphere module draws itself (hooks v2): sky, stars, sun, clouds, weather
     var A = W.MojoTrackAnchors || { sky: {} }, pal = A.sky[stage.sky] || ['#3f8fe6', '#8cc8ff', '#d9eeff']
     var night = !!stage.night || stage.fx === 'space', FX = W.MojoChaseFX, T = FX.build()
     var CX = W.MojoCodexAnchors, far = img.FAR, mid = img.MID || null
@@ -124,25 +125,27 @@
         S.par.road += dz; S.par.roadside += dz * 0.70; S.par.mid += dz * 0.20; S.par.far += dz * 0.05
         S.curveOff += curve * dz / 200
       },
-      drawBack: function (c, camY, quality) {
+      /** bk (optional, hooks v2) = { pre: fn() called right after the sky blit and before FAR, tint: {c, a}|null over FAR/MID } */
+      drawBack: function (c, camY, quality, bk) {
         var w = v.w, hy = v.hy, hill = (camY - 950) * 0.012 * v.u
         if (!skyC || skyC.width !== Math.round(w) || skyC.height !== Math.round(hy + 2)) { skyC = cv(Math.round(w), Math.round(hy + 2)); var sk = skyC.getContext('2d'); sk.fillStyle = skyG; sk.fillRect(0, 0, skyC.width, skyC.height) }
-        c.drawImage(skyC, 0, 0)
-        if (night) {
+        if (!(OW.sky && bk && bk.pre)) c.drawImage(skyC, 0, 0)   // an atmosphere that owns the sky paints the whole band itself (no overdraw)
+        if (bk && bk.pre) bk.pre()
+        if (night && !OW.stars) {
           for (var i = 0; i < stars.length; i++) { var st = stars[i], a = 0.5 + 0.5 * Math.sin(t * 2 + st.p); c.globalAlpha = a * 0.9; c.fillStyle = '#fff'; c.fillRect(st.x * w, st.y * hy * 0.6, 2 * v.pr, 2 * v.pr) }
           c.globalAlpha = 1
         }
         // sun / moon bloom + god rays + lens flare (additive)
-        var sx = w * 0.74 - S.curveOff * w * 0.002 % w, sy = hy * (stage.sky === 'sunset' ? 0.62 : 0.26)
+        var sx = w * 0.74 - S.curveOff * w * 0.002 % w, sy = hy * (stage.sky === 'sunset' ? 0.62 : 0.26), sun = !OW.sun
         c.globalCompositeOperation = 'lighter'
-        if (!night && quality > 1 && !OFF('rays')) {
+        if (sun && !night && quality > 1 && !OFF('rays')) {
           c.globalAlpha = 0.16 + 0.04 * Math.sin(t * 0.7); c.save(); c.translate(sx, sy); c.rotate(t * 0.03)
           var rs = w * 0.85; c.drawImage(T.rays, -rs / 2, -rs / 2, rs, rs); c.restore()
         }
-        c.globalAlpha = night ? 0.5 : 0.95; var gs = (night ? 0.14 : 0.32) * w; c.drawImage(stage.sky === 'sunset' ? T.glowO : T.glowW, sx - gs / 2, sy - gs / 2, gs, gs)
+        if (sun) { c.globalAlpha = night ? 0.5 : 0.95; var gs = (night ? 0.14 : 0.32) * w; c.drawImage(stage.sky === 'sunset' ? T.glowO : T.glowW, sx - gs / 2, sy - gs / 2, gs, gs) }
         c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
         // clouds (day): drift + parallax with curvature
-        if (!night) for (var k = 0; k < clouds.length; k++) {
+        if (!night && !OW.clouds) for (var k = 0; k < clouds.length; k++) {
           var cl = clouds[k], cw = cl.s * w, px = ((cl.x * w + t * cl.sp * w - S.curveOff * w * 0.01) % (w + cw) + (w + cw)) % (w + cw) - cw
           c.globalAlpha = 0.85; c.drawImage(T.puff, px, cl.y * hy * 0.7, cw, cw * 0.55)
         }
@@ -168,13 +171,16 @@
         c.globalAlpha = 1
         // haze at the horizon
         c.fillStyle = hazeG; c.fillRect(0, hy - v.h * 0.09, w, v.h * 0.09 + 2)
+        // the atmosphere's ambient tint over the FAR/MID band (one fill; the ROADSIDE band and the road stay untinted)
+        var tn = bk && bk.tint
+        if (tn && tn.a > 0.005) { var ty0 = Math.max(0, Math.min(my, far ? fy : my)); c.globalAlpha = Math.min(1, tn.a); c.fillStyle = tn.c; c.fillRect(0, ty0, w, hy + v.h * 0.02 - ty0 + 2); c.globalAlpha = 1 }
         // ROADSIDE band (0.70x)
         var nh = hy * 0.11, ny = hy - nh + 4 + hill, nw = nh * near.width / near.height
         var nxo = -(((S.par.roadside * 0.004 + S.curveOff * 6) * v.u) % nw + nw) % nw
         var nearS = scaled('near', near, nw, nh); nw = nearS.width; nxo = -(((S.par.roadside * 0.004 + S.curveOff * 6) * v.u) % nw + nw) % nw
         for (var x3 = Math.round(nxo); x3 < w; x3 += nw) c.drawImage(nearS, x3, Math.round(ny))
         // lens flare ghosts (day, high/medium)
-        if (!night && quality > 0 && !OFF('flare')) {
+        if (sun && !night && quality > 0 && !OFF('flare')) {
           c.globalCompositeOperation = 'lighter'
           var dx = w / 2 - sx, dy = v.h * 0.55 - sy
           for (var f = 1; f <= 4; f++) { var fs = w * (0.03 + f * 0.012), fxp = sx + dx * f * 0.35, fyp = sy + dy * f * 0.35; c.globalAlpha = 0.12; c.drawImage(f % 2 ? T.glowC : T.glowY, fxp - fs / 2, fyp - fs / 2, fs, fs) }
@@ -182,16 +188,16 @@
         }
       },
       sun: function () { return { x: v.w * 0.74, y: v.hy * (stage.sky === 'sunset' ? 0.62 : 0.26) } },
-      headlights: function (c, x, y, wCar, on) {
+      headlights: function (c, x, y, wCar, on) {   // on: true/false or 0..1 (the atmosphere fades them in at dusk)
         if (!on) return
-        c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.75
+        c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.75 * (on === true ? 1 : Math.min(1, +on))
         var cw = wCar * 2.6, ch = (y - v.hy) * 0.85
         c.drawImage(cone, x - cw / 2, y - ch, cw, ch)
         c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
       },
       /** weather: rain (+ splashes), snow, leaves, dust devils — pooled particles */
       weather: function (dt, fx, flow, q) {
-        var w = v.w, h = v.h, kind = stage.weather, n
+        var w = v.w, h = v.h, kind = OW.weather ? 'none' : stage.weather, n
         if (kind === 'rain') {
           n = Math.round(dt * 260 * q)
           for (var i = 0; i < n; i++) { var p = fx.spawn(T.rain, Math.random() * w * 1.2 - w * 0.1, -20, -w * 0.08, h * 2.4, 0.5, h * 0.05, true); if (p) { p.stretch = 1; p.a = 0.5 } }
@@ -230,7 +236,10 @@
       },
       post: function (c, st) {
         var w = v.w, h = v.h
-        if (S.grade && st.quality > 0 && !OFF('grade')) { c.fillStyle = S.grade; c.globalAlpha = 0.55; c.fillRect(0, 0, w, h); c.globalAlpha = 1 }   // a plain tint: soft-light cost ~10 ms on a software rasteriser
+        // the biome grade fades as the atmosphere's lights come on (at dusk and night it washed the scene out milky)
+        var gA = 0.55 * (1 - 0.8 * Math.min(1, Math.max(0, +st.atmosLight || 0)))
+        if (S.grade && st.quality > 0 && !OFF('grade') && gA > 0.01) { c.fillStyle = S.grade; c.globalAlpha = gA; c.fillRect(0, 0, w, h); c.globalAlpha = 1 }
+   // a plain tint: soft-light cost ~10 ms on a software rasteriser
         if (st.strobe > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.16 * st.strobe; c.fillStyle = (Math.floor(t * 8) % 2) ? '#ff2a2a' : '#2a6bff'; c.fillRect(0, 0, w, h); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
         if (st.tunnel > 0) { c.globalAlpha = 0.35 * st.tunnel; c.fillStyle = '#05040a'; c.fillRect(0, 0, w, h); c.globalAlpha = 1 }
         if (!OFF('vig')) c.globalAlpha = 0.7 + 0.3 * st.boost, c.drawImage(vig, -w * 0.05 * st.boost, -h * 0.05 * st.boost, w * (1 + 0.1 * st.boost), h * (1 + 0.1 * st.boost))
