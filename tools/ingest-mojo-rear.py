@@ -20,6 +20,9 @@ opaque because a shaded rim separates them from the page) plus:
     body centred (centre = midpoint of the outer edges of the bottom 12% of the art: the wheel/skid/hull row).
     Swapping forms never jumps. Anchors (baseline, centre, body width, tail lights, emitters) are written to
     games/data/mojo-rear-anchors.js (window.MojoRearAnchors) and each index entry.
+  * OUTLINE (owner 2026-10-03): every cut is ringed with a white sticker outline OUTLINE_T px wide plus a soft
+    dark rim (tools/mojo_outline.py) BEFORE alignment, so the contact line, centre and body width are measured on
+    the outlined sprite and the shared canvas grows to fit it (no clipping).
   * TAIL LIGHTS: the symmetric pair of small saturated-red blobs in the lower body (auto, audited by the
     contact sheet), so the chase can glow them additively.
 """
@@ -39,6 +42,7 @@ ANCHORS_JS = ROOT / 'games' / 'data' / 'mojo-rear-anchors.js'
 INSET = 3
 QUALITY = 92
 PAD = 6               # transparent margin around the shared canvas
+OUTLINE_T = 5         # white ring px: 2.5% of the family's median shorter side (183 px), mojo_outline.thickness
 
 # Row by row, as drawn. kind: ground (wheels -> dust), air (hovers, shadow offset), water (spray).
 CELLS = [
@@ -101,6 +105,7 @@ def _load(name, file):
 clean = _load('mojo_clean_for_rear', 'clean-mojo-sprites.py')
 ingest = _load('mojo_ingest_for_rear', 'ingest-mojo-sheets.py')
 hero = _load('mojo_hero_for_rear', 'ingest-mojo-hero.py')
+outline = hero.outline
 _pts = clean._pts
 page, holes, encode = hero.page, hero.holes, hero.encode
 
@@ -369,7 +374,7 @@ def main():
         return 0
     report, built = [], []
     for name, kind, s in sources():
-        built.append((name, kind, build(name, s, report)))
+        built.append((name, kind, outline.outline(build(name, s, report), OUTLINE_T)[0]))
     for line in report:
         print('FAIL', line)
     if report:
@@ -382,7 +387,7 @@ def main():
         exports[LIB / CAT / (name + '.webp')] = data
         a = anchors[name]
         entries[key] = {'file': f'assets/db/lib/{key}.webp', 'cat': CAT, 'tags': name.split('-') + ['mojo', 'rear', 'chase', 'cartoon'],
-                        'source': SRCTAG, 'w': size[0], 'h': size[1], 'baseline': a['base'], 'cx': a['cx'], 'bw': a['bw'], 'kind': kind}
+                        'source': SRCTAG, 'w': size[0], 'h': size[1], 'baseline': a['base'], 'cx': a['cx'], 'bw': a['bw'], 'kind': kind, 'outline': OUTLINE_T}
     if args.sheets:
         out = Path(args.sheets)
         out.mkdir(parents=True, exist_ok=True)

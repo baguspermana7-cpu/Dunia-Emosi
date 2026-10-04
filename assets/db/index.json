@@ -9059,8 +9059,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 59,
-   "h": 72
+   "w": 71,
+   "h": 84,
+   "outline": 3
   },
   "mojo-char/bo": {
    "file": "assets/db/lib/mojo-char/bo.webp",
@@ -9071,8 +9072,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 218,
-   "h": 380
+   "w": 234,
+   "h": 396,
+   "outline": 5
   },
   "mojo-char/bo-celebrate": {
    "file": "assets/db/lib/mojo-char/bo-celebrate.webp",
@@ -9084,8 +9086,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 141,
-   "h": 193
+   "w": 155,
+   "h": 207,
+   "outline": 4
   },
   "mojo-char/bo-excited": {
    "file": "assets/db/lib/mojo-char/bo-excited.webp",
@@ -9097,8 +9100,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 237,
-   "h": 363
+   "w": 255,
+   "h": 381,
+   "outline": 6
   },
   "mojo-char/bo-goggles": {
    "file": "assets/db/lib/mojo-char/bo-goggles.webp",
@@ -9110,8 +9114,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 132,
-   "h": 202
+   "w": 144,
+   "h": 214,
+   "outline": 3
   },
   "mojo-char/bo-jump": {
    "file": "assets/db/lib/mojo-char/bo-jump.webp",
@@ -9123,8 +9128,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 131,
-   "h": 203
+   "w": 143,
+   "h": 215,
+   "outline": 3
   },
   "mojo-char/bo-main": {
    "file": "assets/db/lib/mojo-char/bo-main.webp",
@@ -9136,8 +9142,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 115,
-   "h": 208
+   "w": 127,
+   "h": 220,
+   "outline": 3
   },
   "mojo-char/bo-sheet10": {
    "file": "assets/db/lib/mojo-char/bo-sheet10.webp",
@@ -9149,8 +9156,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 160,
-   "h": 274
+   "w": 174,
+   "h": 288,
+   "outline": 4
   },
   "mojo-char/bo-sit": {
    "file": "assets/db/lib/mojo-char/bo-sit.webp",
@@ -9162,8 +9170,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 133,
-   "h": 203
+   "w": 145,
+   "h": 215,
+   "outline": 3
   },
   "mojo-char/bo-surprised": {
    "file": "assets/db/lib/mojo-char/bo-surprised.webp",
@@ -9175,8 +9184,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 128,
-   "h": 205
+   "w": 140,
+   "h": 217,
+   "outline": 3
   },
   "mojo-char/bo-tablet": {
    "file": "assets/db/lib/mojo-char/bo-tablet.webp",
@@ -9188,8 +9198,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 109,
-   "h": 203
+   "w": 121,
+   "h": 215,
+   "outline": 3
   },
   "mojo-char/bo-think": {
    "file": "assets/db/lib/mojo-char/bo-think.webp",
@@ -9201,8 +9212,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 202,
-   "h": 367
+   "w": 218,
+   "h": 383,
+   "outline": 5
   },
   "mojo-char/bo-think2": {
    "file": "assets/db/lib/mojo-char/bo-think2.webp",
@@ -9214,8 +9226,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 107,
-   "h": 202
+   "w": 119,
+   "h": 214,
+   "outline": 3
   },
   "mojo-char/bo-thumbs": {
    "file": "assets/db/lib/mojo-char/bo-thumbs.webp",
@@ -9227,8 +9240,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 119,
-   "h": 206
+   "w": 131,
+   "h": 218,
+   "outline": 3
   },
   "mojo-char/bo-tools": {
    "file": "assets/db/lib/mojo-char/bo-tools.webp",
@@ -9240,8 +9254,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 236,
-   "h": 362
+   "w": 254,
+   "h": 380,
+   "outline": 6
   },
   "mojo-char/bo-wave": {
    "file": "assets/db/lib/mojo-char/bo-wave.webp",
@@ -9253,8 +9268,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 224,
-   "h": 355
+   "w": 242,
+   "h": 373,
+   "outline": 6
   },
   "mojo-char/bo-wink": {
    "file": "assets/db/lib/mojo-char/bo-wink.webp",
@@ -9266,8 +9282,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 135,
-   "h": 204
+   "w": 147,
+   "h": 216,
+   "outline": 3
   },
   "mojo-char/build-bot": {
    "file": "assets/db/lib/mojo-char/build-bot.webp",
@@ -9279,8 +9296,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 124,
-   "h": 168
+   "w": 136,
+   "h": 180,
+   "outline": 3
   },
   "mojo-char/cat": {
    "file": "assets/db/lib/mojo-char/cat.webp",
@@ -9291,8 +9309,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 55,
-   "h": 70
+   "w": 67,
+   "h": 82,
+   "outline": 3
   },
   "mojo-char/cow": {
    "file": "assets/db/lib/mojo-char/cow.webp",
@@ -9303,8 +9322,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 61,
-   "h": 72
+   "w": 73,
+   "h": 84,
+   "outline": 3
   },
   "mojo-char/dog": {
    "file": "assets/db/lib/mojo-char/dog.webp",
@@ -9315,8 +9335,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 56,
-   "h": 68
+   "w": 68,
+   "h": 80,
+   "outline": 3
   },
   "mojo-char/float": {
    "file": "assets/db/lib/mojo-char/float.webp",
@@ -9327,8 +9348,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 166,
-   "h": 204
+   "w": 180,
+   "h": 218,
+   "outline": 4
   },
   "mojo-char/float-curious": {
    "file": "assets/db/lib/mojo-char/float-curious.webp",
@@ -9340,8 +9362,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 103,
-   "h": 129
+   "w": 115,
+   "h": 141,
+   "outline": 3
   },
   "mojo-char/float-happy": {
    "file": "assets/db/lib/mojo-char/float-happy.webp",
@@ -9353,8 +9376,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 103,
-   "h": 112
+   "w": 115,
+   "h": 124,
+   "outline": 3
   },
   "mojo-char/float-love": {
    "file": "assets/db/lib/mojo-char/float-love.webp",
@@ -9366,8 +9390,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 112,
-   "h": 124
+   "w": 124,
+   "h": 136,
+   "outline": 3
   },
   "mojo-char/float-sheet10": {
    "file": "assets/db/lib/mojo-char/float-sheet10.webp",
@@ -9379,8 +9404,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 154,
-   "h": 190
+   "w": 168,
+   "h": 204,
+   "outline": 4
   },
   "mojo-char/float2": {
    "file": "assets/db/lib/mojo-char/float2.webp",
@@ -9391,8 +9417,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 101,
-   "h": 151
+   "w": 113,
+   "h": 163,
+   "outline": 3
   },
   "mojo-char/grandad": {
    "file": "assets/db/lib/mojo-char/grandad.webp",
@@ -9403,8 +9430,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 205,
-   "h": 278
+   "w": 221,
+   "h": 294,
+   "outline": 5
   },
   "mojo-char/grandad-arms": {
    "file": "assets/db/lib/mojo-char/grandad-arms.webp",
@@ -9416,8 +9444,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 77,
-   "h": 147
+   "w": 89,
+   "h": 159,
+   "outline": 3
   },
   "mojo-char/grandad-sheet10": {
    "file": "assets/db/lib/mojo-char/grandad-sheet10.webp",
@@ -9429,8 +9458,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 188,
-   "h": 253
+   "w": 204,
+   "h": 269,
+   "outline": 5
   },
   "mojo-char/grandad-thumbs": {
    "file": "assets/db/lib/mojo-char/grandad-thumbs.webp",
@@ -9442,8 +9472,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 114,
-   "h": 147
+   "w": 126,
+   "h": 159,
+   "outline": 3
   },
   "mojo-char/grandad-wrench": {
    "file": "assets/db/lib/mojo-char/grandad-wrench.webp",
@@ -9455,8 +9486,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 108,
-   "h": 146
+   "w": 120,
+   "h": 158,
+   "outline": 3
   },
   "mojo-char/grandad2": {
    "file": "assets/db/lib/mojo-char/grandad2.webp",
@@ -9467,8 +9499,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 133,
-   "h": 202
+   "w": 145,
+   "h": 214,
+   "outline": 3
   },
   "mojo-char/mechanic-bot": {
    "file": "assets/db/lib/mojo-char/mechanic-bot.webp",
@@ -9480,8 +9513,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 113,
-   "h": 150
+   "w": 125,
+   "h": 162,
+   "outline": 3
   },
   "mojo-char/neon": {
    "file": "assets/db/lib/mojo-char/neon.webp",
@@ -9492,8 +9526,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 136,
-   "h": 276
+   "w": 148,
+   "h": 288,
+   "outline": 3
   },
   "mojo-char/neon2": {
    "file": "assets/db/lib/mojo-char/neon2.webp",
@@ -9504,8 +9539,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 115,
-   "h": 210
+   "w": 127,
+   "h": 222,
+   "outline": 3
   },
   "mojo-char/oona": {
    "file": "assets/db/lib/mojo-char/oona.webp",
@@ -9516,8 +9552,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 163,
-   "h": 223
+   "w": 177,
+   "h": 237,
+   "outline": 4
   },
   "mojo-char/oona-play": {
    "file": "assets/db/lib/mojo-char/oona-play.webp",
@@ -9529,8 +9566,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 103,
-   "h": 139
+   "w": 115,
+   "h": 151,
+   "outline": 3
   },
   "mojo-char/oona-run": {
    "file": "assets/db/lib/mojo-char/oona-run.webp",
@@ -9542,8 +9580,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 100,
-   "h": 141
+   "w": 112,
+   "h": 153,
+   "outline": 3
   },
   "mojo-char/oona-sheet10": {
    "file": "assets/db/lib/mojo-char/oona-sheet10.webp",
@@ -9555,8 +9594,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 162,
-   "h": 237
+   "w": 176,
+   "h": 251,
+   "outline": 4
   },
   "mojo-char/oona-sit": {
    "file": "assets/db/lib/mojo-char/oona-sit.webp",
@@ -9568,8 +9608,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 94,
-   "h": 140
+   "w": 106,
+   "h": 152,
+   "outline": 3
   },
   "mojo-char/oona-sleep": {
    "file": "assets/db/lib/mojo-char/oona-sleep.webp",
@@ -9581,8 +9622,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 117,
-   "h": 121
+   "w": 129,
+   "h": 133,
+   "outline": 3
   },
   "mojo-char/oona2": {
    "file": "assets/db/lib/mojo-char/oona2.webp",
@@ -9593,8 +9635,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 109,
-   "h": 190
+   "w": 121,
+   "h": 202,
+   "outline": 3
   },
   "mojo-char/painter-bot": {
    "file": "assets/db/lib/mojo-char/painter-bot.webp",
@@ -9606,8 +9649,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 118,
-   "h": 156
+   "w": 130,
+   "h": 168,
+   "outline": 3
   },
   "mojo-char/rabbit": {
    "file": "assets/db/lib/mojo-char/rabbit.webp",
@@ -9618,8 +9662,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 51,
-   "h": 67
+   "w": 63,
+   "h": 79,
+   "outline": 3
   },
   "mojo-char/race-bot": {
    "file": "assets/db/lib/mojo-char/race-bot.webp",
@@ -9631,8 +9676,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 125,
-   "h": 155
+   "w": 137,
+   "h": 167,
+   "outline": 3
   },
   "mojo-char/sheep": {
    "file": "assets/db/lib/mojo-char/sheep.webp",
@@ -9643,8 +9689,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 63,
-   "h": 69
+   "w": 75,
+   "h": 81,
+   "outline": 3
   },
   "mojo-chase/biome/bridge": {
    "file": "assets/db/lib/mojo-chase/biome/bridge.webp",
@@ -12900,10 +12947,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 68
   },
   "mojo-chase/items/barrel": {
@@ -12917,10 +12964,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 166.5,
    "bw": 138
   },
   "mojo-chase/items/barrier": {
@@ -12934,10 +12981,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 194
   },
   "mojo-chase/items/boost-pad": {
@@ -12952,10 +12999,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 226
   },
   "mojo-chase/items/bridge": {
@@ -12969,10 +13016,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 146
   },
   "mojo-chase/items/coin": {
@@ -12986,11 +13033,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
-   "bw": 110
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.0,
+   "bw": 117,
+   "outline": 4
   },
   "mojo-chase/items/cone": {
    "file": "assets/db/lib/mojo-chase/items/cone.webp",
@@ -13003,10 +13051,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 150
   },
   "mojo-chase/items/crate": {
@@ -13020,10 +13068,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 174
   },
   "mojo-chase/items/heart": {
@@ -13037,11 +13085,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.0,
-   "bw": 45
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.0,
+   "bw": 55,
+   "outline": 4
   },
   "mojo-chase/items/magnet": {
    "file": "assets/db/lib/mojo-chase/items/magnet.webp",
@@ -13054,11 +13103,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
-   "bw": 106
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 166.5,
+   "bw": 112,
+   "outline": 4
   },
   "mojo-chase/items/mystery": {
    "file": "assets/db/lib/mojo-chase/items/mystery.webp",
@@ -13071,11 +13121,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
-   "bw": 180
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.0,
+   "bw": 185,
+   "outline": 4
   },
   "mojo-chase/items/oil": {
    "file": "assets/db/lib/mojo-chase/items/oil.webp",
@@ -13088,10 +13139,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 90
   },
   "mojo-chase/items/pothole": {
@@ -13105,10 +13156,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 166.5,
    "bw": 144
   },
   "mojo-chase/items/ramp": {
@@ -13122,10 +13173,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
    "bw": 210
   },
   "mojo-chase/items/rocket": {
@@ -13139,11 +13190,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.0,
-   "bw": 149
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.0,
+   "bw": 155,
+   "outline": 4
   },
   "mojo-chase/items/shield": {
    "file": "assets/db/lib/mojo-chase/items/shield.webp",
@@ -13156,11 +13208,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
-   "bw": 86
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.5,
+   "bw": 92,
+   "outline": 4
   },
   "mojo-chase/items/star": {
    "file": "assets/db/lib/mojo-chase/items/star.webp",
@@ -13173,11 +13226,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 161.0,
-   "bw": 135
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 166.5,
+   "bw": 144,
+   "outline": 4
   },
   "mojo-chase/items/stopwatch": {
    "file": "assets/db/lib/mojo-chase/items/stopwatch.webp",
@@ -13190,11 +13244,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
-   "bw": 106
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 166.5,
+   "bw": 110,
+   "outline": 4
   },
   "mojo-chase/items/tyres-2": {
    "file": "assets/db/lib/mojo-chase/items/tyres-2.webp",
@@ -13208,10 +13263,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.5,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 166.5,
    "bw": 172
   },
   "mojo-chase/items/tyres-3": {
@@ -13226,10 +13281,10 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 321,
-   "h": 227,
-   "baseline": 220,
-   "cx": 160.0,
+   "w": 334,
+   "h": 238,
+   "baseline": 231,
+   "cx": 167.0,
    "bw": 179
   },
   "mojo-chase/props/banner-blue": {
@@ -13692,11 +13747,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 283,
-   "h": 265,
-   "baseline": 258,
-   "cx": 141.5,
-   "bw": 40
+   "w": 298,
+   "h": 278,
+   "baseline": 271,
+   "cx": 149.0,
+   "bw": 51,
+   "outline": 5
   },
   "mojo-chase/robbers/robber-cap": {
    "file": "assets/db/lib/mojo-chase/robbers/robber-cap.webp",
@@ -13710,11 +13766,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 283,
-   "h": 265,
-   "baseline": 258,
-   "cx": 141.0,
-   "bw": 39
+   "w": 298,
+   "h": 278,
+   "baseline": 271,
+   "cx": 149.0,
+   "bw": 49,
+   "outline": 5
   },
   "mojo-chase/robbers/robber-cowboy": {
    "file": "assets/db/lib/mojo-chase/robbers/robber-cowboy.webp",
@@ -13728,11 +13785,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 283,
-   "h": 265,
-   "baseline": 258,
-   "cx": 142.0,
-   "bw": 59
+   "w": 298,
+   "h": 278,
+   "baseline": 271,
+   "cx": 148.5,
+   "bw": 70,
+   "outline": 5
   },
   "mojo-chase/robbers/robber-helmet": {
    "file": "assets/db/lib/mojo-chase/robbers/robber-helmet.webp",
@@ -13746,11 +13804,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 283,
-   "h": 265,
-   "baseline": 258,
-   "cx": 141.0,
-   "bw": 59
+   "w": 298,
+   "h": 278,
+   "baseline": 271,
+   "cx": 149.0,
+   "bw": 69,
+   "outline": 5
   },
   "mojo-chase/signs/banner-gear": {
    "file": "assets/db/lib/mojo-chase/signs/banner-gear.webp",
@@ -14367,11 +14426,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 214
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 226,
+   "outline": 5
   },
   "mojo-chase/vehicles/bad1": {
    "file": "assets/db/lib/mojo-chase/vehicles/bad1.webp",
@@ -14384,11 +14444,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 137.0,
-   "bw": 191
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 202,
+   "outline": 5
   },
   "mojo-chase/vehicles/big": {
    "file": "assets/db/lib/mojo-chase/vehicles/big.webp",
@@ -14401,11 +14462,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 218
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 229,
+   "outline": 5
   },
   "mojo-chase/vehicles/cash": {
    "file": "assets/db/lib/mojo-chase/vehicles/cash.webp",
@@ -14418,11 +14480,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 213
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 223,
+   "outline": 5
   },
   "mojo-chase/vehicles/chaos": {
    "file": "assets/db/lib/mojo-chase/vehicles/chaos.webp",
@@ -14435,11 +14498,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 204
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 215,
+   "outline": 5
   },
   "mojo-chase/vehicles/fuel": {
    "file": "assets/db/lib/mojo-chase/vehicles/fuel.webp",
@@ -14452,11 +14516,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 201
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 213,
+   "outline": 5
   },
   "mojo-chase/vehicles/joke": {
    "file": "assets/db/lib/mojo-chase/vehicles/joke.webp",
@@ -14469,11 +14534,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 205
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 217,
+   "outline": 5
   },
   "mojo-chase/vehicles/junk": {
    "file": "assets/db/lib/mojo-chase/vehicles/junk.webp",
@@ -14486,11 +14552,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 214
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 224,
+   "outline": 5
   },
   "mojo-chase/vehicles/logs": {
    "file": "assets/db/lib/mojo-chase/vehicles/logs.webp",
@@ -14503,11 +14570,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 137.0,
-   "bw": 199
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 211,
+   "outline": 5
   },
   "mojo-chase/vehicles/loot": {
    "file": "assets/db/lib/mojo-chase/vehicles/loot.webp",
@@ -14520,11 +14588,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 204
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 215,
+   "outline": 5
   },
   "mojo-chase/vehicles/police-van": {
    "file": "assets/db/lib/mojo-chase/vehicles/police-van.webp",
@@ -14538,11 +14607,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 201
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 211,
+   "outline": 5
   },
   "mojo-chase/vehicles/rich": {
    "file": "assets/db/lib/mojo-chase/vehicles/rich.webp",
@@ -14555,11 +14625,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 207
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 218,
+   "outline": 5
   },
   "mojo-chase/vehicles/speed": {
    "file": "assets/db/lib/mojo-chase/vehicles/speed.webp",
@@ -14572,11 +14643,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 216
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 227,
+   "outline": 5
   },
   "mojo-chase/vehicles/steal": {
    "file": "assets/db/lib/mojo-chase/vehicles/steal.webp",
@@ -14589,11 +14661,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 206
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 217,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-01": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-01.webp",
@@ -14607,11 +14680,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 199
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 210,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-02": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-02.webp",
@@ -14625,11 +14699,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 216
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 228,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-03": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-03.webp",
@@ -14643,11 +14718,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 210
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 222,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-04": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-04.webp",
@@ -14661,11 +14737,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 216
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 227,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-05": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-05.webp",
@@ -14679,11 +14756,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 222
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 233,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-06": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-06.webp",
@@ -14697,11 +14775,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 178
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 190,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-07": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-07.webp",
@@ -14715,11 +14794,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 206
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 218,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-08": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-08.webp",
@@ -14733,11 +14813,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 137.0,
-   "bw": 217
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 229,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-09": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-09.webp",
@@ -14751,11 +14832,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 213
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 223,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-10": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-10.webp",
@@ -14769,11 +14851,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 137.0,
-   "bw": 229
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 239,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-11": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-11.webp",
@@ -14787,11 +14870,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 217
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 228,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-12": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-12.webp",
@@ -14805,11 +14889,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 213
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 223,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-13": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-13.webp",
@@ -14823,11 +14908,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 190
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 202,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-14": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-14.webp",
@@ -14841,11 +14927,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 218
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 228,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-15": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-15.webp",
@@ -14859,11 +14946,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 220
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 231,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-16": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-16.webp",
@@ -14877,11 +14965,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 137.0,
-   "bw": 195
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 206,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-17": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-17.webp",
@@ -14895,11 +14984,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 222
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 233,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-18": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-18.webp",
@@ -14913,11 +15003,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 218
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 230,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-19": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-19.webp",
@@ -14931,11 +15022,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 180
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 191,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-20": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-20.webp",
@@ -14949,11 +15041,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 222
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 233,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-21": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-21.webp",
@@ -14967,11 +15060,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 188
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 200,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-22": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-22.webp",
@@ -14985,11 +15079,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 217
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 228,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-24": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-24.webp",
@@ -15003,11 +15098,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 225
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 236,
+   "outline": 5
   },
   "mojo-chase/vehicles/striped-25": {
    "file": "assets/db/lib/mojo-chase/vehicles/striped-25.webp",
@@ -15021,11 +15117,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 212
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 143.5,
+   "bw": 224,
+   "outline": 5
   },
   "mojo-chase/vehicles/sweet": {
    "file": "assets/db/lib/mojo-chase/vehicles/sweet.webp",
@@ -15038,11 +15135,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 186
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 196,
+   "outline": 5
   },
   "mojo-chase/vehicles/thief": {
    "file": "assets/db/lib/mojo-chase/vehicles/thief.webp",
@@ -15055,11 +15153,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.0,
-   "bw": 203
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 214,
+   "outline": 5
   },
   "mojo-chase/vehicles/trash": {
    "file": "assets/db/lib/mojo-chase/vehicles/trash.webp",
@@ -15072,11 +15171,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 206
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 217,
+   "outline": 5
   },
   "mojo-chase/vehicles/vroom": {
    "file": "assets/db/lib/mojo-chase/vehicles/vroom.webp",
@@ -15089,11 +15189,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 206
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 217,
+   "outline": 5
   },
   "mojo-chase/vehicles/work": {
    "file": "assets/db/lib/mojo-chase/vehicles/work.webp",
@@ -15106,11 +15207,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 136.5,
-   "bw": 194
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.0,
+   "bw": 205,
+   "outline": 5
   },
   "mojo-chase/vehicles/yum": {
    "file": "assets/db/lib/mojo-chase/vehicles/yum.webp",
@@ -15123,11 +15225,12 @@
     "cartoon"
    ],
    "source": "owner mojo chase sheets 2026-10-03",
-   "w": 273,
-   "h": 246,
-   "baseline": 239,
-   "cx": 137.0,
-   "bw": 187
+   "w": 288,
+   "h": 259,
+   "baseline": 252,
+   "cx": 144.5,
+   "bw": 198,
+   "outline": 5
   },
   "mojo-chase/vfx/boost-1": {
    "file": "assets/db/lib/mojo-chase/vfx/boost-1.webp",
@@ -16591,9 +16694,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 199,
-   "h": 183,
-   "facing": "r"
+   "w": 212,
+   "h": 195,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/base-2": {
    "file": "assets/db/lib/mojo-hero/base-2.webp",
@@ -16606,9 +16710,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 205,
-   "h": 179,
-   "facing": "r"
+   "w": 219,
+   "h": 191,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/base-bo": {
    "file": "assets/db/lib/mojo-hero/base-bo.webp",
@@ -16621,9 +16726,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 210,
-   "h": 209,
-   "facing": "r"
+   "w": 223,
+   "h": 222,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/base-bo-front": {
    "file": "assets/db/lib/mojo-hero/base-bo-front.webp",
@@ -16637,9 +16743,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 217,
-   "h": 214,
-   "facing": "f"
+   "w": 228,
+   "h": 225,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/base-front": {
    "file": "assets/db/lib/mojo-hero/base-front.webp",
@@ -16652,9 +16759,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 221,
-   "h": 212,
-   "facing": "f"
+   "w": 234,
+   "h": 222,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/boat": {
    "file": "assets/db/lib/mojo-hero/boat.webp",
@@ -16666,9 +16774,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 224,
-   "h": 192,
-   "facing": "r"
+   "w": 238,
+   "h": 205,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/cargo": {
    "file": "assets/db/lib/mojo-hero/cargo.webp",
@@ -16680,9 +16789,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 217,
-   "h": 206,
-   "facing": "l"
+   "w": 231,
+   "h": 218,
+   "facing": "l",
+   "outline": 5
   },
   "mojo-hero/chopper-1": {
    "file": "assets/db/lib/mojo-hero/chopper-1.webp",
@@ -16695,9 +16805,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 209,
-   "h": 229,
-   "facing": "f"
+   "w": 223,
+   "h": 241,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/chopper-2": {
    "file": "assets/db/lib/mojo-hero/chopper-2.webp",
@@ -16710,9 +16821,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 205,
-   "h": 226,
-   "facing": "f"
+   "w": 219,
+   "h": 239,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/chopper-3": {
    "file": "assets/db/lib/mojo-hero/chopper-3.webp",
@@ -16725,9 +16837,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 183,
-   "h": 221,
-   "facing": "f"
+   "w": 197,
+   "h": 234,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/chopper-4": {
    "file": "assets/db/lib/mojo-hero/chopper-4.webp",
@@ -16740,9 +16853,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 222,
-   "h": 224,
-   "facing": "f"
+   "w": 236,
+   "h": 237,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/dozer-1": {
    "file": "assets/db/lib/mojo-hero/dozer-1.webp",
@@ -16755,9 +16869,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 229,
-   "h": 193,
-   "facing": "l"
+   "w": 243,
+   "h": 204,
+   "facing": "l",
+   "outline": 5
   },
   "mojo-hero/dozer-2": {
    "file": "assets/db/lib/mojo-hero/dozer-2.webp",
@@ -16770,9 +16885,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 229,
-   "h": 214,
-   "facing": "l"
+   "w": 243,
+   "h": 223,
+   "facing": "l",
+   "outline": 5
   },
   "mojo-hero/dozer-3": {
    "file": "assets/db/lib/mojo-hero/dozer-3.webp",
@@ -16785,9 +16901,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 206,
-   "h": 216,
-   "facing": "r"
+   "w": 217,
+   "h": 229,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/jet-1": {
    "file": "assets/db/lib/mojo-hero/jet-1.webp",
@@ -16800,9 +16917,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 226,
-   "h": 203,
-   "facing": "r"
+   "w": 240,
+   "h": 217,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/jet-2": {
    "file": "assets/db/lib/mojo-hero/jet-2.webp",
@@ -16815,9 +16933,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 233,
-   "h": 167,
-   "facing": "r"
+   "w": 246,
+   "h": 181,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/jet-3": {
    "file": "assets/db/lib/mojo-hero/jet-3.webp",
@@ -16830,9 +16949,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 230,
-   "h": 174,
-   "facing": "r"
+   "w": 243,
+   "h": 187,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/jet-4": {
    "file": "assets/db/lib/mojo-hero/jet-4.webp",
@@ -16845,9 +16965,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 225,
-   "h": 205,
-   "facing": "r"
+   "w": 239,
+   "h": 218,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/monster-1": {
    "file": "assets/db/lib/mojo-hero/monster-1.webp",
@@ -16860,9 +16981,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 227,
-   "h": 219,
-   "facing": "f"
+   "w": 239,
+   "h": 230,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/monster-2": {
    "file": "assets/db/lib/mojo-hero/monster-2.webp",
@@ -16875,9 +16997,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 230,
-   "h": 197,
-   "facing": "f"
+   "w": 244,
+   "h": 210,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/monster-3": {
    "file": "assets/db/lib/mojo-hero/monster-3.webp",
@@ -16890,9 +17013,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 225,
-   "h": 225,
-   "facing": "r"
+   "w": 238,
+   "h": 236,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/offroad": {
    "file": "assets/db/lib/mojo-hero/offroad.webp",
@@ -16904,9 +17028,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 207,
-   "h": 214,
-   "facing": "f"
+   "w": 219,
+   "h": 227,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/racer": {
    "file": "assets/db/lib/mojo-hero/racer.webp",
@@ -16918,9 +17043,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 220,
-   "h": 221,
-   "facing": "r"
+   "w": 234,
+   "h": 234,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-hero/rescue": {
    "file": "assets/db/lib/mojo-hero/rescue.webp",
@@ -16932,9 +17058,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 201,
-   "h": 213,
-   "facing": "f"
+   "w": 215,
+   "h": 226,
+   "facing": "f",
+   "outline": 5
   },
   "mojo-hero/van": {
    "file": "assets/db/lib/mojo-hero/van.webp",
@@ -16946,9 +17073,10 @@
     "cartoon"
    ],
    "source": "owner mojo primary sheet 2026-10-03",
-   "w": 198,
-   "h": 199,
-   "facing": "r"
+   "w": 212,
+   "h": 211,
+   "facing": "r",
+   "outline": 5
   },
   "mojo-prop/apple-cart": {
    "file": "assets/db/lib/mojo-prop/apple-cart.webp",
@@ -20950,12 +21078,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.0,
-   "bw": 161,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.0,
+   "bw": 173,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/base": {
    "file": "assets/db/lib/mojo-rear/base.webp",
@@ -20968,12 +21097,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 141.0,
-   "bw": 167,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 149.0,
+   "bw": 179,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/base-neon": {
    "file": "assets/db/lib/mojo-rear/base-neon.webp",
@@ -20987,12 +21117,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 168,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 180,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/boat": {
    "file": "assets/db/lib/mojo-rear/boat.webp",
@@ -21005,12 +21136,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 141.0,
-   "bw": 135,
-   "kind": "water"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 149.0,
+   "bw": 143,
+   "kind": "water",
+   "outline": 5
   },
   "mojo-rear/cargo": {
    "file": "assets/db/lib/mojo-rear/cargo.webp",
@@ -21023,12 +21155,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 158,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 170,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/chopper": {
    "file": "assets/db/lib/mojo-rear/chopper.webp",
@@ -21041,12 +21174,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.0,
-   "bw": 193,
-   "kind": "air"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 204,
+   "kind": "air",
+   "outline": 5
   },
   "mojo-rear/chopper-2": {
    "file": "assets/db/lib/mojo-rear/chopper-2.webp",
@@ -21060,12 +21194,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 141.0,
-   "bw": 175,
-   "kind": "air"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 149.0,
+   "bw": 185,
+   "kind": "air",
+   "outline": 5
   },
   "mojo-rear/chopper-3": {
    "file": "assets/db/lib/mojo-rear/chopper-3.webp",
@@ -21079,12 +21214,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.0,
-   "bw": 175,
-   "kind": "air"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.0,
+   "bw": 185,
+   "kind": "air",
+   "outline": 5
   },
   "mojo-rear/crane": {
    "file": "assets/db/lib/mojo-rear/crane.webp",
@@ -21097,12 +21233,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 144,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 154,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/crane-2": {
    "file": "assets/db/lib/mojo-rear/crane-2.webp",
@@ -21116,12 +21253,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 150,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 149.0,
+   "bw": 161,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/delivery": {
    "file": "assets/db/lib/mojo-rear/delivery.webp",
@@ -21134,12 +21272,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 170,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 182,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/digger": {
    "file": "assets/db/lib/mojo-rear/digger.webp",
@@ -21152,12 +21291,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 141.0,
-   "bw": 175,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.0,
+   "bw": 189,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/dumper": {
    "file": "assets/db/lib/mojo-rear/dumper.webp",
@@ -21170,12 +21310,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 154,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 166,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/excavator": {
    "file": "assets/db/lib/mojo-rear/excavator.webp",
@@ -21188,12 +21329,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 158,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 170,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/hover": {
    "file": "assets/db/lib/mojo-rear/hover.webp",
@@ -21206,12 +21348,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.0,
-   "bw": 173,
-   "kind": "water"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.0,
+   "bw": 183,
+   "kind": "water",
+   "outline": 5
   },
   "mojo-rear/jet": {
    "file": "assets/db/lib/mojo-rear/jet.webp",
@@ -21224,12 +21367,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 134,
-   "kind": "air"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 146,
+   "kind": "air",
+   "outline": 5
   },
   "mojo-rear/jet-2": {
    "file": "assets/db/lib/mojo-rear/jet-2.webp",
@@ -21243,12 +21387,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.0,
-   "bw": 129,
-   "kind": "air"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.0,
+   "bw": 141,
+   "kind": "air",
+   "outline": 5
   },
   "mojo-rear/ladder": {
    "file": "assets/db/lib/mojo-rear/ladder.webp",
@@ -21261,12 +21406,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 146,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 158,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/loader": {
    "file": "assets/db/lib/mojo-rear/loader.webp",
@@ -21279,12 +21425,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 141.0,
-   "bw": 185,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 198,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/monster": {
    "file": "assets/db/lib/mojo-rear/monster.webp",
@@ -21297,12 +21444,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 198,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.0,
+   "bw": 209,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/monster-2": {
    "file": "assets/db/lib/mojo-rear/monster-2.webp",
@@ -21316,12 +21464,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 198,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 208,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/plane": {
    "file": "assets/db/lib/mojo-rear/plane.webp",
@@ -21334,12 +21483,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 141.0,
-   "bw": 135,
-   "kind": "air"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 149.0,
+   "bw": 145,
+   "kind": "air",
+   "outline": 5
   },
   "mojo-rear/prop-plane": {
    "file": "assets/db/lib/mojo-rear/prop-plane.webp",
@@ -21353,12 +21503,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 141.0,
-   "bw": 107,
-   "kind": "air"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 149.0,
+   "bw": 113,
+   "kind": "air",
+   "outline": 5
   },
   "mojo-rear/snow": {
    "file": "assets/db/lib/mojo-rear/snow.webp",
@@ -21371,12 +21522,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.5,
-   "bw": 178,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "bw": 188,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-rear/tow": {
    "file": "assets/db/lib/mojo-rear/tow.webp",
@@ -21389,12 +21541,13 @@
     "cartoon"
    ],
    "source": "owner mojo rear-view sheet 2026-10-03",
-   "w": 281,
-   "h": 241,
-   "baseline": 234,
-   "cx": 140.0,
-   "bw": 183,
-   "kind": "ground"
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.0,
+   "bw": 195,
+   "kind": "ground",
+   "outline": 5
   },
   "mojo-tile/barrier": {
    "file": "assets/db/lib/mojo-tile/barrier.webp",
@@ -22530,8 +22683,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 308,
-   "h": 351
+   "w": 330,
+   "h": 373,
+   "outline": 8
   },
   "mojo-top/ambulance": {
    "file": "assets/db/lib/mojo-top/ambulance.webp",
@@ -22542,8 +22696,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 342,
-   "h": 300
+   "w": 364,
+   "h": 322,
+   "outline": 8
   },
   "mojo-top/balloon": {
    "file": "assets/db/lib/mojo-top/balloon.webp",
@@ -22554,8 +22709,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 303,
-   "h": 338
+   "w": 325,
+   "h": 360,
+   "outline": 8
   },
   "mojo-top/base": {
    "file": "assets/db/lib/mojo-top/base.webp",
@@ -22566,8 +22722,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 300,
-   "h": 273
+   "w": 322,
+   "h": 295,
+   "outline": 8
   },
   "mojo-top/base-sheet04": {
    "file": "assets/db/lib/mojo-top/base-sheet04.webp",
@@ -22579,8 +22736,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 313,
-   "h": 256
+   "w": 335,
+   "h": 278,
+   "outline": 8
   },
   "mojo-top/base-sheet05": {
    "file": "assets/db/lib/mojo-top/base-sheet05.webp",
@@ -22592,8 +22750,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 331,
-   "h": 287
+   "w": 353,
+   "h": 309,
+   "outline": 8
   },
   "mojo-top/base-sheet10": {
    "file": "assets/db/lib/mojo-top/base-sheet10.webp",
@@ -22605,8 +22764,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 194,
-   "h": 193
+   "w": 216,
+   "h": 215,
+   "outline": 8
   },
   "mojo-top/boat": {
    "file": "assets/db/lib/mojo-top/boat.webp",
@@ -22617,8 +22777,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 349,
-   "h": 346
+   "w": 371,
+   "h": 368,
+   "outline": 8
   },
   "mojo-top/bridge": {
    "file": "assets/db/lib/mojo-top/bridge.webp",
@@ -22629,8 +22790,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 352,
-   "h": 350
+   "w": 374,
+   "h": 372,
+   "outline": 8
   },
   "mojo-top/camera": {
    "file": "assets/db/lib/mojo-top/camera.webp",
@@ -22641,8 +22803,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 329,
-   "h": 328
+   "w": 351,
+   "h": 350,
+   "outline": 8
   },
   "mojo-top/cargo-crane": {
    "file": "assets/db/lib/mojo-top/cargo-crane.webp",
@@ -22654,8 +22817,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 347,
-   "h": 332
+   "w": 369,
+   "h": 354,
+   "outline": 8
   },
   "mojo-top/chopper": {
    "file": "assets/db/lib/mojo-top/chopper.webp",
@@ -22666,8 +22830,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 354,
-   "h": 351
+   "w": 376,
+   "h": 373,
+   "outline": 8
   },
   "mojo-top/crane": {
    "file": "assets/db/lib/mojo-top/crane.webp",
@@ -22678,8 +22843,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 301,
-   "h": 357
+   "w": 323,
+   "h": 379,
+   "outline": 8
   },
   "mojo-top/delivery": {
    "file": "assets/db/lib/mojo-top/delivery.webp",
@@ -22690,8 +22856,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 343,
-   "h": 304
+   "w": 365,
+   "h": 326,
+   "outline": 8
   },
   "mojo-top/dozer": {
    "file": "assets/db/lib/mojo-top/dozer.webp",
@@ -22702,8 +22869,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 361,
-   "h": 331
+   "w": 383,
+   "h": 353,
+   "outline": 8
   },
   "mojo-top/drill": {
    "file": "assets/db/lib/mojo-top/drill.webp",
@@ -22714,8 +22882,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 322,
-   "h": 331
+   "w": 344,
+   "h": 353,
+   "outline": 8
   },
   "mojo-top/drilling": {
    "file": "assets/db/lib/mojo-top/drilling.webp",
@@ -22726,8 +22895,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 307,
-   "h": 311
+   "w": 329,
+   "h": 333,
+   "outline": 8
   },
   "mojo-top/dumper": {
    "file": "assets/db/lib/mojo-top/dumper.webp",
@@ -22738,8 +22908,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 360,
-   "h": 340
+   "w": 382,
+   "h": 362,
+   "outline": 8
   },
   "mojo-top/farm": {
    "file": "assets/db/lib/mojo-top/farm.webp",
@@ -22750,8 +22921,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 358,
-   "h": 285
+   "w": 380,
+   "h": 307,
+   "outline": 8
   },
   "mojo-top/fire": {
    "file": "assets/db/lib/mojo-top/fire.webp",
@@ -22762,8 +22934,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 310,
-   "h": 334
+   "w": 332,
+   "h": 356,
+   "outline": 8
   },
   "mojo-top/forklift": {
    "file": "assets/db/lib/mojo-top/forklift.webp",
@@ -22774,8 +22947,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 367,
-   "h": 312
+   "w": 389,
+   "h": 334,
+   "outline": 8
   },
   "mojo-top/fuel": {
    "file": "assets/db/lib/mojo-top/fuel.webp",
@@ -22786,8 +22960,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 358,
-   "h": 320
+   "w": 380,
+   "h": 342,
+   "outline": 8
   },
   "mojo-top/garbage": {
    "file": "assets/db/lib/mojo-top/garbage.webp",
@@ -22798,8 +22973,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 363,
-   "h": 323
+   "w": 385,
+   "h": 345,
+   "outline": 8
   },
   "mojo-top/harvester": {
    "file": "assets/db/lib/mojo-top/harvester.webp",
@@ -22810,8 +22986,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 345,
-   "h": 312
+   "w": 367,
+   "h": 334,
+   "outline": 8
   },
   "mojo-top/ice-cream": {
    "file": "assets/db/lib/mojo-top/ice-cream.webp",
@@ -22823,8 +23000,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 347,
-   "h": 323
+   "w": 369,
+   "h": 345,
+   "outline": 8
   },
   "mojo-top/jet": {
    "file": "assets/db/lib/mojo-top/jet.webp",
@@ -22835,8 +23013,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 354,
-   "h": 331
+   "w": 376,
+   "h": 353,
+   "outline": 8
   },
   "mojo-top/jumper": {
    "file": "assets/db/lib/mojo-top/jumper.webp",
@@ -22847,8 +23026,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 359,
-   "h": 334
+   "w": 381,
+   "h": 356,
+   "outline": 8
   },
   "mojo-top/lift": {
    "file": "assets/db/lib/mojo-top/lift.webp",
@@ -22859,8 +23039,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 308,
-   "h": 350
+   "w": 330,
+   "h": 372,
+   "outline": 8
   },
   "mojo-top/logging": {
    "file": "assets/db/lib/mojo-top/logging.webp",
@@ -22871,8 +23052,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 341,
-   "h": 314
+   "w": 363,
+   "h": 336,
+   "outline": 8
   },
   "mojo-top/mixer": {
    "file": "assets/db/lib/mojo-top/mixer.webp",
@@ -22883,8 +23065,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 332,
-   "h": 307
+   "w": 354,
+   "h": 329,
+   "outline": 8
   },
   "mojo-top/monster": {
    "file": "assets/db/lib/mojo-top/monster.webp",
@@ -22895,8 +23078,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 357,
-   "h": 346
+   "w": 379,
+   "h": 368,
+   "outline": 8
   },
   "mojo-top/police": {
    "file": "assets/db/lib/mojo-top/police.webp",
@@ -22907,8 +23091,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 323,
-   "h": 309
+   "w": 345,
+   "h": 331,
+   "outline": 8
   },
   "mojo-top/racer": {
    "file": "assets/db/lib/mojo-top/racer.webp",
@@ -22919,8 +23104,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 336,
-   "h": 315
+   "w": 358,
+   "h": 337,
+   "outline": 8
   },
   "mojo-top/recycling": {
    "file": "assets/db/lib/mojo-top/recycling.webp",
@@ -22931,8 +23117,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 323,
-   "h": 317
+   "w": 345,
+   "h": 339,
+   "outline": 8
   },
   "mojo-top/rescue": {
    "file": "assets/db/lib/mojo-top/rescue.webp",
@@ -22943,8 +23130,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 344,
-   "h": 333
+   "w": 366,
+   "h": 355,
+   "outline": 8
   },
   "mojo-top/rocket": {
    "file": "assets/db/lib/mojo-top/rocket.webp",
@@ -22955,8 +23143,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 335,
-   "h": 333
+   "w": 357,
+   "h": 355,
+   "outline": 8
   },
   "mojo-top/satellite": {
    "file": "assets/db/lib/mojo-top/satellite.webp",
@@ -22967,8 +23156,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 304,
-   "h": 353
+   "w": 326,
+   "h": 375,
+   "outline": 8
   },
   "mojo-top/searchlight": {
    "file": "assets/db/lib/mojo-top/searchlight.webp",
@@ -22979,8 +23169,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 325,
-   "h": 352
+   "w": 347,
+   "h": 374,
+   "outline": 8
   },
   "mojo-top/snow-plow": {
    "file": "assets/db/lib/mojo-top/snow-plow.webp",
@@ -22992,8 +23183,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 333,
-   "h": 329
+   "w": 355,
+   "h": 351,
+   "outline": 8
   },
   "mojo-top/space-lab": {
    "file": "assets/db/lib/mojo-top/space-lab.webp",
@@ -23005,8 +23197,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 321,
-   "h": 331
+   "w": 343,
+   "h": 353,
+   "outline": 8
   },
   "mojo-top/submarine": {
    "file": "assets/db/lib/mojo-top/submarine.webp",
@@ -23017,8 +23210,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 330,
-   "h": 344
+   "w": 352,
+   "h": 366,
+   "outline": 8
   },
   "mojo-top/sweeper": {
    "file": "assets/db/lib/mojo-top/sweeper.webp",
@@ -23029,8 +23223,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 369,
-   "h": 309
+   "w": 391,
+   "h": 331,
+   "outline": 8
   },
   "mojo-top/towing": {
    "file": "assets/db/lib/mojo-top/towing.webp",
@@ -23041,8 +23236,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 345,
-   "h": 320
+   "w": 367,
+   "h": 342,
+   "outline": 8
   },
   "mojo-top/tree-cutter": {
    "file": "assets/db/lib/mojo-top/tree-cutter.webp",
@@ -23054,8 +23250,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 305,
-   "h": 316
+   "w": 327,
+   "h": 338,
+   "outline": 8
   },
   "mojo-top/water": {
    "file": "assets/db/lib/mojo-top/water.webp",
@@ -23066,8 +23263,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 324,
-   "h": 329
+   "w": 346,
+   "h": 351,
+   "outline": 8
   },
   "mojo-top/workshop": {
    "file": "assets/db/lib/mojo-top/workshop.webp",
@@ -23078,8 +23276,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 344,
-   "h": 338
+   "w": 366,
+   "h": 360,
+   "outline": 8
   },
   "mojo-top/wrecking-ball": {
    "file": "assets/db/lib/mojo-top/wrecking-ball.webp",
@@ -23091,8 +23290,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 355,
-   "h": 355
+   "w": 377,
+   "h": 377,
+   "outline": 8
   },
   "mojo-ui/arrow-down": {
    "file": "assets/db/lib/mojo-ui/arrow-down.webp",

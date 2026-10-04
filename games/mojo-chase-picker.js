@@ -107,7 +107,7 @@
   /* rear preview: the in-race sprite with its own anchors (tail lights, exhaust) */
   function rearInfo (id) {
     var RA = W.MojoRearAnchors, key = (RA && RA.forms[id]) || 'base'
-    var a = RA && RA.sprites[key], sz = (RA && RA.size) || { w: 281, h: 241 }
+    var a = RA && RA.sprites[key], sz = (RA && RA.size) || { w: 297, h: 254 }
     return { key: key, src: lib('mojo-rear/' + key), a: a, w: sz.w, h: sz.h }
   }
   function pct (v, of) { return (100 * v / of).toFixed(2) + '%' }

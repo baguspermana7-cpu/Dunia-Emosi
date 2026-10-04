@@ -24,6 +24,10 @@ be referenced by the game (qa-mojo-chase checks the denylist):
   door), FAKE (a fake ambulance, confusing); striped R5C3 (spiked); both spike strips (dropped: sharp-looking);
   the portal (not used); OUTLAW (its WANTED poster face has hollow dark eyes that read as a skull at
   small size). PRISON (police-van look, light bar, no robber) is kept as the POLICE van.
+OUTLINE (owner 2026-10-03, "give it a white outline line to disguise it"): robbers, vehicles and the PICKUPS in
+items/ get a white sticker ring (tools/mojo_outline.py, OUTLINE_T px per family) before the family canvas is laid
+out, so baselines/centres are measured on the outlined art. Obstacles, road pieces and roadside props are world
+objects and are never outlined.
 Duplicates between sheet A and sheet B keep the sharper copy (variance of the Laplacian over the art), except
 the 2-tyre and 3-tyre stacks which differ and are both kept.
 """
@@ -72,6 +76,10 @@ SHEETS = {
 # never cut, never referenced (qa-mojo-chase scans the game files for these names)
 DENYLIST = ['robber-mohawk', 'pirate', 'raider', 'fire-truck-skull', 'fake', 'striped-23', 'spikes', 'spike-strip', 'portal', 'outlaw']
 KEEP_BOTH = {'tyres-2', 'tyres-3'}
+# white ring px per family = 2.5% of the family's median shorter side (mojo_outline.thickness): robbers 190 px,
+# vehicles 197 px, pickups 160-197 px. Only these items are outlined (the collectibles, not obstacles/road).
+OUTLINE_T = {'robbers': 5, 'vehicles': 5, 'items': 4}
+PICKUPS = {'star', 'coin', 'heart', 'magnet', 'rocket', 'shield', 'stopwatch', 'mystery'}
 
 # Audited enclosed page-colour components, "sheet:name" -> "x,y ..." in cell-crop px (--audit, 2x-3x zoom).
 # Floor under a vehicle/robber (the hole whose lowest row reaches the art's bottom 6% and whose centre is in the
@@ -105,7 +113,7 @@ def _load(name, file):
 
 
 rear = _load('mojo_rear_for_chase', 'ingest-mojo-rear.py')
-clean, hero, ingest = rear.clean, rear.hero, rear.ingest
+clean, hero, ingest, outline = rear.clean, rear.hero, rear.ingest, rear.outline
 _pts, page, holes = clean._pts, hero.page, hero.holes
 
 
@@ -181,6 +189,13 @@ def measure(rgba):
     bc = np.nonzero(band.any(0))[0]
     return {'top': top, 'base': base, 'left': int(cols[0]), 'right': int(cols[-1]),
             'cx': (bc[0] + bc[-1]) / 2.0, 'bw': int(bc[-1] - bc[0] + 1), 'w': int(cols[-1] - cols[0] + 1), 'h': h}
+
+
+def outline_t(fam, name):
+    """Ring thickness for one chase sprite, or None when it is a world object that is never outlined."""
+    if fam not in OUTLINE_T or (fam == 'items' and name not in PICKUPS):
+        return None
+    return OUTLINE_T[fam]
 
 
 def family_canvas(items):
@@ -308,7 +323,11 @@ def main():
     fams, exports, entries = {}, {}, {}
     for fam in ('items', 'props', 'robbers', 'vehicles'):
         names = sorted(n for n, b in built.items() if b['fam'] == fam)
-        imgs, anchors, size = family_canvas([(n, built[n]['im']) for n in names])
+        ringed = []
+        for n in names:
+            t = outline_t(fam, n)
+            ringed.append((n, built[n]['im'] if t is None else outline.outline(built[n]['im'], t)[0]))
+        imgs, anchors, size = family_canvas(ringed)
         fams[fam] = {'size': {'w': size[0], 'h': size[1]}, 'sprites': anchors}
         for n in names:
             key = f'mojo-chase/{fam}/{n}'
@@ -316,6 +335,8 @@ def main():
             anchors[n]['sheet'] = built[n]['sheet']
             entries[key] = {'file': f'assets/db/lib/{key}.webp', 'cat': 'mojo-chase', 'tags': n.split('-') + ['mojo', 'chase', fam, 'cartoon'],
                             'source': SRCTAG, 'w': size[0], 'h': size[1], 'baseline': anchors[n]['base'], 'cx': anchors[n]['cx'], 'bw': anchors[n]['bw']}
+            if outline_t(fam, n):
+                entries[key]['outline'] = outline_t(fam, n)
         if args.sheets:
             out = Path(args.sheets)
             out.mkdir(parents=True, exist_ok=True)

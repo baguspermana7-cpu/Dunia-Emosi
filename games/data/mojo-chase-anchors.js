@@ -17,209 +17,209 @@
  "families": {
   "items": {
    "size": {
-    "h": 227,
-    "w": 321
+    "h": 238,
+    "w": 334
    },
    "sprites": {
     "banana": {
-     "base": 220,
+     "base": 231,
      "bw": 68,
-     "cx": 160.5,
-     "left": 90,
+     "cx": 167.5,
+     "left": 97,
      "lights": [],
-     "right": 299,
+     "right": 306,
      "sheet": "B",
-     "top": 67
+     "top": 78
     },
     "barrel": {
-     "base": 220,
+     "base": 231,
      "bw": 138,
-     "cx": 160.5,
-     "left": 92,
+     "cx": 166.5,
+     "left": 98,
      "lights": [],
-     "right": 229,
+     "right": 235,
      "sheet": "B",
-     "top": 25
+     "top": 36
     },
     "barrier": {
-     "base": 220,
+     "base": 231,
      "bw": 194,
-     "cx": 160.5,
-     "left": 63,
+     "cx": 167.5,
+     "left": 70,
      "lights": [],
-     "right": 262,
+     "right": 269,
      "sheet": "A",
-     "top": 33
+     "top": 44
     },
     "boost-pad": {
-     "base": 220,
+     "base": 231,
      "bw": 226,
-     "cx": 160.5,
-     "left": 48,
+     "cx": 167.5,
+     "left": 55,
      "lights": [],
-     "right": 273,
+     "right": 280,
      "sheet": "B",
-     "top": 57
+     "top": 68
     },
     "bridge": {
-     "base": 220,
+     "base": 231,
      "bw": 146,
-     "cx": 160.5,
-     "left": 60,
+     "cx": 167.5,
+     "left": 67,
      "lights": [],
-     "right": 302,
+     "right": 309,
      "sheet": "A",
-     "top": 43
+     "top": 54
     },
     "coin": {
-     "base": 220,
-     "bw": 110,
-     "cx": 160.5,
-     "left": 73,
-     "lights": [],
-     "right": 249,
-     "sheet": "B",
-     "top": 37
-    },
-    "cone": {
-     "base": 220,
-     "bw": 150,
-     "cx": 160.5,
-     "left": 74,
-     "lights": [],
-     "right": 259,
-     "sheet": "B",
-     "top": 29
-    },
-    "crate": {
-     "base": 220,
-     "bw": 174,
-     "cx": 160.5,
-     "left": 74,
-     "lights": [],
-     "right": 265,
-     "sheet": "B",
-     "top": 26
-    },
-    "heart": {
-     "base": 220,
-     "bw": 45,
-     "cx": 160.0,
-     "left": 76,
-     "lights": [],
-     "right": 244,
-     "sheet": "A",
-     "top": 63
-    },
-    "magnet": {
-     "base": 220,
-     "bw": 106,
-     "cx": 160.5,
-     "left": 88,
+     "base": 231,
+     "bw": 117,
+     "cx": 167.0,
+     "left": 75,
      "lights": [],
      "right": 260,
      "sheet": "B",
-     "top": 18
+     "top": 40
+    },
+    "cone": {
+     "base": 231,
+     "bw": 150,
+     "cx": 167.5,
+     "left": 81,
+     "lights": [],
+     "right": 266,
+     "sheet": "B",
+     "top": 40
+    },
+    "crate": {
+     "base": 231,
+     "bw": 174,
+     "cx": 167.5,
+     "left": 81,
+     "lights": [],
+     "right": 272,
+     "sheet": "B",
+     "top": 37
+    },
+    "heart": {
+     "base": 231,
+     "bw": 55,
+     "cx": 167.0,
+     "left": 77,
+     "lights": [],
+     "right": 256,
+     "sheet": "A",
+     "top": 65
+    },
+    "magnet": {
+     "base": 231,
+     "bw": 112,
+     "cx": 166.5,
+     "left": 89,
+     "lights": [],
+     "right": 270,
+     "sheet": "B",
+     "top": 21
     },
     "mystery": {
-     "base": 220,
-     "bw": 180,
-     "cx": 160.5,
+     "base": 231,
+     "bw": 185,
+     "cx": 167.0,
+     "left": 71,
+     "lights": [],
+     "right": 287,
+     "sheet": "A",
+     "top": 27
+    },
+    "oil": {
+     "base": 231,
+     "bw": 90,
+     "cx": 167.5,
+     "left": 33,
+     "lights": [],
+     "right": 250,
+     "sheet": "B",
+     "top": 113
+    },
+    "pothole": {
+     "base": 231,
+     "bw": 144,
+     "cx": 166.5,
+     "left": 77,
+     "lights": [],
+     "right": 306,
+     "sheet": "A",
+     "top": 78
+    },
+    "ramp": {
+     "base": 231,
+     "bw": 210,
+     "cx": 167.5,
+     "left": 63,
+     "lights": [],
+     "right": 278,
+     "sheet": "B",
+     "top": 66
+    },
+    "rocket": {
+     "base": 231,
+     "bw": 155,
+     "cx": 167.0,
+     "left": 89,
+     "lights": [],
+     "right": 299,
+     "sheet": "A",
+     "top": 38
+    },
+    "shield": {
+     "base": 231,
+     "bw": 92,
+     "cx": 167.5,
+     "left": 79,
+     "lights": [],
+     "right": 265,
+     "sheet": "A",
+     "top": 25
+    },
+    "star": {
+     "base": 231,
+     "bw": 144,
+     "cx": 166.5,
      "left": 70,
      "lights": [],
-     "right": 277,
+     "right": 264,
+     "sheet": "B",
+     "top": 38
+    },
+    "stopwatch": {
+     "base": 231,
+     "bw": 110,
+     "cx": 166.5,
+     "left": 85,
+     "lights": [],
+     "right": 251,
      "sheet": "A",
      "top": 24
     },
-    "oil": {
-     "base": 220,
-     "bw": 90,
-     "cx": 160.5,
-     "left": 26,
-     "lights": [],
-     "right": 243,
-     "sheet": "B",
-     "top": 102
-    },
-    "pothole": {
-     "base": 220,
-     "bw": 144,
-     "cx": 160.5,
-     "left": 71,
-     "lights": [],
-     "right": 300,
-     "sheet": "A",
-     "top": 67
-    },
-    "ramp": {
-     "base": 220,
-     "bw": 210,
-     "cx": 160.5,
-     "left": 56,
-     "lights": [],
-     "right": 271,
-     "sheet": "B",
-     "top": 55
-    },
-    "rocket": {
-     "base": 220,
-     "bw": 149,
-     "cx": 160.0,
-     "left": 86,
-     "lights": [],
-     "right": 286,
-     "sheet": "A",
-     "top": 36
-    },
-    "shield": {
-     "base": 220,
-     "bw": 86,
-     "cx": 160.5,
-     "left": 75,
-     "lights": [],
-     "right": 253,
-     "sheet": "A",
-     "top": 23
-    },
-    "star": {
-     "base": 220,
-     "bw": 135,
-     "cx": 161.0,
-     "left": 69,
-     "lights": [],
-     "right": 254,
-     "sheet": "B",
-     "top": 36
-    },
-    "stopwatch": {
-     "base": 220,
-     "bw": 106,
-     "cx": 160.5,
-     "left": 84,
-     "lights": [],
-     "right": 240,
-     "sheet": "A",
-     "top": 22
-    },
     "tyres-2": {
-     "base": 220,
+     "base": 231,
      "bw": 172,
-     "cx": 160.5,
-     "left": 75,
+     "cx": 166.5,
+     "left": 81,
      "lights": [],
-     "right": 264,
+     "right": 270,
      "sheet": "A",
-     "top": 36
+     "top": 47
     },
     "tyres-3": {
-     "base": 220,
+     "base": 231,
      "bw": 179,
-     "cx": 160.0,
-     "left": 70,
+     "cx": 167.0,
+     "left": 77,
      "lights": [],
-     "right": 249,
+     "right": 256,
      "sheet": "B",
-     "top": 19
+     "top": 30
     }
    }
   },
@@ -283,794 +283,803 @@
   },
   "robbers": {
    "size": {
-    "h": 265,
-    "w": 283
+    "h": 278,
+    "w": 298
    },
    "sprites": {
     "robber-beanie": {
-     "base": 258,
-     "bw": 40,
-     "cx": 141.5,
-     "left": 29,
+     "base": 271,
+     "bw": 51,
+     "cx": 149.0,
+     "left": 31,
      "lights": [],
-     "right": 213,
+     "right": 227,
      "sheet": "B",
-     "top": 25
+     "top": 28
     },
     "robber-cap": {
-     "base": 258,
-     "bw": 39,
-     "cx": 141.0,
-     "left": 21,
+     "base": 271,
+     "bw": 49,
+     "cx": 149.0,
+     "left": 23,
      "lights": [],
-     "right": 220,
+     "right": 234,
      "sheet": "B",
-     "top": 27
+     "top": 30
     },
     "robber-cowboy": {
-     "base": 258,
-     "bw": 59,
-     "cx": 142.0,
+     "base": 271,
+     "bw": 70,
+     "cx": 148.5,
      "left": 33,
      "lights": [],
-     "right": 228,
+     "right": 240,
      "sheet": "B",
-     "top": 19
+     "top": 21
     },
     "robber-helmet": {
-     "base": 258,
-     "bw": 59,
-     "cx": 141.0,
-     "left": 55,
+     "base": 271,
+     "bw": 69,
+     "cx": 149.0,
+     "left": 57,
      "lights": [],
-     "right": 237,
+     "right": 250,
      "sheet": "B",
-     "top": 22
+     "top": 24
     }
    }
   },
   "vehicles": {
    "size": {
-    "h": 246,
-    "w": 273
+    "h": 259,
+    "w": 288
    },
    "sprites": {
     "army": {
-     "base": 239,
-     "bw": 214,
-     "cx": 136.5,
+     "base": 252,
+     "bw": 226,
+     "cx": 143.5,
      "left": 29,
      "lights": [
       [
-       68.5,
-       157.8
+       75.5,
+       165.8
       ],
       [
-       204.6,
-       157.6
+       211.6,
+       165.6
       ]
      ],
-     "right": 244,
+     "right": 257,
      "sheet": "V",
-     "top": 21
+     "top": 23
     },
     "bad1": {
-     "base": 239,
-     "bw": 191,
-     "cx": 137.0,
-     "left": 42,
+     "base": 252,
+     "bw": 202,
+     "cx": 144.5,
+     "left": 44,
      "lights": [
       [
-       68.3,
-       170.3
+       76.3,
+       178.3
       ],
       [
-       207.0,
-       170.4
+       215.0,
+       178.4
       ]
      ],
-     "right": 232,
+     "right": 245,
      "sheet": "V",
-     "top": 36
+     "top": 38
     },
     "big": {
-     "base": 239,
-     "bw": 218,
-     "cx": 136.5,
-     "left": 24,
+     "base": 252,
+     "bw": 229,
+     "cx": 144.0,
+     "left": 27,
      "lights": [
       [
-       59.7,
-       122.5
+       67.7,
+       130.5
       ],
       [
-       212.9,
-       122.3
+       220.9,
+       130.3
       ]
      ],
-     "right": 247,
+     "right": 260,
      "sheet": "V",
-     "top": 33
+     "top": 35
     },
     "cash": {
-     "base": 239,
-     "bw": 213,
-     "cx": 136.0,
-     "left": 30,
+     "base": 252,
+     "bw": 223,
+     "cx": 144.0,
+     "left": 32,
      "lights": [
       [
-       60.4,
-       134.5
+       68.4,
+       142.5
       ],
       [
-       212.9,
-       134.5
+       220.9,
+       142.5
       ]
      ],
-     "right": 243,
+     "right": 257,
      "sheet": "V",
-     "top": 35
+     "top": 38
     },
     "chaos": {
-     "base": 239,
-     "bw": 204,
-     "cx": 136.5,
-     "left": 35,
-     "lights": [
-      [
-       67.0,
-       162.4
-      ],
-      [
-       205.4,
-       161.9
-      ]
-     ],
-     "right": 238,
-     "sheet": "V",
-     "top": 34
-    },
-    "fuel": {
-     "base": 239,
-     "bw": 201,
-     "cx": 136.0,
-     "left": 35,
-     "lights": [
-      [
-       52.1,
-       145.0
-      ],
-      [
-       220.1,
-       143.0
-      ]
-     ],
-     "right": 237,
-     "sheet": "V",
-     "top": 29
-    },
-    "joke": {
-     "base": 239,
-     "bw": 205,
-     "cx": 136.0,
-     "left": 33,
-     "lights": [
-      [
-       69.5,
-       161.7
-      ],
-      [
-       202.6,
-       161.6
-      ]
-     ],
-     "right": 239,
-     "sheet": "V",
-     "top": 37
-    },
-    "junk": {
-     "base": 239,
-     "bw": 214,
-     "cx": 136.5,
-     "left": 30,
-     "lights": [
-      [
-       61.8,
-       198.9
-      ],
-      [
-       211.9,
-       199.2
-      ]
-     ],
-     "right": 244,
-     "sheet": "V",
-     "top": 40
-    },
-    "logs": {
-     "base": 239,
-     "bw": 199,
-     "cx": 137.0,
+     "base": 252,
+     "bw": 215,
+     "cx": 144.0,
      "left": 37,
      "lights": [
       [
-       63.7,
-       179.5
+       75.0,
+       170.4
       ],
       [
-       209.4,
-       179.3
-      ]
-     ],
-     "right": 237,
-     "sheet": "V",
-     "top": 37
-    },
-    "loot": {
-     "base": 239,
-     "bw": 204,
-     "cx": 136.5,
-     "left": 34,
-     "lights": [
-      [
-       58.0,
-       164.0
-      ],
-      [
-       215.9,
-       163.8
-      ]
-     ],
-     "right": 239,
-     "sheet": "V",
-     "top": 39
-    },
-    "police-van": {
-     "base": 239,
-     "bw": 201,
-     "cx": 136.0,
-     "left": 36,
-     "lights": [
-      [
-       70.8,
-       179.3
-      ],
-      [
-       201.3,
-       179.2
-      ]
-     ],
-     "right": 236,
-     "sheet": "V",
-     "top": 52
-    },
-    "rich": {
-     "base": 239,
-     "bw": 207,
-     "cx": 136.0,
-     "left": 32,
-     "lights": [
-      [
-       59.4,
-       165.6
-      ],
-      [
-       213.5,
-       165.4
-      ]
-     ],
-     "right": 240,
-     "sheet": "V",
-     "top": 50
-    },
-    "speed": {
-     "base": 239,
-     "bw": 216,
-     "cx": 136.5,
-     "left": 28,
-     "lights": [
-      [
-       63.9,
-       146.0
-      ],
-      [
-       203.5,
-       146.1
-      ]
-     ],
-     "right": 244,
-     "sheet": "V",
-     "top": 35
-    },
-    "steal": {
-     "base": 239,
-     "bw": 206,
-     "cx": 136.5,
-     "left": 33,
-     "lights": [
-      [
-       82.2,
-       152.0
-      ],
-      [
-       190.9,
-       152.1
-      ]
-     ],
-     "right": 240,
-     "sheet": "V",
-     "top": 48
-    },
-    "striped-01": {
-     "base": 239,
-     "bw": 199,
-     "cx": 136.0,
-     "left": 37,
-     "lights": [
-      [
-       66.1,
-       168.4
-      ],
-      [
-       206.6,
-       171.0
-      ]
-     ],
-     "right": 236,
-     "sheet": "S",
-     "top": 42
-    },
-    "striped-02": {
-     "base": 239,
-     "bw": 216,
-     "cx": 136.5,
-     "left": 28,
-     "lights": [],
-     "right": 245,
-     "sheet": "S",
-     "top": 44
-    },
-    "striped-03": {
-     "base": 239,
-     "bw": 210,
-     "cx": 136.5,
-     "left": 32,
-     "lights": [
-      [
-       55.5,
-       168.9
-      ],
-      [
-       217.6,
-       169.1
-      ]
-     ],
-     "right": 241,
-     "sheet": "S",
-     "top": 32
-    },
-    "striped-04": {
-     "base": 239,
-     "bw": 216,
-     "cx": 136.5,
-     "left": 28,
-     "lights": [
-      [
-       77.0,
-       147.0
-      ],
-      [
-       195.1,
-       146.9
-      ]
-     ],
-     "right": 245,
-     "sheet": "S",
-     "top": 50
-    },
-    "striped-05": {
-     "base": 239,
-     "bw": 222,
-     "cx": 136.5,
-     "left": 26,
-     "lights": [
-      [
-       58.6,
-       143.0
-      ],
-      [
-       215.8,
-       142.7
-      ]
-     ],
-     "right": 248,
-     "sheet": "S",
-     "top": 24
-    },
-    "striped-06": {
-     "base": 239,
-     "bw": 178,
-     "cx": 136.5,
-     "left": 44,
-     "lights": [],
-     "right": 232,
-     "sheet": "S",
-     "top": 27
-    },
-    "striped-07": {
-     "base": 239,
-     "bw": 206,
-     "cx": 136.5,
-     "left": 31,
-     "lights": [],
-     "right": 240,
-     "sheet": "S",
-     "top": 33
-    },
-    "striped-08": {
-     "base": 239,
-     "bw": 217,
-     "cx": 137.0,
-     "left": 28,
-     "lights": [
-      [
-       66.5,
-       172.9
-      ],
-      [
-       208.2,
-       173.3
-      ]
-     ],
-     "right": 246,
-     "sheet": "S",
-     "top": 46
-    },
-    "striped-09": {
-     "base": 239,
-     "bw": 213,
-     "cx": 136.0,
-     "left": 29,
-     "lights": [],
-     "right": 244,
-     "sheet": "S",
-     "top": 43
-    },
-    "striped-10": {
-     "base": 239,
-     "bw": 229,
-     "cx": 137.0,
-     "left": 22,
-     "lights": [
-      [
-       64.8,
-       128.1
-      ],
-      [
-       209.1,
-       128.0
+       213.4,
+       169.9
       ]
      ],
      "right": 252,
-     "sheet": "S",
+     "sheet": "V",
+     "top": 36
+    },
+    "fuel": {
+     "base": 252,
+     "bw": 213,
+     "cx": 144.0,
+     "left": 38,
+     "lights": [
+      [
+       60.1,
+       153.0
+      ],
+      [
+       228.2,
+       151.0
+      ]
+     ],
+     "right": 251,
+     "sheet": "V",
      "top": 31
     },
-    "striped-11": {
-     "base": 239,
+    "joke": {
+     "base": 252,
      "bw": 217,
-     "cx": 136.0,
-     "left": 27,
+     "cx": 144.0,
+     "left": 35,
      "lights": [
       [
-       83.0,
-       152.6
+       77.5,
+       169.7
       ],
       [
-       188.7,
-       152.6
+       210.6,
+       169.6
       ]
      ],
-     "right": 245,
-     "sheet": "S",
-     "top": 51
+     "right": 253,
+     "sheet": "V",
+     "top": 40
     },
-    "striped-12": {
-     "base": 239,
-     "bw": 213,
-     "cx": 136.0,
-     "left": 30,
+    "junk": {
+     "base": 252,
+     "bw": 224,
+     "cx": 143.5,
+     "left": 31,
      "lights": [
       [
-       62.7,
-       141.0
+       68.8,
+       206.9
       ],
       [
-       209.2,
-       141.2
+       218.9,
+       207.2
       ]
      ],
-     "right": 243,
-     "sheet": "S",
-     "top": 35
+     "right": 257,
+     "sheet": "V",
+     "top": 42
     },
-    "striped-13": {
-     "base": 239,
-     "bw": 190,
-     "cx": 136.5,
-     "left": 40,
-     "lights": [],
-     "right": 233,
-     "sheet": "S",
-     "top": 35
-    },
-    "striped-14": {
-     "base": 239,
-     "bw": 218,
-     "cx": 136.5,
-     "left": 27,
+    "logs": {
+     "base": 252,
+     "bw": 211,
+     "cx": 144.0,
+     "left": 37,
      "lights": [
       [
-       50.0,
-       180.3
+       70.7,
+       187.5
+      ],
+      [
+       216.4,
+       187.3
+      ]
+     ],
+     "right": 249,
+     "sheet": "V",
+     "top": 40
+    },
+    "loot": {
+     "base": 252,
+     "bw": 215,
+     "cx": 144.0,
+     "left": 36,
+     "lights": [
+      [
+       65.0,
+       172.0
       ],
       [
        222.9,
-       180.9
+       171.8
       ]
      ],
-     "right": 246,
-     "sheet": "S",
-     "top": 53
+     "right": 251,
+     "sheet": "V",
+     "top": 41
     },
-    "striped-15": {
-     "base": 239,
-     "bw": 220,
-     "cx": 136.5,
-     "left": 26,
-     "lights": [],
-     "right": 247,
-     "sheet": "S",
-     "top": 49
-    },
-    "striped-16": {
-     "base": 239,
-     "bw": 195,
-     "cx": 137.0,
-     "left": 37,
-     "lights": [],
-     "right": 236,
-     "sheet": "S",
-     "top": 48
-    },
-    "striped-17": {
-     "base": 239,
-     "bw": 222,
-     "cx": 136.5,
-     "left": 25,
+    "police-van": {
+     "base": 252,
+     "bw": 211,
+     "cx": 144.0,
+     "left": 38,
      "lights": [
       [
-       81.8,
-       168.2
+       78.8,
+       187.3
       ],
       [
-       191.6,
-       168.1
+       209.3,
+       187.2
+      ]
+     ],
+     "right": 250,
+     "sheet": "V",
+     "top": 54
+    },
+    "rich": {
+     "base": 252,
+     "bw": 218,
+     "cx": 144.5,
+     "left": 34,
+     "lights": [
+      [
+       67.4,
+       173.6
+      ],
+      [
+       221.5,
+       173.4
+      ]
+     ],
+     "right": 254,
+     "sheet": "V",
+     "top": 52
+    },
+    "speed": {
+     "base": 252,
+     "bw": 227,
+     "cx": 144.0,
+     "left": 30,
+     "lights": [
+      [
+       71.9,
+       154.0
+      ],
+      [
+       211.5,
+       154.1
+      ]
+     ],
+     "right": 258,
+     "sheet": "V",
+     "top": 37
+    },
+    "steal": {
+     "base": 252,
+     "bw": 217,
+     "cx": 144.0,
+     "left": 35,
+     "lights": [
+      [
+       89.2,
+       160.0
+      ],
+      [
+       197.9,
+       160.1
+      ]
+     ],
+     "right": 253,
+     "sheet": "V",
+     "top": 51
+    },
+    "striped-01": {
+     "base": 252,
+     "bw": 210,
+     "cx": 144.5,
+     "left": 39,
+     "lights": [
+      [
+       74.1,
+       176.4
+      ],
+      [
+       214.6,
+       179.0
       ]
      ],
      "right": 249,
      "sheet": "S",
+     "top": 44
+    },
+    "striped-02": {
+     "base": 252,
+     "bw": 228,
+     "cx": 144.5,
+     "left": 30,
+     "lights": [],
+     "right": 259,
+     "sheet": "S",
      "top": 46
     },
-    "striped-18": {
-     "base": 239,
-     "bw": 218,
-     "cx": 136.5,
+    "striped-03": {
+     "base": 252,
+     "bw": 222,
+     "cx": 144.5,
+     "left": 34,
+     "lights": [
+      [
+       63.5,
+       176.9
+      ],
+      [
+       225.6,
+       177.1
+      ]
+     ],
+     "right": 255,
+     "sheet": "S",
+     "top": 34
+    },
+    "striped-04": {
+     "base": 252,
+     "bw": 227,
+     "cx": 144.0,
+     "left": 30,
+     "lights": [
+      [
+       85.0,
+       155.0
+      ],
+      [
+       203.1,
+       154.9
+      ]
+     ],
+     "right": 259,
+     "sheet": "S",
+     "top": 52
+    },
+    "striped-05": {
+     "base": 252,
+     "bw": 233,
+     "cx": 144.0,
      "left": 27,
      "lights": [
       [
-       56.4,
-       163.5
+       65.6,
+       151.0
       ],
       [
-       216.3,
-       163.4
+       222.8,
+       150.7
       ]
      ],
-     "right": 246,
+     "right": 261,
+     "sheet": "S",
+     "top": 26
+    },
+    "striped-06": {
+     "base": 252,
+     "bw": 190,
+     "cx": 144.5,
+     "left": 45,
+     "lights": [],
+     "right": 245,
+     "sheet": "S",
+     "top": 28
+    },
+    "striped-07": {
+     "base": 252,
+     "bw": 218,
+     "cx": 143.5,
+     "left": 33,
+     "lights": [],
+     "right": 253,
+     "sheet": "S",
+     "top": 35
+    },
+    "striped-08": {
+     "base": 252,
+     "bw": 229,
+     "cx": 144.0,
+     "left": 29,
+     "lights": [
+      [
+       73.5,
+       180.9
+      ],
+      [
+       215.2,
+       181.3
+      ]
+     ],
+     "right": 259,
+     "sheet": "S",
+     "top": 48
+    },
+    "striped-09": {
+     "base": 252,
+     "bw": 223,
+     "cx": 144.0,
+     "left": 32,
+     "lights": [],
+     "right": 257,
+     "sheet": "S",
+     "top": 45
+    },
+    "striped-10": {
+     "base": 252,
+     "bw": 239,
+     "cx": 144.0,
+     "left": 23,
+     "lights": [
+      [
+       71.8,
+       136.1
+      ],
+      [
+       216.1,
+       136.0
+      ]
+     ],
+     "right": 265,
+     "sheet": "S",
+     "top": 34
+    },
+    "striped-11": {
+     "base": 252,
+     "bw": 228,
+     "cx": 143.5,
+     "left": 29,
+     "lights": [
+      [
+       91.0,
+       160.6
+      ],
+      [
+       196.7,
+       160.6
+      ]
+     ],
+     "right": 258,
+     "sheet": "S",
+     "top": 54
+    },
+    "striped-12": {
+     "base": 252,
+     "bw": 223,
+     "cx": 144.0,
+     "left": 32,
+     "lights": [
+      [
+       70.7,
+       149.0
+      ],
+      [
+       217.2,
+       149.2
+      ]
+     ],
+     "right": 257,
      "sheet": "S",
      "top": 37
     },
-    "striped-19": {
-     "base": 239,
-     "bw": 180,
-     "cx": 136.5,
-     "left": 47,
+    "striped-13": {
+     "base": 252,
+     "bw": 202,
+     "cx": 144.5,
+     "left": 42,
+     "lights": [],
+     "right": 247,
+     "sheet": "S",
+     "top": 38
+    },
+    "striped-14": {
+     "base": 252,
+     "bw": 228,
+     "cx": 143.5,
+     "left": 28,
      "lights": [
       [
-       75.5,
-       172.2
+       57.0,
+       188.3
       ],
       [
-       200.9,
-       171.1
+       229.9,
+       188.9
       ]
      ],
-     "right": 226,
+     "right": 259,
      "sheet": "S",
-     "top": 43
+     "top": 55
     },
-    "striped-20": {
-     "base": 239,
-     "bw": 222,
-     "cx": 136.5,
-     "left": 25,
+    "striped-15": {
+     "base": 252,
+     "bw": 231,
+     "cx": 144.0,
+     "left": 28,
+     "lights": [],
+     "right": 260,
+     "sheet": "S",
+     "top": 52
+    },
+    "striped-16": {
+     "base": 252,
+     "bw": 206,
+     "cx": 143.5,
+     "left": 38,
      "lights": [
       [
-       58.6,
-       152.4
+       59.0,
+       168.3
       ],
       [
-       212.7,
-       152.3
+       227.1,
+       168.6
       ]
      ],
      "right": 248,
      "sheet": "S",
-     "top": 48
+     "top": 50
     },
-    "striped-21": {
-     "base": 239,
-     "bw": 188,
-     "cx": 136.5,
-     "left": 42,
+    "striped-17": {
+     "base": 252,
+     "bw": 233,
+     "cx": 144.0,
+     "left": 26,
      "lights": [
       [
-       72.5,
-       174.1
+       88.8,
+       176.2
       ],
       [
-       200.0,
-       175.4
+       198.6,
+       176.1
       ]
      ],
-     "right": 231,
+     "right": 261,
      "sheet": "S",
-     "top": 34
+     "top": 48
     },
-    "striped-22": {
-     "base": 239,
-     "bw": 217,
-     "cx": 136.0,
+    "striped-18": {
+     "base": 252,
+     "bw": 230,
+     "cx": 143.5,
      "left": 28,
      "lights": [
       [
-       46.0,
-       170.3
-      ],
-      [
-       226.2,
-       170.4
-      ]
-     ],
-     "right": 244,
-     "sheet": "S",
-     "top": 31
-    },
-    "striped-24": {
-     "base": 239,
-     "bw": 225,
-     "cx": 136.0,
-     "left": 22,
-     "lights": [],
-     "right": 250,
-     "sheet": "S",
-     "top": 23
-    },
-    "striped-25": {
-     "base": 239,
-     "bw": 212,
-     "cx": 136.5,
-     "left": 30,
-     "lights": [
-      [
-       58.9,
-       161.0
-      ],
-      [
-       213.7,
-       161.2
-      ]
-     ],
-     "right": 243,
-     "sheet": "S",
-     "top": 31
-    },
-    "sweet": {
-     "base": 239,
-     "bw": 186,
-     "cx": 136.5,
-     "left": 44,
-     "lights": [
-      [
-       70.5,
-       202.1
-      ],
-      [
-       203.8,
-       202.3
-      ]
-     ],
-     "right": 229,
-     "sheet": "V",
-     "top": 36
-    },
-    "thief": {
-     "base": 239,
-     "bw": 203,
-     "cx": 136.0,
-     "left": 35,
-     "lights": [],
-     "right": 238,
-     "sheet": "V",
-     "top": 31
-    },
-    "trash": {
-     "base": 239,
-     "bw": 206,
-     "cx": 136.5,
-     "left": 33,
-     "lights": [
-      [
-       59.5,
+       63.4,
        171.5
       ],
       [
-       213.6,
-       171.1
+       223.3,
+       171.4
       ]
      ],
-     "right": 240,
-     "sheet": "V",
-     "top": 43
+     "right": 259,
+     "sheet": "S",
+     "top": 38
     },
-    "vroom": {
-     "base": 239,
-     "bw": 206,
-     "cx": 136.5,
-     "left": 33,
-     "lights": [],
-     "right": 241,
-     "sheet": "V",
-     "top": 43
-    },
-    "work": {
-     "base": 239,
-     "bw": 194,
-     "cx": 136.5,
-     "left": 39,
+    "striped-19": {
+     "base": 252,
+     "bw": 191,
+     "cx": 144.0,
+     "left": 49,
      "lights": [
       [
-       67.9,
-       180.1
+       83.5,
+       180.2
       ],
       [
-       204.5,
-       180.1
+       208.9,
+       179.1
       ]
      ],
-     "right": 233,
+     "right": 239,
+     "sheet": "S",
+     "top": 45
+    },
+    "striped-20": {
+     "base": 252,
+     "bw": 233,
+     "cx": 144.0,
+     "left": 27,
+     "lights": [
+      [
+       66.6,
+       160.4
+      ],
+      [
+       220.7,
+       160.3
+      ]
+     ],
+     "right": 261,
+     "sheet": "S",
+     "top": 50
+    },
+    "striped-21": {
+     "base": 252,
+     "bw": 200,
+     "cx": 144.5,
+     "left": 45,
+     "lights": [
+      [
+       80.5,
+       182.1
+      ],
+      [
+       208.0,
+       183.4
+      ]
+     ],
+     "right": 245,
+     "sheet": "S",
+     "top": 36
+    },
+    "striped-22": {
+     "base": 252,
+     "bw": 228,
+     "cx": 144.5,
+     "left": 30,
+     "lights": [
+      [
+       54.0,
+       178.3
+      ],
+      [
+       234.2,
+       178.4
+      ]
+     ],
+     "right": 258,
+     "sheet": "S",
+     "top": 34
+    },
+    "striped-24": {
+     "base": 252,
+     "bw": 236,
+     "cx": 143.5,
+     "left": 24,
+     "lights": [],
+     "right": 263,
+     "sheet": "S",
+     "top": 26
+    },
+    "striped-25": {
+     "base": 252,
+     "bw": 224,
+     "cx": 143.5,
+     "left": 32,
+     "lights": [
+      [
+       65.9,
+       169.0
+      ],
+      [
+       220.7,
+       169.2
+      ]
+     ],
+     "right": 255,
+     "sheet": "S",
+     "top": 34
+    },
+    "sweet": {
+     "base": 252,
+     "bw": 196,
+     "cx": 144.5,
+     "left": 46,
+     "lights": [
+      [
+       78.5,
+       210.1
+      ],
+      [
+       211.8,
+       210.3
+      ]
+     ],
+     "right": 243,
      "sheet": "V",
-     "top": 23
+     "top": 38
+    },
+    "thief": {
+     "base": 252,
+     "bw": 214,
+     "cx": 144.5,
+     "left": 37,
+     "lights": [],
+     "right": 252,
+     "sheet": "V",
+     "top": 34
+    },
+    "trash": {
+     "base": 252,
+     "bw": 217,
+     "cx": 144.0,
+     "left": 35,
+     "lights": [
+      [
+       67.5,
+       179.5
+      ],
+      [
+       221.6,
+       179.1
+      ]
+     ],
+     "right": 253,
+     "sheet": "V",
+     "top": 45
+    },
+    "vroom": {
+     "base": 252,
+     "bw": 217,
+     "cx": 144.0,
+     "left": 34,
+     "lights": [],
+     "right": 254,
+     "sheet": "V",
+     "top": 46
+    },
+    "work": {
+     "base": 252,
+     "bw": 205,
+     "cx": 144.0,
+     "left": 42,
+     "lights": [
+      [
+       75.9,
+       188.1
+      ],
+      [
+       212.5,
+       188.1
+      ]
+     ],
+     "right": 247,
+     "sheet": "V",
+     "top": 25
     },
     "yum": {
-     "base": 239,
-     "bw": 187,
-     "cx": 137.0,
-     "left": 44,
+     "base": 252,
+     "bw": 198,
+     "cx": 144.5,
+     "left": 46,
      "lights": [],
-     "right": 239,
+     "right": 255,
      "sheet": "V",
-     "top": 28
+     "top": 30
     }
    }
   }

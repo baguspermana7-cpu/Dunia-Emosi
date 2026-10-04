@@ -32,6 +32,14 @@ Method (deterministic, idempotent; the output depends only on the owner sheets p
      committed sprite was (a > 40 dB match to the committed file is unreachable for ANY lossy re-encode: two
      4:2:0 WebP encodes of the same art differ by 38-43 dB; lossless would triple the file sizes).
 
+  5. OUTLINE (owner 2026-10-03, "There's still a little white ... give it a white outline line to disguise it"):
+     the character and vehicle families (OUTLINED: mojo-char, mojo-top) get a white sticker ring baked in by
+     tools/mojo_outline.py, from the clean in-memory cut-out (never from the published file, so re-runs never
+     double-outline). The canvas grows by mojo_outline.pad(t) on every side; the index entry records w/h and
+     `outline` (ring px). mojo-top uses ONE thickness (8 px: 2.5% of its 318 px median shorter side); mojo-char
+     poses are shown in fixed-height boxes whatever their source size, so each pose takes 2.5% of its own shorter
+     side (3-8 px) for the same on-screen width. A size check accepts the legacy un-outlined file once.
+
 New art: when a re-ingest produces a new near-white component, qa-mojo-art.py fails until it is audited here
 (add its seed to CLEAR_HOLES or KEEP_WHITE). Seeds are sprite-pixel coordinates "x,y" inside the component.
 """
@@ -67,6 +75,8 @@ HALO_CATEGORIES = ('mojo-top', 'mojo-char', 'mojo-prop')
 HALO_EXEMPT = set()
 MIN_PSNR = 36.0      # new vs committed sprite, opaque interior (two lossy 4:2:0 encodes differ ~38-43 dB)
 MAX_FIDELITY_LOSS = 0.5  # dB: new vs owner source may not be worse than committed vs owner source
+OUTLINED = ('mojo-char', 'mojo-top')
+OUTLINE_FAMILY_T = {'mojo-top': 8}   # mojo-char: per pose (see method step 5)
 
 # Audited background holes (sprite px). Judged by eye on source crops, 2026-10-01.
 CLEAR_HOLES = {
@@ -362,6 +372,31 @@ def _pts(value):
     return [tuple(int(v) for v in p.split(',')) for p in value.split()]
 
 
+def load_outline():
+    spec = importlib.util.spec_from_file_location('mojo_outline_for_clean', ROOT / 'tools' / 'mojo_outline.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+mo = load_outline()
+
+
+def outline_t(name, rgba):
+    """Ring thickness for an OUTLINED sprite (its clean un-outlined RGBA), else None."""
+    cat = name.split('/')[0]
+    if cat not in OUTLINED:
+        return None
+    return OUTLINE_FAMILY_T.get(cat) or mo.thickness(mo.short_side(rgba))
+
+
+def place(im, size, offset):
+    """im on a transparent canvas of size at offset (an un-outlined image in the outlined frame)."""
+    canvas = Image.new('RGBA', size, (0, 0, 0, 0))
+    canvas.paste(im.convert('RGBA'), offset)
+    return canvas
+
+
 def load_ingest():
     sys.path.insert(0, str(ROOT / 'tools'))
     spec = importlib.util.spec_from_file_location('mojo_ingest_for_clean', ROOT / 'tools' / 'ingest-mojo-sheets.py')
@@ -634,9 +669,9 @@ def clean(name, a, alpha, bbox, preserve, report):
     return Image.fromarray(np.dstack([rgb, alpha])[y0:y1, x0:x1].astype(np.uint8), 'RGBA'), bg
 
 
-def psnr_interior(before, after):
+def psnr_interior(before, after, erode=3):
     b, n = np.asarray(before.convert('RGBA')).astype(np.float64), np.asarray(after.convert('RGBA')).astype(np.float64)
-    core = ndimage.binary_erosion((b[..., 3] == 255) & (n[..., 3] == 255), iterations=3)
+    core = ndimage.binary_erosion((b[..., 3] == 255) & (n[..., 3] == 255), iterations=erode)
     if not core.any():
         return float('inf')
     mse = ((b[..., :3][core] - n[..., :3][core]) ** 2).mean()
@@ -663,6 +698,23 @@ def contact(entries, path, bg):
     sheet.convert('RGB').save(path)
 
 
+def publish_outlined(ringed, files):
+    """Write the outlined sprites and record w/h/outline in both asset indexes, under the shared index lock."""
+    import json
+    m = load_ingest()                    # also puts tools/ on sys.path
+    from asset_transaction import publish
+    index = ROOT / 'assets' / 'db' / 'index.json'
+    assets = json.loads(index.read_text(encoding='utf-8'))['assets']
+    entries = {}
+    for name, (t, (w, h)) in ringed.items():
+        entry = dict(assets.get(name) or {'file': f'assets/db/lib/{name}.webp', 'cat': name.split('/')[0]})
+        if entry.get('w') != w or entry.get('h') != h or entry.get('outline') != t or (LIB / (name + '.webp')) in files:
+            entry.update(w=w, h=h, outline=t)
+            entries[name] = entry
+    if entries or files:
+        publish(str(index), entries, files, m.index_helper())
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry', action='store_true')
@@ -671,20 +723,35 @@ def main():
     parser.add_argument('--before', help='directory of original sprites for the before sheets')
     args = parser.parse_args()
     report, changed, per_cat, before_after = [], [], {}, {}
+    ringed, ring_files = {}, {}
     for name, a, alpha, bbox, preserve in source_crops(set(args.only) if args.only else None):
         path = LIB / (name + '.webp')
         current = Image.open(path).convert('RGBA')
         reference = Image.open(Path(args.before) / (name + '.webp')).convert('RGBA') if args.before else current
         new, _ = clean(name, a, alpha, bbox, preserve, report)
-        if new.size != current.size:
-            raise SystemExit(f'{name}: size drift {current.size} -> {new.size}; re-ingest first')
         x0, y0, x1, y1 = bbox
         truth = Image.fromarray(np.dstack([a, alpha])[y0:y1, x0:x1].astype(np.uint8), 'RGBA')
-        fidelity_old = psnr_interior(truth, current)
+        t = outline_t(name, np.asarray(new))
+        if t is not None:
+            plain = new.size
+            arr, off = mo.outline(np.asarray(new), t)
+            new = Image.fromarray(arr, 'RGBA')
+            truth = place(truth, new.size, off)
+            if current.size == plain:          # the legacy un-outlined file: compare it in the outlined frame
+                current = place(current, new.size, off)
+            if reference.size == plain:
+                reference = place(reference, new.size, off)
+            ringed[name] = (t, new.size)
+        if new.size != current.size:
+            raise SystemExit(f'{name}: size drift {current.size} -> {new.size}; re-ingest first')
+        # outlined: WebP 4:2:0 chroma from the new white ring bleeds ~2 px into the art, so fidelity is judged
+        # on the interior 3 px further in (mojo-top/base-sheet10, 142 px wide, was otherwise never outlined)
+        erode = 6 if t is not None else 3
+        fidelity_old = psnr_interior(truth, current, erode)
         for q in (QUALITY, 95, 98, 100):   # smallest quality that is at least as faithful to the owner art
             data = encode(new, q)
             decoded = Image.open(io.BytesIO(data)).convert('RGBA')
-            fidelity_new = psnr_interior(truth, decoded)
+            fidelity_new = psnr_interior(truth, decoded, erode)
             if fidelity_new >= fidelity_old - MAX_FIDELITY_LOSS:
                 break
         else:
@@ -703,10 +770,14 @@ def main():
                           f'{fidelity_new:.1f}): the two lossy encodes differ, the new one is no further from the owner art')
         changed.append((name, quality, moved))
         per_cat[cat] = per_cat.get(cat, 0) + 1
-        if not args.dry:
+        if t is not None:
+            ring_files[path] = data          # published together with its index entry (new w/h)
+        elif not args.dry:
             tmp = path.with_suffix('.webp.tmp')
             tmp.write_bytes(data)
             os.replace(tmp, path)
+    if ringed and not args.dry:
+        publish_outlined(ringed, ring_files)
     for line in report:
         print('WARN', line)
     print('changed', len(changed), dict(sorted(per_cat.items())))

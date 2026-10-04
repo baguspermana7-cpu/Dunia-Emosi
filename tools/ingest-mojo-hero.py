@@ -24,7 +24,10 @@ Method (deterministic: output depends only on the owner sheet and the audited ta
   5. SHADOW: the soft grey ground shadow below the vehicle becomes translucent BLACK at alpha (B-L)/B
      (clean-mojo-sprites.floor_shadow), so it reads on any backdrop; FLOOR_KEEP boxes protect white parts that
      sit low in the frame (skids, wing tips). Shadow pixels under 3% alpha are dropped for tight bounds.
-  6. Native resolution (no upscale), WebP q92 method 6. Both asset indexes are merged under the shared lock by
+  6. OUTLINE (owner 2026-10-03, "give it a white outline line to disguise it"): a white sticker ring OUTLINE_T px
+     wide plus a soft dark rim is baked around the art (tools/mojo_outline.py), the floor shadow drawn beneath it;
+     the sprite is then cropped tight again and `trim` carries the shift (sprite px = cell px - trim[:2]).
+  7. Native resolution (no upscale), WebP q92 method 6. Both asset indexes are merged under the shared lock by
      asset_transaction.publish (re-read right before writing; other keys are never dropped).
 """
 import argparse, importlib.util, io, json, os, sys
@@ -41,6 +44,7 @@ CAT = 'mojo-hero'
 SRCTAG = 'owner mojo primary sheet 2026-10-03'
 INSET = 3
 QUALITY = 92
+OUTLINE_T = 5         # white ring px: 2.5% of the family's median shorter side (203 px), mojo_outline.thickness
 SHADOW_MIN = 8        # alpha levels: fainter shadow is dropped (tight bounds, no grey dust)
 
 # Row by row, as drawn. facing = which way the vehicle's nose points on screen ('l', 'r', or 'f' head-on).
@@ -128,6 +132,7 @@ def _load(name, file):
 
 
 clean = _load('mojo_clean_for_hero', 'clean-mojo-sprites.py')
+outline = _load('mojo_outline_for_hero', 'mojo_outline.py')
 ingest = _load('mojo_ingest_for_hero', 'ingest-mojo-sheets.py')
 _pts = clean._pts
 
@@ -273,9 +278,10 @@ def build(name, s, report):
         for i, sz in enumerate(sizes, 1):
             if sz < 12:
                 alpha3[lab2 == i] = 0
-    rgba = Image.fromarray(np.dstack([rgb3, alpha3]).astype(np.uint8), 'RGBA')
-    trim = rgba.getbbox()
-    return rgba.crop(trim), alpha, bg, trim
+    ringed, off = outline.crop_tight(*outline.outline(np.dstack([rgb3, alpha3]).astype(np.uint8), OUTLINE_T))
+    h2, w2 = ringed.shape[:2]
+    trim = (-off[0], -off[1], w2 - off[0], h2 - off[1])
+    return Image.fromarray(ringed, 'RGBA'), alpha, bg, trim
 
 
 def sources():
@@ -323,7 +329,7 @@ def audit(out):
 
 def entries_for(written):
     return {k: {'file': v['file'], 'cat': CAT, 'tags': k.split('/', 1)[1].split('-') + ['mojo', 'hero', 'cartoon'],
-                'source': SRCTAG, 'w': v['w'], 'h': v['h'], 'facing': v['facing']} for k, v in written.items()}
+                'source': SRCTAG, 'w': v['w'], 'h': v['h'], 'facing': v['facing'], 'outline': OUTLINE_T} for k, v in written.items()}
 
 
 def main():

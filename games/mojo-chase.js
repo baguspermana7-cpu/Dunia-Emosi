@@ -461,7 +461,7 @@
       return 'smoke'
     }
     function tyrePuff (dir, k) {
-      var a = rearA || { cx: 140, base: 234, bw: 168, dust: [], kind: 'ground' }, seg = track && track.seg(Math.floor((S.z + Z_P) / TR.SEG)), kind = tyreKind(a, seg)
+      var a = rearA || { cx: 149, base: 247, bw: 179, dust: [], kind: 'ground' }, seg = track && track.seg(Math.floor((S.z + Z_P) / TR.SEG)), kind = tyreKind(a, seg)
       if (!kind || !a.dust || !a.dust.length) return
       var cp = carPx(), m = mojoXY(), sc = cp / a.bw, ox = m.x - a.cx * sc, oy = m.y - a.base * sc + bob() - (S.hop > 0 ? Math.sin((1 - S.hop / 0.5) * Math.PI) * cp * 0.35 : 0)
       // the outer wheel of a right turn is the LEFT one; 72% of the puffs come from it
@@ -735,7 +735,7 @@
     }
     function emit (dt) {
       var m = mojoXY(), cp = carPx(), q = QUAL[quality].cap
-      var a = rearA || { cx: 140, base: 234, bw: 168, dust: [], exhaust: [], kind: 'ground' }, k = cp / a.bw, ox = m.x - a.cx * k, oy = m.y - a.base * k + bob()
+      var a = rearA || { cx: 149, base: 247, bw: 179, dust: [], exhaust: [], kind: 'ground' }, k = cp / a.bw, ox = m.x - a.cx * k, oy = m.y - a.base * k + bob()
       // exhaust puffs (boost: flame)
       if (Math.random() < dt * 14 * q) for (var i = 0; i < a.exhaust.length; i++) { var ex = a.exhaust[i], p = FX.spawn(TEX.puff, ox + ex[0] * k, oy + ex[1] * k, (Math.random() - 0.5) * 40 * v.u, 30 * v.u, 0.7, cp * 0.1, false); if (p) { p.grow = cp * 0.25; p.a = 0.28; p.flow = 0.9 } }
       // wheel dust / water spray
@@ -1016,7 +1016,7 @@
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
     }
     function drawPlayer (night) {
-      var m = mojoXY(), cp = carPx(), a = rearA || { cx: 140, base: 234, bw: 168, lights: [], kind: 'ground' }, im = img.rear
+      var m = mojoXY(), cp = carPx(), a = rearA || { cx: 149, base: 247, bw: 179, lights: [], kind: 'ground' }, im = img.rear
       var air = a.kind === 'air', hover = air ? -cp * 0.14 + Math.sin(S.t * 3) * cp * 0.02 : 0
       var lean = (S.lane - S.lanePos) * -0.12 + (S.spin > 0 ? (0.8 - S.spin) / 0.8 * TAU : 0), sq = S.squash > 0 ? 1 - S.squash * 0.4 : 1
       // headlight cone at night / in tunnels

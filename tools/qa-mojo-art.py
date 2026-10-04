@@ -23,6 +23,34 @@ spec = importlib.util.spec_from_file_location('mojo_ingest', ROOT / 'tools/inges
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 
+ospec = importlib.util.spec_from_file_location('mojo_outline', ROOT / 'tools/mojo_outline.py')
+mo = importlib.util.module_from_spec(ospec)
+ospec.loader.exec_module(mo)
+INDEX = json.loads((ROOT / 'assets/db/index.json').read_text(encoding='utf-8'))['assets']
+
+
+def ring_of(key):
+    """White sticker outline thickness (px) recorded for a published sprite, or None (not outlined)."""
+    return (INDEX.get(key) or {}).get('outline')
+
+
+def art_only(key, rgba):
+    """The published sprite with its deliberate white outline peeled off (fringe measures look at the art)."""
+    t = ring_of(key)
+    return rgba if t is None else mo.peel(rgba, t)
+
+
+def outline_contact(key, raw):
+    """For an outlined sprite: a predicate 'this component touches the peeled outline'. White paint AT the
+    silhouette (a white tail fin, a skid end) merges with the ring and reads as outline; a page-coloured slab seen
+    THROUGH the art (a cab window) is enclosed by art and never touches it, so the slab audit still sees those."""
+    t = ring_of(key)
+    if t is None:
+        return lambda component: False
+    ring = mo.ring_mask(raw, t)
+    return lambda component: bool((m.ndimage.binary_dilation(component, iterations=2) & ring).any())
+
+
 def source_sheets_available(*prefixes):
     return all(any(Path(m.SRC).glob(prefix + '-*')) for prefix in prefixes)
 
@@ -193,12 +221,14 @@ class SpriteCleanTests(unittest.TestCase):
         failures, checked = [], 0
         for name, a, alpha, bbox, preserve in clean.source_crops():
             page = clean.page_colour(a, alpha)
-            rgba = np.asarray(Image.open(clean.LIB / (name + '.webp')).convert('RGBA'))
+            raw = np.asarray(Image.open(clean.LIB / (name + '.webp')).convert('RGBA'))
+            rgba, at_ring = art_only(name, raw), outline_contact(name, raw)
             checked += 1
-            keep = clean._pts(clean.KEEP_WHITE.get(name, ''))
+            p = mo.pad(ring_of(name)) if ring_of(name) else 0     # outlined sprites moved by pad(t)
+            keep = [(x + p, y + p) for x, y in clean._pts(clean.KEEP_WHITE.get(name, ''))]
             for component in self.page_components(rgba, page):
                 grown = m.ndimage.binary_dilation(component, iterations=4)
-                if not any(0 <= y < grown.shape[0] and 0 <= x < grown.shape[1] and grown[y, x] for x, y in keep):
+                if not at_ring(component) and not any(0 <= y < grown.shape[0] and 0 <= x < grown.shape[1] and grown[y, x] for x, y in keep):
                     ys, xs = np.nonzero(component)
                     failures.append(f'{name} {int(component.sum())}px @ {int(xs.mean())},{int(ys.mean())}')
         self.assertGreater(checked, 500)
@@ -301,7 +331,7 @@ class HeroArtTests(unittest.TestCase):
         or coloured art is not. Measured 2026-10-03: worst 10.6% (chopper-1: white skid tubes and rotor blades at the edge)."""
         worst = []
         for path in sorted((hero.LIB / hero.CAT).glob('*.webp')):
-            ring, edge = thin_light_ring(np.asarray(Image.open(path).convert('RGBA')))
+            ring, edge = thin_light_ring(art_only(hero.CAT + '/' + path.stem, np.asarray(Image.open(path).convert('RGBA'))))
             worst.append((ring / max(edge, 1), path.stem))
         self.assertEqual(len(worst), 25)
         self.assertLess(max(worst)[0], 0.12, max(worst))
@@ -313,11 +343,12 @@ class HeroArtTests(unittest.TestCase):
         failures = []
         for name, _, _, cell in hero.sources():
             _, _, page, trim = hero.build(name, cell, [])
-            rgba = np.asarray(Image.open(hero.LIB / hero.CAT / (name + '.webp')).convert('RGBA'))
+            raw = np.asarray(Image.open(hero.LIB / hero.CAT / (name + '.webp')).convert('RGBA'))
+            rgba, at_ring = art_only(hero.CAT + '/' + name, raw), outline_contact(hero.CAT + '/' + name, raw)
             keep = [(x - trim[0], y - trim[1]) for x, y in clean._pts(hero.KEEP_WHITE.get(name, ''))]
             for component in SpriteCleanTests.page_components(rgba, page):
                 grown = m.ndimage.binary_dilation(component, iterations=4)
-                if not any(0 <= y < grown.shape[0] and 0 <= x < grown.shape[1] and grown[y, x] for x, y in keep):
+                if not at_ring(component) and not any(0 <= y < grown.shape[0] and 0 <= x < grown.shape[1] and grown[y, x] for x, y in keep):
                     ys, xs = np.nonzero(component)
                     failures.append(f'{name} {int(component.sum())}px @ {int(xs.mean())},{int(ys.mean())}')
         self.assertEqual(failures, [])
@@ -430,9 +461,11 @@ def fringe_failures(lib):
     for fam in SMEAR_FAMILIES:
         for path in sorted((lib / fam).glob('*.webp')):
             key = fam + '/' + path.stem
-            f = fringe_metrics(np.asarray(Image.open(path).convert('RGBA')))
+            f = fringe_metrics(art_only(key, np.asarray(Image.open(path).convert('RGBA'))))
             seen += 1
-            limit = HALO_MAX.get(fam)
+            # an outlined sprite's rim is blended over its own white ring BY DESIGN (that is what disguises the
+            # leftover pale pixels): its halo is gated by OutlineTests (ring coverage), not by page mix
+            limit = None if ring_of(key) else HALO_MAX.get(fam)
             if limit is not None and key not in HALO_EXEMPT and f['halo'] > limit:
                 bad.append(f'{key}: white edge halo {f["halo"]:.3f} > {limit} of the rim (near-white {f["nearwhite"]} px)')
             if f['smear'] > SMEAR_MAX:
@@ -471,6 +504,101 @@ class SpriteFringeTests(unittest.TestCase):
         self.assertLessEqual(fringe_metrics(img)['floor'], FLOOR_MAX)
         img[84:96, 20:60] = (240, 240, 240, 120)         # a white veil
         self.assertGreater(fringe_metrics(img)['smear'], 100)
+
+
+# Owner 2026-10-03: "There's still a little white. We should give it a white outline line to disguise it."
+# family -> (expected outlined sprite count, one shared thickness or None = per pose)
+OUTLINED = {
+    'mojo-hero': (25, 5), 'mojo-char': (47, None), 'mojo-top': (47, 8), 'mojo-rear': (25, 5),
+    'mojo-chase/robbers': (4, 5), 'mojo-chase/vehicles': (44, 5), 'mojo-chase/items': (8, 4),
+}
+NEVER_OUTLINED = ('mojo-bg', 'mojo-prop', 'mojo-fx', 'mojo-tile', 'mojo-ui', 'mojo-chase/props', 'mojo-chase/signs',
+                  'mojo-chase/vfx', 'mojo-chase/far', 'mojo-chase/biome')
+RING_COVERAGE = 0.90      # measured 2026-10-03: worst 0.994 (mojo-hero/base-front, mojo-char/rabbit)
+
+
+def outline_failures(lib):
+    lib = Path(lib)
+    bad, counts = [], {}
+    for fam, (count, fixed) in OUTLINED.items():
+        for path in sorted((lib / fam).glob('*.webp')):
+            key = fam + '/' + path.stem
+            t = ring_of(key)
+            if t is None:
+                continue
+            counts[fam] = counts.get(fam, 0) + 1
+            if not mo.MIN_T <= t <= mo.MAX_T or (fixed is not None and t != fixed):
+                bad.append(f'{key}: outline {t} px outside {mo.MIN_T}-{mo.MAX_T} / family value {fixed}')
+            rgba = np.asarray(Image.open(path).convert('RGBA'))
+            entry = INDEX[key]
+            if (entry.get('w'), entry.get('h')) != (rgba.shape[1], rgba.shape[0]):
+                bad.append(f'{key}: index w/h {entry.get("w")}x{entry.get("h")} != file {rgba.shape[1]}x{rgba.shape[0]}')
+            st = mo.ring_stats(rgba, t)
+            if st['coverage'] < RING_COVERAGE:
+                bad.append(f'{key}: white ring on {st["coverage"]:.3f} of the boundary < {RING_COVERAGE}')
+            if not t - 1.5 <= st['thickness'] <= t + 1.0:
+                bad.append(f'{key}: ring width {st["thickness"]:.1f} px, expected {t} (-1.5/+1)')
+            if st['clipped']:
+                bad.append(f'{key}: {st["clipped"]} opaque px on the canvas edge (outline clipped)')
+        if counts.get(fam, 0) != count:
+            bad.append(f'{fam}: {counts.get(fam, 0)} outlined sprites, expected {count}')
+    for key, entry in INDEX.items():
+        if entry.get('outline') and key.startswith(NEVER_OUTLINED):
+            bad.append(f'{key}: world/background art must not be outlined')
+    return bad
+
+
+def anchors_json(name, var):
+    text = (ROOT / 'games/data' / name).read_text(encoding='utf-8')
+    return json.loads(text[text.index(var + ' = ') + len(var) + 3:text.rindex(' })(')])
+
+
+class OutlineTests(unittest.TestCase):
+    """White sticker outline: present, even, unclipped, never on world art, and the anchors still line up."""
+    def test_outlined_families_have_an_even_unclipped_white_ring(self):
+        bad = outline_failures(ROOT / 'assets/db/lib')
+        self.assertEqual(bad, [], 'outline (re-run the ingest tools; see tools/mojo_outline.py):\n' + '\n'.join(bad))
+
+    def test_anchor_baselines_agree_and_match_the_published_canvas(self):
+        rear = anchors_json('mojo-rear-anchors.js', 'W.MojoRearAnchors')
+        fams = {'mojo-rear': rear} | {'mojo-chase/' + f: v for f, v in anchors_json('mojo-chase-anchors.js', 'W.MojoChaseAnchors')['families'].items()}
+        for fam, data in fams.items():
+            bases = [a['base'] for a in data['sprites'].values()]
+            self.assertLessEqual(max(bases) - min(bases), 2, fam)
+            for name, a in data['sprites'].items():
+                path = ROOT / 'assets/db/lib' / fam / (name + '.webp')
+                rgba = np.asarray(Image.open(path).convert('RGBA'))
+                self.assertEqual((rgba.shape[1], rgba.shape[0]), (data['size']['w'], data['size']['h']), name)
+                rows = np.nonzero((rgba[..., 3] >= 128).sum(1) >= 2)[0]
+                self.assertLessEqual(abs(int(rows[-1]) - a['base']), 2, f'{fam}/{name}: contact row moved')
+
+    def test_outline_is_exact_inside_and_never_fills_an_enclosed_gap(self):
+        img = np.zeros((60, 60, 4), np.uint8)
+        img[10:50, 10:50] = (200, 40, 40, 255)
+        img[25:35, 25:35] = 0                              # an enclosed see-through gap (cab window)
+        img[10:50, 49] = (180, 120, 120, 128)              # a soft anti-aliased rim
+        out, (ox, oy) = mo.outline(img, 4)
+        self.assertEqual((ox, oy), (mo.pad(4),) * 2)
+        inner = out[oy:oy + 60, ox:ox + 60]
+        opaque = img[..., 3] == 255
+        np.testing.assert_array_equal(inner[opaque], img[opaque])
+        self.assertTrue((inner[25:35, 25:35, 3] == 0).all(), 'enclosed gap filled')
+        self.assertTrue((out[oy + 30, ox + 7:ox + 10, :3] == 255).all() and (out[oy + 30, ox + 7:ox + 10, 3] == 255).all())
+        self.assertEqual(int(out[0].max()), 0)
+        again, _ = mo.outline(img, 4)
+        np.testing.assert_array_equal(out, again)          # deterministic
+        st = mo.ring_stats(out, 4)
+        self.assertGreater(st['coverage'], 0.95)
+        self.assertEqual(st['clipped'], 0)
+        self.assertLess(mo.ring_stats(np.pad(img, ((8, 8), (8, 8), (0, 0))), 4)['coverage'], 0.1, 'no ring must fail')
+
+    def test_floor_shadow_is_drawn_under_the_ring_not_outlined(self):
+        img = np.zeros((40, 60, 4), np.uint8)
+        img[5:25, 10:50] = (30, 140, 220, 255)
+        img[25:35, 5:55] = (0, 0, 0, 70)                   # the cleaners' translucent black floor shadow
+        out, (ox, oy) = mo.outline(img, 3)
+        self.assertEqual(int(out[oy + 33, ox + 2, 3]), 0, 'ring drawn around the floor shadow')
+        self.assertEqual(tuple(out[oy + 33, ox + 6]), (0, 0, 0, 70))
 
 
 class SceneBackgroundTests(unittest.TestCase):
