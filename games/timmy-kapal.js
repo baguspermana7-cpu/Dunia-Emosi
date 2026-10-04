@@ -1378,7 +1378,7 @@
     })
     if (W.TKFleet) TKFleet.ships.forEach(function (s) { u[Art.lib(s.top)] = 1; u[Art.lib(s.side)] = 1 })   // ship select (side) + gameplay (top), offline
     WD.WORLDS.forEach(function (w) { u[Art.vessel(w)] = 1 })
-    ;['gt/undo', 'gt/play-confirm', 'things/trash-can', 'gt-el/lighthouse', 'gt-el/star-gold', 'gt-el/signpost-arrow', 'game/gear', 'gt/q-islamic', 'sd/cat-math', 'animals/penguin'].forEach(function (k) { u[Art.lib(k)] = 1 })
+    ;['tk-top/patrol-ol', 'tk-top/tug', 'gt/undo', 'gt/play-confirm', 'things/trash-can', 'gt-el/lighthouse', 'gt-el/star-gold', 'gt-el/signpost-arrow', 'game/gear', 'gt/q-islamic', 'sd/cat-math', 'animals/penguin'].forEach(function (k) { u[Art.lib(k)] = 1 })
     ;['click', 'correct', 'wrong', 'levelup', 'star'].forEach(function (k) { u[Art.BASE + 'assets/sfx/' + k + '.mp3'] = 1 })
     var fx = { boom: 10, pop: 7, smoke: 8 }
     Object.keys(fx).forEach(function (k) { for (var i = 1; i <= fx[k]; i++) u[Art.BASE + 'assets/vfx/explosion/' + k + '/f-' + i + '.webp'] = 1 })

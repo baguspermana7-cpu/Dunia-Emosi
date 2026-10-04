@@ -39223,6 +39223,21 @@
    "h": 291,
    "psnr": 44.6
   },
+  "tk-top/patrol-ol": {
+   "file": "assets/db/lib/tk-top/patrol-ol.webp",
+   "cat": "tk-top",
+   "tags": [
+    "patrol",
+    "navy",
+    "top-view",
+    "ship",
+    "outlined"
+   ],
+   "source": "tk-top/patrol + tools/tk_outline.py",
+   "w": 98,
+   "h": 281,
+   "outline": 3
+  },
   "tk-top/research": {
    "file": "assets/db/lib/tk-top/research.webp",
    "cat": "tk-top",

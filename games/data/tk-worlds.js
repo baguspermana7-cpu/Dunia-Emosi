@@ -570,7 +570,7 @@
         { deck: true, say: 'Mesin kapal butuh dua roda gigi baru. Ambil dari gudang!', item: 'gt-el/gear', blk: ['tk-prop/propeller', 'gt-el/crate', 'tk-prop/crate-plain'], par: 12,
           fact: 'USS Missouri lebih panjang dari dua lapangan sepak bola.' })],
       mech: [ml('missouri10', 'Kapal Patroli', 'Kapal patroli lewat! Pilih waktu yang tepat, lalu merapat.', ['S.#...', '..#.#.', '......', '#.#T#.', '..#..G'],
-        { say: 'Kapal patroli bolak-balik di jalur tengah. Lihat jalannya, lalu menyeberang!', pic: 'tk-top/patrol',
+        { say: 'Kapal patroli bolak-balik di jalur tengah. Lihat jalannya, lalu menyeberang!', pic: 'tk-top/patrol-ol',
           blk: ['tk-key/dock', 'tk-prop/bollard-rope'], par: 9, topic: 'umum',
           ice: [{ kind: 'patrol', path: path([[1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [4, 2], [3, 2], [2, 2]]) }],
           fact: 'Kapal patroli kecil menjaga pelabuhan supaya semua kapal aman.' })],

@@ -707,7 +707,7 @@
     drop: 'tk-prop/cargo-net', key: 'things/key-gold', lock: 'things/padlock', whirl: 'tk-world/whirlpool', stop: 'game/flag-red',
     bag: 'tk-key/backpack', chest: 'tk-prop/treasure-chest-4', chestOpen: 'tk-prop/treasure-chest-open', seal: 'tk-prop/scroll-sealed',
     cloud: 'nature/cloud', beacon: 'tk-prop/buoy-light', fn: 'tk-prop/blueprint-scroll', hint: 'tk-prop/lantern',
-    whale: 'tk-world/whale-tail', patrol: 'tk-top/patrol', tug: 'tk-top/tug' }
+    whale: 'tk-world/whale-tail', patrol: 'tk-top/patrol-ol', tug: 'tk-top/tug' }
   var THEME_ART = {
     sea: { block: ['tk-prop/iceberg-5', 'tk-world/iceberg-2', 'tk-prop/iceberg-3'] },
     deck: { block: ['tk-prop/crate-plain', 'tk-prop/barrels', 'tk-char/officer-boy'] }

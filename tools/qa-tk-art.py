@@ -246,5 +246,22 @@ class LiteralShipPixels(unittest.TestCase):
             self.assertEqual(index.read_text(encoding='utf-8'), '{"assets":{}}')
 
 
+class StickerOutline(unittest.TestCase):
+    """Grid sprites wear the white sticker rim (tools/tk_outline.py, the Mojo outline module)."""
+    def test_twins_are_outlined_and_rebuild_identically(self):
+        tko = module('tk_outline_gate', 'tk_outline.py')
+        for twin, src in tko.TARGETS.items():
+            with self.subTest(twin=twin):
+                path = tko.LIB / (twin + '.webp')
+                self.assertTrue(path.exists(), twin + ' is published')
+                rgba = np.asarray(Image.open(path).convert('RGBA'))
+                self.assertGreaterEqual(tko.rim_white(rgba), 0.5, twin + ' carries a white rim')
+                self.assertEqual(path.read_bytes(), tko.build(src)[0], twin + ' rebuilds byte-identically (never double-outlined)')
+
+    def test_grid_uses_the_outlined_patrol(self):
+        grid = (TOOLS.parent / 'games' / 'tk-grid.js').read_text(encoding='utf-8')
+        self.assertIn("patrol: 'tk-top/patrol-ol'", grid)
+
+
 if __name__ == '__main__':
     unittest.main()
