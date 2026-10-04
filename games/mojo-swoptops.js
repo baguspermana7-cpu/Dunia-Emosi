@@ -332,7 +332,7 @@
     })
     lv.grid.map.forEach(function (row, r) {
       for (var c = 0; c < row.length; c++) if (row.charAt(c) === 'T') {
-        var t = el('div', 'dec'); t.innerHTML = '<img alt="" src="' + MA.src('obj/tree') + '">'; t.setAttribute('data-rc', r + ',' + c); decorF.appendChild(t)
+        var t = el('div', 'dec'); t.innerHTML = '<img alt="" src="' + MA.src('obj/tree') + '">'; t.setAttribute('data-rc', r + ',' + c); fitRing(t.firstChild); decorF.appendChild(t)
       }
     })
     $('objs').appendChild(objsF); $('decor').appendChild(decorF)
@@ -358,6 +358,18 @@
     paint(G.w)
     placeAll(G.w)
   }
+  /* owner 2026-10-04: board objects carry a baked white sticker ring (tools/mojo_outline.py) whose canvas grows by
+     pad = ring + 3 px on every side. Sizes are fitted to the ART (key: [pad, longer side of the published file]),
+     so the ring adds an edge instead of shrinking the object. tools/qa-mojo-art.py checks this table against the
+     asset index. */
+  var RING = { 'mojo-prop/house': [6, 88], 'mojo-prop/shop': [6, 95], 'mojo-prop/hospital': [6, 89], 'mojo-prop/factory': [6, 89],
+    'mojo-prop/garage': [6, 87], 'mojo-prop/school': [6, 94], 'mojo-prop/star': [6, 91], 'mojo-prop/toolbox': [6, 152],
+    'mojo-prop/tree-round': [8, 242], 'mojo-prop/lamp-post': [6, 77], 'mojo-prop/bolt': [6, 90], 'mojo-prop/hammer': [6, 75],
+    'mojo-prop/screwdriver': [6, 117], 'mojo-prop/wrench': [6, 113], 'mojo-prop/rock-road': [7, 206], 'mojo-prop/flag-board': [8, 281],
+    'mojo-tile/crate': [6, 84] }
+  function ringOf (src) { var m = /lib\/([a-z-]+\/[a-z0-9-]+)\.webp/.exec(src || ''); return (m && RING[m[1]]) || null }
+  function ringScale (src) { var r = ringOf(src); return r ? r[1] / (r[1] - 2 * r[0]) : 1 }
+  function fitRing (img) { var k = ringScale(img.getAttribute('src')), v = k === 1 ? '' : k.toFixed(3); if (img.style.scale !== v) img.style.scale = v }
   var tileImages = {}, BOARD_BUILDINGS = ['house', 'shop', 'hospital', 'factory', 'garage', 'school']
   ;['road','grass','water','indoor-floor','wall','trap-hole'].concat(BOARD_BUILDINGS.map(function (k) { return 'b:' + k })).forEach(function (key) {
     var im = new Image(); im.onload = function () { if (G) paint(G.w) }
@@ -412,7 +424,7 @@
         if (grass) drawTile(x, grass, X, Y, s, 0.07); else { x.fillStyle = T.grass; x.fillRect(X, Y, s, s) }
         if (k === '#' && !onCell[r + ',' + c]) {
           var b = tileImg('b:' + BUILDINGS[(r * 3 + c * 5) % BUILDINGS.length])
-          if (b) { var bw = b.naturalWidth, bh = b.naturalHeight, sc = Math.min(s * 0.9 / bw, s * 0.9 / bh); x.drawImage(b, X + (s - bw * sc) / 2, Y + (s - bh * sc) / 2 + s * 0.02, bw * sc, bh * sc) }
+          if (b) { var bw = b.naturalWidth, bh = b.naturalHeight, bp = (ringOf(b.src) || [0])[0], sc = Math.min(s * 0.9 / (bw - 2 * bp), s * 0.9 / (bh - 2 * bp)); x.drawImage(b, X + (s - bw * sc) / 2, Y + (s - bh * sc) / 2 + s * 0.02, bw * sc, bh * sc) }
           else { x.fillStyle = T.roofs[(r * 3 + c * 5) % T.roofs.length]; x.fillRect(X + 6, Y + 6, s - 12, s - 12) }
         }
       } else if (k === '#') {
@@ -480,7 +492,7 @@
       case 'person': return MA.src('char/' + (o.who || 'kid'))
       case 'toolbox': return MA.src('obj/toolbox')
       case 'repair': return o.what === 'lamp' ? MA.src('obj/lamp') : MA.src('obj/' + (o.what || 'gate') + '-' + (o.st === 'fixed' ? 'fixed' : 'broken'))
-      case 'flag': return MA.src('obj/flag')
+      case 'flag': return MA.lib('mojo-prop/flag-board')   // the outlined board copy of the goal flag
       case 'crate': return MA.src('obj/crate')
       case 'bolt': return MA.src('obj/bolt')
       case 'drop': return MA.src('obj/drop')
@@ -505,6 +517,7 @@
     var d = OBJ[o.id]; if (!d) return
     var img = d.querySelector('img.main'), s = objImg(o)
     if (img.getAttribute('src') !== s) img.src = s
+    fitRing(img)
     var gone = o.st === 'got' || o.st === 'rescued' || o.st === 'cleared' || o.st === 'carried'
     d.classList.toggle('gone', gone)
     d.classList.toggle('resolved', !PG.blocks(o))   // a resolved SEBELAH object: its action badge goes away
@@ -574,8 +587,23 @@
     b.classList.toggle('alert', !!alert)
     var pose = MA.lib(alert ? 'mojo-char/bo-think' : 'mojo-char/bo'), bi = $('bo-img')
     if (bi && bi.getAttribute('src') !== pose) bi.src = pose
+    if (full || alert) boOpen(3000); else if (boLine) $('bo').classList.add('new')
     if (!quiet) say(boLine)
   }
+  /* owner 2026-10-04: "The text callout takes too much space; it covers the arrows." Bo's message is a one-line
+     chip in its own fixed slot; a tap opens the whole text in a popover ABOVE the palette (nothing below moves),
+     closed after 4 s or by a tap outside. A new hint or alert opens by itself for 3 s. */
+  var boTimer = 0
+  function boOpen (ms) {
+    var bo = $('bo'); clearTimeout(boTimer)
+    bo.classList.add('open'); bo.classList.remove('new'); $('bo-details').setAttribute('aria-expanded', 'true')
+    boTimer = setTimeout(boClose, ms || 4000)
+  }
+  function boClose () {
+    clearTimeout(boTimer); var bo = $('bo')
+    if (bo) { bo.classList.remove('open'); $('bo-details').setAttribute('aria-expanded', 'false') }
+  }
+  D.addEventListener('pointerdown', function (e) { var bo = $('bo'); if (bo && bo.classList.contains('open') && !bo.contains(e.target)) boClose() }, true)
 
   /* ── palette + program strip ────────────────────────────────────────── */
   function updatePaletteScroll () {
@@ -1701,6 +1729,8 @@
   tap('bo-say', function () { say(boLine, 'id', true) })
   tap('bo-details', function () {
     if (!G || G.run) return
+    if (!$('bo').classList.contains('open')) { boOpen(4000); return }   // the chip opens first; the popover opens the card
+    boClose()
     overlay('ov-card','<div class="card bo-explanation"><h2 class="fk">Pesan Bo</h2><p class="bo-goal" id="bo-goal"></p><p id="bo-full"></p><div class="row"><button class="btn b-soft fk" id="bo-full-say">Dengarkan</button><button class="btn b-show fk" id="bo-show" type="button"><i class="ico">' + MA.icon('hint') + '</i><span>Tunjukkan Caranya</span></button><button class="btn b-go fk" id="bo-close">Kembali ke Rencana</button></div></div>')
     $('bo-goal').textContent = 'Tugas sekarang: ' + $('bo-task').textContent
     $('bo-full').textContent = boLine
@@ -1712,7 +1742,7 @@
   try { if (W.SFXEngine && SFXEngine.setMute) SFXEngine.setMute(!soundOn()) } catch (e) {}
   // warm every picture the game uses so a level plays offline (the page itself is in sw.js SHELL)
   if (W.MojoFX) MojoFX.init({ layer: function () { return $('fx') }, cell: function () { return CELL }, lib: MA.lib, board: function () { return $('board') } })
-  var WARM = MA.libFiles().concat(['road','grass','water','indoor-floor','wall','trap-hole'].map(function (k) { return MA.lib('mojo-tile/' + k) }), BOARD_BUILDINGS.map(function (k) { return MA.lib('mojo-prop/' + k) }), W.MojoFX ? MojoFX.files() : [])
+  var WARM = MA.libFiles().concat(['road','grass','water','indoor-floor','wall','trap-hole'].map(function (k) { return MA.lib('mojo-tile/' + k) }), BOARD_BUILDINGS.concat(['flag-board']).map(function (k) { return MA.lib('mojo-prop/' + k) }), W.MojoFX ? MojoFX.files() : [])
   var assetLoad = { ready:false, pending:WARM.length, failed:[] }, warming = false
   function warmAssets () {
     if (warming) return

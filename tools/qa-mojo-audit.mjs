@@ -112,7 +112,7 @@ console.log('L3 showcase: Peta reachable, tap to skip PASS');
  await begin(p,'m1');await program(p,await p.evaluate(()=>__mojo.solution()));await tap(p,'#btn-run');
  for(let i=0;i<80&&!(await p.$('#chase-host'));i++)await sleep(150);ok(!!await p.$('#chase-host'),'C3 the story chase opened');
  ok(await p.evaluate(()=>(__mojo.save().lv.m1||{}).stars>=1),'C3 the stars are already safe while the chase runs');
- await sleep(1200);if(await p.$('#mc-go'))await tap(p,'#mc-go');await sleep(1500);
+ await sleep(1200);if(await p.$('.mcp-go'))await tap(p,'.mcp-go');else if(await p.$('#mc-go'))await tap(p,'#mc-go');for(let i=0;i<60&&(await p.evaluate(()=>{const s=window.__mojoChase&&__mojoChase.state&&__mojoChase.state();return s?s.state:''}))!=='active';i++){if(await p.$('.mc-skip.on'))await tap(p,'.mc-skip.on').catch(()=>{});await sleep(250)}
  const pause=await p.$('#chase-host .mc-pause');ok(!!pause,'C3 the chase has its pause button');await tap(p,pause);await sleep(500);await tap(p,'#mc-exit');
  await p.waitForSelector('#ov-card.on #res-map',{timeout:8000});ok(true,'C3 leaving the chase shows the result card');
  ok(await p.evaluate(()=>(__mojo.save().lv.m1||{}).stars>=1),'C3 the grid stars are saved');ok(!await p.$('#chase-host'),'C3 the chase is gone');

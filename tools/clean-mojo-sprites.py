@@ -77,6 +77,14 @@ MIN_PSNR = 36.0      # new vs committed sprite, opaque interior (two lossy 4:2:0
 MAX_FIDELITY_LOSS = 0.5  # dB: new vs owner source may not be worse than committed vs owner source
 OUTLINED = ('mojo-char', 'mojo-top')
 OUTLINE_FAMILY_T = {'mojo-top': 8}   # mojo-char: per pose (see method step 5)
+# Owner 2026-10-04: "still no white outline to disguise the white crop leftovers" on the BOARD objects. Every
+# sprite the G31 board draws as an object or item (games/data/mojo-art.js OWNER + the canvas buildings in
+# games/mojo-swoptops.js BOARD_BUILDINGS) gets the same sticker ring, per sprite (2.5% of its shorter side).
+# Full-cell ground tiles (road, grass, water, pit, floor, wall) and backgrounds are never outlined.
+# (mojo-prop/rock-road and the outlined flag are cut by tools/ingest-mojo-board-props.py; the fire is not outlined.)
+BOARD_OUTLINED = ('mojo-prop/house', 'mojo-prop/shop', 'mojo-prop/hospital', 'mojo-prop/factory', 'mojo-prop/garage',
+                  'mojo-prop/school', 'mojo-prop/star', 'mojo-prop/toolbox', 'mojo-prop/tree-round', 'mojo-prop/lamp-post',
+                  'mojo-prop/bolt', 'mojo-prop/hammer', 'mojo-prop/screwdriver', 'mojo-prop/wrench', 'mojo-tile/crate')
 
 # Audited background holes (sprite px). Judged by eye on source crops, 2026-10-01.
 CLEAR_HOLES = {
@@ -385,7 +393,7 @@ mo = load_outline()
 def outline_t(name, rgba):
     """Ring thickness for an OUTLINED sprite (its clean un-outlined RGBA), else None."""
     cat = name.split('/')[0]
-    if cat not in OUTLINED:
+    if cat not in OUTLINED and name not in BOARD_OUTLINED:
         return None
     return OUTLINE_FAMILY_T.get(cat) or mo.thickness(mo.short_side(rgba))
 

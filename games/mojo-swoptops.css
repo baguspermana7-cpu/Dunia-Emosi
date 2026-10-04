@@ -745,3 +745,35 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
  .mojo .mj-rot,.ob.flag img.main,.dec img,.slot.active .chip::after,.p-strip.locked .slot.done::after,.bubble.say,.bubble.say2{animation:none!important}
  .scr.active{animation:scrIn .2s ease both}
 }
+
+/* ── Bo chip (owner 2026-10-04: "the callout covers the arrows; hide it, tap to expand") ──
+   #bo is a FIXED slot: Bo's face + one ellipsized line + the speak button. #bo.open lifts the whole message into
+   a popover over the palette (absolute, so nothing below moves); games/mojo-swoptops.js boOpen()/boClose(). */
+#bo{position:relative;flex:none;height:60px;align-items:center;gap:6px;z-index:30}
+#bo .bo-img{display:block;width:44px;height:44px}
+#bo .bubble{flex:1;min-width:0;height:56px;min-height:0;max-height:none;padding:0 60px 0 12px;overflow:hidden;align-items:center;box-sizing:border-box}
+#bo .bubble::before{bottom:auto;top:50%;margin-top:-8px;border-width:8px;left:-8px}
+#bo .bubble .spk{top:0;bottom:auto;right:0;transform:none;width:56px;height:56px}
+#bo:not(.open) .bo-copy{flex-direction:row;align-items:center;min-width:0;height:100%}
+#bo:not(.open) #bo-task,#bo:not(.open) .bo-copy small{display:none}
+#bo:not(.open) #bo-text{display:block;min-width:0;max-height:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;font-weight:800}
+#bo.new::after,#bo.new::before{content:'';position:absolute;left:34px;top:4px;width:12px;height:12px;border-radius:50%;background:#FF7043;pointer-events:none}
+#bo.new::after{box-shadow:0 0 0 2px #fff}
+#bo.new::before{opacity:0;animation:boPing 1.2s cubic-bezier(.23,1,.32,1) 3}   /* three pings, then a still dot */
+@keyframes boPing{from{opacity:.7;transform:scale(1)}to{opacity:0;transform:scale(2.4)}}
+#bo.open .bubble{position:absolute;left:0;right:0;top:0;height:auto;min-height:56px;max-height:min(60vh,340px);overflow-y:auto;overscroll-behavior:contain;
+  padding:10px 60px 10px 12px;align-items:flex-start;z-index:60;box-shadow:0 10px 28px rgba(23,50,77,.35),0 4px 0 rgba(23,50,77,.15);transform-origin:20px 20px}
+#bo.open .bubble::before{display:none}
+#bo.open .bo-copy{gap:4px}
+#bo.open #bo-text{max-height:none;overflow:visible;white-space:normal;font-size:16px;line-height:1.35}
+#bo.open .bo-copy small{display:block;min-height:0;padding:0;font-size:13px}
+#bo.open .bubble.alert{box-shadow:0 10px 28px rgba(23,50,77,.35),0 0 0 3px #FFC83D}
+#bo.open .bubble.say{animation:bubSpringA .38s cubic-bezier(.34,1.56,.64,1),boPop .18s cubic-bezier(.23,1,.32,1)}
+#bo.open .bubble.say2{animation:bubSpringB .38s cubic-bezier(.34,1.56,.64,1),boPop .18s cubic-bezier(.23,1,.32,1)}
+@keyframes boPop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@media (orientation:landscape) and (max-height:520px),(orientation:portrait){
+ #bo{height:58px}#bo .bo-img{width:40px;height:40px}#bo.new::after,#bo.new::before{left:30px}
+ #bo:not(.open) #bo-text{font-size:14px}#bo.open #bo-text{font-size:15px}
+}
+@media (orientation:portrait){#bo{padding-top:0;align-self:center}}
+@media (prefers-reduced-motion:reduce){#bo.new::before{animation:none}#bo.open .bubble.say,#bo.open .bubble.say2{animation:none}}

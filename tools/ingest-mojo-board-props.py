@@ -19,6 +19,9 @@ first: removing its grass left holes in the stone, and the boulder touches its c
 The flame is separated from the logs and stones by colour (flame = bright warm pixels), its holes filled, and the
 cut where it met the logs fades out over its lowest rows, so it reads as fire burning on the ground.
 Outputs (new names; the old tiles stay for the Soal pack): mojo-prop/rock-road.webp, mojo-fx/flame-road.webp.
+2026-10-04: the rock and a board copy of the goal flag (mojo-prop/flag-board, from the shared game/flag-red, which
+stays as it is) carry the white sticker ring of tools/mojo_outline.py; the flame does not (a ring round fire reads
+wrong): its pale rim pixels are recoloured from the flame instead (unwhite_rim). All three are recorded in the index.
 """
 import importlib.util, io, os, sys, tempfile
 from pathlib import Path
@@ -93,21 +96,73 @@ def flame():
     ramp = np.ones(a.shape[0], np.float32)
     ramp[y1 - fade:y1 + 1] = np.linspace(1.0, 0.0, fade + 1) ** 0.8
     alpha = (alpha * ramp[:, None]).astype(np.uint8)
+    a = unwhite_rim(a, alpha)
     im = Image.fromarray(np.dstack([a, alpha]).astype(np.uint8), 'RGBA')
     im = im.crop(im.getbbox())
     return im
 
 
+def unwhite_rim(a, alpha, depth=3.0, pale=200, chroma=40):
+    """Owner 2026-10-04 ("still white crop leftovers"): a flame takes NO white sticker ring (a ring round fire reads
+    wrong), so the pale page pixels the cut kept on its rim are recoloured instead: every neutral light pixel within
+    `depth` px of the transparency takes the colour of the nearest non-pale art pixel. Alpha (the shape) is kept."""
+    a = a.copy()
+    rgb = a.astype(np.int16)
+    vis = alpha > 0
+    rim = vis & (ndimage.distance_transform_edt(vis) <= depth)
+    bad = rim & (rgb.min(2) >= pale) & ((rgb.max(2) - rgb.min(2)) <= chroma)
+    good = vis & ~bad
+    if bad.any() and good.any():
+        _, (iy, ix) = ndimage.distance_transform_edt(~good, return_indices=True)
+        a[bad] = a[iy[bad], ix[bad]]
+    return a
+
+
+def outlined(im):
+    """The white sticker ring of tools/mojo_outline.py on a clean cut-out (applied once, in memory)."""
+    arr = np.asarray(im.convert('RGBA'))
+    t = CLEAN.mo.thickness(CLEAN.mo.short_side(arr))
+    ring, _ = CLEAN.mo.outline(arr, t)
+    return Image.fromarray(ring, 'RGBA'), t
+
+
+def flag():
+    """The board's goal flag: the shared game/flag-red (left untouched) copied into the Mojo family with the ring."""
+    return Image.open(LIB / 'game' / 'flag-red.webp').convert('RGBA')
+
+
+TAGS = {'mojo-prop/rock-road': ['rock', 'road', 'mojo', 'cartoon'], 'mojo-fx/flame-road': ['fire', 'flame', 'mojo', 'cartoon'],
+        'mojo-prop/flag-board': ['flag', 'goal', 'mojo', 'cartoon']}
+SOURCE = {'mojo-prop/rock-road': 'owner mojo sheet 29 (board props)', 'mojo-fx/flame-road': 'owner mojo sheet 28 (board props)',
+          'mojo-prop/flag-board': 'game/flag-red + mojo outline'}
+
+
 def main():
+    import json
     dry = '--dry' in sys.argv
     SCRATCH.mkdir(parents=True, exist_ok=True)
-    for key, im in (('mojo-prop/rock-road', rock()), ('mojo-fx/flame-road', flame())):
+    rock_im, rock_t = outlined(rock())
+    flag_im, flag_t = outlined(flag())
+    entries, files = {}, {}
+    for key, im, t in (('mojo-prop/rock-road', rock_im, rock_t), ('mojo-fx/flame-road', flame(), None),
+                       ('mojo-prop/flag-board', flag_im, flag_t)):
         out = (SCRATCH / (key.replace('/', '-') + '.webp')) if dry else (LIB / (key + '.webp'))
         buf = io.BytesIO(); im.save(buf, 'WEBP', quality=92, method=6)
-        out.write_bytes(buf.getvalue())
+        if dry:
+            out.write_bytes(buf.getvalue())
+        else:
+            files[out] = buf.getvalue()
+        entry = {'file': f'assets/db/lib/{key}.webp', 'cat': key.split('/')[0], 'tags': TAGS[key], 'source': SOURCE[key],
+                 'w': im.width, 'h': im.height}
+        if t is not None:
+            entry['outline'] = t
+        entries[key] = entry
         for bgc, tag in (((40, 44, 52), 'dark'), ((234, 220, 194), 'road')):
             pv = Image.new('RGBA', im.size, bgc + (255,)); pv.alpha_composite(im); pv.convert('RGB').save(SCRATCH / (key.replace('/', '-') + '-' + tag + '.png'))
-        print(key, im.size, out)
+        print(key, im.size, 'outline', t, out)
+    if not dry:
+        from asset_transaction import publish      # ING put tools/ on sys.path
+        publish(str(ROOT / 'assets' / 'db' / 'index.json'), entries, files, ING.index_helper())
 
 
 if __name__ == '__main__':

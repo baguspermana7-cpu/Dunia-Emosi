@@ -6,7 +6,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const out='/tmp/mojo-interactions';fs.mkdirSync(out,{recursive:true});
 const p=await browser.newPage();await p.setViewport({width:1280,height:800});
 const errors=[];p.on('pageerror',e=>errors.push(e.message));
-async function tap(s){const e=await p.$(s);assert.ok(e,s);await e.evaluate(e=>e.scrollIntoView({block:'nearest',inline:'nearest'}));await e.click();await sleep(40)}
+// Bo's chip (2026-10-04) opens on the first tap; the open popover's tap opens the Pesan Bo card
+async function tap(s){if(s==='#bo-details'&&!(await p.$eval('#bo',e=>e.classList.contains('open')))){await (await p.$(s)).click();await sleep(60)}const e=await p.$(s);assert.ok(e,s);await e.evaluate(e=>e.scrollIntoView({block:'nearest',inline:'nearest'}));await e.click();await sleep(40)}
 async function start(id){await p.evaluate(id=>__mojo.start(id),id);await tap('#in-go');if(await p.$('#ov-card.on #picker-later'))await tap('#picker-later')}
 async function program(a){if(await p.$('#btn-clear:not([disabled])')){await tap('#btn-clear');await tap('#cl-yes')}for(const c of a)await tap(`[data-cmd="${c}"]`)}
 async function auto(){
@@ -185,7 +186,7 @@ try{
   const open=async()=>{await q.evaluate(()=>__mojo.map('kota'));await sleep(200);return q.$$eval('.lvl',bs=>bs.map(b=>b.classList.contains('lock')?0:1).join(''))};
   assert.equal(await open(),'111000000000','the first three levels are open from the start');
   assert.match(await q.$eval('[data-level="t4"]',e=>e.getAttribute('aria-label')),/selesaikan level 1 dulu/);
-  const qt=async s=>{const e=await q.$(s);await e.click();await sleep(60)};
+  const qt=async s=>{if(s==='#bo-details'&&!(await q.$eval('#bo',e=>e.classList.contains('open')))){await (await q.$(s)).click();await sleep(60)}const e=await q.$(s);await e.click();await sleep(60)};
   await qt('[data-level="t4"]');assert.match(await q.$eval('#toast',e=>e.textContent),/^Selesaikan level 1 dulu/);
   assert.ok(await q.evaluate(()=>document.getAnimations().some(a=>a.effect?.target?.dataset?.level==='t4')),'a locked tile shakes');
   // finish t1 the "show me" way: one star

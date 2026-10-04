@@ -10,6 +10,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -17,6 +18,7 @@ from pathlib import Path
 from unittest import mock
 import numpy as np
 from PIL import Image
+from scipy import ndimage
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 spec = importlib.util.spec_from_file_location('mojo_ingest', ROOT / 'tools/ingest-mojo-sheets.py')
@@ -515,6 +517,64 @@ OUTLINED = {
 NEVER_OUTLINED = ('mojo-bg', 'mojo-prop', 'mojo-fx', 'mojo-tile', 'mojo-ui', 'mojo-chase/props', 'mojo-chase/signs',
                   'mojo-chase/vfx', 'mojo-chase/far', 'mojo-chase/biome')
 RING_COVERAGE = 0.90      # measured 2026-10-03: worst 0.994 (mojo-hero/base-front, mojo-char/rabbit)
+# Owner 2026-10-04: "still no white outline to disguise the white crop leftovers" on the BOARD objects. Every
+# sprite the G31 board draws as an object or item carries the ring, per sprite (tools/clean-mojo-sprites.py
+# BOARD_OUTLINED + tools/ingest-mojo-board-props.py). These keys are the only outlined members of their families.
+BOARD_OUTLINED = ('mojo-prop/house', 'mojo-prop/shop', 'mojo-prop/hospital', 'mojo-prop/factory', 'mojo-prop/garage',
+                  'mojo-prop/school', 'mojo-prop/star', 'mojo-prop/toolbox', 'mojo-prop/tree-round', 'mojo-prop/lamp-post',
+                  'mojo-prop/bolt', 'mojo-prop/hammer', 'mojo-prop/screwdriver', 'mojo-prop/wrench', 'mojo-tile/crate',
+                  'mojo-prop/rock-road', 'mojo-prop/flag-board')
+# full-cell ground tiles and the flame (a ring round fire reads wrong; its rim is recoloured instead) never get one
+BOARD_NEVER = ('mojo-tile/road', 'mojo-tile/grass', 'mojo-tile/water', 'mojo-tile/trap-hole', 'mojo-tile/indoor-floor',
+               'mojo-tile/wall', 'mojo-fx/flame-road')
+# game/flag-red (the source of mojo-prop/flag-board) already carries a DRAWN 8 px white sticker border; the ring
+# sits outside it, so the white measured from the coloured art is 8 + t px (measured 13.0 for t = 5)
+DRAWN_BORDER = {'mojo-prop/flag-board': 8}
+FLAME_PALE_RIM = 20       # neutral light px within 3 px of the flame's edge (86 before the 2026-10-04 re-cut, 5 after)
+
+
+def check_ring(key, path, t, fixed, bad, drawn=0):
+    if not mo.MIN_T <= t <= mo.MAX_T or (fixed is not None and t != fixed):
+        bad.append(f'{key}: outline {t} px outside {mo.MIN_T}-{mo.MAX_T} / family value {fixed}')
+    rgba = np.asarray(Image.open(path).convert('RGBA'))
+    entry = INDEX[key]
+    if (entry.get('w'), entry.get('h')) != (rgba.shape[1], rgba.shape[0]):
+        bad.append(f'{key}: index w/h {entry.get("w")}x{entry.get("h")} != file {rgba.shape[1]}x{rgba.shape[0]}')
+    st = mo.ring_stats(rgba, t + drawn)
+    if st['coverage'] < RING_COVERAGE:
+        bad.append(f'{key}: white ring on {st["coverage"]:.3f} of the boundary < {RING_COVERAGE}')
+    if not t + drawn - 1.5 <= st['thickness'] <= t + drawn + 1.0:
+        bad.append(f'{key}: ring width {st["thickness"]:.1f} px, expected {t + drawn} (-1.5/+1)')
+    if st['clipped']:
+        bad.append(f'{key}: {st["clipped"]} opaque px on the canvas edge (outline clipped)')
+
+
+def board_outline_failures(lib):
+    lib, bad = Path(lib), []
+    for key in BOARD_OUTLINED:
+        t = ring_of(key)
+        if t is None:
+            bad.append(f'{key}: board object not outlined')
+            continue
+        check_ring(key, lib / (key + '.webp'), t, None, bad, DRAWN_BORDER.get(key, 0))
+    for key in BOARD_NEVER:
+        if ring_of(key):
+            bad.append(f'{key}: ground tile / flame must not be outlined')
+    # games/mojo-swoptops.js RING: [pad, longer side] per outlined board sprite, so sizes fit the ART box
+    js = (ROOT / 'games/mojo-swoptops.js').read_text(encoding='utf-8')
+    table = dict((k, (int(a), int(b))) for k, a, b in re.findall(r"'(mojo-[a-z]+/[a-z0-9-]+)': \[(\d+), (\d+)\]", js[js.index('var RING = {'):js.index('function ringOf')]))
+    for key in BOARD_OUTLINED:
+        e = INDEX.get(key) or {}
+        want = ((e.get('outline') or 0) + mo.SHADOW_W + 1, max(e.get('w') or 0, e.get('h') or 0))
+        if table.get(key) != want:
+            bad.append(f'{key}: mojo-swoptops.js RING {table.get(key)} != index {want}')
+    rgba = np.asarray(Image.open(lib / 'mojo-fx/flame-road.webp').convert('RGBA')).astype(int)
+    vis = rgba[..., 3] > 0
+    rim = vis & (ndimage.distance_transform_edt(vis) <= 3)
+    pale = (rgba[..., :3].min(2) >= 215) & ((rgba[..., :3].max(2) - rgba[..., :3].min(2)) <= 30)
+    if int((rim & pale).sum()) > FLAME_PALE_RIM:
+        bad.append(f'mojo-fx/flame-road: {int((rim & pale).sum())} pale rim px > {FLAME_PALE_RIM}')
+    return bad
 
 
 def outline_failures(lib):
@@ -543,7 +603,7 @@ def outline_failures(lib):
         if counts.get(fam, 0) != count:
             bad.append(f'{fam}: {counts.get(fam, 0)} outlined sprites, expected {count}')
     for key, entry in INDEX.items():
-        if entry.get('outline') and key.startswith(NEVER_OUTLINED):
+        if entry.get('outline') and key.startswith(NEVER_OUTLINED) and key not in BOARD_OUTLINED:
             bad.append(f'{key}: world/background art must not be outlined')
     return bad
 
@@ -558,6 +618,10 @@ class OutlineTests(unittest.TestCase):
     def test_outlined_families_have_an_even_unclipped_white_ring(self):
         bad = outline_failures(ROOT / 'assets/db/lib')
         self.assertEqual(bad, [], 'outline (re-run the ingest tools; see tools/mojo_outline.py):\n' + '\n'.join(bad))
+
+    def test_board_objects_are_outlined_but_ground_tiles_and_fire_are_not(self):
+        bad = board_outline_failures(ROOT / 'assets/db/lib')
+        self.assertEqual(bad, [], 'board outline (clean-mojo-sprites.py / ingest-mojo-board-props.py):\n' + '\n'.join(bad))
 
     def test_anchor_baselines_agree_and_match_the_published_canvas(self):
         rear = anchors_json('mojo-rear-anchors.js', 'W.MojoRearAnchors')

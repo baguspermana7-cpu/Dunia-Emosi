@@ -16395,6 +16395,19 @@
    "w": 118,
    "h": 69
   },
+  "mojo-fx/flame-road": {
+   "file": "assets/db/lib/mojo-fx/flame-road.webp",
+   "cat": "mojo-fx",
+   "tags": [
+    "fire",
+    "flame",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheet 28 (board props)",
+   "w": 122,
+   "h": 127
+  },
   "mojo-fx/highlight": {
    "file": "assets/db/lib/mojo-fx/highlight.webp",
    "cat": "mojo-fx",
@@ -17401,8 +17414,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 62,
-   "h": 78
+   "w": 74,
+   "h": 90,
+   "outline": 3
   },
   "mojo-prop/bolt-sheet03": {
    "file": "assets/db/lib/mojo-prop/bolt-sheet03.webp",
@@ -18300,8 +18314,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 77,
-   "h": 77
+   "w": 89,
+   "h": 89,
+   "outline": 3
   },
   "mojo-prop/fan": {
    "file": "assets/db/lib/mojo-prop/fan.webp",
@@ -18364,6 +18379,20 @@
    "source": "owner mojo sheets 2026-09-30",
    "w": 173,
    "h": 222
+  },
+  "mojo-prop/flag-board": {
+   "file": "assets/db/lib/mojo-prop/flag-board.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "flag",
+    "goal",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "game/flag-red + mojo outline",
+   "w": 239,
+   "h": 281,
+   "outline": 5
   },
   "mojo-prop/flag-sheet15": {
    "file": "assets/db/lib/mojo-prop/flag-sheet15.webp",
@@ -18450,8 +18479,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 75,
-   "h": 70
+   "w": 87,
+   "h": 82,
+   "outline": 3
   },
   "mojo-prop/garage2": {
    "file": "assets/db/lib/mojo-prop/garage2.webp",
@@ -18575,8 +18605,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 59,
-   "h": 63
+   "w": 71,
+   "h": 75,
+   "outline": 3
   },
   "mojo-prop/hammer2": {
    "file": "assets/db/lib/mojo-prop/hammer2.webp",
@@ -18709,8 +18740,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 77,
-   "h": 68
+   "w": 89,
+   "h": 80,
+   "outline": 3
   },
   "mojo-prop/house": {
    "file": "assets/db/lib/mojo-prop/house.webp",
@@ -18721,8 +18753,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 76,
-   "h": 65
+   "w": 88,
+   "h": 77,
+   "outline": 3
   },
   "mojo-prop/hut": {
    "file": "assets/db/lib/mojo-prop/hut.webp",
@@ -18835,8 +18868,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 18,
-   "h": 65
+   "w": 30,
+   "h": 77,
+   "outline": 3
   },
   "mojo-prop/lamp-post2": {
    "file": "assets/db/lib/mojo-prop/lamp-post2.webp",
@@ -19634,6 +19668,20 @@
    "w": 224,
    "h": 168
   },
+  "mojo-prop/rock-road": {
+   "file": "assets/db/lib/mojo-prop/rock-road.webp",
+   "cat": "mojo-prop",
+   "tags": [
+    "rock",
+    "road",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner mojo sheet 29 (board props)",
+   "w": 206,
+   "h": 158,
+   "outline": 4
+  },
   "mojo-prop/rock-sheet15": {
    "file": "assets/db/lib/mojo-prop/rock-sheet15.webp",
    "cat": "mojo-prop",
@@ -19770,8 +19818,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 82,
-   "h": 75
+   "w": 94,
+   "h": 87,
+   "outline": 3
   },
   "mojo-prop/screwdriver": {
    "file": "assets/db/lib/mojo-prop/screwdriver.webp",
@@ -19782,8 +19831,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 72,
-   "h": 105
+   "w": 84,
+   "h": 117,
+   "outline": 3
   },
   "mojo-prop/seats": {
    "file": "assets/db/lib/mojo-prop/seats.webp",
@@ -19831,8 +19881,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 83,
-   "h": 70
+   "w": 95,
+   "h": 82,
+   "outline": 3
   },
   "mojo-prop/side-panels": {
    "file": "assets/db/lib/mojo-prop/side-panels.webp",
@@ -20166,8 +20217,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 79,
-   "h": 79
+   "w": 91,
+   "h": 91,
+   "outline": 3
   },
   "mojo-prop/star-sheet03": {
    "file": "assets/db/lib/mojo-prop/star-sheet03.webp",
@@ -20508,8 +20560,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 140,
-   "h": 114
+   "w": 152,
+   "h": 126,
+   "outline": 3
   },
   "mojo-prop/tools": {
    "file": "assets/db/lib/mojo-prop/tools.webp",
@@ -20690,8 +20743,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 199,
-   "h": 226
+   "w": 215,
+   "h": 242,
+   "outline": 5
   },
   "mojo-prop/tree-sheet15": {
    "file": "assets/db/lib/mojo-prop/tree-sheet15.webp",
@@ -21025,8 +21079,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 71,
-   "h": 101
+   "w": 83,
+   "h": 113,
+   "outline": 3
   },
   "mojo-prop/wrench-sheet03": {
    "file": "assets/db/lib/mojo-prop/wrench-sheet03.webp",
@@ -21743,8 +21798,9 @@
     "cartoon"
    ],
    "source": "owner mojo sheets 2026-09-30",
-   "w": 72,
-   "h": 70
+   "w": 84,
+   "h": 82,
+   "outline": 3
   },
   "mojo-tile/crate-move": {
    "file": "assets/db/lib/mojo-tile/crate-move.webp",
