@@ -284,18 +284,19 @@ async function checkLevelMap (p, tag, wid, rotate) {
   check(m.font >= 14 && m.star >= 18, `${tag}: titles >= 14 px, stars >= 18 px (${m.font} / ${m.star})`)
   check(m.next === (wid === 'kamar' ? 2 : 3) && m.ring && m.flag === 'Main!', `${tag}: the first unplayed level is current: pulse ring + "Main!" flag (${m.next} ${m.ring} ${m.flag})`)
   check(wid === 'kamar' || (m.ship && !m.shipOnNext), `${tag}: the world's ship waits beside the current level`)
-  check(m.locked.length >= 1 && m.locked.every(Boolean), `${tag}: locked levels are grey with a lock (${m.locked.join(',')})`)
+  const cur0 = wid === 'kamar' ? 2 : 3, allOpen = nLv <= cur0 + 3   // short worlds: explore-ahead opens every level, nothing stays locked
+  check(allOpen ? m.locked.length === 0 : (m.locked.length >= 1 && m.locked.every(Boolean)), `${tag}: locked levels are grey with a lock (${allOpen ? 'none expected, ' + nLv + ' levels' : m.locked.join(',')})`)
   // explore-ahead (owner 2026-10-03): the last starred level opens the next 3, so the first lock sits 3 past the current one
   const cur = wid === 'kamar' ? 2 : 3
-  check(m.lockedK.length && Math.min(...m.lockedK) === cur + 3 && [0, 1, 2].every(d => !m.lockedK.includes(cur + d)), `${tag}: finishing level ${cur} opens levels ${cur + 1}..${cur + 3}, the first lock is level ${cur + 4} (locked: ${m.lockedK.map(k => k + 1).join(',')})`)
+  check(allOpen ? !m.lockedK.length : m.lockedK.length && Math.min(...m.lockedK) === cur + 3 && [0, 1, 2].every(d => !m.lockedK.includes(cur + d)), `${tag}: finishing level ${cur} opens levels ${cur + 1}..${cur + 3}, the first lock is level ${cur + 4} (locked: ${m.lockedK.map(k => k + 1).join(',')})`)
   check(wid === 'kamar' || m.chest, `${tag}: the fragment level is a treasure chest`)
   check(m.plate === 'Peta ' + name && m.guide, `${tag}: "Peta ${name}" plate + guide bubble (${m.plate} / ${m.guide})`)
   check(m.fillW >= 0.85 && m.fillH >= 0.85, `${tag}: the board fills the frame (w ${m.fillW.toFixed(2)} h ${m.fillH.toFixed(2)})`)
   // a locked tap: gentle shake + the hint toast, no level starts
   await p.evaluate(() => { window.__shook = 0; const o = Element.prototype.animate; if (!o.__qa) { Element.prototype.animate = function (k, t) { if (this.classList && this.classList.contains('chap') && JSON.stringify(k).includes('translate')) window.__shook++; return o.call(this, k, t) }; Element.prototype.animate.__qa = true } })
-  await tapSel(p, '#route .chap.locked .md'); await sleep(250)
+  if (!allOpen) { await tapSel(p, '#route .chap.locked .md'); await sleep(250)
   const lk = await p.evaluate(() => ({ shook: window.__shook, toast: document.getElementById('toast').textContent, s: __tk.state().screen }))
-  check(lk.shook >= 1 && /Selesaikan level sebelumnya dulu/.test(lk.toast) && lk.s === 'scr-map', `${tag}: a locked tap shakes + says "Selesaikan level sebelumnya dulu" (${JSON.stringify(lk)})`)
+  check(lk.shook >= 1 && /Selesaikan level sebelumnya dulu/.test(lk.toast) && lk.s === 'scr-map', `${tag}: a locked tap shakes + says "Selesaikan level sebelumnya dulu" (${JSON.stringify(lk)})`) }
   if (rotate) {   // rotation: the board re-lays out (debounced) without sailing the ship again
     const vp = p.viewport()
     await p.setViewport(Object.assign({}, vp, { width: vp.height, height: vp.width })); await sleep(700)

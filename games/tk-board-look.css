@@ -1,0 +1,122 @@
+/* G30 Timmy board look + scene life (games/tk-board-look.js). Everything is scoped under .tkg.tkb-on, set by the
+   module once a grid board is mounted. Transform + opacity animations only; will-change only on moving layers.
+   #tkb-bg sits under every panel (z -1 in the isolated root); the board's ground layer sits under every tile;
+   tags (z 2) sit above the art (z 1); the vessel (5) and the fog (6) stay above everything added here. */
+.tkg.tkb-on{isolation:isolate}
+.tkb-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:strict}
+.tkb-bg>i,.tkb-parts{position:absolute;display:block;pointer-events:none}
+.tkb-parts{inset:0}
+.tkb-anim{will-change:transform,opacity}
+.tkb-pause .tkb-anim,.tkb-pause .tkb-rip b,.tkb-pause .tkg-o.tkb-foam:after,.tkb-pause .tkg-imv:after,.tkb-pause .tkb-splash{animation-play-state:paused!important}
+
+/* the painting breathes: a copy of the root's own background, scaled 1 -> 1.03 */
+.tkb-paint{inset:0;transform-origin:50% 72%;animation:tkbBreath 36s ease-in-out infinite alternate}
+@keyframes tkbBreath{from{transform:scale(1)}to{transform:scale(1.03)}}
+
+/* two cloud bands at two depths (200vw band, -100vw loop) */
+.tkb-cl{left:0;width:200vw;background-repeat:repeat-x;background-size:100vw 100%}
+.tkb-cl1{top:4%;height:24%;opacity:.45;animation:tkbCloud 200s linear infinite;
+  background-image:radial-gradient(ellipse 9vw 26% at 12% 46%,rgba(255,255,255,.7),rgba(255,255,255,0) 70%),radial-gradient(ellipse 6vw 18% at 17% 38%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%),
+    radial-gradient(ellipse 11vw 22% at 52% 64%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),radial-gradient(ellipse 7vw 20% at 82% 30%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%)}
+.tkb-cl2{top:12%;height:30%;opacity:.36;animation:tkbCloud 120s linear infinite;animation-delay:-40s;
+  background-image:radial-gradient(ellipse 15vw 24% at 30% 50%,rgba(255,255,255,.7),rgba(255,255,255,0) 70%),radial-gradient(ellipse 9vw 18% at 36% 40%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%),
+    radial-gradient(ellipse 13vw 20% at 76% 58%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%)}
+@keyframes tkbCloud{from{transform:translate3d(0,0,0)}to{transform:translate3d(-100vw,0,0)}}
+.tkb-bg[data-tkb=night] .tkb-cl{opacity:.14}
+.tkb-bg[data-tkb=deep] .tkb-cl,.tkb-bg[data-tkb=indoor] .tkb-cl{display:none}
+
+/* soft ray fan from the top-left corner, swaying */
+.tkb-rays{left:-8vw;top:-12vh;width:80vw;height:110vh;transform-origin:0 0;opacity:.7;animation:tkbRays 15s ease-in-out infinite alternate;
+  background:conic-gradient(from 96deg at 0 0,rgba(255,244,200,0) 0deg,rgba(255,244,200,.18) 6deg,rgba(255,244,200,0) 12deg,rgba(255,244,200,0) 18deg,rgba(255,244,200,.13) 23deg,rgba(255,244,200,0) 29deg,rgba(255,244,200,0) 36deg,rgba(255,244,200,.15) 41deg,rgba(255,244,200,0) 48deg,rgba(255,244,200,0) 360deg)}
+@keyframes tkbRays{from{transform:rotate(-2.5deg);opacity:.4}to{transform:rotate(2.5deg);opacity:.9}}
+.tkb-bg[data-tkb=deep] .tkb-rays{left:20vw;width:70vw;background:conic-gradient(from 150deg at 30% 0,rgba(200,240,255,0) 0deg,rgba(200,240,255,.16) 5deg,rgba(200,240,255,0) 10deg,rgba(200,240,255,0) 20deg,rgba(200,240,255,.13) 25deg,rgba(200,240,255,0) 31deg,rgba(200,240,255,0) 360deg)}
+.tkb-bg[data-tkb=night] .tkb-rays{display:none}
+.tkb-bg[data-tkb=indoor] .tkb-rays{opacity:.4}
+
+/* themed particles (pool <= 12): one element each, an infinite loop with a negative delay */
+.tkb-p{position:absolute;display:block;width:var(--sz,8px);height:var(--sz,8px);pointer-events:none;animation-timing-function:linear;animation-iteration-count:infinite}
+.tkb-glint{height:3px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,255,255,.95),rgba(255,255,255,0) 70%);animation-name:tkbGlint;animation-timing-function:ease-in-out}
+@keyframes tkbGlint{0%,100%{transform:scaleX(.3);opacity:0}45%{transform:scaleX(1);opacity:.9}60%{transform:scaleX(.8);opacity:.5}}
+.tkb-star{border-radius:50%;background:radial-gradient(circle,#fff 0 35%,rgba(255,255,255,0) 70%);animation-name:tkbTwinkle;animation-timing-function:ease-in-out;animation-direction:alternate}
+@keyframes tkbTwinkle{from{transform:scale(.55);opacity:.15}to{transform:scale(1.15);opacity:1}}
+.tkb-snow{border-radius:50%;background:radial-gradient(circle,#fff 0 45%,rgba(255,255,255,0) 72%);animation-name:tkbSnow}
+@keyframes tkbSnow{0%{transform:translate3d(0,0,0);opacity:0}8%{opacity:.95}50%{transform:translate3d(calc(var(--dx) * -.5),52vh,0)}92%{opacity:.95}100%{transform:translate3d(var(--dx),106vh,0);opacity:0}}
+.tkb-bubble{border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9) 0 14%,rgba(255,255,255,.12) 30% 58%,rgba(255,255,255,.6) 64%,rgba(255,255,255,0) 70%);animation-name:tkbBubble}
+@keyframes tkbBubble{0%{transform:translate3d(0,0,0);opacity:0}10%{opacity:.85}50%{transform:translate3d(var(--dx),-45vh,0)}100%{transform:translate3d(0,-92vh,0);opacity:0}}
+.tkb-mote{border-radius:50%;background:radial-gradient(circle,rgba(255,240,200,.85) 0 30%,rgba(255,240,200,0) 70%);animation-name:tkbMote;animation-timing-function:ease-in-out}
+@keyframes tkbMote{0%,100%{transform:translate3d(0,0,0);opacity:.1}30%{transform:translate3d(2vw,-3vh,0);opacity:.8}70%{transform:translate3d(-1vw,-6vh,0);opacity:.4}}
+
+/* a far flyer now and then (one element, restarted by the module) */
+.tkb-fly{left:0;width:84px;height:32px;opacity:0}
+.tkb-fly svg{display:block;width:100%;height:100%}
+.tkb-fly.tkb-f-gulls.on{animation:tkbGull 16s ease-in-out 1 both}
+.tkb-fly.tkb-rtl svg{transform:scaleX(-1)}
+.tkb-fly.tkb-rtl.on{animation-direction:reverse}
+.tkb-fly.tkb-f-shoot{width:150px;height:24px}
+.tkb-fly.tkb-f-shoot.on{animation:tkbShoot 1.6s ease-in 1 both}
+@keyframes tkbGull{0%{transform:translate3d(-10vw,0,0);opacity:0}8%{opacity:.9}30%{transform:translate3d(25vw,-3vh,0)}60%{transform:translate3d(62vw,1vh,0)}92%{opacity:.9}100%{transform:translate3d(108vw,-2vh,0);opacity:0}}
+@keyframes tkbShoot{0%{transform:translate3d(20vw,0,0) rotate(14deg);opacity:0}20%{opacity:1}100%{transform:translate3d(70vw,12vh,0) rotate(14deg);opacity:0}}
+
+/* ── board ── */
+.tkb-on .tkg-board{overflow:visible}
+.tkb-ground{position:absolute;inset:0;overflow:hidden;border-radius:14px;pointer-events:none}
+.tkb-on.tkg--deck .tkb-ground{border-radius:10px}
+.tkb-ground>i{position:absolute;display:block;pointer-events:none}
+/* water glints: short bright dashes that flash on the sea */
+.tkb-gl{width:calc(var(--t) * .3);height:3px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,255,255,.9),rgba(255,255,255,0) 70%);opacity:0;animation:tkbGlint 3s ease-in-out infinite}
+.tkb-on[data-tkb-sea="0"] .tkb-gl,.tkb-on[data-tkb-th=indoor] .tkb-gl{display:none}
+/* cloud shadows: soft dark blobs, alpha <= .1 */
+.tkb-cs{left:0;top:-10%;width:70%;height:70%;border-radius:50%;background:radial-gradient(ellipse closest-side,rgba(6,24,52,.1),rgba(6,24,52,.05) 55%,rgba(6,24,52,0));animation:tkbShadow 38s linear infinite}
+.tkb-cs2{top:38%;width:56%;height:62%;animation-duration:54s;animation-delay:-27s}
+@keyframes tkbShadow{from{transform:translate3d(-105%,-6%,0)}to{transform:translate3d(185%,12%,0)}}
+.tkb-on[data-tkb-th=indoor] .tkb-cs,.tkb-on[data-tkb-th=night] .tkb-cs,.tkb-on[data-tkb-th=deep] .tkb-cs{display:none}
+/* a glint sweep every 8 s */
+.tkb-sweep{left:0;top:-30%;width:22%;height:160%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,250,.18) 50%,rgba(255,255,255,0));opacity:0;animation:tkbSweep 8s ease-in-out infinite}
+@keyframes tkbSweep{0%{transform:translate3d(-120%,0,0) rotate(16deg);opacity:0}3%{opacity:1}22%{transform:translate3d(560%,0,0) rotate(16deg);opacity:1}24%,100%{transform:translate3d(560%,0,0) rotate(16deg);opacity:0}}
+
+/* art (z 1) under every tag (z 2); the grid sorts nothing, the module orders the art by row */
+.tkb-on .tkg-blk,.tkb-on .tkg-goal{z-index:1}
+.tkb-on .tkg-start,.tkb-on .tkg-stop,.tkb-on .tkg-key,.tkb-on .tkg-door,.tkb-on .tkg-qt,.tkb-on .tkg-whirl,.tkb-on .tkg-sw,.tkb-on .tkg-gate,.tkb-on .tkg-cur,.tkb-on .tkg-drop,.tkb-on .tkg-slick,.tkb-on .tkg-bcn{z-index:2}
+.tkb-on .tkg-blk.tkb-a>img{position:absolute;left:calc(50% - var(--t) * var(--tkb-w) / 2 + var(--t) * var(--tkb-dx,0));bottom:calc(var(--t) * .05);width:calc(var(--t) * var(--tkb-w));height:calc(var(--t) * var(--tkb-h));max-width:none;object-fit:contain;object-position:50% 100%}
+.tkb-on .tkg-goal.tkb-lh .lh{left:1%;right:auto;top:auto;bottom:8%;width:calc(var(--t) * var(--tkb-w));height:calc(var(--t) * var(--tkb-h));object-position:50% 100%;filter:drop-shadow(0 3px 2px rgba(0,20,60,.4))}
+/* contact shadow (every dressed art) + a foam ring breathing round rocks and ice in the sea */
+.tkb-on .tkg-blk.tkb-a:before{content:"";position:absolute;z-index:-1;left:calc(50% - var(--t) * var(--tkb-w) * .36 + var(--t) * var(--tkb-dx,0));width:calc(var(--t) * var(--tkb-w) * .72);bottom:calc(var(--t) * .01);height:calc(var(--t) * .16);border-radius:50%;background:radial-gradient(closest-side,rgba(0,18,48,.38),rgba(0,18,48,0));pointer-events:none}
+.tkb-on.tkg--deck .tkg-blk.tkb-a:before{background:radial-gradient(closest-side,rgba(40,18,0,.42),rgba(40,18,0,0))}
+.tkb-on .tkg-o.tkb-foam:after{content:"";position:absolute;z-index:-1;left:calc(50% - var(--t) * var(--tkb-w) * .42 + var(--t) * var(--tkb-dx,0));width:calc(var(--t) * var(--tkb-w) * .84);bottom:calc(var(--t) * .0);height:calc(var(--t) * .2);border-radius:50%;border:2px solid rgba(255,255,255,.7);box-shadow:0 0 6px rgba(255,255,255,.45);pointer-events:none;animation:tkbFoam 3.4s ease-in-out infinite}
+@keyframes tkbFoam{0%,100%{transform:scale(.92);opacity:.45}50%{transform:scale(1.06);opacity:.9}}
+
+/* water ripple rings under the vessel (inside the boat, under its art) and under moving ice */
+.tkb-rip{position:absolute;z-index:-1;left:12%;right:12%;bottom:8%;height:24%;pointer-events:none}
+.tkb-rip b{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.7);opacity:0;animation:tkbRip 2.6s ease-out infinite}
+.tkb-rip b+b{animation-delay:-1.3s}
+@keyframes tkbRip{0%{transform:scale(.55);opacity:.85}100%{transform:scale(1.3);opacity:0}}
+.tkb-on.tkg--deck .tkb-rip{background:radial-gradient(closest-side,rgba(40,18,0,.36),rgba(40,18,0,0))}
+.tkb-on.tkg--deck .tkb-rip b{display:none}
+.tkb-on[data-tkb-sea="1"] .tkg-imv{isolation:isolate}
+.tkb-on[data-tkb-sea="1"] .tkg-imv:after{content:"";position:absolute;z-index:-1;left:14%;right:14%;bottom:6%;height:20%;border-radius:50%;border:2px solid rgba(255,255,255,.6);pointer-events:none;animation:tkbFoam 2.8s ease-in-out infinite}
+
+/* the diorama base: a sea cliff (sea boards) or a wooden hull (deck boards) under the board */
+.tkb-skirt{position:absolute;left:10px;right:10px;top:calc(100% + 1px);height:20px;pointer-events:none;transform-origin:50% 0;
+  clip-path:polygon(0 0,100% 0,97% 50%,90% 100%,10% 100%,3% 50%);
+  background:linear-gradient(180deg,rgba(240,250,255,.9) 0 9%,#3d8cc0 9% 24%,#8a7560 24% 58%,#5f4d3d 58%)}
+.tkb-skirt:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 26px,rgba(0,0,0,.09) 26px 30px)}
+.tkb-skirt.tkb-anim{animation:tkbBob 7s ease-in-out infinite alternate}
+@keyframes tkbBob{from{transform:scaleY(1)}to{transform:scaleY(1.08)}}
+.tkb-on[data-tkb-th=snow] .tkb-skirt{background:linear-gradient(180deg,#F4FBFF 0 18%,#BFD9EA 18% 50%,#8FB1C8 50%)}
+.tkb-on.tkg--deck .tkb-skirt{background:linear-gradient(180deg,#C99A62 0 14%,#6B4423 14% 60%,#4A2C14 60%)}
+
+/* ambient life on the board (z 4: under the vessel and the fog) */
+.tkb-amb{position:absolute;left:0;top:0;width:100%;height:100%;z-index:4;pointer-events:none}
+.tkb-actor{position:absolute;left:0;top:0;display:block;pointer-events:none}
+.tkb-actor svg{display:block;width:100%;height:100%}
+.tkb-gull svg{animation:tkbFlap .32s linear infinite alternate;transform-origin:50% 60%}
+@keyframes tkbFlap{from{transform:scaleY(1)}to{transform:scaleY(.35)}}
+.tkb-splash{position:absolute;width:calc(var(--t) * .3);height:calc(var(--t) * .1);margin:calc(var(--t) * -.05) 0 0 calc(var(--t) * -.15);border-radius:50%;border:2px solid rgba(255,255,255,.85);pointer-events:none;animation:tkbSplash .6s ease-out forwards}
+@keyframes tkbSplash{from{transform:scale(.3);opacity:1}to{transform:scale(1.4);opacity:0}}
+
+@media (prefers-reduced-motion:reduce){
+  .tkb-anim,.tkb-rip b,.tkg-o.tkb-foam:after,.tkg-imv:after,.tkb-gull svg{animation:none!important;will-change:auto}
+  .tkb-p,.tkb-fly,.tkb-actor,.tkb-splash,.tkb-sweep,.tkb-gl{display:none!important}
+}
+.tkb-rm .tkb-p,.tkb-rm .tkb-fly,.tkb-rm .tkb-actor,.tkb-rm .tkb-splash,.tkb-rm .tkb-sweep,.tkb-rm .tkb-gl{display:none!important}
+.tkb-rm .tkb-anim{animation:none!important;will-change:auto}
