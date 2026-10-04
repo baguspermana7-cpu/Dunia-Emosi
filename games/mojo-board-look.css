@@ -1,0 +1,72 @@
+/* Mojo board look (games/mojo-board-look.js, owner 2026-10-04 "immersive diorama"). Everything is scoped under
+   .board.mbl-on, set by the module once a level is laid out. Art grows from the cell's bottom-centre; the cell div
+   (tap target, transform) keeps its size. No transforms are used for placement, so the game's own inline
+   transforms (fire strength, flag wave, tree sway) keep working. */
+.board.mbl-on{isolation:isolate;box-shadow:0 0 0 5px rgba(255,255,255,.92),0 0 0 8px rgba(23,50,77,.14),0 10px 22px rgba(0,0,0,.14)}
+.board.mbl-on>.fx{z-index:900}
+.board.mbl-on>.fxg{z-index:899}
+.board.mbl-on>.mbl-amb{z-index:700}
+.board.mbl-on .mbl-ground,.board.mbl-on .mbl-props{pointer-events:none}
+.mbl-ground canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:18px}
+
+/* hero art, anchored to the ground */
+.board.mbl-on .ob.mbl-a>img.main,.board.mbl-on .dec.mbl-a>img,.mbl-bld>img{position:absolute;left:calc(50% - var(--cell) * var(--mbl-w) / 2 + var(--cell) * var(--mbl-dx,0));bottom:calc(var(--cell) * .02);width:calc(var(--cell) * var(--mbl-w));height:calc(var(--cell) * var(--mbl-h));max-width:none;object-fit:contain;object-position:50% 100%}
+.board.mbl-on .ob.mbl-a.elev>img.main{transform:none}
+.board.mbl-on .ob.mbl-a:not(.fire)>img.main{transform-origin:50% 100%}   /* the ring scale (img.style.scale) grows the art up, never below its foot */
+.board.mbl-on .dec.mbl-a>img{transform-origin:50% 100%}
+.mbl-sh{position:absolute;z-index:-1;left:calc(50% - var(--cell) * var(--mbl-w,1) * .34 + var(--cell) * var(--mbl-dx,0));width:calc(var(--cell) * var(--mbl-w,1) * .68);bottom:calc(var(--cell) * -.03);height:calc(var(--cell) * .17);border-radius:50%;background:radial-gradient(closest-side,rgba(20,30,10,.32),rgba(20,30,10,0));pointer-events:none}
+.ob.gone .mbl-sh{opacity:0}
+.mbl-bld{position:absolute;left:0;top:0;width:var(--cell);height:var(--cell);pointer-events:none}
+.mbl-bld>img{filter:drop-shadow(0 3px 2px rgba(0,0,0,.22))}
+
+/* a friend up a big tree: the tree (img.perch) grows ~2 cells, the friend sits on the canopy */
+.board.mbl-on .ob.mbl-perch>img.perch{inset:auto!important;left:calc(50% - var(--cell) * var(--mbl-w) / 2 + var(--cell) * var(--mbl-dx,0))!important;bottom:calc(var(--cell) * .02)!important;width:calc(var(--cell) * var(--mbl-w))!important;height:calc(var(--cell) * var(--mbl-h))!important;max-width:none;object-fit:contain;object-position:50% 100%;opacity:1;transform-origin:50% 100%}
+.board.mbl-on .ob.mbl-perch>img.main{z-index:1;left:calc(50% - var(--cell) * var(--mbl-fw) / 2 + var(--cell) * var(--mbl-dx,0));bottom:calc(var(--cell) * (.03 + var(--mbl-h) * (1 - var(--mbl-top))));width:calc(var(--cell) * var(--mbl-fw));height:calc(var(--cell) * var(--mbl-fh));transform-origin:50% 100%}
+.board.mbl-on .ob.mbl-cat>img.main{animation:mblCatIdle 5.2s var(--ease-io,ease-in-out) infinite}
+.board.mbl-on .ob.mbl-cat.mbl-near>img.main{animation:mblCatLook 1.6s var(--ease-io,ease-in-out) infinite alternate}
+.board.mbl-on .ob.mbl-cat.mbl-near.mbl-look-r>img.main{animation-name:mblCatLookR}
+.mbl-tail{position:absolute;z-index:0;left:calc(50% + var(--cell) * (.1 + var(--mbl-dx,0)));bottom:calc(var(--cell) * (.03 + var(--mbl-h) * (1 - var(--mbl-top)) - .34));width:calc(var(--cell) * .085);height:calc(var(--cell) * .42);border-radius:0 0 50% 50%/0 0 30% 30%;background:repeating-linear-gradient(180deg,#EBA43C 0 18%,#C26E1C 18% 27%);box-shadow:0 2px 2px rgba(0,0,0,.18);transform-origin:50% 0;animation:mblTail 2.6s var(--ease-io,ease-in-out) infinite alternate;pointer-events:none}
+.ob.gone .mbl-tail{opacity:0;transition:opacity .25s}
+@keyframes mblCatIdle{0%,55%,100%{transform:none}60%{transform:rotate(-5deg)}63%{transform:rotate(2deg)}66%{transform:none}80%{transform:translateY(calc(var(--cell) * -.02)) scaleY(1.03)}}
+@keyframes mblCatLook{from{transform:rotate(-4deg) translateY(calc(var(--cell) * .02))}to{transform:rotate(-12deg) translateY(calc(var(--cell) * .05))}}
+@keyframes mblCatLookR{from{transform:rotate(4deg) translateY(calc(var(--cell) * .02))}to{transform:rotate(12deg) translateY(calc(var(--cell) * .05))}}
+@keyframes mblTail{from{transform:rotate(-16deg)}to{transform:rotate(18deg)}}
+
+/* a friend on a balcony: the railing block becomes a small house front */
+.board.mbl-on .ob.mbl-balc::before{left:4%;right:4%;bottom:calc(var(--cell) * .03);height:calc(var(--cell) * var(--mbl-fac));border-radius:8px 8px 4px 4px;background:linear-gradient(90deg,transparent 18%,rgba(90,140,190,.85) 18% 40%,transparent 40% 60%,rgba(90,140,190,.85) 60% 82%,transparent 82%) 0 26%/100% 30% no-repeat,linear-gradient(180deg,#FFE0B2,#F6C38B);box-shadow:inset 0 -6px 0 rgba(0,0,0,.08),0 3px 0 rgba(0,0,0,.2)}
+.board.mbl-on .ob.mbl-balc::after{bottom:calc(var(--cell) * (.03 + var(--mbl-fac) - .08));height:calc(var(--cell) * .12)}
+.board.mbl-on .ob.mbl-balc>img.main{position:absolute;z-index:1;left:calc(50% - var(--cell) * var(--mbl-fw) / 2);bottom:calc(var(--cell) * (.03 + var(--mbl-fac) - .06));width:calc(var(--cell) * var(--mbl-fw));height:calc(var(--cell) * var(--mbl-fh));transform:none;object-fit:contain;object-position:50% 100%}
+
+/* tall art keeps its height tag readable beside it, not on top of the art */
+.board.mbl-on .ob.mbl-tall>.tag{right:auto;left:calc(50% + var(--cell) * (var(--mbl-w) * .36 + var(--mbl-dx,0)));top:calc(var(--cell) * (1 - var(--mbl-th) * .6))}
+.board.mbl-on .ob.mbl-tall.mbl-tag-l>.tag{left:auto;right:calc(50% + var(--cell) * (var(--mbl-w) * .36 - var(--mbl-dx,0)))}
+
+/* water shimmer: transform + opacity only */
+.mbl-wave{position:absolute;width:var(--cell);height:var(--cell);overflow:hidden;pointer-events:none;border-radius:12%}
+.mbl-wave::before{content:'';position:absolute;inset:0 -50% 0 -50%;background:repeating-linear-gradient(105deg,transparent 0 18px,rgba(255,255,255,.22) 18px 22px,transparent 22px 44px);animation:mblWave 4.5s linear infinite}
+@keyframes mblWave{0%{transform:translateX(-12%);opacity:.5}50%{opacity:.95}100%{transform:translateX(12%);opacity:.5}}
+
+/* the floating diorama base under the board */
+.mbl-skirt{position:absolute;z-index:-1;left:6px;right:6px;top:calc(100% + 1px);height:calc(var(--cell) * .26);pointer-events:none;clip-path:polygon(0 0,100% 0,97% 55%,90% 100%,10% 100%,3% 55%);background:linear-gradient(180deg,#6FA843 0 16%,#8D6E63 16% 58%,#6D4C41 58%)}
+.mbl-skirt::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(0,0,0,.08) 22px 26px)}
+.board[data-mbl-theme=hill] .mbl-skirt{background:linear-gradient(180deg,#7DA34D 0 16%,#9E9E9E 16% 58%,#757575 58%)}
+.board[data-mbl-theme=school] .mbl-skirt{background:linear-gradient(180deg,#CFD8DC 0 18%,#B0BEC5 18% 58%,#90A4AE 58%)}
+
+/* ambient life (max 2 flyers, 3 leaves; none at all under reduced motion) */
+.mbl-actor{position:absolute;pointer-events:none}
+.mbl-leaf{width:calc(var(--cell) * .1);height:calc(var(--cell) * .06);border-radius:0 100% 0 100%;background:#5DA33A;animation:mblFall 3.6s var(--ease-io,ease-in-out) forwards}
+.mbl-leaf-o{background:#E0A030}
+@keyframes mblFall{0%{transform:translate(0,0) rotate(0);opacity:0}10%{opacity:1}35%{transform:translate(calc(var(--mbl-drift) * .5),calc(var(--mbl-fall) * .35)) rotate(120deg)}70%{transform:translate(calc(var(--mbl-drift) * -.3),calc(var(--mbl-fall) * .75)) rotate(220deg);opacity:1}100%{transform:translate(var(--mbl-drift),var(--mbl-fall)) rotate(300deg);opacity:0}}
+.mbl-fly{width:calc(var(--cell) * .26);height:calc(var(--cell) * .2)}
+.mbl-bird svg{width:100%;height:100%;animation:mblFlap .35s linear infinite alternate;transform-origin:50% 60%}
+.mbl-bfly{display:flex;justify-content:center;gap:1px;width:calc(var(--cell) * .2);height:calc(var(--cell) * .16)}
+.mbl-bfly b{width:45%;height:100%;border-radius:60% 40% 50% 50%;background:radial-gradient(circle at 50% 40%,#FFF59D 0 25%,#FF8A65 26%);animation:mblWing .18s linear infinite alternate;transform-origin:100% 50%}
+.mbl-bfly b+b{transform-origin:0 50%;border-radius:40% 60% 50% 50%}
+.mbl-rtl{scale:-1 1}
+@keyframes mblFlap{from{transform:scaleY(1)}to{transform:scaleY(.35)}}
+@keyframes mblWing{from{transform:scaleX(1)}to{transform:scaleX(.25)}}
+
+@media (prefers-reduced-motion:reduce){
+  .board.mbl-on .ob.mbl-cat>img.main,.mbl-tail,.mbl-wave::before,.mbl-leaf,.mbl-bird svg,.mbl-bfly b{animation:none!important}
+  .mbl-actor{display:none}
+}
