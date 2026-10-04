@@ -216,6 +216,35 @@
     return q || chaseGen(1, rng(qSeed++), null, { kind: kind })
   }
 
+  /* ── THE Swop form table (owner 2026-10-04: "the rear view must change with the selector"). One row per offered
+     form; the picker card, the big rear preview and the in-race sprite ALL read this row, nothing else.
+       card  lib key on the picker card: the film hero ONLY where it depicts the same machine as the rear sprite
+             (chosen by looking at the mojo-rear contact sheet), otherwise the rear sprite itself
+       rear  assets/db/lib/mojo-rear/<rear>.webp = preview + race sprite (anchors in data/mojo-rear-anchors.js)
+       kind  ground | air (air hovers over the road with a shadow). No water forms: every stage is a road.
+       unlock  Balapan stages cleared (>= 1 star) before it can be picked: 4 at start, 6 by 3 cleared, all by 14.
+     Not offered: boat/hover (no water stage), offroad (no rear sprite). Racer has no rear art of its own: it is
+     the neon-trim rear, and its card shows that same rear sprite. ───────────────────────────────────── */
+  var FORMS = [
+    { id: 'racer', name: 'Pembalap', perk: 'boost', line: 'Boost lebih cepat!', card: 'mojo-rear/base-neon', rear: 'base-neon', kind: 'ground', unlock: 0 },
+    { id: 'monster', name: 'Monster', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', card: 'mojo-hero/monster-2', rear: 'monster-2', kind: 'ground', unlock: 0 },
+    { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang dan batu!', card: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
+    { id: 'dozer', name: 'Dozer', perk: 'recover', line: 'Cepat pulih setelah BROK!', card: 'mojo-rear/loader', rear: 'loader', kind: 'ground', unlock: 0 },
+    { id: 'rescue', name: 'Ambulans', perk: 'heal', line: 'Semangat cepat terisi lagi!', card: 'mojo-rear/ambulance', rear: 'ambulance', kind: 'ground', unlock: 2 },
+    { id: 'snow-plow', name: 'Bajak Salju', perk: 'snow', line: 'Kuat dan cepat di jalan salju!', card: 'mojo-rear/snow', rear: 'snow', kind: 'ground', unlock: 3 },
+    { id: 'fire', name: 'Pemadam', perk: 'heal', line: 'Semangat cepat terisi lagi!', card: 'mojo-rear/ladder', rear: 'ladder', kind: 'ground', unlock: 4 },
+    { id: 'cargo', name: 'Truk Kargo', perk: 'recover', line: 'Kuat, cepat pulih setelah BROK!', card: 'mojo-hero/cargo', rear: 'cargo', kind: 'ground', unlock: 5 },
+    { id: 'chopper', name: 'Helikopter', perk: 'fly', line: 'Terbang melewati rintangan!', card: 'mojo-hero/chopper-3', rear: 'chopper-3', kind: 'air', unlock: 6 },
+    { id: 'tow', name: 'Mobil Derek', perk: 'recover', line: 'Cepat pulih setelah BROK!', card: 'mojo-rear/tow', rear: 'tow', kind: 'ground', unlock: 7 },
+    { id: 'crane', name: 'Truk Crane', perk: 'recover', line: 'Kokoh, cepat pulih setelah BROK!', card: 'mojo-rear/crane-2', rear: 'crane-2', kind: 'ground', unlock: 8 },
+    { id: 'delivery', name: 'Mobil Boks', perk: 'boost', line: 'Boost lebih cepat!', card: 'mojo-rear/delivery', rear: 'delivery', kind: 'ground', unlock: 9 },
+    { id: 'excavator', name: 'Ekskavator', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', card: 'mojo-rear/excavator', rear: 'excavator', kind: 'ground', unlock: 10 },
+    { id: 'plane', name: 'Pesawat', perk: 'fly', line: 'Terbang melewati rintangan!', card: 'mojo-rear/prop-plane', rear: 'prop-plane', kind: 'air', unlock: 12 },
+    { id: 'jet', name: 'Jet', perk: 'boost', line: 'Melesat sangat cepat!', card: 'mojo-hero/jet-4', rear: 'jet', kind: 'air', unlock: 14 }
+  ]
+  function form (id) { for (var i = 0; i < FORMS.length; i++) if (FORMS[i].id === id) return FORMS[i]; return null }
+  function formRear (id) { var f = form(id); return f ? f.rear : null }
+
   W.MojoChases = { STAGES: STAGES, PIECES: PIECES, ADVENTURE: ADVENTURE, stage: stage, config: config, beatAfter: beatAfter,
-    sequencer: sequencer, rng: rng, question: question, chaseGen: chaseGen }
+    sequencer: sequencer, rng: rng, question: question, chaseGen: chaseGen, FORMS: FORMS, form: form, formRear: formRear }
 })(typeof window !== 'undefined' ? window : globalThis)

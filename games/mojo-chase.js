@@ -45,8 +45,15 @@
   var CD_STEP = 0.8     // the 3-2-1 countdown: seconds per number
   var CUT_KEY = 'dunia-g31-cut-seen'   // stage ids whose intro cutscene was already watched (it plays once per stage)
   // every Swop form the picker can offer: its name for the callouts and the perk it brings when cfg.perk is absent
-  var FORM_NAME = { racer: 'Pembalap', monster: 'Monster', jumper: 'Pelompat', 'snow-plow': 'Bajak Salju', dozer: 'Dozer', rescue: 'Penyelamat', boat: 'Perahu', chopper: 'Helikopter', jet: 'Jet' }
+  // name / perk / rear sprite come from THE form table (MojoChases.FORMS); these literals are only the fallback
+  var FORM_NAME = { racer: 'Pembalap', monster: 'Monster', jumper: 'Pelompat', 'snow-plow': 'Bajak Salju', dozer: 'Dozer', rescue: 'Ambulans', chopper: 'Helikopter', jet: 'Jet' }
   var FORM_PERK = { racer: 'boost', jet: 'boost', monster: 'grip', jumper: 'jump', 'snow-plow': 'snow', dozer: 'recover', rescue: 'heal', boat: 'splash', chopper: 'fly' }
+  function formRow (id) { try { return (W.MojoChases && W.MojoChases.form && W.MojoChases.form(id)) || null } catch (e) { return null } }
+  function formName (id) { var f = formRow(id); return f ? f.name : FORM_NAME[id] }
+  function formPerk (id) { var f = formRow(id); return f ? f.perk : FORM_PERK[id] }
+  // the in-race rear sprite of a form: the table row first, the generated anchor alias second, plain Mojo last
+  function rearOf (id) { var f = formRow(id), RA = W.MojoRearAnchors; return f ? f.rear : (RA && RA.forms[id]) || 'base' }
+  function knownForm (id) { var RA = W.MojoRearAnchors; return !!id && (!!formRow(id) || !!(RA && RA.forms[id])) }
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
   function lib (k) { return (W.AssetIndex && W.AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') }
   function clamp (v, a, b) { return v < a ? a : v > b ? b : v }
@@ -130,18 +137,17 @@
     var stage = CH.stage(cfg.stage) || CH.STAGES[0], TEX = FX.build()
     var RA = W.MojoRearAnchors, CA = W.MojoChaseAnchors, TA = W.MojoTrackAnchors
     // the Swop forms a child can race with (owner: "pilih karakter"): film art on the card, rear art in the race, one perk each
-    var FORMS = [
-      { id: 'racer', name: 'Pembalap', art: 'mojo-hero/racer', perk: 'Ngebut lebih kencang' },
-      { id: 'monster', name: 'Monster', art: 'mojo-hero/monster-2', perk: 'Lumpur dan jalan licin tidak masalah' },
-      { id: 'snow-plow', name: 'Bajak Salju', art: 'mojo-top/snow-plow', perk: 'Kuat dan cepat di jalan salju' },
-      { id: 'dozer', name: 'Dozer', art: 'mojo-hero/dozer-2', perk: 'Cepat pulih setelah BROK' }
-    ]
+    // fallback intro chooser (no picker module): the table's starter forms; card art = the table's card key
+    var FORMS = ['racer', 'monster', 'snow-plow', 'dozer'].map(function (id) {
+      var f = formRow(id) || { name: FORM_NAME[id], card: 'mojo-rear/' + rearOf(id), line: '' }
+      return { id: id, name: f.name, art: f.card, perk: String(f.line || '').replace(/!$/, '') }
+    })
     var look0 = stage.look || stage.biome
     var recForm = stage.recForm || (look0 === 'snow' ? 'snow-plow' : /forest|farm|jungle|autumn|ruins|windfarm/.test(look0) || stage.weather === 'leaves' ? 'monster' : /construction|harbour/.test(look0) ? 'dozer' : 'racer')
     // cfg.mojo_form is honoured as given ('racer' included); without one: the avatar's last form, else the stage pick
-    var formId = cfg.mojo_form && RA && RA.forms[cfg.mojo_form] ? cfg.mojo_form : (cfg.lastForm && FORMS.some(function (f) { return f.id === cfg.lastForm }) ? cfg.lastForm : recForm)
-    var perk = cfg.perk || FORM_PERK[formId] || null
-    var rearKey = (RA && RA.forms[formId]) || 'base', rearA = RA ? RA.sprites[rearKey] : null
+    var formId = knownForm(cfg.mojo_form) ? cfg.mojo_form : (cfg.lastForm && FORMS.some(function (f) { return f.id === cfg.lastForm }) ? cfg.lastForm : recForm)
+    var perk = cfg.perk || formPerk(formId) || null
+    var rearKey = rearOf(formId), rearA = RA ? RA.sprites[rearKey] : null
     var targetName = cfg.target_type || stage.target, targetA = CA ? CA.families.vehicles.sprites[targetName] : null
     var sound = typeof cfg.sound === 'function' ? cfg.sound : function () { return true }
     var AU = Audio(sound)
@@ -193,7 +199,7 @@
       })
     }
     function want (name, key) { need[name] = key }
-    FORMS.forEach(function (f) { want('rear:' + f.id, 'mojo-rear/' + ((RA && RA.forms[f.id]) || 'base')) })
+    FORMS.forEach(function (f) { want('rear:' + f.id, 'mojo-rear/' + rearOf(f.id)) })
     want('rear', 'mojo-rear/' + rearKey); want('target', 'mojo-chase/vehicles/' + targetName); want('police', 'mojo-chase/vehicles/police-van')
     want('robber', 'mojo-chase/robbers/robber-beanie'); want('p:bridge-tower', 'mojo-chase/cprops/red-suspension-bridge-tower')
     Object.keys(OBJ).forEach(function (k) { want('o:' + k, OBJ[k].k) })
@@ -523,7 +529,9 @@
       S.edu = CH.question(); S.eduSeg = segAhead
       track.mark(segAhead, 'gantry')
       H.edu.textContent = S.edu.prompt; H.edu.classList.add('on')
-      call(S.edu.prompt, 2600, 'edu')
+      // ONE callout per event (owner 2026-10-04): the yellow lane pill shows the prompt, Bo's bubble steps aside; the voice still reads it
+      H.call.classList.remove('on'); callT = 0
+      if (cfg.say) try { cfg.say(S.edu.prompt) } catch (e) {}
     }
 
     /* capture */
@@ -1148,7 +1156,7 @@
       var sc = RM ? 1 : t < 0.12 ? 1.15 * t / 0.12 : t < IN ? 1.15 - 0.15 * (t - 0.12) / (IN - 0.12) : 1   // pop 0 -> 1.15 -> 1
       var al = t > IN + HOLD ? Math.max(0, 1 - (t - IN - HOLD) / OUT) : RM ? Math.min(1, t / 0.15) : 1
       var rot = RM ? 0 : Math.sin(t * 22) * 0.08 * Math.max(0, 1 - t / 0.9)                                   // the wobble settles
-      var fs = Math.round(uiPx(20)); c.font = uiFont(fs)
+      var fs = Math.round(Math.max(uiPx(10), 12 / v.css)); c.font = uiFont(fs)   // owner 2026-10-04: 50% of the old size, >= 12 css px
       var tw = c.measureText(TN.text).width, bw = tw + fs * 1.3, bh = fs * 1.75, tl = fs * 0.95, pad = 10 * v.u
       var R = S.targetScreen, seen = !!R && S.t - S.targetSeenT < 0.2 && R.x > 0 && R.x < v.w && R.y > 0 && R.y < v.h
       var ax = seen ? R.x : clamp(R ? R.x : v.cx, pad + bw / 2, v.w - pad - bw / 2), ay = seen ? (R.roof != null ? R.roof + R.w * 0.05 : R.y - R.w * 0.42) : 0
@@ -1175,7 +1183,7 @@
     function drawNear () {
       if (!NM.on) return
       NM.t += FDT; if (NM.t > 0.9) { NM.on = false; return }
-      var t = NM.t, sc = RM ? 1 : t < 0.1 ? t / 0.1 * 1.2 : t < 0.2 ? 1.2 - (t - 0.1) * 2 : 1, fs = Math.round(uiPx(22))
+      var t = NM.t, sc = RM ? 1 : t < 0.1 ? t / 0.1 * 1.2 : t < 0.2 ? 1.2 - (t - 0.1) * 2 : 1, fs = Math.round(Math.max(uiPx(11), 12 / v.css))
       c.save(); c.globalAlpha = t > 0.6 ? 1 - (t - 0.6) / 0.3 : 1; c.translate(NM.x, NM.y - t * 50 * v.u); c.scale(sc, sc)
       c.font = uiFont(fs); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = fs * 0.22; c.strokeStyle = '#10264f'
       c.strokeText('Nyaris!', 0, 0); c.fillStyle = '#ffd54a'; c.fillText('Nyaris!', 0, 0); c.restore()
@@ -1234,7 +1242,7 @@
 
     /* start */
     function setForm (id, pk) {
-      formId = id; S.form = id; perk = pk || FORM_PERK[id] || null; rearKey = (RA && RA.forms[id]) || 'base'; rearA = RA ? RA.sprites[rearKey] : null
+      formId = id; S.form = id; perk = pk || formPerk(id) || null; rearKey = rearOf(id); rearA = RA ? RA.sprites[rearKey] : null
       var rk = rearKey
       if (RIMG[rk]) { img.rear = RIMG[rk]; formLoad = null }
       else {   // a picker form that was not preloaded (jumper, rescue, boat, chopper, jet...): decode it now; the countdown waits
@@ -1251,7 +1259,7 @@
         var custom = HK().beforeStart !== HOOKS.beforeStart   // a picker module ran: its choice is final (even 'racer')
         c2 = c2 || {}
         var chosen = !!(c2.picked || c2.formChosen)
-        if ((custom || chosen) && c2.mojo_form && RA && RA.forms[c2.mojo_form]) { setForm(c2.mojo_form, c2.perk || null); cfg.formChosen = true }
+        if ((custom || chosen) && knownForm(c2.mojo_form)) { setForm(c2.mojo_form, c2.perk || null); cfg.formChosen = true }
         else if (c2.perk) perk = c2.perk
         if (chosen) startRun(); else intro()   // the picker already asked: no intro card, straight to the cutscene / countdown
       }, function () { intro() })
@@ -1294,14 +1302,14 @@
       H.mission.classList.add('hide'); H.place.classList.add('hide')   // nothing may cover the road while racing (owner)
       S.state = 'swop'; S.phaseT = 0; S.speed = 0.4; S.flash = RM ? 0 : 0.8
       var m = mojoXY(); burst(m.x, m.y - carPx() * 0.4, 30, TEX.sparkle, 900 * v.u, 0.8, carPx() * 0.2, true)
-      AU.cue('swoosh'); call('Swop! Jadi Mojo ' + (FORM_NAME[formId] || 'Hebat') + '!', 1300, 'swop')
+      AU.cue('swoosh'); call('Swop! Jadi Mojo ' + (formName(formId) || 'Hebat') + '!', 1300, 'swop')
       last = performance.now()
     }
     loadAll().then(function () {
       if (finished) return
       S.form = formId
       for (var nm in img) if (nm.indexOf('p:') === 0) imgP[nm.slice(2)] = img[nm]
-      FORMS.forEach(function (f) { var rk0 = (RA && RA.forms[f.id]) || 'base'; if (img['rear:' + f.id]) RIMG[rk0] = img['rear:' + f.id] })
+      FORMS.forEach(function (f) { var rk0 = rearOf(f.id); if (img['rear:' + f.id]) RIMG[rk0] = img['rear:' + f.id] })
       if (img.rear) RIMG[rearKey] = img.rear
       for (var sq2 in SEQ) for (var fj = 1; fj <= 8; fj++) if (img['seq:' + sq2 + '-' + fj]) SEQ[sq2].push(img['seq:' + sq2 + '-' + fj])
       imgP.lollipop = procProp('lollipop'); imgP.gumdrop = procProp('gumdrop')
@@ -1341,7 +1349,7 @@
     })
 
     // test seam (QA only)
-    W.__mojoChase = { host: host, active: true,
+    W.__mojoChase = { host: host, active: true, view: API.view, robber: API.robber,   // QA seams (canvas px; multiply by view().css)
       state: function () {
         var med = function (a) { if (!a.length) return 0; var b = a.slice().sort(function (x, y) { return x - y }); return b[Math.floor(b.length / 2)] }
         return { state: S.state, paused: S.paused, prog: S.prog, lane: S.lane, lanePos: S.lanePos, lastLaneMs: S.lastLaneMs, hits: S.hits, brok: S.brok, recover: S.recover,
@@ -1374,5 +1382,5 @@
   var live = {}, prior = (W.MojoChase && W.MojoChase.hooks) || {}
   for (var hk in HOOKS) live[hk] = HOOKS[hk]
   for (var pk in prior) if (prior[pk]) live[pk] = prior[pk]
-  W.MojoChase = { mount: mount, OBJ: OBJ, version: 2, hooks: live }
+  W.MojoChase = { mount: mount, OBJ: OBJ, version: 2, hooks: live, rearKey: rearOf }
 })(window, document)

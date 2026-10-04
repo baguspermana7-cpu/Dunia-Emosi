@@ -189,7 +189,7 @@ try {
     for (let f = 0; f < (width === 1280 || width === 390 ? 20 : 3); f++) { await p.screenshot({ path: `${out}/${width}-boost-${String(f).padStart(2, '0')}.png` }); await sleep(100) }
     await p.evaluate(() => { __mojoChase.force({ tauntAt: -99 }); __mojoChase.emitTest('brok') })   // past the 6 s taunt cooldown (an idle car may have bumped something)
     const tn = await p.evaluate(() => new Promise(res => setTimeout(() => res(__mojoChase.state()), 350)))
-    check(tn.taunt === 'Kamu jelek!' && tn.tauntBox && tn.tauntBox.fs >= 18 && tn.tauntBox.y + tn.tauntBox.h < tn.playerYCss - tn.carCss, `${width}: a BROK makes the robber taunt "Kamu jelek!" (${tn.taunt}, font ${tn.tauntBox && tn.tauntBox.fs.toFixed(1)} px, clear of Mojo)`)
+    check(tn.taunt === 'Kamu jelek!' && tn.tauntBox && tn.tauntBox.fs >= 12 && tn.tauntBox.fs <= 16 && tn.tauntBox.y + tn.tauntBox.h < tn.playerYCss - tn.carCss, `${width}: a BROK makes the robber taunt "Kamu jelek!" (${tn.taunt}, font ${tn.tauntBox && tn.tauntBox.fs.toFixed(1)} px of 12..16 = 50% size, clear of Mojo)`)
     for (let f = 0; f < (width === 1280 || width === 390 ? 20 : 3); f++) { await p.screenshot({ path: `${out}/${width}-brok-${String(f).padStart(2, '0')}.png` }); await sleep(100) }
     s = await waitState(p, s => s.recoveryMs.length > 0, 4000)
     check(s.brok >= 1 && s.recoveryMs.length && s.recoveryMs[0] <= 1800 && s.recoveryMs[0] >= 1000, `${width}: BROK then control back in 1.0-1.8 s (${s.recoveryMs})`)
@@ -228,6 +228,13 @@ try {
       await openStage(p, 'malam'); await go(p); await sleep(4000)
       await p.screenshot({ path: `${out}/1280-night.png` })
       for (let f = 0; f < 20; f++) { await p.screenshot({ path: `${out}/1280-night-${String(f).padStart(2, '0')}.png` }); await sleep(100) }
+      // the lane event shows ONE callout: the yellow pill, never Bo's bubble with the same words (owner photo b82cd034)
+      await p.evaluate(() => __mojoChase.force({ prog: 0.34, best: 0.34 }))
+      await p.waitForFunction(() => document.querySelector('.mc-edu.on'), { timeout: 8000 }).catch(() => {})
+      const dup = await p.evaluate(() => { const e = document.querySelector('.mc-edu'), c = document.querySelector('.mc-call'); return { edu: e.classList.contains('on') ? e.textContent : null, call: c.classList.contains('on') ? c.textContent.trim() : null } })
+      check(dup.edu && dup.call !== dup.edu, `night: the lane event shows the yellow pill only, no duplicate Bo bubble (pill "${dup.edu}", bubble ${dup.call ? '"' + dup.call + '"' : 'off'})`)
+      await p.evaluate(() => { const c = document.querySelector('.mc-call'); c.classList.add('on'); c.querySelector('span').textContent = 'Tidak apa-apa! Pelan-pelan saja.' })
+      await sleep(300); await p.screenshot({ path: `${out}/1280-night-callouts.png` })
       await p.click('.mc-pause'); await sleep(300); await p.click('#mc-exit'); await sleep(500)
     }
     check(!errors.length, `${width}: no page errors (${errors.slice(0, 3)})`)
@@ -305,7 +312,8 @@ try {
     await waitState(p, s => s.state === 'active', 20000)
     const hits = await p.evaluate(() => {
       document.querySelector('.mc-call').classList.add('on'); document.querySelector('.mc-call span').textContent = 'Tidak apa-apa! Pelan-pelan saja.'
-      const sel = ['.mc-badge', '.mc-hearts', '.mc-prog', '.mc-title', '.mc-pause', '.mc-cnt.star', '.mc-cnt.crate', '.mc-timer', '.mc-mission .plank', '.mc-place .plank', '.mc-call', '.mc-btn.l', '.mc-btn.u', '.mc-btn.r', '.mc-gadget']
+      document.querySelector('.mc-edu').classList.add('on'); document.querySelector('.mc-edu').textContent = 'Jalur mana 4 + 3?'
+      const sel = ['.mc-badge', '.mc-hearts', '.mc-prog', '.mc-title', '.mc-loc', '.mc-pause', '.mc-cnt.star', '.mc-cnt.crate', '.mc-timer', '.mc-mission .plank', '.mc-place .plank', '.mc-call', '.mc-edu', '.mc-btn.l', '.mc-btn.u', '.mc-btn.r', '.mc-gadget']
       const box = sel.map(q => { const e = document.querySelector(q); if (!e || e.closest('.hide') || getComputedStyle(e).display === 'none' || getComputedStyle(e).visibility === 'hidden') return null; const r = e.getBoundingClientRect(); return r.width && r.height ? [q, r] : null }).filter(Boolean)
       const out = []
       for (let i = 0; i < box.length; i++) for (let j = i + 1; j < box.length; j++) {
@@ -319,7 +327,7 @@ try {
     const cover = await p.evaluate(() => {
       const k = __mojoChase.state().corridor, out = []
       ;[...document.querySelectorAll('.mc-hud > *')].forEach(e => {
-        if (e.classList.contains('mc-reticle') || e.classList.contains('mc-call') || e.classList.contains('mc-edu') || getComputedStyle(e).display === 'none' || +getComputedStyle(e).opacity < 0.05) return
+        if (e.classList.contains('mc-reticle') || getComputedStyle(e).display === 'none' || +getComputedStyle(e).opacity < 0.05) return
         const r = e.getBoundingClientRect(); if (!r.width) return
         const y0 = Math.max(r.top, k.hy), y1 = Math.min(r.bottom, k.top); if (y1 <= y0) return
         const t = (y1 - k.hy) / (k.top - k.hy), half = k.wTop + (k.wBot - k.wTop) * t
@@ -327,7 +335,18 @@ try {
       })
       return out
     })
-    check(!cover.length, `${w}x${h}: no HUD element covers the road corridor (${cover.join(', ')})`)
+    check(!cover.length, `${w}x${h}: no HUD element (Bo's bubble and the lane pill included) covers the road corridor (${cover.join(', ')})`)
+    // owner 2026-10-04: callouts at 50% (Bo 32 -> 16 px, pill 38 -> 19 px at 1280x800; >= 12 px), clear of the robber
+    const co = await p.evaluate(() => {
+      const f = q => parseFloat(getComputedStyle(document.querySelector(q)).fontSize), b = q => document.querySelector(q).getBoundingClientRect()
+      const v = __mojoChase.view ? __mojoChase.view() : null, rb = __mojoChase.robber ? __mojoChase.robber() : null
+      const css = v ? v.css : 1, rob = rb && rb.w ? { l: (rb.x - rb.w / 2) * css, r: (rb.x + rb.w / 2) * css, t: (rb.roof != null ? rb.roof : rb.y - rb.w * 0.8) * css, b: rb.y * css } : null
+      const hit = q => { if (!rob) return false; const r = b(q); return r.left < rob.r && r.right > rob.l && r.top < rob.b && r.bottom > rob.t }
+      return { u: parseFloat(getComputedStyle(document.querySelector('.mc-host')).getPropertyValue('--u')) || 1, call: f('.mc-call span'), edu: f('.mc-edu'), img: b('.mc-call img').width, rob: !!rob, hit: ['.mc-call', '.mc-edu'].filter(hit) }
+    })
+    const big = [Math.max(14, 10 * co.u), Math.max(14, 12 * co.u), 20 * co.u]   // half of the old 20u / 24u / 40u (16 / 19.2 / 32 px at 1280x800), 14 px floor on phones
+    check(co.call >= 12 && co.call <= big[0] + 0.5 && co.edu >= 12 && co.edu <= big[1] + 0.5 && co.img <= big[2] + 0.5, `${w}x${h}: callouts at 50% size (u ${co.u}, Bo ${co.call} px, avatar ${Math.round(co.img)} px, lane pill ${co.edu} px)`)
+    check(!co.hit.length, `${w}x${h}: no callout covers the robber (${co.rob ? co.hit.join(', ') || 'clear' : 'robber not drawn'})`)
     await p.screenshot({ path: `${out}/hud-${w}x${h}.png` })
     await p.click('.mc-pause').catch(() => {}); await sleep(200); await p.click('#mc-exit').catch(() => {}); await done.catch(() => {})
     await p.close()

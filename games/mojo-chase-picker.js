@@ -6,7 +6,7 @@
  *
  *   MojoChasePicker.run(cfg, api) -> Promise<cfg'>   registered as MojoChase.hooks.beforeStart (api.host = mount host)
  *       cfg' = a NEW object: cfg + { mojo_form, perk, lastForm }   (the input cfg is never mutated)
- *   MojoChasePicker.FORMS                        the offered forms (id, name, perk id, perk line, art)
+ *   MojoChasePicker.FORMS                        the offered forms = MojoChases.FORMS rows (id, name, perk, line, card, rear, kind, unlock)
  *   MojoChasePicker.recommend(stage) -> { rec, alt[] }   "Paling Tepat" + "Bisa Juga" by stage/biome
  *   MojoChasePicker.state()                      QA seam: { open, form, rec }
  *
@@ -22,31 +22,29 @@
   var KEY = 'dunia-g31-chase', SWOP_MS = 420
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
 
-  // the offered forms: film art where the owner drew one, the workshop top view otherwise
-  var FORMS = [
-    { id: 'racer', name: 'Pembalap', perk: 'boost', line: 'Boost lebih cepat!', art: 'mojo-hero/racer' },
-    { id: 'monster', name: 'Monster', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', art: 'mojo-hero/monster-2' },
-    { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang dan batu!', art: 'mojo-hero/monster-1' },
-    { id: 'snow-plow', name: 'Bajak Salju', perk: 'snow', line: 'Kuat dan cepat di jalan salju!', art: 'mojo-top/snow-plow' },
-    { id: 'dozer', name: 'Dozer', perk: 'recover', line: 'Cepat pulih setelah BROK!', art: 'mojo-hero/dozer-2' },
-    { id: 'rescue', name: 'Penyelamat', perk: 'heal', line: 'Semangat cepat terisi lagi!', art: 'mojo-hero/rescue' },
-    { id: 'boat', name: 'Perahu', perk: 'splash', line: 'Jago di jalan basah dan air!', art: 'mojo-hero/boat' },
-    { id: 'chopper', name: 'Helikopter', perk: 'fly', line: 'Terbang melewati rintangan!', art: 'mojo-hero/chopper-3' },
-    { id: 'jet', name: 'Jet', perk: 'boost', line: 'Melesat sangat cepat!', art: 'mojo-hero/jet-4' }
+  // the offered forms = THE table in data/mojo-chases.js (MojoChases.FORMS): card art, preview and in-race sprite
+  // all come from one row, so the three can never show different transformations (owner 2026-10-04)
+  var FALLBACK = [
+    { id: 'racer', name: 'Pembalap', perk: 'boost', line: 'Boost lebih cepat!', card: 'mojo-rear/base-neon', rear: 'base-neon', kind: 'ground', unlock: 0 },
+    { id: 'monster', name: 'Monster', perk: 'grip', line: 'Lumpur dan batu tidak masalah!', card: 'mojo-hero/monster-2', rear: 'monster-2', kind: 'ground', unlock: 0 },
+    { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang dan batu!', card: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
+    { id: 'dozer', name: 'Dozer', perk: 'recover', line: 'Cepat pulih setelah BROK!', card: 'mojo-rear/loader', rear: 'loader', kind: 'ground', unlock: 0 }
   ]
-  // progressive unlock (owner 2026-10-03: "4-6 early, growing until every character is unlocked"):
-  // form -> number of Balapan stages cleared (>= 1 star) before it can be picked. 4 at stage 1, 6 by stage 4,
-  // all 9 by stage 16 of 25. The stage's "Paling Tepat" form is always selectable there as a free trial ("Baru!").
-  var UNLOCK = { racer: 0, monster: 0, dozer: 0, jumper: 0, rescue: 2, 'snow-plow': 3, chopper: 6, boat: 10, jet: 15 }
-  var ALT = { racer: ['jet', 'rescue'], monster: ['jumper', 'dozer'], jumper: ['monster', 'racer'], 'snow-plow': ['monster', 'dozer'],
-    dozer: ['monster', 'snow-plow'], rescue: ['racer', 'monster'], boat: ['racer', 'rescue'], chopper: ['jet', 'racer'], jet: ['chopper', 'racer'] }
+  var FORMS = (W.MojoChases && W.MojoChases.FORMS && W.MojoChases.FORMS.length ? W.MojoChases.FORMS : FALLBACK).filter(function (f) { return f.kind !== 'water' })
+  // progressive unlock (owner 2026-10-03: "4-6 early, growing until every character is unlocked"): form -> Balapan
+  // stages cleared (>= 1 star). The stage's "Paling Tepat" form is always selectable there as a free trial ("Baru!").
+  var UNLOCK = {}; FORMS.forEach(function (f) { UNLOCK[f.id] = f.unlock || 0 })
+  var ALT0 = { racer: ['delivery', 'jet'], monster: ['jumper', 'excavator'], jumper: ['monster', 'racer'], 'snow-plow': ['monster', 'tow'],
+    dozer: ['excavator', 'crane'], rescue: ['fire', 'racer'], fire: ['rescue', 'crane'], cargo: ['delivery', 'tow'], chopper: ['plane', 'jet'],
+    tow: ['cargo', 'monster'], crane: ['dozer', 'cargo'], delivery: ['cargo', 'racer'], excavator: ['dozer', 'monster'], plane: ['chopper', 'jet'], jet: ['plane', 'chopper'] }
+  var ALT = {}; FORMS.forEach(function (f) { ALT[f.id] = (ALT0[f.id] || []).filter(function (a) { return UNLOCK.hasOwnProperty(a) }) })
 
   var LOCK_SVG = '<svg viewBox="0 0 40 44" aria-hidden="true"><path d="M11 19 V13 a9 9 0 0 1 18 0 V19" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><rect x="5" y="18" width="30" height="23" rx="6" fill="#ffcf33" stroke="#7a4220" stroke-width="3"/><circle cx="20" cy="29" r="3.5" fill="#7a4220"/></svg>'
   function lib (k) { return (W.AssetIndex && W.AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') }
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
   function esc (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] }) }
   // the film hero crop when the owner drew one (data/mojo-art.js), else the listed art
-  function cardArt (f) { try { var k = W.MojoArt && W.MojoArt.heroKey && W.MojoArt.heroKey(f.id); if (k) return k } catch (e) {} return f.art }
+  function cardArt (f) { return f.card || 'mojo-rear/' + f.rear }
   function byId (id) { for (var i = 0; i < FORMS.length; i++) if (FORMS[i].id === id) return FORMS[i]; return null }
   function assign (a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o }
 
@@ -57,9 +55,9 @@
     if (!rec) {
       if (look === 'snow' || stage.sky === 'snow') rec = 'snow-plow'
       else if (/space|sky|air|cloud/.test(look)) rec = 'jet'
-      else if (/beach|lake|river|water|sea/.test(look)) rec = 'boat'
       else if (/forest|farm|jungle|autumn|ruins|windfarm|mud|desert|canyon|volcano/.test(look) || stage.weather === 'leaves') rec = 'monster'
-      else if (/construction|harbour/.test(look)) rec = 'dozer'
+      else if (/harbour/.test(look)) rec = 'crane'
+      else if (/construction/.test(look)) rec = 'dozer'
       else rec = 'racer'
     }
     return { rec: rec, alt: (ALT[rec] || []).slice() }
@@ -106,7 +104,7 @@
 
   /* rear preview: the in-race sprite with its own anchors (tail lights, exhaust) */
   function rearInfo (id) {
-    var RA = W.MojoRearAnchors, key = (RA && RA.forms[id]) || 'base'
+    var RA = W.MojoRearAnchors, f = byId(id), key = (f && f.rear) || (RA && RA.forms[id]) || 'base'
     var a = RA && RA.sprites[key], sz = (RA && RA.size) || { w: 297, h: 254 }
     return { key: key, src: lib('mojo-rear/' + key), a: a, w: sz.w, h: sz.h }
   }
@@ -145,11 +143,11 @@
         var locked = AV.selectable.indexOf(f.id) < 0
         if (locked) {
           return '<button type="button" class="mcp-card lock" data-form="' + f.id + '" aria-disabled="true" aria-label="' + esc(f.name) + ' terkunci">' +
-            '<img alt="" draggable="false" src="' + lib(cardArt(f)) + '"><i class="padlock">' + LOCK_SVG + '</i><b>Selesaikan ' + AV.need[f.id] + ' tahap lagi</b></button>'
+            '<img alt="" draggable="false" data-key="' + esc(cardArt(f)) + '" src="' + lib(cardArt(f)) + '"><i class="padlock">' + LOCK_SVG + '</i><b>Selesaikan ' + AV.need[f.id] + ' tahap lagi</b></button>'
         }
         var badge = f.id === AV.trial ? '<em class="new">Baru!</em>' : f.id === R.rec ? '<em class="gold">Paling Tepat</em>' : R.alt.indexOf(f.id) >= 0 ? '<em class="alt">Bisa Juga</em>' : ''
         return '<button type="button" class="mcp-card" data-form="' + f.id + '" aria-label="' + esc(f.name) + '">' + badge +
-          '<img alt="" draggable="false" src="' + lib(cardArt(f)) + '"><b>' + esc(f.name) + '</b></button>'
+          '<img alt="" draggable="false" data-key="' + esc(cardArt(f)) + '" src="' + lib(cardArt(f)) + '"><b>' + esc(f.name) + '</b></button>'
       }).join('')
       root.innerHTML =
         '<div class="mcp-bg" style="background-image:url(' + lib(bgKey) + ')"></div><div class="mcp-shade"></div>' +
