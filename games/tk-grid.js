@@ -935,6 +935,16 @@
     '.tkg-bubble.on{animation:tkg-pop 240ms var(--e)}',
     '.tkg-bubble em{display:inline-block;font-style:normal;font-size:12px;font-weight:900;color:#fff;background:#1d5fc0;border-radius:8px;padding:1px 8px;margin-bottom:2px}',
     '.tkg-bubble span{display:block}',
+    /* the bubble keeps one height: a long line folds to its first sentence + a Baca pill; the full text opens in .tkg-pop */
+    '.tkg-bubble{max-height:var(--bubmax,68px);overflow:hidden}.tkg-tim{min-height:68px}.tkg--land .tkg-tim{min-height:0}.tkg--land .tkg-bubble{--bubmax:calc(var(--both,124px) - 12px)}',
+    '.tkg-bubble.more{pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent}',
+    '.tkg-more{display:none;position:absolute;right:8px;top:5px;font-style:normal;font-size:12px;font-weight:900;color:#1d5fc0;background:#e3eeff;border:1.5px solid #1d5fc0;border-radius:10px;padding:0 9px;line-height:17px;box-shadow:0 2px 0 rgba(0,0,0,.18)}',
+    '.tkg-bubble.more .tkg-more{display:block}.tkg-bubble.more:active{transform:scale(.97)}',
+    '.tkg-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
+    '.tkg-bpop{position:absolute;z-index:60;left:8px;top:8px;background:#fff;color:#12314f;border-radius:16px;padding:8px 14px 10px;font-size:15px;line-height:1.3;font-weight:800;box-shadow:0 10px 26px rgba(0,10,40,.45);opacity:0;transform:translateY(6px) scale(.96);transform-origin:20% 100%;pointer-events:none;transition:opacity 160ms linear,transform 200ms var(--e)}',
+    '.tkg-bpop.on{opacity:1;transform:none;pointer-events:auto}',
+    '.tkg-bpop em{display:inline-block;font-style:normal;font-size:12px;font-weight:900;color:#fff;background:#1d5fc0;border-radius:8px;padding:1px 8px;margin-bottom:3px}.tkg-bpop span{display:block}',
+    '@media (prefers-reduced-motion:reduce){.tkg-bpop{transition:opacity 120ms linear;transform:none}}',
     '.tkg-win{position:absolute;left:50%;top:50%;z-index:25;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 22px;border-radius:22px;background:#fff;color:#12314f;',
     'box-shadow:0 12px 30px rgba(0,10,40,.45);opacity:0;transform:translate(-50%,-50%) scale(.92);transition:opacity 200ms linear,transform 320ms var(--e);pointer-events:none}',
     '.tkg-win.on{opacity:1;transform:translate(-50%,-50%) scale(1)}',
@@ -1599,6 +1609,9 @@
     hand.appendChild(hin); coach.appendChild(hand); coach.setAttribute('aria-hidden', 'true')
     var skipB = el('button', 'tkg-btn tkg-skip', '<span>Lewati</span>'); skipB.type = 'button'; skipB.setAttribute('aria-label', 'Lewati petunjuk tangan')
     root.appendChild(coach)
+    // board VFX (games/tk-fx.js, the Mojo board effects ported): optional, every call guarded
+    if (G.TKFx) TKFx.init({ board: board, cell: function () { return st.T }, lib: libSrc, later: later, cancel: function (t) { clock.cancel(t) }, theme: theme, rm: rm })
+    function tkfx (name, a, b, c, d) { if (G.TKFx && TKFx[name]) TKFx[name](a, b, c, d) }
 
     function put (e, x, y) { e._x = x; e._y = y; e.style.transform = 'translate3d(' + (x * st.T) + 'px,' + (y * st.T) + 'px,0)' }
     function placeAll () {
@@ -1714,7 +1727,7 @@
       if (scrollT) { tf = { aw: sea.clientWidth - 4, ah: sea.clientHeight - 4, T: scrollT, rose: '' }; T = scrollT }
       var k = T + ':' + land + ':' + W + ':' + H + ':' + tf.aw + ':' + tf.ah
       fitSlots()
-      fitTip()
+      fitTip(); fitBubble()
       if (k === lastKey) return
       lastKey = k
       st.T = T
@@ -1784,6 +1797,7 @@
 
     /* ── board state ── */
     function resetBoard (animate) {
+      tkfx('clear')
       vis = { x: L.start.x, y: L.start.y, dir: L.start.dir }
       st.angle = DIRS.indexOf(L.start.dir) * 90
       st.face = L.start.dir === 'W' ? 'W' : 'E'
@@ -1814,15 +1828,51 @@
     /* ── bubble: Timmy's own row, so it never covers the board. A timed message falls back to the idle line. ── */
     var bubbleT = null
     var idleMsg = str(opts.hint || L.hint || (hasAbs ? say$.intro : defaultMission()))
+    /* owner 2026-10-04 (the Mojo Bo chip, ported): the bubble has a fixed height. A line that does not fit shows its
+       first sentence (or "Ketuk untuk membaca") with a "Baca" pill; a tap opens the whole text in a popover placed
+       where it never covers the command palette, closed after 4 s or by a tap. Feedback opens it by itself. */
+    var bFull = el('span', 'tkg-sr'), bMore = el('i', 'tkg-more', 'Baca'), pop = el('div', 'tkg-bpop'), popT = null
+    bubble.appendChild(bMore); bubble.appendChild(bFull); bTxt.setAttribute('aria-hidden', 'true')
+    pop.setAttribute('aria-hidden', 'true'); pop.appendChild(el('em', '', 'Timmy')); var popTxt = el('span'); pop.appendChild(popTxt); root.appendChild(pop)
+    function firstLine (t) { var m = String(t).match(/^.*?[.!?](?:\s|$)/); return m ? m[0].trim() : String(t) }
+    function fitBubble () {
+      if (!bFull) return
+      var text = bFull.textContent
+      bTxt.textContent = text; bubble.classList.remove('more')
+      if (!bubble.clientHeight || bubble.scrollHeight <= bubble.clientHeight + 1) { closePop(); return }
+      bubble.classList.add('more'); bTxt.textContent = firstLine(text)
+      if (bTxt.textContent === text || bubble.scrollHeight > bubble.clientHeight + 1) bTxt.textContent = 'Ketuk untuk membaca pesan Timmy.'
+      if (pop.classList.contains('on')) placePop()
+    }
+    function placePop () {
+      var R = root.getBoundingClientRect(), b = bubble.getBoundingClientRect(), c = cmd.getBoundingClientRect()
+      var w = Math.min(440, R.width - 16), h = pop.offsetHeight, x = Math.max(8, Math.min(b.left - R.left, R.width - w - 8))
+      var hits = function (y) { return !(x + R.left + w <= c.left || x + R.left >= c.right || y + R.top + h <= c.top || y + R.top >= c.bottom) }
+      var y = b.top - R.top - h - 8
+      if (y < topInset || hits(y)) y = b.bottom - R.top + 8
+      if (y + h > R.height - 4 || hits(y)) { var s = sea.getBoundingClientRect(); y = Math.max(topInset, s.top - R.top + 8); x = Math.max(8, Math.min(s.left - R.left + (s.width - w) / 2, R.width - w - 8)) }
+      pop.style.width = w + 'px'; pop.style.left = Math.round(x) + 'px'; pop.style.top = Math.round(y) + 'px'
+    }
+    function openPop (ms) {
+      if (dead || !bubble.classList.contains('more')) return
+      popTxt.textContent = bFull.textContent; pop.classList.add('on'); placePop()
+      if (popT) clock.cancel(popT)
+      popT = later(closePop, ms || 4000)
+    }
+    function closePop () { if (popT) { clock.cancel(popT); popT = null } pop.classList.remove('on') }
+    bubble.addEventListener('click', function (e) { if (!bubble.classList.contains('more')) return; e.stopPropagation(); sfx('click'); if (pop.classList.contains('on')) closePop(); else openPop() })
+    root.addEventListener('pointerdown', function (e) { if (pop.classList.contains('on') && !bubble.contains(e.target)) closePop() }, true)
     function setBubble (text, cls) {
-      bTxt.textContent = text
+      bFull.textContent = text
       bubble.className = 'tkg-bubble' + (cls ? ' ' + cls : '')
+      fitBubble()
     }
     function say (text, kind, ms) {
       st.msg = text
       setBubble(text, 'on' + (kind ? ' ' + kind : ''))
       if (bubbleT) { clock.cancel(bubbleT); bubbleT = null }
       if (ms) bubbleT = later(hush, ms)
+      if (kind && bubble.classList.contains('more')) openPop(Math.min(ms || 3500, 3500))
     }
     function hush () { if (bubbleT) { clock.cancel(bubbleT); bubbleT = null } setBubble(idleMsg, '') }
 
@@ -2276,6 +2326,7 @@
     }
     // a bump never punishes: bounce back, wobble, a little star daze, a soft "duk"
     function bumpFx (bx, by, tx, ty) {
+      tkfx('bump', bx, by, tx, ty)
       if (rm || !bump.animate) return
       var T = st.T, dx = (tx - bx) * T * 0.22, dy = (ty - by) * T * 0.22
       try {
@@ -2369,12 +2420,12 @@
           later(function () {
             if (g.k === 'warp') {
               leaveMark(g.fx, g.fy, 0, 0)
-              warpFx(g.fx, g.fy); sfx('warp'); moveBoat(g.x, g.y, 'warp')
+              warpFx(g.fx, g.fy); tkfx('warp', g.fx, g.fy); sfx('warp'); moveBoat(g.x, g.y, 'warp')
               later(function () { warpFx(g.x, g.y) }, 140)
             } else {
               leaveMark(g.fx, g.fy, g.x - g.fx, g.y - g.fy)
               if (g.k === 'current') { fx('tkg-ring', g.fx, g.fy, 700); sfx('current') }
-              fx('tkg-wake', g.fx, g.fy)
+              fx('tkg-wake', g.fx, g.fy); tkfx('move', g.fx, g.fy, g.x, g.y)
               moveBoat(g.x, g.y, g.k === 'slide' ? 'glide' : 'io')
             }
             arrive(s, g, gi === lg.length - 1)
@@ -2385,19 +2436,19 @@
       } else if (ev === 'turn') {
         st.angle += s.cmd === 'L' ? -90 : 90
         if (s.dir === 'E' || s.dir === 'W') st.face = s.dir
-        setHeading(true); sfx('step')
+        setHeading(true); sfx('step'); tkfx('turn', s.x, s.y)
       } else if (ev === 'pick') {
         var ie = O.item[s.item]
         if (ie) { put(ie, s.x, s.y); ie.style.opacity = '0'; later(function () { ie.classList.add('gone') }, 300); fly(null, s, bag, src('crate'), function () { popEl(bag); bagSync(s) }) }
         else bagSync(s)
-        carry.classList.add('on'); sfx('good'); sparkle(s.x, s.y)
+        carry.classList.add('on'); sfx('good'); sparkle(s.x, s.y); tkfx('pickup', s.x, s.y)
       } else if (ev === 'drop') {
         L.items.forEach(function (it, i) {
           if (!(s.items & (1 << i)) || !O.item[i]) return
           var e = O.item[i]; e.classList.remove('gone'); e.classList.add('dl'); put(e, s.x, s.y); e.style.opacity = ''
         })
         if (bag) fly(null, s, bag, src('crate'), function () { popEl(bag); bagSync(s) }, true)
-        carry.classList.remove('on'); sfx('good')
+        carry.classList.remove('on'); sfx('good'); tkfx('drop', s.x, s.y)
       } else if (ev === 'bump') {
         var t = s.toward || { x: s.x, y: s.y }
         var iceEl = s.iceIdx != null && O.imv[s.iceIdx] ? O.imv[s.iceIdx].firstChild : null
@@ -2449,7 +2500,7 @@
       L.keys.forEach(function (k, i) {
         if (k.x !== g.x || k.y !== g.y || !(s.keys && s.keys.indexOf(k.color) >= 0)) return
         var e = O.key[i]; if (!e || e.classList.contains('got')) return
-        e.classList.add('got'); sfx('coin')
+        e.classList.add('got'); sfx('coin'); tkfx('pickup', g.x, g.y)
         fly(null, g, bag, src('key'), function () {
           if (bagK) { var ki = img(src('key'), '', ''); ki.style.filter = KEYF[k.color]; bagK.appendChild(ki) }
           popEl(bag)
@@ -2459,7 +2510,7 @@
         var p = L.stops[n]; if (p.x !== g.x || p.y !== g.y) return
         var e = O.stop[n]
         fly(null, g, bag, src('crate'), function () { if (e) { e.classList.add('done'); popEl(e.querySelector('b')) } bagSync({ ck: n + 1 }) }, true)
-        sfx('good'); later(function () { sparkle(g.x, g.y) }, 300)
+        sfx('good'); tkfx('pickup', g.x, g.y); later(function () { sparkle(g.x, g.y) }, 300)
       })
       ;(s.early || []).forEach(function (n) {
         var p = L.stops[n]; if (p.x !== g.x || p.y !== g.y) return
@@ -2517,7 +2568,7 @@
       sfx('click')
       closeAsk()
       st.attempts++
-      st.bad = null; st.early = 0; renderSlots(-1); clearHintMarks(); hush()
+      st.bad = null; st.early = 0; renderSlots(-1); clearHintMarks(); hush(); tkfx('clear')
       var res = run(L, flat())
       st.running = true; st.stepN = 0; root.classList.add('tkg--busy')
       bringIn(sea)
@@ -2599,7 +2650,7 @@
       st.done = true; root.classList.add('tkg--won')
       var g = L.goal || { x: vis.x, y: vis.y }
       fx('tkg-ring', g.x, g.y, 900)
-      burst(g.x, g.y)
+      burst(g.x, g.y); tkfx('goal', g.x, g.y)
       goldPath()
       clearNudge(); if (idleT) { clock.cancel(idleT); idleT = null }
       if (!rm && board.animate) {
@@ -2744,6 +2795,7 @@
         if (dead) return
         dead = true
         co.run++
+        if (G.TKFx && TKFx.release) TKFx.release(board)
         clock.destroy(); cancelAnimations()
         document.removeEventListener('visibilitychange', syncPause)
         if (ro) { try { ro.disconnect() } catch (e) {} }
@@ -2775,7 +2827,10 @@
           qDone: Object.keys(st.qDone).map(Number), ask: ask.classList.contains('on'), paused: clock.paused() || root.classList.contains('tkg--ask'),
           nudge: nudged ? (nudged === goB ? 'go' : 'pal:' + nudged.getAttribute('data-cmd')) : null }
       },
-      layout: onResize
+      layout: onResize,
+      // QA seam: speak a line through Timmy's bubble (the chip / popover rules apply)
+      say: function (t, kind, ms) { if (!dead) say(str(t), kind, ms) },
+      chip: function () { return { more: bubble.classList.contains('more'), shown: bTxt.textContent, full: bFull.textContent, open: pop.classList.contains('on') } }
     }
   }
 

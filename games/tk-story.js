@@ -90,9 +90,19 @@
       '<div class="tks-nav"><button class="tks-btn tks-back" type="button"><span class="tks-arr l"></span>Kembali</button><div class="tks-dots"></div>' +
       '<button class="tks-btn tks-next" type="button"><span class="tks-nt">Lanjut</span><span class="tks-arr"></span></button></div></div></div>'
     var root = host.firstChild, bg = root.querySelector('.tks-bg'), ls = root.querySelector('.tks-ls'), cap = root.querySelector('.tks-cap')
+    function thumbText (c) {
+      var t = String(c || '').trim(), MAX = 58
+      if (t.length <= MAX) return t
+      var s = (t.match(/^.*?[.!?](?=\s|$)/) || [''])[0]
+      if (s && s.length <= MAX) return s
+      var k = (t.match(/^[^,;:]*/) || [''])[0].trim()
+      return k && k.length <= MAX && k.length >= 12 ? k : ''
+    }
     root.querySelector('.tks-thumbs').innerHTML = panels.map(function (p, k) {
       var main = (p.layers || []).slice().sort(function (a, b) { return (b.s || 0) - (a.s || 0) })[0]
-      var txt = String(p.caption || ''); if (txt.length > 58) txt = txt.slice(0, 55).replace(/\s+\S*$/, '') + '…'
+      // a thumbnail names its panel with a WHOLE phrase, never a cut line with an ellipsis (owner audit 2026-10-04):
+      // the full caption if short, else its first sentence, else its first clause, else just the panel number
+      var txt = thumbText(p.caption)
       return '<div class="tks-t" data-i="' + k + '"><span class="tks-tbg" style="background:' + Art.scene(p.scene) + '"></span>' +
         (main ? '<img src="' + Art.src(main.k) + '" alt="">' : '') + '<span class="tks-tc"><b>' + (k + 1) + '</b>' + esc(txt) + '</span></div>'
     }).join('')
