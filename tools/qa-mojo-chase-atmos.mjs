@@ -62,7 +62,13 @@ async function page (w, h, dpr, inject) {
   const p = await browser.newPage(); await p.setViewport({ width: w, height: h, deviceScaleFactor: dpr || 1 })
   const errors = []; p.on('pageerror', e => errors.push(e.message)); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
   p.on('console', m => { if (m.type() === 'error') errors.push(m.text()) })
+  // the page now ships the module itself: the "absent" arm serves both atmos scripts empty so the A/B stays a real A/B
+  // (and the "present" arm is not a double load)
+  let shipped = true
+  await p.setRequestInterception(true)
+  p.on('request', r => shipped && /\/games\/(data\/)?mojo-chase-atmos(-data)?\.js/.test(r.url()) ? r.respond({ status: 200, contentType: 'application/javascript', body: '' }) : r.continue())
   await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu && window.MojoChases)
+  shipped = false
   if (inject) for (const s of SCRIPTS) await p.addScriptTag({ url: BASE + s })
   return { p, errors }
 }

@@ -10,7 +10,7 @@
  *   update(dt, state)     state = { t, speed, prog, state, tunnel 0..1, quality 0..2, paused, mojoX?, mojoY? }
  *   drawSky(ctx, view)    after the core sky blit, before FAR: full sky band 0..view.hy + sky life
  *   drawOverlay(ctx, view) after FX, before HUD/post: fog veil, rain, splashes, snow, breeze motes, flash
- *   roadSeg(ctx, s, k, view)  renderRoad overlayFn: wet-road sheen per segment (k < 70)
+ *   roadSeg(ctx, s, k, view)  renderRoad overlayFn: queues the wet-road sheen per segment (k < 70); roadSeg(ctx, null, -1) after the road flush paints it
  *   lightsOn() -> 0..1    headlights / tail lights / lamps / windows fade (1 at senja and later)
  *   tint() -> {c, a}|null ambient tint for FAR/MID/props;  telegraph() 0..1;  sway() 0..1;  calm() bool
  *   say                   set by the core: function (text, ms) — Bo callouts
@@ -410,10 +410,11 @@
     if (DV.starA > 0.02) {
       c.fillStyle = '#ffffff'
       for (var b = 0; b < 3; b++) {
-        c.globalAlpha = DV.starA * (0.55 + 0.45 * Math.sin(R.clock * (1.3 + b * 0.5) + b * 2.1)); c.beginPath()
+        // fillRect per star, not one path of 37 rects: the GPU batches rect draws, while a many-subpath fill goes
+        // through the path renderer every frame (measured: the single largest raster cost of night + rain)
+        c.globalAlpha = DV.starA * (0.55 + 0.45 * Math.sin(R.clock * (1.3 + b * 0.5) + b * 2.1))
         var sz = pr * (b === 0 ? 2.2 : 1.5)
-        for (i = b; i < NST; i += 3) c.rect(((STX[i] * w - curve * w * 0.001) % w + w) % w, STY[i] * starH, sz, sz)
-        c.fill()
+        for (i = b; i < NST; i += 3) c.fillRect(((STX[i] * w - curve * w * 0.001) % w + w) % w, STY[i] * starH, sz, sz)
       }
       c.globalAlpha = 1
     }
@@ -458,7 +459,7 @@
     if (R.rbAge >= 0) { c.globalAlpha = 0.5 * env(R.rbAge, 30, 4, 6); c.drawImage(SP.rainbow, w * 0.18, hy * 0.18, w * 0.95, hy * 0.82); c.globalAlpha = 1 }
     drawAmbient(c, w, hy, pr, curve)
     for (var k = 0; k < 3; k++) if (SLOTS[k].on) drawLife(c, SLOTS[k], w, hy, pr)
-    if (R.flash > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = flashA() * 1.6; c.fillStyle = '#c9d6ff'; c.fillRect(0, 0, w, hy); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
+    if (R.flash > 0 && flashA() > 0.004) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = flashA() * 1.6; c.fillStyle = '#c9d6ff'; c.fillRect(0, 0, w, hy); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
     if (R.prof) R.prof.sky = R.prof.sky * 0.95 + (performance.now() - p0) * 0.05
   }
   function flashA () { var f = R.flash; return f < 0.08 ? 0.12 : f < 0.15 ? 0.03 : f < 0.26 ? 0.09 : Math.max(0, 0.09 * (1 - (f - 0.26) / 0.19)) }
@@ -624,7 +625,8 @@
       for (var b = 0; b < 2; b++) {
         c.beginPath()
         for (i = 0; i < n; i++) { var z = RZ[i]; if ((z > 0.62) !== (b === 1)) continue; x = RX[i] * w; y = RY[i] * h; s = len * (0.45 + z); c.moveTo(x, y); c.lineTo(x - s * 0.16, y + s) }
-        c.strokeStyle = b ? 'rgba(215,228,248,0.42)' : 'rgba(190,206,232,0.3)'; c.lineWidth = pr * (b ? 1.3 : 0.8); c.globalAlpha = VEIL_MAX / 0.42 * Math.min(1, 0.3 + R.wI * 0.7) * vis; c.stroke()
+        c.strokeStyle = b ? 'rgba(215,228,248,0.42)' : 'rgba(190,206,232,0.3)'; c.lineWidth = Math.max(1, Math.round(pr * (b ? 1.3 : 0.8)));   // whole-pixel widths: a hairline / plain stroke, never a fractional one
+        c.globalAlpha = VEIL_MAX / 0.42 * Math.min(1, 0.3 + R.wI * 0.7) * vis; c.stroke()
       }
       // road splashes: little rings, one stroke
       c.beginPath(); var any = false
@@ -668,22 +670,43 @@
     if (R.prof) R.prof.over = R.prof.over * 0.95 + (performance.now() - p0) * 0.05
   }
 
-  function flashAll (c, w, h) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = flashA() * 0.5; c.fillStyle = '#c9d6ff'; c.fillRect(0, 0, w, h); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
+  function flashAll (c, w, h) { if (flashA() <= 0.004) return; c.globalCompositeOperation = 'lighter'; c.globalAlpha = flashA() * 0.5; c.fillStyle = '#c9d6ff'; c.fillRect(0, 0, w, h); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over' }
   function pre0 () { return R.preSeen || skyPre() }
 
-  /* ── road segment pass: wet sheen down the three lanes (front-to-back, called per segment) ──────── */
+  /* ── road segment pass: wet sheen down the three lanes ─────────────────────────────────────────────
+   * renderRoad calls this per segment WHILE it is still queueing its own quads, and paints them in one flush
+   * afterwards: a sheen drawn here directly would sit UNDER the road (35 invisible path fills a frame). So the
+   * per-segment calls only queue (nearest 70 segments, every other one, max 35), and the call after the road's
+   * flush — roadSeg(ctx, null, -1) — paints them as one path per alpha step (RSTEP fills, not 35). */
+  var RSTEP = 4, RQ = [], RN = new Int32Array(RSTEP), RQMAX = 12
+  for (var rq = 0; rq < RSTEP; rq++) RQ.push(new Float32Array(RQMAX * 3 * 8))
   function roadSeg (c, s, k, v) {
-    if (!R.on || R.wet < 0.08 || k > 70 || (k & 1) || !s || s.tunnel || OFF()) return
-    R.calls.road++
+    if (k === 0 || OFF()) for (var z = 0; z < RSTEP; z++) RN[z] = 0   // a new frame: drop anything never flushed
+    if (!s) { if (k < 0) roadFlush(c); return }
+    if (!R.on || R.wet < 0.08 || k > 70 || (k & 1) || s.tunnel || OFF()) return
     var p1 = s.p1, p2 = s.p2; if (!p1 || !p2 || p2.y >= p1.y) return
-    var a = 0.2 * R.wet * (1 - k / 70) * (1 - R.tunnel)
-    if (a < 0.01) return
-    c.globalAlpha = a; c.fillStyle = DV.sheen; c.beginPath()
+    if (0.2 * R.wet * (1 - k / 70) * (1 - R.tunnel) < 0.01) return
+    var st = Math.min(RSTEP - 1, (k * RSTEP / 70) | 0), q = RQ[st]; if (RN[st] >= RQMAX) return
+    R.calls.road++
+    var o = RN[st] * 24
     for (var L = -1; L <= 1; L++) {
       var x1 = p1.x + L * p1.w * 0.66, x2 = p2.x + L * p2.w * 0.66, w1 = p1.w * 0.1, w2 = p2.w * 0.1
-      c.moveTo(x1 - w1, p1.y); c.lineTo(x1 + w1, p1.y); c.lineTo(x2 + w2, p2.y); c.lineTo(x2 - w2, p2.y); c.closePath()
+      q[o] = x1 - w1; q[o + 1] = x1 + w1; q[o + 2] = p1.y; q[o + 3] = x2 + w2; q[o + 4] = x2 - w2; q[o + 5] = p2.y; o += 8
     }
-    c.fill(); c.globalAlpha = 1
+    RN[st]++
+  }
+  function roadFlush (c) {
+    if (!R.on || R.wet < 0.08) return
+    c.fillStyle = DV.sheen
+    for (var st = 0; st < RSTEP; st++) {
+      var n = RN[st]; if (!n) continue
+      RN[st] = 0
+      var a = 0.2 * R.wet * (1 - (st + 0.5) / RSTEP) * (1 - R.tunnel); if (a < 0.01) continue
+      var q = RQ[st]; c.globalAlpha = a; c.beginPath()
+      for (var i = 0, o = 0; i < n * 3; i++, o += 8) { c.moveTo(q[o], q[o + 2]); c.lineTo(q[o + 1], q[o + 2]); c.lineTo(q[o + 3], q[o + 5]); c.lineTo(q[o + 4], q[o + 5]); c.closePath() }
+      c.fill()
+    }
+    c.globalAlpha = 1
   }
 
   /* ── small read-only state for the core ──────────────────────────────────────────────────────── */

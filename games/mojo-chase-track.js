@@ -311,6 +311,7 @@
       maxy = Y2
     }
     flush(c)
+    if (overlayFn) overlayFn(null, -1)   // the per-segment overlay queued above lands ON the road now (it was painted under it)
     // tunnel walls / ceiling / portals and sprites: far -> near (painter)
     for (var j = n - 1; j > 0; j--) {
       var t = track.seg(baseI + j); if (!t || !t.p1) continue

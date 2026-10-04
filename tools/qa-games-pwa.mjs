@@ -108,8 +108,11 @@ async function controlledUpdate(p,stars){
  await begin(p,'m2');await program(p,['up']);await tap(p,'#btn-run');
  const prior=await p.evaluate(()=>__mojo.save().lv.t1),token=await p.evaluate(()=>window.__pwaBoot=Math.random());let reloads=0;
  const listener=f=>{if(f===p.mainFrame())reloads++};p.on('framenavigated',listener);fixture.revision=2;
+ await p.evaluate(()=>{navigator.serviceWorker.getRegistration().then(r=>r.update()).catch(e=>console.error(e))});
+ // v63.30: a deploy must not reload a game the child is playing; the reload waits until the page is hidden
+ await sleep(6000);check(reloads===0&&await p.evaluate(t=>window.__pwaBoot===t,token),'SW update never reloads a visible game in progress');
  const next=p.waitForNavigation({waitUntil:'networkidle0',timeout:60000});
- await p.evaluate(()=>{navigator.serviceWorker.getRegistration().then(r=>r.update()).catch(e=>console.error(e))});await next;await ready(p,'g31');await sleep(1600);p.off('framenavigated',listener);
+ await p.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});setInterval(()=>document.dispatchEvent(new Event('visibilitychange')),500)});await next;await ready(p,'g31');await sleep(1600);p.off('framenavigated',listener);
  check(reloads===1,'Controlled SW version update reloads exactly once');
  check(await p.evaluate(t=>window.__pwaBoot!==t,token),'Updated document starts a fresh boot');
  assert.deepEqual(await p.evaluate(()=>__mojo.save().lv.t1),prior);check(prior.stars===stars,'SW update retains earned child progress');

@@ -37,6 +37,17 @@
       console.warn('[Dunia PWA] Penyimpanan sesi tidak tersedia; pembaruan tetap dimuat.')
     }
     reloaded = true
+    // v63.30 — a deploy must never yank a child out of a game in progress (owner: "random tiba2
+    // back to home"). While the page is visible, wait until it is hidden (app switched, screen
+    // off, tab closed) and reload then; the new build is picked up on the next return.
+    if (document.visibilityState === 'visible') {
+      document.addEventListener('visibilitychange', function onHide() {
+        if (document.visibilityState !== 'hidden') return
+        document.removeEventListener('visibilitychange', onHide)
+        location.reload()
+      })
+      return
+    }
     location.reload()
   }
   var ctlAtLoad = !!navigator.serviceWorker.controller
