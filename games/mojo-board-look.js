@@ -348,7 +348,39 @@
   }
   if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', wire); else wire()
 
+  /* ── perch points for the rescue staging (games/mojo-fx.js): where a ladder must reach, in board px ──
+     A raised friend: the friend's feet (bottom-centre of its art box). A tall repair (the lamp): near the top of
+     its art. Measured from the layout boxes (offset*), not the screen rect, so idle loops and the ring scale
+     (origin at the art's foot) never move the point. */
+  function txy (el) {
+    var m = /translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px/.exec((el && el.style.transform) || '')
+    return m ? [+m[1], +m[2]] : null
+  }
+  function perchPoint (id) {
+    var d = D.querySelector('#objs > .ob[data-id="' + id + '"]'), o = META[id]
+    if (!d) return null
+    var t = txy(d), img = d.querySelector('img.main'), C = CELL || readCell()
+    if (!t || !img || !C) return null
+    var x = t[0] + img.offsetLeft + img.offsetWidth / 2
+    var friend = o ? o.type === 'person' : d.classList.contains('person')
+    var y = friend ? t[1] + img.offsetTop + img.offsetHeight : t[1] + img.offsetTop + img.offsetHeight * 0.1
+    return { x: x, y: y, id: id, elev: (o && o.elev) || 0 }
+  }
+  // the raised thing next to (r,c) a ladder from Mojo should reach: the one Mojo faces first, then any neighbour
+  function perchNear (r, c, h) {
+    var st = W.__mojo && W.__mojo.state && W.__mojo.state(), objs = (st && st.objects) || [], best = null, DR = [[-1, 0], [0, 1], [1, 0], [0, -1]]
+    if (h == null && st && st.position) h = st.position.h
+    objs.forEach(function (o) {
+      if (!o.elev || Math.abs(o.r - r) + Math.abs(o.c - c) > 1) return
+      var face = h != null && DR[h] && o.r === r + DR[h][0] && o.c === c + DR[h][1]
+      var score = (face ? 2 : 0) + (o.st === 'rescued' || o.st === 'fixed' ? 0 : 1)
+      if (!best || score > best.score) best = { id: o.id, score: score }
+    })
+    return best ? perchPoint(best.id) : null
+  }
+
   W.MojoBoardLook = {
+    perchPoint: perchPoint, perchNear: perchNear,
     LOOK: LOOK, apply: function () { if (!W.__mblWired) wire(); else setup() },
     voice: voice, log: log, state: function () { return { on: on, cell: CELL, cat: !!cat, near: catNear, rescued: catRescued, headroom: [hrT, hrB], rm: RM } }
   }

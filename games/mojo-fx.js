@@ -62,6 +62,7 @@
     return g
   }
   function kill (g) {
+    if (g.onKill) { var f = g.onKill; g.onKill = null; try { f() } catch (e) {} }
     g.nodes.forEach(function (n) { try { n.remove() } catch (e) {} })
     g.nodes = []
     var k = groups.indexOf(g); if (k >= 0) groups.splice(k, 1)
@@ -147,12 +148,69 @@
     try { b.animate(k, { duration: ms || 260, easing: 'linear' }) } catch (e) {}
   }
   function cc (r, c) { var s = cell(); return [(c + 0.5) * s, (r + 0.5) * s] }
+  /* an element's box in the effect layer's px (board coordinates), from the screen rects (any board scale) */
+  function boxIn (el) {
+    var fx = layer(); if (!fx || !el) return null
+    var a = fx.getBoundingClientRect(), b = el.getBoundingClientRect(), k = a.width ? fx.offsetWidth / a.width : 1
+    return { x: (b.left - a.left) * k, y: (b.top - a.top) * k, w: b.width * k, h: b.height * k }
+  }
+  function hearts (g, x, y, delay) {
+    var s = cell()
+    for (var k = 0; k < (RM ? 1 : 5); k++) (function (k) {
+      var a = -Math.PI / 2 + (k - 2) * 0.45
+      var n = node(g, 'mfx-img', x, y, s * 0.42, s * 0.42, 8); if (!n) return
+      n.style.backgroundImage = 'url("' + cfg.lib('mojo-chase/items/heart') + '")'
+      play(n, RM ? [{ opacity: 0 }, { opacity: 1 }, { opacity: 0 }] : [{ transform: 'translate(0,0) scale(.3)', opacity: 0 }, { transform: 'translate(' + Math.cos(a) * s * 0.35 + 'px,' + Math.sin(a) * s * 0.35 + 'px) scale(1)', opacity: 1, offset: 0.4 }, { transform: 'translate(' + Math.cos(a) * s * 0.7 + 'px,' + (Math.sin(a) * s * 0.7 - s * 0.2) + 'px) scale(.8)', opacity: 0 }], 900, EOUT, delay + k * 60)
+    })(k)
+  }
+
+  /* ── the ladder: Mojo's centre to the perch point; one rung per level, spaced so the needed height reaches it.
+     A clipped wrapper (rotated toward the perch) holds a full-length ladder that slides out of Mojo (transform). ── */
+  var stand = null, liftObs = null
+  function ladderGeo (r, c, top) {
+    var s = cell(), p = cc(r, c), q = W.MojoBoardLook && W.MojoBoardLook.perchNear ? W.MojoBoardLook.perchNear(r, c) : null
+    var ux = 0, uy = -1, unit = s * 0.16
+    if (q && q.elev > 0) {
+      var dx = q.x - p[0], dy = q.y - p[1], d = Math.sqrt(dx * dx + dy * dy)
+      if (d > s * 0.3 && dy < 0) { ux = dx / d; uy = dy / d; unit = d / q.elev }
+    }
+    return { r: r, c: c, x: p[0], y: p[1], ux: ux, uy: uy, nx: -uy, ny: ux, unit: unit, len: Math.max(4, top * unit), perch: q,
+      at: function (v) { return [this.x + this.ux * v * this.unit, this.y + this.uy * v * this.unit] } }
+  }
+  function ladderNode (L, top) {
+    var fx = layer(); if (!fx) return null
+    var s = cell(), w = Math.max(10, s * 0.26), len = L.len, u = L.unit, ang = Math.atan2(L.ux, -L.uy) * 180 / Math.PI
+    var wrap = D.createElement('i'); wrap.className = 'mfx mfx-lad'; wrap.setAttribute('aria-hidden', 'true')
+    wrap.style.cssText = 'left:' + (L.x - w / 2) + 'px;top:' + (L.y - len) + 'px;width:' + w + 'px;height:' + len + 'px;z-index:6;overflow:hidden;transform-origin:50% 100%;transform:rotate(' + ang.toFixed(2) + 'deg);will-change:auto'
+    var inner = D.createElement('i'); inner.className = 'mfx-ladder'
+    var rung = Math.max(3, Math.min(6, u * 0.22)), rail = Math.max(2, w * 0.13)
+    // rungs counted from the foot: one at every level, the top one exactly at the perch
+    inner.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:' + len + 'px;display:block;border-radius:6px;transform:translateY(' + len + 'px);' +
+      'background:repeating-linear-gradient(0deg,transparent 0 ' + (u - rung).toFixed(1) + 'px,#8D6E00 ' + (u - rung).toFixed(1) + 'px ' + (u - rung + 1.5).toFixed(1) + 'px,#FFB300 ' + (u - rung + 1.5).toFixed(1) + 'px ' + u.toFixed(1) + 'px),' +
+      'linear-gradient(90deg,#8D6E00 0 ' + rail + 'px,#FFB300 ' + rail + 'px ' + (rail * 1.6) + 'px,transparent ' + (rail * 1.6) + 'px calc(100% - ' + (rail * 1.6) + 'px),#FFB300 calc(100% - ' + (rail * 1.6) + 'px) calc(100% - ' + rail + 'px),#8D6E00 calc(100% - ' + rail + 'px))'
+    wrap.appendChild(inner); fx.appendChild(wrap)
+    return wrap
+  }
+  // the standing ladder goes when Mojo drives off, the beat/level ends, or the world resets to the ground
+  function dropStand (soft) {
+    var L = stand; stand = null; if (!L || !L.wrap) return
+    var w = L.wrap
+    if (!soft || RM || !w.animate) { w.remove(); return }
+    var g = group('ladder-off'); g.nodes.push(w)
+    play(w, [{ opacity: 1 }, { opacity: 0 }], 220, 'ease'); settle(g, 260)
+  }
+  function watchLift () {
+    var mj = D.getElementById('mojo'); if (!mj || liftObs || !W.MutationObserver) return
+    liftObs = new MutationObserver(function () { if (stand && !mj.classList.contains('lifted')) dropStand(true) })
+    liftObs.observe(mj, { attributes: true, attributeFilter: ['class'] })
+  }
   var DIR = [[-1, 0], [0, 1], [1, 0], [0, -1]]
 
   /* ── the event effects (board cell coordinates) ─────────────────────────── */
   var FX = {
     // a wheel-dust puff behind Mojo as it drives off
     move: function (from, to) {
+      dropStand(true)
       var g = group('move'), s = cell(), p = cc(from[0], from[1]), dr = to[0] - from[0], dc = to[1] - from[1]
       var x = p[0] - dc * s * 0.18, y = p[1] - dr * s * 0.18 + s * 0.22
       sprite(g, 'dust', x, y, s * 0.6, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(.9)', opacity: 0.85, offset: 0.25 }, { transform: 'translate(' + (-dc * s * 0.25) + 'px,' + (-dr * s * 0.25 - s * 0.08) + 'px) scale(1.25)', opacity: 0 }], 560)
@@ -208,28 +266,45 @@
       seq(g, 'sparks', p[0], p[1] - s * 0.2, s * 0.8, 360)
       settle(g, 900)
     },
-    // NAIK / TURUN: a ladder extends (or retracts) one step per level; the marker ticks each step
+    // NAIK / TURUN: a ladder extends (or retracts) one rung per level from Mojo to the real perch point of the
+    // raised thing beside it (MojoBoardLook.perchNear: the cat's feet on the tall tree, the friend on the balcony,
+    // the lamp head); the rung spacing is scaled so the top rung of the needed height lands there. The marker ticks
+    // each rung. After NAIK the ladder stays standing (Mojo is up there); TURUN retracts it back into Mojo.
     lift: function (r, c, from, to, stepMs) {
-      var g = group('lift'), s = cell(), p = cc(r, c), top = Math.max(from, to), step = s * 0.16
-      var n = Math.abs(to - from); if (!n) { settle(g, 10); return 0 }
-      var lad = node(g, 'mfx-ladder', p[0], p[1] - (top * step) / 2, s * 0.26, Math.max(4, top * step), 6)
+      var g = group('lift'), s = cell(), p = cc(r, c), n = Math.abs(to - from)
+      if (!n) { settle(g, 10); return 0 }
+      var L = (stand && stand.r === r && stand.c === c) ? stand : null
+      if (!L) { dropStand(); L = ladderGeo(r, c, Math.max(from, to)) }
+      else stand = null   // TURUN (or more NAIK) takes the standing ladder over; it is re-stood at the end if still up
+      var lad = L.wrap || ladderNode(L, Math.max(from, to))
       if (lad) {
-        lad.style.transformOrigin = '50% 100%'
-        var kf = []; for (var k = 0; k <= n; k++) { var v = from + (to > from ? k : -k); kf.push({ transform: 'scaleY(' + (v / top) + ')', offset: k / n }) }
-        play(lad, RM ? [{ opacity: 0 }, { opacity: 1 }] : kf, n * stepMs, 'steps(' + n + ',end)')
-        play(lad, [{ opacity: 1 }, { opacity: 1, offset: 0.85 }, { opacity: 0 }], n * stepMs + 700, 'linear')
+        if (g.nodes.indexOf(lad) < 0) g.nodes.push(lad)
+        var inner = lad.firstChild, len = L.len
+        var at = function (v) { return 'translateY(' + Math.max(0, len - Math.max(v, 0) * L.unit).toFixed(1) + 'px)' }
+        if (RM) {
+          inner.style.transform = at(to)
+          play(lad, to > 0 ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 1 }, { opacity: 0 }], Math.min(n * stepMs, 500), 'ease')
+        } else {
+          var kf = []; for (var k = 0; k <= n; k++) kf.push({ transform: at(from + (to > from ? k : -k)), offset: k / n })
+          play(inner, kf, n * stepMs, 'steps(' + n + ',end)')
+          if (to <= 0) play(lad, [{ opacity: 1 }, { opacity: 1, offset: 0.8 }, { opacity: 0 }], n * stepMs + 200, 'linear')
+        }
       }
       seq(g, 'gravity', p[0], p[1], s * 1.15, n * stepMs, { loop: 1, z: 1, opacity: '0.7' })
       for (var i = 1; i <= n; i++) (function (i) {
-        var v = from + (to > from ? i : -i)
+        var v = from + (to > from ? i : -i), q = L.at(Math.max(v, 0))
         later(function () {
-          var m = node(g, 'mfx-tick', p[0] + s * 0.42, p[1] - Math.max(v, 0) * step - s * 0.1, s * 0.42, s * 0.42, 9)
+          var m = node(g, 'mfx-tick', q[0] + L.nx * s * 0.42, q[1] + L.ny * s * 0.42 - s * 0.1, s * 0.42, s * 0.42, 9)
           if (m) { m.textContent = String(v); play(m, RM ? [{ opacity: 0 }, { opacity: 1 }, { opacity: 0 }] : [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1.15)', opacity: 1, offset: 0.3 }, { transform: 'scale(1)', opacity: 1, offset: 0.7 }, { transform: 'scale(.8)', opacity: 0 }], Math.max(stepMs + 120, 380), EOUT) }
-          seq(g, 'spark1', p[0], p[1] - Math.max(v, 0) * step, s * 0.55, 220)   // the rattle of one rung locking
-          dots(g, p[0], p[1] - Math.max(v, 0) * step, 4, '#FFD54F', s * 0.25, 260, Math.max(4, s * 0.06))
+          seq(g, 'spark1', q[0], q[1], s * 0.55, 220)   // the rattle of one rung locking
+          dots(g, q[0], q[1], 4, '#FFD54F', s * 0.25, 260, Math.max(4, s * 0.06))
           if (cfg.tick) cfg.tick(v, i === n)
         }, (i - 1) * stepMs + stepMs * 0.5)
       })(i)
+      if (to > 0 && lad) {   // NAIK: the ladder stays up once it is out; the group retires without it
+        L.wrap = lad; L.lvl = to
+        later(function () { var k = g.nodes.indexOf(lad); if (k >= 0) g.nodes.splice(k, 1); if (lad.isConnected) { stand = L; watchLift() } }, n * stepMs + 20)
+      }
       settle(g, n * stepMs + 900)
       return n * stepMs
     },
@@ -275,6 +350,7 @@
     },
     // jump: a boost flame at take-off, a speed trail along the arc, a squash and dust on landing
     jump: function (from, to, ms) {
+      dropStand(true)
       var g = group('jump'), s = cell(), a = cc(from[0], from[1]), b = cc(to[0], to[1])
       var ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI
       var bx = Math.cos(ang * Math.PI / 180), by = Math.sin(ang * Math.PI / 180)
@@ -289,18 +365,65 @@
       settle(g, ms + 800)
       return fl
     },
-    // rescue: holy light on the friend, a burst of hearts, "Selamat!"
-    rescue: function (r, c) {
+    // rescue: holy light on the friend; with the friend's id it hops down from its perch in an arc into Mojo's
+    // basket (squash on landing, onLand() lets the game mark it rescued: the board look's purr/meow fire then),
+    // rides on Mojo a moment and leaves in a burst of hearts and "Selamat!". Returns the ms until it has landed
+    // (0 = no hop staged: the caller keeps its old animation).
+    rescue: function (r, c, id, mrc, onLand) {
       var g = group('rescue'), s = cell(), p = cc(r, c)
-      seq(g, 'holy-light', p[0], p[1], s * 1.3, 560, { loop: 2, z: 7 })
-      for (var k = 0; k < (RM ? 1 : 5); k++) (function (k) {
-        var a = -Math.PI / 2 + (k - 2) * 0.45
-        var n = node(g, 'mfx-img', p[0], p[1], s * 0.42, s * 0.42, 8); if (!n) return
-        n.style.backgroundImage = 'url("' + cfg.lib('mojo-chase/items/heart') + '")'
-        play(n, RM ? [{ opacity: 0 }, { opacity: 1 }, { opacity: 0 }] : [{ transform: 'translate(0,0) scale(.3)', opacity: 0 }, { transform: 'translate(' + Math.cos(a) * s * 0.35 + 'px,' + Math.sin(a) * s * 0.35 + 'px) scale(1)', opacity: 1, offset: 0.4 }, { transform: 'translate(' + Math.cos(a) * s * 0.7 + 'px,' + (Math.sin(a) * s * 0.7 - s * 0.2) + 'px) scale(.8)', opacity: 0 }], 900, EOUT, 300 + k * 60)
-      })(k)
-      later(function () { text(g, p[0], p[1] - s * 0.55, 'Selamat!', '#D81B60') }, 500)
-      settle(g, 1700)
+      var ob = id != null && layer() && layer().parentNode.querySelector('#objs > .ob[data-id="' + id + '"]')
+      var img = ob && ob.querySelector('img.main'), mj = D.getElementById('mojo'), fx = layer()
+      var hop = !!(img && mj && fx && mrc && img.offsetWidth)
+      var a = hop ? boxIn(img) : null, mb = hop ? boxIn(mj) : null
+      var src = p
+      if (a) src = [a.x + a.w / 2, a.y + a.h * 0.55]
+      // the glow frames screen onto the board: kept inside it (above its top edge they would show their black)
+      seq(g, 'holy-light', src[0], Math.max(src[1], s * 0.66), s * 1.3, 560, { loop: 2, z: 7 })
+      if (!hop) {
+        hearts(g, p[0], p[1], 300)
+        later(function () { text(g, p[0], p[1] - s * 0.55, 'Selamat!', '#D81B60') }, 500)
+        settle(g, 1700)
+        return 0
+      }
+      var T0 = 220, HOP = 560, SQ = 170, RIDE = 900
+      var k = 0.55, fw = a.w, fh = a.h, fx0 = a.x + fw / 2, fy0 = a.y + fh          // the friend's feet
+      var bx = mb.x + mb.w / 2, by = mb.y + mb.h * 0.42                               // the basket on Mojo
+      var rider = node(g, 'mfx-img mfx-rider', fx0, fy0 - fh / 2, fw, fh, 10)
+      if (!rider) return 0
+      rider.style.backgroundImage = 'url("' + (img.currentSrc || img.src) + '")'
+      rider.style.transformOrigin = '50% 100%'
+      img.style.visibility = 'hidden'                                                 // the real one leaves its perch
+      g.onKill = function () { img.style.visibility = '' }
+      var dx = bx - fx0, dy = by - fy0
+      if (RM) {   // fades only: it leaves the perch and appears on Mojo
+        rider.style.opacity = '0'
+        play(rider, [{ opacity: 1 }, { opacity: 0 }], 260, 'ease', T0)
+        var r2 = node(g, 'mfx-img mfx-rider', bx, by - fh * k / 2, fw * k, fh * k, 10)
+        if (r2) { r2.style.backgroundImage = rider.style.backgroundImage; play(r2, [{ opacity: 0 }, { opacity: 1, offset: 0.15 }, { opacity: 1, offset: 0.8 }, { opacity: 0 }], HOP + SQ + RIDE + 300, 'ease', T0 + 200) }
+      } else {
+        var kf = [{ transform: 'translate(0,0) scale(1)', offset: 0 }], N = 10, up = s * 0.45 + Math.max(0, -dy) * 0.1
+        for (var i = 1; i <= N; i++) {
+          var t = i / N, y = dy * t - 4 * up * t * (1 - t), sc = 1 + (k - 1) * t
+          kf.push({ transform: 'translate(' + (dx * t).toFixed(1) + 'px,' + y.toFixed(1) + 'px) rotate(' + (Math.sin(t * Math.PI) * (dx >= 0 ? 12 : -12)).toFixed(1) + 'deg) scale(' + sc.toFixed(3) + ')', offset: t * HOP / (HOP + SQ) })
+        }
+        var end = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) '
+        kf[kf.length - 1].easing = EOUT
+        kf.push({ transform: end + 'scale(' + (k * 1.28).toFixed(3) + ',' + (k * 0.72).toFixed(3) + ')', offset: (HOP + SQ * 0.4) / (HOP + SQ) })
+        kf.push({ transform: end + 'scale(' + k + ')', offset: 1 })
+        play(rider, kf, HOP + SQ, 'linear', T0)
+        // riding: a little bob on Mojo, then it pops away in the hearts
+        later(function () {
+          if (!rider.isConnected) return
+          play(rider, [{ transform: end + 'scale(' + k + ')', opacity: 1 }, { transform: end + 'translateY(-' + (s * 0.05).toFixed(1) + 'px) scale(' + k + ')', opacity: 1, offset: 0.25 }, { transform: end + 'scale(' + k + ')', opacity: 1, offset: 0.5 }, { transform: end + 'translateY(-' + (s * 0.05).toFixed(1) + 'px) scale(' + k + ')', opacity: 1, offset: 0.75 }, { transform: end + 'scale(' + (k * 1.25) + ')', opacity: 0 }], RIDE + 300, 'ease-in-out')
+        }, T0 + HOP + SQ)
+      }
+      later(function () {
+        dots(g, bx, by, 8, '#FF8FB1', s * 0.45, 420, Math.max(5, s * 0.07))
+        if (onLand) try { onLand() } catch (e) { console.warn('[MojoFX] rescue land', e) }
+      }, T0 + HOP)
+      later(function () { hearts(g, bx, by - fh * k * 0.5, 0); text(g, bx, by - s * 0.75, 'Selamat!', '#D81B60') }, T0 + HOP + SQ + RIDE * 0.45)
+      settle(g, T0 + HOP + SQ + RIDE + 500)
+      return T0 + HOP + SQ
     },
     // repair: three hammer hits, each with sparks, then a shine
     repair: function (r, c, hitMs, hit, hammerSrc) {
@@ -337,6 +460,7 @@
     },
     // a beat done: a level-up badge swoops over Mojo and a regen glow
     beat: function (r, c) {
+      dropStand(true)
       var g = group('beat'), s = cell(), p = cc(r, c)
       seq(g, 'regen', p[0], p[1], s * 1.3, 640, { z: 7 })
       sprite(g, 'level-up', p[0], p[1] - s * 0.6, s * 0.9, [{ transform: 'translateY(20px) scale(.4)', opacity: 0 }, { transform: 'translateY(0) scale(1.1)', opacity: 1, offset: 0.35 }, { transform: 'translateY(-6px) scale(1)', opacity: 1, offset: 0.8 }, { transform: 'translateY(-18px)', opacity: 0 }], 1100, { z: 9 })
@@ -346,6 +470,7 @@
 
   /* the result card: owner confetti sprites falling over the screen (a fixed layer, not the board) */
   function confetti (host, n) {
+    dropStand(true)
     if (RM || !host) return
     var keys = ['confetti', 'confetti2', 'confetti-sheet13', 'confetti-sheet03', 'sparkle']
     var w = W.innerWidth, h = W.innerHeight, g = group('confetti')
@@ -362,7 +487,8 @@
   var API = {
     CAP: CAP,
     init: function (o) { cfg = o },
-    clear: function () { timers.forEach(W.clearTimeout); timers = []; groups.slice().forEach(kill); groups = [] },
+    clear: function () { timers.forEach(W.clearTimeout); timers = []; groups.slice().forEach(kill); groups = []; dropStand() },
+    standing: function () { return stand ? { r: stand.r, c: stand.c, lvl: stand.lvl, unit: stand.unit, perch: stand.perch } : null },
     live: function () { return groups.length },
     names: function () { return groups.map(function (g) { return g.name }) },
     reduced: function () { return RM },

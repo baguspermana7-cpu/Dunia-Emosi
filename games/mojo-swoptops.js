@@ -1032,7 +1032,7 @@
         case 'spray': spray(e); wait = Math.max(wait, 900); break
         case 'raise': wait = Math.max(wait, raiseAnim(e, prev.m.lift || 0) + 120); break
         case 'lower': wait = Math.max(wait, lowerAnim(prev.m.lift || 0) + 120); break
-        case 'rescue': rescueAnim(e); wait = Math.max(wait, 900); break
+        case 'rescue': wait = Math.max(wait, rescueAnim(e) || 900); break
         case 'tool': toolAnim(e); wait = Math.max(wait, 760); break
         case 'repair': wait = Math.max(wait, repairAnim(e)); break
         case 'pick': case 'drop': renderObj(PG.find(G.w, e.id)); if (e.e === 'drop') OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); wait = Math.max(wait, 300); break
@@ -1136,13 +1136,17 @@
   function raiseAnim (e, from) { return liftSteps(from, e.lift) }
   function lowerAnim (from) { return liftSteps(from, 0) }
   function rescueAnim (e) {
-    var d = OBJ[e.id], m = G.w.m; if (!d) return
+    var d = OBJ[e.id], m = G.w.m; if (!d) return 0
     var b = tf(m.r, m.c, ' scale(.5)')
     var o0 = PG.find(G.cp, e.id) || PG.find(G.w, e.id)
-    if (o0) fxCall('rescue', o0.r, o0.c)
-    // the friend hops: up, then into Mojo
+    // MojoFX stages the hop itself (the friend arcs down from its perch into the basket); land() marks it rescued
+    var land = function () { renderObj(PG.find(G.w, e.id)); burst(m.r, m.c, '#FF8FB1'); SND.goal(); squash(1.08, 0.9, 200) }
+    var hop = o0 ? fxCall('rescue', o0.r, o0.c, e.id, [m.r, m.c], land) : 0
+    if (hop) return hop + 80
+    // fallback: the friend hops: up, then into Mojo
     anim(d, [{ transform: d.style.transform, opacity: 1 }, { transform: d.style.transform + ' translateY(-22%) scale(1.08)', opacity: 1, offset: 0.35 }, { transform: b, opacity: 0 }], 760, EIO, function () { renderObj(PG.find(G.w, e.id)) })
     later(function () { burst(m.r, m.c, '#FF8FB1'); SND.goal(); squash(1.08, 0.9, 200) }, 680)
+    return 900
   }
   function toolAnim (e) {
     SND.clank()

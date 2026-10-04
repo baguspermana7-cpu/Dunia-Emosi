@@ -1,6 +1,6 @@
 // G31 Mojo Swoptops board VFX gate (games/mojo-fx.js, owner 2026-10-03): every action shows its effect, effects
 // clean up, Berhenti clears them, reduced motion only fades, at most 6 live, art is warmed for offline, and a busy
-// beat stays smooth at 4x CPU.   node tools/qa-mojo-fx.mjs   (needs the dev server on :8081)
+// beat stays smooth at 4x CPU; the m3 rescue is staged on the real perch (ladder, hop, ride, retract, cancel).   node tools/qa-mojo-fx.mjs   (needs the dev server on :8081)
 import puppeteer from 'puppeteer';
 import assert from 'node:assert/strict';
 const URL='http://localhost:8081/games/mojo-swoptops.html?unlock=1';
@@ -124,6 +124,56 @@ console.log('performance PASS',JSON.stringify(globalThis.__perf||''));
 {const p=await page(1280,800,{reduced:true});await p.evaluate(()=>__mojo.start('t1'));await sleep(300);await intro(p);
  ok(await p.evaluate(()=>!document.getAnimations().some(a=>['mjBreathe','flagWave','treeSway','chipGlow'].includes(a.animationName))),'reduced motion: no idle loops');await p._ctx.close()}
 console.log('polish PASS');
+
+// ── 8. rescue staging (plan §5, m3 at 1280x800): the NAIK ladder reaches the cat's real perch on the tall tree,
+//    the cat hops into Mojo's basket and rides there (purr on landing), TURUN retracts the ladder, and Berhenti
+//    mid-rescue removes every staged node and puts the cat back on its branch ──
+{const p=await page(1280,800);
+ const go=async prog=>{await p.evaluate(()=>__mojo.start('m3'));await sleep(300);await intro(p);await p.evaluate(()=>{__fx=[];MojoBoardLook.log.length=0});
+  await p.evaluate(prog=>{if(__mojo.state().prog.length){document.getElementById('btn-clear').click();document.getElementById('cl-yes').click()}for(const c of prog)document.querySelector(`#palette [data-cmd="${c}"]`).click();document.getElementById('btn-run').click()},prog||await p.evaluate(()=>__mojo.solution()))};
+ const until=async(fn,ms=15000)=>{const t=Date.now();while(Date.now()-t<ms){await help(p);if(await p.evaluate(fn))return true;await sleep(40)}return false};
+ const sol=await p.evaluate(()=>{__mojo.start('m3');return __mojo.solution()});ok(sol.includes('raise')&&sol.at(-1)==='rescue','m3 solution ends NAIK..TOLONG ('+sol.join(',')+')');
+ await go(sol);
+ ok(await until(()=>!!MojoFX.standing()),'after NAIK the ladder stays standing');
+ const lad=await p.evaluate(()=>{const l=document.querySelector('#fx .mfx-lad'),fx=document.getElementById('fx').getBoundingClientRect(),a=l.getBoundingClientRect(),q=MojoBoardLook.perchPoint('kucing'),inner=l.firstChild.getBoundingClientRect();
+   return{top:[a.left+a.width/2,Math.max(a.top,inner.top)],perch:[fx.left+q.x,fx.top+q.y],cellTop:fx.top,unit:MojoFX.standing().unit,cell:parseFloat(document.getElementById('board').style.getPropertyValue('--cell'))}});
+ const dLad=Math.hypot(lad.top[0]-lad.perch[0],lad.top[1]-lad.perch[1]);
+ ok(dLad<=12,'the NAIK ladder top reaches the cat\'s perch within 12 px ('+dLad.toFixed(1)+' px; top '+lad.top.map(v=>v|0)+' perch '+lad.perch.map(v=>v|0)+')');
+ ok(lad.perch[1]<lad.cellTop&&lad.unit>lad.cell*0.3,'the perch is on the tall tree above the board and the rungs are spaced to reach it ('+(lad.unit/lad.cell).toFixed(2)+' cell/rung)');
+ ok(await until(()=>__fx.some(x=>x.k==='rescue')),'TOLONG stages the rescue');
+ ok(await p.evaluate(()=>{const r=document.querySelector('#fx .mfx-rider');const im=document.querySelector('.ob[data-id=kucing] img.main');return!!r&&im.style.visibility==='hidden'}),'the cat leaves its branch as a hopping sprite');
+ await sleep(1000);
+ const ride=await p.evaluate(()=>{const r=document.querySelector('#fx .mfx-rider'),m=document.getElementById('mojo').getBoundingClientRect();if(!r)return null;const b=r.getBoundingClientRect(),x=b.left+b.width/2,y=b.top+b.height/2;return{x,y,m:[m.left,m.top,m.right,m.bottom],inside:x>=m.left&&x<=m.right&&y>=m.top&&y<=m.bottom}});
+ ok(ride&&ride.inside,'after the hop the cat rides inside Mojo\'s box ('+JSON.stringify(ride)+')');
+ ok(await p.evaluate(()=>document.querySelector('.ob[data-id=kucing]').classList.contains('gone')&&MojoBoardLook.log.some(l=>l.v==='purr')),'the cat is rescued on landing and purrs');
+ ok(await p.evaluate(()=>{const t=document.querySelector('.ob[data-id=kucing] img.perch');return!!t&&getComputedStyle(t).opacity>0.5}),'the tree stays on the board (only the cat hops)');
+ for(let i=0;i<80&&!(await p.$('#ov-card.on #res-map'));i++){await help(p);await sleep(100)}
+ await sleep(1700);ok(await liveNodes(p)===0&&!(await p.evaluate(()=>MojoFX.standing())),'after the level every staged node is gone');
+ await p.click('#res-map').catch(()=>{});await sleep(300);
+ // TURUN retracts the standing ladder back into Mojo
+ await go(['east','up','up','swop:cherry','raise','lower']);
+ ok(await until(()=>!!MojoFX.standing()),'NAIK stands the ladder (no rescue)');
+ const h0=await p.evaluate(()=>{const l=document.querySelector('#fx .mfx-lad');return l.getBoundingClientRect().bottom-l.firstChild.getBoundingClientRect().top});
+ ok(await until(()=>__fx.filter(x=>x.k==='lift').length>=2),'TURUN plays');await sleep(500);
+ const h1=await p.evaluate(()=>{const l=document.querySelector('#fx .mfx-lad');return l?l.getBoundingClientRect().bottom-l.firstChild.getBoundingClientRect().top:0});
+ ok(h1<h0-10,'TURUN pulls the ladder back down ('+h0.toFixed(0)+' -> '+h1.toFixed(0)+' px)');
+ await sleep(1600);ok(await p.evaluate(()=>!document.querySelector('#fx .mfx-lad')&&!MojoFX.standing()),'the ladder is gone once Mojo is down');
+ await until(()=>!__mojo.state().running,8000);
+ // Berhenti mid-hop: nothing staged stays, the cat is back on its branch
+ await go(sol);
+ ok(await until(()=>__fx.some(x=>x.k==='rescue')),'rescue started (cancel case)');await sleep(350);
+ await p.click('#btn-run');await sleep(80);
+ const c=await p.evaluate(()=>{const im=document.querySelector('.ob[data-id=kucing] img.main');return{n:document.querySelectorAll('#board .mfx').length,live:MojoFX.live(),stand:MojoFX.standing(),vis:im.style.visibility,gone:im.closest('.ob').classList.contains('gone')}});
+ ok(c.n===0&&c.live===0&&!c.stand,'Berhenti mid-rescue clears the ladder, rider and hearts ('+JSON.stringify(c)+')');
+ ok(c.vis===''&&!c.gone,'Berhenti mid-rescue puts the cat back on its branch');
+ await sleep(1500);ok(await liveNodes(p)===0,'nothing staged comes back after Berhenti');
+ await p._ctx.close()}
+{const p=await page(1280,800,{reduced:true});
+ await p.evaluate(()=>{window.__moving=[];setInterval(()=>{for(const a of document.getAnimations()){const t=a.effect&&a.effect.target;if(t&&t.closest&&t.closest('#fx')&&a.effect.getKeyframes().some(k=>k.transform&&k.transform!=='none'))__moving.push(t.className)}},30)});
+ ok(await playLevel(p,'m3'),'m3 finished with reduced motion');
+ ok(await p.evaluate(()=>__moving.length===0),'reduced motion: the ladder and the rescue hop only fade ('+(await p.evaluate(()=>__moving.slice(0,3).join(',')))+')');
+ await p._ctx.close()}
+console.log('rescue staging PASS');
 
 await browser.close();
 assert.deepEqual(errors,[],'page errors: '+errors.join(' | '));

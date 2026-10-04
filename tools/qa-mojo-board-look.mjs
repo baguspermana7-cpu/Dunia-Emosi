@@ -5,6 +5,7 @@
 //  - no art box intersects the top bar, palette, plan strip or Bo chip
 //  - elementFromPoint on every visible palette button returns that button
 //  - z order: a lower row always draws over an upper row; Mojo over its own row
+//  - every raised thing reports its perch point (MojoBoardLook.perchPoint): the friend's feet, >= ~1 cell up
 // Plus (1280x800): reduced motion leaves no ambient animation running; a meow is scheduled at level open and on
 // approach (stub AudioContext); mute gives zero oscillators; idle frame median at 4x CPU <= 20 ms.
 // The look files are injected when the page does not load them yet (as qa-mojo-chase does for the picker).
@@ -123,6 +124,18 @@ try {
         const c = m.cat, ok = c.catBottom >= c.treeTop && c.catBottom <= c.treeTop + 0.3 * c.treeH && c.catMid >= c.treeL && c.catMid <= c.treeL + c.treeW
         check(ok, `${w}x${h} ${id}: the cat sits on the tree's top 30% (bottom ${c.catBottom.toFixed(0)} vs tree ${c.treeTop.toFixed(0)}+${(0.3 * c.treeH).toFixed(0)})`)
         check(c.treeH >= 1.85 * m.cell, `${w}x${h} ${id}: the cat's tree is ~2 cells tall (${(c.treeH / m.cell).toFixed(2)})`)
+      }
+      // rescue staging (games/mojo-fx.js): every raised thing reports the point a ladder must reach — a raised
+      // friend's feet on its perch (layout box, +-2 px), at least ~1 cell up for the tall tree and the balcony
+      const pp = await p.evaluate(() => (__mojo.state().objects || []).filter(o => o.elev).map(o => {
+        const d = document.querySelector('#objs > .ob[data-id="' + o.id + '"]'), im = d && d.querySelector('img.main'), q = MojoBoardLook.perchPoint(o.id)
+        const c = parseFloat(document.getElementById('board').style.getPropertyValue('--cell')), t = /translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px/.exec(d.style.transform)
+        return { id: o.id, type: o.type, perch: o.perch || '', q, feet: im && t ? [+t[1] + im.offsetLeft + im.offsetWidth / 2, +t[2] + im.offsetTop + im.offsetHeight] : null, cellTop: o.r * c, cell: c }
+      }))
+      for (const x of pp) {
+        check(!!x.q && x.q.elev > 0, `${w}x${h} ${id}: ${x.id} reports a perch point (${JSON.stringify(x.q)})`)
+        if (x.q && x.type === 'person') check(Math.hypot(x.q.x - x.feet[0], x.q.y - x.feet[1]) <= 2, `${w}x${h} ${id}: ${x.id} perch point = the friend's feet (${x.q.x.toFixed(0)},${x.q.y.toFixed(0)} vs ${x.feet.map(v => v.toFixed(0))})`)
+        if (x.q && x.perch) check(x.q.y <= x.cellTop + 0.1 * x.cell, `${w}x${h} ${id}: ${x.id} perch point is at least ~1 cell up (tall art: ${x.q.y.toFixed(0)} <= ${(x.cellTop + 0.1 * x.cell).toFixed(0)})`)
       }
       check(!m.hits.length, `${w}x${h} ${id}: no art over the chrome (${m.hits.slice(0, 3).join('; ')})`)
       check(!m.palette.length, `${w}x${h} ${id}: palette buttons take the tap (${m.palette.slice(0, 3).join('; ')})`)
