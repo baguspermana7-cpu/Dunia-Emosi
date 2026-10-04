@@ -1,0 +1,107 @@
+/* Mojo scene life (games/mojo-scene-life.js). Transform + opacity animations only, no filters; will-change only on
+   the moving layers. #msl-bg sits under every play panel (z -1 in the isolated screen); #msl-board sits over the
+   ground canvases and under every tile, item, tag and Mojo (those carry positive z-index). */
+#scr-play.msl-on{isolation:isolate}
+.msl-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:strict}
+.msl-bg>i,.msl-parts{position:absolute;display:block;pointer-events:none}
+.msl-parts{inset:0}
+.msl-anim{will-change:transform,opacity}
+#scr-play.msl-pause .msl-anim{animation-play-state:paused!important}
+
+/* the painting breathes: a copy of #scr-play's own background, scaled 1 -> 1.03 */
+.msl-paint{inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;transform-origin:38% 58%;animation:mslBreath 36s ease-in-out infinite alternate}
+.msl-bg[data-msl=coast] .msl-paint,.msl-bg[data-msl=snow] .msl-paint{transform-origin:64% 46%}
+@keyframes mslBreath{from{transform:scale(1)}to{transform:scale(1.03)}}
+
+/* two cloud bands at two depths; each tile is 100vw wide and the band is 200vw, so -100vw loops seamlessly */
+.msl-cl{left:0;width:200vw;background-repeat:repeat-x}
+.msl-cl1{top:6%;height:26%;opacity:.5;background-size:100vw 100%;animation:mslCloud 200s linear infinite;
+  background-image:radial-gradient(ellipse 9vw 26% at 12% 46%,rgba(255,255,255,.7),rgba(255,255,255,0) 70%),radial-gradient(ellipse 6vw 18% at 17% 38%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%),
+    radial-gradient(ellipse 11vw 22% at 52% 64%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),radial-gradient(ellipse 7vw 20% at 82% 30%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%)}
+.msl-cl2{top:14%;height:34%;opacity:.42;background-size:100vw 100%;animation:mslCloud 120s linear infinite;animation-delay:-40s;
+  background-image:radial-gradient(ellipse 15vw 24% at 30% 50%,rgba(255,255,255,.7),rgba(255,255,255,0) 70%),radial-gradient(ellipse 9vw 18% at 36% 40%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%),
+    radial-gradient(ellipse 13vw 20% at 76% 58%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%)}
+@keyframes mslCloud{from{transform:translate3d(0,0,0)}to{transform:translate3d(-100vw,0,0)}}
+.msl-bg[data-msl=night] .msl-cl{opacity:.16}
+.msl-bg[data-msl=fire] .msl-cl{opacity:.3}
+.msl-bg[data-msl=space] .msl-cl,.msl-bg[data-msl=deep] .msl-cl{display:none}
+
+/* soft ray fan from the top-left corner, swaying */
+.msl-rays{left:-8vw;top:-12vh;width:80vw;height:110vh;transform-origin:0 0;opacity:.75;animation:mslRays 15s ease-in-out infinite alternate;
+  background:conic-gradient(from 96deg at 0 0,rgba(255,244,200,0) 0deg,rgba(255,244,200,.2) 6deg,rgba(255,244,200,0) 12deg,rgba(255,244,200,0) 18deg,rgba(255,244,200,.14) 23deg,rgba(255,244,200,0) 29deg,rgba(255,244,200,0) 36deg,rgba(255,244,200,.17) 41deg,rgba(255,244,200,0) 48deg,rgba(255,244,200,0) 360deg)}
+@keyframes mslRays{from{transform:rotate(-2.5deg);opacity:.45}to{transform:rotate(2.5deg);opacity:.95}}
+.msl-bg[data-msl=fire] .msl-rays{background:conic-gradient(from 96deg at 0 0,rgba(255,170,90,0) 0deg,rgba(255,170,90,.16) 8deg,rgba(255,170,90,0) 16deg,rgba(255,170,90,0) 26deg,rgba(255,170,90,.12) 33deg,rgba(255,170,90,0) 40deg,rgba(255,170,90,0) 360deg)}
+.msl-bg[data-msl=deep] .msl-rays{left:20vw;width:70vw;opacity:.6;background:conic-gradient(from 150deg at 30% 0,rgba(200,240,255,0) 0deg,rgba(200,240,255,.16) 5deg,rgba(200,240,255,0) 10deg,rgba(200,240,255,0) 20deg,rgba(200,240,255,.13) 25deg,rgba(200,240,255,0) 31deg,rgba(200,240,255,0) 360deg)}
+.msl-bg[data-msl=night] .msl-rays,.msl-bg[data-msl=space] .msl-rays{display:none}
+
+/* heat haze over the smoke (fire scenes): two soft warm plumes that waver; gradients only, no filter */
+.msl-haze{display:none!important}
+.msl-bg[data-msl=fire] .msl-haze{display:block!important;left:14%;top:36%;width:22vw;height:46vh;transform-origin:50% 100%;border-radius:50%;
+  background:radial-gradient(ellipse 50% 50% at 50% 60%,rgba(255,150,70,.16),rgba(255,120,50,.06) 55%,rgba(255,120,50,0) 72%);animation:mslHaze 3.2s ease-in-out infinite alternate}
+.msl-bg[data-msl=fire] .msl-haze2{left:64%;top:30%;animation-duration:4.1s;animation-delay:-1.6s}
+@keyframes mslHaze{0%{transform:scale(1,1) skewX(0);opacity:.6}35%{transform:scale(1.06,.97) skewX(2deg);opacity:1}70%{transform:scale(.96,1.04) skewX(-2deg);opacity:.75}100%{transform:scale(1.03,1.02) skewX(1deg);opacity:.95}}
+
+/* particles (pool <= 14): one element each, an infinite CSS loop with a negative delay */
+.msl-p{position:absolute;display:block;width:var(--sz,8px);height:var(--sz,8px);pointer-events:none;animation-timing-function:linear;animation-iteration-count:infinite}
+.msl-petal,.msl-leaf{height:calc(var(--sz) * .6);border-radius:0 100% 0 100%;animation-name:mslCross}
+.msl-petal{background:#FFE4EC;opacity:.85}
+.msl-leaf{background:#7CB342}
+.msl-bg[data-msl=forest] .msl-leaf{background:#D99A2B}
+@keyframes mslCross{0%{transform:translate3d(-6vw,0,0) rotate(0);opacity:0}8%{opacity:.9}50%{transform:translate3d(50vw,calc(var(--dy) * .4),0) rotate(260deg)}92%{opacity:.9}100%{transform:translate3d(106vw,var(--dy),0) rotate(540deg);opacity:0}}
+.msl-ember{border-radius:50%;background:radial-gradient(circle,#FFF3B0 0 30%,#FF9F43 45%,rgba(255,90,30,0) 72%);animation-name:mslRise;animation-timing-function:ease-out}
+@keyframes mslRise{0%{transform:translate3d(0,0,0) scale(1);opacity:0}12%{opacity:1}70%{opacity:.8}100%{transform:translate3d(var(--dx),-58vh,0) scale(.4);opacity:0}}
+.msl-star{border-radius:50%;background:radial-gradient(circle,#fff 0 35%,rgba(255,255,255,0) 70%);animation-name:mslTwinkle;animation-timing-function:ease-in-out;animation-direction:alternate}
+@keyframes mslTwinkle{from{transform:scale(.55);opacity:.15}to{transform:scale(1.15);opacity:1}}
+.msl-glint{height:3px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,255,255,.95),rgba(255,255,255,0) 70%);animation-name:mslGlint;animation-timing-function:ease-in-out}
+@keyframes mslGlint{0%,100%{transform:scaleX(.3);opacity:0}45%{transform:scaleX(1);opacity:.9}60%{transform:scaleX(.8);opacity:.5}}
+.msl-snow{border-radius:50%;background:radial-gradient(circle,#fff 0 45%,rgba(255,255,255,0) 72%);animation-name:mslSnow}
+@keyframes mslSnow{0%{transform:translate3d(0,0,0);opacity:0}8%{opacity:.95}50%{transform:translate3d(calc(var(--dx) * -.5),52vh,0)}92%{opacity:.95}100%{transform:translate3d(var(--dx),106vh,0);opacity:0}}
+.msl-firefly{border-radius:50%;background:radial-gradient(circle,#FFFDE7 0 25%,#E6EE9C 40%,rgba(220,240,120,0) 72%);animation-name:mslFirefly;animation-timing-function:ease-in-out}
+@keyframes mslFirefly{0%,100%{transform:translate3d(0,0,0);opacity:.1}25%{transform:translate3d(3vw,-3vh,0);opacity:1}50%{transform:translate3d(-1vw,-6vh,0);opacity:.3}75%{transform:translate3d(-3vw,-2vh,0);opacity:.9}}
+.msl-bubble{border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9) 0 14%,rgba(255,255,255,.12) 30% 58%,rgba(255,255,255,.6) 64%,rgba(255,255,255,0) 70%);animation-name:mslBubble}
+@keyframes mslBubble{0%{transform:translate3d(0,0,0);opacity:0}10%{opacity:.85}50%{transform:translate3d(var(--dx),-45vh,0)}100%{transform:translate3d(0,-92vh,0);opacity:0}}
+.msl-conf{width:7px;height:11px;border-radius:2px;background:var(--c);animation-name:mslConf}
+@keyframes mslConf{0%{transform:translate3d(0,0,0) rotate(0) scaleX(1);opacity:0}6%{opacity:.9}35%{transform:translate3d(calc(var(--dx) * .4),36vh,0) rotate(220deg) scaleX(.3)}70%{transform:translate3d(calc(var(--dx) * -.2),72vh,0) rotate(470deg) scaleX(1)}94%{opacity:.9}100%{transform:translate3d(var(--dx),104vh,0) rotate(700deg) scaleX(.4);opacity:0}}
+.msl-balloon{width:22px;height:28px;border-radius:50% 50% 48% 48%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.75) 0 12%,rgba(255,255,255,0) 30%),var(--c);opacity:.85;animation-name:mslBalloon;animation-timing-function:ease-in-out}
+.msl-balloon::after{content:'';position:absolute;left:50%;top:100%;width:1px;height:22px;background:rgba(60,60,60,.45)}
+@keyframes mslBalloon{0%{transform:translate3d(0,0,0) rotate(-4deg);opacity:0}8%{opacity:.85}50%{transform:translate3d(var(--dx),-55vh,0) rotate(4deg)}92%{opacity:.85}100%{transform:translate3d(calc(var(--dx) * -.5),-108vh,0) rotate(-3deg);opacity:0}}
+
+/* a far flyer, now and then (one element, restarted by the module) */
+.msl-fly{left:0;width:72px;height:26px;opacity:0}
+.msl-fly svg{display:block;width:100%;height:100%}
+.msl-fly.on{animation:mslFlyAcross 22s linear 1 both}
+.msl-fly.msl-f-plane{width:130px;height:22px}
+.msl-fly.msl-f-plane.on{animation-duration:30s}
+.msl-fly.msl-f-gulls{width:84px;height:32px}
+.msl-fly.msl-f-gulls.on{animation:mslGull 16s ease-in-out 1 both}
+.msl-fly.msl-rtl svg{transform:scaleX(-1)}
+.msl-fly.msl-rtl.on{animation-direction:reverse}
+.msl-fly.msl-f-shoot{width:150px;height:24px}
+.msl-fly.msl-f-shoot.on{animation:mslShoot 1.6s ease-in 1 both}
+@keyframes mslFlyAcross{0%{transform:translate3d(-12vw,0,0);opacity:0}6%{opacity:.75}94%{opacity:.75}100%{transform:translate3d(108vw,-4vh,0);opacity:0}}
+@keyframes mslGull{0%{transform:translate3d(-10vw,0,0);opacity:0}8%{opacity:.9}30%{transform:translate3d(25vw,-3vh,0)}60%{transform:translate3d(62vw,1vh,0)}92%{opacity:.9}100%{transform:translate3d(108vw,-2vh,0);opacity:0}}
+@keyframes mslShoot{0%{transform:translate3d(20vw,0,0) rotate(14deg);opacity:0}20%{opacity:1}100%{transform:translate3d(70vw,12vh,0) rotate(14deg);opacity:0}}
+
+/* ── board life: over the ground, under every item; clipped to the board ── */
+.msl-board{overflow:hidden;border-radius:18px;contain:strict}
+.msl-board>i{position:absolute;display:block;pointer-events:none}
+/* cloud shadows: a large soft dark blob, alpha <= .11 */
+.msl-cs{left:0;top:-10%;width:70%;height:70%;border-radius:50%;background:radial-gradient(ellipse closest-side,rgba(16,40,26,.11),rgba(16,40,26,.06) 55%,rgba(16,40,26,0));animation:mslShadow 38s linear infinite}
+.msl-cs2{top:38%;width:56%;height:62%;animation-duration:54s;animation-delay:-27s}
+@keyframes mslShadow{from{transform:translate3d(-105%,-6%,0)}to{transform:translate3d(185%,12%,0)}}
+/* a light sweep every 8 s */
+.msl-sweep{left:0;top:-30%;width:22%;height:160%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,250,.2) 50%,rgba(255,255,255,0));opacity:0;animation:mslSweep 8s ease-in-out infinite}
+@keyframes mslSweep{0%{transform:translate3d(-120%,0,0) rotate(16deg);opacity:0}3%{opacity:1}22%{transform:translate3d(560%,0,0) rotate(16deg);opacity:1}24%,100%{transform:translate3d(560%,0,0) rotate(16deg);opacity:0}}
+/* grass tufts swaying in three batches (<= 10) */
+.msl-tuft{width:calc(var(--cell,80px) * .16);height:calc(var(--cell,80px) * .14);margin-left:calc(var(--cell,80px) * -.08);transform-origin:50% 100%;opacity:.9;animation:mslSway 4.2s ease-in-out infinite alternate;
+  background:linear-gradient(68deg,transparent 42%,#4E8F2F 43% 55%,transparent 56%) 0 100%/42% 80% no-repeat,linear-gradient(90deg,transparent 40%,#5FA33A 41% 59%,transparent 60%) 50% 100%/30% 100% no-repeat,linear-gradient(112deg,transparent 42%,#4E8F2F 43% 55%,transparent 56%) 100% 100%/42% 80% no-repeat}
+@keyframes mslSway{from{transform:skewX(-9deg)}to{transform:skewX(9deg)}}
+/* the diorama base breathes (grows down from the board's edge, so it never detaches) */
+.board.msl-on>.mbl-skirt{transform-origin:50% 0;animation:mslBob 7s ease-in-out infinite alternate;will-change:transform}
+@keyframes mslBob{from{transform:scaleY(1)}to{transform:scaleY(1.07)}}
+#scr-play.msl-pause .board.msl-on>.mbl-skirt{animation-play-state:paused}
+
+@media (prefers-reduced-motion:reduce){
+  .msl-anim,.board.msl-on>.mbl-skirt{animation:none!important;will-change:auto}
+  .msl-p,.msl-fly,.msl-tuft,.msl-sweep,.msl-haze{display:none!important}
+}
