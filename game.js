@@ -6225,7 +6225,8 @@ function switchPlayerPoke(poke){
     // Apply tier sizing for new player Pokemon
     const _g10swTierSz = t => ({1:1.0, 2:1.2, 3:1.3, 4:1.3}[t||1] || 1.0)
     const swPTierSc = _g10swTierSz(poke.tier)
-    pSpr.style.width = pSpr.style.height = swPTierSc !== 1.0 ? `calc(clamp(140px, min(38vw, 30vh), 320px) * ${swPTierSc})` : ''
+    pSpr.style.width = pSpr.style.height = ''
+    pSpr.style.setProperty('--g10-sc', String(swPTierSc))
     // Update info box
     document.getElementById('g10-pname').textContent = poke.name
     document.getElementById('g10-plv').textContent = 'Lv'+(Math.floor(Math.random()*10)+s.levelNum)
@@ -6593,8 +6594,10 @@ function g10NewBattle(){
   applyPokeFlip(pEl, s.playerPoke.slug, 'player')
   const eSc = pokeFinalScale(s.enemyPoke.slug)
   const pSc = pokeFinalScale(s.playerPoke.slug)
-  if(eEl) eEl.style.width = eEl.style.height = eSc !== 1.0 ? `calc(clamp(140px, min(38vw, 30vh), 320px) * ${eSc})` : ''
-  if(pEl) pEl.style.width = pEl.style.height = pSc !== 1.0 ? `calc(clamp(140px, min(38vw, 30vh), 320px) * ${pSc})` : ''
+  // Size lives in CSS (container units of #g10-field); JS only hands over the
+  // per-species scale. Inline vw/vh sizes ignored the arena and stayed small on tablets.
+  if(eEl){ eEl.style.width = eEl.style.height = ''; eEl.style.setProperty('--g10-sc', String(eSc)) }
+  if(pEl){ pEl.style.width = pEl.style.height = ''; pEl.style.setProperty('--g10-sc', String(pSc)) }
   // Reset wrapper entrance animations so they replay cleanly each battle
   const eWrap=document.getElementById('g10-espr-wrap')
   const pWrap=document.getElementById('g10-pspr-wrap')

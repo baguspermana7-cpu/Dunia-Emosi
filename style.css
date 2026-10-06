@@ -2177,23 +2177,19 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 
 /* ── G10 Battle — mobile responsive ── */
 @media(max-width:480px) {
-  .g10-field { flex:0 0 44vh !important; min-height:220px !important; }
   .g10-math { font-size:44px; }
-  .g10-cbtn { font-size:20px !important; padding:12px 4px !important; min-height:52px !important; border-radius:12px; }
+  .g10-cbtn { font-size:20px !important; padding:12px 4px !important; min-height:56px !important; border-radius:12px; }
   .g10-choices { gap:6px; }
 }
 @media(max-width:400px) {
-  .g10-field { flex:0 0 42vh !important; min-height:200px !important; }
   .g10-math { font-size:38px; }
-  .g10-cbtn { font-size:18px !important; padding:10px 3px !important; min-height:48px !important; }
-  .g10-qpanel { padding:10px 10px max(10vh, calc(env(safe-area-inset-bottom, 0px) + 14px)); gap:6px; }
+  .g10-cbtn { font-size:18px !important; padding:10px 3px !important; min-height:56px !important; }
   .g10-choices { max-width:100%; gap:5px; }
   .g10-oval { width:70px !important; height:14px !important; }
 }
 @media(max-width:360px) {
-  .g10-field { flex:0 0 40vh !important; min-height:180px !important; }
   .g10-math { font-size:34px; }
-  .g10-cbtn { font-size:16px !important; padding:8px 2px !important; min-height:44px !important; }
+  .g10-cbtn { font-size:16px !important; padding:8px 2px !important; min-height:56px !important; }
   .g10-choices { max-width:100%; gap:4px; }
   .g10-oval { width:60px !important; height:12px !important; }
 }
@@ -2229,9 +2225,14 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   flex-direction:column;align-items:stretch;justify-content:flex-start;
   background:#0a0a1e;
 }
-/* Battle field — top portion (sky + grass), 4-quadrant grid */
+/* Battle field — fills every pixel the header + question panel leave over.
+   2026-10-06 owner bug: this was `flex:0 0 46vh; max-height:400px` (a phone-
+   portrait band) and the panel below carried a 10vh bottom padding, so on a
+   landscape tablet the arena was a ~30% strip and the leftover height became
+   a big black void under the question. Gate: tools/qa-poke-battle-layout.mjs. */
 .g10-field {
-  position:relative;flex:0 0 46vh;min-height:240px;max-height:400px;width:100%;overflow:hidden;
+  position:relative;flex:1 1 auto;min-height:180px;width:100%;overflow:hidden;
+  container-type:size;
   background:linear-gradient(180deg,#6bbfee 0%,#a8d8f8 32%,#a0d870 46%,#5a9e3a 65%,#3e7028 100%);
 }
 .g10-field::before {
@@ -2292,6 +2293,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
  */
 .g10-espr{
   width:min(44vw, 22vh);height:min(44vw, 22vh);
+  width:calc(min(40cqw, 50cqh) * var(--g10-sc, 1));height:calc(min(40cqw, 50cqh) * var(--g10-sc, 1));
   /* Hotfix #101-F2: object-fit:contain + max-width:100% so a broken image cannot
      stretch outside its width/height box (broken-image marker stays small). */
   object-fit:contain; max-width:100%; max-height:100%;
@@ -2302,6 +2304,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 }
 .g10-pspr{
   width:min(44vw, 22vh);height:min(44vw, 22vh);
+  width:calc(min(40cqw, 50cqh) * var(--g10-sc, 1));height:calc(min(40cqw, 50cqh) * var(--g10-sc, 1));
   object-fit:contain; max-width:100%; max-height:100%;
   /* --flip:1 because HD CDN sprites face screen-right and player must face screen-right toward enemy (no flip) */
   --flip:1;
@@ -2382,7 +2385,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 /* Question panel — DS bottom screen, stacks tightly from top */
 .g10-qpanel{
   flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  padding:10px 16px max(10vh, calc(env(safe-area-inset-bottom, 0px) + 16px));gap:6px;
+  padding:10px 16px max(14px, calc(env(safe-area-inset-bottom, 0px) + 10px));gap:6px;
   background:rgba(14,14,30,0.99);
   border-top:2px solid rgba(255,255,255,0.07);overflow-y:visible;
 }
@@ -2439,6 +2442,54 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   animation:g10BtnNG 0.4s ease;}
 @keyframes g10BtnNG{0%,100%{transform:none}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
 .g10-cbtn:disabled{pointer-events:none;opacity:0.6;}
+/* G10 owns its bottom inset: .g10-qpanel already pads for the safe area. The
+   global `[id^="screen-game"]{padding-bottom:max(15vh,…) !important}` rule (a
+   browser-chrome guard for scrolling game screens) stacked a SECOND empty 15vh
+   band under the battle — the black void in the owner's tablet photo. */
+#screen-game10{padding-bottom:0 !important;}
+/* …and sizes to the VISIBLE viewport, so the answers never sit under Android's
+   URL bar (later `#screen-game10{height:100vh}` uses the largest viewport). */
+#screen-game10.screen{height:100vh;height:100dvh;min-height:0;}
+/* ── G10 roomy screens (tablets, either orientation): readable HP cards ── */
+@media (min-width:700px) and (min-height:600px){
+  .g10-infobox{min-width:200px;max-width:250px;padding:9px 14px 10px;border-radius:12px;}
+  .g10-enemy-info{top:14px;left:14px;}
+  .g10-player-info{bottom:14px;right:14px;}
+  .g10-poke-name{font-size:19px;max-width:170px;}
+  .g10-poke-lv{font-size:13px;}
+  .g10-type-badge{font-size:12px;padding:3px 10px;}
+  .g10-hp-lbl{font-size:13px;}
+  .g10-hp-track{height:12px;}
+  .g10-hp-nums{font-size:12px;}
+  .g10-oval{width:min(46cqw, 60cqh);height:min(9cqw, 12cqh);}
+  .g10-math{font-size:58px;}
+  .g10-choices{max-width:620px;gap:12px;}
+  .g10-cbtn{min-height:64px;font-size:28px;}
+  .g10-atk-lbl{font-size:12px;}
+}
+/* ── G10 short landscape (phones on their side): question goes into ONE row
+   (label + sum on the left, 4 answers on the right) so the arena keeps the
+   height; the round/status strip shrinks to a hairline row. ── */
+@media (orientation:landscape) and (max-height:500px){
+  #screen-game10 .game-header{padding-top:4px !important;padding-bottom:4px !important;}
+  .g10-status-bar{padding:2px 16px !important;}
+  .g10-status-bar span{font-size:10px !important;}
+  .g10-qpanel{
+    display:grid;grid-template-columns:auto minmax(0,520px);grid-template-areas:"lbl ch" "math ch" "hint hint" "model model";
+    justify-content:center;align-items:center;column-gap:18px;row-gap:2px;
+    padding:6px 16px max(6px, calc(env(safe-area-inset-bottom, 0px) + 4px));
+  }
+  .g10-atk-lbl{grid-area:lbl;}
+  .g10-math{grid-area:math;font-size:40px;}
+  .g10-hint{grid-area:hint;}
+  .g10-model{grid-area:model;}
+  .g10-choices{grid-area:ch;width:100%;max-width:520px;}
+  .g10-cbtn{min-height:56px !important;padding:8px 4px !important;}
+  .g10-infobox{min-width:120px;max-width:150px;padding:4px 8px 5px;}
+  .g10-enemy-info{top:6px;left:6px;}
+  .g10-player-info{bottom:6px;right:6px;}
+  .g10-type-row{margin:2px 0 3px;}
+}
 /* Attack FX */
 .g10-atk-fx{
   position:fixed;z-index:201;pointer-events:none;
