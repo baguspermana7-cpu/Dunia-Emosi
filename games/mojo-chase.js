@@ -53,6 +53,9 @@
   function formPerk (id) { var f = formRow(id); return f ? f.perk : FORM_PERK[id] }
   // the in-race rear sprite of a form: the table row first, the generated anchor alias second, plain Mojo last
   function rearOf (id) { var f = formRow(id), RA = W.MojoRearAnchors; return f ? f.rear : (RA && RA.forms[id]) || 'base' }
+  // a rear key is a mojo-rear sprite name, or a full lib key ('mojo-turn/boat-rear') for the turnaround forms
+  function rearPath (k) { return String(k).indexOf('/') >= 0 ? k : 'mojo-rear/' + k }
+  function rearAnchor (RA, k) { return RA ? (RA.sprites[k] || (RA.extra && RA.extra[k]) || null) : null }
   function knownForm (id) { var RA = W.MojoRearAnchors; return !!id && (!!formRow(id) || !!(RA && RA.forms[id])) }
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
   function lib (k) { return (W.AssetIndex && W.AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') }
@@ -142,7 +145,7 @@
     // the Swop forms a child can race with (owner: "pilih karakter"): film art on the card, rear art in the race, one perk each
     // fallback intro chooser (no picker module): the table's starter forms; card art = the table's SIDE art
     var FORMS = ['racer', 'monster', 'jumper', 'excavator'].map(function (id) {
-      var f = formRow(id) || { name: FORM_NAME[id], side: 'mojo-rear/' + rearOf(id), line: '' }
+      var f = formRow(id) || { name: FORM_NAME[id], side: rearPath(rearOf(id)), line: '' }
       return { id: id, name: f.name, art: f.side, perk: String(f.line || '').replace(/!$/, '') }
     })
     var look0 = stage.look || stage.biome
@@ -150,7 +153,7 @@
     // cfg.mojo_form is honoured as given ('racer' included); without one: the avatar's last form, else the stage pick
     var formId = knownForm(cfg.mojo_form) ? cfg.mojo_form : (cfg.lastForm && FORMS.some(function (f) { return f.id === cfg.lastForm }) ? cfg.lastForm : recForm)
     var perk = cfg.perk || formPerk(formId) || null
-    var rearKey = rearOf(formId), rearA = RA ? RA.sprites[rearKey] : null
+    var rearKey = rearOf(formId), rearA = rearAnchor(RA, rearKey)
     var targetName = cfg.target_type || stage.target, targetA = CA ? CA.families.vehicles.sprites[targetName] : null
     var sound = typeof cfg.sound === 'function' ? cfg.sound : function () { return true }
     var AU = Audio(sound)
@@ -168,7 +171,7 @@
     hud.innerHTML =
       '<div class="mc-tl"><div class="mc-badge"><img alt="Bo" src="' + lib('mojo-char/bo') + '"></div><div class="mc-hearts" aria-label="Semangat"></div></div>' +
       '<div class="mc-sign mc-mission hide"><div class="plank"><b class="ol">MISI</b><span class="ol"></span></div><i class="post"></i></div>' +
-      '<div class="mc-top"><div class="mc-prog"><img class="car" alt="" src="' + lib('mojo-rear/' + rearKey) + '"><div class="bar"><i></i></div><img class="flag" alt="" src="' + lib('mojo-chase/signs/flag-checker') + '"></div>' +
+      '<div class="mc-top"><div class="mc-prog"><img class="car" alt="" src="' + lib(rearPath(rearKey)) + '"><div class="bar"><i></i></div><img class="flag" alt="" src="' + lib('mojo-chase/signs/flag-checker') + '"></div>' +
       '<div class="mc-title ol">KEJAR PENCURI!</div><div class="mc-loc ol"></div><div class="mc-dist"></div></div>' +
       '<button class="mc-pause" type="button" aria-label="Jeda"></button>' +
       '<div class="mc-counters"><span class="mc-cnt star"><img alt="" src="' + lib('mojo-chase/items/star') + '"><b class="ol">0</b></span><span class="mc-cnt crate"><img alt="" src="' + lib('mojo-chase/items/crate') + '"><b class="ol">0</b></span></div>' +
@@ -202,8 +205,8 @@
       })
     }
     function want (name, key) { need[name] = key }
-    FORMS.forEach(function (f) { want('rear:' + f.id, 'mojo-rear/' + rearOf(f.id)) })
-    want('rear', 'mojo-rear/' + rearKey); want('target', 'mojo-chase/vehicles/' + targetName); want('police', 'mojo-chase/vehicles/police-van')
+    FORMS.forEach(function (f) { want('rear:' + f.id, rearPath(rearOf(f.id))) })
+    want('rear', rearPath(rearKey)); want('target', 'mojo-chase/vehicles/' + targetName); want('police', 'mojo-chase/vehicles/police-van')
     want('robber', 'mojo-chase/robbers/robber-beanie'); want('p:bridge-tower', 'mojo-chase/cprops/red-suspension-bridge-tower')
     Object.keys(OBJ).forEach(function (k) { want('o:' + k, OBJ[k].k) })
     // FAR / MID strips: the Codex strip when the stage has one (key-based: a better delivery replaces it by re-ingest)
@@ -435,6 +438,14 @@
         if (!(S.hop > 0)) { S.hop = 0.5; S.jumps++; AU.whoosh(0); hopDust(); call('Hup! Lompat!', 900, 'hop') }
         return
       }
+      // the wrecking ball smashes straight through crates, barrels, cones, tyres, hay and barriers: no BROK
+      if (perk === 'smash' && info.kind === 'block') {
+        S.smashed = (S.smashed || 0) + 1; AU.whoosh(0); if (!RM) S.shake = Math.max(S.shake, 0.18)
+        for (var q = 0; q < 10; q++) { var sp = FX.spawn(TEX.chunk, sx + (Math.random() - 0.5) * cp * 0.3, sy - cp * 0.15, (Math.random() - 0.5) * 800 * v.u, -(300 + Math.random() * 450) * v.u, 0.8, cp * (0.08 + Math.random() * 0.05), false); if (sp) { sp.ay = 2400 * v.u; sp.vr = (Math.random() - 0.5) * 12; sp.rot = 1; sp.floor = sy + cp * 0.12; sp.flow = 0.9 } }
+        burst(sx, sy, 8, TEX.puff, 380 * v.u, 0.6, cp * 0.3, false)
+        call('BRAK! Bola penghancur menerobos!', 900, 'smash')
+        return
+      }
       var immune = false
       if (info.kind === 'slip') {
         if (perk === 'grip' || (perk === 'snow' && look0 === 'snow') || (perk === 'splash' && (o.type === 'oil' || stage.wet))) { S.spin = 0; S.slide = 0; immune = true }
@@ -484,7 +495,7 @@
     var DIRT = /desert|farm|forest|construction|canyon|jungle|volcano|autumn|windfarm/
     function tyreKind (a, seg) {
       if (a.kind === 'air') return null
-      if (a.kind === 'water' || stage.wet || stage.weather === 'rain') return 'water'
+      if (a.kind === 'water' || a.kind === 'amph' || stage.wet || stage.weather === 'rain') return 'water'
       if (look0 === 'snow' || stage.weather === 'snow') return 'snow'
       if (DIRT.test(look0) || (seg && (seg.surface === 'mud' || seg.surface === 'dirt'))) return 'dust'
       return 'smoke'
@@ -501,7 +512,7 @@
       var p = FX.spawn(tex, x, y, side * (40 + Math.random() * 80) * v.u, -(60 + Math.random() * 70) * v.u, 0.5 + Math.random() * 0.2, cp * 0.16, false)
       if (p) { p.grow = cp * (kind === 'smoke' ? 0.6 : 0.45); p.a = (kind === 'smoke' ? 0.55 : 0.62) * Math.min(1, 0.5 + k); p.flow = 0.3; p.drag = 1.4; S.smoke++ }
       // a brief dark skid mark under the outer wheel (ground only), scrolling with the road
-      if (wi === outer && k > 0.35 && kind !== 'water' && a.kind !== 'water') {
+      if (wi === outer && k > 0.35 && kind !== 'water' && a.kind !== 'water' && a.kind !== 'amph') {
         for (var i = 0; i < SK.length && i < (quality ? 20 : 8); i++) if (!SK[i].on) { var s = SK[i]; s.on = true; s.t = 0; s.x = x; s.y = y; s.w = cp * 0.07; break }
       }
     }
@@ -772,7 +783,7 @@
       if (Math.random() < dt * 14 * q) for (var i = 0; i < a.exhaust.length; i++) { var ex = a.exhaust[i], p = FX.spawn(TEX.puff, ox + ex[0] * k, oy + ex[1] * k, (Math.random() - 0.5) * 40 * v.u, 30 * v.u, 0.7, cp * 0.1, false); if (p) { p.grow = cp * 0.25; p.a = 0.28; p.flow = 0.9 } }
       // wheel dust / water spray
       if (S.speed > 0.4 && Math.random() < dt * 22 * q) for (var j = 0; j < a.dust.length; j++) {
-        var dd = a.dust[j], tex = a.kind === 'water' ? (img['fx/splash'] || TEX.puff) : stage.biome === 'snow' ? (img['fx/snow-spray'] || TEX.puff) : TEX.puff
+        var dd = a.dust[j], tex = a.kind === 'water' || a.kind === 'amph' ? (img['fx/splash'] || TEX.puff) : stage.biome === 'snow' ? (img['fx/snow-spray'] || TEX.puff) : TEX.puff
         var d = FX.spawn(tex, ox + dd[0] * k + (Math.random() - 0.5) * cp * 0.1, oy + dd[1] * k, (dd[0] < a.cx ? -1 : 1) * 60 * v.u, 40 * v.u, 0.6, cp * 0.12, false)
         if (d) { d.grow = cp * 0.3; d.a = stage.biome === 'desert' ? 0.55 : 0.32; d.flow = 0.8 }
       }
@@ -1077,8 +1088,9 @@
     }
     function drawPlayer (night) {
       var m = mojoXY(), cp = carPx(), a = rearA || { cx: 149, base: 247, bw: 179, lights: [], kind: 'ground' }, im = img.rear
-      var air = a.kind === 'air', hover = air ? -cp * 0.14 + Math.sin(S.t * 3) * cp * 0.02 : 0
-      var lean = (S.lane - S.lanePos) * -0.12 + (S.spin > 0 ? (0.8 - S.spin) / 0.8 * TAU : 0), sq = S.squash > 0 ? 1 - S.squash * 0.4 : 1
+      // amph (the Perahu catamaran) glides on its pontoons: a slow swell bob and a gentle roll, never wheel bounce
+      var air = a.kind === 'air', amph = a.kind === 'amph', hover = air ? -cp * 0.14 + Math.sin(S.t * 3) * cp * 0.02 : amph && !RM ? -cp * 0.012 + Math.sin(S.t * 4.2) * cp * 0.014 : 0
+      var lean = (S.lane - S.lanePos) * -0.12 + (amph && !RM ? Math.sin(S.t * 2.1) * 0.025 : 0) + (S.spin > 0 ? (0.8 - S.spin) / 0.8 * TAU : 0), sq = S.squash > 0 ? 1 - S.squash * 0.4 : 1
       // headlight cone at night / in tunnels
       scene.headlights(c, m.x, m.y - cp * 0.3, cp, night || S.tunnel > 0.4 ? 1 : atm.L)
       // soft contact shadow (aerial forms: offset and smaller)
@@ -1252,13 +1264,13 @@
 
     /* start */
     function setForm (id, pk) {
-      formId = id; S.form = id; perk = pk || formPerk(id) || null; rearKey = rearOf(id); rearA = RA ? RA.sprites[rearKey] : null
+      formId = id; S.form = id; perk = pk || formPerk(id) || null; rearKey = rearOf(id); rearA = rearAnchor(RA, rearKey)
       var rk = rearKey
       if (RIMG[rk]) { img.rear = RIMG[rk]; formLoad = null }
       else {   // a picker form that was not preloaded (jumper, rescue, boat, chopper, jet...): decode it now; the countdown waits
-        var pl = formLoad = loadOne('mojo-rear/' + rk).then(function (im) { if (im) RIMG[rk] = im; if (im && rearKey === rk) img.rear = im; if (formLoad === pl) formLoad = null })
+        var pl = formLoad = loadOne(rearPath(rk)).then(function (im) { if (im) RIMG[rk] = im; if (im && rearKey === rk) img.rear = im; if (formLoad === pl) formLoad = null })
       }
-      H.car.src = lib('mojo-rear/' + rearKey)
+      H.car.src = lib(rearPath(rearKey))
       if (cfg.onForm) try { cfg.onForm(id) } catch (e) {}
     }
     function startIntro () {

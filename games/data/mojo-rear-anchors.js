@@ -2,6 +2,101 @@
  * every sprite shares one canvas (size), its contact line on row `base`, body centred on `cx`.
  * lights = tail lamp centres, dust = wheel contact emitters, exhaust = exhaust/engine emitters (sprite px). */
 (function (W) { W.MojoRearAnchors = {
+ "extra": {
+  "mojo-turn/boat-rear": {
+   "base": 247,
+   "bw": 218,
+   "cx": 148.5,
+   "dust": [
+    [
+     61.3,
+     247
+    ],
+    [
+     235.7,
+     247
+    ]
+   ],
+   "exhaust": [
+    [
+     113.6,
+     222.2
+    ],
+    [
+     183.4,
+     222.2
+    ]
+   ],
+   "kind": "amph",
+   "lights": [],
+   "top": 41
+  },
+  "mojo-turn/dump-rear": {
+   "base": 247,
+   "bw": 190,
+   "cx": 148.5,
+   "dust": [
+    [
+     72.5,
+     247
+    ],
+    [
+     224.5,
+     247
+    ]
+   ],
+   "exhaust": [
+    [
+     106.7,
+     217.7
+    ],
+    [
+     190.3,
+     217.7
+    ]
+   ],
+   "kind": "ground",
+   "lights": [],
+   "top": 39
+  },
+  "mojo-turn/wrecking-rear": {
+   "base": 247,
+   "bw": 164,
+   "cx": 148.5,
+   "dust": [
+    [
+     82.9,
+     247
+    ],
+    [
+     214.1,
+     247
+    ]
+   ],
+   "exhaust": [
+    [
+     112.4,
+     216.8
+    ],
+    [
+     184.6,
+     216.8
+    ]
+   ],
+   "kind": "ground",
+   "lights": [
+    [
+     126.8,
+     196.0
+    ],
+    [
+     194.5,
+     196.1
+    ]
+   ],
+   "top": 32
+  }
+ },
  "forms": {
   "aerial-ladder": "ladder",
   "ambulance": "ambulance",

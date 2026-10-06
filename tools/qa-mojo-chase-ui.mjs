@@ -173,17 +173,17 @@ try {
       }
       return { out, n: MojoChasePicker.FORMS.length, s1: MojoChasePicker.available({ v: 1, st: {} }, S[0]).selectable.length }
     })
-    check(sched.s1 === 4, `unlock: stage 1 with nothing cleared offers 4 selectable forms (${sched.s1})`)
+    check(sched.s1 === 7, `unlock: stage 1 with nothing cleared offers 7 selectable forms (4 + the 3 turnaround forms) (${sched.s1})`)
     // owner 2026-10-04 "every level opens 2-3 characters": +2..3 per cleared stage until all are open
     const u = sched.out.map(r => r.unlocked)
-    check(u[0] === 4 && u.slice(1).every((n, i) => n === sched.n || (n - u[i] >= 2 && n - u[i] <= 3)) && u[3] === sched.n, `unlock: 4 at start, +2..3 per cleared stage, all ${sched.n} after 3 stages (${u.slice(0, 5).join(',')})`)
+    check(u[0] === 7 && u.slice(1).every((n, i) => n === sched.n || (n - u[i] >= 2 && n - u[i] <= 3)) && u[3] === sched.n, `unlock: 7 at start, +2..3 per cleared stage, all ${sched.n} after 3 stages (${u.slice(0, 5).join(',')})`)
     check(sched.out.every((r, i) => i === 0 || r.unlocked >= sched.out[i - 1].unlocked), `unlock: the unlocked count grows monotonically (${sched.out.map(r => r.unlocked).join(',')})`)
     check(sched.out.filter(r => r.k >= sched.out.length - 6).every(r => r.unlocked === sched.n), `unlock: every form unlocked by the final stages (${sched.out.find(r => r.unlocked === sched.n).k} cleared of ${sched.out.length - 1})`)
     check(sched.out.every(r => r.recOk), 'unlock: the stage\'s recommended form is always selectable, at every progress level')
     // DOM: harbour stage with nothing cleared -> Truk Kargo as a "Baru!" trial; locked cards cannot be selected
     await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('pelabuhan'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(400)
     const d = await p.evaluate(() => ({ n: MojoChasePicker.FORMS.length, sel: document.querySelectorAll('.mcp-card:not(.lock)').length, lock: document.querySelectorAll('.mcp-card.lock').length, trial: !!document.querySelector('.mcp-card[data-form="cargo"] em.new'), form: MojoChasePicker.state().form, hint: [...document.querySelectorAll('.mcp-card.lock b')].every(b => /^Selesaikan \d+ tahap lagi$/.test(b.textContent)) }))
-    check(d.sel === 5 && d.lock === d.n - 5 && d.trial && d.form === 'cargo' && d.hint, `unlock: harbour stage at the start = 4 unlocked + the "Baru!" trial, 4 locked silhouettes with "Selesaikan N tahap lagi" (${JSON.stringify(d)})`)
+    check(d.sel === 8 && d.lock === d.n - 8 && d.trial && d.form === 'cargo' && d.hint, `unlock: harbour stage at the start = 7 unlocked + the "Baru!" trial, 5 locked silhouettes with "Selesaikan N tahap lagi" (${JSON.stringify(d)})`)
     await p.evaluate(() => document.querySelector('.mcp-card.lock[data-form="jet"]').click()); await sleep(150)
     const lk = await p.evaluate(() => ({ form: MojoChasePicker.state().form, wig: document.querySelector('.mcp-card[data-form="jet"]').classList.contains('wiggle'), ask: document.querySelector('.mcp-ask').textContent }))
     check(lk.form === 'cargo' && lk.wig && /tahap lagi/.test(lk.ask), `unlock: tapping a locked card wiggles + hints and never selects it (${lk.ask})`)
@@ -201,17 +201,53 @@ try {
     while (await p.$('.mcp-new-ok')) { cel.push(await p.$eval('.mcp-new h2', e => e.textContent)); if (!celArt) celArt = await p.evaluate(() => [...document.querySelectorAll('.mcp-new .art.many figure')].map(f => { const i = f.querySelector('img'), r = MojoChases.form(i.dataset.form); return { ok: !!r && i.getAttribute('src').indexOf(r.side) >= 0 && f.textContent.trim() === r.name } })); await p.click('.mcp-new-ok'); await sleep(150) }
     check(cel.length === 1 && /^Wujud baru terbuka: .+, .+ dan .+!$/.test(cel[0]) && celArt && celArt.length === 3 && celArt.every(a => a.ok), `unlock: 3 forms opened at once -> ONE celebration card naming all three, each with its side art (${cel.join(' | ')}; ${celArt && celArt.length} art)`)
     const s6 = await p.evaluate(() => MojoChasePicker.state().selectable.length)
-    check(s6 === 7, `unlock: 1 stage cleared -> 7 selectable (${s6})`)
+    check(s6 === 10, `unlock: 1 stage cleared -> 10 selectable (${s6})`)
     await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
     await page(412, 915, 1, p)
     await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('pantai'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(300)
     const other = await p.evaluate(() => ({ n: MojoChasePicker.state().selectable.length, cel: !!document.querySelector('.mcp-new') }))
-    check(other.n === 4 && !other.cel, `unlock per avatar: the second avatar keeps its own progress (${other.n} selectable, celebration ${other.cel})`)
+    check(other.n === 7 && !other.cel, `unlock per avatar: the second avatar keeps its own progress (${other.n} selectable, celebration ${other.cel})`)
     await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
     await page(412, 915, 0, p)
     await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('pantai'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(300)
     const back = await p.evaluate(() => ({ n: MojoChasePicker.state().selectable.length, cel: !!document.querySelector('.mcp-new'), seen: MojoChasePicker.readSave().formsSeen }))
-    check(back.n === 7 && !back.cel && back.seen.length === 7, `unlock per avatar: switching back keeps 7 forms and celebrates nothing twice (${JSON.stringify(back)})`)
+    check(back.n === 10 && !back.cel && back.seen.length === 10, `unlock per avatar: switching back keeps 10 forms and celebrates nothing twice (${JSON.stringify(back)})`)
+    await p.close()
+  }
+
+  /* ── N. the 3 TURNAROUND forms (owner 2026-10-06 "in the selection by DEFAULT"): present and selectable on stage 1
+     with nothing cleared; card = mojo-turn/<v>-side, preview = -diag, race = -rear of the SAME sheet row; every image
+     loads with clear alpha at its borders and no label-pill colour in its top corners. ─────────────────────────── */
+  {
+    const p = await page(1280, 800, 0)
+    await p.evaluate(() => { avatarScopedSet('dunia-g31-chase', JSON.stringify({ v: 1, st: {}, formsSeen: ['racer'] })) })
+    await page(1280, 800, 0, p)
+    await p.evaluate(() => { window.__pk = MojoChasePicker.run(MojoChases.config('pantai'), { host: document.body }) }); await p.waitForSelector('.mcp-go'); await sleep(400)
+    while (await p.$('.mcp-new-ok')) { await p.click('.mcp-new-ok'); await sleep(100) }
+    const T3 = ['wrecking', 'boat', 'dump'], bad = []
+    for (const v of T3) {
+      const r = await p.evaluate(async v => {
+        const f = MojoChases.form(v), c = document.querySelector('.mcp-card[data-form="' + v + '"]')
+        if (!f || !c) return { miss: true }
+        const lock = c.classList.contains('lock'), key = c.querySelector('img').dataset.key
+        c.click(); await new Promise(res => setTimeout(res, 560))
+        const b = document.querySelector('.mcp-rear')
+        const scan = k => new Promise(res => { const i = new Image(); i.onload = () => { const cv = document.createElement('canvas'); cv.width = i.naturalWidth; cv.height = i.naturalHeight; const x = cv.getContext('2d'); x.drawImage(i, 0, 0); const d = x.getImageData(0, 0, cv.width, cv.height).data, W = cv.width, H = cv.height; let border = 0, pill = 0
+          for (let y = 0; y < H; y++) for (let xx = 0; xx < W; xx++) { const o = (y * W + xx) * 4, a = d[o + 3]; if ((y === 0 || y === H - 1 || xx === 0 || xx === W - 1) && a > 0) border++
+            if (a > 128 && y < H * 0.2 && (xx < W * 0.25 || xx >= W * 0.75)) { const R = d[o], G = d[o + 1], B = d[o + 2]; if ((R < 40 && G > 120 && G < 175 && B > 215) || (R >= 210 && R <= 232 && G >= 228 && G <= 242 && B >= 243 && B - R > 15) || (R < 30 && G < 50 && B > 60 && B < 110)) pill++ } }
+          res({ ok: true, border, pill }) }; i.onerror = () => res({ ok: false }); i.src = (window.AssetIndex && AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') })
+        return { lock, key, form: MojoChasePicker.state().form, side: b.dataset.side, card: b.dataset.card, rear: b.dataset.rear, row: f,
+          imgs: [await scan(f.side), await scan(f.preview), await scan(f.rear)], anchor: !!(MojoRearAnchors.extra && MojoRearAnchors.extra[f.rear]), core: MojoChase.rearKey(v) }
+      }, v)
+      if (r.miss) { bad.push(v + ': not in the table / no card'); continue }
+      if (r.lock || r.form !== v) bad.push(v + ': not selectable at stage 1')
+      if (r.key !== 'mojo-turn/' + v + '-side' || r.card !== r.key) bad.push(v + ': card ' + r.key)
+      if (r.side !== 'mojo-turn/' + v + '-diag') bad.push(v + ': preview ' + r.side)
+      if (r.rear !== 'mojo-turn/' + v + '-rear' || r.core !== r.rear || !r.anchor) bad.push(v + ': race ' + r.rear + '/' + r.core + ' anchor ' + r.anchor)
+      r.imgs.forEach((im, j) => { if (!im.ok || im.border || im.pill) bad.push(v + ' ' + ['side', 'diag', 'rear'][j] + ': ' + JSON.stringify(im)) })
+    }
+    check(!bad.length, `turnaround: Bola Penghancur, Perahu and Dump Truck selectable at stage 1; card = side, preview = diag, race = rear of the same row; 9 images with alpha borders and no label pill (${bad.slice(0, 3).join(' | ') || 'ok'})`)
+    await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
     await p.close()
   }
 
@@ -227,12 +263,14 @@ try {
       const RA = window.MojoRearAnchors
       const has = k => new Promise(res => { const i = new Image(); i.onload = () => res(i.naturalWidth > 0); i.onerror = () => res(false); i.src = (window.AssetIndex && AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') })
       const rows = []
-      for (const f of MojoChases.FORMS) rows.push({ id: f.id, side: f.side, rear: f.rear, kind: f.kind, sideOk: /^mojo-(hero|top)\//.test(f.side) && await has(f.side), rearOk: !!RA.sprites[f.rear] && await has('mojo-rear/' + f.rear), core: MojoChase.rearKey(f.id) })
+      for (const f of MojoChases.FORMS) rows.push({ id: f.id, side: f.side, preview: f.preview || f.side, rear: f.rear, kind: f.kind, sideOk: /^mojo-(hero|top|turn)\//.test(f.side) && await has(f.side) && await has(f.preview || f.side), rearOk: !!(RA.sprites[f.rear] || (RA.extra && RA.extra[f.rear])) && await has(f.rear.indexOf('/') >= 0 ? f.rear : 'mojo-rear/' + f.rear), core: MojoChase.rearKey(f.id) })
       return { rows, same: MojoChasePicker.FORMS.length === MojoChases.FORMS.length && MojoChasePicker.FORMS.every((f, i) => f === MojoChases.FORMS[i]) }
     })
     check(tab.same && tab.rows.length >= 10, `form table: the picker offers exactly the MojoChases.FORMS rows (${tab.rows.length} forms)`)
-    check(tab.rows.every(r => r.kind !== 'water' && !/^(boat|hover)$/.test(r.rear)), `form table: no boat or hovercraft on the road (${tab.rows.filter(r => r.kind === 'water').map(r => r.id).join(',') || 'none'})`)
-    check(tab.rows.every(r => r.sideOk), `form table: every side key is a real mojo-hero / mojo-top image (${tab.rows.filter(r => !r.sideOk).map(r => r.side).join(',') || 'ok'})`)
+    // owner 2026-10-06 overrides the earlier "no boat on the road": the turnaround Perahu IS offered, as kind 'amph'
+    // (pontoon glide + spray); the old mojo-rear boat/hover sprites (kind 'water') stay out
+    check(tab.rows.every(r => r.kind !== 'water' && !/^(boat|hover)$/.test(r.rear)) && tab.rows.some(r => r.id === 'boat' && r.kind === 'amph'), `form table: the road boat is the amphibious turnaround Perahu only, no kind 'water' row (${tab.rows.filter(r => r.kind === 'water').map(r => r.id).join(',') || 'none'})`)
+    check(tab.rows.every(r => r.sideOk), `form table: every side + preview key is a real mojo-hero / mojo-top / mojo-turn image (${tab.rows.filter(r => !r.sideOk).map(r => r.side).join(',') || 'ok'})`)
     check(tab.rows.every(r => r.rearOk), `form table: every rear key is a real mojo-rear sprite with anchors (${tab.rows.filter(r => !r.rearOk).map(r => r.rear).join(',') || 'ok'})`)
     check(tab.rows.every(r => r.core === r.rear), `form table: MojoChase.rearKey(id) is the same row's rear for every form (${tab.rows.filter(r => r.core !== r.rear).map(r => r.id + ':' + r.core).join(',') || 'ok'})`)
     await p.evaluate(allClear)
@@ -243,16 +281,16 @@ try {
       const r = tab.rows[i]
       const card = await p.evaluate(id => { const c = document.querySelector('.mcp-card[data-form="' + id + '"]'); if (!c) return null; const im = c.querySelector('img'); c.click(); return { key: im.dataset.key, src: im.getAttribute('src'), lock: c.classList.contains('lock') } }, r.id)
       await sleep(520)
-      const pv = await p.evaluate(() => { const b = document.querySelector('.mcp-rear'); return { form: MojoChasePicker.state().form, side: b.dataset.side, rear: b.dataset.rear, src: b.querySelector('img.side').getAttribute('src') } })
+      const pv = await p.evaluate(() => { const b = document.querySelector('.mcp-rear'); return { form: MojoChasePicker.state().form, side: b.dataset.side, card: b.dataset.card, rear: b.dataset.rear, src: b.querySelector('img.side').getAttribute('src') } })
       if (!card || card.lock) { bad.push(i + ' ' + r.id + ': no card or locked'); continue }
       if (card.key !== r.side || card.src.indexOf(r.side) < 0) bad.push(i + ' ' + r.id + ': card ' + card.src)
-      if (pv.form !== r.id || pv.side !== r.side || pv.src.indexOf(r.side) < 0) bad.push(i + ' ' + r.id + ': preview ' + pv.src)
-      if (pv.src === card.src ? false : pv.src.split('?')[0] !== card.src.split('?')[0]) bad.push(i + ' ' + r.id + ': card and preview differ')
+      if (pv.form !== r.id || pv.side !== r.preview || pv.card !== r.side || pv.src.indexOf(r.preview) < 0) bad.push(i + ' ' + r.id + ': preview ' + pv.src)
+      if (r.preview === r.side && pv.src.split('?')[0] !== card.src.split('?')[0]) bad.push(i + ' ' + r.id + ': card and preview differ')
       if (pv.rear !== r.rear) bad.push(i + ' ' + r.id + ': race key ' + pv.rear)
       if (srcs.length && srcs[srcs.length - 1] === pv.src) bad.push(i + ' ' + r.id + ': preview did not change')
       srcs.push(pv.src)
     }
-    check(!bad.length, `form table: for each of ${tab.rows.length} forms card src = preview src = FORMS[i].side, picker race key = FORMS[i].rear, and the preview changes on every selection (${bad.slice(0, 3).join(' | ') || 'ok'})`)
+    check(!bad.length, `form table: for each of ${tab.rows.length} forms card src = FORMS[i].side, preview src = FORMS[i].preview || side, picker race key = FORMS[i].rear, and the preview changes on every selection (${bad.slice(0, 3).join(' | ') || 'ok'})`)
     await p.click('.mcp-go'); await p.evaluate(() => window.__pk)
     // the stage board never repeats itself ("Ngarai Batu Merah / Ngarai Batu Merah" on the gurun stage)
     const boards = []

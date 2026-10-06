@@ -450,7 +450,7 @@ HALO_MAX = {
 # The element-library animals (light-blue card sheet 02, tint-only cleaning): white/cream fur drawn to the edge.
 HALO_EXEMPT = {'mojo-char/' + n for n in ('bird', 'cat', 'cow', 'dog', 'rabbit', 'sheep')}
 SMEAR_MAX = 80                    # [63 mojo-top/searchlight: its painted light beam]; families below
-SMEAR_FAMILIES = ('mojo-hero', 'mojo-char', 'mojo-top', 'mojo-prop', 'mojo-rear', 'mojo-fx', 'mojo-ui', 'mojo-tile',
+SMEAR_FAMILIES = ('mojo-hero', 'mojo-turn', 'mojo-char', 'mojo-top', 'mojo-prop', 'mojo-rear', 'mojo-fx', 'mojo-ui', 'mojo-tile',
                   'mojo-chase/items', 'mojo-chase/props', 'mojo-chase/robbers', 'mojo-chase/vehicles', 'mojo-chase/signs')
 FLOOR_MAX = 30                    # wheeled film poses [6 offroad/van]; unfixed base-bo 130, van 504
 FLOOR_GATED = {'mojo-hero/' + n for n in hero.WHEELED}
@@ -511,7 +511,7 @@ class SpriteFringeTests(unittest.TestCase):
 # Owner 2026-10-03: "There's still a little white. We should give it a white outline line to disguise it."
 # family -> (expected outlined sprite count, one shared thickness or None = per pose)
 OUTLINED = {
-    'mojo-hero': (25, 5), 'mojo-char': (47, None), 'mojo-top': (47, 8), 'mojo-rear': (25, 5),
+    'mojo-hero': (25, 5), 'mojo-char': (47, None), 'mojo-top': (47, 8), 'mojo-rear': (25, 5), 'mojo-turn': (9, 5),
     'mojo-chase/robbers': (4, 5), 'mojo-chase/vehicles': (44, 5), 'mojo-chase/items': (8, 4),
 }
 NEVER_OUTLINED = ('mojo-bg', 'mojo-prop', 'mojo-fx', 'mojo-tile', 'mojo-ui', 'mojo-chase/props', 'mojo-chase/signs',
@@ -701,6 +701,71 @@ class SceneBackgroundTests(unittest.TestCase):
     def test_duplicate_sheets_are_registered_once(self):
         self.assertEqual(set(bgs.DUPLICATES), {'50', '52'})
         self.assertFalse(set(bgs.DUPLICATES) & set(bgs.SHEETS))
+
+
+tspec = importlib.util.spec_from_file_location('mojo_turn', ROOT / 'tools/ingest-mojo-turnaround.py')
+turn = importlib.util.module_from_spec(tspec)
+tspec.loader.exec_module(turn)
+
+
+def pill_pixels(rgba, zone=None):
+    """Opaque pixels with the turnaround sheet's LABEL-PILL colours (blue name pill 3,146,241; grey-blue view pill
+    223,235,249; navy pill text 9,32,81) inside the top corners (top 20%, outer 25% each side) or a given zone."""
+    a = np.asarray(rgba).astype(int)
+    if a.shape[2] == 3:
+        a = np.dstack([a, np.full(a.shape[:2], 255)])
+    h, w = a.shape[:2]
+    if zone is None:
+        zone = np.zeros((h, w), bool)
+        zone[:int(h * .2), :int(w * .25)] = True
+        zone[:int(h * .2), int(w * .75):] = True
+    r, g, b, al = a[..., 0], a[..., 1], a[..., 2], a[..., 3]
+    blue = (r < 40) & (g > 120) & (g < 175) & (b > 215)
+    grey = (r >= 210) & (r <= 232) & (g >= 228) & (g <= 242) & (b >= 243) & (b - r > 15)
+    navy = (r < 30) & (g < 50) & (b > 60) & (b < 110)
+    return int((zone & (al > 128) & (blue | grey | navy)).sum())
+
+
+class TurnaroundTests(unittest.TestCase):
+    """mojo-turn/*: the owner's 3x3 turnaround sheet (wrecking / boat / dump x side / diag / rear),
+    cut by tools/ingest-mojo-turnaround.py: pills removed, audited holes, rear on the mojo-rear canvas."""
+    NAMES = [f'{v}-{w}' for v, _ in turn.ROWS for w in turn.VIEWS]
+
+    def test_every_cell_audited_and_pills_found(self):
+        if not turn.SHEET.exists():
+            self.skipTest('owner sheet not on this machine')
+        report = []
+        for name, kind, col, s in turn.sources():
+            before = pill_pixels(s, turn.pill_zones(s.shape, col))
+            self.assertGreater(before, 200, f'{name}: the pill detector sees no pill in the raw cell')
+            s2, n = turn.depill(s, col, report, name)
+            self.assertEqual(pill_pixels(s2, turn.pill_zones(s.shape, col)), 0, f'{name}: pill colour left after depill')
+            turn.build(name, kind, s2, report)
+        self.assertEqual(report, [], 'unaudited holes / pill trouble in tools/ingest-mojo-turnaround.py:\n' + '\n'.join(report))
+
+    def test_published_sprites_have_alpha_borders_no_pills_and_rear_canvas(self):
+        RA = anchors_json('mojo-rear-anchors.js', 'W.MojoRearAnchors')
+        for n in self.NAMES:
+            key = 'mojo-turn/' + n
+            self.assertIn(key, INDEX, key)
+            rgba = np.asarray(Image.open(ROOT / 'assets/db/lib' / (key + '.webp')).convert('RGBA'))
+            al = rgba[..., 3]
+            border = int(np.concatenate([al[0], al[-1], al[:, 0], al[:, -1]]).max())
+            self.assertEqual(border, 0, f'{key}: opaque pixel on the canvas border')
+            self.assertEqual(pill_pixels(rgba), 0, f'{key}: label-pill colour in the top corners')
+            if n.endswith('-rear'):
+                self.assertEqual((rgba.shape[1], rgba.shape[0]), (RA['size']['w'], RA['size']['h']), key)
+                a = RA['extra'][key]
+                rows = np.nonzero((al >= 128).sum(1) >= 2)[0]
+                self.assertLessEqual(abs(int(rows[-1]) - a['base']), 2, f'{key}: contact row moved')
+                self.assertLessEqual(abs(a['base'] - 247), 2, f'{key}: not on the mojo-rear baseline')
+
+    def test_white_paint_stays_opaque(self):
+        # the boom-tip pulley, the boat's white hull band and life ring are KEEP_WHITE seeds: present in the table
+        self.assertIn('394,53', turn.KEEP_WHITE['wrecking-side'])
+        self.assertIn('232,228', turn.KEEP_WHITE['boat-rear'])
+        for n, seeds in turn.KEEP_WHITE.items():
+            self.assertFalse(set(seeds.split()) & set(turn.CLEAR_HOLES.get(n, '').split()), n)
 
 
 class PublicationTests(unittest.TestCase):

@@ -55,7 +55,7 @@ check(prog.prog >= 1 && prog.elapsed < 130, `rubber band: a permanently dizzy dr
 
 /* ── A. assets ─────────────────────────────────────────────────────────────────────────────────── */
 const RA = globalThis.MojoRearAnchors, CA = globalThis.MojoChaseAnchors, TA = globalThis.MojoTrackAnchors
-const rearKeys = Object.keys(RA.sprites).map(n => 'mojo-rear/' + n)
+const rearKeys = Object.keys(RA.sprites).map(n => 'mojo-rear/' + n).concat(Object.keys(RA.extra || {}))   // + the turnaround rears (mojo-turn/<v>-rear), same canvas
 const chaseKeys = []
 for (const [fam, F] of Object.entries(CA.families)) for (const n of Object.keys(F.sprites)) chaseKeys.push(`mojo-chase/${fam}/${n}`)
 for (const [fam, F] of Object.entries(TA.families)) for (const n of Object.keys(F.sprites)) chaseKeys.push(`mojo-chase/${fam === 'trackprops' ? 'props' : 'signs'}/${n}`)

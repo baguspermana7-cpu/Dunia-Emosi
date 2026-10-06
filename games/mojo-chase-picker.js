@@ -36,7 +36,7 @@
   var UNLOCK = {}; FORMS.forEach(function (f) { UNLOCK[f.id] = f.unlock || 0 })
   var ALT0 = { racer: ['delivery', 'jet'], monster: ['jumper', 'excavator'], jumper: ['monster', 'racer'], 'snow-plow': ['monster', 'tow'],
     dozer: ['excavator', 'crane'], rescue: ['fire', 'racer'], fire: ['rescue', 'crane'], cargo: ['delivery', 'tow'], chopper: ['plane', 'jet'],
-    tow: ['cargo', 'monster'], crane: ['dozer', 'cargo'], delivery: ['cargo', 'racer'], excavator: ['monster', 'cargo'], plane: ['chopper', 'jet'], jet: ['plane', 'chopper'] }
+    tow: ['cargo', 'monster'], wrecking: ['excavator', 'dump'], boat: ['racer', 'jumper'], dump: ['cargo', 'excavator'], crane: ['dozer', 'cargo'], delivery: ['cargo', 'racer'], excavator: ['monster', 'cargo'], plane: ['chopper', 'jet'], jet: ['plane', 'chopper'] }
   var ALT = {}; FORMS.forEach(function (f) { ALT[f.id] = (ALT0[f.id] || []).filter(function (a) { return UNLOCK.hasOwnProperty(a) }) })
 
   var LOCK_SVG = '<svg viewBox="0 0 40 44" aria-hidden="true"><path d="M11 19 V13 a9 9 0 0 1 18 0 V19" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><rect x="5" y="18" width="30" height="23" rx="6" fill="#ffcf33" stroke="#7a4220" stroke-width="3"/><circle cx="20" cy="29" r="3.5" fill="#7a4220"/></svg>'
@@ -105,9 +105,11 @@
   /* the big preview: the SIDE art of the form (owner: "only the game itself uses the rear view"), wheels on the
      start line, idle bounce + ground shadow; data-side = the art shown, data-rear = the race sprite of the same machine */
   function rearKey (id) { var RA = W.MojoRearAnchors, f = byId(id); return (f && f.rear) || (RA && RA.forms[id]) || 'base' }
+  // the turnaround forms show their front 3/4 DIAGONAL view here (row field `preview`); data-card = the card art
+  function previewArt (f) { return f.preview || cardArt(f) }
   function paintRear (box, id) {
-    var f = byId(id), side = f ? cardArt(f) : 'mojo-top/base', img = box.querySelector('img.side')
-    img.src = lib(side); box.setAttribute('data-side', side); box.setAttribute('data-rear', rearKey(id))
+    var f = byId(id), side = f ? previewArt(f) : 'mojo-top/base', img = box.querySelector('img.side')
+    img.src = lib(side); box.setAttribute('data-side', side); box.setAttribute('data-card', f ? cardArt(f) : side); box.setAttribute('data-rear', rearKey(id))
   }
 
   var cur = null   // the open picker (one at a time)

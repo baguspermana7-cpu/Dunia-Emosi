@@ -228,9 +228,15 @@
        crane (boom / pole rig), plane (no side plane art), dumper (yellow bed / red bed), boat + hover (no water stage),
        dozer (every side art with a loader bucket also carries the backhoe arm, and the 'loader' rear has no arm:
        that side art IS the excavator), offroad (no rear), the film racer (big spoiler no rear sprite shows) -> the default form is plain Mojo.
-       kind  ground | air (air hovers over the road with a shadow)
+       preview  optional lib key of the BIG picker preview (the turnaround forms show their front 3/4 DIAGONAL view
+             there); without it the preview is the side art
+       kind  ground | air (air hovers over the road with a shadow) | amph (the Perahu catamaran: glides on its pontoons
+             on the road with a swell bob and water spray, never tyre smoke)
        unlock  Balapan stages cleared (>= 1 star) before it can be picked (owner 2026-10-04: every stage opens 2-3
-               forms): 4 at start, 7 after 1 stage, 9 after 2, all 10 after 3. ─ */
+               forms): 7 at start, 10 after 1 stage, 12 after 2, all 13 after 3.
+       The three TURNAROUND forms (owner 2026-10-06: "these characters don't exist yet ... in the selection by
+       DEFAULT") come from ONE owner sheet row each (tools/ingest-mojo-turnaround.py -> mojo-turn/<v>-side|diag|rear),
+       so card, preview and race sprite are the same machine by construction. ─ */
   var FORMS = [
     // base: plain blue cab, small wheels, no attachment in both
     { id: 'racer', name: 'Mojo', perk: 'boost', line: 'Boost lebih cepat!', side: 'mojo-top/base', rear: 'base', kind: 'ground', unlock: 0 },
@@ -239,6 +245,12 @@
     // monster-1 / monster: monster tyres + red shocks + twin roof lamps + white roll bars, no spare wheel, in both
     { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang, jalan licin, dan rintangan rendah!', side: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
     // ambulance: white box with the red cross + blue cab in both
+    // turnaround row WRECKING BALL: crane boom + black wrecking ball on a blue 6-wheel cab (side / diag / rear)
+    { id: 'wrecking', name: 'Bola Penghancur', perk: 'smash', line: 'Menerobos peti dan palang tanpa BROK!', side: 'mojo-turn/wrecking-side', preview: 'mojo-turn/wrecking-diag', rear: 'mojo-turn/wrecking-rear', kind: 'ground', unlock: 0 },
+    // turnaround row BOAT: amphibious catamaran, red-white pontoons, red A-frame + life ring (side / diag / rear)
+    { id: 'boat', name: 'Perahu', perk: 'splash', line: 'Meluncur di atas pelampung, jalan basah tidak licin!', side: 'mojo-turn/boat-side', preview: 'mojo-turn/boat-diag', rear: 'mojo-turn/boat-rear', kind: 'amph', unlock: 0 },
+    // turnaround row DUMP TRUCK: yellow tipper bed with the red lift arm on a blue 6-wheel cab (side / diag / rear)
+    { id: 'dump', name: 'Dump Truck', perk: 'recover', line: 'Bak besar dan kuat, cepat pulih lagi!', side: 'mojo-turn/dump-side', preview: 'mojo-turn/dump-diag', rear: 'mojo-turn/dump-rear', kind: 'ground', unlock: 0 },
     { id: 'rescue', name: 'Ambulans', perk: 'heal', line: 'Semangat cepat terisi lagi!', side: 'mojo-top/ambulance', rear: 'ambulance', kind: 'ground', unlock: 1 },
     // aerial-ladder / ladder: white ladder boom on the roof with red-white trim in both
     { id: 'fire', name: 'Pemadam', perk: 'heal', line: 'Semangat cepat terisi lagi!', side: 'mojo-top/aerial-ladder', rear: 'ladder', kind: 'ground', unlock: 1 },

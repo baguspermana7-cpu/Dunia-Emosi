@@ -168,3 +168,7 @@
 }
 /* the core's Pause button is disabled while the card is open */
 .mc-host.mcq-open .mc-pause,#chase-host.mcq-open .mc-pause{pointer-events:none;opacity:.35}
+/* 13 forms (the 3 turnaround forms join at start, 2026-10-06): up to 12 can open on one card; wide screens lay them
+   out 6 per row, short landscape phones 8 per row, so the card and its button stay inside the viewport */
+@media (min-width:700px){.mcp-new .box:has(.art.many){width:min(640px,100%)}.mcp-new .art.many figure{width:clamp(64px,15%,96px)}}
+@media (min-width:700px) and (max-height:520px){.mcp-new .box:has(.art.many){width:min(780px,100%);padding:8px 12px 10px;gap:2px}.mcp-new .art.many{gap:2px 8px;padding:2px 0}.mcp-new .art.many figure{width:clamp(56px,11.5%,78px)}.mcp-new .art.many figcaption{font-size:12px}}

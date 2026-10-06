@@ -23350,6 +23350,180 @@
    "h": 377,
    "outline": 8
   },
+  "mojo-turn/boat-diag": {
+   "file": "assets/db/lib/mojo-turn/boat-diag.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "boat",
+    "diag",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 421,
+   "h": 235,
+   "baseline": 228,
+   "cx": 211.0,
+   "kind": "amph",
+   "outline": 5
+  },
+  "mojo-turn/boat-rear": {
+   "file": "assets/db/lib/mojo-turn/boat-rear.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "boat",
+    "rear",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "kind": "amph",
+   "outline": 5,
+   "bw": 218
+  },
+  "mojo-turn/boat-side": {
+   "file": "assets/db/lib/mojo-turn/boat-side.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "boat",
+    "side",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 360,
+   "h": 236,
+   "baseline": 229,
+   "cx": 180.5,
+   "kind": "amph",
+   "outline": 5
+  },
+  "mojo-turn/dump-diag": {
+   "file": "assets/db/lib/mojo-turn/dump-diag.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "dump",
+    "diag",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 421,
+   "h": 235,
+   "baseline": 228,
+   "cx": 210.0,
+   "kind": "ground",
+   "outline": 5
+  },
+  "mojo-turn/dump-rear": {
+   "file": "assets/db/lib/mojo-turn/dump-rear.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "dump",
+    "rear",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "kind": "ground",
+   "outline": 5,
+   "bw": 190
+  },
+  "mojo-turn/dump-side": {
+   "file": "assets/db/lib/mojo-turn/dump-side.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "dump",
+    "side",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 360,
+   "h": 236,
+   "baseline": 229,
+   "cx": 180.0,
+   "kind": "ground",
+   "outline": 5
+  },
+  "mojo-turn/wrecking-diag": {
+   "file": "assets/db/lib/mojo-turn/wrecking-diag.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "wrecking",
+    "diag",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 421,
+   "h": 235,
+   "baseline": 228,
+   "cx": 210.5,
+   "kind": "ground",
+   "outline": 5
+  },
+  "mojo-turn/wrecking-rear": {
+   "file": "assets/db/lib/mojo-turn/wrecking-rear.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "wrecking",
+    "rear",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 297,
+   "h": 254,
+   "baseline": 247,
+   "cx": 148.5,
+   "kind": "ground",
+   "outline": 5,
+   "bw": 164
+  },
+  "mojo-turn/wrecking-side": {
+   "file": "assets/db/lib/mojo-turn/wrecking-side.webp",
+   "cat": "mojo-turn",
+   "tags": [
+    "wrecking",
+    "side",
+    "mojo",
+    "turnaround",
+    "chase",
+    "cartoon"
+   ],
+   "source": "owner mojo turnaround sheet 2026-10-06",
+   "w": 360,
+   "h": 236,
+   "baseline": 229,
+   "cx": 180.0,
+   "kind": "ground",
+   "outline": 5
+  },
   "mojo-ui/arrow-down": {
    "file": "assets/db/lib/mojo-ui/arrow-down.webp",
    "cat": "mojo-ui",
