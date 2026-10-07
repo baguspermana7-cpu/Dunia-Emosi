@@ -74,8 +74,13 @@
     harbour: 'garage-harbour', garage: 'garage-harbour', title: 'title-clean' }
   // levels whose objective matches a painting (mojo-levels.js stays untouched; arrays are per beat)
   var LEVEL_SCENE = { t1: 'road', t2: 'road', t3: 'road', t4: 'fire', t5: 'road', t6: 'fire', t7: ['rockslide'],
-    m1: 'rockslide', m2: 'fire', m3: 'height', m4: 'fire', m5: 'fun', m6: 'road', m7: 'rockslide', m8: 'gap',
-    s1: ['fire', 'fire', 'garage', 'height'] }
+    m1: 'rockslide', m2: 'fire', m3: 'height', m4: 'fire', m5: 'fun', m6: 'road', m7: 'rockslide', m8: 'gap', m9: 'harbour',
+    s1: ['fire', 'fire', 'garage', 'height'],
+    // regions 3-6 (2026-10-04). 'site' is no painting key on purpose: Konstruksi falls back to its region painting
+    h1: 'forest', h2: 'forest-fire', h3: 'forest', h4: 'river-rescue', h5: 'forest-fire', h6: ['forest', 'forest-fire', 'forest'],
+    g1: 'rockslide', g2: 'gap', g3: 'canyon', g4: 'mountain', g5: 'snow', g6: ['rockslide', 'canyon', 'snow'],
+    k1: 'site', k2: 'site', k3: 'site', k4: 'site', k5: 'site', k6: 'site',
+    p1: 'beach', p2: 'beach', p3: 'fun', p4: 'island', p5: 'beach', p6: ['beach', 'fun', 'island'] }
   var REGION_SCENE = { kota: 'road', pelabuhan: 'harbour', hutan: 'forest-fire', gunung: 'rockslide', pulau: 'beach' }
   function sceneTheme (lv, b) {
     if (!b) return null

@@ -211,17 +211,10 @@
 
   /* ── MISSION MAP ────────────────────────────────────────────────────── */
   var UNLOCK_ALL = /[?&]unlock=1/.test(location.search)
-  /* Owner rule 2026-10-03 "let them explore": finishing a level with ANY stars opens the next three, in order and
-     across episodes; the first three are open from the start; star totals never gate. Unlocks only grow (an old
-     save keeps everything it had and gains the new opens). */
+  /* Owner decision 2026-10-06 "make everything open": every region and every level is open from the start; stars
+     and progress are still shown, they never gate. (UNLOCK_ALL kept for the QA URL; it changes nothing now.) */
   var OPEN_AHEAD = 3
-  function maxDone () { var m = -1; ML.LEVELS.forEach(function (l, i) { if (S.lv[l.id]) m = i }); return m }
-  function unlocked (i) {
-    if (UNLOCK_ALL || i < OPEN_AHEAD) return true
-    var lv = ML.LEVELS[i]
-    if (S.lv[lv.id] || i <= maxDone() + OPEN_AHEAD) return true
-    return lv.ch === 'misi' && !!S.lv.t7   // the earlier rule's open, kept so no save ever loses a level
-  }
+  function unlocked (i) { return UNLOCK_ALL || (i >= 0 && i < ML.LEVELS.length) }
   // the exact level whose finish opens level i (1-based, as the tiles are numbered)
   function opener (i) { return i - OPEN_AHEAD + 1 }
   function starImg (on) { return '<i style="background-image:url(' + MA.src('obj/star') + ');' + (on ? '' : 'opacity:.25;filter:grayscale(1)') + '"></i>' }
@@ -1791,7 +1784,7 @@
   })
   home()
   function award (n) { S.rewardBolts = Math.min(1000000, (S.rewardBolts || 0) + (n | 0)); save(); homeCounters() }
-  W.MojoMenu.setup({ home:home, show:show, toast:toast, episodes:map, start:start, next:nextLevelId, overlay:overlay, close:closeOv, cue:SND.place, say:say, reset:resetProgress, award:award, save:function () { return S } })
+  W.MojoMenu.setup({ home:home, show:show, toast:toast, episodes:map, start:start, next:nextLevelId, unlocked:function (id) { var i = ML.index(id); return i >= 0 && unlocked(i) }, overlay:overlay, close:closeOv, cue:SND.place, say:say, reset:resetProgress, award:award, save:function () { return S } })
   if (W.MojoChaseMenu) W.MojoChaseMenu.setup({ home:home, show:show, toast:toast, cue:SND.place, say:say, award:award, save:function () { return S } })
 
   /* test seam (QA only: reads state, never plays for the child) */

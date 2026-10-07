@@ -173,33 +173,27 @@ try{
  }
  assert.ok(asked>=20,'event questions checked: '+asked);await p.evaluate(()=>{if(window.__qaReal)performance.now=window.__qaReal});
  console.log('Event questions: '+asked+' drawn scenes, nouns from the level, moment explained, 56px answers PASS');
- // ── a map toast never shows during play ──
- await p.evaluate(()=>__mojo.home());await tap('#btn-levels');await tap('[data-region="pulau"]');
- assert.ok(await p.$eval('#toast',e=>e.classList.contains('show')),'the locked-region toast shows on the map');
- await p.evaluate(()=>__mojo.start('m6'));assert.equal(await p.$eval('#toast',e=>e.classList.contains('show')),false,'entering play clears the map toast');
- await sleep(2600);assert.equal(await p.$eval('#toast',e=>e.classList.contains('show')),false);console.log('Map toast never shows during play PASS');
- // ── explore-friendly unlocks (owner 2026-10-03): finishing level k with ANY stars opens k+1..k+3 ──
+ // ── everything open (owner decision 2026-10-06): no locked tile anywhere; stars still recorded ──
  {
   const q=await browser.newPage();await q.setViewport({width:1280,height:800});
   await q.goto('http://localhost:8081/games/mojo-swoptops.html',{waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);
   await q.evaluate(()=>avatarScopedRemove('dunia-g31-mojo'));await q.reload({waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);await sleep(400);
-  const open=async()=>{await q.evaluate(()=>__mojo.map('kota'));await sleep(200);return q.$$eval('.lvl',bs=>bs.map(b=>b.classList.contains('lock')?0:1).join(''))};
-  assert.equal(await open(),'111000000000','the first three levels are open from the start');
-  assert.match(await q.$eval('[data-level="t4"]',e=>e.getAttribute('aria-label')),/selesaikan level 1 dulu/);
+  const open=async id=>{await q.evaluate(id=>__mojo.map(id),id);await sleep(200);return q.$$eval('.lvl',bs=>bs.map(b=>b.classList.contains('lock')?0:1).join(''))};
+  assert.equal(await open('kota'),'111111111111','a fresh save opens every Kota Pusat level');
+  for(const r of await q.evaluate(()=>MojoLevels.REGIONS.map(r=>r.id)))assert.ok(!(await open(r)).includes('0'),r+': every level open on a fresh save');
   const qt=async s=>{if(s==='#bo-details'&&!(await q.$eval('#bo',e=>e.classList.contains('open')))){await (await q.$(s)).click();await sleep(60)}const e=await q.$(s);await e.click();await sleep(60)};
-  await qt('[data-level="t4"]');assert.match(await q.$eval('#toast',e=>e.textContent),/^Selesaikan level 1 dulu/);
-  assert.ok(await q.evaluate(()=>document.getAnimations().some(a=>a.effect?.target?.dataset?.level==='t4')),'a locked tile shakes');
-  // finish t1 the "show me" way: one star
+  await open('kota');await qt('[data-level="s1"]');assert.equal(await q.evaluate(()=>__mojo.state()?.id),'s1','tapping any tile starts it (no "Selesaikan" toast)');
+  // a map toast never shows during play
+  await q.evaluate(()=>__mojo.home());await (await q.$('#btn-levels')).click();await sleep(200);
+  assert.equal(await q.$('.region.locked'),null,'no locked region card');
+  // finish t1 the "show me" way: one star, shown on its tile
   await q.evaluate(()=>__mojo.start('t1'));await qt('#in-go');if(await q.$('#ov-card.on #picker-later'))await qt('#picker-later');
   await qt('#bo-details');await qt('#bo-show');await q.waitForFunction(()=>!__mojo.state().running&&/giliranmu/.test(__mojo.state().boLine),{timeout:30000});
   await qt('#btn-run');await q.waitForSelector('#ov-card.on #res-map',{timeout:30000});
   assert.equal(await q.evaluate(()=>__mojo.save().lv.t1.stars),1);
-  assert.equal(await open(),'111100000000','finishing level 1 with ONE star opens levels 2, 3 and 4');
-  // a save that finished level 6 (any stars) opens 7..9, across the episode boundary into Bab 1
-  await q.evaluate(()=>{const k='dunia-g31-mojo',v=JSON.parse(avatarScopedGet(k));v.lv.t6={stars:1,t:1};avatarScopedSet(k,JSON.stringify(v))});await q.reload({waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);await sleep(300);
-  assert.equal(await open(),'111111111000','finishing level 6 with one star opens 7, 8 and 9 across the episode boundary; nothing earlier closes');
-  await q.screenshot({path:out+'/unlock-ahead.png'});await q.close();
-  console.log('Finishing a level with 1 star opens the next 3; locked tiles name the exact level and shake PASS');
+  await open('kota');assert.ok(await q.$eval('[data-level="t1"]',b=>b.classList.contains('done')),'the finished tile shows as done with its star');
+  await q.screenshot({path:out+'/all-open.png'});await q.evaluate(()=>avatarScopedRemove('dunia-g31-mojo'));await q.close();
+  console.log('Everything open from the start; any tile starts; stars still recorded PASS');
  }
  assert.equal(errors.length,0,errors.join('\n'));
 }finally{await browser.close()}

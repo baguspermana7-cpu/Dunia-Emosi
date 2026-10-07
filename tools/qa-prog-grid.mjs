@@ -335,6 +335,23 @@ section('F levels')
   const w2 = starts(s1)[2]
   const short = PG.run(w2, ['swop:normal', 'up', 'up', 'east', 'repair'], s1.beats[2], { auto: true })
   check(!short.done && short.stop && short.stop.reason === 'need-bolts' && short.stop.info.have === 7, 'slice: a route with only 2 more bolts stops at the gate (need 8, have 7)')
+  // the map (owner bug 2026-10-04 "selesai 1-2 tapi level berikutnya tidak terbuka"): no region is an empty
+  // "Segera hadir" card; every region has >= 5 real levels, each region starts later in level order than the one
+  // before (the "finish any level -> next three open" rule then walks into the regions in order), and the four
+  // new regions each end with a 2-3 beat story mission
+  for (const r of ML.REGIONS) {
+    check(r.open && r.levels.length >= 5 && r.levels.every(id => ML.byId(id)), `region ${r.id}: ${r.levels.length} real levels (>= 5), open`)
+    if (['hutan', 'gunung', 'konstruksi', 'pulau'].includes(r.id)) { const fin = ML.byId(r.levels[r.levels.length - 1]); check(fin.beats.length >= 2 && fin.beats.length <= 3, `region ${r.id}: its last level ${fin.id} is a ${fin.beats.length}-beat story mission`) }
+  }
+  check(ML.LEVELS.every(l => ML.REGIONS.filter(r => r.levels.includes(l.id)).length === 1), 'every level sits in exactly one region')
+  const firstIdx = ML.REGIONS.map(r => Math.min(...r.levels.map(id => ML.index(id))))
+  check(firstIdx.every((v, i) => !i || v > firstIdx[i - 1]), 'each region starts later in level order than the one before ' + firstIdx.join(','))
+  // palettes carry only what the beat needs: every non-arrow command is used by the beat's shortest plan (new regions)
+  for (const lv of ML.LEVELS.filter(l => /^[hgkp]\d$|^m9$/.test(l.id))) {
+    const st = starts(lv)
+    lv.beats.forEach((b, bi) => { const sol = PG.solve(st[bi], b) || [], extra = b.palette.filter(c => !['up', 'down', 'west', 'east'].includes(c) && !sol.includes(c))
+      check(!extra.length, `${lv.id} beat ${bi + 1}: palette holds only the needed actions ${extra.join(',')}`) })
+  }
 }
 
 /* Alternative predecessor states must propagate beyond one checkpoint. */

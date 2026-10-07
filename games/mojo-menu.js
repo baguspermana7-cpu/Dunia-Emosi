@@ -19,8 +19,9 @@
     return A.lib(key + (key === 'mojo-bg/construction' ? '' : port ? '-port' : '-land'))
   }
   // Peta Swoppiton (owner mockup "World Map"): the painted map with six numbered pins where its own
-  // blue circles are drawn, and a region card per place. Two regions are open; the other four are
-  // honest "Segera" cards that answer a tap instead of doing nothing.
+  // blue circles are drawn, and a region card per place. Owner decision 2026-10-06 "make everything open":
+  // the shell opens every level, so every region with missions is open. "Segera hadir" is only for a region
+  // that truly has no missions (none today); the progress-lock branch stays for a future rule.
   var PINS = { kota:[27.4,36.5], pelabuhan:[34.5,57.6], hutan:[65,49.5], gunung:[83,32.1], konstruksi:[81.7,87], pulau:[52.8,80.1] }
   function regionStats (r) {
     var s = API.save(), done = 0, stars = 0
@@ -35,12 +36,13 @@
     art.appendChild(stage); c.appendChild(art); c.appendChild(cards)
     var head = D.querySelector('#scr-regions .topbar'), total = 0, max = 0
     W.MojoLevels.REGIONS.forEach(function (r, i) {
-      var ready = r.open && r.levels.length > 0, st = regionStats(r)
+      var empty = !(r.open && r.levels.length > 0), ready = !empty && (!API.unlocked || API.unlocked(r.levels[0])), st = regionStats(r)
+      var prev = i > 0 ? W.MojoLevels.REGIONS[i - 1].title : '', wait = 'Selesaikan misi ' + prev + ' dulu, ya!'
       total += st.stars; max += st.total * 3
-      var go = function () { if (ready) { activeRegion = r.id; API.cue(); API.episodes(r.id) } else { API.cue(); API.toast(r.title + ': segera hadir — misi baru sedang dibuat!') } }
+      var go = function () { if (ready) { activeRegion = r.id; API.cue(); API.episodes(r.id) } else { API.cue(); API.toast(empty ? r.title + ': segera hadir — misi baru sedang dibuat!' : r.title + ' masih terkunci. ' + wait) } }
       // the pin on the painted map
       var pin = node('button', 'map-pin' + (ready ? '' : ' locked') + (r.id === nextRegion ? ' next' : ''))
-      pin.type = 'button'; pin.setAttribute('data-pin', r.id); pin.setAttribute('aria-label', r.title + (ready ? '' : ' (segera)'))
+      pin.type = 'button'; pin.setAttribute('data-pin', r.id); pin.setAttribute('aria-label', r.title + (ready ? '' : empty ? ' (segera)' : ' (terkunci)'))
       pin.style.left = PINS[r.id][0] + '%'; pin.style.top = PINS[r.id][1] + '%'
       pin.innerHTML = ready ? '<b class="fk">' + (i + 1) + '</b>' : '<i class="ico">' + A.icon('lock') + '</i>'
       bind(pin, go); stage.appendChild(pin)
@@ -54,7 +56,8 @@
       b.appendChild(node('strong', '', r.title))
       var sub = node('span', 'rsub')
       if (ready) sub.innerHTML = '<img src="' + A.src('obj/star') + '" alt="">' + st.stars + '/' + (st.total * 3) + '<em class="rcount"> · ' + st.done + '/' + st.total + ' misi</em>'
-      else sub.innerHTML = '<i class="ico">' + A.icon('lock') + '</i>Segera hadir — misi baru sedang dibuat!'   // honest: no content yet, not a progress lock
+      else if (empty) sub.innerHTML = '<i class="ico">' + A.icon('lock') + '</i>Segera hadir — misi baru sedang dibuat!'   // honest: no content yet, not a progress lock
+      else { sub.innerHTML = '<i class="ico">' + A.icon('lock') + '</i>'; sub.appendChild(D.createTextNode(wait)); b.classList.add('wait') }   // a progress lock names what opens it
       b.appendChild(sub)
       bind(b, go); cards.appendChild(b)
     })
