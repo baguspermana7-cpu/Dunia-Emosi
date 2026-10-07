@@ -731,6 +731,9 @@
     early: 'Bendera {k} dulu, ya! Urutannya 1, 2, 3.',
     qGood: 'Benar! Hebat!', qBad: 'Tidak apa-apa, ayo lanjut!', qBonus: 'Benar! Bintang bonus!',
     hintAsk: 'Pakai petunjuk? Bintangnya paling banyak 2.', hintFix: 'Ganti perintah nomor {n}, ya.', hintNext: 'Coba tambah: {c}.',
+    hintLen: 'Rute terpendek {n} langkah.', hintTwo: 'Dua langkah berikutnya: 1) {a}, 2) {b}.', hintMore: 'Masih bingung? Ketuk Timmy: Tunjukkan Caranya.',
+    showAsk: 'Mau Timmy tunjukkan caranya? Bintangnya paling banyak 1.', showGo: 'Lihat, Timmy tunjukkan caranya!',
+    showDone: 'Begitu caranya! Sekarang giliranmu: tekan JALAN!',
     hintFn: 'Isi Fungsi dulu. Coba tambah: {c}.',
     tour1: 'Ketuk panah untuk menambah perintah.', tour2: 'Perintahmu muncul di sini. Ketuk untuk menghapus.', tour3: 'Tekan JALAN! untuk berlayar.',
     edge: 'Ups, itu ujung laut! Ubah perintah nomor {n}.',
@@ -885,6 +888,12 @@
     '.tkg-goal.art .lh{left:9%;right:auto;top:9%;bottom:auto;width:82%;height:82%}.tkg-goal.art .fl{right:0;top:0;bottom:auto;width:34%;height:38%}',
     '.tkg-goal:before{content:"";position:absolute;inset:4%;border-radius:8px;background:rgba(70,210,110,.38);border:3px solid #6dff95;box-shadow:0 0 14px rgba(90,255,140,.7),inset 0 0 12px rgba(90,255,140,.45)}',
     '.tkg-goal .lh{position:absolute;left:4%;bottom:10%;width:52%;height:78%;object-fit:contain}',
+    /* board polish (the Mojo look, ported 2026-10-04): the goal breathes a ring so the eye finds it; a soft vignette
+       darkens the water at the board's edge (first child of the board, so every piece paints above it) */
+    '.tkg-goal:after{content:"";position:absolute;inset:4%;border-radius:10px;border:3px solid rgba(140,255,170,.85);pointer-events:none;animation:tkg-goalp 2.4s cubic-bezier(.23,1,.32,1) infinite}',
+    '@keyframes tkg-goalp{0%{transform:scale(1);opacity:.85}70%,100%{transform:scale(1.22);opacity:0}}.tkg--won .tkg-goal:after{animation:none;opacity:0}',
+    '.tkg-vig{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(4,22,58,.32) 100%)}.tkg--deck .tkg-vig{background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(40,20,5,.28) 100%)}',
+    '@media (prefers-reduced-motion:reduce){.tkg-goal:after{animation:none;opacity:.6}}',
     '.tkg-goal .fl{position:absolute;right:4%;bottom:12%;width:52%;height:62%;object-fit:contain}',
     '.tkg--deck .tkg-goal .lh{left:2%;right:2%;bottom:14%;width:96%;height:70%}',
     '.tkg--deck .tkg-goal .fl{right:2%;top:2%;bottom:auto;width:40%;height:44%}',
@@ -938,9 +947,8 @@
     /* the bubble keeps one height: a long line folds to its first sentence + a Baca pill; the full text opens in .tkg-pop */
     '.tkg-bubble{max-height:var(--bubmax,68px);overflow:hidden}.tkg-tim{min-height:68px}.tkg--land .tkg-tim{min-height:0}.tkg--land .tkg-bubble{--bubmax:calc(var(--both,124px) - 12px)}',
     '.tkg-bubble.more{pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent}',
-    '.tkg-more{display:none;position:absolute;right:8px;top:5px;font-style:normal;font-size:12px;font-weight:900;color:#1d5fc0;background:#e3eeff;border:1.5px solid #1d5fc0;border-radius:10px;padding:0 9px;line-height:17px;box-shadow:0 2px 0 rgba(0,0,0,.18)}',
-    '.tkg-bubble.more .tkg-more{display:block}.tkg-bubble.more:active{transform:scale(.97)}',
-    '.tkg-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
+    '.tkg-baca{display:none;position:absolute;right:8px;top:4px;margin:0;height:auto;font-style:normal;font-size:14px;font-weight:900;color:#1d5fc0;background:#e3eeff;border:1.5px solid #1d5fc0;border-radius:10px;padding:0 9px;line-height:18px;white-space:nowrap;width:max-content;box-sizing:content-box;box-shadow:0 2px 0 rgba(0,0,0,.18)}',
+    '.tkg-bubble.more .tkg-baca{display:block}.tkg-bubble.more:active{transform:scale(.97)}',
     '.tkg-bpop{position:absolute;z-index:60;left:8px;top:8px;background:#fff;color:#12314f;border-radius:16px;padding:8px 14px 10px;font-size:15px;line-height:1.3;font-weight:800;box-shadow:0 10px 26px rgba(0,10,40,.45);opacity:0;transform:translateY(6px) scale(.96);transform-origin:20% 100%;pointer-events:none;transition:opacity 160ms linear,transform 200ms var(--e)}',
     '.tkg-bpop.on{opacity:1;transform:none;pointer-events:auto}',
     '.tkg-bpop em{display:inline-block;font-style:normal;font-size:12px;font-weight:900;color:#fff;background:#1d5fc0;border-radius:8px;padding:1px 8px;margin-bottom:3px}.tkg-bpop span{display:block}',
@@ -1188,7 +1196,10 @@
     '.tkg-ask.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}',
     '.tkg-ask p{margin:0 0 8px;font-size:17px;font-weight:900;line-height:1.25}',
     '.tkg-ask .st{display:flex;justify-content:center;gap:4px;margin-bottom:10px}.tkg-ask .st img{width:34px;height:34px}.tkg-ask .st img.dim{opacity:.3;filter:grayscale(1)}',
-    '.tkg-ask .bt{display:flex;gap:10px;justify-content:center}.tkg-ask .tkg-btn{min-width:96px}',
+    '.tkg-ask .bt{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.tkg-ask .tkg-btn{min-width:96px}',
+    '.tkg-ask .show{flex:1 1 100%;background:linear-gradient(180deg,#ffb347,#ef8a00);box-shadow:0 4px 0 #a35a00}.tkg-ask .show[hidden]{display:none}',
+    '.tkg-hintb--nudge img{animation:tkg-nudge-help 1.6s var(--e) infinite}@keyframes tkg-nudge-help{0%,60%,100%{transform:none}70%{transform:translateY(-6px) rotate(-4deg)}80%{transform:none}88%{transform:translateY(-3px)}}',
+    '@media (prefers-reduced-motion:reduce){.tkg-hintb--nudge img{animation:none;filter:drop-shadow(0 0 6px #ffd84a)}}',
     '.tkg-ask .yes{background:linear-gradient(180deg,#48d465,#1f9a3f);box-shadow:0 4px 0 #146e2d}.tkg-ask .no{background:linear-gradient(180deg,#667894,#3e4c66);box-shadow:0 4px 0 #27324a}',
     '.tkg-chip--fix{box-shadow:0 0 0 3px #fff,0 0 0 6px #ff5a5a;outline:3px dashed #ff5a5a;outline-offset:4px}',
     '@keyframes tkg-glint{0%,70%{transform:translateX(-120%)}100%{transform:translateX(320%)}}',
@@ -1609,6 +1620,7 @@
     hand.appendChild(hin); coach.appendChild(hand); coach.setAttribute('aria-hidden', 'true')
     var skipB = el('button', 'tkg-btn tkg-skip', '<span>Lewati</span>'); skipB.type = 'button'; skipB.setAttribute('aria-label', 'Lewati petunjuk tangan')
     root.appendChild(coach)
+    var vig = el('div', 'tkg-vig'); vig.setAttribute('aria-hidden', 'true'); board.insertBefore(vig, board.firstChild)
     // board VFX (games/tk-fx.js, the Mojo board effects ported): optional, every call guarded
     if (G.TKFx) TKFx.init({ board: board, cell: function () { return st.T }, lib: libSrc, later: later, cancel: function (t) { clock.cancel(t) }, theme: theme, rm: rm })
     function tkfx (name, a, b, c, d) { if (G.TKFx && TKFx[name]) TKFx[name](a, b, c, d) }
@@ -1831,8 +1843,8 @@
     /* owner 2026-10-04 (the Mojo Bo chip, ported): the bubble has a fixed height. A line that does not fit shows its
        first sentence (or "Ketuk untuk membaca") with a "Baca" pill; a tap opens the whole text in a popover placed
        where it never covers the command palette, closed after 4 s or by a tap. Feedback opens it by itself. */
-    var bFull = el('span', 'tkg-sr'), bMore = el('i', 'tkg-more', 'Baca'), pop = el('div', 'tkg-bpop'), popT = null
-    bubble.appendChild(bMore); bubble.appendChild(bFull); bTxt.setAttribute('aria-hidden', 'true')
+    var bFull = { textContent: '' }, bMore = el('b', 'tkg-baca', 'Baca'), pop = el('div', 'tkg-bpop'), popT = null
+    bubble.appendChild(bMore); bMore.setAttribute('aria-hidden', 'true')
     pop.setAttribute('aria-hidden', 'true'); pop.appendChild(el('em', '', 'Timmy')); var popTxt = el('span'); pop.appendChild(popTxt); root.appendChild(pop)
     function firstLine (t) { var m = String(t).match(/^.*?[.!?](?:\s|$)/); return m ? m[0].trim() : String(t) }
     function fitBubble () {
@@ -1866,6 +1878,7 @@
       bFull.textContent = text
       bubble.className = 'tkg-bubble' + (cls ? ' ' + cls : '')
       fitBubble()
+      if (bubble.classList.contains('more')) bubble.setAttribute('aria-label', 'Timmy: ' + text); else bubble.removeAttribute('aria-label')
     }
     function say (text, kind, ms) {
       st.msg = text
@@ -2104,25 +2117,45 @@
       var sel = root.querySelectorAll('.tkg-chip--hint,.tkg-chip--fix'); for (var i = 0; i < sel.length; i++) sel[i].classList.remove('tkg-chip--hint', 'tkg-chip--fix')
       var gh = board.querySelectorAll('.tkg-gh'); for (var j = 0; j < gh.length; j++) board.removeChild(gh[j])
     }
+    /* ── Petunjuk: a LADDER (the Mojo hint ladder, ported; owner 2026-10-04). Every press still lights the next real
+       step (never a route trace or slot ghost, owner 2026-09-29); the words grow more concrete with each rung:
+       1 the mission + the next step, 2 the next step + how long the shortest route is, 3+ the next TWO steps.
+       After rung 3, or after two runs that stopped, the card also offers "Tunjukkan Caranya": Timmy fills the
+       route, sails it naming every step, resets the board and hands JALAN! back (that level: at most 1 star). ── */
+    var HINT_MAX = 3
+    st.rung = 0; st.fails = 0; st.shown = false; st.demo = false
     var ask = el('div', 'tkg-ask'); ask.setAttribute('role', 'dialog'); ask.setAttribute('aria-label', 'Petunjuk')
     var askP = el('p'); askP.textContent = say$.hintAsk; ask.appendChild(askP)
     var askS = el('div', 'st'); for (var ai = 0; ai < 3; ai++) askS.appendChild(img(src('sparkle'), ai === 2 ? 'dim' : '', '')); ask.appendChild(askS)
     var askB = el('div', 'bt'), yesB = el('button', 'tkg-btn yes', '<span>Ya</span>'), noB = el('button', 'tkg-btn no', '<span>Batal</span>')
-    yesB.type = 'button'; noB.type = 'button'; askB.appendChild(yesB); askB.appendChild(noB); ask.appendChild(askB); root.appendChild(ask)
+    var showB = el('button', 'tkg-btn show', '<span>Tunjukkan Caranya</span>')
+    yesB.type = 'button'; noB.type = 'button'; showB.type = 'button'
+    askB.appendChild(showB); askB.appendChild(yesB); askB.appendChild(noB); ask.appendChild(askB); root.appendChild(ask)
+    function canShow () { return !st.shown && (st.fails >= 2 || st.rung >= HINT_MAX) }
     function askHint () {
       if (clock.paused() || st.running || st.done) return
       sfx('click')
-      if (st.hints > 0) { hint(); return }
-      ask.classList.add('on'); try { yesB.focus() } catch (e) {}
+      var show = canShow()
+      hintB.classList.remove('tkg-hintb--nudge')
+      closePop()
+      if (st.hints > 0 && !show) { hint(); return }
+      showB.hidden = !show
+      yesB.firstChild.textContent = st.hints > 0 ? 'Petunjuk' : 'Ya'
+      askP.textContent = st.hints > 0 ? say$.showAsk : show ? say$.hintAsk + ' ' + say$.showAsk : say$.hintAsk
+      var dim = askS.querySelectorAll('img'); for (var di = 0; di < dim.length; di++) dim[di].className = di === 2 || (show && st.hints > 0 && di === 1) ? 'dim' : ''
+      ask.classList.add('on'); try { (show ? showB : yesB).focus() } catch (e) {}
     }
     function closeAsk () { ask.classList.remove('on') }
     yesB.addEventListener('click', function (e) { e.stopPropagation(); closeAsk(); hint() })
     noB.addEventListener('click', function (e) { e.stopPropagation(); sfx('click'); closeAsk() })
+    showB.addEventListener('click', function (e) { e.stopPropagation(); sfx('click'); closeAsk(); showMe() })
+    function words (list) { return list.filter(function (c) { return c !== 'FN' }).map(function (c) { return LABEL[c] }).join(' + ') }
     function hint () {
       if (clock.paused() || st.running || st.done) return
       var h = nextHint(L, flat())
       if (!h) return
       st.hints++
+      st.rung = Math.min(HINT_MAX, st.rung + 1)
       if (typeof opts.onHint === 'function') { try { opts.onHint() } catch (e) { if (G.console) console.error('[TKGrid] onHint', e) } }
       root.setAttribute('data-hinted', '1')
       clearHintMarks()
@@ -2132,12 +2165,43 @@
       if (h.keep < list.length) {
         var fix = chipAt(flatOf(lane, h.keep))
         if (fix) { fix.classList.add('tkg-chip--fix'); reveal(fix) }
-        say(say$.hintFix.replace('{n}', String(h.keep + 1)), 'good', 5000)
+        say(say$.hintFix.replace('{n}', String(h.keep + 1)) + (st.rung >= HINT_MAX ? ' ' + say$.hintMore : ''), 'good', 6000)
         return
       }
       h.next.forEach(function (c) { var p = pal.querySelector('[data-cmd="' + c + '"]'); if (p) p.classList.add('tkg-chip--hint') })
-      var words = h.next.map(function (c) { return LABEL[c] }).join(' + ')
-      say((lane === 'f' ? say$.hintFn : say$.hintNext).replace('{c}', words), 'good', 5000)
+      var line = (lane === 'f' ? say$.hintFn : say$.hintNext).replace('{c}', words(h.next))
+      if (st.rung === 1) line = idleMsg.replace(/[.!?]?\s*$/, '.') + ' ' + line
+      else if (st.rung === 2 && L.shortest > 0) line = line + ' ' + say$.hintLen.replace('{n}', String(L.shortest))
+      else if (st.rung >= HINT_MAX && lane === 'm' && !hasFn) {
+        // the next two steps (a repeat chip counts with the command it repeats)
+        var rest = h.full.slice(h.keep), a1 = REP[rest[0]] ? rest.slice(0, 2) : rest.slice(0, 1), r2 = rest.slice(a1.length), a2 = REP[r2[0]] ? r2.slice(0, 2) : r2.slice(0, 1)
+        if (a2.length) line = say$.hintTwo.replace('{a}', words(a1)).replace('{b}', words(a2))
+        line += ' ' + say$.hintMore
+      }
+      say(line, 'good', 6500)
+    }
+    // "Tunjukkan Caranya": the route that works from here (the child's correct start is kept) fills the slots and plays
+    function showMe () {
+      if (clock.paused() || st.running || st.done) return
+      var h = nextHint(L, flat()), full = h ? h.full : flat()
+      if (!full || !full.length) return
+      st.shown = true; st.hints = Math.max(1, st.hints)
+      if (typeof opts.onHint === 'function') { try { opts.onHint() } catch (e) { if (G.console) console.error('[TKGrid] onHint', e) } }
+      root.setAttribute('data-hinted', '1'); clearHintMarks()
+      var m = full.indexOf('FN')
+      st.prog = (m < 0 ? full : full.slice(0, m)).slice(0, L.maxLen); st.fn = m < 0 ? [] : full.slice(m + 1).slice(0, L.fnMax)
+      edited(); renderSlots(-1)
+      say(say$.showGo, 'good')
+      st.demo = true
+      later(go, rm ? 200 : 900)
+    }
+    function demoDone () {
+      st.demo = false
+      later(function () {
+        if (dead || st.running || st.done) return
+        resetBoard(true); markRun(null); st.bad = null; renderSlots(-1)
+        say(say$.showDone, 'good')
+      }, rm ? 300 : 1100)
     }
 
     /* ── the queued route is NOT drawn before JALAN! (owner: no trace). It is still computed for state() / gates. ── */
@@ -2399,6 +2463,7 @@
     }
     function playStep (s) {
       markRun(s)
+      if (st.demo && s.cmd && LABEL[s.cmd]) say(LABEL[s.cmd] + '.', 'good')
       st.dirty = true
       if (s.event !== 'bump') s.ice.forEach(function (p, i) { if (O.imv[i]) { turnMob(O.imv[i], p); put(O.imv[i], p.x, p.y) } })
       if (s.opened) {
@@ -2547,7 +2612,8 @@
           later(cb, rm ? 200 : 500)
         }, 0)
       }
-      if (typeof opts.onQuestion !== 'function') { later(function () { finish(false) }, rm ? 150 : 400); return }
+      if (typeof opts.onQuestion !== 'function' || st.demo) {   // a Tunjukkan Caranya demo sails past question tiles
+      later(function () { finish(false) }, rm ? 150 : 400); return }
       st.asked++
       root.classList.add('tkg--ask')
       var p = null
@@ -2567,7 +2633,7 @@
       if (!st.prog.length) { say(say$.noProg, 'bad', 2600); wiggle(slots); sfx('click'); return }
       sfx('click')
       closeAsk()
-      st.attempts++
+      if (!st.demo) st.attempts++
       st.bad = null; st.early = 0; renderSlots(-1); clearHintMarks(); hush(); tkfx('clear')
       var res = run(L, flat())
       st.running = true; st.stepN = 0; root.classList.add('tkg--busy')
@@ -2606,7 +2672,10 @@
     function finish (res) {
       st.running = false; root.classList.remove('tkg--busy')
       markRun(null)
+      if (st.demo) { if (res.ok) { var gd = L.goal || { x: vis.x, y: vis.y }; fx('tkg-ring', gd.x, gd.y, 900); tkfx('goal', gd.x, gd.y); sfx('good') } demoDone(); return }
       if (res.ok) { won(res); return }
+      st.fails++
+      if (canShow()) hintB.classList.add('tkg-hintb--nudge')   // two stopped runs: Timmy bobs, help is there
       if (res.failAt != null) {
         st.bad = res.failAt
         renderSlots(-1)
@@ -2669,6 +2738,7 @@
       winStars.innerHTML = ''
       // Petunjuk is an explicit choice: using it caps this level at 2 stars
       var n = stars(res.moves, L.shortest, L.easy, st.hints > 0)
+      if (st.shown) n = Math.min(n, 1)   // finished after "Tunjukkan Caranya": one star
       var starEls = []
       for (var i = 0; i < 3; i++) { var s = el('span', '', wrapIc(ic('star', i < n ? '' : 'tk-ico--dim'), i < n ? 'got' : '')); winStars.appendChild(s); starEls.push(s) }
       later(function () { win.classList.add('on') }, rm ? 0 : 500)
@@ -2676,7 +2746,7 @@
         flyStars(starEls.slice(0, n), function () {
           later(function () {
             win.classList.remove('on')
-            try { if (typeof opts.onDone === 'function') opts.onDone({ stars: n, moves: res.moves, attempts: st.attempts, hints: st.hints, shortest: L.shortest, bonus: st.bonus, asked: st.asked, hinted: st.hints > 0 }) } catch (e) { if (G.console) console.error('[TKGrid] onDone', e) }
+            try { if (typeof opts.onDone === 'function') opts.onDone({ stars: n, moves: res.moves, attempts: st.attempts, hints: st.hints, shortest: L.shortest, bonus: st.bonus, asked: st.asked, hinted: st.hints > 0, shown: !!st.shown }) } catch (e) { if (G.console) console.error('[TKGrid] onDone', e) }
           }, 350)
         })
       }, rm ? 300 : 1150)
@@ -2807,6 +2877,7 @@
         if (dead) return
         clock.clear(); cancelAnimations()
         st.runId++; st.running = false; st.done = false; st.prog = []; st.fn = []; st.bad = null; st.hints = 0; st.bonus = 0
+        st.rung = 0; st.fails = 0; st.shown = false; st.demo = false
         root.classList.remove('tkg--busy'); root.classList.remove('tkg--won'); root.classList.remove('tkg--ask'); root.removeAttribute('data-hinted'); win.classList.remove('on')
         clearHintMarks(); markRun(null); renderSlots(-1); resetBoard(true); hush(); poke()
       },
@@ -2823,7 +2894,7 @@
           program: flat(), main: st.prog.slice(), fn: st.fn.slice(), lane: st.lane, message: st.msg, bubble: bubble.classList.contains('on'), tile: st.T,
           boat: vis ? { x: vis.x, y: vis.y } : null, maxLen: L.maxLen, shortest: L.shortest, stars: st.earned,
           coach: co.on, tourStop: co.on ? co.stop || null : null, tools: L.tools.slice(), easy: L.easy, trim: L.trim, preview: pv ? { ok: pv.ok, bad: pv.bad, path: pv.path.map(function (p) { return { x: p.x, y: p.y } }) } : null,
-          trail: trail.map(function (p) { return { x: p.x, y: p.y } }), bonus: st.bonus, asked: st.asked, hinted: st.hints > 0,
+          trail: trail.map(function (p) { return { x: p.x, y: p.y } }), bonus: st.bonus, asked: st.asked, hinted: st.hints > 0, rung: st.rung, fails: st.fails, shown: st.shown, demo: st.demo,
           qDone: Object.keys(st.qDone).map(Number), ask: ask.classList.contains('on'), paused: clock.paused() || root.classList.contains('tkg--ask'),
           nudge: nudged ? (nudged === goB ? 'go' : 'pal:' + nudged.getAttribute('data-cmd')) : null }
       },

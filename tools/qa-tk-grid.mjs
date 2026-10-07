@@ -861,6 +861,8 @@ if (process.env.QA_UI !== '0') {
           check(!pre.trace && !pre.gb, `${tag}: no trace before JALAN! ${JSON.stringify(pre)}`)
           if (id[0] === 'M') check(pre.ghost === def.ice.length, `${tag}: one sprite per moving obstacle, no next-step ghost`)
           await p.screenshot({ path: `${MSHOTS}/${id}-${w}-before.png` })
+          // the question pause is recorded IN the page (a 200 ms window is shorter than one sampling round + screenshot)
+          await p.evaluate(() => { window.__sawAsk = false; const r = document.querySelector('.tkg'); if (r) new MutationObserver(() => { if (r.classList.contains('tkg--ask') && window.__h.state().paused) window.__sawAsk = true }).observe(r, { attributes: true, attributeFilter: ['class'] }) })
           await tapSel(p, '.tkg-go')
           const seen = {}, props = new Set(), paused = { v: false }
           let shot = false
@@ -886,6 +888,7 @@ if (process.env.QA_UI !== '0') {
           check(await p.$$eval('.tkg-gold', e => e.length) > 0, `${tag}: golden path after the win`)
           const badProps = [...props].filter(x => !/^(transform|opacity|strokeDashoffset|stroke-dashoffset|all)$/.test(x))
           check(!badProps.length, `${tag}: only transform / opacity / stroke-dashoffset animate (${badProps})`)
+          if (await p.evaluate(() => window.__sawAsk)) paused.v = true
           if (id === 'Q2') check(paused.v && res.bonus === 1 && res.asked === 1, `${tag}: chest question paused the run and gave a bonus star (${JSON.stringify(res)})`)
           await p.screenshot({ path: `${MSHOTS}/${id}-${w}-won.png` })
           check(!p.__errs.length, `${tag}: errors ${p.__errs.slice(0, 3).join(' | ')}`)
