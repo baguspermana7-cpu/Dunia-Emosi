@@ -79,8 +79,10 @@ check(['malam', 'tol-malam', 'antariksa'].every(id => CH.stage(id).night === tru
 const launched = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-gpu-blocklist'].concat(GPU ? ['--use-angle=vulkan', '--enable-gpu'] : []) })
 // pages bypass the service worker: another session editing sw.js mid-run would otherwise reload a page (sw-reload.js)
 const browser = { newPage: async () => { const pg = await launched.newPage(); await pg.setBypassServiceWorker(true); return pg }, close: () => launched.close() }
+// QA_ONLY=brok runs section C2 (the BROK gate) alone; unset = the whole gate, which is what ships
+const ONLY = process.env.QA_ONLY || ''
 try {
-  {
+  if (!ONLY) {
     const p = await browser.newPage()
     await p.goto(BASE + '/games/mojo-swoptops.html', { waitUntil: 'domcontentloaded' })
     const res = await p.evaluate(async (rear, keys) => {
@@ -144,7 +146,7 @@ try {
     })
   }
   async function waitState (p, fn, ms) { const t = Date.now(); while (Date.now() - t < ms) { const s = await state(p); if (fn(s)) return s; await sleep(150) } return state(p) }
-  for (const [width, height] of sizes) {
+  for (const [width, height] of (ONLY ? [] : sizes)) {
     const p = await browser.newPage(); await p.setViewport({ width, height, deviceScaleFactor: 1, hasTouch: width < 900 })
     const errors = []
     p.on('pageerror', e => errors.push(e.message)); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
@@ -243,7 +245,7 @@ try {
 
   /* ── E. no leaks over 5 replays (+ PRD §23 edge cases: repeated swipes, boost while dizzy, pause in capture,
      rotation mid-chase, pause during the intro) ─────────────────────────────────────────────────── */
-  {
+  if (!ONLY) {
     const p = await browser.newPage(); await p.setViewport({ width: 1024, height: 768 }); const errors = []
     p.on('pageerror', e => errors.push(e.message)); p.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.text()) }); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
     await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
@@ -277,7 +279,7 @@ try {
   /* ── G. owner's phone: 412x915 DPR 2.625, touch, mobile UA, CPU 4x. A real touchscreen tap on the rocket button,
      while the robber is on screen, starts the capture within 300 ms (owner: "sudah ditekan tidak ada respons").
      Then the HUD overlap gate on 4 phone sizes: no two HUD boxes intersect (Bo's bubble forced on). ────── */
-  {
+  if (!ONLY) {
     const p = await browser.newPage()
     await p.setUserAgent('Mozilla/5.0 (Linux; Android 14; SM-A546E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36')
     await p.setViewport({ width: 412, height: 915, deviceScaleFactor: 2.625, isMobile: true, hasTouch: true })
@@ -355,7 +357,7 @@ try {
   /* ── J. the jumper clears HOLES (owner 2026-10-04 "Pelompat bisa lompat batu tapi tidak bisa lompat lubang"): every
      spawned lane becomes a pothole, so Mojo must drive into pothole rows back to back (also while still airborne);
      each one is a hop, never a BROK, a slip or a slowdown. ───────────────────────────────────────────────────── */
-  {
+  if (!ONLY) {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 }); const errors = []
     p.on('pageerror', e => errors.push(e.message))
     await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
@@ -382,7 +384,7 @@ try {
   }
 
   /* ── F. every stage loads and renders its start frame without errors (contact sheet of 25) + perf ───────── */
-  {
+  if (!ONLY) {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 }); const errors = []
     p.on('pageerror', e => errors.push(e.message)); p.on('response', r => { if (r.status() >= 400) errors.push(r.status() + ' ' + r.url()) })
     await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
@@ -426,13 +428,77 @@ try {
     await p.click('.mc-pause').catch(() => {}); await sleep(200); await p.click('#mc-exit').catch(() => {}); await done.catch(() => {})
     await p.close()
   }
-  {
+  if (!ONLY) {
     const p = await browser.newPage()
     await p.close()
   }
 
+  /* ── C2. BROK is visible for EVERY default form (owner 2026-10-07: "the BROK effect doesn't come out when
+     you hit an object"). A perk may neutralise its own theme, never everything: before this the jumper hopped
+     every block but the barrier and the wrecking ball smashed every block, so those two children never saw a
+     BROK. For each form: the real hit() path is driven with each obstacle type, a hard hit must raise a burst
+     within 300 ms, drop a heart and say BROK, and no form may be immune to every type. The burst is also
+     measured: the owner asked for half the old size. ───────────────────────────────────────────── */
+  {
+    const FORMS = ['racer', 'monster', 'jumper', 'wrecking', 'boat', 'dump', 'excavator']
+    const TYPES = ['crate', 'barrel', 'barrier', 'cone', 'tyres', 'rock', 'hay', 'banana', 'oil', 'pothole']
+    const table = {}
+    for (const form of FORMS) {
+      // the page keeps its service worker here (unlike the rest of the gate): this section probes collision
+      // rules seven times over, and reloading every sprite from the network each time costs minutes
+      const p = await launched.newPage(); await p.setViewport({ width: 1280, height: 800 })
+      const errs = []; p.on('pageerror', e => errs.push(e.message))
+      await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu && window.__mojo)
+      // the picker only (no atmosphere module): this section probes hit(), and the weather transitions add
+      // minutes across seven starts without touching a single collision rule
+      if (!(await p.evaluate(() => !!window.MojoChasePicker))) {
+        await p.addStyleTag({ url: BASE + '/games/mojo-chase-ui.css' })
+        await p.addScriptTag({ url: BASE + '/games/mojo-chase-picker.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-quiz.js' })
+      }
+      await openStage(p, 'pantai')
+      const inPicker = await p.evaluate(f => { const c = document.querySelector('.mcp-card[data-form="' + f + '"]'); if (c) { c.click(); return true } return false }, form)
+      check(inPicker, `chase picker offers the default form ${form}`)
+      await sleep(450); await go(p)
+      await p.waitForFunction(() => window.__mojoChase && __mojoChase.active && __mojoChase.state().imgs > 10, { timeout: 60000 })
+      await p.evaluate(() => __mojoChase.force({ state: 'active', hearts: 3 }))
+      await sleep(400)
+      // a hard hit FIRST, on a clean state: the burst is on screen within 300 ms, a heart is gone, and Bo
+      // says BROK. (The per-type sweep below fires ten hits in a second, which is nothing like real play and
+      // leaves call()'s 4 s per-key cooldown spent, so the message check has to come before it.)
+      await p.evaluate(() => __mojoChase.force({ hearts: 3, recover: 0, brok: 0, hits: 0 }))
+      await p.evaluate(() => __mojoChase.emitTest('brok'))
+      const t0 = Date.now(); let hit = null
+      while (Date.now() - t0 < 300) { hit = await p.evaluate(() => __mojoChase.state()); if (hit.burstOn > 0 && hit.brokDraw && /BROK/.test(hit.call || '')) break; await sleep(30) }
+      const row = {}
+      for (const t of TYPES) { row[t] = await p.evaluate(t => __mojoChase.probe(t), t); await p.evaluate(() => __mojoChase.force({ hearts: 3, recover: 0 })) }
+      table[form] = Object.fromEntries(TYPES.map(t => [t, row[t].why + (row[t].brok ? '*' : '')]))
+      check(TYPES.some(t => row[t].brok), `${form}: is not immune to every obstacle (${TYPES.filter(t => row[t].brok).join(',') || 'NONE'})`)
+      check(hit.burstOn > 0, `${form}: a hard hit puts a BROK burst on the board within 300 ms`)
+      check(hit.hearts === 2, `${form}: a hard hit costs exactly one heart (${hit.hearts})`)
+      check(/BROK/.test(hit.call || ''), `${form}: Bo says BROK (${hit.call})`)
+      // size: the owner asked for half. The comic sticker is tight, the Codex sheet is a padded explosion
+      // frame, so its BOX is allowed to be wider than its blast; both are half what they were.
+      const r = hit.brokDraw ? hit.brokDraw.w / hit.brokDraw.cp : 99
+      check(hit.brokDraw && (hit.brokDraw.seq ? r <= 1.2 : r <= 0.7), `${form}: the BROK draws at ${r.toFixed(2)} of the car (${hit.brokDraw && hit.brokDraw.seq ? 'padded sheet, <= 1.2' : 'sticker, <= 0.7'})`)
+      check(errs.length === 0, `${form}: no page error during the BROK probe ${errs.join(';')}`)
+      if (form === 'wrecking') await p.screenshot({ path: `${out}/brok-wrecking.png` })
+      await p.close()
+    }
+    report.brok = table
+    const src = fs.readFileSync(path.join(root, 'games/mojo-chase.js'), 'utf8')
+    const num = k => { const m = new RegExp(k + '\\s*=\\s*([\\d.]+)').exec(src); return m ? +m[1] : NaN }
+    check(num('BROK_SIZE') <= 0.7 && num('BROK_DOM') <= 0.7, `the BROK sticker and DOM boom are at most 0.7 of the car (${num('BROK_SIZE')}, ${num('BROK_DOM')})`)
+    // no obstacle set may leave a default perk with nothing that stops it
+    const SMASH = ['crate', 'barrel', 'cone', 'tyres', 'hay'], JUMPS = ['pothole', 'oil', 'banana', 'rock', 'tyres', 'cone']
+    const sets = new Function('return ' + /var OBS_SET = (\{[\s\S]*?\})\n/.exec(src)[1])()
+    for (const [biome, list] of Object.entries(sets)) {
+      check(list.some(t => SMASH.indexOf(t) < 0), `obstacle set "${biome}" has something the wrecking ball cannot smash (${list.join(',')})`)
+      check(list.some(t => JUMPS.indexOf(t) < 0), `obstacle set "${biome}" has something the jumper cannot hop (${list.join(',')})`)
+    }
+  }
+
   /* ── D. rubber band: a crashing autopilot still finishes ─────────────────────────────────────── */
-  if (!process.env.QA_FAST) {
+  if (!process.env.QA_FAST && !ONLY) {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 })
     await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
     const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai', { seconds: 70 })))

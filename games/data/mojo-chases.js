@@ -246,7 +246,7 @@
     { id: 'jumper', name: 'Pelompat', perk: 'jump', line: 'Lompat melewati lubang, jalan licin, dan rintangan rendah!', side: 'mojo-hero/monster-1', rear: 'monster', kind: 'ground', unlock: 0 },
     // ambulance: white box with the red cross + blue cab in both
     // turnaround row WRECKING BALL: crane boom + black wrecking ball on a blue 6-wheel cab (side / diag / rear)
-    { id: 'wrecking', name: 'Bola Penghancur', perk: 'smash', line: 'Menerobos peti dan palang tanpa BROK!', side: 'mojo-turn/wrecking-side', preview: 'mojo-turn/wrecking-diag', rear: 'mojo-turn/wrecking-rear', kind: 'ground', unlock: 0 },
+    { id: 'wrecking', name: 'Bola Penghancur', perk: 'smash', line: 'Menerobos peti, drum dan ban tanpa BROK! Batu dan palang tetap BROK.', side: 'mojo-turn/wrecking-side', preview: 'mojo-turn/wrecking-diag', rear: 'mojo-turn/wrecking-rear', kind: 'ground', unlock: 0 },
     // turnaround row BOAT: amphibious catamaran, red-white pontoons, red A-frame + life ring (side / diag / rear)
     { id: 'boat', name: 'Perahu', perk: 'splash', line: 'Meluncur di atas pelampung, jalan basah tidak licin!', side: 'mojo-turn/boat-side', preview: 'mojo-turn/boat-diag', rear: 'mojo-turn/boat-rear', kind: 'amph', unlock: 0 },
     // turnaround row DUMP TRUCK: yellow tipper bed with the red lift arm on a blue 6-wheel cab (side / diag / rear)

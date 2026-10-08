@@ -80,10 +80,27 @@
   }
   var OBS_SET = { coastal: ['crate', 'barrel', 'cone', 'barrier', 'tyres'], town: ['cone', 'barrier', 'crate', 'barrel'], forest: ['rock', 'crate', 'barrel', 'tyres'],
     desert: ['barrel', 'rock', 'crate', 'tyres'], snow: ['rock', 'crate', 'barrel'], construction: ['cone', 'barrier', 'tyres', 'barrel'],
-    farm: ['hay', 'crate', 'cone'], city: ['cone', 'barrier', 'barrel', 'crate'] }
-  // what the jumper hops (perk 'jump', line in data/mojo-chases.js): holes, slippery patches and LOW obstacles; the
-  // tall barrier is not jumpable
-  var JUMPABLE = { pothole: 1, oil: 1, banana: 1, rock: 1, crate: 1, barrel: 1, tyres: 1, cone: 1, hay: 1 }
+    // every set keeps at least one thing each default perk cannot neutralise, so no form ever rides a whole
+    // chase without a BROK (farm was hay/crate/cone, all smashable: the wrecking ball was immune there)
+    farm: ['hay', 'crate', 'cone', 'rock'], city: ['cone', 'barrier', 'barrel', 'crate'] }
+  /* A perk neutralises its OWN theme, never every hazard (owner 2026-10-07: "the BROK effect doesn't come out
+     when you hit an object"). Before this, JUMPABLE held every block but `barrier` and `smash` cleared every
+     block, so a child who picked Pelompat or Bola Penghancur could finish a whole chase without ever seeing a
+     BROK — on the farm set (hay/crate/cone) the wrecking ball was immune to literally everything.
+       JUMPABLE   what the jumper hops: holes, slippery patches and LOW things (its line in data/mojo-chases.js
+                  already says "lubang, jalan licin, dan rintangan rendah"). A rock stays jumpable - owner
+                  2026-10-04 "Pelompat bisa lompat batu". Crate, barrel, hay and the tall barrier do NOT.
+       SMASHABLE  what the wrecking ball breaks through: the things that shatter. A rock and a steel barrier
+                  do not, so every biome still has something that stops it. */
+  var JUMPABLE = { pothole: 1, oil: 1, banana: 1, rock: 1, tyres: 1, cone: 1 }
+  var SMASHABLE = { crate: 1, barrel: 1, cone: 1, tyres: 1, hay: 1 }
+  /* How big the BROK draws, as a share of the car's width. Owner 2026-10-07: "don't make the BROK too big,
+     make it 50% of its current size" - the burst was cp * 1.25 and the DOM boom cp * 1.1, which filled the
+     road at phone size. Halved; the hit-stop, shake and flash are untouched, so it still lands. */
+  var BROK_SIZE = 0.62, BROK_DOM = 0.55
+  // the Codex 'brok' sheet is a padded explosion frame (its blast fills roughly half the frame), so its BOX is
+  // wider than the tight comic sticker above while reading the same size on screen. Halved from 2.3 as well.
+  var BROK_SEQ = 1.15
   var FX_KEYS = ['explosion', 'dust', 'skid', 'speed-trail', 'sparks', 'confetti', 'fireworks', 'collect', 'boost-flame-sheet13', 'tire-smoke', 'sparkle', 'splash', 'snow-spray']
 
   /* ── audio: local WebAudio tones + the shared SFXEngine cues; mute = parent's sound() ─────────────── */
@@ -428,18 +445,23 @@
     function hit (o, sx, sy) {
       o.taken = true
       var info = OBJ[o.type], cp = carPx()
-      if (S.recover > 0) return                                   // repeated hits never stack (PRD §9)
-      if (S.shield) { S.shield = 0; ring(sx, sy, 1); burst(sx, sy, 14, TEX.glowC, 600 * v.u, 0.5, cp * 0.14, true); call('Perisai menahan!', 1100, 'shieldhit'); return }
+      // which branch handled this hit: read by the gate (tools/qa-mojo-chase.mjs) to prove no form is immune
+      S.lastHitType = o.type; S.lastHitPerk = perk
+      if (S.recover > 0) { S.brokWhy = 'recover'; return }        // repeated hits never stack (PRD §9)
+      if (S.shield) { S.brokWhy = 'shield'; S.shield = 0; ring(sx, sy, 1); burst(sx, sy, 14, TEX.glowC, 600 * v.u, 0.5, cp * 0.14, true); call('Perisai menahan!', 1100, 'shieldhit'); return }
       // perks: a flyer passes over anything slippery; a jumper hops every hole, slippery patch and low obstacle
       // (JUMPABLE). Owner 2026-10-04 "Pelompat bisa lompat batu tapi tidak bisa lompat lubang": a hazard met while
       // ALREADY airborne used to fall through to BROK (two holes in a row) - an airborne jumper now clears it too
-      if (perk === 'fly' && info.kind === 'slip') return
+      if (perk === 'fly' && info.kind === 'slip') { S.brokWhy = 'fly'; return }
       if (perk === 'jump' && JUMPABLE[o.type]) {
+        S.brokWhy = 'jump'
         if (!(S.hop > 0)) { S.hop = 0.5; S.jumps++; AU.whoosh(0); hopDust(); call('Hup! Lompat!', 900, 'hop') }
         return
       }
-      // the wrecking ball smashes straight through crates, barrels, cones, tyres, hay and barriers: no BROK
-      if (perk === 'smash' && info.kind === 'block') {
+      // the wrecking ball smashes straight through the things that shatter (SMASHABLE): crates, barrels, cones,
+      // tyres and hay. A rock and the steel barrier stop it, so it still takes a BROK like everyone else.
+      if (perk === 'smash' && SMASHABLE[o.type]) {
+        S.brokWhy = 'smash'
         S.smashed = (S.smashed || 0) + 1; AU.whoosh(0); if (!RM) S.shake = Math.max(S.shake, 0.18)
         for (var q = 0; q < 10; q++) { var sp = FX.spawn(TEX.chunk, sx + (Math.random() - 0.5) * cp * 0.3, sy - cp * 0.15, (Math.random() - 0.5) * 800 * v.u, -(300 + Math.random() * 450) * v.u, 0.8, cp * (0.08 + Math.random() * 0.05), false); if (sp) { sp.ay = 2400 * v.u; sp.vr = (Math.random() - 0.5) * 12; sp.rot = 1; sp.floor = sy + cp * 0.12; sp.flow = 0.9 } }
         burst(sx, sy, 8, TEX.puff, 380 * v.u, 0.6, cp * 0.3, false)
@@ -448,24 +470,28 @@
       }
       var immune = false
       if (info.kind === 'slip') {
+        S.brokWhy = 'slip'
         if (perk === 'grip' || (perk === 'snow' && look0 === 'snow') || (perk === 'splash' && (o.type === 'oil' || stage.wet))) { S.spin = 0; S.slide = 0; immune = true }
         else if (info.fx === 'spin') { S.spin = 0.8; call('Wiii, licin!', 1000, 'spin') }
         else if (info.fx === 'slide') { S.slide = 0.8; call('Hati-hati, licin!', 1000, 'slide') }
         else { if (!RM) S.shake = Math.max(S.shake, 0.3); S.squash = 0.18 }
-        S.recover = perk === 'grip' ? 0.35 : 0.7; S.recoverMax = S.recover; S.hard = false; AU.whoosh()
+        S.recover = perk === 'grip' ? 0.3 : 0.55; S.recoverMax = S.recover; S.hard = false; AU.whoosh()
         burst(sx, sy, 8, TEX.puff, 260 * v.u, 0.6, cp * 0.25, false)
         if (!immune) taunt('Kamu jelek!')
         return
       }
+      S.brokWhy = 'brok'
       S.hits++; S.brok++; S.hearts = Math.max(0, S.hearts - 1); S.heartT = 0
       taunt('Kamu jelek!')
-      S.recover = perk === 'recover' ? 1.05 : 1.4; S.recoverMax = S.recover; S.hard = true; S.lastHitAt = performance.now(); S.lastHitT = S.simT || 0; if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
+      // the no-stack window is what keeps one bump from eating three hearts; 1.4 s at chase speed swallowed the
+      // NEXT obstacle too, so a child saw no BROK for it (owner 2026-10-07). 1.0 s still covers one impact.
+      S.recover = perk === 'recover' ? 0.8 : 1.0; S.recoverMax = S.recover; S.hard = true; S.lastHitAt = performance.now(); S.lastHitT = S.simT || 0; if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
       if (!RM) S.shake = 0.55
       S.squash = 0.2; AU.brok()
       for (var i = 0; i < S.bursts.length; i++) if (!S.bursts[i].on) { var b = S.bursts[i]; b.on = true; b.x = sx; b.y = sy - cp * 0.2; b.t = 0; break }
-      for (var k = 0; k < 12; k++) { var p = FX.spawn(TEX.chunk, sx + (Math.random() - 0.5) * cp * 0.3, sy - cp * 0.15, (Math.random() - 0.5) * 700 * v.u, -(250 + Math.random() * 450) * v.u, 0.85, cp * (0.09 + Math.random() * 0.05), false); if (p) { p.ay = 2400 * v.u; p.vr = (Math.random() - 0.5) * 12; p.rot = 1; p.floor = sy + cp * 0.12; p.flow = 0.9 } }   // chunky debris arcs and bounces
-      burst(sx, sy, 10, TEX.puff, 400 * v.u, 0.8, cp * 0.4, false)
-      if (W.VFX && W.VFX.dom && !RM) { try { var hr = host.getBoundingClientRect(); W.VFX.dom(hr.left + sx * v.css, hr.top + (sy - cp * 0.2) * v.css, { fx: 'boom', size: cp * v.css * 1.1 }) } catch (e2) {} }
+      for (var k = 0; k < 12; k++) { var p = FX.spawn(TEX.chunk, sx + (Math.random() - 0.5) * cp * 0.22, sy - cp * 0.15, (Math.random() - 0.5) * 520 * v.u, -(200 + Math.random() * 340) * v.u, 0.8, cp * (0.06 + Math.random() * 0.035), false); if (p) { p.ay = 2400 * v.u; p.vr = (Math.random() - 0.5) * 12; p.rot = 1; p.floor = sy + cp * 0.12; p.flow = 0.9 } }   // chunky debris arcs and bounces
+      burst(sx, sy, 10, TEX.puff, 280 * v.u, 0.7, cp * 0.24, false)
+      if (W.VFX && W.VFX.dom && !RM) { try { var hr = host.getBoundingClientRect(); W.VFX.dom(hr.left + sx * v.css, hr.top + (sy - cp * 0.2) * v.css, { fx: 'boom', size: cp * v.css * BROK_DOM }) } catch (e2) {} }
       call(S.hits >= 3 ? 'Tidak apa-apa! Pelan-pelan saja.' : 'BROK! Ayo lanjut!', 1300, 'hit' + (S.hits % 2))
       if (S.hits >= 3) { rowSt.assist = Math.min(1, 0.4 + (S.hits - 3) * 0.15) }
     }
@@ -1138,8 +1164,8 @@
         var b = S.bursts[i]; if (!b.on) continue
         b.t += FDT; if (b.t > 0.75) { b.on = false; continue }
         var bi = seqImg('brok', b.t / 0.75 * 8)
-        if (bi) { var bw = cp * 2.3, bh = bw * bi.naturalHeight / bi.naturalWidth; c.globalAlpha = b.t > 0.55 ? Math.max(0, 1 - (b.t - 0.55) / 0.2) : 1; c.drawImage(bi, b.x - bw / 2, b.y - cp * 0.35 - bh / 2, bw, bh); c.globalAlpha = 1 }
-        else { var k = b.t < 0.12 ? b.t / 0.12 * 1.15 : 1.15 - (b.t - 0.12) * 0.25, sz = cp * 1.25 * k; c.globalAlpha = b.t > 0.5 ? 1 - (b.t - 0.5) / 0.25 : 1; c.drawImage(TEX.brok, b.x - sz / 2, b.y - sz / 2, sz, sz); c.globalAlpha = 1 }
+        if (bi) { var bw = cp * BROK_SEQ, bh = bw * bi.naturalHeight / bi.naturalWidth; c.globalAlpha = b.t > 0.55 ? Math.max(0, 1 - (b.t - 0.55) / 0.2) : 1; c.drawImage(bi, b.x - bw / 2, b.y - cp * 0.35 - bh / 2, bw, bh); c.globalAlpha = 1; S.brokDraw = { w: bw, h: bh, cp: cp, seq: true } }
+        else { var k = b.t < 0.12 ? b.t / 0.12 * 1.15 : 1.15 - (b.t - 0.12) * 0.25, sz = cp * BROK_SIZE * k; c.globalAlpha = b.t > 0.5 ? 1 - (b.t - 0.5) / 0.25 : 1; c.drawImage(TEX.brok, b.x - sz / 2, b.y - sz / 2, sz, sz); c.globalAlpha = 1; S.brokDraw = { w: sz, h: sz, cp: cp, seq: false } }
       }
       // ring shockwaves
       for (var r = 0; r < S.rings.length; r++) {
@@ -1381,13 +1407,27 @@
           ring: track ? track.ring.length : 0, made: track ? track.made() : 0, chevrons: track ? track.chevronAudit() : null,
           edu: S.eduResult, eduPrompt: S.edu ? S.edu.prompt : null, particles: FX.live(), cap: FX.cap(), stage: stage.id, target: targetName, corridor: v.w ? { hy: v.hy * v.css, top: (v.playerY - carPx() * 1.15) * v.css, cx: v.cx * v.css, wTop: v.w * 0.04 * v.css, wBot: TR.ROADW * v.hw / Z_P * 1.1 * v.css } : null, rear: rearKey, form: formId, captureMs: S.captureMs, recForm: recForm,
           perk: perk, taunt: TN.on ? TN.text : null, tauntBox: TN.on && TN.box ? { x: TN.box.x * v.css, y: TN.box.y * v.css, w: TN.box.w * v.css, h: TN.box.h * v.css, fs: TN.box.fs * v.css } : null, taunts: S.taunts, smoke: S.smoke, near: S.near, carCss: carPx() * v.css, playerYCss: v.playerY * v.css, formLoading: !!formLoad, count: S.state === 'countdown' ? S.cdN : 0,
-          imgs: Object.keys(img).length, prof: S.prof, missing: Object.keys(need).filter(function (n) { return !img[n] }), boost: S.boost, z: S.z }
+          imgs: Object.keys(img).length, prof: S.prof, missing: Object.keys(need).filter(function (n) { return !img[n] }), boost: S.boost, z: S.z,
+          // the BROK gate (owner 2026-10-07): which branch swallowed the last hit, whether a burst is on
+          // screen, and how big it actually drew relative to the car
+          hearts: S.hearts, brokWhy: S.brokWhy || null, lastHitType: S.lastHitType || null, lastHitPerk: S.lastHitPerk || null,
+          burstOn: S.bursts.filter(function (b) { return b.on }).length, brokDraw: S.brokDraw || null, call: H.call && H.call.classList.contains('on') ? H.callT.textContent : null }
+      },
+      // drive one obstacle type into Mojo with the current form, from a clean state: which branch takes it?
+      probe: function (type) {
+        var m = mojoXY()
+        S.recover = 0; S.shield = 0; S.brokWhy = null; S.brokDraw = null
+        var before = S.brok
+        hit({ type: type, taken: false }, m.x, m.y - carPx() * 0.2)
+        return { type: type, perk: perk, why: S.brokWhy, brok: S.brok - before, hearts: S.hearts, burstOn: S.bursts.filter(function (b) { return b.on }).length }
       },
       auto: function (o) { S.auto = o || null },
       tap: function (what) { if (what === 'go') { var b = host.querySelector('#mc-go'); if (b) b.click() } },
       force: function (o) { for (var k in o) S[k] = o[k] },
       quality: function (qv, lock) { quality = qv; S.qLock = !!lock; resize() }, profile: function (on) { S.prof = on ? {} : null },
-      emitTest: function (kind) { var m = mojoXY(); if (kind === 'brok') { var o = { type: 'crate', taken: false }; S.recover = 0; hit(o, m.x, m.y - carPx() * 0.2) } else if (kind === 'star') pick({ type: 'star' }, m.x, m.y - carPx() * 0.8); else if (kind === 'boost') { S.boostCharge = 1; boost() } else if (kind === 'quiz') pick({ type: 'quiz', taken: false }, m.x, m.y - carPx() * 0.8) }
+      // 'barrier' and not 'crate': no perk neutralises the steel barrier, so the seam fires a real BROK
+      // whatever form is on the road (a crate is smashed by the wrecking ball)
+      emitTest: function (kind) { var m = mojoXY(); if (kind === 'brok') { var o = { type: 'barrier', taken: false }; S.recover = 0; S.shield = 0; hit(o, m.x, m.y - carPx() * 0.2) } else if (kind === 'star') pick({ type: 'star' }, m.x, m.y - carPx() * 0.8); else if (kind === 'boost') { S.boostCharge = 1; boost() } else if (kind === 'quiz') pick({ type: 'quiz', taken: false }, m.x, m.y - carPx() * 0.8) }
 
     }
     return done
