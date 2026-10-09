@@ -67,14 +67,38 @@
   }
   /* object types: block = stops ground movement while unresolved, walk = LEWATI (taken by driving onto it),
      verb = the SEBELAH action that resolves it, push = a Dozer can push it, jump = can be jumped over,
-     pickup = collected on entering (res: which resource it adds) */
+     pickup = collected on entering (res: which resource it adds), road = must stand ON a road cell.
+     DELIVERY FAMILY (owner 2026-10-07, "really varied maze scenarios"), all DATA, no per-level code:
+       carry   picked up with AMBIL beside Mojo and carried (ride = it rides visibly on Mojo)
+       stop    a destination resolved with ANTAR; `accepts` names the id / type / kind it takes,
+               `order` + `seq` make a queue (out of turn = reason 'order'), `keep` = a visit (the
+               passenger stays aboard and travels on), `pay` names its payoff effect
+       wagon   coupled behind Mojo with GANDENG; coupled wagons trail along the cells Mojo leaves
+       loco    the engine at the station: GANDENG hands the whole train over (needs n wagons)
+       gate    opened with BUKA once Mojo holds its key;  key  a LEWATI key
+       pile    scooped with ISI into a resource;  hole  filled with TUANG until its need is met
+       part    a carried plank put down with PASANG over a pit or water (that cell becomes road)
+       mark    a LEWATI trail print, taken in `order`
+       patrol  a blocker that walks a fixed `path` one cell per command (phase = its offset) */
   var TYPES = {
     rock: { block: 1, push: 1, jump: 1, verb: 'push' },
     log: { block: 1, push: 1, jump: 1, verb: 'push' },
     fire: { block: 1, verb: 'spray' },
     person: { block: 1, verb: 'rescue' },
     repair: { block: 1, verb: 'repair' },
-    crate: { block: 1, jump: 1, verb: 'pick' },
+    crate: { block: 1, jump: 1, verb: 'pick', carry: 1 },
+    rider: { block: 1, verb: 'pick', carry: 1, ride: 1 },
+    parcel: { block: 1, jump: 1, verb: 'pick', carry: 1 },
+    part: { block: 1, verb: 'pick', carry: 1, fits: 1 },
+    stop: { block: 1, verb: 'deliver' },
+    wagon: { block: 1, verb: 'couple', trail: 1 },
+    loco: { block: 1, verb: 'couple', loco: 1 },
+    gate: { block: 1, verb: 'unlock', road: 1 },
+    pile: { block: 1, verb: 'load' },
+    hole: { block: 1, verb: 'dump', road: 1 },
+    patrol: { block: 1, patrol: 1, road: 1 },
+    key: { walk: 1, keyed: 1 },
+    mark: { walk: 1, ordered: 1 },
     toolbox: { walk: 1, trigger: 'letters' },
     flag: { walk: 1 },
     zone: { walk: 1 },
@@ -86,7 +110,8 @@
   var REASONS = ['empty', 'grass', 'form', 'unknown-form', 'not-allowed', 'unknown-verb', 'edge', 'terrain', 'object', 'lift-up', 'in-air',
     'carrying', 'no-target', 'ambiguous', 'push-edge', 'push-wall', 'push-object', 'too-tall', 'jump-fire', 'jump-person',
     'jump-repair', 'land', 'no-water', 'height', 'not-raised', 'too-high', 'need-form', 'hands-full', 'too-heavy', 'microgame',
-    'hands-empty', 'drop-here', 'on-ground', 'no-landing', 'need-tool', 'need-bolts', 'need-water', 'cap-full']
+    'hands-empty', 'drop-here', 'on-ground', 'no-landing', 'need-tool', 'need-bolts', 'need-water', 'cap-full',
+    'order', 'wrong-stop', 'need-key', 'need-wagons', 'train-full', 'no-gap', 'no-load', 'hole-full', 'caught']
 
   function defineForm (id, def) {
     def = def || {}
@@ -96,7 +121,7 @@
   function form (id) { return FORMS[id] || null }
   function verbOf (cmd) { return typeof cmd === 'string' ? cmd.split(':')[0] : cmd && cmd.op }
   function can (formId, verb) {
-    if (BASE.indexOf(verb) >= 0 || verb === 'swop') return true
+    if (BASE.indexOf(verb) >= 0 || verb === 'swop' || verb === 'wait') return true
     var f = FORMS[formId]; return !!(f && f.verbs.indexOf(verb) >= 0)
   }
   function formsWith (verb, allowed) {
@@ -111,25 +136,33 @@
     var gr = lv.grid, m = lv.mojo || {}
     var w = {
       rows: gr.rows, cols: gr.cols, map: gr.map, fill: {}, mode: lv.mode === 'rel' ? 'rel' : 'abs',
-      m: { r: m.at[0], c: m.at[1], h: hd(m.h), form: m.form || 'normal', lift: 0, air: false, carry: null },
-      res: copy(lv.res || {}), cap: lv.cap || {}, tools: {}, got: {}, forms: null,
+      m: { r: m.at[0], c: m.at[1], h: hd(m.h), form: m.form || 'normal', lift: 0, air: false, carry: null, train: [], tail: [] },
+      res: copy(lv.res || {}), cap: lv.cap || {}, tools: {}, got: {}, keys: {}, forms: null, tick: 0, patrols: 0,
       objs: (lv.objects || []).map(function (o) {
         var t = TYPES[o.type] || {}
         var x = copy(o); x.r = o.at[0]; x.c = o.at[1]; delete x.at
         x.st = o.st || (o.type === 'fire' ? 'burning' : o.type === 'person' ? 'waiting' : o.type === 'repair' ? 'broken'
-          : o.type === 'rock' || o.type === 'log' ? 'block' : o.type === 'toolbox' ? 'closed' : t.pickup ? 'here' : 'idle')
+          : o.type === 'rock' || o.type === 'log' ? 'block' : o.type === 'toolbox' ? 'closed' : o.type === 'gate' ? 'locked'
+          : t.pickup || t.keyed || t.ordered ? 'here' : 'idle')
         if (o.type === 'fire') x.str = o.str || 1
+        if (o.type === 'hole') x.got = o.got || 0
         return x
       })
     }
+    w.patrols = w.objs.filter(function (o) { return (TYPES[o.type] || {}).patrol }).length
+    w.objs.forEach(function (o) { if ((TYPES[o.type] || {}).patrol) { var p = patrolAt(o, 0); o.r = p[0]; o.c = p[1] } })
     w.beat = 0
     if (beatIndex) for (var i = 1; i <= beatIndex; i++) w = startBeat(w, lv, i)
     return w
   }
   function copy (o) { var r = {}; for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) r[k] = o[k]; return r }
   function clone (w) {
-    return { rows: w.rows, cols: w.cols, map: w.map, fill: copy(w.fill), m: copy(w.m), res: copy(w.res), cap: w.cap,
-      tools: copy(w.tools), got: copy(w.got), forms: w.forms, beat: w.beat, mode: w.mode, objs: w.objs.map(copy) }
+    var m = copy(w.m)
+    m.train = (w.m.train || []).slice()
+    m.tail = (w.m.tail || []).map(function (p) { return [p[0], p[1]] })
+    return { rows: w.rows, cols: w.cols, map: w.map, fill: copy(w.fill), m: m, res: copy(w.res), cap: w.cap,
+      tools: copy(w.tools), got: copy(w.got), keys: copy(w.keys || {}), tick: w.tick || 0, patrols: w.patrols || 0,
+      forms: w.forms, beat: w.beat, mode: w.mode, objs: w.objs.map(copy) }
   }
   // the world placed at beat i: Mojo moves to the beat's start (a scene cut), the rest carries over
   function startBeat (w, lv, i) {
@@ -151,8 +184,13 @@
     s += '|'
     for (var t in w.tools) s += t + ','
     s += '|'
-    for (var i = 0; i < w.objs.length; i++) { var o = w.objs[i]; s += o.r + '.' + o.c + '.' + o.st + (o.str != null ? '.' + o.str : '') + ';' }
+    for (var i = 0; i < w.objs.length; i++) { var o = w.objs[i]; s += o.r + '.' + o.c + '.' + o.st + (o.str != null ? '.' + o.str : '') + (o.got ? '.' + o.got : '') + ';' }
     for (var f in w.fill) s += 'f' + f
+    // the train (coupled wagons and the cells they trail along) and the keys Mojo holds are part of the state;
+    // the command clock only when a patrol actually walks (it would otherwise double the search space)
+    if (m.train.length) s += '|' + m.train.join('.') + '/' + m.tail.map(function (p) { return p[0] + '-' + p[1] }).join('.')
+    for (var kk in w.keys) s += '|k' + kk
+    if (w.patrols) s += '|t' + (w.tick % 24)
     return s
   }
 
@@ -165,6 +203,12 @@
   function terCh (w, r, c) { return w.fill[r + ',' + c] ? '.' : ((w.map[r] || '').charAt(c) || '.') }
   // objects still standing in a cell (rescued people, cleared rocks, carried crates and collected pickups are gone)
   function gone (o) { return o.st === 'rescued' || o.st === 'cleared' || o.st === 'carried' || o.st === 'got' || o.st === 'delivered-gone' }
+  // where a patrol stands after `tick` commands (its own path, one cell per command, offset by `phase`)
+  function patrolAt (o, tick) {
+    var p = o.path && o.path.length ? o.path : [[o.r, o.c]]
+    var i = (((tick + (o.phase || 0)) % p.length) + p.length) % p.length
+    return p[i]
+  }
   function objsAt (w, r, c) {
     var o = []
     for (var i = 0; i < w.objs.length; i++) { var x = w.objs[i]; if (x.r === r && x.c === c && !gone(x)) o.push(x) }
@@ -177,7 +221,12 @@
     if (o.type === 'fire') return o.st !== 'out'
     if (o.type === 'repair') return o.st !== 'fixed'
     if (o.type === 'person') return o.st !== 'rescued'
-    if (o.type === 'crate') return o.st === 'idle'
+    if (o.type === 'gate') return o.st !== 'open'
+    if (o.type === 'hole') return o.st !== 'filled'
+    if (o.type === 'wagon') return o.st === 'idle'
+    if (o.type === 'part') return o.st === 'idle'
+    if (o.type === 'stop' || o.type === 'loco' || o.type === 'pile' || o.type === 'patrol') return true
+    if (t.carry) return o.st === 'idle'
     return !gone(o)
   }
   function blocker (w, r, c) { var a = objsAt(w, r, c); for (var i = 0; i < a.length; i++) if (blocks(a[i])) return a[i]; return null }
@@ -197,6 +246,61 @@
     if (!mv) return res(w0, 'blocked', 'microgame', { id: tb.id, at: [r, c] })
     return null
   }
+  /* ── queues, trains and payloads (owner 2026-10-07) ─────────────────── */
+  // a thing in a queue is resolved only in its turn: a numbered stop, a trail print, an uncle waiting third
+  function orderDone (o) { return o.type === 'stop' ? o.st === 'done' : gone(o) }
+  function orderBlock (w, o) {
+    if (!o || !o.order) return null
+    for (var i = 0; i < w.objs.length; i++) {
+      var x = w.objs[i]
+      if (x === o || (x.seq || '') !== (o.seq || '') || !x.order || x.order >= o.order) continue
+      if (!orderDone(x)) return { next: x.id, order: x.order, mine: o.order }
+    }
+    return null
+  }
+  // a LEWATI item that is out of turn stops Mojo BEFORE he drives onto it (so the trail is followed, not skipped)
+  function orderGate (w0, w, r, c) {
+    if (!inb(w, r, c)) return null
+    var a = objsAt(w, r, c)
+    for (var i = 0; i < a.length; i++) {
+      if (!(TYPES[a[i].type] || {}).ordered || gone(a[i])) continue
+      var b = orderBlock(w, a[i])
+      if (b) return res(w0, 'blocked', 'order', { id: a[i].id, next: b.next, order: b.order, mine: b.mine })
+    }
+    return null
+  }
+  // does this destination take what Mojo is carrying? (id, type or kind — a red parcel to the red mailbox)
+  function accepts (stop, w) {
+    var o = w.m.carry ? find(w, w.m.carry) : null
+    if (!o) return false
+    if (!stop.accepts) return true
+    return stop.accepts === o.id || stop.accepts === o.type || stop.accepts === o.kind
+  }
+  // coupled wagons follow Mojo through the cells he leaves behind
+  function shiftTrail (w, from, ev) {
+    var m = w.m
+    if (!m.train.length) return
+    m.tail = [[from[0], from[1]]].concat(m.tail).slice(0, m.train.length)
+    for (var i = 0; i < m.train.length; i++) {
+      var o = find(w, m.train[i])
+      if (o && m.tail[i]) { o.r = m.tail[i][0]; o.c = m.tail[i][1] }
+    }
+    ev.push({ e: 'trail', ids: m.train.slice(), at: m.tail.map(function (p) { return [p[0], p[1]] }) })
+  }
+  // every patrol takes one step; it catches Mojo if it walks onto his cell
+  function advancePatrols (w, ev) {
+    var t = (w.tick || 0) + 1, hit = null
+    for (var i = 0; i < w.objs.length; i++) {
+      var o = w.objs[i]
+      if (!(TYPES[o.type] || {}).patrol) continue
+      var p = patrolAt(o, t)
+      o.r = p[0]; o.c = p[1]
+      ev.push({ e: 'patrol', id: o.id, at: [o.r, o.c] })
+      if (!w.m.air && o.r === w.m.r && o.c === w.m.c) hit = { id: o.id, at: [o.r, o.c] }
+    }
+    w.tick = t
+    return hit
+  }
   // enter a cell (driving, landing, or flying over it): take every LEWATI item there.
   // A resource stops at its cap; that pickup then stays on the ground (event full, reason cap-full).
   function enter (w, r, c, ev) {
@@ -205,6 +309,8 @@
     for (var i = 0; i < a.length; i++) {
       var o = a[i], t = TYPES[o.type] || {}
       if (o.type === 'toolbox' && o.st === 'closed') { o.st = 'got'; w.tools[o.tool] = true; ev.push({ e: 'tool', id: o.id, tool: o.tool }); continue }
+      if (t.keyed && !gone(o)) { o.st = 'got'; w.keys[o.key || o.id] = true; ev.push({ e: 'key', id: o.id, key: o.key || o.id }); continue }
+      if (t.ordered && !gone(o)) { o.st = 'got'; w.got[o.id] = true; ev.push({ e: 'mark', id: o.id, n: o.order || 0 }); continue }
       if (!t.pickup) continue
       if (t.star) { o.st = 'got'; w.got[o.id] = true; ev.push({ e: 'star', id: o.id }); continue }
       var k = o.res || t.res, cap = w.cap[k], cur = w.res[k] || 0, add = o.n || 1
@@ -220,6 +326,7 @@
   function unresolved (o) {
     if (o.type === 'person') return o.st !== 'rescued'
     if (o.type === 'repair') return o.st !== 'fixed'
+    if (o.type === 'stop') return o.st !== 'done'
     return !gone(o)
   }
   var AIM = {
@@ -228,7 +335,18 @@
     raise: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.elev > 0 && unresolved(o) }) },
     rescue: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'person' && o.st !== 'rescued' }) },
     repair: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'repair' && o.st !== 'fixed' }) },
-    pick: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'crate' && o.st === 'idle' }) },
+    pick: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return (TYPES[o.type] || {}).carry && o.st === 'idle' }) },
+    deliver: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'stop' && o.st !== 'done' && accepts(o, w) }) },
+    couple: function (w, r, c) {
+      return objsAt(w, r, c).some(function (o) {
+        var t = TYPES[o.type] || {}
+        return (t.trail && o.st === 'idle') || (t.loco && o.st !== 'ready')
+      })
+    },
+    unlock: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'gate' && o.st !== 'open' }) },
+    load: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'pile' }) },
+    dump: function (w, r, c) { return objsAt(w, r, c).some(function (o) { return o.type === 'hole' && o.st !== 'filled' }) },
+    place: function (w, r, c) { var ch = terCh(w, r, c); return (ch === 'o' || ch === '~') && !objsAt(w, r, c).length },
     jump: function (w, r, c) {
       if (objsAt(w, r, c).some(function (o) { return (TYPES[o.type] || {}).jump && blocks(o) })) return true
       var ch = terCh(w, r, c); return ch === 'o' || ch === '~'
@@ -278,7 +396,7 @@
     var verb = verbOf(cmd), arg = typeof cmd === 'string' ? cmd.split(':')[1] : null
     var w = clone(w0), m = w.m, ev = [], g
     if (!verb) return res(w0, 'blocked', 'empty')
-    if (verb !== 'swop' && BASE.indexOf(verb) < 0 && !can(m.form, verb)) {
+    if (verb !== 'swop' && verb !== 'wait' && BASE.indexOf(verb) < 0 && !can(m.form, verb)) {
       return res(w0, 'invalid-capability', 'form', { verb: verb, form: m.form, forms: formsWith(verb, w.forms) })
     }
     var a = ahead(w), ar = a[0], ac = a[1]
@@ -300,8 +418,11 @@
           if (b) return res(w0, 'blocked', 'object', { at: a, id: b.id, type: b.type, h: m.h })
         }
         if ((g = enterGate(w0, w, ar, ac, opts))) return g
-        ev.push({ e: 'move', from: [m.r, m.c], to: a })
+        if ((g = orderGate(w0, w, ar, ac))) return g
+        var was = [m.r, m.c]
+        ev.push({ e: 'move', from: was, to: a })
         enter(w, ar, ac, ev)   // flying over a cell takes its items too (the Chopper collects everything)
+        shiftTrail(w, was, ev)
         break
       }
       case 'left': m.h = (m.h + 3) % 4; ev.push({ e: 'turn', h: m.h }); break
@@ -332,8 +453,10 @@
           p.st = z.length ? 'cleared' : 'pushed'
         }
         ev.push({ e: 'push', id: p.id, to: d })
-        ev.push({ e: 'move', from: [m.r, m.c], to: a })
+        var pwas = [m.r, m.c]
+        ev.push({ e: 'move', from: pwas, to: a })
         enter(w, ar, ac, ev)
+        shiftTrail(w, pwas, ev)
         break
       }
       case 'jump': {
@@ -357,8 +480,11 @@
         var lb = blocker(w, l[0], l[1])
         if (lb) return res(w0, 'blocked', 'land', { at: l, id: lb.id, type: lb.type })
         if ((g = enterGate(w0, w, l[0], l[1], opts))) return g
-        ev.push({ e: 'jump', from: [m.r, m.c], to: l, over: a })
+        if ((g = orderGate(w0, w, l[0], l[1]))) return g
+        var jwas = [m.r, m.c]
+        ev.push({ e: 'jump', from: jwas, to: l, over: a })
         enter(w, l[0], l[1], ev)
+        shiftTrail(w, jwas, ev)
         break
       }
       case 'spray': {
@@ -396,17 +522,108 @@
       }
       case 'pick': case 'hook': {
         if (m.carry) return res(w0, 'blocked', 'hands-full', { id: m.carry })
-        var tg = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.type === 'crate' && o.st === 'idle' })[0] : null
+        var tg = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return (TYPES[o.type] || {}).carry && o.st === 'idle' })[0] : null
         if (!tg) return res(w0, 'blocked', 'no-target', { verb: verb })
         if (tg.heavy && verb !== 'hook') return res(w0, 'blocked', 'too-heavy', { id: tg.id })
+        var pb = orderBlock(w, tg)
+        if (pb) return res(w0, 'blocked', 'order', { id: tg.id, next: pb.next, order: pb.order, mine: pb.mine })
         tg.st = 'carried'; m.carry = tg.id
-        ev.push({ e: 'pick', id: tg.id })
+        ev.push({ e: 'pick', id: tg.id, ride: !!(TYPES[tg.type] || {}).ride })
         break
       }
+      /* ANTAR: hand what Mojo carries to the destination beside him. `keep` = a visit (the passenger stays
+         aboard and rides on to the next uncle); otherwise the passenger steps off and the stop is done. */
+      case 'deliver': {
+        if (!m.carry) return res(w0, 'blocked', 'hands-empty')
+        var sp = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.type === 'stop' && o.st !== 'done' && accepts(o, w) })[0]
+          || objsAt(w, ar, ac).filter(function (o) { return o.type === 'stop' && o.st !== 'done' })[0] : null
+        if (!sp) return res(w0, 'blocked', 'no-target', { verb: 'deliver' })
+        if (!accepts(sp, w)) return res(w0, 'blocked', 'wrong-stop', { id: sp.id, carry: m.carry, wants: sp.accepts })
+        var sb = orderBlock(w, sp)
+        if (sb) return res(w0, 'blocked', 'order', { id: sp.id, next: sb.next, order: sb.order, mine: sb.mine })
+        if ((g = heightBlock(w0, w, sp, 'deliver'))) return g   // a nest up a tree: NAIK to it first
+        var cg = find(w, m.carry)
+        sp.got = (sp.got || 0) + 1
+        if (sp.got >= (sp.need || 1)) sp.st = 'done'
+        if (!sp.keep) { cg.r = sp.r; cg.c = sp.c; cg.st = 'delivered-gone'; m.carry = null }
+        ev.push({ e: 'deliver', id: sp.id, cargo: cg.id, keep: !!sp.keep, pay: sp.pay || null, at: [sp.r, sp.c], done: sp.st === 'done' })
+        break
+      }
+      /* GANDENG: a wagon joins the line behind Mojo; at the station the whole line is handed to the engine. */
+      case 'couple': {
+        var cand = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) {
+          var t = TYPES[o.type] || {}
+          return (t.trail && o.st === 'idle') || (t.loco && o.st !== 'ready')
+        })[0] : null
+        if (!cand) return res(w0, 'blocked', 'no-target', { verb: 'couple' })
+        if ((TYPES[cand.type] || {}).loco) {
+          var need = cand.needs || 1
+          if (m.train.length < need) return res(w0, 'blocked', 'need-wagons', { id: cand.id, need: need, have: m.train.length })
+          cand.st = 'ready'; cand.wagons = m.train.length
+          m.train.forEach(function (id) { var x = find(w, id); if (x) x.st = 'delivered' })
+          ev.push({ e: 'train', id: cand.id, n: m.train.length, ids: m.train.slice(), pay: cand.pay || 'horn' })
+          m.train = []; m.tail = []
+          break
+        }
+        var tcap = m.tcap || 3
+        if (m.train.length >= tcap) return res(w0, 'blocked', 'train-full', { have: m.train.length, cap: tcap })
+        cand.st = 'coupled'
+        m.train = m.train.concat([cand.id])
+        m.tail = m.tail.concat([[cand.r, cand.c]])
+        ev.push({ e: 'couple', id: cand.id, n: m.train.length })
+        break
+      }
+      /* BUKA: the gate opens once Mojo holds its key (the key is a LEWATI pickup). */
+      case 'unlock': {
+        var gt = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.type === 'gate' && o.st !== 'open' })[0] : null
+        if (!gt) return res(w0, 'blocked', 'no-target', { verb: 'unlock' })
+        var nk = gt.key || 'kunci'
+        if (!w.keys[nk]) return res(w0, 'blocked', 'need-key', { id: gt.id, key: nk })
+        gt.st = 'open'
+        ev.push({ e: 'unlock', id: gt.id, key: nk })
+        break
+      }
+      /* ISI / TUANG: a scoop from the pile, poured into the hole until its need is met (that cell becomes road). */
+      case 'load': {
+        var pl = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.type === 'pile' })[0] : null
+        if (!pl) return res(w0, 'blocked', 'no-target', { verb: 'load' })
+        var lk = pl.res || 'sand', lcap = w.cap[lk], lcur = w.res[lk] || 0
+        if (lcap != null && lcur >= lcap) return res(w0, 'blocked', 'cap-full', { res: lk, id: pl.id })
+        w.res[lk] = lcap != null ? Math.min(lcap, lcur + (pl.n || 1)) : lcur + (pl.n || 1)
+        ev.push({ e: 'load', id: pl.id, res: lk, value: w.res[lk] })
+        break
+      }
+      case 'dump': {
+        var hl = inb(w, ar, ac) ? objsAt(w, ar, ac).filter(function (o) { return o.type === 'hole' && o.st !== 'filled' })[0] : null
+        if (!hl) return res(w0, 'blocked', 'no-target', { verb: 'dump' })
+        var dk = hl.res || 'sand', dneed = (hl.need || 1) - (hl.got || 0), dhave = w.res[dk] || 0
+        if (dhave <= 0) return res(w0, 'blocked', 'no-load', { id: hl.id, res: dk, need: dneed })
+        var dused = Math.min(dhave, dneed)
+        w.res[dk] = dhave - dused; hl.got = (hl.got || 0) + dused
+        if (hl.got >= (hl.need || 1)) { hl.st = 'filled'; w.fill[hl.r + ',' + hl.c] = 1 } else hl.st = 'part'
+        ev.push({ e: 'dump', id: hl.id, used: dused, left: (hl.need || 1) - hl.got, filled: hl.st === 'filled' })
+        break
+      }
+      /* PASANG: the carried plank goes down over the gap beside Mojo and becomes a crossing. */
+      case 'place': {
+        if (!m.carry) return res(w0, 'blocked', 'hands-empty')
+        var pc = find(w, m.carry)
+        if (!(TYPES[pc.type] || {}).fits) return res(w0, 'blocked', 'drop-here', { at: a, id: pc.id })
+        if (!inb(w, ar, ac)) return res(w0, 'blocked', 'edge', { at: a })
+        var pch = terCh(w, ar, ac)
+        if (!((pch === 'o' || pch === '~') && !w.fill[ar + ',' + ac])) return res(w0, 'blocked', 'no-gap', { at: a, terrain: pch })
+        if (objsAt(w, ar, ac).length) return res(w0, 'blocked', 'drop-here', { at: a })
+        pc.r = ar; pc.c = ac; pc.st = 'placed'; m.carry = null
+        w.fill[ar + ',' + ac] = 1
+        ev.push({ e: 'place', id: pc.id, at: a, terrain: pch })
+        break
+      }
+      case 'wait': ev.push({ e: 'wait' }); break
       case 'drop': case 'release': {
         if (!m.carry) return res(w0, 'blocked', 'hands-empty')
         if (!inb(w, ar, ac) || !ter(w, ar, ac).pass || objsAt(w, ar, ac).filter(function (o) { return o.type !== 'zone' }).length) return res(w0, 'blocked', 'drop-here', { at: a })
         var cr = find(w, m.carry)
+        if ((TYPES[cr.type] || {}).ride) return res(w0, 'blocked', 'drop-here', { at: a, id: cr.id, ride: true })
         cr.r = ar; cr.c = ac
         var zz = objsAt(w, ar, ac).filter(function (o) { return o.type === 'zone' && (!o.accepts || o.accepts === cr.type || o.accepts === cr.id) })
         cr.st = zz.length ? 'delivered' : 'idle'
@@ -438,6 +655,7 @@
       }
       default: return res(w0, 'invalid-capability', 'unknown-verb', { verb: verb })
     }
+    if (w.patrols) { var caught = advancePatrols(w, ev); if (caught) return res(w0, 'blocked', 'caught', caught) }
     return res(w, 'success', null, null, ev)
   }
 
@@ -450,7 +668,14 @@
       case 'rescue': return !!o && o.st === 'rescued'
       case 'repair': return !!o && o.st === 'fixed'
       case 'clear': return !!o && o.st === 'cleared'
-      case 'deliver': return !!o && o.st === 'delivered'
+      case 'deliver': return !!o && (o.st === 'delivered' || o.st === 'done')
+      case 'visit': return !!o && (o.st === 'done' || o.st === 'got')
+      case 'train': return !!o && o.st === 'ready'
+      case 'fill': return !!o && o.st === 'filled'
+      case 'open': return !!o && o.st === 'open'
+      case 'place': return !!o && o.st === 'placed'
+      case 'carry': return w.m.carry === ob.id
+      case 'key': return !!w.keys[ob.key || ob.id]
       case 'tool': return !!w.tools[ob.tool]
       case 'collect': return (w.res[ob.res] || 0) >= ob.n
       case 'star': return !!w.got[ob.id]
@@ -554,6 +779,7 @@
   }
   function useful (w, c) {
     if (c.indexOf('swop:') === 0 && c.slice(5) === w.m.form) return false
+    if (c === 'wait' && !w.patrols) return false   // waiting changes nothing when nothing moves on its own
     return can(w.m.form, verbOf(c))
   }
   function solve (w0, beat, opts) {
@@ -661,15 +887,16 @@
       var ch = (gr.map[o.at[0]] || '').charAt(o.at[1]), tr = TERRAIN[ch] || {}
       // LEWATI items, pushables and crates (Mojo enters or carries from that cell) sit ON the road;
       // other SEBELAH targets may stand on road or on park grass beside it
-      var onRoad = t.walk || t.push || o.type === 'crate'
+      var onRoad = t.walk || t.push || t.carry || t.trail || t.road
       if (onRoad ? !tr.road : !(tr.road || tr.grass)) p.push(lv.id + ': ' + o.id + ' stands on ' + (tr.name || ch) + (onRoad && tr.grass ? ' (it must sit ON the road)' : ''))
     })
     p = p.concat(lintRule(lv))
+    p = p.concat(lintDelivery(lv, ids))
     ;(lv.beats || []).forEach(function (b, bi) {
       if (!b.objectives || !b.objectives.length) p.push(lv.id + ': beat ' + bi + ' has no objective')
       ;(b.objectives || []).forEach(function (ob) { if (ob.id && !ids[ob.id]) p.push(lv.id + ': beat ' + bi + ' objective names ' + ob.id) })
       ;(b.forms || []).forEach(function (f) { if (!FORMS[f]) p.push(lv.id + ': unknown form ' + f) })
-      ;(b.palette || []).forEach(function (c) { var v = verbOf(c); if (v === 'swop') { if (!FORMS[c.split(':')[1]]) p.push(lv.id + ': palette swop ' + c) } else if (BASE.indexOf(v) < 0 && !formsWith(v).length) p.push(lv.id + ': palette verb ' + c) })
+      ;(b.palette || []).forEach(function (c) { var v = verbOf(c); if (v === 'swop') { if (!FORMS[c.split(':')[1]]) p.push(lv.id + ': palette swop ' + c) } else if (BASE.indexOf(v) < 0 && v !== 'wait' && !formsWith(v).length) p.push(lv.id + ': palette verb ' + c) })
       if (!(b.slots > 0)) p.push(lv.id + ': beat ' + bi + ' slots')
     })
     return p
@@ -731,6 +958,60 @@
     }
     return p
   }
+  /* the delivery family, statically (owner 2026-10-07): a queue is a complete 1..n run, a destination names
+     something that exists and can actually be carried to it, a gate has its key somewhere on the board, the
+     station has enough wagons, a hole has a pile (or a starting load), and a patrol walks on road only. */
+  function lintDelivery (lv, ids) {
+    var p = [], objs = lv.objects || [], byId = {}, kinds = {}, types = {}, keys = {}, seqs = {}
+    objs.forEach(function (o) {
+      byId[o.id] = o; types[o.type] = (types[o.type] || 0) + 1
+      if (o.kind) kinds[o.kind] = (kinds[o.kind] || 0) + 1
+      if ((TYPES[o.type] || {}).keyed) keys[o.key || o.id] = 1
+      if (o.order) {
+        var g = seqs[o.seq || ''] = seqs[o.seq || ''] || []
+        g.push(o)
+      }
+    })
+    for (var sq in seqs) {
+      var g = seqs[sq].slice().sort(function (a, b) { return a.order - b.order }), seen = {}
+      g.forEach(function (o) {
+        if (seen[o.order]) p.push(lv.id + ': two things numbered ' + o.order + ' in queue "' + sq + '" (' + seen[o.order] + ', ' + o.id + ')')
+        seen[o.order] = o.id
+      })
+      for (var n = 1; n <= g.length; n++) if (!seen[n]) p.push(lv.id + ': queue "' + sq + '" has no number ' + n + ' (it jumps from ' + (n - 1) + ')')
+    }
+    objs.forEach(function (o) {
+      if (o.type === 'stop') {
+        if (!o.accepts) { p.push(lv.id + ': ' + o.id + ' takes anything (give it accepts)'); return }
+        var n = (byId[o.accepts] ? 1 : 0) + (types[o.accepts] || 0) + (kinds[o.accepts] || 0)
+        if (!n) p.push(lv.id + ': ' + o.id + ' accepts "' + o.accepts + '", which nothing on the board is')
+        else if (byId[o.accepts] && !(TYPES[byId[o.accepts].type] || {}).carry) p.push(lv.id + ': ' + o.id + ' accepts ' + o.accepts + ', which cannot be carried')
+      }
+      if (o.type === 'gate' && !keys[o.key || 'kunci']) p.push(lv.id + ': ' + o.id + ' needs the key "' + (o.key || 'kunci') + '", which is not on the board')
+      if (o.type === 'loco' && (types.wagon || 0) < (o.needs || 1)) p.push(lv.id + ': ' + o.id + ' needs ' + (o.needs || 1) + ' wagons, the board has ' + (types.wagon || 0))
+      if (o.type === 'hole') {
+        var hres = o.res || 'sand'
+        if (!types.pile && !((lv.res || {})[hres] >= (o.need || 1))) p.push(lv.id + ': ' + o.id + ' needs ' + (o.need || 1) + ' ' + hres + ' and the board has no pile to load from')
+        if ((lv.cap || {})[hres] == null) p.push(lv.id + ': ' + o.id + ' pours ' + hres + ', which has no cap')
+      }
+      if (o.type === 'patrol') {
+        var path = o.path || []
+        if (path.length < 2) p.push(lv.id + ': ' + o.id + ' has no patrol path')
+        path.forEach(function (c) {
+          var tr = TERRAIN[((lv.grid.map[c[0]] || '').charAt(c[1]))] || {}
+          if (!tr.road) p.push(lv.id + ': ' + o.id + ' patrols ' + c.join(',') + ', which is not road')
+        })
+      }
+      if ((TYPES[o.type] || {}).fits && !(lv.grid.map || []).join('').match(/[o~]/)) p.push(lv.id + ': ' + o.id + ' is a plank and the board has no gap to bridge')
+    })
+    ;(lv.beats || []).forEach(function (b, bi) {
+      var pal = b.palette || []
+      if (pal.indexOf('deliver') >= 0 && pal.indexOf('pick') < 0) p.push(lv.id + ': beat ' + bi + ' offers ANTAR without AMBIL')
+      if (pal.indexOf('dump') >= 0 && pal.indexOf('load') < 0) p.push(lv.id + ': beat ' + bi + ' offers TUANG without ISI')
+      if (pal.indexOf('place') >= 0 && pal.indexOf('pick') < 0) p.push(lv.id + ': beat ' + bi + ' offers PASANG without AMBIL')
+    })
+    return p
+  }
   function prep (w, lv, b) { var n = clone(w); n.forms = lv.beats[b].forms || null; return n }
   // Bounded checkpoint verification. `ok` covers tested starts; `complete` discloses any omitted states.
   function verify (lv, opts) {
@@ -775,11 +1056,12 @@
   }
 
   G.ProgGrid = {
-    VERSION: '1.2.0', REASONS: REASONS, AIM_VERBS: Object.keys(AIM), aim: aim, unresolved: unresolved, DIRS: DIRS, HEAD: HEAD, BASE: BASE, ABS: ABS, REL: REL, ABS_H: ABS_H, moves: moves, modeOf: modeOf, TERRAIN: TERRAIN, TYPES: TYPES,
+    VERSION: '1.3.0', REASONS: REASONS, AIM_VERBS: Object.keys(AIM), aim: aim, unresolved: unresolved, DIRS: DIRS, HEAD: HEAD, BASE: BASE, ABS: ABS, REL: REL, ABS_H: ABS_H, moves: moves, modeOf: modeOf, TERRAIN: TERRAIN, TYPES: TYPES,
     defineForm: defineForm, form: form, forms: function () { return Object.keys(FORMS) }, can: can, formsWith: formsWith, verbOf: verbOf,
     world: world, startBeat: startBeat, prep: prep, clone: clone, key: key, find: find, objsAt: objsAt, blocks: blocks, ahead: ahead, terrain: ter, terrainChar: terCh,
     step: step, stepBeat: stepBeat, ok: ok, met: met, beatDone: beatDone, cond: cond,
     cursor: cursor, size: size, flat: flat, run: run,
+    accepts: accepts, orderBlock: orderBlock, patrolAt: patrolAt, lintDelivery: lintDelivery,
     palette: palette, solve: solve, count: count, hint: hint, lint: lint, lintRule: lintRule, verify: verify
   }
 })(typeof window !== 'undefined' ? window : globalThis)

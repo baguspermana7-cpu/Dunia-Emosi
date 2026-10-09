@@ -451,7 +451,8 @@ HALO_MAX = {
 HALO_EXEMPT = {'mojo-char/' + n for n in ('bird', 'cat', 'cow', 'dog', 'rabbit', 'sheep')}
 SMEAR_MAX = 80                    # [63 mojo-top/searchlight: its painted light beam]; families below
 SMEAR_FAMILIES = ('mojo-hero', 'mojo-turn', 'mojo-char', 'mojo-top', 'mojo-prop', 'mojo-rear', 'mojo-fx', 'mojo-ui', 'mojo-tile',
-                  'mojo-chase/items', 'mojo-chase/props', 'mojo-chase/robbers', 'mojo-chase/vehicles', 'mojo-chase/signs')
+                  'mojo-chase/items', 'mojo-chase/props', 'mojo-chase/robbers', 'mojo-chase/vehicles', 'mojo-chase/signs',
+                  'mojo-train', 'mojo-cross')
 FLOOR_MAX = 30                    # wheeled film poses [6 offroad/van]; unfixed base-bo 130, van 504
 FLOOR_GATED = {'mojo-hero/' + n for n in hero.WHEELED}
 
@@ -523,7 +524,11 @@ RING_COVERAGE = 0.90      # measured 2026-10-03: worst 0.994 (mojo-hero/base-fro
 BOARD_OUTLINED = ('mojo-prop/house', 'mojo-prop/shop', 'mojo-prop/hospital', 'mojo-prop/factory', 'mojo-prop/garage',
                   'mojo-prop/school', 'mojo-prop/star', 'mojo-prop/toolbox', 'mojo-prop/tree-round', 'mojo-prop/lamp-post',
                   'mojo-prop/bolt', 'mojo-prop/hammer', 'mojo-prop/screwdriver', 'mojo-prop/wrench', 'mojo-tile/crate',
-                  'mojo-prop/rock-road', 'mojo-prop/flag-board')
+                  'mojo-prop/rock-road', 'mojo-prop/flag-board') + tuple(
+    # the delivery family (owner 2026-10-07, tools/ingest-mojo-train.py): the train rake Mojo couples and the
+    # cross-world guests he carries are board objects, so they carry the same white sticker ring
+    'mojo-train/' + n for n in ('malivlak', 'malivlak-rake', 'diesel', 'coach-annie', 'coach-slip', 'tanker',
+                                'cargo-nate', 'ice-penny', 'water-red')) + ('mojo-cross/ash', 'mojo-cross/pikachu')
 # full-cell ground tiles and the flame (a ring round fire reads wrong; its rim is recoloured instead) never get one
 BOARD_NEVER = ('mojo-tile/road', 'mojo-tile/grass', 'mojo-tile/water', 'mojo-tile/trap-hole', 'mojo-tile/indoor-floor',
                'mojo-tile/wall', 'mojo-fx/flame-road')

@@ -398,7 +398,7 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
   .lvl:hover{transform:translateY(-2px)}
 }
 @media (prefers-reduced-motion:reduce){
-  .cloud,.home-mojo,.lvl.next,.ob.pickup img,.ob.fire img,.cmd.cand,.slot.ghost .chip,.ob.focus::before,.mojo.air .mj-rotor{animation:none!important}
+  .cloud,.home-mojo,.lvl.next,.ob.pickup img,.ob.fire img,.cmd.cand,.slot.ghost .chip,.ob.focus::before,.mojo.air .mj-rotor,.mj-cargo.on,.mj-cargo.rider img{animation:none!important}
   .slot.fail .chip{animation:none}
   .card,.mg,.overlay.on,.scr.active,.bubble.say p{animation:scrIn .2s ease both!important}
   .stars i.on{animation:scrIn .25s ease both}
@@ -534,6 +534,21 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
 .ob.resolved .act{opacity:0;transform:scale(.6)}
 /* a raised friend stands on a perch drawn under them: a tree, or a balcony (the railing is .elev::after) */
 .ob .perch{position:absolute;inset:0;width:100%!important;height:100%!important;opacity:.95;transform:none!important;animation:none!important}
+/* ── the delivery family (owner 2026-10-07) ─────────────────────────────────────────────────
+   A carried passenger or parcel RIDES on Mojo: a seat pinned above his cab, scaled to the cell.
+   A coupled wagon trails behind him, so it keeps its art but drops its action badge. */
+.mj-cargo{position:absolute;left:50%;bottom:62%;width:52%;height:52%;transform:translateX(-50%);display:none;z-index:4;pointer-events:none}
+.mj-cargo.on{display:block;animation:cargo-in .32s var(--ease-out)}
+.mj-cargo img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(0,0,0,.3))}
+.mj-cargo.rider{bottom:66%;width:58%;height:58%}
+.mj-cargo.rider img{animation:float 2.4s var(--ease-io) infinite}
+@keyframes cargo-in{from{transform:translateX(-50%) translateY(26%) scale(.5);opacity:0}to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}}
+.ob.coupled .act{opacity:0;transform:scale(.6)}
+.ob.coupled img.main{filter:drop-shadow(0 3px 2px rgba(0,0,0,.3))}
+.ob.rider img,.ob.stop img,.ob.loco img{width:92%;height:92%}
+.ob.stop img,.ob.loco img{transform:translateY(-6%)}
+.ob.mark img,.ob.key img{width:58%;height:58%}
+.ob.hole img{width:76%;height:76%}
 .ob.perch-balcony::before{content:'';position:absolute;left:4%;right:4%;bottom:4%;height:36%;border-radius:6px;background:linear-gradient(180deg,#B0BEC5,#78909C);box-shadow:0 3px 0 rgba(0,0,0,.25)}
 .ob.perch-balcony.focus::before{box-shadow:0 0 0 5px #FFE14D,0 0 18px 6px rgba(255,225,77,.8)}
 .ob.gone .perch{opacity:.95}
@@ -694,6 +709,11 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
 .mfx{position:absolute;display:block;pointer-events:none;z-index:6;background:no-repeat center/contain;will-change:transform,opacity}
 .mfx.under{z-index:0}
 .mfx-dot{border-radius:50%;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
+/* the crash kit (games/mojo-fx.js bump, owner 2026-10-08): chunky debris, and the 80 ms hit-stop that holds the
+   board still on impact before the shake lands. The stop is lifted by the timer or by Berhenti, never left on. */
+.mfx-chunk{border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.28),inset 0 -2px 0 rgba(0,0,0,.18)}
+.mfx-brok{filter:drop-shadow(0 3px 3px rgba(0,0,0,.28))}
+.board.mfx-stop,.board.mfx-stop *{animation-play-state:paused!important}
 .mfx-ring{border:4px solid #fff;border-radius:50%;box-sizing:border-box}
 .mfx-top svg,.mfx-top img{width:100%;height:100%;display:block}
 .mfx-txt{display:flex;align-items:center;justify-content:center;font-family:'Fredoka One','Nunito',sans-serif;font-size:max(18px,calc(var(--cell)*.3));color:#fff;-webkit-text-stroke:3px #fff;paint-order:stroke fill;text-shadow:0 2px 0 rgba(0,0,0,.18);white-space:nowrap}

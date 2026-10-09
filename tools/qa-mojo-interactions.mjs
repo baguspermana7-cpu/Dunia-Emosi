@@ -17,6 +17,11 @@ async function auto(){
  if(mg?.kind==='height')await tap(`[data-v="${mg.answer}"]`);
 }
 async function idle(){for(let n=0;n<350;n++){await auto();if(await p.evaluate(()=>!__mojo.state().running))return;await sleep(80)}throw Error('Run did not stop')}
+/* The three whole-catalogue sweeps below (hint ladder, Tunjukkan Caranya, event questions) run every level.
+   QA_LEVELS=<ids> narrows them to one slice while a new family is being built; unset = the whole catalogue,
+   which is what ships. */
+const ONLY=process.env.QA_LEVELS?process.env.QA_LEVELS.split(','):null;
+async function LEVELS(page){const all=await page.evaluate(()=>__mojo.levels());return ONLY?all.filter(id=>ONLY.includes(id)):all}
 try{
  await p.goto('http://localhost:8081/games/mojo-swoptops.html?unlock=1',{waitUntil:'networkidle0'});
  await p.waitForFunction(()=>window.__mojo?.ready&&navigator.serviceWorker.controller);await sleep(800);
@@ -118,7 +123,7 @@ try{
  await tap('#bo-details');assert.equal(await p.$eval('#bo-full',e=>e.textContent),'Itu rumput taman. Mojo jalan di jalan raya saja.');await p.screenshot({path:out+'/grass-stop.png'});await tap('#bo-close');
  console.log('Real tap onto grass: Mojo stops with "Itu rumput taman. Mojo jalan di jalan raya saja." PASS');
  // ── hint ladder: four distinct, concrete rungs; never exhausted (owner 2026-10-03, m6 photo) ──
- for(const id of await p.evaluate(()=>__mojo.levels())){
+ for(const id of await LEVELS(p)){
   await start(id);const texts=[];
   for(let k=1;k<=5;k++){await tap('#btn-hint');texts.push(await p.evaluate(()=>__mojo.state().hintText))}
   const [r1,r2,r3,r4,r5]=texts;
@@ -136,7 +141,7 @@ try{
  await start('t2');await program(['west']);for(let k=0;k<2;k++){assert.equal(await p.$eval('#btn-show',e=>e.hidden),true);await tap('#btn-run');await idle()}
  assert.equal(await p.$eval('#btn-show',e=>e.hidden),false,'offered after two stopped runs');console.log('Tunjukkan Caranya offered after two stopped runs PASS');
  // ── show me: fills a solvable plan for EVERY beat of EVERY level, narrates it, the child runs it, 1 star ──
- for(const id of await p.evaluate(()=>__mojo.levels())){
+ for(const id of await LEVELS(p)){
   await start(id);const beats=await p.evaluate(()=>__mojo.state().beats);
   for(let bi=0;bi<beats;bi++){
    await p.waitForFunction(b=>__mojo.state().beat===b&&!__mojo.state().trans&&!document.getElementById('btn-run').disabled,{},bi);
@@ -158,7 +163,7 @@ try{
  await p.screenshot({path:out+'/show-me-result.png'});console.log('Tunjukkan Caranya: every beat of every level filled, narrated, run by the child, 1 star PASS');
  // ── event questions: drawn, counted, about this level (owner 2026-10-03, m6 photo) ──
  let asked=0;
- for(const id of await p.evaluate(()=>__mojo.levels())){
+ for(const id of await LEVELS(p)){
   for(const evs of [[{e:'collect',res:'bolts'}],[{e:'bump',reason:'object'}],[{e:'ended'}]]){
    await start(id);await p.evaluate(()=>{const real=window.__qaReal||(window.__qaReal=performance.now.bind(performance));window.__qaShift=(window.__qaShift||0)+130000;performance.now=()=>real()+window.__qaShift});
    const ok=await p.evaluate(e=>__mojo.eventQuestion(()=>{},e),evs);if(!ok)continue;asked++;
@@ -171,7 +176,7 @@ try{
    await tap('#event-skip');
   }
  }
- assert.ok(asked>=20,'event questions checked: '+asked);await p.evaluate(()=>{if(window.__qaReal)performance.now=window.__qaReal});
+ assert.ok(asked>=(ONLY?ONLY.length*2:20),'event questions checked: '+asked+(ONLY?' over '+ONLY.length+' scoped levels':''));await p.evaluate(()=>{if(window.__qaReal)performance.now=window.__qaReal});
  console.log('Event questions: '+asked+' drawn scenes, nouns from the level, moment explained, 56px answers PASS');
  // ── everything open (owner decision 2026-10-06): no locked tile anywhere; stars still recorded ──
  {
@@ -179,7 +184,7 @@ try{
   await q.goto('http://localhost:8081/games/mojo-swoptops.html',{waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);
   await q.evaluate(()=>avatarScopedRemove('dunia-g31-mojo'));await q.reload({waitUntil:'networkidle0'});await q.waitForFunction(()=>window.__mojo?.ready);await sleep(400);
   const open=async id=>{await q.evaluate(id=>__mojo.map(id),id);await sleep(200);return q.$$eval('.lvl',bs=>bs.map(b=>b.classList.contains('lock')?0:1).join(''))};
-  assert.equal(await open('kota'),'111111111111','a fresh save opens every Kota Pusat level');
+  {const k=await open('kota');assert.ok(k.length>=12&&/^1+$/.test(k),'a fresh save opens every Kota Pusat level: '+k)}
   for(const r of await q.evaluate(()=>MojoLevels.REGIONS.map(r=>r.id)))assert.ok(!(await open(r)).includes('0'),r+': every level open on a fresh save');
   const qt=async s=>{if(s==='#bo-details'&&!(await q.$eval('#bo',e=>e.classList.contains('open')))){await (await q.$(s)).click();await sleep(60)}const e=await q.$(s);await e.click();await sleep(60)};
   await open('kota');await qt('[data-level="s1"]');assert.equal(await q.evaluate(()=>__mojo.state()?.id),'s1','tapping any tile starts it (no "Selesaikan" toast)');

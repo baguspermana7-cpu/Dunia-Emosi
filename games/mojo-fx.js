@@ -140,6 +140,66 @@
     if (RM) play(n, [{ opacity: 0 }, { opacity: 1, offset: 0.25 }, { opacity: 1, offset: 0.75 }, { opacity: 0 }], 1000, 'ease')
     else play(n, [{ transform: 'translateY(8px) scale(.7)', opacity: 0 }, { transform: 'translateY(-6px) scale(1.12)', opacity: 1, offset: 0.25 }, { transform: 'translateY(-10px) scale(1)', opacity: 1, offset: 0.75 }, { transform: 'translateY(-26px) scale(1)', opacity: 0 }], 1100, EOUT)
   }
+  /* ── the crash kit (owner 2026-10-08: "when Mojo crashes the BROK text effect and the like don't appear") ──
+     The board borrows the chase's own owner art (assets/db/lib/mojo-chase/vfx/brok-burst, dizzy-1..8) so a bump
+     reads the same in both games. Everything here is transform/opacity, lives in the bump group (so Berhenti and
+     the 6-effect cap clear it) and is clamped inside the board, never over the palette or Bo's chip. ── */
+  function chaseUrl (k) { return cfg.lib('mojo-chase/vfx/' + k) }
+  var CRASH_ART = ['brok-burst', 'dizzy-1', 'dizzy-2', 'dizzy-3', 'dizzy-4', 'dizzy-5', 'dizzy-6', 'dizzy-7', 'dizzy-8']
+  // keep an effect box inside the board: outside it lie the palette and Bo's chip
+  function inBoard (x, y, w, h) {
+    var b = cfg && cfg.board && cfg.board(); if (!b || !b.offsetWidth) return [x, y]
+    return [Math.max(w / 2, Math.min(b.offsetWidth - w / 2, x)), Math.max(h / 2, Math.min(b.offsetHeight - h / 2, y))]
+  }
+  // chunky debris thrown out and pulled down: up fast, then a faster fall, gone inside ms
+  function chunks (g, x, y, n, ms) {
+    if (RM) return
+    var s = cell(), COL = ['#C98A3C', '#8D6E63', '#90A4AE', '#FFD54F', '#A1887F']
+    for (var k = 0; k < n; k++) {
+      var side = k % 2 ? 1 : -1, dx = side * s * (0.28 + (k * 23 % 45) / 100), up = s * (0.3 + (k * 31 % 35) / 100)
+      var sz = Math.max(7, s * (0.12 + (k * 13 % 5) / 50))
+      var p = node(g, 'mfx-chunk', x, y, sz, sz * (k % 3 ? 1 : 0.7), 7); if (!p) return
+      p.style.background = COL[k % COL.length]
+      // thrown out and up (ease-out), then pulled down faster and faster (ease-in): gravity, per keyframe, so
+      // the effect-level curve never compresses the arc into the first frames
+      play(p, [
+        { transform: 'translate(0,0) rotate(0)', opacity: 1, offset: 0, easing: 'cubic-bezier(.17,.84,.44,1)' },
+        { transform: 'translate(' + (dx * 0.55).toFixed(1) + 'px,' + (-up).toFixed(1) + 'px) rotate(' + (k * 70) + 'deg)', opacity: 1, offset: 0.38, easing: 'cubic-bezier(.55,0,1,.45)' },
+        { transform: 'translate(' + dx.toFixed(1) + 'px,' + (s * 0.42).toFixed(1) + 'px) rotate(' + (k * 190) + 'deg)', opacity: 0, offset: 1 }
+      ], ms, 'linear')
+    }
+  }
+  /* an owner frame pack from the chase played in place (a background swap on a timer, never per rAF) */
+  function chaseSeq (g, base, n, x, y, w, h, per, loops, z) {
+    var urls = []; for (var i = 1; i <= n; i++) urls.push(chaseUrl(base + '-' + i))
+    var nd = node(g, 'mfx-spr', x, y, w, h, z); if (!nd) return null
+    nd.style.backgroundImage = 'url("' + urls[0] + '")'
+    if (RM) { play(nd, [{ opacity: 0 }, { opacity: 1, offset: 0.3 }, { opacity: 1, offset: 0.7 }, { opacity: 0 }], 600, 'ease'); return nd }
+    var f = 0, total = n * (loops || 1)
+    function step () {
+      if (!nd.isConnected) return
+      if (f >= total) { nd.style.opacity = '0'; return }
+      nd.style.backgroundImage = 'url("' + urls[f % n] + '")'; f++
+      later(step, per)
+    }
+    play(nd, [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1)', offset: 0.18 }, { opacity: 1, transform: 'scale(1)', offset: 0.78 }, { opacity: 0, transform: 'scale(.9)' }], per * total, 'ease')
+    later(step, per)
+    return nd
+  }
+  /* 80 ms hit-stop: the board holds still on impact, then the shake lands. Every held animation is resumed by the
+     timer OR by clear() — a cancelled run must never leave the board frozen. */
+  var stopResume = null
+  function endHitStop () { var f = stopResume; stopResume = null; if (f) { try { f() } catch (e) {} } }
+  function hitStop (ms) {
+    if (RM) return
+    var b = cfg && cfg.board && cfg.board(); if (!b) return
+    endHitStop()
+    b.classList.add('mfx-stop')
+    var held = []
+    try { (b.getAnimations ? b.getAnimations({ subtree: true }) : []).forEach(function (a) { if (a.playState === 'running') { a.pause(); held.push(a) } }) } catch (e) {}
+    stopResume = function () { b.classList.remove('mfx-stop'); held.forEach(function (a) { try { a.play() } catch (e) {} }); held = [] }
+    later(endHitStop, ms || 80)
+  }
   function shake (px, ms) {
     if (RM) return
     var b = cfg && cfg.board && cfg.board(); if (!b || !b.animate) return
@@ -216,13 +276,33 @@
       sprite(g, 'dust', x, y, s * 0.6, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(.9)', opacity: 0.85, offset: 0.25 }, { transform: 'translate(' + (-dc * s * 0.25) + 'px,' + (-dr * s * 0.25 - s * 0.08) + 'px) scale(1.25)', opacity: 0 }], 560)
       settle(g, 700)
     },
-    // blocked: skid marks under the wheels, a puff of tyre smoke, a short shake
+    /* blocked: skid marks, tyre smoke — and the crash the owner expects (2026-10-08): a comic BROK! burst at the
+       impact point, chunky debris with gravity, dizzy stars orbiting Mojo, an 80 ms hit-stop and a firmer shake.
+       The caller's clank stays; nothing here makes a sound. */
     bump: function (r, c, h) {
       var g = group('bump'), s = cell(), p = cc(r, c), d = DIR[h || 0]
+      hitStop(80)
       sprite(g, 'skid', p[0] - d[1] * s * 0.12, p[1] - d[0] * s * 0.12 + s * 0.2, s * 0.7, [{ opacity: 0, transform: 'scale(.8)' }, { opacity: 0.9, transform: 'scale(1)', offset: 0.2 }, { opacity: 0.9, offset: 0.7 }, { opacity: 0 }], 900, { z: 1, cls: 'under' })
       sprite(g, 'tire-smoke', p[0] + d[1] * s * 0.3, p[1] + d[0] * s * 0.3, s * 0.55, [{ opacity: 0, transform: 'scale(.5)' }, { opacity: 0.85, transform: 'scale(1)', offset: 0.3 }, { opacity: 0, transform: 'translateY(-12px) scale(1.3)' }], 700)
-      shake(4, 260)
-      settle(g, 1000)
+      // the BROK! burst sits where the two cells meet, pulled inside the board so it never reaches the palette
+      var bz = s * 0.8, bp = inBoard(p[0] + d[1] * s * 0.5, p[1] + d[0] * s * 0.5, bz, bz)
+      var brok = node(g, 'mfx-spr mfx-brok', bp[0], bp[1], bz, bz, 10)
+      if (brok) {
+        brok.style.backgroundImage = 'url("' + chaseUrl('brok-burst') + '")'
+        if (RM) play(brok, [{ opacity: 0 }, { opacity: 1, offset: 0.25 }, { opacity: 1, offset: 0.7 }, { opacity: 0 }], 700, 'ease')
+        // 0 -> 1.15 -> 1, then a fade. The curve is PER KEYFRAME and the effect runs linear: an effect-level
+        // ease here ran the whole pop inside the first 150 ms and the burst was never seen at full size.
+        else play(brok, [{ transform: 'scale(0) rotate(-14deg)', opacity: 0, easing: EOUT },
+          { transform: 'scale(1.15) rotate(-5deg)', opacity: 1, offset: 0.2, easing: 'ease-out' },
+          { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.45, easing: 'ease-in' },
+          { transform: 'scale(1.06) rotate(3deg)', opacity: 0 }], 700, 'linear')
+      }
+      chunks(g, bp[0], bp[1] + s * 0.1, 7, 900)
+      // dizzy stars orbit over Mojo's roof while it shakes it off
+      var dw = s * 0.95, dp = inBoard(p[0], p[1] - s * 0.52, dw, dw * 0.68)
+      chaseSeq(g, 'dizzy', 8, dp[0], dp[1], dw, dw * 0.68, 70, 2, 11)
+      later(function () { shake(6, 320) }, RM ? 0 : 80)
+      settle(g, 1200)
     },
     // Swop: portal swirl + electric aura under Mojo; the caller animates the tops and asks for the click
     swop: function (r, c) {
@@ -458,6 +538,84 @@
       sprite(g, 'fireworks', p[0], p[1] - s * 0.5, s * 1.2, [{ transform: 'scale(.2)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: 0.4 }, { transform: 'scale(1.2)', opacity: 0 }], 900, { delay: 150, z: 9 })
       settle(g, 1300)
     },
+    /* ── the delivery family (owner 2026-10-07) ────────────────────────────────────────────────────────
+       deliver  the handover: a collect pop over the destination, sparkle, and the payoff its `pay` names
+                (hearts for a reunion, a wake for a ship, steam for a train, a beam for a lighthouse)
+       hearts   the reunion: owner hearts rising over the cell
+       train    the whole rake handed over: steam billowing up and a checkpoint ring
+       couple   the coupling clank: a short dust puff where the wagon snaps into line
+       unlock   the gate swings: sparkles along it
+       load     a scoop: dust rising into the bed
+       dump     the load pours out: a falling curtain of grains                                        */
+    deliver: function (r, c, from, pay) {
+      dropStand(true)
+      var g = group('deliver'), s = cell(), p = cc(r, c), m = cc(from[0], from[1])
+      // the parcel / passenger arcs from Mojo to the destination
+      sprite(g, 'collect', m[0], m[1] - s * 0.1, s * 0.5, [{ transform: 'translate(0,0) scale(.5)', opacity: 0 },
+        { transform: 'translate(' + ((p[0] - m[0]) * 0.5) + 'px,' + ((p[1] - m[1]) * 0.5 - s * 0.45) + 'px) scale(1)', opacity: 1, offset: 0.5 },
+        { transform: 'translate(' + (p[0] - m[0]) + 'px,' + (p[1] - m[1]) + 'px) scale(.7)', opacity: 0 }], 560, { z: 8 })
+      sprite(g, 'sparkle', p[0], p[1] - s * 0.3, s * 0.8, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1.05)', opacity: 1, offset: 0.45 }, { transform: 'scale(1.3)', opacity: 0 }], 700, { delay: 420 })
+      if (pay === 'ship') {
+        seq(g, 'smoke', p[0], p[1] - s * 0.6, s * 1.4, 760, { blend: false, opacity: '.85', delay: 380 })
+        dots(g, p[0], p[1] + s * 0.35, 9, '#9FD8F5', s * 0.9, 760, Math.max(5, s * 0.09))
+      } else if (pay === 'horn') {
+        seq(g, 'smoke', p[0], p[1] - s * 0.75, s * 1.2, 820, { blend: false, delay: 360 })
+      } else if (pay === 'light') {
+        sprite(g, 'sparkle', p[0], p[1] - s * 0.75, s * 1.3, [{ transform: 'scale(.5)', opacity: 0 }, { transform: 'scale(1.25)', opacity: 1, offset: 0.4 }, { transform: 'scale(1.6)', opacity: 0 }], 900, { delay: 320, blend: 'screen' })
+      } else if (pay === 'drop') {
+        dots(g, p[0], p[1] + s * 0.3, 6, '#C9B79C', s * 0.45, 420, Math.max(5, s * 0.07))
+      }
+      settle(g, 1500)
+      return pay === 'ship' || pay === 'horn' ? 1200 : 900
+    },
+    hearts: function (r, c) {
+      var g = group('hearts'), s = cell(), p = cc(r, c)
+      for (var k = 0; k < 4; k++) {
+        var n = node(g, 'mfx-spr', p[0] + (k - 1.5) * s * 0.22, p[1] - s * 0.15, s * 0.3, s * 0.3, 9)
+        if (!n) break
+        n.style.backgroundImage = 'url("' + cfg.lib('mojo-chase/items/heart') + '")'
+        play(n, RM ? [{ opacity: 0 }, { opacity: 1, offset: 0.3 }, { opacity: 0 }]
+          : [{ transform: 'translateY(0) scale(.4)', opacity: 0 }, { transform: 'translateY(-' + s * 0.35 + 'px) scale(1)', opacity: 1, offset: 0.35 }, { transform: 'translateY(-' + s * 0.95 + 'px) scale(.8)', opacity: 0 }], 900, EOUT, k * 90)
+      }
+      settle(g, 1400)
+      return 1000
+    },
+    train: function (r, c, n) {
+      dropStand(true)
+      var g = group('train'), s = cell(), p = cc(r, c)
+      seq(g, 'smoke', p[0], p[1] - s * 0.8, s * 1.5, 900, { blend: false, loop: 2 })
+      sprite(g, 'checkpoint', p[0], p[1], s * 1.25, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1.05)', opacity: 1, offset: 0.4 }, { transform: 'scale(1.5)', opacity: 0 }], 900, { delay: 180 })
+      dots(g, p[0], p[1] + s * 0.3, 8, '#D7CCC8', s * 0.7, 620, Math.max(5, s * 0.08))
+      shake(4, 260)
+      settle(g, 1600)
+      return 1200
+    },
+    couple: function (r, c) {
+      var g = group('couple'), s = cell(), p = cc(r, c)
+      dots(g, p[0], p[1] + s * 0.3, 5, '#BCAAA4', s * 0.4, 380, Math.max(5, s * 0.07))
+      settle(g, 700)
+      return 420
+    },
+    unlock: function (r, c) {
+      var g = group('unlock'), s = cell(), p = cc(r, c)
+      sprite(g, 'sparks', p[0], p[1], s * 0.8, [{ transform: 'scale(.5)', opacity: 0 }, { transform: 'scale(1.1)', opacity: 1, offset: 0.4 }, { transform: 'scale(1.3)', opacity: 0 }], 560)
+      settle(g, 900)
+      return 560
+    },
+    load: function (r, c) {
+      var g = group('load'), s = cell(), p = cc(r, c)
+      sprite(g, 'dust', p[0], p[1] + s * 0.1, s * 0.7, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 0.85, offset: 0.35 }, { transform: 'translateY(-' + s * 0.3 + 'px) scale(1.2)', opacity: 0 }], 620)
+      settle(g, 1000)
+      return 460
+    },
+    dump: function (r, c, filled) {
+      var g = group('dump'), s = cell(), p = cc(r, c)
+      dots(g, p[0], p[1] - s * 0.25, 10, '#D2B48C', s * 0.55, 520, Math.max(5, s * 0.08))
+      sprite(g, 'dust-cloud', p[0], p[1] + s * 0.15, s * 0.85, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 0.9, offset: 0.35 }, { transform: 'scale(1.25)', opacity: 0 }], 700, { delay: 180 })
+      if (filled) shake(4, 240)
+      settle(g, 1200)
+      return filled ? 760 : 520
+    },
     // a beat done: a level-up badge swoops over Mojo and a regen glow
     beat: function (r, c) {
       dropStand(true)
@@ -487,7 +645,7 @@
   var API = {
     CAP: CAP,
     init: function (o) { cfg = o },
-    clear: function () { timers.forEach(W.clearTimeout); timers = []; groups.slice().forEach(kill); groups = []; dropStand() },
+    clear: function () { timers.forEach(W.clearTimeout); timers = []; endHitStop(); groups.slice().forEach(kill); groups = []; dropStand() },
     standing: function () { return stand ? { r: stand.r, c: stand.c, lvl: stand.lvl, unit: stand.unit, perch: stand.perch } : null },
     live: function () { return groups.length },
     names: function () { return groups.map(function (g) { return g.name }) },
@@ -499,6 +657,7 @@
     files: function () {
       var o = ['dust', 'skid', 'tire-smoke', 'portal', 'collect', 'sparkle', 'dust-cloud', 'water-splash', 'smoke', 'sparks', 'repair-sparks', 'checkpoint', 'fireworks', 'level-up', 'boost-flame-sheet13', 'speed-trail', 'confetti', 'confetti2', 'confetti-sheet13', 'confetti-sheet03'].map(spriteUrl)
       o.push(cfg.lib('mojo-chase/items/heart'))
+      CRASH_ART.forEach(function (k) { o.push(chaseUrl(k)) })
       ;['electric-aura', 'sparks', 'gravity', 'smoke', 'holy-light', 'spark1', 'regen'].forEach(function (f) { o = o.concat(frames(f)) })
       return o
     }

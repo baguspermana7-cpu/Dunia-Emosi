@@ -175,6 +175,41 @@ console.log('polish PASS');
  await p._ctx.close()}
 console.log('rescue staging PASS');
 
+// ── 9. the crash kit (owner 2026-10-08 "when Mojo crashes the BROK text effect and the like don't appear"):
+//    a bump bursts BROK!, throws chunky debris and spins dizzy stars over Mojo, holds an 80 ms hit-stop, stays
+//    off the palette and Bo's chip, cleans itself up within 1.5 s, and Berhenti clears it mid-burst ──
+{const p=await page(1280,800);
+ await p.evaluate(()=>__mojo.start('m2'));await sleep(300);await intro(p);
+ const crash=()=>p.evaluate(()=>{const m=__mojo.state().position||{};MojoFX.bump(m.r||1,m.c||1,(m.h||0))});
+ const look=()=>p.evaluate(()=>{
+   const q=s=>[...document.querySelectorAll('#board '+s)];
+   const chrome=['#bo','#palette','#scr-play .p-top','#scr-play .p-strip'].map(s=>document.querySelector(s)).filter(e=>e&&e.offsetParent!==null);
+   const hits=e=>{const a=e.getBoundingClientRect();return chrome.some(t=>{const b=t.getBoundingClientRect();return Math.min(a.right,b.right)-Math.max(a.left,b.left)>1&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1})};
+   const brok=q('.mfx-brok'),chunk=q('.mfx-chunk'),star=q('.mfx-spr').filter(e=>/dizzy-/.test(e.style.backgroundImage));
+   return{brok:brok.length,chunk:chunk.length,star:star.length,over:[...brok,...chunk,...star].filter(hits).map(e=>e.className),
+     stop:document.getElementById('board').classList.contains('mfx-stop'),live:MojoFX.live(),names:MojoFX.names()}});
+ await crash();await sleep(40);let b=await look();
+ ok(b.brok===1,'a bump bursts one comic BROK! ('+b.brok+')');
+ ok(b.chunk>=5,'a bump throws chunky debris ('+b.chunk+')');
+ ok(b.star===1,'dizzy stars spin over Mojo ('+b.star+')');
+ ok(b.stop,'the impact holds the board for a hit-stop');
+ ok(b.over.length===0,'the crash never covers the palette, the plan strip, the top bar or Bo ('+b.over.join(',')+')');
+ ok(b.names.filter(n=>n==='bump').length===1,'the whole crash is ONE effect in the cap ('+b.names.join(',')+')');
+ await sleep(260);ok(!(await p.evaluate(()=>document.getElementById('board').classList.contains('mfx-stop'))),'the hit-stop lifts itself');
+ await sleep(1500);b=await look();ok(b.brok+b.chunk+b.star===0,'the crash is gone 1.5 s later ('+JSON.stringify(b)+')');
+ await crash();await sleep(40);await p.evaluate(()=>MojoFX.clear());b=await look();
+ ok(b.brok+b.chunk+b.star===0&&!b.stop&&b.live===0,'Berhenti mid-crash clears it and lifts the hit-stop ('+JSON.stringify(b)+')');
+ await p._ctx.close()}
+{const p=await page(1280,800,{reduced:true});
+ await p.evaluate(()=>__mojo.start('m2'));await sleep(300);await intro(p);
+ await p.evaluate(()=>{const m=__mojo.state().position||{};MojoFX.bump(m.r||1,m.c||1,(m.h||0))});await sleep(60);
+ const r=await p.evaluate(()=>({chunk:document.querySelectorAll('#board .mfx-chunk').length,
+   moving:[...document.querySelectorAll('#board .mfx')].filter(e=>e.getAnimations().some(a=>a.effect.getKeyframes().some(k=>k.transform&&k.transform!=='none'))).map(e=>e.className),
+   boardAnim:document.getElementById('board').getAnimations().length,stop:document.getElementById('board').classList.contains('mfx-stop')}));
+ ok(r.chunk===0&&r.moving.length===0&&r.boardAnim===0&&!r.stop,'reduced motion: the crash only fades, no debris, no shake, no hit-stop ('+JSON.stringify(r)+')');
+ await p._ctx.close()}
+console.log('crash kit PASS');
+
 await browser.close();
 assert.deepEqual(errors,[],'page errors: '+errors.join(' | '));
 console.log('qa-mojo-fx: '+passed+' checks PASS');

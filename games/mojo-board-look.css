@@ -11,21 +11,23 @@
 
 /* hero art, anchored to the ground */
 .board.mbl-on .ob.mbl-a>img.main,.board.mbl-on .dec.mbl-a>img,.mbl-bld>img{position:absolute;left:calc(50% - var(--cell) * var(--mbl-w) / 2 + var(--cell) * var(--mbl-dx,0));bottom:calc(var(--cell) * .02);width:calc(var(--cell) * var(--mbl-w));height:calc(var(--cell) * var(--mbl-h));max-width:none;object-fit:contain;object-position:50% 100%}
-.board.mbl-on .ob.mbl-a.elev>img.main{transform:none}
+/* ground contact: the board's own lifts (.ob.elev, and the delivery family's .ob.stop/.ob.loco -6%) would
+   float diorama art above its cell, so the anchored art stands on the ground and nothing else moves it */
+.board.mbl-on .ob.mbl-a.elev>img.main,.board.mbl-on .ob.mbl-a.stop>img.main,.board.mbl-on .ob.mbl-a.loco>img.main{transform:none}
 .board.mbl-on .ob.mbl-a:not(.fire)>img.main{transform-origin:50% 100%}   /* the ring scale (img.style.scale) grows the art up, never below its foot */
 .board.mbl-on .dec.mbl-a>img{transform-origin:50% 100%}
-.mbl-sh{position:absolute;z-index:-1;left:calc(50% - var(--cell) * var(--mbl-w,1) * .34 + var(--cell) * var(--mbl-dx,0));width:calc(var(--cell) * var(--mbl-w,1) * .68);bottom:calc(var(--cell) * -.03);height:calc(var(--cell) * .17);border-radius:50%;background:radial-gradient(closest-side,rgba(20,30,10,.32),rgba(20,30,10,0));pointer-events:none}
+.mbl-sh{position:absolute;z-index:-1;left:calc(50% - var(--cell) * var(--mbl-ew,1) * .34 + var(--cell) * var(--mbl-dx,0));width:calc(var(--cell) * var(--mbl-ew,1) * .68);bottom:calc(var(--cell) * -.03);height:calc(var(--cell) * .17);border-radius:50%;background:radial-gradient(closest-side,rgba(20,30,10,.32),rgba(20,30,10,0));pointer-events:none}
 .ob.gone .mbl-sh{opacity:0}
 .mbl-bld{position:absolute;left:0;top:0;width:var(--cell);height:var(--cell);pointer-events:none}
 .mbl-bld>img{filter:drop-shadow(0 3px 2px rgba(0,0,0,.22))}
 
 /* a friend up a big tree: the tree (img.perch) grows ~2 cells, the friend sits on the canopy */
 .board.mbl-on .ob.mbl-perch>img.perch{inset:auto!important;left:calc(50% - var(--cell) * var(--mbl-w) / 2 + var(--cell) * var(--mbl-dx,0))!important;bottom:calc(var(--cell) * .02)!important;width:calc(var(--cell) * var(--mbl-w))!important;height:calc(var(--cell) * var(--mbl-h))!important;max-width:none;object-fit:contain;object-position:50% 100%;opacity:1;transform-origin:50% 100%}
-.board.mbl-on .ob.mbl-perch>img.main{z-index:1;left:calc(50% - var(--cell) * var(--mbl-fw) / 2 + var(--cell) * var(--mbl-dx,0));bottom:calc(var(--cell) * (.03 + var(--mbl-h) * (1 - var(--mbl-top))));width:calc(var(--cell) * var(--mbl-fw));height:calc(var(--cell) * var(--mbl-fh));transform-origin:50% 100%}
+.board.mbl-on .ob.mbl-perch>img.main{z-index:1;left:calc(50% - var(--cell) * var(--mbl-fw) / 2 + var(--cell) * var(--mbl-dx,0));bottom:calc(var(--cell) * (.03 + var(--mbl-eh) * (1 - var(--mbl-top))));width:calc(var(--cell) * var(--mbl-fw));height:calc(var(--cell) * var(--mbl-fh));transform-origin:50% 100%}
 .board.mbl-on .ob.mbl-cat>img.main{animation:mblCatIdle 5.2s var(--ease-io,ease-in-out) infinite}
 .board.mbl-on .ob.mbl-cat.mbl-near>img.main{animation:mblCatLook 1.6s var(--ease-io,ease-in-out) infinite alternate}
 .board.mbl-on .ob.mbl-cat.mbl-near.mbl-look-r>img.main{animation-name:mblCatLookR}
-.mbl-tail{position:absolute;z-index:0;left:calc(50% + var(--cell) * (.1 + var(--mbl-dx,0)));bottom:calc(var(--cell) * (.03 + var(--mbl-h) * (1 - var(--mbl-top)) - .34));width:calc(var(--cell) * .085);height:calc(var(--cell) * .42);border-radius:0 0 50% 50%/0 0 30% 30%;background:repeating-linear-gradient(180deg,#EBA43C 0 18%,#C26E1C 18% 27%);box-shadow:0 2px 2px rgba(0,0,0,.18);transform-origin:50% 0;animation:mblTail 2.6s var(--ease-io,ease-in-out) infinite alternate;pointer-events:none}
+.mbl-tail{position:absolute;z-index:0;left:calc(50% + var(--cell) * (.1 + var(--mbl-dx,0)));bottom:calc(var(--cell) * (.03 + var(--mbl-eh) * (1 - var(--mbl-top)) - .34));width:calc(var(--cell) * .085);height:calc(var(--cell) * .42);border-radius:0 0 50% 50%/0 0 30% 30%;background:repeating-linear-gradient(180deg,#EBA43C 0 18%,#C26E1C 18% 27%);box-shadow:0 2px 2px rgba(0,0,0,.18);transform-origin:50% 0;animation:mblTail 2.6s var(--ease-io,ease-in-out) infinite alternate;pointer-events:none}
 .ob.gone .mbl-tail{opacity:0;transition:opacity .25s}
 @keyframes mblCatIdle{0%,55%,100%{transform:none}60%{transform:rotate(-5deg)}63%{transform:rotate(2deg)}66%{transform:none}80%{transform:translateY(calc(var(--cell) * -.02)) scaleY(1.03)}}
 @keyframes mblCatLook{from{transform:rotate(-4deg) translateY(calc(var(--cell) * .02))}to{transform:rotate(-12deg) translateY(calc(var(--cell) * .05))}}
@@ -38,8 +40,8 @@
 .board.mbl-on .ob.mbl-balc>img.main{position:absolute;z-index:1;left:calc(50% - var(--cell) * var(--mbl-fw) / 2);bottom:calc(var(--cell) * (.03 + var(--mbl-fac) - .06));width:calc(var(--cell) * var(--mbl-fw));height:calc(var(--cell) * var(--mbl-fh));transform:none;object-fit:contain;object-position:50% 100%}
 
 /* tall art keeps its height tag readable beside it, not on top of the art */
-.board.mbl-on .ob.mbl-tall>.tag{right:auto;left:calc(50% + var(--cell) * (var(--mbl-w) * .36 + var(--mbl-dx,0)));top:calc(var(--cell) * (1 - var(--mbl-th) * .6))}
-.board.mbl-on .ob.mbl-tall.mbl-tag-l>.tag{left:auto;right:calc(50% + var(--cell) * (var(--mbl-w) * .36 - var(--mbl-dx,0)))}
+.board.mbl-on .ob.mbl-tall>.tag{right:auto;left:calc(50% + var(--cell) * (var(--mbl-ew) * .36 + var(--mbl-dx,0)));top:calc(var(--cell) * (1 - var(--mbl-th) * .6))}
+.board.mbl-on .ob.mbl-tall.mbl-tag-l>.tag{left:auto;right:calc(50% + var(--cell) * (var(--mbl-ew) * .36 - var(--mbl-dx,0)))}
 
 /* water shimmer: transform + opacity only */
 .mbl-wave{position:absolute;width:var(--cell);height:var(--cell);overflow:hidden;pointer-events:none;border-radius:12%}

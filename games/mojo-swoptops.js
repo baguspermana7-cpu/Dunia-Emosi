@@ -105,11 +105,14 @@
 
   /* ── words ──────────────────────────────────────────────────────────── */
   var LABEL = { up: 'Atas', down: 'Bawah', west: 'Kiri', east: 'Kanan', fwd: 'Maju', left: 'Kiri', right: 'Kanan', push: 'Dorong', spray: 'Semprot', raise: 'Naik', lower: 'Turun', rescue: 'Tolong', pick: 'Ambil', drop: 'Taruh',
-    repair: 'Perbaiki', jump: 'Lompat', takeoff: 'Terbang', land: 'Mendarat', hook: 'Kait', release: 'Lepas' }
-  var EN = { up: 'Up', down: 'Down', west: 'Left', east: 'Right', fwd: 'Forward', left: 'Left', right: 'Right', push: 'Push', spray: 'Spray', raise: 'Lift', lower: 'Lower', rescue: 'Rescue', pick: 'Pick up', drop: 'Drop', repair: 'Fix', jump: 'Jump', takeoff: 'Take off', land: 'Land' }
+    repair: 'Perbaiki', jump: 'Lompat', takeoff: 'Terbang', land: 'Mendarat', hook: 'Kait', release: 'Lepas',
+    deliver: 'Antar', couple: 'Gandeng', unlock: 'Buka', load: 'Isi', dump: 'Tuang', place: 'Pasang', wait: 'Tunggu' }
+  var EN = { up: 'Up', down: 'Down', west: 'Left', east: 'Right', fwd: 'Forward', left: 'Left', right: 'Right', push: 'Push', spray: 'Spray', raise: 'Lift', lower: 'Lower', rescue: 'Rescue', pick: 'Pick up', drop: 'Drop', repair: 'Fix', jump: 'Jump', takeoff: 'Take off', land: 'Land',
+    deliver: 'Deliver', couple: 'Couple', unlock: 'Unlock', load: 'Load', dump: 'Dump', place: 'Place', wait: 'Wait' }
   var DOES = { push: 'mendorong batu', spray: 'menyemprot air', raise: 'naik ke atas', lower: 'turun', rescue: 'menolong teman', pick: 'mengambil barang', drop: 'menaruh barang',
-    repair: 'memperbaiki', jump: 'melompat', takeoff: 'terbang', land: 'mendarat', hook: 'mengait', release: 'melepas' }
-  var SHORT = { normal: 'Mojo', dozer: 'Dozer', fire: 'Pemadam', cherry: 'Keranjang', jumper: 'Lompat', crane: 'Derek', chopper: 'Heli' }
+    repair: 'memperbaiki', jump: 'melompat', takeoff: 'terbang', land: 'mendarat', hook: 'mengait', release: 'melepas',
+    deliver: 'mengantar barang', couple: 'menggandeng gerbong', unlock: 'membuka gerbang', load: 'mengisi muatan', dump: 'menuang muatan', place: 'memasang papan', wait: 'menunggu' }
+  var SHORT = { normal: 'Mojo', dozer: 'Dozer', fire: 'Pemadam', cherry: 'Keranjang', jumper: 'Lompat', crane: 'Derek', chopper: 'Heli', dumper: 'Bak Pasir' }
   function formName (f) { return (ML.FORMS[f] && ML.FORMS[f].name) || 'Mojo' }
   function cmdLabel (c) { return c.indexOf('swop:') === 0 ? 'Jadi ' + SHORT[c.slice(5)] : (LABEL[c] || c) }
   function cmdColor (c) { return c.indexOf('swop:') === 0 ? (ML.FORMS[c.slice(5)] || {}).color || '#7B1FA2' : MA.CAT[c] || '#546E7A' }
@@ -318,7 +321,7 @@
     ;(lv.objects || []).forEach(function (o) {
       var t = PG.TYPES[o.type] || {}
       var d = el('div', 'ob ' + o.type + (TYPE_PICKUP[o.type] ? ' pickup' : '') + (o.elev ? ' elev' : '') + (t.walk && o.type !== 'zone' ? ' walk' : '') + (o.perch ? ' perch-' + o.perch : ''))
-      d.innerHTML = (t.walk && o.type !== 'zone' ? '<i class="ring" aria-hidden="true"></i>' : '') + (o.perch === 'tree' ? '<img class="perch" alt="" src="' + MA.src('obj/tree') + '">' : '') + '<img class="main" alt="">' +
+      d.innerHTML = (t.walk && o.type !== 'zone' ? '<i class="ring" aria-hidden="true"></i>' : '') + (PERCH_ART[o.perch] ? '<img class="perch" alt="" src="' + MA.src(PERCH_ART[o.perch]) + '">' : '') + '<img class="main" alt="">' +
         (t.verb ? '<i class="act" aria-hidden="true" style="background:' + cmdColor(t.verb) + '">' + MA.icon(t.verb) + '</i>' : '')
       d.setAttribute('data-id', o.id)
       objsF.appendChild(d); OBJ[o.id] = d
@@ -330,6 +333,7 @@
     })
     $('objs').appendChild(objsF); $('decor').appendChild(decorF)
     $('mojo-ch').innerHTML = MA.chassis('top')
+    cargoNode().innerHTML = ''
     if (ro) ro.disconnect()
     /* No synchronous layout() here (M5: reading the board size forced a full reflow of the fresh screen). The
        observer's first callback runs after the browser's own layout and before the first paint, so the board is
@@ -337,7 +341,26 @@
     if (W.ResizeObserver) { layoutDue = true; ro = new ResizeObserver(function () { layout(); W.requestAnimationFrame(updatePaletteScroll) }); ro.observe($('board-wrap')) } else { W.addEventListener('resize', layout); layout() }
   }
   var layoutDue = false
-  var TYPE_PICKUP = { bolt: 1, drop: 1, star: 1 }
+  var TYPE_PICKUP = { bolt: 1, drop: 1, star: 1, key: 1, mark: 1 }
+  // what a raised friend stands on (owner 2026-10-07 adds the balloon basket Pikachu is stuck in)
+  var PERCH_ART = { tree: 'obj/tree', balon: 'obj/balon' }
+  /* A carried passenger or parcel RIDES on Mojo (owner: "carried passengers and parcels ride visibly").
+     The #mojo element is in the page; its cargo seat is created here so no markup change is needed. */
+  function cargoNode () {
+    var n = $('mojo-cargo')
+    if (!n) { n = el('div', 'mj-cargo'); n.id = 'mojo-cargo'; n.setAttribute('aria-hidden', 'true'); $('mojo').appendChild(n) }
+    return n
+  }
+  function renderCargo (w) {
+    var n = cargoNode(), id = w.m.carry, o = id ? PG.find(w, id) : null
+    if (!o) { if (n.firstChild) n.innerHTML = ''; n.classList.remove('on'); return }
+    var src = objImg(o)
+    if (!n.firstChild) n.innerHTML = '<img alt="">'
+    var img = n.firstChild
+    if (img.getAttribute('src') !== src) { img.src = src; fitRing(img) }
+    n.classList.add('on')
+    n.classList.toggle('rider', (PG.TYPES[o.type] || {}).ride === 1)
+  }
   function layout () {
     if (!G) return
     layoutDue = false
@@ -359,7 +382,12 @@
     'mojo-prop/garage': [6, 87], 'mojo-prop/school': [6, 94], 'mojo-prop/star': [6, 91], 'mojo-prop/toolbox': [6, 152],
     'mojo-prop/tree-round': [8, 242], 'mojo-prop/lamp-post': [6, 77], 'mojo-prop/bolt': [6, 90], 'mojo-prop/hammer': [6, 75],
     'mojo-prop/screwdriver': [6, 117], 'mojo-prop/wrench': [6, 113], 'mojo-prop/rock-road': [7, 206], 'mojo-prop/flag-board': [8, 281],
-    'mojo-tile/crate': [6, 84] }
+    'mojo-tile/crate': [6, 84],
+    // the delivery family's own art (tools/ingest-mojo-train.py): the train rake and the cross-world guests
+    'mojo-train/malivlak': [7, 184], 'mojo-train/malivlak-rake': [7, 314], 'mojo-train/diesel': [7, 234],
+    'mojo-train/coach-annie': [6, 244], 'mojo-train/coach-slip': [6, 244], 'mojo-train/tanker': [8, 228],
+    'mojo-train/cargo-nate': [6, 224], 'mojo-train/ice-penny': [7, 214], 'mojo-train/water-red': [6, 216],
+    'mojo-cross/ash': [6, 122], 'mojo-cross/pikachu': [6, 188] }
   function ringOf (src) { var m = /lib\/([a-z-]+\/[a-z0-9-]+)\.webp/.exec(src || ''); return (m && RING[m[1]]) || null }
   function ringScale (src) { var r = ringOf(src); return r ? r[1] / (r[1] - 2 * r[0]) : 1 }
   function fitRing (img) { var k = ringScale(img.getAttribute('src')), v = k === 1 ? '' : k.toFixed(3); if (img.style.scale !== v) img.style.scale = v }
@@ -490,9 +518,17 @@
       case 'bolt': return MA.src('obj/bolt')
       case 'drop': return MA.src('obj/drop')
       case 'star': return MA.src('obj/star')
+      // the delivery family: every object names its own picture, so a new scenario is pure data
+      case 'rider': return MA.src('char/' + (o.who || 'kid'))
+      case 'gate': return MA.src(o.st === 'open' ? 'obj/gerbang-buka' : 'obj/gerbang')
+      case 'key': return MA.src(o.art || 'obj/kunci')
+      case 'parcel': case 'part': case 'stop': case 'wagon': case 'loco': case 'pile': case 'hole': case 'mark': case 'patrol':
+        return MA.src(o.art || DEFAULT_ART[o.type])
       default: return MA.src('obj/cone')
     }
   }
+  var DEFAULT_ART = { parcel: 'obj/paket-biru', part: 'obj/papan', stop: 'obj/dermaga', wagon: 'train/coach-annie',
+    loco: 'train/malivlak', pile: 'obj/pasir', hole: 'obj/lubang', mark: 'obj/jejak', patrol: 'obj/cone' }
   function objTag (o, lv0) {
     if (o.type === 'fire' && o.st !== 'out') return '<img src="' + MA.src('obj/drop') + '" alt="">' + o.str   // the water it still needs
     if (o.type === 'person' && o.elev && o.st !== 'rescued') return '<img src="' + MA.src('tool/tangga') + '" alt="">' + o.elev
@@ -504,6 +540,17 @@
       return t
     }
     if (o.type === 'toolbox' && o.st === 'closed') return '<img src="' + MA.src('tool/' + o.tool) + '" alt="">'
+    // delivery family tags: the queue number, what a stop still waits for, the gate's key, how much a hole needs
+    if (o.order && !(o.type === 'stop' ? o.st === 'done' : o.st === 'got' || o.st === 'carried')) return '<b class="num">' + o.order + '</b>'
+    if (o.type === 'stop' && o.st !== 'done') {
+      var t2 = ''
+      if (o.elev) t2 += '<img src="' + MA.src('tool/tangga') + '" alt="">' + o.elev
+      if (o.need > 1) t2 += '<b class="num">' + ((o.need || 1) - (o.got || 0)) + '</b>'
+      return t2
+    }
+    if (o.type === 'gate' && o.st !== 'open') return '<img src="' + MA.src('obj/kunci') + '" alt="">'
+    if (o.type === 'loco' && o.st !== 'ready') return '<b class="num">' + (o.needs || 1) + '</b>'
+    if (o.type === 'hole' && o.st !== 'filled') return '<img src="' + MA.src('obj/pasir') + '" alt="">' + ((o.need || 1) - (o.got || 0))
     return ''
   }
   function renderObj (o) {
@@ -511,10 +558,11 @@
     var img = d.querySelector('img.main'), s = objImg(o)
     if (img.getAttribute('src') !== s) img.src = s
     fitRing(img)
-    var gone = o.st === 'got' || o.st === 'rescued' || o.st === 'cleared' || o.st === 'carried'
+    var gone = o.st === 'got' || o.st === 'rescued' || o.st === 'cleared' || o.st === 'carried' || o.st === 'delivered-gone'
     d.classList.toggle('gone', gone)
-    d.classList.toggle('resolved', !PG.blocks(o))   // a resolved SEBELAH object: its action badge goes away
-    d.classList.toggle('done', o.st === 'open' || (o.type === 'fire' && o.st === 'out'))
+    d.classList.toggle('resolved', !PG.blocks(o) || o.st === 'done' || o.st === 'ready' || o.st === 'filled')   // a resolved SEBELAH object: its action badge goes away
+    d.classList.toggle('done', o.st === 'open' || o.st === 'done' || o.st === 'ready' || o.st === 'filled' || (o.type === 'fire' && o.st === 'out'))
+    d.classList.toggle('coupled', o.st === 'coupled' || o.st === 'delivered')
     var tg = d.querySelector('.tag'), t = objTag(o)
     if (t) { if (!tg) { tg = el('span', 'tag'); d.appendChild(tg) } if (tg.innerHTML !== t) tg.innerHTML = t } else if (tg) tg.remove()
     if (o.type === 'fire') { var f0 = (PG.find(PG.world(G.lv), o.id) || {}).str || 1; img.style.transform = o.st === 'out' ? '' : 'scale(' + (0.62 + 0.38 * o.str / f0) + ')' }
@@ -524,6 +572,7 @@
     $('mojo').style.opacity = ''; $('mojo-mod').style.opacity = ''
     w.objs.forEach(function (o) { if (OBJ[o.id]) OBJ[o.id].style.opacity = ''; renderObj(o) })
     placeAll(w)
+    renderCargo(w)
     $('mojo-mod').innerHTML = MA.module(w.m.form, 'top')
     if (snap && !layoutDue) paint(w)   // a fresh board is painted once, by its first layout()
     renderHud()
@@ -536,9 +585,22 @@
       case 'extinguish': return { img: MA.src('obj/fire'), t: 'Padamkan api' }
       case 'rescue': return { img: MA.src('char/' + ((o && o.who) || 'kid')), t: 'Tolong ' + ((o && o.name) || 'teman') }
       case 'repair': return { img: objImg(Object.assign({}, o, { st: 'broken' })), t: 'Perbaiki ' + ({ gate: 'gerbang', swing: 'ayunan', lamp: 'lampu' }[o && o.what] || '') }
-      case 'reach': return { img: MA.src('obj/flag'), t: 'Sampai ke bendera' }
+    case 'reach': return { img: MA.src('obj/flag'), t: 'Sampai ke bendera' }
+      // the delivery family: the chip shows the destination's own picture and its own name
+      case 'deliver': return { img: objImg(o || {}), t: (o && o.type === 'stop' ? 'Antar ke ' : 'Antar ') + lowName(o) }
+      case 'visit': return { img: objImg(o || {}), t: 'Lewati ' + lowName(o) }
+      case 'train': return { img: objImg(o || {}), t: 'Gandeng ke ' + lowName(o) }
+      case 'fill': return { img: objImg(o || {}), t: 'Tutup ' + lowName(o) }
+      case 'open': return { img: objImg(o || {}), t: 'Buka ' + lowName(o) }
+      case 'place': return { img: objImg(o || {}), t: 'Pasang ' + lowName(o) }
+      case 'carry': return { img: objImg(o || {}), t: 'Bawa ' + lowName(o) }
       default: return { img: MA.src('obj/star'), t: '' }
     }
+  }
+  // "Sarang induk burung" -> "sarang induk burung" (a proper name keeps its capital: "Antar ke Malivlak")
+  function lowName (o) {
+    var n = nameOf(o)
+    return /^[A-Z][a-z]+$/.test(n) ? n : n.charAt(0).toLowerCase() + n.slice(1)
   }
   function renderHud () {
     if (!G) return
@@ -898,7 +960,8 @@
   function objAt (r, c, type) { var a = PG.objsAt(G.w, r, c); for (var k = 0; k < a.length; k++) if (!type || a[k].type === type) return a[k]; return null }
   /* ONE message per engine reason (tools/qa-prog-grid.mjs section L proves every ProgGrid.REASONS key is here).
      Every line names the next move or the form that helps; nothing falls back to a generic sentence. */
-  var OBJ_VERB = { rock: 'push', log: 'push', fire: 'spray', person: 'rescue', repair: 'repair', crate: 'pick' }
+  var OBJ_VERB = { rock: 'push', log: 'push', fire: 'spray', person: 'rescue', repair: 'repair', crate: 'pick',
+    rider: 'pick', parcel: 'pick', part: 'pick', stop: 'deliver', wagon: 'couple', loco: 'couple', gate: 'unlock', pile: 'load', hole: 'dump' }
   var WHAT = { gate: 'Gerbang', swing: 'Ayunan', lamp: 'Lampu' }
   var TOOL = { palu: 'palu' }
   function up (v) { return (LABEL[v] || v).toUpperCase() }
@@ -906,7 +969,10 @@
     if (!o) return 'Itu'
     if (o.type === 'person') return o.name || 'Teman'
     if (o.type === 'repair') return WHAT[o.what] || 'Yang rusak'
-    return { fire: 'Api', rock: 'Batu', log: 'Kayu', crate: 'Peti', toolbox: 'Kotak alat', flag: 'Bendera' }[o.type] || 'Itu'
+    if (o.name) return o.name   // the delivery family names every passenger, destination, wagon and prop
+    return { fire: 'Api', rock: 'Batu', log: 'Kayu', crate: 'Peti', toolbox: 'Kotak alat', flag: 'Bendera',
+      rider: 'Penumpang', parcel: 'Paket', part: 'Papan', stop: 'Tujuan', wagon: 'Gerbong', loco: 'Kereta',
+      gate: 'Gerbang', key: 'Kunci', pile: 'Tumpukan', hole: 'Lubang', mark: 'Jejak', patrol: 'Penjaga' }[o.type] || 'Itu'
   }
   // "Swop jadi Pemadam, lalu SEMPROT dari sebelahnya." / "Berhenti di sebelahnya, lalu SEMPROT."
   function actLine (verb) {
@@ -937,9 +1003,27 @@
     'no-target': function (inf, v) {
       return { spray: 'Tidak ada api di sebelah Mojo. Berhenti di SEBELAH api, lalu SEMPROT.', push: 'Tidak ada batu di sebelah Mojo. Berhenti di SEBELAH batu, lalu DORONG.',
         raise: 'Tidak ada yang tinggi di sebelah Mojo. Berhenti di SEBELAH pohon, balkon atau lampu, lalu NAIK.', rescue: 'Tidak ada teman di sebelah Mojo. Berhenti di SEBELAH temannya, lalu TOLONG.',
-        repair: 'Tidak ada yang rusak di sebelah Mojo. Berhenti di SEBELAH yang rusak, lalu PERBAIKI.', pick: 'Tidak ada peti di sebelah Mojo. Berhenti di SEBELAH peti, lalu AMBIL.',
-        hook: 'Tidak ada peti di sebelah Mojo. Berhenti di SEBELAH peti, lalu KAIT.', jump: 'Tidak ada batu atau lubang di sebelah Mojo. LOMPAT hanya melewati satu rintangan.' }[v] || 'Di sebelah Mojo belum ada yang bisa dibantu. Jalan dulu ke SEBELAH-nya.'
+        repair: 'Tidak ada yang rusak di sebelah Mojo. Berhenti di SEBELAH yang rusak, lalu PERBAIKI.', pick: 'Tidak ada yang bisa diambil di sebelah Mojo. Berhenti di SEBELAH penumpang atau paketnya, lalu AMBIL.',
+        hook: 'Tidak ada peti di sebelah Mojo. Berhenti di SEBELAH peti, lalu KAIT.', jump: 'Tidak ada batu atau lubang di sebelah Mojo. LOMPAT hanya melewati satu rintangan.',
+        deliver: 'Tidak ada tujuan di sebelah Mojo. Berhenti di SEBELAH tempat tujuannya, lalu ANTAR.',
+        couple: 'Tidak ada gerbong di sebelah Mojo. Berhenti di SEBELAH gerbong atau keretanya, lalu GANDENG.',
+        unlock: 'Tidak ada gerbang di sebelah Mojo. Berhenti di SEBELAH gerbang, lalu BUKA.',
+        load: 'Tidak ada tumpukan di sebelah Mojo. Berhenti di SEBELAH tumpukan pasir atau hidran, lalu ISI.',
+        dump: 'Tidak ada lubang di sebelah Mojo. Berhenti di SEBELAH lubang, lalu TUANG.',
+        place: 'Tidak ada lubang di sebelah Mojo untuk dipasangi papan. Berhenti di SEBELAH lubangnya, lalu PASANG.' }[v] || 'Di sebelah Mojo belum ada yang bisa dibantu. Jalan dulu ke SEBELAH-nya.'
     },
+    'order': function (inf) {
+      var next = findO(inf.next)
+      return 'Belum gilirannya! ' + nameOf(next) + ' nomor ' + inf.order + ' dulu, baru yang nomor ' + inf.mine + '.'
+    },
+    'wrong-stop': function (inf) { return nameOf(findO(inf.id)) + ' tidak menunggu ' + lowName(findO(inf.carry)) + '. Cari tujuan yang cocok, ya.' },
+    'need-key': 'Gerbangnya masih terkunci. LEWATI kuncinya di jalan dulu, baru BUKA.',
+    'need-wagons': function (inf) { return nameOf(findO(inf.id)) + ' perlu ' + inf.need + ' gerbong, Mojo baru bawa ' + inf.have + '. GANDENG gerbong lagi dulu.' },
+    'train-full': function (inf) { return 'Rangkaiannya sudah penuh, ' + inf.have + ' gerbong. Antar dulu ke keretanya.' },
+    'no-gap': 'Di sebelah Mojo tidak ada lubang. Papan dipasang tepat di SEBELAH lubang atau air.',
+    'no-load': function (inf) { return 'Baknya kosong! Lubangnya masih perlu ' + inf.need + '. ISI dulu di tumpukan.' },
+    'hole-full': 'Lubang itu sudah tertutup. Cari lubang yang lain, ya.',
+    'caught': 'Penjaganya menghalangi jalan! TUNGGU sebentar, lalu jalan saat jalurnya kosong.',
     'ambiguous': function (inf, v) { return 'Ada dua yang bisa di-' + (LABEL[v] || v).toLowerCase() + ' di sebelah Mojo. Pindah ke tempat yang hanya di sebelah satu, ya.' },
     'push-edge': 'Batunya tidak bisa keluar papan. Dorong dari sisi lain?',
     'push-wall': function (inf) { return inf.terrain === ',' ? 'Batu tidak boleh masuk rumput taman. Dorong dari sisi lain?' : 'Ada tembok di belakang batu. Dorong dari sisi lain?' },
@@ -962,13 +1046,13 @@
     'too-heavy': 'Petinya terlalu berat. Swop jadi Derek, lalu KAIT.',
     'microgame': 'Kotak alat belum terbuka. Susun hurufnya untuk mendapat alat!',
     'hands-empty': 'Mojo belum membawa apa-apa. AMBIL peti dulu.',
-    'drop-here': 'Tidak bisa menaruh di sana. Cari tempat kosong di depan Mojo.',
+    'drop-here': function (inf) { return inf.ride ? 'Penumpang tidak boleh diturunkan di jalan. ANTAR ke tempat tujuannya, ya.' : 'Tidak bisa menaruh di sana. Cari tempat kosong di depan Mojo.' },
     'on-ground': 'Mojo masih di darat. TERBANG dulu, baru MENDARAT.',
     'no-landing': 'Tidak bisa mendarat di sana. Terbang ke jalan dulu.',
     'need-tool': function (inf) { return 'Kita perlu ' + (TOOL[inf.tool] || inf.tool || 'alat') + ' dulu. LEWATI kotak alat untuk mengambilnya!' },
     'need-bolts': function (inf) { return 'Perlu ' + inf.need + ' baut, baru ada ' + inf.have + '. LEWATI baut untuk menambah. Kurang berapa lagi?' },
     'need-water': function (inf) { return 'Perlu ' + inf.need + ' air, baru ada ' + inf.have + '. LEWATI tetes air biru.' },
-    'cap-full': function (inf) { return inf.res === 'water' ? 'Tangki air sudah penuh! Tetes airnya tetap di sana.' : 'Kotak baut sudah penuh! Bautnya tetap di sana.' }
+    'cap-full': function (inf) { return inf.res === 'water' ? 'Tangki air sudah penuh! Isinya tetap di sana.' : inf.res === 'sand' ? 'Bak pasirnya sudah penuh! TUANG dulu di lubang.' : 'Kotak baut sudah penuh! Bautnya tetap di sana.' }
   }
   function clue (res, cmd) {
     var m = MSG[res.reason]
@@ -1028,8 +1112,21 @@
         case 'rescue': wait = Math.max(wait, rescueAnim(e) || 900); break
         case 'tool': toolAnim(e); wait = Math.max(wait, 760); break
         case 'repair': wait = Math.max(wait, repairAnim(e)); break
-        case 'pick': case 'drop': renderObj(PG.find(G.w, e.id)); if (e.e === 'drop') OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); wait = Math.max(wait, 300); break
+        case 'pick': case 'drop': renderObj(PG.find(G.w, e.id)); renderCargo(G.w); if (e.e === 'drop') OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); if (e.e === 'pick') { fxCall('pickup', m.r, m.c); SND.place() } wait = Math.max(wait, 360); break
         case 'takeoff': case 'land': placeMojo(m); tone(e.e === 'takeoff' ? 200 : 500, e.e === 'takeoff' ? 500 : 200, 0.4, 0.06); wait = Math.max(wait, 420); break
+        /* ── the delivery family's payoffs (owner 2026-10-07: "immersive effects and visuals") ── */
+        case 'deliver': wait = Math.max(wait, deliverAnim(e)); break
+        case 'couple': var cw = PG.find(G.w, e.id); renderObj(cw); if (cw) fxCall('couple', cw.r, cw.c); SND.clank(); wait = Math.max(wait, 420); break
+        case 'train': wait = Math.max(wait, trainAnim(e)); break
+        case 'unlock': var gw = PG.find(G.w, e.id); renderObj(gw); if (gw) fxCall('unlock', gw.r, gw.c); SND.clank(); wait = Math.max(wait, 620); break
+        case 'key': later(function () { pickupAt(e.id); SND.star() }, T.move * 0.8); wait = Math.max(wait, 360); break
+        case 'mark': later(function () { pickupAt(e.id) }, T.move * 0.7); break
+        case 'trail': trailAnim(e); wait = Math.max(wait, T.move); break
+        case 'load': fxCall('load', m.r, m.c); SND.move(); wait = Math.max(wait, 420); break
+        case 'dump': wait = Math.max(wait, dumpAnim(e)); break
+        case 'place': wait = Math.max(wait, placeAnim(e)); break
+        case 'patrol': renderObj(PG.find(G.w, e.id)); if (OBJ[e.id]) OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); wait = Math.max(wait, T.move); break
+        case 'wait': wait = Math.max(wait, 320); break
       }
     })
     later(function () { G.w.objs.forEach(renderObj); done() }, wait + 40)
@@ -1141,6 +1238,71 @@
     later(function () { burst(m.r, m.c, '#FF8FB1'); SND.goal(); squash(1.08, 0.9, 200) }, 680)
     return 900
   }
+  /* ── the delivery family's payoffs (owner 2026-10-07: "immersive effects and visuals") ───────────────
+     Each destination names its own payoff in `pay`, so a new scenario picks its ending from data:
+       wave reunion hearts · chirp a bird call · ship a horn and a wake · horn a train horn and steam ·
+       bark a dog · light a lighthouse beam · drop a parcel thud · fix a workshop fanfare.             */
+  function voice (name, pitch, kind) { if (W.MojoBoardLook && MojoBoardLook.voice) { try { MojoBoardLook.voice(name, pitch, kind) } catch (x) { console.warn('[Mojo] voice failed', name, x) } } }
+  var PAY_COLOUR = { wave: '#FFD166', reunion: '#FF8FB1', chirp: '#8BE8C8', ship: '#7EC8F2', horn: '#F4B400', bark: '#FFC48A', light: '#FFE14D', drop: '#C9B79C', fix: '#A5D6A7' }
+  function deliverAnim (e) {
+    var o = PG.find(G.w, e.id), m = G.w.m, pay = e.pay || 'wave'
+    renderCargo(G.w)
+    ;(e.keep ? [] : [e.cargo]).forEach(function (id) { renderObj(PG.find(G.w, id)) })
+    renderObj(o)
+    var ms = fxCall('deliver', o ? o.r : m.r, o ? o.c : m.c, [m.r, m.c], pay) || 0
+    burst(o ? o.r : m.r, o ? o.c : m.c, PAY_COLOUR[pay] || '#FFD166')
+    squash(1.06, 0.92, 220)
+    payoff(pay, o)
+    return Math.max(ms, 760)
+  }
+  function payoff (pay, o) {
+    switch (pay) {
+      case 'chirp': voice('chirp'); later(function () { voice('chirp', 1.22, 'happy') }, 420); break
+      case 'bark': voice('bark'); break
+      case 'ship': voice('ship'); break
+      case 'horn': voice('horn'); break
+      case 'light': voice('clank'); SND.star(); break
+      case 'fix': SND.hammer(); later(function () { SND.goal() }, 240); break
+      case 'drop': SND.place(); break
+      default: SND.goal()
+    }
+    if (pay === 'reunion' || pay === 'chirp' || pay === 'bark') { if (o) fxCall('hearts', o.r, o.c) }
+  }
+  function trainAnim (e) {
+    var o = PG.find(G.w, e.id)
+    ;(e.ids || []).forEach(function (id) { renderObj(PG.find(G.w, id)) })
+    renderObj(o)
+    var ms = o ? fxCall('train', o.r, o.c, e.n) || 0 : 0
+    voice(e.pay === 'fix' ? 'clank' : 'horn')
+    if (e.pay === 'fix') SND.hammer(); else SND.goal()
+    burst(o ? o.r : G.w.m.r, o ? o.c : G.w.m.c, PAY_COLOUR[e.pay] || '#F4B400')
+    return Math.max(ms, 900)
+  }
+  function trailAnim (e) {
+    ;(e.ids || []).forEach(function (id, i) {
+      var d = OBJ[id], at = e.at[i]
+      if (!d || !at) return
+      var from = d.style.transform, to = tf(at[0], at[1])
+      anim(d, [{ transform: from }, { transform: to }], T.move, EIO, function () { d.style.transform = to })
+      d.style.transform = to
+    })
+  }
+  function dumpAnim (e) {
+    var o = PG.find(G.w, e.id)
+    renderObj(o)
+    SND.push()
+    var ms = o ? fxCall('dump', o.r, o.c, e.filled) || 0 : 0
+    if (e.filled) { later(function () { paint(G.w); fxCall('fill', o.r, o.c) }, 320) }
+    return Math.max(ms, e.filled ? 760 : 460)
+  }
+  function placeAnim (e) {
+    var d = OBJ[e.id]
+    renderObj(PG.find(G.w, e.id)); renderCargo(G.w)
+    if (d) d.style.transform = tf(e.at[0], e.at[1])
+    SND.clank()
+    later(function () { paint(G.w); fxCall('fill', e.at[0], e.at[1]) }, 300)
+    return 760
+  }
   function toolAnim (e) {
     SND.clank()
     var o = PG.find(G.w, e.id)
@@ -1246,7 +1408,10 @@
   /* The things this level really has (owner 2026-10-03: never ask about what is not on the board). Each theme
      is a noun + the owner sprite it is drawn with; the question shows that many sprites, so it is always answerable. */
   var THEME_ART = { bolt: ['baut', 'obj/bolt'], drop: ['tetes air', 'obj/drop'], star: ['bintang', 'obj/star'], fire: ['api', 'obj/fire'],
-    tree: ['pohon', 'obj/tree'], flag: ['bendera', 'obj/flag'], rock: ['batu', 'obj/rock'], toolbox: ['kotak alat', 'obj/toolbox'] }
+    tree: ['pohon', 'obj/tree'], flag: ['bendera', 'obj/flag'], rock: ['batu', 'obj/rock'], toolbox: ['kotak alat', 'obj/toolbox'],
+    // the delivery family's countable things, so a world card on these boards asks about what is really on them
+    rider: ['penumpang', 'char/pip'], parcel: ['paket', 'obj/paket-biru'], wagon: ['gerbong', 'train/coach-annie'],
+    mark: ['jejak', 'obj/jejak'], key: ['kunci', 'obj/kunci'] }
   function levelThemes (lv) {
     var t = {}
     ;(lv.objects || []).forEach(function (o) { if (THEME_ART[o.type]) t[o.type] = 1 })
@@ -1421,7 +1586,7 @@
     for (var i = 0; i < pre.length; i++) w = PG.stepBeat(w, pre[i], b, { auto: true }).world
     for (var k = 0; k < Math.min(n, h.steps.length); k++) {
       var r = PG.stepBeat(w, h.steps[k], b, { auto: true }), cell = [r.world.m.r, r.world.m.c]
-      ;(r.events || []).forEach(function (e) { if (e.id && ['spray', 'push', 'raise', 'rescue', 'repair', 'pick'].indexOf(e.e) >= 0) { var o = PG.find(w, e.id); if (o) cell = [o.r, o.c] } })
+      ;(r.events || []).forEach(function (e) { if (e.id && ['spray', 'push', 'raise', 'rescue', 'repair', 'pick', 'deliver', 'couple', 'train', 'unlock', 'load', 'dump', 'place'].indexOf(e.e) >= 0) { var o = PG.find(w, e.id); if (o) cell = [o.r, o.c] } })
       out.push({ cmd: h.steps[k], cell: cell }); w = r.world
     }
     return { at: h.at, steps: out, rest: h.steps.length }
@@ -1437,7 +1602,9 @@
       var t = (G.fail && G.fail.index < G.prog.length ? 'Rencanamu berhenti di kotak ' + (G.fail.index + 1) + '. ' : '') + 'Tugasnya: ' + obInfo(miss).t.toLowerCase() + '. '
       if (o) {
         if (OBJ[o.id]) OBJ[o.id].classList.add('focus')
-        t += nameOf(o) + ' ada di ' + where(o) + ' Mojo. ' + (o.type === 'flag' ? 'Ikuti jalan abu-abu dan LEWATI sampai ke bendera.' : 'Mojo harus berhenti di SEBELAH ' + low(o) + '.')
+        var walkOver = (PG.TYPES[o.type] || {}).walk   // a flag, a trail print or a numbered post is LEWATI, not SEBELAH
+        t += nameOf(o) + ' ada di ' + where(o) + ' Mojo. ' + (o.type === 'flag' ? 'Ikuti jalan abu-abu dan LEWATI sampai ke bendera.'
+          : walkOver ? 'Ikuti jalan abu-abu dan LEWATI ' + low(o) + '.' : 'Mojo harus berhenti di SEBELAH ' + low(o) + '.')
       }
       var first = ri.acts.filter(function (a) { return a.id && a.id !== id })[0], fo = first && PG.find(G.cp, first.id)
       if (fo && (!o || fo.type !== o.type)) { t += ' Di jalan ada ' + low(fo) + ' di ' + where(fo) + ': berhenti di SEBELAH-nya dulu.'; if (OBJ[fo.id]) OBJ[fo.id].classList.add('focus') }

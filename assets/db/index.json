@@ -16221,6 +16221,37 @@
    "w": 215,
    "h": 195
   },
+  "mojo-cross/ash": {
+   "file": "assets/db/lib/mojo-cross/ash.webp",
+   "cat": "mojo-cross",
+   "tags": [
+    "ash",
+    "trainer",
+    "guest",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: trainer/ash-running.webp",
+   "w": 94,
+   "h": 122,
+   "outline": 3,
+   "baseline": 118
+  },
+  "mojo-cross/pikachu": {
+   "file": "assets/db/lib/mojo-cross/pikachu.webp",
+   "cat": "mojo-cross",
+   "tags": [
+    "pikachu",
+    "guest",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: g23/pikachu.webp",
+   "w": 188,
+   "h": 118,
+   "outline": 3,
+   "baseline": 114
+  },
   "mojo-fx/boost-flame-sheet13": {
    "file": "assets/db/lib/mojo-fx/boost-flame-sheet13.webp",
    "cat": "mojo-fx",
@@ -23349,6 +23380,156 @@
    "w": 377,
    "h": 377,
    "outline": 8
+  },
+  "mojo-train/cargo-nate": {
+   "file": "assets/db/lib/mojo-train/cargo-nate.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "cargo",
+    "wagon",
+    "gerbong",
+    "freight",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: mighty/freight-nate.webp",
+   "w": 224,
+   "h": 136,
+   "outline": 3,
+   "baseline": 132
+  },
+  "mojo-train/coach-annie": {
+   "file": "assets/db/lib/mojo-train/coach-annie.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: aeg/annie-and-clarabel.webp",
+   "w": 244,
+   "h": 119,
+   "outline": 3,
+   "baseline": 115
+  },
+  "mojo-train/coach-slip": {
+   "file": "assets/db/lib/mojo-train/coach-slip.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: aeg/slip-coaches.webp",
+   "w": 244,
+   "h": 128,
+   "outline": 3,
+   "baseline": 124
+  },
+  "mojo-train/diesel": {
+   "file": "assets/db/lib/mojo-train/diesel.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "diesel",
+    "locomotive",
+    "train",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: aeg/diesel.webp",
+   "w": 234,
+   "h": 158,
+   "outline": 4,
+   "baseline": 154
+  },
+  "mojo-train/ice-penny": {
+   "file": "assets/db/lib/mojo-train/ice-penny.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "ice",
+    "cream",
+    "wagon",
+    "gerbong",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: mighty/penny-ice-cream.webp",
+   "w": 214,
+   "h": 174,
+   "outline": 4,
+   "baseline": 170
+  },
+  "mojo-train/malivlak": {
+   "file": "assets/db/lib/mojo-train/malivlak.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "malivlak",
+    "locomotive",
+    "train",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: malivlak-body.webp",
+   "w": 184,
+   "h": 174,
+   "outline": 4,
+   "baseline": 170
+  },
+  "mojo-train/malivlak-rake": {
+   "file": "assets/db/lib/mojo-train/malivlak-rake.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "malivlak",
+    "train",
+    "rake",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: malivlak-body.webp",
+   "w": 314,
+   "h": 161,
+   "outline": 4,
+   "baseline": 157
+  },
+  "mojo-train/tanker": {
+   "file": "assets/db/lib/mojo-train/tanker.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "tanker",
+    "wagon",
+    "gerbong",
+    "train",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: aeg/troublesome-tankers.webp",
+   "w": 228,
+   "h": 216,
+   "outline": 5,
+   "baseline": 212
+  },
+  "mojo-train/water-red": {
+   "file": "assets/db/lib/mojo-train/water-red.webp",
+   "cat": "mojo-train",
+   "tags": [
+    "water",
+    "wagon",
+    "gerbong",
+    "rescue",
+    "mojo",
+    "cartoon"
+   ],
+   "source": "owner train art (assets/train) ingested for the G31 board: mighty/red-water-rescue.webp",
+   "w": 216,
+   "h": 141,
+   "outline": 3,
+   "baseline": 137
   },
   "mojo-turn/boat-diag": {
    "file": "assets/db/lib/mojo-turn/boat-diag.webp",

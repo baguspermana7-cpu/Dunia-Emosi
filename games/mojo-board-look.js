@@ -12,28 +12,92 @@
   function $ (id) { return D.getElementById(id) }
   function rnd (a, b) { return a + Math.random() * (b - a) }
 
-  /* ── LOOK: art box in cells (w,h), anchored bottom-centre. perch = the thing a raised friend stands on;
-     top = where the friend's feet sit, as a share of the perch height from its top. voice = ambient sound. ── */
+  /* ── ONE proportional system (owner 2026-10-08: "it has to be proportional") ─────────────────────────
+     Every w/h below is the art's EFFECTIVE box ON SCREEN, in cells, anchored bottom-centre. The picture is
+     drawn with object-fit:contain, so a WIDE picture is fitted to the box width instead of being scaled up.
+     The game's baked sticker ring (img.style.scale, see mojo-swoptops.js RING) is cancelled by sizeArt(),
+     so one number means the same thing for every picture — that mismatch (a ring between 1.00x and 1.19x)
+     is why the old table drew a 1.42-cell building at 1.42 and a 1.60-cell tree at 1.71.
+
+       PROP  1.00-1.16   a thing that lives in ONE cell: rock, crate, parcel, toolbox, a background building
+       MID   1.18-1.40   taller than a cell but still furniture: a swing, a gate, a wagon, a locomotive
+       HERO  <= 1.90     the few landmarks that carry the scene (HEROES below): the cat's tree, the lamp,
+                         the balloon, the balcony, a stop (lighthouse / station / dock)
+
+     WIDTH is the hard limit and HEIGHT is what makes a hero: art may only overflow UPWARD. NOTHING is wider
+     than W_MAX, heroes included — art that reaches more than 0.2 cells sideways covers the middle of the next
+     cell, and on an edge column edge() shifts it inward by another half-overflow on top of that (g6: a 1.30
+     tree in the last column reached 0.30 into its neighbour and sat on the friend standing there).
+     So a hero is TALL and narrow, never wide. Gate: tools/qa-mojo-board-look.mjs. ── */
+  var W_MAX = 1.16, H_HERO = 1.90
+  var HEROES = { 'perch:tree': 1, 'perch:balon': 1, 'perch:balcony': 1, 'repair:lamp': 1, stop: 1 }
   var LOOK = {
-    'perch:tree': { w: 1.6, h: 1.92, friend: { w: 0.7, h: 0.7 }, top: 0.24, idle: 'cat' },
-    'perch:balcony': { facade: 1.02, friend: { w: 0.8, h: 0.8 } },
-    'repair:lamp': { w: 0.9, h: 2.0 },
-    'repair:swing': { w: 1.4, h: 1.4, voice: 'creak' },
-    'repair:gate': { w: 1.15, h: 1.15 },
-    rock: { w: 1.15, h: 1.15 }, crate: { w: 1.1, h: 1.1 }, fire: { w: 1.2, h: 1.2, voice: 'crackle' },
-    person: { w: 1.05, h: 1.1 }, toolbox: { w: 0.95, h: 0.95 }, flag: { w: 1.05, h: 1.15 },
+    /* heroes — tall, and only as wide as their own picture needs at that height */
+    'perch:tree': { w: 1.16, h: 1.31, friend: { w: 0.58, h: 0.58 }, top: 0.25, idle: 'cat' },   // tree-round, ar .89
+    'perch:balon': { w: 1.16, h: 1.40, friend: { w: 0.54, h: 0.54 }, top: 0.3 },                 // balloon, ar .83
+    'perch:balcony': { facade: 1.02, friend: { w: 0.74, h: 0.74 } },                             // facade is drawn in CSS
+    'repair:lamp': { w: 0.70, h: 1.70 },                                                         // lamp-post, ar .39
+    stop: { w: 1.16, h: 1.42 },                                                                  // lighthouse / station / dock
+    /* mid */
+    'repair:swing': { w: 1.14, h: 1.22, voice: 'creak' },
+    loco: { w: 1.16, h: 1.30, voice: 'horn' }, gate: { w: 1.08, h: 1.24 }, flag: { w: 0.96, h: 1.22 },
+    fire: { w: 1.10, h: 1.26, voice: 'crackle' },
+    /* props — one cell */
+    'repair:gate': { w: 1.10, h: 1.15 },
+    rock: { w: 1.08, h: 1.08 }, crate: { w: 1.05, h: 1.05 },
+    person: { w: 1.00, h: 1.14 }, toolbox: { w: 0.92, h: 0.92 },
     'who:cat': { voice: 'meow' },
-    tree: { w: 1.15, h: 1.32 },        // 'T' decor
-    building: { w: 1.42, h: 1.35 }     // '#' outside (canvas keeps its small one underneath)
+    /* the delivery family (owner 2026-10-07): the passengers are person-sized, the rake fits the cell width,
+       and the ones with a voice idle with it while the board is on screen. */
+    rider: { w: 1.00, h: 1.14 }, parcel: { w: 0.85, h: 0.85 }, part: { w: 1.05, h: 0.75 },
+    wagon: { w: 1.16, h: 1.05 }, key: { w: 0.80, h: 0.80 }, mark: { w: 0.80, h: 0.80 },
+    pile: { w: 1.05, h: 0.90 }, hole: { w: 1.00, h: 0.80 }, patrol: { w: 1.00, h: 1.14, voice: 'siren' },
+    'who:burung': { voice: 'chirp' }, 'who:anjing': { voice: 'bark' },
+    tree: { w: 1.03, h: 1.18 },        // 'T' decor: scenery, so it never reaches into the cell above it
+    building: { w: 1.12, h: 1.18 }     // '#' outside: the picture fits the CELL WIDTH (canvas keeps its small one underneath)
   }
   var BUILDINGS = ['house', 'shop', 'hospital', 'factory', 'garage', 'school']
   var GRASSY = { town: 1, park: 1, hill: 1 }
   var SKIRT = 0.26   // diorama base under the board, in cells
 
-  function lookFor (o) {
-    if (o.perch && LOOK['perch:' + o.perch]) return LOOK['perch:' + o.perch]
-    if (o.type === 'repair' && LOOK['repair:' + (o.what || 'gate')]) return LOOK['repair:' + (o.what || 'gate')]
-    return LOOK[o.type] || null
+  function keyFor (o) {
+    if (o.perch && LOOK['perch:' + o.perch]) return 'perch:' + o.perch
+    if (o.type === 'repair' && LOOK['repair:' + (o.what || 'gate')]) return 'repair:' + (o.what || 'gate')
+    return LOOK[o.type] ? o.type : null
+  }
+  function lookFor (o) { var k = keyFor(o); return k ? LOOK[k] : null }
+  /* the sticker ring the game bakes into the art (img.style.scale, origin at the foot) multiplies whatever
+     box CSS gives the picture. Divide it out so the box on screen is exactly the LOOK number: --mbl-w/h is
+     the CSS box, --mbl-ew/eh the size it ends up at, which is what everything else (shadow, the friend on a
+     perch, the tail, the height tag, the headroom) must measure against. */
+  function ringK (img) { var k = img && parseFloat(img.style.scale); return k > 0 ? k : 1 }
+  function setBox (d, img, w, h) {
+    var k = ringK(img)
+    d.style.setProperty('--mbl-w', +(w / k).toFixed(4)); d.style.setProperty('--mbl-ew', w)
+    if (h != null) { d.style.setProperty('--mbl-h', +(h / k).toFixed(4)); d.style.setProperty('--mbl-eh', h) }
+    return k
+  }
+  // re-apply when the game swaps a picture for one with a different ring (fire out, repair fixed, gate open)
+  function sizeArt (d, L) {
+    var main = d.querySelector('img.main') || d.querySelector('img'), perch = d.querySelector('img.perch')
+    var sig = ringK(perch) + '/' + ringK(main)
+    if (d.__mblSig === sig) return false
+    d.__mblSig = sig
+    if (L.friend && L.h) {
+      setBox(d, perch, L.w, L.h)
+      var km = ringK(main)
+      d.style.setProperty('--mbl-fw', +(L.friend.w / km).toFixed(4)); d.style.setProperty('--mbl-fh', +(L.friend.h / km).toFixed(4))
+    } else if (L.facade) {
+      var kb = ringK(main)
+      d.style.setProperty('--mbl-fw', +(L.friend.w / kb).toFixed(4)); d.style.setProperty('--mbl-fh', +(L.friend.h / kb).toFixed(4))
+      d.style.setProperty('--mbl-fac', L.facade); d.style.setProperty('--mbl-ew', 0.92); d.style.setProperty('--mbl-w', 0.92)
+    } else setBox(d, main, L.w, L.h)
+    return true
+  }
+  function resize () {   // cheap sweep: only the elements whose ring actually changed are written
+    ;[].forEach.call(D.querySelectorAll('#objs > .ob.mbl-a'), function (d) {
+      var o = META[d.getAttribute('data-id')], L = o && lookFor(o); if (L) sizeArt(d, L)
+    })
   }
   function voiceOf (o) { var v = o.who && LOOK['who:' + o.who]; return (v && v.voice) || ((lookFor(o) || {}).voice) || null }
   // art height above the cell's own bottom (cells): what the headroom must fit for a row-0 object
@@ -70,25 +134,23 @@
     ;[].forEach.call(D.querySelectorAll('#objs > .ob'), function (d) {
       var o = META[d.getAttribute('data-id')]; if (!o) return
       var L = lookFor(o); if (!L || d.classList.contains('pickup')) return
-      d.classList.add('mbl-a')
+      d.classList.add('mbl-a'); d.__mblSig = null; sizeArt(d, L)
       if (L.friend && L.h) {        // a friend up a big tree
-        d.classList.add('mbl-perch', 'mbl-tall'); d.style.setProperty('--mbl-w', L.w); d.style.setProperty('--mbl-h', L.h)
-        d.style.setProperty('--mbl-fw', L.friend.w); d.style.setProperty('--mbl-fh', L.friend.h); d.style.setProperty('--mbl-top', L.top)
+        d.classList.add('mbl-perch', 'mbl-tall'); d.style.setProperty('--mbl-top', L.top)
         d.style.setProperty('--mbl-th', artTop(o).toFixed(2))
         if (L.idle === 'cat' || o.who === 'cat') { d.classList.add('mbl-cat'); if (!d.querySelector('.mbl-tail')) d.appendChild(node('i', 'mbl-tail')) ; cat = d }
       } else if (L.facade) {        // a friend on a balcony
-        d.classList.add('mbl-balc', 'mbl-tall'); d.style.setProperty('--mbl-fac', L.facade); d.style.setProperty('--mbl-fw', L.friend.w); d.style.setProperty('--mbl-fh', L.friend.h)
-        d.style.setProperty('--mbl-w', 0.92); d.style.setProperty('--mbl-th', artTop(o).toFixed(2))
+        d.classList.add('mbl-balc', 'mbl-tall'); d.style.setProperty('--mbl-th', artTop(o).toFixed(2))
       } else {
-        d.style.setProperty('--mbl-w', L.w); d.style.setProperty('--mbl-h', L.h); d.style.setProperty('--mbl-th', (0.03 + L.h).toFixed(2))
-        if (L.h >= 1.35) d.classList.add('mbl-tall')
+        d.style.setProperty('--mbl-th', (0.03 + L.h).toFixed(2))
+        if (L.h >= 1.24) d.classList.add('mbl-tall')
       }
       if (!d.querySelector('.mbl-sh')) d.insertBefore(node('i', 'mbl-sh'), d.firstChild)
       if (o.who === 'cat' && !cat) cat = d
       edge(d, o.at[1], cols, (L.w || 1))
     })
     ;[].forEach.call(D.querySelectorAll('#decor > .dec'), function (d) {
-      var L = LOOK.tree; d.classList.add('mbl-a'); d.style.setProperty('--mbl-w', L.w); d.style.setProperty('--mbl-h', L.h)
+      var L = LOOK.tree; d.classList.add('mbl-a'); setBox(d, d.querySelector('img'), L.w, L.h)
       if (!d.querySelector('.mbl-sh')) d.insertBefore(node('i', 'mbl-sh'), d.firstChild)
       var rc = (d.getAttribute('data-rc') || '0,0').split(','); edge(d, +rc[1], cols, L.w)
     })
@@ -126,6 +188,7 @@
           b.innerHTML = '<i class="mbl-sh"></i><img alt="" src="' + W.MojoArt.lib('mojo-prop/' + BUILDINGS[(r * 3 + c * 5) % BUILDINGS.length]) + '">'
           var L = LOOK.building, o = Math.max(0, (L.w - 1) / 2)
           b.style.setProperty('--mbl-w', L.w); b.style.setProperty('--mbl-h', L.h)
+          b.style.setProperty('--mbl-ew', L.w); b.style.setProperty('--mbl-eh', L.h)
           b.style.setProperty('--mbl-dx', (c === 0 ? o : c === row.length - 1 ? -o : 0).toFixed(3)); props.appendChild(b)
         }
       }
@@ -145,15 +208,31 @@
      transparent border on #board-wrap (clientHeight excludes borders), so the game's own layout() shrinks the
      cell to fit through its ResizeObserver: no change to layout() itself. ── */
   var hrT = 0, hrB = 0
+  /* how far the art envelope currently reaches INTO the chrome, in px [top, bottom]. Measured, never assumed:
+     a reservation that only knows the wrap's own box cannot see a top bar or a Bo chip drawn over the board. */
+  function chromeMiss (needT) {
+    var b = $('board'), C = CELL || readCell(); if (!b || !C) return [0, 0]
+    var br = b.getBoundingClientRect(); if (!br.width) return [0, 0]
+    var top = 0, bot = 0
+    ;['#scr-play .p-top', '#bo'].forEach(function (s) {
+      var e = D.querySelector(s); if (!e || e.offsetParent === null) return
+      var r = e.getBoundingClientRect()
+      if (r.right > br.left + 1 && r.left < br.right - 1 && r.bottom < br.bottom) top = Math.max(top, r.bottom - (br.top - needT * C))
+    })
+    var st = D.querySelector('#scr-play .p-strip')
+    if (st && st.offsetParent !== null) {
+      var sr = st.getBoundingClientRect()
+      if (sr.right > br.left + 1 && sr.left < br.right - 1) bot = (br.bottom + SKIRT * C + 8) - sr.top
+    }
+    return [Math.max(0, top), Math.max(0, bot)]
+  }
   function headroom () {
     var wrap = $('board-wrap'); if (!wrap || !LV) return
-    // the game scales an outlined image up by its ring (img.style.scale, origin at the art's foot): count it
-    var ring = 1
-    ;[].forEach.call(D.querySelectorAll('#objs > .ob.mbl-a img, #decor > .dec img'), function (i) { ring = Math.max(ring, parseFloat(i.style.scale) || 1) })
+    // sizeArt() cancels the sticker ring, so artTop() is already the size on screen: no ring factor here
     var needT = 0
-    ;(LV.objects || []).forEach(function (o) { if (o.at[0] === 0 && !{ bolt: 1, drop: 1, star: 1 }[o.type]) needT = Math.max(needT, artTop(o) * ring - 1) })
+    ;(LV.objects || []).forEach(function (o) { if (o.at[0] === 0 && !{ bolt: 1, drop: 1, star: 1 }[o.type]) needT = Math.max(needT, artTop(o) - 1) })
     var indoor = LV.grid.theme === 'school'
-    LV.grid.map[0].split('').forEach(function (k) { if (k === 'T') needT = Math.max(needT, (LOOK.tree.h + 0.03) * ring - 1); if (k === '#' && !indoor) needT = Math.max(needT, LOOK.building.h + 0.03 - 1) })
+    LV.grid.map[0].split('').forEach(function (k) { if (k === 'T') needT = Math.max(needT, LOOK.tree.h + 0.03 - 1); if (k === '#' && !indoor) needT = Math.max(needT, LOOK.building.h + 0.03 - 1) })
     needT += needT > 0 ? 0.06 : 0   // + the trees' idle sway and the fire's flicker
     var cs = W.getComputedStyle(wrap), pT = parseFloat(cs.paddingTop) || 0, pB = parseFloat(cs.paddingBottom) || 0
     var cw = wrap.clientWidth, ch0 = wrap.clientHeight + hrT + hrB, R = LV.grid.rows, Cn = LV.grid.cols
@@ -169,6 +248,12 @@
       var k = hLim < wLim ? 1 : 2
       if (dT > 0.5) bt += dT * k; if (dB > 0.5) bb += dB * k
     }
+    // the model above reserves space inside the wrap; the chrome does not have to live outside it (the top bar
+    // and Bo's chip float over the play screen, the plan strip sits under it). Measure what is REALLY there and
+    // correct the reservation by the amount the art misses by — one step per pass, the ResizeObserver re-runs us.
+    var miss = chromeMiss(needT)
+    if (miss[0] > 0.5) bt = Math.max(bt, hrT + miss[0] * (hLim < wLim ? 1 : 2))
+    if (miss[1] > 0.5) bb = Math.max(bb, hrB + miss[1] * (hLim < wLim ? 1 : 2))
     bt = Math.min(Math.ceil(bt), Math.round(ch0 * 0.4)); bb = Math.min(Math.ceil(bb), Math.round(ch0 * 0.2))
     if (Math.abs(bt - hrT) < 2 && Math.abs(bb - hrB) < 2) return
     hrT = bt; hrB = bb
@@ -185,6 +270,7 @@
   /* ── depth: lower rows draw over the overflow of upper rows; Mojo rides its row ── */
   function depth () {
     raf = 0; if (!on) return
+    resize()   // a swapped picture (fire out, repair fixed, gate open) can carry a different sticker ring
     // per row: building 1, tree 2, object 4, pickup 5. Mojo rides above the NEXT row's trees and buildings
     // (scenery never hides the player) and under that row's objects.
     ;[].forEach.call(D.querySelectorAll('#decor > .dec'), function (d) { var p = (d.getAttribute('data-rc') || '0').split(','); setZ(d, +p[0] * 10 + 2) })
@@ -310,7 +396,68 @@
       }
     }
   }
-  var GAP = { meow: 2500, purr: 1500, crackle: 900, creak: 4000, birds: 6000 }
+  /* ── delivery-family voices (owner 2026-10-07: "a bird chirp, a train horn with steam, a dog bark, a
+     siren, a reunion with hearts"). Same WebAudio synth, same mute rule, same rate limit. ── */
+  VOICES.chirp = function (c, p, kind) {
+    var t0 = c.currentTime + 0.02, k = kind === 'happy' ? 4 : 3
+    for (var i = 0; i < k; i++) {
+      var t = t0 + i * 0.13, o = c.createOscillator(), g = c.createGain(), f = (2400 + i * 180) * (p || 1)
+      o.type = 'sine'
+      o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 1.6, t + 0.05); o.frequency.exponentialRampToValueAtTime(f * 1.1, t + 0.1)
+      env(c, g, t, 0.012, 0.03, 0.12); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.16)
+    }
+  }
+  VOICES.horn = function (c, p) {
+    var t = c.currentTime + 0.02, d = 1.1, base = 170 * (p || 1)
+    ;[1, 1.5, 2.02].forEach(function (mult, i) {
+      var o = c.createOscillator(), g = c.createGain(), lp = c.createBiquadFilter()
+      o.type = i ? 'sawtooth' : 'square'
+      o.frequency.setValueAtTime(base * mult * 0.96, t); o.frequency.linearRampToValueAtTime(base * mult, t + 0.12)
+      o.frequency.setValueAtTime(base * mult, t + d * 0.72); o.frequency.linearRampToValueAtTime(base * mult * 0.9, t + d)
+      lp.type = 'lowpass'; lp.frequency.value = 1100
+      env(c, g, t, 0.09, 0.045 / (i + 1), d)
+      o.connect(lp); lp.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + 0.08)
+    })
+  }
+  VOICES.ship = function (c, p) {
+    var t = c.currentTime + 0.02, d = 1.5, base = 92 * (p || 1)
+    ;[1, 1.49].forEach(function (mult, i) {
+      var o = c.createOscillator(), g = c.createGain(), lp = c.createBiquadFilter()
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(base * mult, t)
+      lp.type = 'lowpass'; lp.frequency.value = 620
+      env(c, g, t, 0.18, 0.05 / (i + 1), d)
+      o.connect(lp); lp.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + 0.08)
+    })
+  }
+  VOICES.bark = function (c, p) {
+    var t0 = c.currentTime + 0.02
+    for (var i = 0; i < 2; i++) {
+      var t = t0 + i * 0.22, o = c.createOscillator(), g = c.createGain(), bp = c.createBiquadFilter()
+      o.type = 'sawtooth'
+      o.frequency.setValueAtTime(420 * (p || 1), t); o.frequency.exponentialRampToValueAtTime(190 * (p || 1), t + 0.14)
+      bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 1.4
+      env(c, g, t, 0.012, 0.055, 0.17); o.connect(bp); bp.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.2)
+    }
+  }
+  VOICES.siren = function (c, p) {
+    var t = c.currentTime + 0.02, d = 1.2, o = c.createOscillator(), lfo = c.createOscillator(), lg = c.createGain(), g = c.createGain()
+    o.type = 'triangle'; o.frequency.value = 720 * (p || 1)
+    lfo.frequency.value = 2.2; lg.gain.value = 220 * (p || 1); lfo.connect(lg); lg.connect(o.frequency)
+    env(c, g, t, 0.08, 0.04, d); o.connect(g); g.connect(c.destination)
+    ;[o, lfo].forEach(function (x) { x.start(t); x.stop(t + d + 0.05) })
+  }
+  VOICES.clank = function (c, p) {
+    var t = c.currentTime + 0.02
+    ;[1180, 1760].forEach(function (f, i) {
+      var o = c.createOscillator(), g = c.createGain(), bp = c.createBiquadFilter()
+      o.type = 'square'; o.frequency.setValueAtTime(f * (p || 1), t + i * 0.06); o.frequency.exponentialRampToValueAtTime(f * 0.7 * (p || 1), t + i * 0.06 + 0.16)
+      bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 3
+      env(c, g, t + i * 0.06, 0.005, 0.035, 0.2); o.connect(bp); bp.connect(g); g.connect(c.destination)
+      o.start(t + i * 0.06); o.stop(t + i * 0.06 + 0.24)
+    })
+  }
+  var GAP = { meow: 2500, purr: 1500, crackle: 900, creak: 4000, birds: 6000,
+    chirp: 900, horn: 2500, ship: 3000, bark: 900, siren: 2500, clank: 500 }
   function voice (name, pitch, kind) {
     var now = Date.now()
     if (kind !== 'happy' && lastVoice[name] && now - lastVoice[name] < GAP[name]) return
@@ -381,7 +528,8 @@
 
   W.MojoBoardLook = {
     perchPoint: perchPoint, perchNear: perchNear,
-    LOOK: LOOK, apply: function () { if (!W.__mblWired) wire(); else setup() },
+    LOOK: LOOK, HEROES: HEROES, LIMITS: { width: W_MAX, heroH: H_HERO }, keyFor: keyFor,
+    apply: function () { if (!W.__mblWired) wire(); else setup() },
     voice: voice, log: log, state: function () { return { on: on, cell: CELL, cat: !!cat, near: catNear, rescued: catRescued, headroom: [hrT, hrB], rm: RM } }
   }
 })(window, document)

@@ -465,7 +465,14 @@ section('J absolute arrows')
 /* ── K konsistensi: the ONE rule (LEWATI vs SEBELAH) ──────────────── */
 section('K konsistensi')
 {
-  const VERB = { fire: ['fire', 'spray'], person: ['normal', 'rescue'], repair: ['normal', 'repair'], rock: ['dozer', 'push'], log: ['dozer', 'push'], crate: ['normal', 'pick'] }
+  /* type -> [form, verb, extra world the action needs]. The delivery family (owner 2026-10-07) joins the
+     SAME rule table: every blocker is still acted on from BESIDE it, from all four sides, and Mojo turns. */
+  const VERB = { fire: ['fire', 'spray'], person: ['normal', 'rescue'], repair: ['normal', 'repair'], rock: ['dozer', 'push'], log: ['dozer', 'push'], crate: ['normal', 'pick'],
+    rider: ['normal', 'pick'], parcel: ['normal', 'pick'], part: ['normal', 'pick'],
+    stop: ['normal', 'deliver', { extra: [{ id: 'cargo', type: 'parcel', at: [4, 4] }], carry: 'cargo' }],
+    wagon: ['crane', 'couple'], loco: ['crane', 'couple', { extra: [{ id: 'g', type: 'wagon', at: [4, 4] }], train: ['g'] }],
+    gate: ['normal', 'unlock', { keys: { kunci: true } }],
+    pile: ['dumper', 'load', { cap: { sand: 3 } }], hole: ['dumper', 'dump', { res: { sand: 2 }, cap: { sand: 3 } }] }
   const grid5 = ['.....', '.....', '.....', '.....', '.....']
   const objOf = type => ({ id: 'x', type, at: [2, 2], str: 1, needs: {} })
   for (const [type, t] of Object.entries(PG.TYPES)) {
@@ -476,12 +483,16 @@ section('K konsistensi')
     else check(r.status === 'blocked' && r.reason === 'object' && r.info.type === type, `${type}: SEBELAH — an arrow into it is a gentle bump naming it (${r.reason})`)
     check(!!t.walk !== !!t.block, `${type}: is exactly one of walk-over or blocker`)
     if (!t.block) continue
+    if (!t.verb) { check(type === 'patrol', `${type}: a blocker with no action is only the moving patrol`); continue }
     check(!!VERB[type] && t.verb === VERB[type][1], `${type}: has its SEBELAH action ${t.verb}`)
-    const [form, verb] = VERB[type]
+    const [form, verb, need = {}] = VERB[type]
     // the action works from all four sides, whatever Mojo faces, and Mojo turns to the target
     for (let side = 0; side < 4; side++) for (let h = 0; h < 4; h++) {
       const at = [2 - PG.DIRS[side][0], 2 - PG.DIRS[side][1]]   // Mojo on the cell `side` of the target... target lies in direction `side`
-      const ww = W(L(grid5, { at, h, form }, [objOf(type)], { res: { water: 3 }, cap: { water: 5 } }))
+      const ww = W(L(grid5, { at, h, form }, [objOf(type), ...(need.extra || [])], { res: { water: 3, ...(need.res || {}) }, cap: { water: 5, ...(need.cap || {}) } }))
+      if (need.carry) { ww.m.carry = need.carry; PG.find(ww, need.carry).st = 'carried' }
+      if (need.train) { ww.m.train = need.train.slice(); ww.m.tail = need.train.map(id => [PG.find(ww, id).r, PG.find(ww, id).c]); need.train.forEach(id => { PG.find(ww, id).st = 'coupled' }) }
+      if (need.keys) Object.assign(ww.keys, need.keys)
       const rs = S(ww, verb)
       const okSide = PG.ok(rs.status) && rs.world.m.h === side && (h === side ? !rs.turned : rs.turned && rs.events[0].e === 'turn' && rs.events[0].auto)
       if (!okSide) check(false, `${type}: ${verb} from side ${side} facing ${h} (${rs.status} ${rs.reason} h=${rs.world.m.h})`)
@@ -490,6 +501,8 @@ section('K konsistensi')
         // after resolving it, the cell is road again — except a pushed rock/log, which is still a rock
         const next = PG.run(rs.world, [['up', 'east', 'down', 'west'][side]], null)
         if (type === 'rock' || type === 'log') check(next.stop && next.stop.reason === 'object', `${type}: pushed onto ground it is still a ${type} and blocks`)
+        // a destination, an engine at its platform and a sand pile are places, not obstacles to clear: they stay
+        else if (type === 'stop' || type === 'loco' || type === 'pile') check(next.stop && next.stop.reason === 'object', `${type}: served (${PG.find(rs.world, 'x').st}) it is still a place and stays put`)
         else check(!next.stop, `${type}: resolved (${PG.find(rs.world, 'x').st}) it never blocks`)
       }
     }
@@ -587,11 +600,15 @@ section('L rule lint + messages')
   // Bo's beat line (owner 2026-10-03, m6 photo): the bubble shows the FIRST sentence, so it must name THIS beat's
   // objective and fit the bubble; and Bo never names an action the beat cannot use
   const WHATN = { swing: 'ayunan', lamp: 'lampu', gate: 'gerbang' }
-  const ACT = { DORONG: 'push', SEMPROT: 'spray', NAIK: 'raise', TURUN: 'lower', TOLONG: 'rescue', PERBAIKI: 'repair', LOMPAT: 'jump', AMBIL: 'pick', TERBANG: 'takeoff' }
+  const ACT = { DORONG: 'push', SEMPROT: 'spray', NAIK: 'raise', TURUN: 'lower', TOLONG: 'rescue', PERBAIKI: 'repair', LOMPAT: 'jump', AMBIL: 'pick', TERBANG: 'takeoff',
+    ANTAR: 'deliver', GANDENG: 'couple', BUKA: 'unlock', ISI: 'load', TUANG: 'dump', PASANG: 'place', TUNGGU: 'wait' }
+  // the delivery family names every passenger, destination, wagon and prop, so Bo's line can say it out loud
+  const NAMED = ['deliver', 'visit', 'train', 'fill', 'open', 'place', 'carry']
   for (const lv of ML.LEVELS) lv.beats.forEach((b, bi) => {
     const first = (b.bo.match(/^.*?[.!?](?:\s|$)/) || [b.bo])[0].trim().toLowerCase()
     const nouns = (b.objectives || []).map(ob => { const o = (lv.objects || []).find(x => x.id === ob.id)
-      return ob.do === 'reach' ? 'bendera' : ob.do === 'extinguish' ? 'api' : ob.do === 'rescue' ? (o.name || '').toLowerCase() : ob.do === 'repair' ? WHATN[o.what] : ob.id })
+      return ob.do === 'reach' ? 'bendera' : ob.do === 'extinguish' ? 'api' : ob.do === 'rescue' ? (o.name || '').toLowerCase() : ob.do === 'repair' ? WHATN[o.what]
+        : NAMED.includes(ob.do) ? ((o && o.name) || ob.id).toLowerCase() : ob.id })
     check(first.length <= 64 && nouns.some(n => n && first.includes(n)), `${lv.id} beat ${bi + 1}: Bo's bubble line "${first}" names the objective (${nouns.join('/')}) and fits the bubble (${first.length}/64)`)
     const verbs = new Set((b.palette || PG.palette(b)).map(c => PG.verbOf(c)))
     const named = Object.keys(ACT).filter(k => new RegExp('\\b' + k + '\\b').test(b.bo))
@@ -609,6 +626,181 @@ section('L rule lint + messages')
   const noMsg = PG.REASONS.filter(r => !keys.has(r))
   check(block.length > 20 && noMsg.length === 0, `every engine reason has its own message in mojo-swoptops.js MSG (${keys.size} keys) ${noMsg.join(',')}`)
   check(!/Hmm, Mojo berhenti/.test(ui) && !/Coba AMBIL/.test(ui), 'the generic "Mojo berhenti" fallback and the toolbox "Coba AMBIL" text are gone')
+}
+
+/* ── M the delivery family: carry, deliver, queues, trains, keys, load/pour, planks, timed patrols ── */
+section('M carry / deliver / chains / keys / timed')
+{
+  const DL = (map, mojo, objects, extra = {}) => ({ id: 'dl', rev: 3, grid: { rows: map.length, cols: map[0].length, map }, mojo, objects,
+    res: extra.res, cap: extra.cap,
+    beats: [{ title: 'u', story: 'u', bo: 'u', objectives: extra.objectives, slots: extra.slots || 14, budget: extra.budget || 14, forms: extra.forms || ['normal'], palette: extra.palette }] })
+  const run = (lv, prog) => PG.run(PG.prep(PG.world(lv), lv, 0), prog, lv.beats[0], { auto: true })
+
+  // carry: a passenger is taken from BESIDE Mojo, rides on him, and cannot be put down in the road
+  {
+    const lv = DL(['....'], { at: [0, 0], h: 'E' }, [{ id: 'pip', type: 'rider', at: [0, 1], name: 'Pip' }, { id: 'rumah', type: 'stop', at: [0, 3], accepts: 'pip', name: 'Rumah' }],
+      { objectives: [{ do: 'deliver', id: 'rumah' }], palette: ['up', 'down', 'west', 'east', 'pick', 'drop', 'deliver'] })
+    const w = PG.prep(PG.world(lv), lv, 0)
+    check(S(w, 'east').reason === 'object', 'a waiting passenger blocks the road: Mojo stops beside him')
+    const picked = S(w, 'pick')
+    check(picked.status === 'success' && picked.world.m.carry === 'pip' && PG.find(picked.world, 'pip').st === 'carried', 'AMBIL puts the passenger aboard (he rides on Mojo)')
+    check(S(picked.world, 'pick').reason === 'hands-full', 'Mojo carries one thing at a time')
+    check(S(picked.world, 'drop').reason === 'drop-here' && S(picked.world, 'drop').info.ride, 'a passenger is never dropped in the road (TARUH refuses, ANTAR is the way)')
+    check(S(picked.world, 'deliver').reason === 'no-target', 'ANTAR with no destination beside Mojo = no-target')
+    const done = run(lv, ['pick', 'east', 'east', 'deliver'])
+    check(done.done && PG.find(done.world, 'rumah').st === 'done' && done.world.m.carry === null, 'ANTAR beside the destination completes it and the passenger steps off')
+    check(PG.lint(lv).length === 0, 'a carry/deliver level lints clean ' + PG.lint(lv).join(' | '))
+  }
+  // deliver: the destination only takes what it accepts (id, type or kind), and `keep` makes it a visit
+  {
+    const lv = DL(['.....'], { at: [0, 0], h: 'E' }, [
+      { id: 'merah', type: 'parcel', at: [0, 1], kind: 'merah' }, { id: 'biru', type: 'parcel', at: [0, 3], kind: 'biru' },
+      { id: 'kotak', type: 'stop', at: [0, 2], accepts: 'biru', name: 'Kotak biru' }],
+      { objectives: [{ do: 'deliver', id: 'kotak' }], palette: ['up', 'down', 'west', 'east', 'pick', 'deliver'] })
+    const w = run(lv, ['pick', 'east']).world
+    check(S(w, 'deliver').reason === 'wrong-stop', 'a blue letterbox refuses the red parcel (wrong-stop)')
+    const right = PG.clone(w); right.m.carry = 'biru'; PG.find(right, 'biru').st = 'carried'; PG.find(right, 'merah').st = 'idle'
+    check(PG.ok(S(right, 'deliver').status) && PG.find(S(right, 'deliver').world, 'kotak').st === 'done', 'the same letterbox takes the blue parcel: it matches by colour, not by position')
+  }
+  // a queue: visits happen in order, out of turn is refused, and `keep` keeps the passenger aboard
+  {
+    const lv = DL([',,,,,', '.....'], { at: [1, 0], h: 'E' }, [
+      { id: 'pip', type: 'rider', at: [1, 1], name: 'Pip' },
+      { id: 'a', type: 'stop', at: [0, 0], accepts: 'pip', keep: true, order: 1, seq: 'q', name: 'Paman A' },
+      { id: 'b', type: 'stop', at: [0, 2], accepts: 'pip', keep: true, order: 2, seq: 'q', name: 'Paman B' },
+      { id: 'c', type: 'stop', at: [0, 4], accepts: 'pip', order: 3, seq: 'q', name: 'Paman C' }],
+      { objectives: [{ do: 'visit', id: 'a' }, { do: 'visit', id: 'b' }, { do: 'deliver', id: 'c' }], palette: ['up', 'down', 'west', 'east', 'pick', 'deliver'] })
+    const w0 = run(lv, ['pick', 'east', 'east']).world      // Mojo stands beside Paman B, Paman A not yet visited
+    const out = S(w0, 'deliver')
+    check(out.reason === 'order' && out.info.next === 'a' && out.info.order === 1, 'the second uncle refuses his turn before the first (reason order, naming who is next)')
+    const v1 = run(lv, ['pick', 'deliver']).world
+    check(PG.find(v1, 'a').st === 'done' && v1.m.carry === 'pip', 'a `keep` visit completes the stop and the passenger travels on')
+    const sol = PG.solve(PG.prep(PG.world(lv), lv, 0), lv.beats[0])
+    check(sol && PG.run(PG.prep(PG.world(lv), lv, 0), sol, lv.beats[0], { auto: true }).done, 'the solver finds the queue route ' + (sol || []).join(' '))
+    check(PG.lint({ ...lv, objects: lv.objects.map(o => o.id === 'b' ? { ...o, order: 3 } : o) }).some(p => p.includes('no number 2')), 'lint: a queue that jumps a number is refused')
+  }
+  // one destination that takes several passengers (the ship with `need`)
+  {
+    const lv = DL([',,,,,', '.....'], { at: [1, 0], h: 'E' }, [
+      { id: 'a', type: 'rider', at: [1, 1], name: 'A' }, { id: 'b', type: 'rider', at: [1, 4], name: 'B' },
+      { id: 'kapal', type: 'stop', at: [0, 2], accepts: 'rider', need: 2, name: 'Kapal' }],
+      { objectives: [{ do: 'deliver', id: 'kapal' }], palette: ['up', 'down', 'west', 'east', 'pick', 'deliver'] })
+    const one = run(lv, ['pick', 'east', 'east', 'deliver']).world
+    check(PG.find(one, 'kapal').st !== 'done' && PG.find(one, 'kapal').got === 1, 'a ship that needs two passengers is not done after the first')
+    const sol = PG.solve(PG.prep(PG.world(lv), lv, 0), lv.beats[0])
+    check(sol && sol.filter(c => c === 'deliver').length === 2, 'the solver boards both passengers')
+  }
+  // chains: wagons couple behind Mojo, trail along the cells he leaves, and never block him
+  {
+    const lv = DL([',,,,,,', '......', '.,.,.,'], { at: [1, 0], h: 'E', form: 'crane' }, [
+      { id: 'g1', type: 'wagon', at: [2, 0] }, { id: 'g2', type: 'wagon', at: [2, 2] },
+      { id: 'loko', type: 'loco', at: [0, 5], needs: 2, name: 'Malivlak' }],
+      { objectives: [{ do: 'train', id: 'loko' }], forms: ['crane'], palette: ['up', 'down', 'west', 'east', 'couple'] })
+    const w = PG.prep(PG.world(lv), lv, 0)
+    check(S(S(w, 'east').world, 'couple').reason === 'no-target', 'GANDENG with no wagon beside Mojo = no-target')
+    const c1 = run(lv, ['couple'])
+    check(c1.world.m.train.length === 1 && PG.find(c1.world, 'g1').st === 'coupled', 'GANDENG puts the wagon in the line behind Mojo')
+    const moved = run(lv, ['couple', 'east', 'east'])
+    const g1 = PG.find(moved.world, 'g1')
+    check(g1.r === 1 && g1.c === 1, `the coupled wagon follows Mojo along the cells he leaves (at ${g1.r},${g1.c})`)
+    check(S(moved.world, 'west').status === 'success', 'a coupled wagon never blocks Mojo')
+    const two = run(lv, ['couple', 'east', 'east', 'couple'])
+    check(two.world.m.train.length === 2, 'a second wagon joins the end of the line')
+    const short = run(lv, ['couple', 'east', 'east', 'east', 'east', 'east', 'couple'])
+    check(short.stop && short.stop.reason === 'need-wagons' && short.stop.info.need === 2, 'the engine refuses a train that is short of wagons (need-wagons)')
+    const full = PG.solve(w, lv.beats[0])
+    const end = PG.run(w, full, lv.beats[0], { auto: true }).world
+    check(PG.find(end, 'loko').st === 'ready' && end.m.train.length === 0 && end.objs.filter(o => o.type === 'wagon').every(o => o.st === 'delivered'), 'at the station the whole line is handed to the engine')
+    check(PG.lintDelivery({ ...lv, objects: lv.objects.filter(o => o.id !== 'g2') }, {}).some(p => p.includes('needs 2 wagons')), 'lint: an engine that needs more wagons than the board has is refused')
+  }
+  // keys and gates
+  {
+    const lv = DL(['..T..', '.....', '..T..'], { at: [1, 0], h: 'E' }, [
+      { id: 'k', type: 'key', at: [0, 0], key: 'taman' }, { id: 'g', type: 'gate', at: [1, 2], key: 'taman', name: 'Gerbang' },
+      { id: 'flag', type: 'flag', at: [1, 4] }],
+      { objectives: [{ do: 'reach', at: [1, 4] }], palette: ['up', 'down', 'west', 'east', 'unlock'] })
+    const w = PG.prep(PG.world(lv), lv, 0)
+    check(S(S(w, 'east').world, 'unlock').reason === 'need-key', 'the gate refuses to open without its key (need-key)')
+    check(S(w, 'up').world.keys.taman === true, 'driving over the key picks it up (LEWATI)')
+    const open = run(lv, ['up', 'down', 'east', 'unlock'])
+    check(PG.find(open.world, 'g').st === 'open' && S(open.world, 'east').status === 'success', 'BUKA opens the gate and the road is free')
+    check(PG.lint({ ...lv, objects: lv.objects.filter(o => o.id !== 'k') }).some(p => p.includes('needs the key')), 'lint: a gate whose key is not on the board is refused')
+  }
+  // load and pour
+  {
+    const lv = DL([',,,,,,', '......'], { at: [1, 0], h: 'E', form: 'dumper' }, [
+      { id: 'pile', type: 'pile', at: [0, 1], res: 'sand', n: 1 }, { id: 'hole', type: 'hole', at: [1, 3], need: 2, res: 'sand', name: 'Lubang' },
+      { id: 'flag', type: 'flag', at: [1, 5] }],
+      { res: { sand: 0 }, cap: { sand: 2 }, objectives: [{ do: 'fill', id: 'hole' }], forms: ['dumper'], palette: ['up', 'down', 'west', 'east', 'load', 'dump'] })
+    const w = PG.prep(PG.world(lv), lv, 0)
+    check(S(S(w, 'east').world, 'dump').reason === 'no-target', 'TUANG with no hole beside Mojo = no-target')
+    const l2 = run(lv, ['east', 'load', 'load'])
+    check(l2.world.res.sand === 2 && S(l2.world, 'load').reason === 'cap-full', 'ISI fills the bed and stops at its cap')
+    const half = run(lv, ['east', 'load', 'east', 'dump'])
+    check(PG.find(half.world, 'hole').st === 'part' && PG.find(half.world, 'hole').got === 1, 'one scoop only part-fills a hole that needs two')
+    const fin = run(lv, ['east', 'load', 'load', 'east', 'dump'])
+    check(PG.find(fin.world, 'hole').st === 'filled' && fin.world.fill['1,3'], 'the filled hole becomes road again')
+    check(S(run(lv, ['east', 'east']).world, 'dump').reason === 'no-load', 'TUANG with an empty bed = no-load')
+  }
+  // a plank over a gap
+  {
+    const lv = DL([',,,,,,', '..o...'], { at: [1, 0], h: 'E' }, [{ id: 'papan', type: 'part', at: [1, 1], name: 'Papan' }, { id: 'flag', type: 'flag', at: [1, 5] }],
+      { objectives: [{ do: 'reach', at: [1, 5] }], palette: ['up', 'down', 'west', 'east', 'pick', 'place'] })
+    const w = PG.prep(PG.world(lv), lv, 0)
+    check(S(w, 'place').reason === 'hands-empty', 'PASANG with nothing carried = hands-empty')
+    const carried = run(lv, ['pick'])
+    check(S(carried.world, 'place').reason === 'no-gap', 'the plank only goes down over a real gap (no-gap)')
+    const laid = run(lv, ['pick', 'east', 'place'])
+    check(PG.find(laid.world, 'papan').st === 'placed' && laid.world.fill['1,2'], 'PASANG bridges the pit and that cell becomes road')
+    check(run(lv, ['pick', 'east', 'place', 'east', 'east', 'east', 'east']).done, 'Mojo crosses his own plank to the flag')
+    check(PG.lint({ ...lv, grid: { rows: 2, cols: 6, map: [',,,,,,', '......'] } }).some(p => p.includes('no gap to bridge')), 'lint: a plank on a board with no gap is refused')
+  }
+  // timed obstacles: a patrol walks its own path, one cell per command, and can catch Mojo
+  {
+    const path = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 3], [1, 2], [1, 1]]
+    const lv = DL(['.....', '.....', '.....'], { at: [0, 1], h: 'E' }, [
+      { id: 'pol', type: 'patrol', at: [1, 0], path }, { id: 'flag', type: 'flag', at: [2, 4] }],
+      { objectives: [{ do: 'reach', at: [2, 4] }], palette: ['up', 'down', 'west', 'east', 'wait'] })
+    const w = PG.prep(PG.world(lv), lv, 0)
+    check(PG.find(w, 'pol').r === 1 && PG.find(w, 'pol').c === 0, 'a patrol starts on the first cell of its path')
+    const w1 = S(w, 'wait')
+    check(w1.status === 'success' && PG.find(w1.world, 'pol').c === 1 && w1.world.tick === 1, 'TUNGGU is a real command: the clock ticks and the patrol steps on')
+    check(PG.key(w1.world) !== PG.key(w) && /\|t\d/.test(PG.key(w1.world)), 'the clock is part of the state while a patrol walks')
+    const still = DL(['...'], { at: [0, 0], h: 'E' }, [{ id: 'flag', type: 'flag', at: [0, 2] }], { objectives: [{ do: 'reach', at: [0, 2] }], palette: ['east', 'wait'] })
+    const sw = PG.prep(PG.world(still), still, 0)
+    check(!/\|t\d/.test(PG.key(sw)), 'a board with no patrol carries no clock in its state (the search never doubles)')
+    check(!PG.solve(sw, still.beats[0]).includes('wait'), 'the solver never pads a plan with TUNGGU when nothing moves')
+    const caught = run(lv, ['down'])
+    check(caught.stop && caught.stop.reason === 'caught', 'the patrol walking onto Mojo stops the run (caught)')
+    const sol = PG.solve(w, lv.beats[0])
+    check(sol && PG.run(w, sol, lv.beats[0], { auto: true }).done, 'the solver routes around a moving patrol ' + (sol || []).join(' '))
+    check(PG.lint({ ...lv, grid: { rows: 3, cols: 5, map: ['.....', ',,,,,', '.....'] } }).some(p => p.includes('not road')), 'lint: a patrol path off the road is refused')
+  }
+  // every delivery level solves, and the new verbs reach the UI the same way the old ones do
+  {
+    const fam = ML.LEVELS.filter(l => /^d\d+$/.test(l.id))
+    check(fam.length >= 14, `the delivery family ships ${fam.length} levels (10-16 asked)`)
+    const regions = new Set(fam.map(l => ML.region(l.id).id))
+    check(regions.size === 6, `the delivery family covers all six regions (${[...regions].join(',')})`)
+    const verbs = new Set(fam.flatMap(l => l.beats.flatMap(b => (b.palette || []).map(c => PG.verbOf(c)))))
+    for (const v of ['deliver', 'couple', 'unlock', 'load', 'dump', 'place', 'pick']) check(verbs.has(v), `the new verb ${v} is used by a shipped level`)
+    const ui = fs.readFileSync(path.join(ROOT, 'games/mojo-swoptops.js'), 'utf8')
+    const art = fs.readFileSync(path.join(ROOT, 'games/data/mojo-art.js'), 'utf8')
+    const labels = ui.slice(ui.indexOf('var LABEL = {'), ui.indexOf('var EN = {'))
+    const icons = art.slice(art.indexOf('var ICON = {'), art.indexOf('// colour category per command'))
+    const cats = art.slice(art.indexOf('var CAT = {'), art.indexOf('function icon ('))
+    for (const [v, l] of [['deliver', 'Antar'], ['couple', 'Gandeng'], ['unlock', 'Buka'], ['load', 'Isi'], ['dump', 'Tuang'], ['place', 'Pasang'], ['wait', 'Tunggu']]) {
+      check(labels.includes(`${v}: '${l}'`), `${v} has its Indonesian palette label "${l}"`)
+      check(new RegExp('\\b' + v + ':\\s*\'<').test(icons), `${v} has its own palette icon`)
+      check(new RegExp('\\b' + v + ':\\s*\'#').test(cats), `${v} has its own chip colour`)
+    }
+    // the hint ladder and "Tunjukkan Caranya" read the solver, so every new beat must have a route from its start
+    for (const lv of fam) lv.beats.forEach((b, i) => {
+      const w = starts(lv)[i]
+      const h = PG.hint(w, b, [], {})
+      check(h && h.cmd, `${lv.id} beat ${i + 1}: the hint ladder has a first command from an empty plan (${h && h.cmd})`)
+    })
+  }
 }
 
 console.log(`\n${passes} passed, ${fails.length} failed`)

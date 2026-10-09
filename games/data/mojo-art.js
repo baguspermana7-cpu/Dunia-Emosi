@@ -80,7 +80,11 @@
     h1: 'forest', h2: 'forest-fire', h3: 'forest', h4: 'river-rescue', h5: 'forest-fire', h6: ['forest', 'forest-fire', 'forest'],
     g1: 'rockslide', g2: 'gap', g3: 'canyon', g4: 'mountain', g5: 'snow', g6: ['rockslide', 'canyon', 'snow'],
     k1: 'site', k2: 'site', k3: 'site', k4: 'site', k5: 'site', k6: 'site',
-    p1: 'beach', p2: 'beach', p3: 'fun', p4: 'island', p5: 'beach', p6: ['beach', 'fun', 'island'] }
+    p1: 'beach', p2: 'beach', p3: 'fun', p4: 'island', p5: 'beach', p6: ['beach', 'fun', 'island'],
+    // the delivery family (2026-10-07); 'site' is no painting key on purpose (Konstruksi keeps its region art)
+    d1: 'road', d2: 'road', d3: 'road', d4: 'harbour', d5: 'pier', d6: ['harbour', 'harbour'],
+    d7: 'forest', d8: 'forest', d9: 'canyon', d10: 'mountain', d11: 'site', d12: 'fire',
+    d13: 'beach', d14: ['beach', 'fun'], d15: 'beach' }
   var REGION_SCENE = { kota: 'road', pelabuhan: 'harbour', hutan: 'forest-fire', gunung: 'rockslide', pulau: 'beach' }
   function sceneTheme (lv, b) {
     if (!b) return null
@@ -168,11 +172,23 @@
     left2: '<path d="M30 8 L14 24 L30 40"' + ST + '/>',
     right2: '<path d="M18 8 L34 24 L18 40"' + ST + '/>',
     plan: '<rect x="8" y="8" width="10" height="10" rx="2" fill="#fff"/><rect x="8" y="21" width="10" height="10" rx="2" fill="#fff"/><rect x="8" y="34" width="10" height="7" rx="2" fill="#fff"/><path d="M24 13 H40 M24 26 H40 M24 38 H34"' + ST + '/>',
-    debug: '<circle cx="21" cy="21" r="12"' + ST + '/><path d="M30 30 L41 41"' + ST + '/>'
+    debug: '<circle cx="21" cy="21" r="12"' + ST + '/><path d="M30 30 L41 41"' + ST + '/>',
+    /* the delivery family (owner 2026-10-07): ANTAR a parcel into waiting hands, GANDENG a coupling hook,
+       BUKA a key turning in a padlock, ISI a scoop filling, TUANG a tipped bucket, PASANG a plank over a gap,
+       TUNGGU a clock face. Drawn in the same white-on-chip-colour language as every other command icon. */
+    deliver: '<rect x="8" y="8" width="20" height="17" rx="3" fill="#fff"/><path d="M8 16 H28 M18 8 V25" stroke="#546E7A" stroke-width="3"/><path d="M18 30 q6 6 14 6 H42"' + ST + '/><path d="M36 30 L42 36 L36 42"' + ST + '/>',
+    couple: '<rect x="4" y="18" width="14" height="12" rx="3" fill="#fff"/><rect x="30" y="18" width="14" height="12" rx="3" fill="#fff"/><path d="M18 24 H30"' + ST + '/><circle cx="24" cy="24" r="5"' + ST + '/>',
+    unlock: '<rect x="12" y="22" width="24" height="18" rx="4" fill="#fff"/><path d="M17 22 V16 Q17 8 25 8 Q33 8 33 16"' + ST + '/><circle cx="24" cy="30" r="3" fill="#546E7A"/>',
+    load: '<path d="M10 26 Q24 14 38 26"' + ST + '/><path d="M10 26 Q24 42 38 26 Z" fill="#fff"/><path d="M24 12 V4 M16 14 L12 7 M32 14 L36 7"' + ST + '/>',
+    dump: '<path d="M8 14 L30 8 L36 26 L14 32 Z" fill="#fff"/><path d="M34 30 q6 6 2 12"' + ST + '/><circle cx="34" cy="42" r="3" fill="#fff"/><circle cx="24" cy="42" r="3" fill="#fff"/><circle cx="14" cy="42" r="3" fill="#fff"/>',
+    place: '<rect x="6" y="22" width="36" height="9" rx="3" fill="#fff"/><path d="M12 36 V42 M36 36 V42"' + ST + '/><path d="M24 6 V16"' + ST + '/><path d="M17 11 L24 18 L31 11"' + ST + '/>',
+    wait: '<circle cx="24" cy="25" r="16"' + ST + '/><path d="M24 15 V25 L31 29"' + ST + '/><path d="M18 5 H30"' + ST + '/>'
   }
   // colour category per command (with the icon, never colour alone — PRD §22.4)
   var CAT = { up: '#1E88E5', down: '#1E88E5', west: '#1E88E5', east: '#1E88E5', fwd: '#1E88E5', left: '#1E88E5', right: '#1E88E5', back: '#1E88E5', push: '#E0A100', spray: '#E53935', raise: '#FB8C00', lower: '#FB8C00',
-    rescue: '#D81B60', pick: '#6D4C41', drop: '#6D4C41', repair: '#546E7A', jump: '#43A047', takeoff: '#1565C0', land: '#1565C0', hook: '#8D6E63', release: '#8D6E63', swop: '#7B1FA2' }
+    rescue: '#D81B60', pick: '#6D4C41', drop: '#6D4C41', repair: '#546E7A', jump: '#43A047', takeoff: '#1565C0', land: '#1565C0', hook: '#8D6E63', release: '#8D6E63', swop: '#7B1FA2',
+    // delivery family: ANTAR teal, GANDENG train-brown, BUKA amber-lock, ISI/TUANG sand, PASANG timber, TUNGGU slate
+    deliver: '#00897B', couple: '#5D4037', unlock: '#F9A825', load: '#C17B3E', dump: '#8D6E63', place: '#7E57C2', wait: '#607D8B' }
   function icon (cmd) {
     if (!cmd) return ''
     if (cmd.indexOf('swop:') === 0 || cmd.indexOf('form/') === 0) {
@@ -205,7 +221,28 @@
     'char/bo': 'tk-char/mechanic-boy', 'char/bo-wrench': 'tk-char/mechanic-boy-wrench', 'char/mia': 'mojo-char/oona', 'char/kid': 'tk-char/explorer-kid', 'char/rafi': 'tk-char/lantern-boy',
     'char/cat': 'animals/cat', 'obj/rock': 'gt/rock', 'obj/fire': 'gt/fx-fire', 'obj/star': 'gt/star-collectible', 'obj/toolbox': 'gt/tool-kit', 'obj/flag': 'game/flag-red',
     'obj/tree': 'park/tree', 'obj/lamp': 'park/street-lamp', 'obj/crate': 'game/crate-wood', 'obj/cone': 'things/traffic-cone', 'obj/bush': 'game/bush', 'obj/bench': 'park/bench',
-    'tool/kunci': 'gt/repair', 'tool/tangga': 'game/ladder', 'tool/roda': 'gt/part-tire', 'ui/trophy': 'game/trophy-gold', 'ui/gear': 'game/gear'
+    'tool/kunci': 'gt/repair', 'tool/tangga': 'game/ladder', 'tool/roda': 'gt/part-tire', 'ui/trophy': 'game/trophy-gold', 'ui/gear': 'game/gear',
+    /* ── the delivery family (owner 2026-10-07). Passengers, destinations and payload props, all from art the
+       repo already holds: the owner's own Mojo cast, the Timmy (tk-*) cast for the cross-world guests, the
+       newly ingested train rake (mojo-train, tools/ingest-mojo-train.py) and the shared prop library. ── */
+    'char/pip': 'mojo-char/float', 'char/burung': 'mojo-char/bird', 'char/induk': 'mojo-prop/bird-blue',
+    'char/anjing': 'mojo-char/dog', 'char/paman1': 'mojo-char/grandad', 'char/paman2': 'mojo-char/grandad-thumbs',
+    'char/paman3': 'mojo-char/grandad-arms', 'char/timmy': 'tk-char/timmy-map', 'char/pinguin': 'tk-char/penguin-sailor',
+    'char/penyelam': 'tk-char/diver', 'char/kapten': 'tk-char/captain-old', 'char/ash': 'mojo-cross/ash', 'char/pikachu': 'mojo-cross/pikachu',
+    'train/malivlak': 'mojo-train/malivlak', 'train/malivlak-rake': 'mojo-train/malivlak-rake', 'train/diesel': 'mojo-train/diesel',
+    'train/coach-annie': 'mojo-train/coach-annie', 'train/coach-slip': 'mojo-train/coach-slip', 'train/tanker': 'mojo-train/tanker',
+    'train/cargo-nate': 'mojo-train/cargo-nate', 'train/ice-penny': 'mojo-train/ice-penny', 'train/water-red': 'mojo-train/water-red',
+    'kapal/titanic': 'tk-legend/ship-titanic-clean', 'kapal/selam': 'tk-ship/submarine-black',
+    // colour-matched courier run: the three parcels and the three posts are picked for READABLE colour
+    // (red gift / blue crate / yellow box -> red-roof post / blue-roof post / gold chest), never by name alone
+    'obj/paket-merah': 'things/gift', 'obj/paket-biru': 'mojo-prop/mod-cargo', 'obj/paket-kuning': 'mojo-prop/package',
+    'obj/pos-biru': 'mojo-prop/well-blue', 'obj/pos-kuning': 'mojo-prop/chest-gold', 'obj/pos-merah': 'mojo-prop/well-red',
+    'obj/gerbang': 'mojo-tile/gate-closed', 'obj/gerbang-buka': 'mojo-tile/gate-open', 'obj/kunci': 'game/key-ornate',
+    'obj/dermaga': 'mojo-prop/dock', 'obj/rumah-anjing': 'park/doghouse', 'obj/jejak': 'mojo-prop/chevron',
+    'obj/papan': 'mojo-prop/bridge-wood', 'obj/mobil-mogok': 'vehicles/car-red', 'obj/bengkel': 'mojo-prop/garage',
+    'obj/pasir': 'mojo-tile/sand', 'obj/lubang': 'mojo-tile/trap-hole', 'obj/hidran': 'mojo-chase/cprops/fire-hydrant',
+    'obj/mercusuar': 'mojo-prop/lighthouse', 'obj/padang': 'game/hot-air-balloon', 'obj/balon': 'game/hot-air-balloon',
+    'obj/angka-1': 'mojo-prop/number-1', 'obj/angka-2': 'mojo-prop/number-2', 'obj/angka-3': 'mojo-prop/number-3'
   }
   var cache = {}
   function src (key) {

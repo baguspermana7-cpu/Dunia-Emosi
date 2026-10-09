@@ -1,6 +1,14 @@
 // G31 Mojo board "immersive diorama" gate (games/mojo-board-look.js/.css + mojo-board-paint.js).
 // Every level at 1280x800, 1024x768, 844x390, 390x844:
 //  - tall art anchored: its image box bottom sits on the cell bottom (+-4 px, layout boxes)
+//  - ONE PROPORTIONAL SYSTEM (owner 2026-10-08 "this rock and the houses are oversized... it has to be
+//    proportional"). Every art box is the LAYOUT box times the sticker-ring scale, in cells, so an idle
+//    sway or the fire's flicker never moves the number:
+//      * a picture on a '#' building cell is at most 1.2 cells wide and 1.25 tall
+//      * no art box reaches into the CENTRE 60% of a neighbouring cell that holds the road (sideways),
+//        or an item / target / Mojo (sideways or above) — art overflows UPWARD over empty road only
+//      * a pushable (rock, crate) stays within 1.15 cells, so it still reads as one cell
+//      * only MojoBoardLook.HEROES may pass 1.4 cells, and nothing passes 1.9
 //  - the cat's box sits on the tree's top 30%
 //  - no art box intersects the top bar, palette, plan strip or Bo chip
 //  - elementFromPoint on every visible palette button returns that button
@@ -70,6 +78,13 @@ async function begin (p, id) {
 
 function measure () {
   const R = e => { const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height } }
+  // the PAINTED art, not the element: object-fit:contain + object-position:50% 100% leaves transparent space
+  // above a wide picture, and transparent space covers nothing
+  const PAINT = e => {
+    const r = R(e); if (e.tagName !== 'IMG' || !e.naturalWidth || !e.naturalHeight) return r
+    const s = Math.min(r.w / e.naturalWidth, r.h / e.naturalHeight), w = e.naturalWidth * s, h = e.naturalHeight * s
+    return { l: r.l + (r.w - w) / 2, r: r.r - (r.w - w) / 2, t: r.b - h, b: r.b, w: w, h: h }
+  }
   const cell = parseFloat(document.getElementById('board').style.getPropertyValue('--cell'))
   const out = { cell, anchor: [], cat: null, hits: [], palette: [], z: [] }
   const rowOf = e => { const m = /translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px/.exec(e.style.transform || ''); return m ? Math.round(+m[2] / cell) : null }
@@ -82,15 +97,18 @@ function measure () {
   })
   const cat = document.querySelector('#objs > .ob.mbl-cat')
   if (cat) {
+    // the ring scale grows the tree from its foot: the canopy the cat must sit on is the SCALED top
     const tr = cat.querySelector('img.perch'), ct = cat.querySelector('img.main')
-    out.cat = { treeTop: tr.offsetTop, treeH: tr.offsetHeight, treeL: tr.offsetLeft, treeW: tr.offsetWidth, catBottom: ct.offsetTop + ct.offsetHeight, catMid: ct.offsetLeft + ct.offsetWidth / 2 }
+    const k = parseFloat(tr.style.scale) || 1, h = tr.offsetHeight * k, foot = tr.offsetTop + tr.offsetHeight
+    const w = tr.offsetWidth * k, cx = tr.offsetLeft + tr.offsetWidth / 2
+    out.cat = { treeTop: foot - h, treeH: h, treeL: cx - w / 2, treeW: w, catBottom: ct.offsetTop + ct.offsetHeight, catMid: ct.offsetLeft + ct.offsetWidth / 2 }
   }
   // art boxes vs chrome
   const chrome = [['top bar', '#scr-play .p-top'], ['palette', '#palette'], ['plan strip', '#scr-play .p-strip'], ['Bo chip', '#bo']]
     .map(([n, s]) => { const e = document.querySelector(s); return e && e.offsetParent !== null ? [n, R(e)] : null }).filter(Boolean)
   const art = [...document.querySelectorAll('#objs > .ob.mbl-a > img, #decor > .dec.mbl-a > img, .mbl-bld > img, #mbl-skirt, #objs > .ob.mbl-a > .tag, .mbl-tail')]
   art.forEach(a => {
-    const r = R(a); if (r.w < 1 || r.h < 1 || getComputedStyle(a).opacity === '0') return
+    const r = PAINT(a); if (r.w < 1 || r.h < 1 || getComputedStyle(a).opacity === '0') return
     chrome.forEach(([n, c]) => { const ix = Math.min(r.r, c.r) - Math.max(r.l, c.l), iy = Math.min(r.b, c.b) - Math.max(r.t, c.t); if (ix > 1 && iy > 1) out.hits.push(`${a.className || a.tagName} in ${(a.closest('[data-id],[data-rc]') || a).getAttribute('data-id') || ''} x ${n}`) })
   })
   // palette buttons are what a finger hits
@@ -110,6 +128,62 @@ function measure () {
   return out
 }
 
+/* ── the proportional system: every art box in cells, and what it covers ──────────────────────────
+   The box is the LAYOUT box times the sticker ring (img.style.scale, origin 50% 100%), never the
+   screen rect: the trees sway, the fire flickers and Mojo slides, and none of that is a size. */
+function measureFit () {
+  const board = document.getElementById('board'), cell = parseFloat(board.style.getPropertyValue('--cell'))
+  const st = window.__mojo.state(), lv = window.MojoLevels.byId(st.id), map = lv.grid.map
+  const GONE = { got: 1, rescued: 1, cleared: 1, carried: 1, 'delivered-gone': 1 }
+  const at = {}
+  ;(st.objects || []).forEach(o => { if (!GONE[o.st]) (at[o.r + ',' + o.c] = at[o.r + ',' + o.c] || []).push(o) })
+  const byId = {}; (lv.objects || []).forEach(o => { byId[o.id] = o })
+  const tf = e => { const m = /translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px/.exec(e.style.transform || ''); return m ? [+m[1], +m[2]] : null }
+  const mt = tf(document.getElementById('mojo'))
+  const mojo = mt ? [Math.round(mt[1] / cell), Math.round(mt[0] / cell)] : null
+  const arts = []
+  const add = (img, x0, y0, r, c, key, id, type) => {
+    if (!img || !img.offsetWidth || !img.offsetHeight || getComputedStyle(img).opacity === '0') return
+    const k = parseFloat(img.style.scale) || 1
+    const cx = x0 + img.offsetLeft + img.offsetWidth / 2, foot = y0 + img.offsetTop + img.offsetHeight
+    // the PAINTED art inside the box (object-fit:contain, object-position 50% 100%), times the sticker ring
+    const fit = (img.naturalWidth && img.naturalHeight) ? Math.min(img.offsetWidth / img.naturalWidth, img.offsetHeight / img.naturalHeight) : 0
+    const w = (fit ? img.naturalWidth * fit : img.offsetWidth) * k / cell
+    const h = (fit ? img.naturalHeight * fit : img.offsetHeight) * k / cell
+    arts.push({ key, id, type, r, c, w, h, l: cx / cell - w / 2, rt: cx / cell + w / 2, b: foot / cell, t: foot / cell - h })
+  }
+  document.querySelectorAll('#objs > .ob.mbl-a:not(.gone)').forEach(d => {
+    const t = tf(d), o = byId[d.getAttribute('data-id')]; if (!t || !o) return
+    const key = window.MojoBoardLook.keyFor(o) || o.type
+    add(d.querySelector('img.perch'), t[0], t[1], o.at[0], o.at[1], key, o.id, o.type)
+    if (!d.classList.contains('mbl-perch')) add(d.querySelector('img.main'), t[0], t[1], o.at[0], o.at[1], key, o.id, o.type)
+  })
+  document.querySelectorAll('#decor > .dec.mbl-a').forEach(d => {
+    const p = (d.getAttribute('data-rc') || '0,0').split(',').map(Number)
+    add(d.querySelector('img'), p[1] * cell, p[0] * cell, p[0], p[1], 'tree', 'dec ' + p, 'tree')
+  })
+  document.querySelectorAll('.mbl-bld').forEach(d => {
+    const p = (d.getAttribute('data-rc') || '0,0').split(',').map(Number)
+    add(d.querySelector('img'), parseFloat(d.style.left) || 0, parseFloat(d.style.top) || 0, p[0], p[1], 'building', 'bld ' + p, 'building')
+  })
+  // what a neighbouring cell holds and must keep visible
+  const ROAD = { '.': 1, '=': 1 }
+  const holds = (r, c) => (mojo && mojo[0] === r && mojo[1] === c) ? 'Mojo' : ((at[r + ',' + c] || [])[0] || {}).type || ''
+  const over = []
+  arts.forEach(a => {
+    ;[[0, -1, 'left'], [0, 1, 'right'], [-1, 0, 'above']].forEach(([dr, dc, dir]) => {
+      const nr = a.r + dr, nc = a.c + dc
+      if (nr < 0 || nc < 0 || nr >= map.length || nc >= map[nr].length) return
+      const what = holds(nr, nc), ch = map[nr].charAt(nc)
+      // sideways: the road itself must stay readable. Upward: only over EMPTY road (the diorama).
+      if (!(dir === 'above' ? what : (what || ROAD[ch]))) return
+      const ix = Math.min(a.rt, nc + 0.8) - Math.max(a.l, nc + 0.2), iy = Math.min(a.b, nr + 0.8) - Math.max(a.t, nr + 0.2)
+      if (ix > 0.01 && iy > 0.01) over.push(`${a.id} covers ${dir} ${nr},${nc} ${what || 'road'} by ${ix.toFixed(2)}x${iy.toFixed(2)}`)
+    })
+  })
+  return { arts: arts.map(a => ({ key: a.key, id: a.id, type: a.type, ch: map[a.r].charAt(a.c), w: a.w, h: a.h })), over, heroes: window.MojoBoardLook.HEROES }
+}
+
 const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'], protocolTimeout: 30000 })
 try {
   for (const [w, h] of sizes) {
@@ -123,7 +197,8 @@ try {
       if (m.cat) {
         const c = m.cat, ok = c.catBottom >= c.treeTop && c.catBottom <= c.treeTop + 0.3 * c.treeH && c.catMid >= c.treeL && c.catMid <= c.treeL + c.treeW
         check(ok, `${w}x${h} ${id}: the cat sits on the tree's top 30% (bottom ${c.catBottom.toFixed(0)} vs tree ${c.treeTop.toFixed(0)}+${(0.3 * c.treeH).toFixed(0)})`)
-        check(c.treeH >= 1.85 * m.cell, `${w}x${h} ${id}: the cat's tree is ~2 cells tall (${(c.treeH / m.cell).toFixed(2)})`)
+        // a hero is TALL, not wide (the width cap is 1.16): the tree stands a third of a cell over a prop
+        check(c.treeH >= 1.25 * m.cell && c.treeH <= 1.9 * m.cell, `${w}x${h} ${id}: the cat's tree is a hero, 1.25-1.9 cells tall (${(c.treeH / m.cell).toFixed(2)})`)
       }
       // rescue staging (games/mojo-fx.js): every raised thing reports the point a ladder must reach — a raised
       // friend's feet on its perch (layout box, +-2 px), at least ~1 cell up for the tall tree and the balcony
@@ -137,6 +212,17 @@ try {
         if (x.q && x.type === 'person') check(Math.hypot(x.q.x - x.feet[0], x.q.y - x.feet[1]) <= 2, `${w}x${h} ${id}: ${x.id} perch point = the friend's feet (${x.q.x.toFixed(0)},${x.q.y.toFixed(0)} vs ${x.feet.map(v => v.toFixed(0))})`)
         if (x.q && x.perch) check(x.q.y <= x.cellTop + 0.1 * x.cell, `${w}x${h} ${id}: ${x.id} perch point is at least ~1 cell up (tall art: ${x.q.y.toFixed(0)} <= ${(x.cellTop + 0.1 * x.cell).toFixed(0)})`)
       }
+      // ── one proportional system ──
+      const f = await p.evaluate(measureFit), sz = a => `${a.id}/${a.key} ${a.w.toFixed(2)}x${a.h.toFixed(2)}`
+      const bld = f.arts.filter(a => a.ch === '#' && (a.w > 1.2 || a.h > 1.25))
+      check(!bld.length, `${w}x${h} ${id}: art on a '#' cell is <= 1.2 x 1.25 cells (${bld.slice(0, 3).map(sz).join('; ')})`)
+      const push = f.arts.filter(a => (a.type === 'rock' || a.type === 'crate') && Math.max(a.w, a.h) > 1.15)
+      check(!push.length, `${w}x${h} ${id}: a pushable stays within 1.15 cells (${push.slice(0, 3).map(sz).join('; ')})`)
+      const notHero = f.arts.filter(a => Math.max(a.w, a.h) > 1.4 && !f.heroes[a.key])
+      check(!notHero.length, `${w}x${h} ${id}: only a hero key passes 1.4 cells (${notHero.slice(0, 3).map(sz).join('; ')})`)
+      const huge = f.arts.filter(a => Math.max(a.w, a.h) > 1.9)
+      check(!huge.length, `${w}x${h} ${id}: nothing passes 1.9 cells (${huge.slice(0, 3).map(sz).join('; ')})`)
+      check(!f.over.length, `${w}x${h} ${id}: no art over a neighbour's road, item, target or Mojo (${f.over.slice(0, 3).join('; ')})`)
       check(!m.hits.length, `${w}x${h} ${id}: no art over the chrome (${m.hits.slice(0, 3).join('; ')})`)
       check(!m.palette.length, `${w}x${h} ${id}: palette buttons take the tap (${m.palette.slice(0, 3).join('; ')})`)
       check(!m.z.length, `${w}x${h} ${id}: depth by row (${m.z.slice(0, 3).join('; ')})`)
