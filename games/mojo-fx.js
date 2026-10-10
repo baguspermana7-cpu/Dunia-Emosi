@@ -170,6 +170,23 @@
     }
   }
   /* an owner frame pack from the chase played in place (a background swap on a timer, never per rAF) */
+  // three birds on an ellipse (rx, ry) around (x, y): each faces the way it flies, bobs and fades out at the end
+  function birds (g, x, y, rx, ry, size) {
+    var url = cfg.lib('mojo-char/bird'), ms = 760, loops = 2, N = 12
+    for (var b = 0; b < 3; b++) {
+      var n = node(g, 'mfx-spr', x, y, size, size, 11)
+      if (!n) continue
+      n.style.backgroundImage = 'url("' + url + '")'
+      if (RM) { play(n, [{ opacity: 0 }, { opacity: 1, offset: 0.2 }, { opacity: 1, offset: 0.8 }, { opacity: 0 }], 1200, 'ease'); continue }
+      var kf = []
+      for (var i = 0; i <= N; i++) {
+        var a = (i / N) * Math.PI * 2 + b * Math.PI * 2 / 3, dir = -Math.sin(a) >= 0 ? 1 : -1, depth = 0.8 + 0.2 * Math.sin(a)
+        kf.push({ transform: 'translate(' + (Math.cos(a) * rx).toFixed(1) + 'px,' + (Math.sin(a) * ry - Math.abs(Math.sin(a * 3)) * size * 0.12).toFixed(1) + 'px) scale(' + (dir * depth).toFixed(2) + ',' + depth.toFixed(2) + ')' })
+      }
+      play(n, kf, ms, 'linear')
+      ;(function (n) { later(function () { play(n, kf, ms, 'linear') }, ms); later(function () { play(n, [{ opacity: 1 }, { opacity: 0 }], 260, 'ease') }, ms * loops - 260) })(n)
+    }
+  }
   function chaseSeq (g, base, n, x, y, w, h, per, loops, z) {
     var urls = []; for (var i = 1; i <= n; i++) urls.push(chaseUrl(base + '-' + i))
     var nd = node(g, 'mfx-spr', x, y, w, h, z); if (!nd) return null
@@ -284,9 +301,14 @@
       hitStop(80)
       sprite(g, 'skid', p[0] - d[1] * s * 0.12, p[1] - d[0] * s * 0.12 + s * 0.2, s * 0.7, [{ opacity: 0, transform: 'scale(.8)' }, { opacity: 0.9, transform: 'scale(1)', offset: 0.2 }, { opacity: 0.9, offset: 0.7 }, { opacity: 0 }], 900, { z: 1, cls: 'under' })
       sprite(g, 'tire-smoke', p[0] + d[1] * s * 0.3, p[1] + d[0] * s * 0.3, s * 0.55, [{ opacity: 0, transform: 'scale(.5)' }, { opacity: 0.85, transform: 'scale(1)', offset: 0.3 }, { opacity: 0, transform: 'translateY(-12px) scale(1.3)' }], 700)
+      // owner 2026-10-10: BROK half size again, and random — half the bumps show BROK, the rest only a smoke puff
+      var look = API.forceLook || (Math.random() < 0.5 ? 'brok' : 'smoke')
+      var dizzy = API.forceDizzy || (Math.random() < 0.5 ? 'birds' : 'stars')
+      API.last = { look: look, dizzy: dizzy }
       // the BROK! burst sits where the two cells meet, pulled inside the board so it never reaches the palette
-      var bz = s * 0.8, bp = inBoard(p[0] + d[1] * s * 0.5, p[1] + d[0] * s * 0.5, bz, bz)
-      var brok = node(g, 'mfx-spr mfx-brok', bp[0], bp[1], bz, bz, 10)
+      var bz = s * 0.4, bp = inBoard(p[0] + d[1] * s * 0.5, p[1] + d[0] * s * 0.5, bz, bz)
+      if (look === 'smoke') sprite(g, 'tire-smoke', bp[0], bp[1] - s * 0.05, s * 0.85, [{ opacity: 0, transform: 'scale(.4)' }, { opacity: 0.9, transform: 'scale(1)', offset: 0.25 }, { opacity: 0, transform: 'scale(1.5) translateY(-12%)' }], 900)
+      var brok = look === 'brok' ? node(g, 'mfx-spr mfx-brok', bp[0], bp[1], bz, bz, 10) : null
       if (brok) {
         brok.style.backgroundImage = 'url("' + chaseUrl('brok-burst') + '")'
         if (RM) play(brok, [{ opacity: 0 }, { opacity: 1, offset: 0.25 }, { opacity: 1, offset: 0.7 }, { opacity: 0 }], 700, 'ease')
@@ -298,9 +320,11 @@
           { transform: 'scale(1.06) rotate(3deg)', opacity: 0 }], 700, 'linear')
       }
       chunks(g, bp[0], bp[1] + s * 0.1, 7, 900)
-      // dizzy stars orbit over Mojo's roof while it shakes it off
+      // dizzy over Mojo's roof while it shakes it off: circling stars, or three little birds that circle and flap
       var dw = s * 0.95, dp = inBoard(p[0], p[1] - s * 0.52, dw, dw * 0.68)
-      chaseSeq(g, 'dizzy', 8, dp[0], dp[1], dw, dw * 0.68, 70, 2, 11)
+      if (dizzy === 'stars') chaseSeq(g, 'dizzy', 8, dp[0], dp[1], dw, dw * 0.68, 70, 2, 11)
+      else birds(g, dp[0], dp[1], dw * 0.42, dw * 0.12, s * 0.24)
+      later(function () { if (cfg && cfg.sound) cfg.sound(dizzy === 'birds' ? 'tweet' : 'twinkle') }, RM ? 0 : 220)
       later(function () { shake(6, 320) }, RM ? 0 : 80)
       settle(g, 1200)
     },
@@ -645,6 +669,7 @@
   var API = {
     CAP: CAP,
     init: function (o) { cfg = o },
+    cellPx: function () { return cfg ? cell() : 0 },       // QA: the board cell size the effects scale from
     clear: function () { timers.forEach(W.clearTimeout); timers = []; endHitStop(); groups.slice().forEach(kill); groups = []; dropStand() },
     standing: function () { return stand ? { r: stand.r, c: stand.c, lvl: stand.lvl, unit: stand.unit, perch: stand.perch } : null },
     live: function () { return groups.length },
@@ -658,6 +683,7 @@
       var o = ['dust', 'skid', 'tire-smoke', 'portal', 'collect', 'sparkle', 'dust-cloud', 'water-splash', 'smoke', 'sparks', 'repair-sparks', 'checkpoint', 'fireworks', 'level-up', 'boost-flame-sheet13', 'speed-trail', 'confetti', 'confetti2', 'confetti-sheet13', 'confetti-sheet03'].map(spriteUrl)
       o.push(cfg.lib('mojo-chase/items/heart'))
       CRASH_ART.forEach(function (k) { o.push(chaseUrl(k)) })
+      o.push(cfg.lib('mojo-char/bird'))                      // the dizzy birds
       ;['electric-aura', 'sparks', 'gravity', 'smoke', 'holy-light', 'spark1', 'regen'].forEach(function (f) { o = o.concat(frames(f)) })
       return o
     }

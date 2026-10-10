@@ -97,10 +97,10 @@
   /* How big the BROK draws, as a share of the car's width. Owner 2026-10-07: "don't make the BROK too big,
      make it 50% of its current size" - the burst was cp * 1.25 and the DOM boom cp * 1.1, which filled the
      road at phone size. Halved; the hit-stop, shake and flash are untouched, so it still lands. */
-  var BROK_SIZE = 0.62, BROK_DOM = 0.55
+  var BROK_SIZE = 0.31, BROK_DOM = 0.28   // owner 2026-10-10: halved again
   // the Codex 'brok' sheet is a padded explosion frame (its blast fills roughly half the frame), so its BOX is
   // wider than the tight comic sticker above while reading the same size on screen. Halved from 2.3 as well.
-  var BROK_SEQ = 1.15
+  var BROK_SEQ = 0.58
   var FX_KEYS = ['explosion', 'dust', 'skid', 'speed-trail', 'sparks', 'confetti', 'fireworks', 'collect', 'boost-flame-sheet13', 'tire-smoke', 'sparkle', 'splash', 'snow-spray']
 
   /* ── audio: local WebAudio tones + the shared SFXEngine cues; mute = parent's sound() ─────────────── */
@@ -133,6 +133,9 @@
       squeal: function () { tone(1650, 1380, 0.26, 0.018, 'triangle'); tone(1720, 1440, 0.22, 0.012, 'sine', 0.03) },   // a quiet tyre squeal
       tick: function (n) { tone(n ? 660 : 990, n ? 660 : 990, 0.14, 0.09, 'triangle') },
       chime: function (combo) { var k = Math.pow(1.122, combo || 0); tone(1046 * k, 1568 * k, 0.16, 0.09, 'triangle'); tone(1568 * k, 2093 * k, 0.18, 0.06, 'sine', 0.06) },
+      // dizzy cues: a falling sparkle glissando for stars, quick "tweet-tweet" chirps for the birds
+      twinkle: function () { [2093, 1760, 1568, 1318, 1175].forEach(function (f, i) { tone(f, f * 1.02, 0.12, 0.05, 'sine', i * 0.07) }) },
+      tweet: function () { [0, 0.16, 0.42, 0.58].forEach(function (t, i) { tone(2600 + (i % 2) * 400, 3400 + (i % 2) * 300, 0.07, 0.045, 'sine', t) }) },
       clack: function () { tone(1800, 900, 0.05, 0.12, 'square'); tone(600, 300, 0.08, 0.1, 'triangle', 0.03) },
       brok: function () { tone(140, 60, 0.28, 0.32, 'sine'); noise(0.18, 0.28, 700); tone(420, 300, 0.07, 0.12, 'square', 0.02) },   // a soft clunk, never a buzzer
       box: function () { tone(523, 1046, 0.12, 0.1, 'triangle'); tone(784, 1318, 0.16, 0.08, 'triangle', 0.08); tone(1046, 2093, 0.2, 0.06, 'sine', 0.16) },
@@ -232,6 +235,8 @@
     TR.BIOME[stage.look || stage.biome].props.forEach(function (p) { if (TR.PROP_KEY[p[0]].indexOf('proc:') < 0) want('p:' + p[0], TR.PROP_KEY[p[0]]) })
     ;['lamp', 'chevron-yellow', 'chevron-red', 'billboard', 'swoppiton', 'gantry', 'finish', 'flag-checker'].forEach(function (k) { want('p:' + k, TR.PROP_KEY[k]) })
     FX_KEYS.forEach(function (k) { want('fx/' + k, 'mojo-fx/' + k) })
+    // the dizzy moment after a BROK: circling stars OR circling little birds (owner 2026-10-10)
+    want('dz:bird', 'mojo-char/bird'); want('dz:star', 'mojo-chase/vfx/single-dizzy-star')
     // Codex 8-pose effect sequences (one canvas per sequence, registered anchor): BROK, safety net, dizzy stars, boost flame, confetti
     var SEQ = { brok: [], net: [], dizzy: [], boost: [], confetti: [] }
     for (var sq in SEQ) for (var fi = 1; fi <= 8; fi++) want('seq:' + sq + '-' + fi, 'mojo-chase/vfx/' + sq + '-' + fi)
@@ -488,11 +493,20 @@
       S.recover = perk === 'recover' ? 0.8 : 1.0; S.recoverMax = S.recover; S.hard = true; S.lastHitAt = performance.now(); S.lastHitT = S.simT || 0; if (!RM) { S.hitStop = 0.08; S.hitScale = 0.05 } S.punch = RM ? 0 : 0.14; S.flash = RM ? 0 : 0.35
       if (!RM) S.shake = 0.55
       S.squash = 0.2; AU.brok()
-      for (var i = 0; i < S.bursts.length; i++) if (!S.bursts[i].on) { var b = S.bursts[i]; b.on = true; b.x = sx; b.y = sy - cp * 0.2; b.t = 0; break }
+      // which dizzy: stars or birds, at random per crash, each with its own little sound once the clunk has landed
+      S.dizzy = S.forceDizzy || (Math.random() < 0.5 ? 'birds' : 'stars')
+      S.dizzyT = RM ? 0.9 : 1.6        // its own clock: the 1 s no-stack window is gameplay, the dizzy is a show
+      if (!S.dzT) S.dzT = 0
+      clearTimeout(S.dzT); S.dzT = setTimeout(function () { if (S.dizzyT > 0) (S.dizzy === 'birds' ? AU.tweet : AU.twinkle)() }, 220)
+      // owner 2026-10-10: "kadang keluar kadang nggak, hanya ada asap aja, random" - half the crashes show the BROK
+      // burst, the other half only a grey smoke puff (the clunk, shake and dizzy stay on every crash)
+      S.crashFx = S.forceCrashFx || (Math.random() < 0.5 ? 'brok' : 'smoke')
+      if (S.crashFx === 'brok') { for (var i = 0; i < S.bursts.length; i++) if (!S.bursts[i].on) { var b = S.bursts[i]; b.on = true; b.x = sx; b.y = sy - cp * 0.2; b.t = 0; break } }
+      else { for (var sp = 0; sp < (RM ? 3 : 9); sp++) { var pf = FX.spawn(TEX.puff, sx + (Math.random() - 0.5) * cp * 0.3, sy - cp * (0.1 + Math.random() * 0.2), (Math.random() - 0.5) * 120 * v.u, -(60 + Math.random() * 90) * v.u, 0.9 + Math.random() * 0.4, cp * (0.16 + Math.random() * 0.08), false); if (pf) { pf.grow = cp * 0.5; pf.a = 0.7 } } }
       for (var k = 0; k < 12; k++) { var p = FX.spawn(TEX.chunk, sx + (Math.random() - 0.5) * cp * 0.22, sy - cp * 0.15, (Math.random() - 0.5) * 520 * v.u, -(200 + Math.random() * 340) * v.u, 0.8, cp * (0.06 + Math.random() * 0.035), false); if (p) { p.ay = 2400 * v.u; p.vr = (Math.random() - 0.5) * 12; p.rot = 1; p.floor = sy + cp * 0.12; p.flow = 0.9 } }   // chunky debris arcs and bounces
       burst(sx, sy, 10, TEX.puff, 280 * v.u, 0.7, cp * 0.24, false)
-      if (W.VFX && W.VFX.dom && !RM) { try { var hr = host.getBoundingClientRect(); W.VFX.dom(hr.left + sx * v.css, hr.top + (sy - cp * 0.2) * v.css, { fx: 'boom', size: cp * v.css * BROK_DOM }) } catch (e2) {} }
-      call(S.hits >= 3 ? 'Tidak apa-apa! Pelan-pelan saja.' : 'BROK! Ayo lanjut!', 1300, 'hit' + (S.hits % 2))
+      if (S.crashFx === 'brok' && W.VFX && W.VFX.dom && !RM) { try { var hr = host.getBoundingClientRect(); W.VFX.dom(hr.left + sx * v.css, hr.top + (sy - cp * 0.2) * v.css, { fx: 'boom', size: cp * v.css * BROK_DOM }) } catch (e2) {} }   // (only when this crash shows BROK, see crashFx)
+      call(S.hits >= 3 ? 'Tidak apa-apa! Pelan-pelan saja.' : S.crashFx === 'brok' ? 'BROK! Ayo lanjut!' : 'Waduh, asap! Ayo lanjut!', 1300, 'hit' + (S.hits % 2))
       if (S.hits >= 3) { rowSt.assist = Math.min(1, 0.4 + (S.hits - 3) * 0.15) }
     }
 
@@ -688,6 +702,7 @@
       if (S.robHop > 0) S.robHop -= dtr
       // speed
       var mult = 1
+      if (S.dizzyT > 0) S.dizzyT -= dt
       if (S.recover > 0) { var k = S.recover / (S.recoverMax || 1.4); mult = 1 - 0.32 * k; S.recover -= dt; if (S.recover <= 0 && S.hard) { S.recoveryMs.push(Math.round((S.simT - S.lastHitT + 0.08) * 1000)); /* simulated time + the 80 ms hit-stop: a stalled test machine must not count */ recovered() } }
       if (S.boost > 0) { S.boost -= dt; mult *= perk === 'boost' ? 1.42 : 1.32 }
       var seg = track.seg(Math.floor((S.z + Z_P) / TR.SEG))
@@ -1149,10 +1164,21 @@
       if (S.shield) { c.globalAlpha = 0.45 + 0.15 * Math.sin(S.t * 6); c.drawImage(TEX.glowC, -cp * 0.9, -cp * 1.3, cp * 1.8, cp * 1.6) }
       if (S.tunnel > 0.3) { c.globalAlpha = 0.25 * (Math.sin(S.z / 160) * 0.5 + 0.5); c.drawImage(TEX.glowY, -cp * 0.6, -cp * 1.1, cp * 1.2, cp * 0.9) }   // passing ceiling-light strobe
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'
-      // dizzy stars orbit the cabin
-      var di = S.recover > 0 && S.hard && seqImg('dizzy', S.t * 14 % 8)
-      if (di) { var dw = cp * 0.95, dh = dw * di.naturalHeight / di.naturalWidth; c.drawImage(di, -dw / 2, -a.base * k * 0.95 - dh / 2, dw, dh) }
-      else if (S.recover > 0 && S.hard && img['o:star']) {
+      // dizzy: little birds circling the cabin (they face the way they fly and flap), or the dizzy stars
+      var dz = S.dizzyT > 0, dzA = Math.min(1, S.dizzyT / 0.3)      // fades out over its last 0.3 s
+      var bird = dz && S.dizzy === 'birds' && img['dz:bird']
+      var di = !bird && dz && seqImg('dizzy', S.t * 14 % 8)
+      if (dz) c.globalAlpha = dzA
+      if (bird) {
+        var bw = cp * 0.2, bh = bw * bird.naturalHeight / bird.naturalWidth, cy0 = -a.base * k * 0.98
+        for (var bi = 0; bi < 3; bi++) {
+          var ba = S.t * 5 + bi * TAU / 3, bx = Math.cos(ba) * cp * 0.38, by = cy0 + Math.sin(ba) * cp * 0.09
+          var dir = -Math.sin(ba) >= 0 ? 1 : -1, flap = 1 + 0.12 * Math.sin(S.t * 30 + bi), depth = 0.82 + 0.18 * Math.sin(ba)
+          c.save(); c.translate(bx, by - Math.abs(Math.sin(S.t * 15 + bi)) * cp * 0.02); c.scale(dir * depth, flap * depth)
+          c.drawImage(bird, -bw / 2, -bh / 2, bw, bh); c.restore()
+        }
+      } else if (di) { var dw = cp * 0.95, dh = dw * di.naturalHeight / di.naturalWidth; c.drawImage(di, -dw / 2, -a.base * k * 0.95 - dh / 2, dw, dh) }
+      else if (dz && img['o:star']) {
         for (var d = 0; d < 3; d++) { var an = S.t * 6 + d * TAU / 3, sx = Math.cos(an) * cp * 0.36, sy = -a.base * k * 0.92 + Math.sin(an) * cp * 0.08, ss = cp * 0.16 * (0.8 + 0.2 * Math.sin(an)); c.drawImage(img['o:star'], sx - ss / 2, sy - ss / 2, ss, ss) }
       }
       c.restore()
@@ -1411,17 +1437,22 @@
           // the BROK gate (owner 2026-10-07): which branch swallowed the last hit, whether a burst is on
           // screen, and how big it actually drew relative to the car
           hearts: S.hearts, brokWhy: S.brokWhy || null, lastHitType: S.lastHitType || null, lastHitPerk: S.lastHitPerk || null,
-          burstOn: S.bursts.filter(function (b) { return b.on }).length, brokDraw: S.brokDraw || null, call: H.call && H.call.classList.contains('on') ? H.callT.textContent : null }
+          crashFx: S.crashFx || null, dizzy: S.dizzy || null, burstOn: S.bursts.filter(function (b) { return b.on }).length, brokDraw: S.brokDraw || null, call: H.call && H.call.classList.contains('on') ? H.callT.textContent : null }
       },
       // drive one obstacle type into Mojo with the current form, from a clean state: which branch takes it?
-      probe: function (type) {
+      // fx: 'brok' (default, so the BROK gate stays deterministic) or 'smoke' — the crash look is random in play
+      probe: function (type, fx) {
         var m = mojoXY()
         S.recover = 0; S.shield = 0; S.brokWhy = null; S.brokDraw = null
         var before = S.brok
-        hit({ type: type, taken: false }, m.x, m.y - carPx() * 0.2)
-        return { type: type, perk: perk, why: S.brokWhy, brok: S.brok - before, hearts: S.hearts, burstOn: S.bursts.filter(function (b) { return b.on }).length }
+        S.forceCrashFx = fx || 'brok'
+        var pinned = S.forceCrashFx; S.forceCrashFx = fx || pinned || 'brok'
+        try { hit({ type: type, taken: false }, m.x, m.y - carPx() * 0.2) } finally { S.forceCrashFx = pinned }
+        return { type: type, perk: perk, why: S.brokWhy, brok: S.brok - before, hearts: S.hearts, crashFx: S.crashFx || null, dizzy: S.dizzy || null, burstOn: S.bursts.filter(function (b) { return b.on }).length }
       },
       auto: function (o) { S.auto = o || null },
+      forceCrash: function (fx) { S.forceCrashFx = fx || null },      // QA: pin the random crash look ('brok' | 'smoke')
+      forceDizzy: function (k) { S.forceDizzy = k || null },          // QA: pin the dizzy look ('stars' | 'birds')
       tap: function (what) { if (what === 'go') { var b = host.querySelector('#mc-go'); if (b) b.click() } },
       force: function (o) { for (var k in o) S[k] = o[k] },
       quality: function (qv, lock) { quality = qv; S.qLock = !!lock; resize() }, profile: function (on) { S.prof = on ? {} : null },

@@ -466,6 +466,8 @@ try {
       // says BROK. (The per-type sweep below fires ten hits in a second, which is nothing like real play and
       // leaves call()'s 4 s per-key cooldown spent, so the message check has to come before it.)
       await p.evaluate(() => __mojoChase.force({ hearts: 3, recover: 0, brok: 0, hits: 0 }))
+      // the crash look is random in play (owner 2026-10-10: BROK or only smoke); this section measures the BROK one
+      await p.evaluate(() => __mojoChase.forceCrash('brok'))
       await p.evaluate(() => __mojoChase.emitTest('brok'))
       const t0 = Date.now(); let hit = null
       while (Date.now() - t0 < 300) { hit = await p.evaluate(() => __mojoChase.state()); if (hit.burstOn > 0 && hit.brokDraw && /BROK/.test(hit.call || '')) break; await sleep(30) }
@@ -479,7 +481,20 @@ try {
       // size: the owner asked for half. The comic sticker is tight, the Codex sheet is a padded explosion
       // frame, so its BOX is allowed to be wider than its blast; both are half what they were.
       const r = hit.brokDraw ? hit.brokDraw.w / hit.brokDraw.cp : 99
-      check(hit.brokDraw && (hit.brokDraw.seq ? r <= 1.2 : r <= 0.7), `${form}: the BROK draws at ${r.toFixed(2)} of the car (${hit.brokDraw && hit.brokDraw.seq ? 'padded sheet, <= 1.2' : 'sticker, <= 0.7'})`)
+      check(hit.brokDraw && (hit.brokDraw.seq ? r <= 0.62 : r <= 0.36), `${form}: the BROK draws at ${r.toFixed(2)} of the car (${hit.brokDraw && hit.brokDraw.seq ? 'padded sheet, <= 0.62' : 'sticker, <= 0.36'}; halved again 2026-10-10)`)
+      if (form === 'racer') {
+        // smoke-only crash: no BROK burst, Bo says "asap", the dizzy still plays; then the random mix and the birds
+        await p.evaluate(() => __mojoChase.force({ hearts: 3, recover: 0, hits: 0 })); await sleep(4200)
+        await p.evaluate(() => { __mojoChase.forceCrash('smoke'); __mojoChase.forceDizzy('birds'); __mojoChase.emitTest('brok') }); await sleep(120)
+        const sm = await p.evaluate(() => __mojoChase.state())
+        check(sm.crashFx === 'smoke' && sm.burstOn === 0 && /asap/i.test(sm.call || ''), `racer: a smoke-only crash shows no BROK and Bo says "asap" (${sm.crashFx}, ${sm.burstOn}, ${sm.call})`)
+        check(sm.dizzy === 'birds', `racer: the dizzy can be circling birds (${sm.dizzy})`)
+        const kinds = { brok: 0, smoke: 0, stars: 0, birds: 0 }
+        await p.evaluate(() => { __mojoChase.forceCrash(null); __mojoChase.forceDizzy(null) })
+        for (let i = 0; i < 40; i++) { await p.evaluate(() => { __mojoChase.force({ hearts: 3, recover: 0 }); __mojoChase.emitTest('brok') }); const st = await p.evaluate(() => __mojoChase.state()); kinds[st.crashFx]++; kinds[st.dizzy]++ }
+        check(kinds.brok >= 8 && kinds.smoke >= 8 && kinds.stars >= 8 && kinds.birds >= 8, `racer: crashes mix BROK and smoke, stars and birds at random (${JSON.stringify(kinds)})`)
+        await p.evaluate(() => __mojoChase.forceCrash('brok'))
+      }
       check(errs.length === 0, `${form}: no page error during the BROK probe ${errs.join(';')}`)
       if (form === 'wrecking') await p.screenshot({ path: `${out}/brok-wrecking.png` })
       await p.close()
@@ -487,7 +502,7 @@ try {
     report.brok = table
     const src = fs.readFileSync(path.join(root, 'games/mojo-chase.js'), 'utf8')
     const num = k => { const m = new RegExp(k + '\\s*=\\s*([\\d.]+)').exec(src); return m ? +m[1] : NaN }
-    check(num('BROK_SIZE') <= 0.7 && num('BROK_DOM') <= 0.7, `the BROK sticker and DOM boom are at most 0.7 of the car (${num('BROK_SIZE')}, ${num('BROK_DOM')})`)
+    check(num('BROK_SIZE') <= 0.35 && num('BROK_DOM') <= 0.35, `the BROK sticker and DOM boom are at most 0.35 of the car (${num('BROK_SIZE')}, ${num('BROK_DOM')})`)
     // no obstacle set may leave a default perk with nothing that stops it
     const SMASH = ['crate', 'barrel', 'cone', 'tyres', 'hay'], JUMPS = ['pothole', 'oil', 'banana', 'rock', 'tyres', 'cone']
     const sets = new Function('return ' + /var OBS_SET = (\{[\s\S]*?\})\n/.exec(src)[1])()

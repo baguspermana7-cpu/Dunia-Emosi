@@ -73,7 +73,10 @@
     think: function () { tone(330, 262, 0.28, 0.08, 'sine') },     // a recoverable stop: soft, never a buzzer
     clank: function () { tone(900, 700, 0.06, 0.12, 'square'); tone(1400, 1200, 0.05, 0.08, 'square', 0.07) },
     spray: function () { noise(0.6, 0.18, 2400) }, push: function () { noise(0.35, 0.2, 400) }, boing: function () { tone(220, 660, 0.3, 0.1, 'sine') },
-    hammer: function () { tone(1200, 900, 0.05, 0.12, 'square'); tone(1100, 850, 0.05, 0.1, 'square', 0.18) }, swop: function () { cue('swoosh') }
+    hammer: function () { tone(1200, 900, 0.05, 0.12, 'square'); tone(1100, 850, 0.05, 0.1, 'square', 0.18) }, swop: function () { cue('swoosh') },
+    // the dizzy after a bump (owner 2026-10-10): a falling sparkle for the stars, "tweet-tweet" for the birds
+    twinkle: function () { [2093, 1760, 1568, 1318, 1175].forEach(function (f, i) { tone(f, f * 1.02, 0.12, 0.05, 'sine', i * 0.07) }) },
+    tweet: function () { [0, 0.16, 0.42, 0.58].forEach(function (t, i) { tone(2600 + (i % 2) * 400, 3400 + (i % 2) * 300, 0.07, 0.045, 'sine', t) }) }
   }
   var VOICE = null
   function pickVoice (lang) {
@@ -1905,7 +1908,8 @@
   D.addEventListener('visibilitychange', function () { if (G && G.active) { if (D.hidden) G.elapsed += Math.max(0,performance.now()-G.tick); G.tick=performance.now(); storePacing() } if (D.hidden) { flushAwards(); hush(); if (G && G.run) stopRun() } })
   try { if (W.SFXEngine && SFXEngine.setMute) SFXEngine.setMute(!soundOn()) } catch (e) {}
   // warm every picture the game uses so a level plays offline (the page itself is in sw.js SHELL)
-  if (W.MojoFX) MojoFX.init({ layer: function () { return $('fx') }, cell: function () { return CELL }, lib: MA.lib, board: function () { return $('board') } })
+  if (W.MojoFX) MojoFX.init({ layer: function () { return $('fx') }, cell: function () { return CELL }, lib: MA.lib, board: function () { return $('board') },
+    sound: function (k) { if (SND[k]) SND[k]() } })
   var WARM = MA.libFiles().concat(['road','grass','water','indoor-floor','wall','trap-hole'].map(function (k) { return MA.lib('mojo-tile/' + k) }), BOARD_BUILDINGS.concat(['flag-board']).map(function (k) { return MA.lib('mojo-prop/' + k) }), W.MojoFX ? MojoFX.files() : [])
   var assetLoad = { ready:false, pending:WARM.length, failed:[] }, warming = false
   function warmAssets () {
