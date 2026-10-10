@@ -85,7 +85,7 @@
     $('kh-bg').style.backgroundImage = 'url(' + KA.plate(st.plate, 1600) + ')'
     $('kh-heroes').innerHTML = heroesHtml(S.story)
     $('kh-t1').textContent = st.title; $('kh-t2').textContent = st.subtitle || st.sub
-    $('kh-plan').innerHTML = planHtml(st); $('kh-plan').style.display = isC ? 'none' : ''
+    $('kh-plan').innerHTML = ''; $('kh-plan').style.display = 'none'   // owner 2026-10-10: an in-game hint does not belong on the landing
     var chs = st.chapters, cur = chapOf(S.story, nextLevel(S.story)), tray = ''
     if (isC) tray = '<span class="lab">Game Aslinya</span><div class="row"><button type="button" class="kcard" id="tr-classic"><span class="pic" style="background-image:url(' + KA.plate(st.cover, 640) + ')"></span><b>Lokomotif Pemberani</b><small>' + esc(st.blurb) + '</small></button></div>'
     else {

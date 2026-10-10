@@ -85,6 +85,14 @@ def rings(mask, t):
     return white, shadow, exterior
 
 
+# Owner 2026-10-10: "asset yang saya kasih itu no background jadi tinggal crop dan nggak perlu ada outline putih".
+# MOJO_NO_RING=1 keeps the exact padded canvas and crop box of the ringed sprite (so sizes, anchors, baselines and
+# RING tables do not move) but paints NO white ring and NO dark rim: the art is cut straight from its alpha.
+import os as _os
+NO_RING = _os.environ.get('MOJO_NO_RING') == '1'
+_RING_BOX = {}
+
+
 def outline(rgba, t, shadow=True):
     """rgba (H, W, 4) uint8 -> (outlined (H+2p, W+2p, 4) uint8, (p, p) offset of the original's pixel 0,0)."""
     src = np.asarray(rgba, dtype=np.uint8)
@@ -109,14 +117,25 @@ def outline(rgba, t, shadow=True):
     opaque = big[..., 3] == 255                                # bit-exact inside the silhouette
     out[opaque] = big[opaque]
     out[out[..., 3] == 0] = 0
+    if NO_RING:
+        ys, xs = np.nonzero(out[..., 3])
+        art = big.copy()
+        art[floor] = big[floor]                                 # keep the art's own floor shadow, nothing else
+        art[art[..., 3] == 0] = 0
+        _RING_BOX[id(art)] = (ys.min(), ys.max() + 1, xs.min(), xs.max() + 1) if len(ys) else None
+        return art, (p, p)
     return out, (p, p)
 
 
 def crop_tight(rgba, offset):
     """Crop an outlined array to its alpha bbox; returns (array, new offset of the original's pixel 0,0)."""
+    box = _RING_BOX.pop(id(rgba), None)
     a = np.asarray(rgba)
-    ys, xs = np.nonzero(a[..., 3])
-    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    if box:                                                    # no-ring mode: crop to where the ring would have been
+        y0, y1, x0, x1 = box
+    else:
+        ys, xs = np.nonzero(a[..., 3])
+        y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
     return a[y0:y1, x0:x1].copy(), (offset[0] - int(x0), offset[1] - int(y0))
 
 
