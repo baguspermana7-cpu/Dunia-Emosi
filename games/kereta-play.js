@@ -68,6 +68,7 @@
       h += '<div class="klane' + (G.S === id ? ' act' : '') + '" data-lane="' + id + '">' + (id === 'main' ? '' : '<img class="who" alt="' + esc(trainMeta(id).name) + '" src="' + face(id) + '">') + cells + '</div>'
     })
     host.innerHTML = h
+    if (G.justAdded) { var ja = host.querySelector('.kslot.f[data-lane="' + G.justAdded.lane + '"][data-i="' + G.justAdded.i + '"]'); if (ja) ja.classList.add('pop'); G.justAdded = null }
     $('kg-count').textContent = used() + '/' + G.lv.slots
     ;[].forEach.call(host.querySelectorAll('.kslot.f'), function (b) { b.addEventListener('click', function () { selectSlot(b.getAttribute('data-lane'), +b.getAttribute('data-i')) }) })
     ;[].forEach.call(host.querySelectorAll('.klane'), function (l) { l.addEventListener('click', function (e) { if (e.target === l && mode() === 'both') { G.S = l.getAttribute('data-lane'); drawLanes() } }) })
@@ -84,7 +85,7 @@
     var cmds = ['maju', 'kiri', 'kanan'].concat(verbsOf()), h = ''
     cmds.forEach(function (c) { h += '<button type="button" class="kcmd" data-c="' + c + '" style="--cmd:' + CMD[c].c + '" aria-label="' + CMD[c].t + ': ' + CMD[c].d + '" title="' + CMD[c].d + '">' + icon(c) + '<span>' + CMD[c].t + '</span></button>' })
     $('kg-pal').innerHTML = h
-    ;[].forEach.call($('kg-pal').querySelectorAll('.kcmd'), function (b) { b.addEventListener('click', function () { addCmd(b.getAttribute('data-c')) }) })
+    ;[].forEach.call($('kg-pal').querySelectorAll('.kcmd'), function (b) { b.addEventListener('click', function () { if (G.noClick && Date.now() < G.noClick) return; addCmd(b.getAttribute('data-c')) }); bindDrag(b) })
   }
   function drawSlotbar () {
     var bar = $('kg-slotbar')
@@ -105,17 +106,45 @@
     })
   }
   function selectSlot (lane, i) { if (G.running) return; G.sel = G.sel && G.sel.lane === lane && G.sel.i === i ? null : { lane: lane, i: i }; drawLanes() }
-  function addCmd (c) {
+  function addCmd (c, lane0, idx0) {
     if (G.running) return
-    var lane = mode() === 'both' ? G.S : 'main', arr = laneArr(lane)
-    var tail = arr[arr.length - 1], rep = REPEAT.indexOf(c) >= 0
-    resetBoard(true)
-    if (tail && rep && tail.c === c && tail.n < 9 && (mode() !== 'turns' || tail.t === G.S)) { tail.n++; G.sel = null; hintOff(); sfx('click'); say(null); drawLanes(); return } // same command again: repeat count, saves a slot
+    var lane = lane0 || (mode() === 'both' ? G.S : 'main'), arr = laneArr(lane), at = idx0 == null ? arr.length : idx0
+    var tail = arr[at - 1], rep = REPEAT.indexOf(c) >= 0
+    resetBoard(true); G.hintLvl = 0; if (G.view) G.view.clearGhost()
+    if (tail && rep && tail.c === c && tail.n < 9 && (mode() !== 'turns' || tail.t === G.S)) { tail.n++; G.sel = null; hintOff(); sfx('click'); say(null); G.justAdded = { lane: lane, i: at - 1 }; drawLanes(); return } // same command again: repeat count, saves a slot
     if (arr.length >= G.lv.slots) { say('Urutan sudah penuh. Hapus satu langkah dulu.', true); return }
     var it = { c: c, n: 1 }; if (mode() === 'turns') it.t = G.S
-    arr.push(it); G.sel = null; hintOff(); sfx('click'); say(null)
+    arr.splice(at, 0, it); G.sel = null; hintOff(); sfx('click'); say(null)
+    G.justAdded = { lane: lane, i: at }
     drawLanes()
-    var sc = $('kg-lanes').querySelector('.klane[data-lane="' + lane + '"]'); if (sc) { var f = sc.querySelectorAll('.kslot.f'); if (f.length) f[f.length - 1].scrollIntoView({ block: 'nearest', inline: 'nearest' }) }
+    var sc = $('kg-lanes').querySelector('.klane[data-lane="' + lane + '"]'); if (sc) { var f = sc.querySelectorAll('.kslot.f'); if (f[at]) f[at].scrollIntoView({ block: 'nearest', inline: 'nearest' }) }
+  }
+  /* drag a command tile into the sequence (a tap still appends); the lane under the finger lights up, the tile lands at the slot nearest to it */
+  function bindDrag (btn) {
+    var st = null
+    btn.addEventListener('pointerdown', function (e) {
+      if (G.running || (e.button != null && e.button > 0)) return
+      st = { x: e.clientX, y: e.clientY, on: false, id: e.pointerId, ghost: null, lane: null, idx: null }
+    })
+    function lane (x, y) { var els = document.elementsFromPoint(x, y), l = null; els.forEach(function (n) { if (!l && n.classList && n.classList.contains('klane')) l = n }); return l }
+    window.addEventListener('pointermove', function (e) {
+      if (!st || e.pointerId !== st.id) return
+      if (!st.on) { if (Math.abs(e.clientX - st.x) + Math.abs(e.clientY - st.y) < 10) return; st.on = true; var g = btn.cloneNode(true); g.className = 'kcmd kcmd-ghost'; g.style.width = btn.offsetWidth + 'px'; g.style.height = btn.offsetHeight + 'px'; document.body.appendChild(g); st.ghost = g }
+      st.ghost.style.left = (e.clientX - st.ghost.offsetWidth / 2) + 'px'; st.ghost.style.top = (e.clientY - st.ghost.offsetHeight / 2) + 'px'
+      ;[].forEach.call(document.querySelectorAll('.klane.dropt'), function (n) { n.classList.remove('dropt') })
+      var l = lane(e.clientX, e.clientY); st.lane = l ? l.getAttribute('data-lane') : null; st.idx = null
+      if (l) { l.classList.add('dropt'); var arr = laneArr(st.lane), fs = [].slice.call(l.querySelectorAll('.kslot.f')), k = arr.length; for (var i = 0; i < fs.length; i++) { var r = fs[i].getBoundingClientRect(); if (e.clientX < r.left + r.width / 2) { k = i; break } } st.idx = k }
+    })
+    function end (e) {
+      if (!st || e.pointerId !== st.id) return
+      var was = st; st = null
+      if (!was.on) return
+      if (was.ghost && was.ghost.parentNode) was.ghost.parentNode.removeChild(was.ghost)
+      ;[].forEach.call(document.querySelectorAll('.klane.dropt'), function (n) { n.classList.remove('dropt') })
+      G.noClick = Date.now() + 80
+      if (e.type === 'pointerup' && was.lane != null && was.idx != null) { if (mode() === 'both' && was.lane !== 'main') G.S = was.lane; addCmd(btn.getAttribute('data-c'), was.lane, was.idx) }
+    }
+    window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end)
   }
 
   /* ── HUD, bubble ────────────────────────────────────────────────────────────────────────────────────── */
@@ -151,7 +180,7 @@
     G.token++
     setRunning(false)
     G.world = G.world0
-    if (G.view) G.view.sync(G.world)
+    if (G.view) { G.view.sync(G.world); G.view.clearGhost() }
     drawHud(); marks(null, null)
     if (!keepMsg) say(null)
   }
@@ -167,7 +196,7 @@
     if (G.running) return
     var acts = compile()
     if (!acts.length) { say('Tambahkan perintah dulu, lalu tekan Jalankan.', false); FX.sound.boop(); return }
-    FX.sound.unlock(); resetBoard(); G.sel = null; drawSlotbar(); hintOff()
+    FX.sound.unlock(); resetBoard(); G.hintLvl = 0; G.sel = null; drawSlotbar(); hintOff()
     var tok = G.token; setRunning(true)
     var w = G.world0
     function done (completed) {
@@ -188,7 +217,9 @@
       }
       if (r.status === 'blocked') {
         marks(acts[i].slots, 'bad'); G.view.bonk(r.train || G.world0.trains[0].id, r.reason)
-        say(KG.MSG[r.reason] || KG.MSG.unknown, true); setRunning(false)
+        var nh = null; try { nh = KG.hint(wd, [], { cap: 200000 }) } catch (e0) {}
+        var nm = nh ? Object.keys(nh.action).map(function (k) { return (mode() !== 'solo' ? trainMeta(k).name + ': ' : '') + CMD[nh.action[k]].t }).join(', ') : null
+        say((KG.MSG[r.reason] || KG.MSG.unknown) + (nm ? ' Coba ' + nm + ' di sini.' : ''), true); setRunning(false)
         return
       }
       var mvA = function (a) { return a && Object.keys(a.action).some(function (k) { return ['maju', 'kiri', 'kanan', 'mundur', 'sambung'].indexOf(a.action[k]) >= 0 }) }
@@ -217,17 +248,31 @@
   function hint () {
     if (G.running) return
     var acts = compile().map(function (a) { return a.action }), h = KG.hint(G.world0, acts)
-    if (!h) { say('Coba mulai lagi dengan menekan Kosongkan, lalu susun dari awal.', false); return }
-    hintOff()
+    if (!h) { say('Coba mulai lagi dengan menekan Hapus, lalu susun dari awal.', false); return }
+    G.hintLvl = Math.min(3, (G.hintLvl || 0) + 1); hintOff(); if (G.view) G.view.clearGhost()
     var ids = Object.keys(h.action), parts = ids.map(function (id) { return (ids.length > 1 || mode() === 'turns' ? trainMeta(id).name + ': ' : '') + CMD[h.action[id]].t })
-    say('Bantuan: langkah ke-' + (h.at + 1) + ' sebaiknya ' + parts.join(', ') + '.', false)
-    ids.forEach(function (id) { var b = $('kg-pal').querySelector('.kcmd[data-c="' + h.action[id] + '"]'); if (b) b.classList.add('hint') })
+    var pre = KG.run(G.world0, acts.slice(0, h.at), { auto: true }).world
+    if (G.hintLvl === 1) { say('Petunjuk: langkah ke-' + (h.at + 1) + ' sebaiknya ' + parts.join(', ') + '.', false); ids.forEach(function (id) { var b = $('kg-pal').querySelector('.kcmd[data-c="' + h.action[id] + '"]'); if (b) b.classList.add('hint') }) }
+    else if (G.hintLvl === 2) {
+      var nx = KG.step(pre, h.action, { auto: true }).world, t0 = nx.trains.filter(function (t) { return t.id === ids[0] })[0]
+      say('Lihat panah di papan: kereta harus menuju petak itu.', false); if (t0 && G.view) G.view.ghost(t0.r, t0.c, t0.d)
+      ids.forEach(function (id) { var b = $('kg-pal').querySelector('.kcmd[data-c="' + h.action[id] + '"]'); if (b) b.classList.add('hint') })
+    } else {
+      // fill the next step: keep what works, drop the wrong tail, add the right command
+      var lane = mode() === 'both' ? ids[0] : 'main', arr = laneArr(lane), slots = compile()
+      if (mode() === 'solo' && slots[h.at - 1]) { var si = slots[h.at - 1].slots.main, k = 0; for (var q = 0; q <= h.at - 1; q++) if (slots[q].slots.main === si) k++; arr.length = si + 1; arr[si].n = k }
+      else if (mode() === 'solo') arr.length = 0
+      if (mode() === 'both') { var wanted = h.at; if (arr.length > wanted) arr.length = wanted }
+      var it = { c: h.action[ids[0]], n: 1 }; if (mode() === 'turns') it.t = ids[0]
+      if (arr.length < G.lv.slots) { arr.push(it); G.justAdded = { lane: lane, i: arr.length - 1 } }
+      say('Aku isi langkah berikutnya: ' + parts.join(', ') + '. Sekarang kamu lanjutkan!', false); G.hintLvl = 0; drawLanes()
+    }
     if (mode() !== 'solo' && ids.length === 1) { G.S = ids[0]; drawTabs() }
   }
 
   /* ── open / close ───────────────────────────────────────────────────────────────────────────────────── */
   function open (lv, cb) {
-    close()
+    close(); G.hintLvl = 0
     G.lv = lv; G.cb = cb; G.world0 = KG.world(lv); G.world = G.world0; G.token = (G.token || 0) + 1; G.sel = null; G.running = false; G.opt = null
     G.S = mode() === 'solo' ? 'main' : G.world0.trains[0].id
     if (mode() === 'both') G.S = G.world0.trains[0].id
@@ -250,6 +295,7 @@
     $('kg-undo').addEventListener('click', function () { if (G.running) return; var lane = mode() === 'both' ? G.S : 'main', a = laneArr(lane); if (a.length) { a.pop(); G.sel = null; resetBoard(true); drawLanes() } })
     $('kg-clear').addEventListener('click', function () { if (G.running) return; G.P = newProgram(); G.sel = null; resetBoard(); drawLanes() })
     $('kg-hint').addEventListener('click', hint)
+    $('kg-info').addEventListener('click', function () { $('kg-card').classList.toggle('open') })
     $('kg-pause').addEventListener('click', function () { G.paused = !G.paused; $('kg-pause').lastChild.textContent = G.paused ? 'Lanjut' : 'Jeda' })
     $('kg-speed').addEventListener('click', function () { G.speed = ((G.speed || 0) + 1) % SPEEDS.length; var k = SPEEDS[G.speed]; if (G.view) G.view.setSpeed(k); $('kg-speed').textContent = (k === 0.5 ? '0.5' : k) + 'x' })
   }

@@ -68,6 +68,7 @@
   /* ── parse: static model from the ASCII map + legends ───────────────────────────────────────────────── */
   function parse (lv) {
     var rows = lv.rows, R = rows.length, C = rows[0].length, problems = [], things = [], trains = [], pins = {}
+    function ord (ch, i) { var o = lv.order && lv.order[ch]; return o ? o[i] : i }
     var gateI = 0, leverI = 0, critI = 0, wagonI = 0, id = 0
     var tdefs = {}; (lv.trains || []).forEach(function (t, i) { tdefs[String(i + 1)] = t })
     var grid = []
@@ -84,14 +85,14 @@
         else if (lv.wagons && lv.wagons[ch]) { var wd = lv.wagons[ch]; things.push({ id: 'w' + (++wagonI), type: 'wagon', r: r, c: c, on: 1, kind: wd.kind || 'umum', manual: wd.manual ? 1 : 0, sprite: wd.sprite || null }); t = '=' }
         else if (ch === 'W') { things.push({ id: 'w' + (++wagonI), type: 'wagon', r: r, c: c, on: 1, sprite: (lv.wagonSprite || 'mojo-train/coach-annie') }); t = '=' }
         else if (ch === 'C') {
-          var cd = (lv.critters || [])[critI++] || {}
-          things.push({ id: 'k' + critI, type: 'critter', r: r, c: c, kind: cd.kind || 'kura', aside: cd.aside || null, gone: 0, sprite: cd.sprite || null, after: cd.after == null ? null : cd.after }); t = '='
+          var ci = ord('C', critI++), cd = (lv.critters || [])[ci] || {}
+          things.push({ id: 'k' + (ci + 1), type: 'critter', r: r, c: c, kind: cd.kind || 'kura', aside: cd.aside || null, gone: 0, sprite: cd.sprite || null, after: cd.after == null ? null : cd.after }); t = '='
         } else if (ch === 'G') {
-          var gd = (lv.gates || [])[gateI] || {}
-          things.push({ id: 'g' + gateI, type: 'gate', r: r, c: c, open: gd.open ? 1 : 0, look: gd.look || 'signal', after: gd.after == null ? null : gd.after }); gateI++; t = '='
+          var gd = (lv.gates || [])[ord('G', gateI)] || {}
+          things.push({ id: 'g' + ord('G', gateI), type: 'gate', r: r, c: c, open: gd.open ? 1 : 0, look: gd.look || 'signal', after: gd.after == null ? null : gd.after }); gateI++; t = '='
         } else if (ch === 'l') {
-          var ld = (lv.levers || [])[leverI] || {}
-          things.push({ id: 'l' + leverI, type: 'lever', r: r, c: c, toggles: ld.toggles || [], sets: ld.sets || null, q: ld.q || null, label: ld.label || '', look: ld.look || 'lever', on: 0 }); leverI++; t = ','
+          var ld = (lv.levers || [])[ord('l', leverI)] || {}
+          things.push({ id: 'l' + ord('l', leverI), type: 'lever', r: r, c: c, toggles: ld.toggles || [], sets: ld.sets || null, q: ld.q || null, label: ld.label || '', look: ld.look || 'lever', on: 0 }); leverI++; t = ','
         } else if (CARGO[ch]) {
           var ov = (lv.legend || {})[ch] || {}
           things.push({ id: 'c' + (++id), type: 'cargo', r: r, c: c, kind: ov.kind || CARGO[ch], q: ov.q || null, sprite: ov.sprite || null, taken: 0 }); t = ch === 'f' ? '~' : ','
@@ -105,6 +106,12 @@
       grid.push(line)
     }
     trains.sort(function (a, b) { return a.order - b.order })
+    things.forEach(function (o) {   // a critter that steps aside lands on the first free grass cell beside its rail cell (aside: true)
+      if (o.type !== 'critter' || o.aside !== true) return
+      var best = null
+      for (var d = 0; d < 4 && !best; d++) { var rr = o.r + DR[d], cc = o.c + DC[d]; if (rr >= 0 && cc >= 0 && rr < R && cc < C && !isRail(grid[rr][cc]) && DECOR.indexOf(grid[rr][cc]) >= 0 && grid[rr][cc] !== '~' && !things.some(function (x) { return x.r === rr && x.c === cc })) best = [rr, cc] }
+      o.aside = best
+    })
     var maxAfter = 0
     things.forEach(function (o) { if (o.after != null && o.after > maxAfter) maxAfter = o.after })
     var m = { lv: lv, R: R, C: C, grid: grid, pins: pins, problems: problems, trains: trains, things: things, maxAfter: maxAfter }

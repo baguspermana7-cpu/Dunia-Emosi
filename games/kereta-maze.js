@@ -216,11 +216,12 @@
     $('kr-hero').innerHTML = cheer + '<div class="kh-glow"></div>' + lv.trains.map(function (t, i) { return '<div class="kh-hero ' + (i ? 'b' : 'a') + '"><img alt="" src="' + face(t.id, 'happy', i ? 'se' : 'sw') + '"></div>' }).join('')
     var rows = r.progress.map(function (g) { return '<div class="krow">' + KA.goalIcon(g) + '<span class="nm">' + esc(g.label) + '</span><b>' + g.have + '/' + g.need + '</b><span class="ok">' + icon('check') + '</span></div>' }).join('')
     var last = lv.n >= levels(S.story).length
-    $('kr-wrap').innerHTML = '<img class="kr-trophy" alt="" src="' + KA.src('game/trophy-gold') + '"><div class="kr-stars" aria-label="' + r.stars + ' bintang">' + starsHtml(r.stars) + '</div><h2 class="kplaque kr-title">Misi Selesai</h2><div class="kr-card kpar"><p><b>' + esc(lv.title) + '</b></p><p>' + esc(lv.post) + '</p>' + rows + routeHtml(r) + '<p class="kb-draft">Langkah dipakai: ' + r.used + (r.opt ? ' (paling singkat: ' + r.opt + ')' : '') + '</p></div>' +
+    $('kr-wrap').innerHTML = '<img class="kr-trophy" alt="" src="' + KA.src('game/trophy-gold') + '"><div class="kr-stars" aria-label="' + r.stars + ' bintang">' + starsHtml(r.stars) + '</div><h2 class="kplaque kr-title">Misi Selesai</h2><div class="kr-card kpar"><p><b>' + esc(lv.title) + '</b></p><p>' + esc(lv.post) + '</p>' + rows + routeHtml(r) + '<p class="kb-draft">Langkah dipakai: <b id="kr-used">0</b>' + (r.opt ? ' (paling singkat: ' + r.opt + ')' : '') + '</p></div>' +
       '<div class="kr-btns"><button type="button" class="kbtn kbtn-teal kbtn-lg" id="kr-next"><span>' + (last ? 'Peta Cerita' : 'Misi Berikutnya') + '</span><span class="kbtn-ic">' + icon('play') + '</span></button><button type="button" class="kbtn kbtn-wood" id="kr-again"><span class="kbtn-ic">' + icon('reset') + '</span><span>Ulangi Misi</span></button></div>'
     $('kr-next').addEventListener('click', function () { if (last) openChap(true); else openBrief(lv.n + 1) })
     $('kr-again').addEventListener('click', function () { openGame(lv.n) })
     show('res')
+    ;(function () { var el = $('kr-used'), t0 = null; if (!el) return; if (FX.reduced()) { el.textContent = r.used; return } function f (t) { if (t0 == null) t0 = t; var u = Math.min(1, (t - t0) / 700); el.textContent = Math.round(r.used * (1 - Math.pow(1 - u, 3))); if (u < 1) W.requestAnimationFrame(f) } W.requestAnimationFrame(f) })()
     var cv = $('kr-fx')
     if (!rfx) rfx = FX.particles(cv)
     rfx.resize(W.innerWidth, W.innerHeight)

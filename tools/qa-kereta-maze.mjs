@@ -32,6 +32,19 @@ for (const ch of Object.keys(LV)) for (const lv of LV[ch]) {
 }
 check(total >= 64 && bad.length === 0, `${total} levels (malivlak ${LV.malivlak.length}, brave ${LV.brave.length}, hellbent ${LV.hellbent.length}) each solved by its reference plan within its slots${bad.length ? ' - ' + bad.slice(0, 3).join(' | ') : ''}`)
 check(LV.malivlak.length === 20 && LV.brave.length >= 30 && LV.hellbent.length >= 8, 'storyline sizes: 20 Malivlak, >= 30 Brave Locomotive, >= 8 Hellbent')
+{
+  const badSz = [], badPz = []
+  for (const ch of Object.keys(LV)) for (const lv of LV[ch]) {
+    const R = lv.rows.length, C = lv.rows[0].length
+    if (R < 5 || R > 7 || C > 12) badSz.push(`${lv.id} ${R}x${C}`)
+    const plan = KG.solve(KG.world({ ...lv, slots: 99 }), { cap: 600000, maxDepth: 70 }) || [], cmds = plan.flatMap(a => Object.values(a))
+    const kinds = new Set(cmds), turn = cmds.some(c => ['kiri', 'kanan', 'tuas', 'wesel', 'putar'].includes(c)), tutorial = lv.n <= 3
+    if (!turn || kinds.size < (tutorial ? 2 : 3) || new Set(plan.map(a => JSON.stringify(a))).size < 2) badPz.push(`${lv.id} kinds ${kinds.size} turn ${turn}`)
+    if (lv.slots < rle(plan)) badPz.push(`${lv.id} slots ${lv.slots} < ${rle(plan)}`)
+  }
+  check(badSz.length === 0, `board fits the play area: every level 5-7 rows x <= 12 columns (cells >= 72 px at 1280x800)${badSz.length ? ' - ' + badSz.slice(0, 4) : ''}`)
+  check(badPz.length === 0, `real puzzles: every plan needs a turn / switch, >= 2 command kinds in tutorials and >= 3 later, never one repeated command${badPz.length ? ' - ' + badPz.slice(0, 5) : ''}`)
+}
 const modes = new Set(Object.values(LV).flat().map(l => l.mode || 'solo'))
 check(modes.has('turns') && modes.has('both') && modes.has('solo'), 'solo, turn-taking and simultaneous two-train levels all present')
 // two-train rules in the engine

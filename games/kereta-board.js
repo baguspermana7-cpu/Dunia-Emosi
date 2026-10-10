@@ -190,7 +190,7 @@
       var r, c, ch, e
       for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
         ch = m.grid[r][c]
-        if (ch === 'T') { e = img(B.deco[(r + c) % B.deco.length] === 'game/bush' ? 'gt/pine-tree' : (lv.biome === 'forest' || lv.biome === 'mountain' || lv.biome === 'night' ? 'gt/pine-tree' : (hash(r, c, 1) > 0.5 ? 'gt-el/oak-tree' : 'gt/pine-tree')), 'kb-deco tree'); place(e, r, c, 0, -0.22); decor.appendChild(e) }
+        if (ch === 'T' && hash(r, c, 2) > 0.45) { e = img(B.deco[(r + c) % B.deco.length] === 'game/bush' ? 'gt/pine-tree' : (lv.biome === 'forest' || lv.biome === 'mountain' || lv.biome === 'night' ? 'gt/pine-tree' : (hash(r, c, 1) > 0.5 ? 'gt-el/oak-tree' : 'gt/pine-tree')), 'kb-deco tree'); place(e, r, c, 0, -0.22); decor.appendChild(e) }
         else if (ch === '#' || ch === 'V') { e = img(ch === 'V' ? 'mojo-prop/house' : 'mojo-prop/building-station', 'kb-deco bldg'); place(e, r, c, 0, -0.12); decor.appendChild(e) }
         else if (ch === 'R') { e = img('mojo-prop/rock', 'kb-deco rock'); place(e, r, c, 0, 0.05); decor.appendChild(e) }
         else if (ch === ',' && hash(r, c, 9) > 0.86 && B.deco.length) { e = img(B.deco[(r * 3 + c) % B.deco.length], 'kb-deco small'); place(e, r, c, (hash(r, c, 4) - 0.5) * 0.3, 0.05); decor.appendChild(e) }
@@ -326,8 +326,8 @@
       function fire () { if (!fin) { fin = true; sync(after); if (done) done() } }
       function verbs () {
         var n = 0
-        rest.forEach(function (ev) { n += effect(ev, before, after) })
-        later(fire, n ? (FX.reduced() ? 120 : 260 / speed) : 0)
+        rest.forEach(function (ev) { n = Math.max(n, effect(ev, before, after)) })
+        later(fire, n ? (FX.reduced() ? 120 : n) : 0)
       }
       if (!moves.length) { verbs(); return }
       moves.forEach(function (mv) {
@@ -341,38 +341,78 @@
         tween(D, function (e, u) {
           hd[0] = tb.r + (ta.r - tb.r) * e; hd[1] = tb.c + (ta.c - tb.c) * e
           for (var j = 0; j < newTail.length; j++) { var o = steps[j] || steps[steps.length - 1]; tail[j][0] = o[0] + (newTail[j][0] - o[0]) * e; tail[j][1] = o[1] + (newTail[j][1] - o[1]) * e }
-          pos.rot = turn * (1 - e) + (FX.reduced() ? 0 : Math.sin(u * Math.PI * 4) * 0.6); pos.bob = FX.reduced() ? 1 : 1 + Math.sin(u * Math.PI * 6) * 0.012
+          var ru = Math.min(1, u / 0.6); pos.rot = turn * (1 - ru * ru * (3 - 2 * ru)) + (FX.reduced() ? 0 : Math.sin(u * Math.PI * 4) * 0.6); pos.bob = FX.reduced() ? 1 : 1 + Math.sin(u * Math.PI * 6) * 0.012
           placeTrain(ta, pos)
           if (puffed < 5 && u > puffed / 5 + 0.04) { puffed++; var hp = px(hd[0], hd[1]); fx.emit('steam', hp.x + DC[toD] * cs * 0.18, hp.y + DR[toD] * cs * 0.18 - cs * 0.15, { dx: -DC[toD] * 0.6, r: cs * 0.1 }); if (tg === 'M') fx.emit('dust', hp.x, hp.y + cs * 0.2); if (tg === 'P') fx.emit('ripple', hp.x, hp.y) }
         }, function () { pending--; if (!pending) verbs() }, prof)
       })
     }
     function toward (ev, after) { var t = after.trains.filter(function (x) { return x.id === ev.train })[0]; return t ? px(t.r, t.c) : { x: 0, y: 0 } }
+    var popT = 0
+    function speaker () {
+      var st = lv.ch
+      if (st === 'brave') return { name: 'Henry', key: 'story-char/henry/wave' }
+      if (st === 'malivlak') return { name: 'Masinis', key: 'malivlak-char/masinis/pipa-2' }
+      return { name: 'Kilat Perak', key: TS.pick('silver', { view: 'front', expression: 'happy', facing: 'sw' }) }
+    }
+    function pop (text, ms) {   // a little speech bubble from the story's helper, never more than one at a time
+      if (destroyed || !text) return
+      var old = tilt.querySelector('.kb-pop'); if (old && old.parentNode) old.parentNode.removeChild(old)
+      var sp = speaker(), d = el('div', 'kb-pop', '<img alt="" src="' + KA.src(sp.key) + '"><div><b>' + sp.name + '</b>' + text + '</div>')
+      tilt.appendChild(d)
+      if (d.animate && !FX.reduced()) d.animate([{ opacity: 0, translate: '0 10px' }, { opacity: 1, translate: '0 0' }], { duration: 220, easing: 'cubic-bezier(.23,1,.32,1)', fill: 'forwards' })
+      clearTimeout(popT); popT = later(function () { if (d.parentNode) { if (d.animate && !FX.reduced()) d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' }).onfinish = function () { if (d.parentNode) d.parentNode.removeChild(d) }; else d.parentNode.removeChild(d) } }, ms || 2200)
+    }
+    var LINES = { kura: 'Silakan lewat pelan-pelan, kura-kura!', burung: 'Terbang yang tinggi, burung kecil!', beruang: 'Halo, beruang! Ayo ikut naik.', goro: 'Goro mundur. Jalan sudah terbuka!' }
+    function away (at) {   // the direction a creature steps off the rail: the first grass cell beside it
+      for (var d = 0; d < 4; d++) { var rr = at[0] + DR[d], cc = at[1] + DC[d]; if (rr >= 0 && cc >= 0 && rr < R && cc < C && !isRail(m, rr, cc)) return [DC[d], DR[d]] }
+      return [0, -1]
+    }
     function effect (ev, before, after) {
-      var e, p
+      var e, p, D = dur()
       if (ev.e === 'load') {
         FX.sound.ding(); e = thingEl[ev.thing]; p = toward(ev, after)
-        if (e && !FX.reduced()) { e.style.display = ''; var s = px(ev.at[0], ev.at[1]); e.style.transition = 'left .24s ease-in, top .24s ease-in, transform .24s ease-in, opacity .24s'; e.style.left = p.x + 'px'; e.style.top = p.y + 'px'; e.style.transform = 'translate(-50%,-50%) scale(.2)'; e.style.opacity = '0'; later(function () { e.style.transition = ''; e.style.transform = ''; e.style.opacity = ''; e.style.display = 'none' }, 270) }
-        fx.burst('star', p.x, p.y, 4); return 1
+        var sp0 = px(ev.at[0], ev.at[1]), walker = ev.kind === 'penumpang' || ev.kind === 'tamu'
+        if (e && !FX.reduced() && e.animate) {
+          e.style.display = ''; var dx = p.x - sp0.x, dy = p.y - sp0.y, dd = (walker ? 700 : 560) / speed
+          e.animate(walker ? [{ translate: '0 0' }, { translate: (dx * 0.33) + 'px ' + (dy * 0.33 - cs * 0.14) + 'px', offset: 0.33 }, { translate: (dx * 0.66) + 'px ' + (dy * 0.66) + 'px', offset: 0.66 }, { translate: dx + 'px ' + dy + 'px', scale: '.5', opacity: 0.2 }]
+            : [{ translate: '0 0', scale: '1' }, { translate: (dx * 0.5) + 'px ' + (dy * 0.5 - cs * 0.7) + 'px', scale: '1.12', offset: 0.5 }, { translate: dx + 'px ' + dy + 'px', scale: '.3', opacity: 0 }], { duration: dd, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' })
+          fx.burst('star', p.x, p.y, 4); return dd + 30
+        }
+        fx.burst('star', p.x, p.y, 4); return 80
       }
-      if (ev.e === 'unload') { FX.sound.ding(); var sp = px(ev.at[0], ev.at[1]); fx.burst('star', sp.x, sp.y - cs * 0.3, 6); var sb = thingEl[ev.stop]; if (sb) { sb.classList.add('pop'); later(function () { sb.classList.remove('pop') }, 400) } return 1 }
+      if (ev.e === 'unload') { FX.sound.ding(); var sp = px(ev.at[0], ev.at[1]); fx.burst('star', sp.x, sp.y - cs * 0.3, 6); var sb = thingEl[ev.stop]; if (sb) { sb.classList.add('pop'); later(function () { sb.classList.remove('pop') }, 400) } if (ev.kind === 'penumpang' || ev.kind === 'tamu') pop('Terima kasih sudah mengantar kami!'); return 360 }
       if (ev.e === 'lever') {
         FX.sound.lever(); var lp = px(ev.at[0], ev.at[1]); fx.burst('spark', lp.x, lp.y, 7)
-        ev.toggles.forEach(function (gi) { var g = gateEl['g' + gi]; if (g) { var gp = { x: parseFloat(g.style.left), y: parseFloat(g.style.top) }; fx.burst('spark', gp.x, gp.y, 5) } })
-        return 1
+        ev.toggles.forEach(function (gi) { var g = gateEl['g' + gi]; if (g) { var gp = { x: parseFloat(g.style.left), y: parseFloat(g.style.top) }; fx.burst('spark', gp.x, gp.y, 5); later(function () { FX.sound.clack() }, 140); g.classList.add('flip'); later(function () { g.classList.remove('flip') }, 420) } })
+        return 460
       }
-      if (ev.e === 'whistle') { FX.sound.whistle(); p = toward(ev, after); fx.emit('ring', p.x, p.y - cs * 0.2); fx.emit('ring', p.x, p.y - cs * 0.2, { c: '#ffffff', life: 0.9 }); return 1 }
+      if (ev.e === 'whistle') { FX.sound.whistle(); p = toward(ev, after); fx.emit('ring', p.x, p.y - cs * 0.2); fx.emit('ring', p.x, p.y - cs * 0.2, { c: '#ffffff', life: 0.9 }); return 380 }
       if (ev.e === 'critter-leave') {
-        e = thingEl[ev.thing]
-        if (e && !FX.reduced()) { e.style.display = ''; e.style.transition = 'transform .45s ease-in, opacity .45s'; e.style.transform = 'translate(-50%,-50%) translateY(-' + cs * 0.9 + 'px) scale(.6)'; e.style.opacity = '0'; later(function () { e.style.transition = ''; e.style.transform = ''; e.style.opacity = ''; e.style.display = 'none' }, 480) }
-        if (ev.kind === 'burung') fx.burst('leaf', px(ev.at[0], ev.at[1]).x, px(ev.at[0], ev.at[1]).y, 3)
-        return 1
+        e = thingEl[ev.thing]; var from = px(ev.at[0], ev.at[1]), dir = ev.aside ? [Math.sign(ev.aside[1] - ev.at[1]), Math.sign(ev.aside[0] - ev.at[0])] : away(ev.at)
+        if (dir[0] === 0 && dir[1] === 0) dir = [0, -1]
+        var flyer = ev.kind === 'burung', dd2 = (flyer ? 1000 : ev.kind === 'kura' ? 1500 : 1200) / speed
+        pop(LINES[ev.kind] || 'Ayo, minggir sebentar ya!', 2300)
+        if (e && !FX.reduced() && e.animate) {
+          e.style.display = ''; var im = e.querySelector('img'), walk = { kura: 'animal/turtle/walk', beruang: 'animal/beruang/jalan' }[ev.kind]
+          if (im && walk) im.src = KA.src(walk)
+          if (im && dir[0] < 0) im.style.scale = '-1 1'
+          var tx = dir[0] * cs * (flyer ? 1.8 : 1.35), ty = dir[1] * cs * (flyer ? 1.8 : 1.35) - (flyer ? cs * 1.2 : 0)
+          e.animate([{ translate: '0 0', opacity: 1 }, { translate: (tx * 0.7) + 'px ' + (ty * 0.7) + 'px', opacity: 1, offset: 0.8 }, { translate: tx + 'px ' + ty + 'px', opacity: flyer ? 0 : 0.0 }], { duration: dd2, easing: flyer ? 'cubic-bezier(.4,0,.6,1)' : 'linear', fill: 'forwards' })
+          if (ev.kind === 'burung') fx.burst('leaf', from.x, from.y, 3)
+          return dd2 + 60
+        }
+        return 80
       }
-      if (ev.e === 'couple') { FX.sound.clunk(); p = px(ev.at[0], ev.at[1]); fx.burst('spark', p.x, p.y, 5); e = thingEl[ev.thing]; if (e) e.style.display = 'none'; return 1 }
-      if (ev.e === 'uncouple') { FX.sound.clunk(); p = px(ev.at[0], ev.at[1]); fx.burst('dust', p.x, p.y, 3); return 1 }
-      if (ev.e === 'turn') { FX.sound.clack(); return 1 }
+      if (ev.e === 'couple') { FX.sound.clunk(); p = px(ev.at[0], ev.at[1]); fx.burst('spark', p.x, p.y, 5); e = thingEl[ev.thing]; if (e) e.style.display = 'none'; return 200 }
+      if (ev.e === 'uncouple') { FX.sound.clunk(); p = px(ev.at[0], ev.at[1]); fx.burst('dust', p.x, p.y, 3); return 200 }
+      if (ev.e === 'turn') { FX.sound.clack(); return 200 }
       return 0
     }
+    function ghost (r, c, d) {   // PETUNJUK level 2: a pulsing arrow on the tile the next step should reach
+      clearGhost(); var g = el('div', 'kb-ghost', KA.icon('maju')); place(g, r, c, 0, 0); g.firstChild.style.rotate = (d * 90) + 'deg'; things.appendChild(g)
+    }
+    function clearGhost () { [].forEach.call(things.querySelectorAll('.kb-ghost'), function (g) { g.parentNode.removeChild(g) }) }
     function bonk (id, reason) {
       var T = trainEl[id]; if (!T || !last) return
       var t = last.trains.filter(function (x) { return x.id === id })[0]; FX.sound.boop()
@@ -391,7 +431,7 @@
     /* ── layout ──────────────────────────────────────────────────────────────────────────────────────── */
     function layout () {
       var rect = host.getBoundingClientRect(), w = Math.max(160, rect.width), h = Math.max(120, rect.height)
-      var ncs = Math.max(26, Math.floor(Math.min((w - 8) / C, (h - 8) / R) * 0.93))
+      var ncs = Math.max(26, Math.floor(Math.min((w - 8) / C, (h - 8) / R) * 0.97))
       cs = ncs; root.style.setProperty('--cs', cs + 'px')
       size.w = C * cs; size.h = R * cs
       tilt.style.width = size.w + 'px'; tilt.style.height = size.h + 'px'
@@ -419,7 +459,7 @@
     }
     function reset (world) { last = world; layout(); sync(world); preload(); clearTimeout(lifeT); lifeT = later(life, 1800) }
     function destroy () { destroyed = true; timers.forEach(clearTimeout); if (ro) ro.disconnect(); fx.clear() }
-    return { preload: preload, setSpeed: function (k) { speed = k || 1 }, reset: reset, apply: apply, sync: sync, bonk: bonk, celebrate: celebrate, destroy: destroy, cell: function (r, c) { var p = px(r, c); return { x: p.x, y: p.y, s: cs } }, get size () { return size }, root: root, fx: fx }
+    return { ghost: ghost, clearGhost: clearGhost, pop: pop, preload: preload, setSpeed: function (k) { speed = k || 1 }, reset: reset, apply: apply, sync: sync, bonk: bonk, celebrate: celebrate, destroy: destroy, cell: function (r, c) { var p = px(r, c); return { x: p.x, y: p.y, s: cs } }, get size () { return size }, root: root, fx: fx }
   }
   W.KeretaBoard = { create: create }
 })(typeof window !== 'undefined' ? window : globalThis)
