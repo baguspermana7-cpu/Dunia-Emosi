@@ -767,3 +767,30 @@ body[data-scr] .toast.pv-t.flip.show{transform:translate(-50%,-50%) rotate(180de
   .rp-in .res-row span{overflow-wrap:anywhere}
   .rp-prize{font-size:13px}.rp-prize img{width:28px;height:28px}
 }
+
+/* ═══════════ attack VFX layer (gt-fx.js): one fixed host, transform/opacity only ═══════════ */
+#gtx{position:fixed;inset:0;z-index:9250;pointer-events:none;overflow:hidden;contain:strict}
+.gtx{position:absolute;left:0;top:0;width:0;height:0}
+.gtx>*{position:absolute;display:block;will-change:transform,opacity;opacity:0}
+.gtx-glow>i{border-radius:50%;background:radial-gradient(circle,#fff 0,var(--c,#FFD23F) 28%,color-mix(in srgb,var(--c,#FFD23F) 40%,transparent) 52%,transparent 70%);mix-blend-mode:screen}
+.gtx-trail>i{left:0;top:-9px;height:18px;transform-origin:0 50%;border-radius:9px;background:linear-gradient(90deg,transparent,var(--c,#FFD23F) 55%,#fff);mix-blend-mode:screen}
+.gtx-lines>i{height:4px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff 60%,var(--c,#FFD23F))}
+.gtx-imp>i:first-child{border-radius:50%;border:6px solid #fff;box-shadow:0 0 18px rgba(255,255,255,.8),inset 0 0 12px rgba(255,255,255,.6)}
+.gtx-imp>i{border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.gtx-imp[data-k=water]>i:not(:first-child){border-radius:50%}
+.gtx-imp[data-k=electric]>i:not(:first-child){border-radius:1px;transform-origin:50% 50%;box-shadow:0 0 8px #fff}
+.gtx-imp[data-k=fire]>i:not(:first-child){border-radius:50% 50% 50% 0;box-shadow:0 0 8px #FF8A3D}
+.gtx-punch>i:first-child{border-radius:50%;background:radial-gradient(circle,#fff 0,rgba(255,255,255,.85) 18%,rgba(255,255,255,.25) 45%,transparent 70%)}
+.gtx-stamp{font:900 64px/1 'Fredoka One','Nunito',sans-serif;color:#FFE27A;-webkit-text-stroke:3px #8a2b00;text-shadow:0 5px 0 #8a2b00,0 0 26px rgba(255,140,0,.95);white-space:nowrap;letter-spacing:.02em}
+.gtx-stamp.sup{color:#9BF0FF;-webkit-text-stroke-color:#0b3d6b;text-shadow:0 5px 0 #0b3d6b,0 0 26px rgba(60,200,255,.95)}
+.gtx-chroma{background-size:contain;background-position:center;background-repeat:no-repeat;mix-blend-mode:screen}
+.gtx-chroma.r{filter:sepia(1) saturate(9) hue-rotate(-50deg) brightness(1.1)}
+.gtx-chroma.c{filter:sepia(1) saturate(9) hue-rotate(150deg) brightness(1.1)}
+.gtx-dust>img{object-fit:contain}
+.gtx-slow>i{left:0;top:0;width:100vw;height:100vh;background:radial-gradient(ellipse at center,transparent 35%,rgba(10,4,20,.85) 100%)}
+.gtx-conf>i{width:10px;height:16px;left:-5px;top:-8px;border-radius:2px;background:#FFD23F}
+.gtx-conf>i:nth-child(4n+1){background:#FF5A36}
+.gtx-conf>i:nth-child(4n+2){background:#1FC7C1;width:12px;height:12px;border-radius:50%}
+.gtx-conf>i:nth-child(4n+3){background:#B06CF2}
+.fx-red{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:9;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(255,40,40,.55),rgba(255,0,0,.35) 70%);mix-blend-mode:multiply}
+@media (max-width:700px){.gtx-stamp{font-size:44px}}

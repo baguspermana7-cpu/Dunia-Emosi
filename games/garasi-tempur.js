@@ -704,7 +704,7 @@
       var ko = ev.filter(function (e) { return e.t === 'ko' })[0]
       if (!ko) return
       M.lost[ko.p]++
-      return FX.ko(toCard).then(function () {
+      return FX.ko(toCard, from).then(function () {
         FX.floatText(innerWidth / 2, innerHeight * 0.42, 'KO!', 'ko')
         return FX.wait(500)
       })
@@ -1047,6 +1047,7 @@
     ;['click', 'correct', 'wrong', 'levelup', 'star'].forEach(function (k) { add(lib.base + 'assets/sfx/' + k + '.mp3') })
     var fx = { boom: 10, pop: 7, smoke: 8 }
     Object.keys(fx).forEach(function (k) { for (var i = 1; i <= fx[k]; i++) add(lib.base + 'assets/vfx/explosion/' + k + '/f-' + i + '.webp') })
+    if (FX.warmUrls) FX.warmUrls(lib.base).forEach(add)        // attack VFX frames + dust sprites
     return Object.keys(u)
   }
   lib.base = (function () { try { return location.pathname.indexOf('/Dunia-Emosi/') === 0 ? '/Dunia-Emosi/' : '/' } catch (e) { return '/' } })()
