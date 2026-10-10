@@ -1,6 +1,296 @@
 {
  "_note": "Named shared sprites (owner sheets, tools/ingest-asset-sheets.py). Key = \"<category>/<name>\". Reuse before cropping anything new.",
  "assets": {
+  "animal/bird-blue/fly": {
+   "file": "assets/db/lib/animal/bird-blue/fly.webp",
+   "cat": "animal",
+   "tags": [
+    "bird",
+    "burung",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 130,
+   "h": 109,
+   "outline": 3,
+   "baseline": 106,
+   "anchor": [
+    65,
+    106
+   ],
+   "char": "bird-blue",
+   "view": "side",
+   "facing": 90,
+   "pose": "fly",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 480,
+    "soft_after": 477
+   },
+   "tint": 0.9
+  },
+  "animal/cardinal/fly": {
+   "file": "assets/db/lib/animal/cardinal/fly.webp",
+   "cat": "animal",
+   "tags": [
+    "cardinal",
+    "burung",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 124,
+   "h": 107,
+   "outline": 3,
+   "baseline": 104,
+   "anchor": [
+    62,
+    104
+   ],
+   "char": "cardinal",
+   "view": "side",
+   "facing": 90,
+   "pose": "fly",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 510,
+    "soft_after": 503
+   },
+   "tint": 77.7
+  },
+  "animal/deer/graze": {
+   "file": "assets/db/lib/animal/deer/graze.webp",
+   "cat": "animal",
+   "tags": [
+    "deer",
+    "rusa",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 235,
+   "h": 187,
+   "outline": 4,
+   "baseline": 184,
+   "anchor": [
+    117,
+    184
+   ],
+   "char": "deer",
+   "view": "side",
+   "facing": 270,
+   "pose": "graze",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 819,
+    "soft_after": 806
+   },
+   "tint": 61.2
+  },
+  "animal/deer/stand": {
+   "file": "assets/db/lib/animal/deer/stand.webp",
+   "cat": "animal",
+   "tags": [
+    "deer",
+    "rusa",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 160,
+   "h": 242,
+   "outline": 4,
+   "baseline": 239,
+   "anchor": [
+    80,
+    239
+   ],
+   "char": "deer",
+   "view": "side",
+   "facing": 90,
+   "pose": "stand",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 745,
+    "soft_after": 741
+   },
+   "tint": 62.8
+  },
+  "animal/rabbit/run": {
+   "file": "assets/db/lib/animal/rabbit/run.webp",
+   "cat": "animal",
+   "tags": [
+    "rabbit",
+    "kelinci",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 180,
+   "h": 135,
+   "outline": 3,
+   "baseline": 132,
+   "anchor": [
+    90,
+    132
+   ],
+   "char": "rabbit",
+   "view": "side",
+   "facing": 90,
+   "pose": "run",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 507,
+    "soft_after": 504
+   },
+   "tint": 65.4
+  },
+  "animal/rabbit/sit": {
+   "file": "assets/db/lib/animal/rabbit/sit.webp",
+   "cat": "animal",
+   "tags": [
+    "rabbit",
+    "kelinci",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 101,
+   "h": 144,
+   "outline": 3,
+   "baseline": 141,
+   "anchor": [
+    50,
+    141
+   ],
+   "char": "rabbit",
+   "view": "side",
+   "facing": 90,
+   "pose": "sit",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 395,
+    "soft_after": 392
+   },
+   "tint": 65.3
+  },
+  "animal/turtle/stand": {
+   "file": "assets/db/lib/animal/turtle/stand.webp",
+   "cat": "animal",
+   "tags": [
+    "turtle",
+    "kura-kura",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 154,
+   "h": 115,
+   "outline": 3,
+   "baseline": 112,
+   "anchor": [
+    77,
+    112
+   ],
+   "char": "turtle",
+   "view": "side",
+   "facing": 90,
+   "pose": "stand",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 357,
+    "soft_after": 355
+   },
+   "tint": 29.9
+  },
+  "animal/turtle/walk": {
+   "file": "assets/db/lib/animal/turtle/walk.webp",
+   "cat": "animal",
+   "tags": [
+    "turtle",
+    "kura-kura",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 160,
+   "h": 114,
+   "outline": 3,
+   "baseline": 111,
+   "anchor": [
+    80,
+    111
+   ],
+   "char": "turtle",
+   "view": "side",
+   "facing": 90,
+   "pose": "walk",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 409,
+    "soft_after": 409
+   },
+   "tint": 19.6
+  },
+  "animal/vulture/perch-1": {
+   "file": "assets/db/lib/animal/vulture/perch-1.webp",
+   "cat": "animal",
+   "tags": [
+    "vulture",
+    "burung",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 160,
+   "h": 128,
+   "outline": 3,
+   "baseline": 125,
+   "anchor": [
+    80,
+    125
+   ],
+   "char": "vulture",
+   "view": "side",
+   "facing": 90,
+   "pose": "perch-1",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 482,
+    "soft_after": 473
+   },
+   "tint": 20.8
+  },
+  "animal/vulture/perch-2": {
+   "file": "assets/db/lib/animal/vulture/perch-2.webp",
+   "cat": "animal",
+   "tags": [
+    "vulture",
+    "burung",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 149,
+   "h": 123,
+   "outline": 3,
+   "baseline": 120,
+   "anchor": [
+    74,
+    120
+   ],
+   "char": "vulture",
+   "view": "side",
+   "facing": 90,
+   "pose": "perch-2",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 438,
+    "soft_after": 428
+   },
+   "tint": 28.3
+  },
   "animals/bee": {
    "file": "assets/db/lib/animals/bee.webp",
    "cat": "animals",
@@ -31329,6 +31619,412 @@
    "w": 460,
    "h": 1044
   },
+  "story-char/baron/shocked": {
+   "file": "assets/db/lib/story-char/baron/shocked.webp",
+   "cat": "story-char",
+   "tags": [
+    "baron",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 214,
+   "h": 256,
+   "outline": 5,
+   "baseline": 253,
+   "anchor": [
+    107,
+    253
+   ],
+   "char": "baron",
+   "view": "front",
+   "facing": 180,
+   "pose": "shocked",
+   "expression": "shocked",
+   "fringe": {
+    "soft_before": 561,
+    "soft_after": 555
+   },
+   "tint": 37.3
+  },
+  "story-char/baron/stand": {
+   "file": "assets/db/lib/story-char/baron/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "baron",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 239,
+   "h": 264,
+   "outline": 6,
+   "baseline": 261,
+   "anchor": [
+    119,
+    261
+   ],
+   "char": "baron",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 670,
+    "soft_after": 662
+   },
+   "tint": 35.3
+  },
+  "story-char/carter/arms-crossed": {
+   "file": "assets/db/lib/story-char/carter/arms-crossed.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "lumberyard",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 187,
+   "h": 252,
+   "outline": 4,
+   "baseline": 249,
+   "anchor": [
+    93,
+    249
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "arms-crossed",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 447,
+    "soft_after": 441
+   },
+   "tint": 18.1
+  },
+  "story-char/carter/stand": {
+   "file": "assets/db/lib/story-char/carter/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "lumberyard",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 245,
+   "h": 241,
+   "outline": 6,
+   "baseline": 238,
+   "anchor": [
+    122,
+    238
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 402,
+    "soft_after": 399
+   },
+   "tint": 28.8
+  },
+  "story-char/henry/point": {
+   "file": "assets/db/lib/story-char/henry/point.webp",
+   "cat": "story-char",
+   "tags": [
+    "henry",
+    "engineer",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 249,
+   "h": 292,
+   "outline": 6,
+   "baseline": 289,
+   "anchor": [
+    124,
+    289
+   ],
+   "char": "henry",
+   "view": "front",
+   "facing": 180,
+   "pose": "point",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 841,
+    "soft_after": 805
+   },
+   "tint": 20.1
+  },
+  "story-char/henry/shovel": {
+   "file": "assets/db/lib/story-char/henry/shovel.webp",
+   "cat": "story-char",
+   "tags": [
+    "henry",
+    "engineer",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 256,
+   "h": 286,
+   "outline": 6,
+   "baseline": 283,
+   "anchor": [
+    128,
+    283
+   ],
+   "char": "henry",
+   "view": "front",
+   "facing": 180,
+   "pose": "shovel",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 795,
+    "soft_after": 765
+   },
+   "tint": 15.4
+  },
+  "story-char/henry/wave": {
+   "file": "assets/db/lib/story-char/henry/wave.webp",
+   "cat": "story-char",
+   "tags": [
+    "henry",
+    "engineer",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 169,
+   "h": 311,
+   "outline": 4,
+   "baseline": 308,
+   "anchor": [
+    84,
+    308
+   ],
+   "char": "henry",
+   "view": "front",
+   "facing": 180,
+   "pose": "wave",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 772,
+    "soft_after": 761
+   },
+   "tint": 20.5
+  },
+  "story-char/henry/worried": {
+   "file": "assets/db/lib/story-char/henry/worried.webp",
+   "cat": "story-char",
+   "tags": [
+    "henry",
+    "engineer",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 152,
+   "h": 284,
+   "outline": 4,
+   "baseline": 281,
+   "anchor": [
+    76,
+    281
+   ],
+   "char": "henry",
+   "view": "front",
+   "facing": 180,
+   "pose": "worried",
+   "expression": "worried",
+   "fringe": {
+    "soft_before": 602,
+    "soft_after": 589
+   },
+   "tint": 12.7
+  },
+  "story-char/james/stand": {
+   "file": "assets/db/lib/story-char/james/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "james",
+    "forestry",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 121,
+   "h": 310,
+   "outline": 3,
+   "baseline": 307,
+   "anchor": [
+    60,
+    307
+   ],
+   "char": "james",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 745,
+    "soft_after": 737
+   },
+   "tint": 39.6
+  },
+  "story-char/katrina/shovel": {
+   "file": "assets/db/lib/story-char/katrina/shovel.webp",
+   "cat": "story-char",
+   "tags": [
+    "katrina",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 228,
+   "h": 259,
+   "outline": 5,
+   "baseline": 256,
+   "anchor": [
+    114,
+    256
+   ],
+   "char": "katrina",
+   "view": "front",
+   "facing": 180,
+   "pose": "shovel",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 668,
+    "soft_after": 650
+   },
+   "tint": 42.7
+  },
+  "story-char/katrina/stand": {
+   "file": "assets/db/lib/story-char/katrina/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "katrina",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 165,
+   "h": 260,
+   "outline": 4,
+   "baseline": 257,
+   "anchor": [
+    82,
+    257
+   ],
+   "char": "katrina",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 508,
+    "soft_after": 459
+   },
+   "tint": 47.6
+  },
+  "story-char/scarlet/gesture": {
+   "file": "assets/db/lib/story-char/scarlet/gesture.webp",
+   "cat": "story-char",
+   "tags": [
+    "scarlet",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 210,
+   "h": 282,
+   "outline": 5,
+   "baseline": 279,
+   "anchor": [
+    105,
+    279
+   ],
+   "char": "scarlet",
+   "view": "front",
+   "facing": 180,
+   "pose": "gesture",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 476,
+    "soft_after": 476
+   },
+   "tint": 93.3
+  },
+  "story-char/scarlet/stand": {
+   "file": "assets/db/lib/story-char/scarlet/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "scarlet",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 160,
+   "h": 288,
+   "outline": 4,
+   "baseline": 285,
+   "anchor": [
+    80,
+    285
+   ],
+   "char": "scarlet",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 342,
+    "soft_after": 342
+   },
+   "tint": 89.6
+  },
+  "story-char/scarlet/worried": {
+   "file": "assets/db/lib/story-char/scarlet/worried.webp",
+   "cat": "story-char",
+   "tags": [
+    "scarlet",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "w": 157,
+   "h": 277,
+   "outline": 4,
+   "baseline": 274,
+   "anchor": [
+    78,
+    274
+   ],
+   "char": "scarlet",
+   "view": "front",
+   "facing": 180,
+   "pose": "worried",
+   "expression": "worried",
+   "fringe": {
+    "soft_before": 357,
+    "soft_after": 357
+   },
+   "tint": 91.9
+  },
   "things/alarm-clock": {
    "file": "assets/db/lib/things/alarm-clock.webp",
    "cat": "things",
@@ -42141,6 +42837,6583 @@
    "w": 270,
    "h": 214,
    "psnr": 42.1
+  },
+  "train-char/caboose-red/front-34l": {
+   "file": "assets/db/lib/train-char/caboose-red/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "caboose",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 281,
+   "h": 283,
+   "outline": 7,
+   "baseline": 280,
+   "anchor": [
+    140,
+    280
+   ],
+   "char": "caboose-red",
+   "view": "front34",
+   "facing": 225,
+   "pose": "front-34l",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 818,
+    "soft_after": 794
+   },
+   "tint": 41.5
+  },
+  "train-char/coach-green/side-l": {
+   "file": "assets/db/lib/train-char/coach-green/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 316,
+   "h": 247,
+   "outline": 6,
+   "baseline": 244,
+   "anchor": [
+    158,
+    244
+   ],
+   "char": "coach-green",
+   "view": "side",
+   "facing": 270,
+   "pose": "side-l",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 387,
+    "soft_after": 387
+   },
+   "tint": 1.5
+  },
+  "train-char/defeatist/34l-neutral": {
+   "file": "assets/db/lib/train-char/defeatist/34l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 198,
+   "h": 169,
+   "outline": 4,
+   "baseline": 166,
+   "anchor": [
+    99,
+    166
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/34l-neutral-b": {
+   "file": "assets/db/lib/train-char/defeatist/34l-neutral-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 166,
+   "h": 171,
+   "outline": 4,
+   "baseline": 168,
+   "anchor": [
+    83,
+    168
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/34l-neutral-c": {
+   "file": "assets/db/lib/train-char/defeatist/34l-neutral-c.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 191,
+   "h": 153,
+   "outline": 4,
+   "baseline": 150,
+   "anchor": [
+    95,
+    150
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/34l-sad": {
+   "file": "assets/db/lib/train-char/defeatist/34l-sad.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 194,
+   "h": 172,
+   "outline": 4,
+   "baseline": 169,
+   "anchor": [
+    97,
+    169
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "sad",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/34l-sad-b": {
+   "file": "assets/db/lib/train-char/defeatist/34l-sad-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 179,
+   "h": 168,
+   "outline": 4,
+   "baseline": 165,
+   "anchor": [
+    89,
+    165
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "sad",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/34l-sad-c": {
+   "file": "assets/db/lib/train-char/defeatist/34l-sad-c.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 194,
+   "h": 159,
+   "outline": 4,
+   "baseline": 156,
+   "anchor": [
+    97,
+    156
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "sad",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/face-neutral": {
+   "file": "assets/db/lib/train-char/defeatist/face-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 113,
+   "h": 175,
+   "outline": 3,
+   "baseline": 172,
+   "anchor": [
+    56,
+    172
+   ],
+   "char": "defeatist",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/face-sad": {
+   "file": "assets/db/lib/train-char/defeatist/face-sad.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 113,
+   "h": 174,
+   "outline": 3,
+   "baseline": 171,
+   "anchor": [
+    56,
+    171
+   ],
+   "char": "defeatist",
+   "view": "front",
+   "facing": 180,
+   "expression": "sad",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/front": {
+   "file": "assets/db/lib/train-char/defeatist/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 116,
+   "h": 177,
+   "outline": 3,
+   "baseline": 174,
+   "anchor": [
+    58,
+    174
+   ],
+   "char": "defeatist",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/front-34l": {
+   "file": "assets/db/lib/train-char/defeatist/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 197,
+   "h": 176,
+   "outline": 4,
+   "baseline": 173,
+   "anchor": [
+    98,
+    173
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/front-34l-b": {
+   "file": "assets/db/lib/train-char/defeatist/front-34l-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 194,
+   "h": 162,
+   "outline": 4,
+   "baseline": 159,
+   "anchor": [
+    97,
+    159
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/front-34r": {
+   "file": "assets/db/lib/train-char/defeatist/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 165,
+   "h": 175,
+   "outline": 4,
+   "baseline": 172,
+   "anchor": [
+    82,
+    172
+   ],
+   "char": "defeatist",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/rear": {
+   "file": "assets/db/lib/train-char/defeatist/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "rear",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 106,
+   "h": 174,
+   "outline": 3,
+   "baseline": 171,
+   "anchor": [
+    53,
+    171
+   ],
+   "char": "defeatist",
+   "view": "rear",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/rear-34r": {
+   "file": "assets/db/lib/train-char/defeatist/rear-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 157,
+   "h": 177,
+   "outline": 4,
+   "baseline": 174,
+   "anchor": [
+    78,
+    174
+   ],
+   "char": "defeatist",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/rear-34r-b": {
+   "file": "assets/db/lib/train-char/defeatist/rear-34r-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 176,
+   "h": 173,
+   "outline": 4,
+   "baseline": 170,
+   "anchor": [
+    88,
+    170
+   ],
+   "char": "defeatist",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/rear-34r-c": {
+   "file": "assets/db/lib/train-char/defeatist/rear-34r-c.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 158,
+   "h": 192,
+   "outline": 4,
+   "baseline": 189,
+   "anchor": [
+    79,
+    189
+   ],
+   "char": "defeatist",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/side-l": {
+   "file": "assets/db/lib/train-char/defeatist/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 259,
+   "h": 165,
+   "outline": 4,
+   "baseline": 162,
+   "anchor": [
+    129,
+    162
+   ],
+   "char": "defeatist",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/side-l-neutral": {
+   "file": "assets/db/lib/train-char/defeatist/side-l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 250,
+   "h": 160,
+   "outline": 4,
+   "baseline": 157,
+   "anchor": [
+    125,
+    157
+   ],
+   "char": "defeatist",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/side-l-sad": {
+   "file": "assets/db/lib/train-char/defeatist/side-l-sad.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "side",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 241,
+   "h": 162,
+   "outline": 4,
+   "baseline": 159,
+   "anchor": [
+    120,
+    159
+   ],
+   "char": "defeatist",
+   "view": "side",
+   "facing": 270,
+   "expression": "sad",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/side-r": {
+   "file": "assets/db/lib/train-char/defeatist/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 223,
+   "h": 160,
+   "outline": 4,
+   "baseline": 157,
+   "anchor": [
+    111,
+    157
+   ],
+   "char": "defeatist",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-e": {
+   "file": "assets/db/lib/train-char/defeatist/top-e.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 198,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    99,
+    50
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-n": {
+   "file": "assets/db/lib/train-char/defeatist/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 80,
+   "h": 189,
+   "outline": 3,
+   "baseline": 186,
+   "anchor": [
+    40,
+    94
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-ne": {
+   "file": "assets/db/lib/train-char/defeatist/top-ne.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 180,
+   "h": 189,
+   "outline": 4,
+   "baseline": 186,
+   "anchor": [
+    90,
+    94
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-nw": {
+   "file": "assets/db/lib/train-char/defeatist/top-nw.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 180,
+   "h": 189,
+   "outline": 4,
+   "baseline": 186,
+   "anchor": [
+    90,
+    94
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-s": {
+   "file": "assets/db/lib/train-char/defeatist/top-s.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 107,
+   "h": 189,
+   "outline": 3,
+   "baseline": 186,
+   "anchor": [
+    53,
+    94
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-se": {
+   "file": "assets/db/lib/train-char/defeatist/top-se.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 180,
+   "h": 189,
+   "outline": 4,
+   "baseline": 186,
+   "anchor": [
+    90,
+    94
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-sw": {
+   "file": "assets/db/lib/train-char/defeatist/top-sw.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 180,
+   "h": 189,
+   "outline": 4,
+   "baseline": 186,
+   "anchor": [
+    90,
+    94
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/defeatist/top-w": {
+   "file": "assets/db/lib/train-char/defeatist/top-w.webp",
+   "cat": "train-char",
+   "tags": [
+    "defeatist",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_hellbent Mournful vintage steam train sprite sheet.png",
+   "w": 240,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    120,
+    50
+   ],
+   "char": "defeatist",
+   "view": "top",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/dragutin-alt/34l-happy": {
+   "file": "assets/db/lib/train-char/dragutin-alt/34l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 150,
+   "h": 103,
+   "outline": 3,
+   "baseline": 100,
+   "anchor": [
+    75,
+    100
+   ],
+   "char": "dragutin-alt",
+   "view": "front34",
+   "facing": 225,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/34l-neutral": {
+   "file": "assets/db/lib/train-char/dragutin-alt/34l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 146,
+   "h": 103,
+   "outline": 3,
+   "baseline": 100,
+   "anchor": [
+    73,
+    100
+   ],
+   "char": "dragutin-alt",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/34r-happy": {
+   "file": "assets/db/lib/train-char/dragutin-alt/34r-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 160,
+   "h": 103,
+   "outline": 3,
+   "baseline": 100,
+   "anchor": [
+    80,
+    100
+   ],
+   "char": "dragutin-alt",
+   "view": "front34",
+   "facing": 135,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/34r-neutral": {
+   "file": "assets/db/lib/train-char/dragutin-alt/34r-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 156,
+   "h": 104,
+   "outline": 3,
+   "baseline": 101,
+   "anchor": [
+    78,
+    101
+   ],
+   "char": "dragutin-alt",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/face-happy": {
+   "file": "assets/db/lib/train-char/dragutin-alt/face-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 98,
+   "h": 104,
+   "outline": 3,
+   "baseline": 101,
+   "anchor": [
+    49,
+    101
+   ],
+   "char": "dragutin-alt",
+   "view": "front",
+   "facing": 180,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/face-neutral": {
+   "file": "assets/db/lib/train-char/dragutin-alt/face-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 97,
+   "h": 103,
+   "outline": 3,
+   "baseline": 100,
+   "anchor": [
+    48,
+    100
+   ],
+   "char": "dragutin-alt",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/front": {
+   "file": "assets/db/lib/train-char/dragutin-alt/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 104,
+   "h": 115,
+   "outline": 3,
+   "baseline": 112,
+   "anchor": [
+    52,
+    112
+   ],
+   "char": "dragutin-alt",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/front-34l": {
+   "file": "assets/db/lib/train-char/dragutin-alt/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 151,
+   "h": 105,
+   "outline": 3,
+   "baseline": 102,
+   "anchor": [
+    75,
+    102
+   ],
+   "char": "dragutin-alt",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/front-34l-b": {
+   "file": "assets/db/lib/train-char/dragutin-alt/front-34l-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 163,
+   "h": 124,
+   "outline": 3,
+   "baseline": 121,
+   "anchor": [
+    81,
+    121
+   ],
+   "char": "dragutin-alt",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/front-34r": {
+   "file": "assets/db/lib/train-char/dragutin-alt/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 169,
+   "h": 107,
+   "outline": 3,
+   "baseline": 104,
+   "anchor": [
+    84,
+    104
+   ],
+   "char": "dragutin-alt",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/rear": {
+   "file": "assets/db/lib/train-char/dragutin-alt/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 98,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    49,
+    97
+   ],
+   "char": "dragutin-alt",
+   "view": "rear",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/rear-34l": {
+   "file": "assets/db/lib/train-char/dragutin-alt/rear-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 141,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    70,
+    97
+   ],
+   "char": "dragutin-alt",
+   "view": "rear34",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/rear-34r": {
+   "file": "assets/db/lib/train-char/dragutin-alt/rear-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 168,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    84,
+    97
+   ],
+   "char": "dragutin-alt",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/rear-34r-b": {
+   "file": "assets/db/lib/train-char/dragutin-alt/rear-34r-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 136,
+   "h": 119,
+   "outline": 3,
+   "baseline": 116,
+   "anchor": [
+    68,
+    116
+   ],
+   "char": "dragutin-alt",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/side-l": {
+   "file": "assets/db/lib/train-char/dragutin-alt/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 246,
+   "h": 77,
+   "outline": 3,
+   "baseline": 74,
+   "anchor": [
+    123,
+    74
+   ],
+   "char": "dragutin-alt",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/side-l-happy": {
+   "file": "assets/db/lib/train-char/dragutin-alt/side-l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 198,
+   "h": 75,
+   "outline": 3,
+   "baseline": 72,
+   "anchor": [
+    99,
+    72
+   ],
+   "char": "dragutin-alt",
+   "view": "side",
+   "facing": 270,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/side-l-neutral": {
+   "file": "assets/db/lib/train-char/dragutin-alt/side-l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 197,
+   "h": 76,
+   "outline": 3,
+   "baseline": 73,
+   "anchor": [
+    98,
+    73
+   ],
+   "char": "dragutin-alt",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/side-r": {
+   "file": "assets/db/lib/train-char/dragutin-alt/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 243,
+   "h": 79,
+   "outline": 3,
+   "baseline": 76,
+   "anchor": [
+    121,
+    76
+   ],
+   "char": "dragutin-alt",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/side-r-happy": {
+   "file": "assets/db/lib/train-char/dragutin-alt/side-r-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 230,
+   "h": 75,
+   "outline": 3,
+   "baseline": 72,
+   "anchor": [
+    115,
+    72
+   ],
+   "char": "dragutin-alt",
+   "view": "side",
+   "facing": 90,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/side-r-neutral": {
+   "file": "assets/db/lib/train-char/dragutin-alt/side-r-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 229,
+   "h": 75,
+   "outline": 3,
+   "baseline": 72,
+   "anchor": [
+    114,
+    72
+   ],
+   "char": "dragutin-alt",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-e": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-e.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 232,
+   "h": 69,
+   "outline": 3,
+   "baseline": 66,
+   "anchor": [
+    116,
+    34
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-n": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 68,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    34,
+    63
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-ne": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-ne.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 125,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    62,
+    63
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-nw": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-nw.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 125,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    62,
+    63
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-s": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-s.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 60,
+   "h": 128,
+   "outline": 3,
+   "baseline": 125,
+   "anchor": [
+    30,
+    64
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-se": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-se.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 125,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    62,
+    63
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-sw": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-sw.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 125,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    62,
+    63
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin-alt/top-w": {
+   "file": "assets/db/lib/train-char/dragutin-alt/top-w.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Vintage green railcar sprite atlas-1.png",
+   "w": 259,
+   "h": 69,
+   "outline": 3,
+   "baseline": 66,
+   "anchor": [
+    129,
+    34
+   ],
+   "char": "dragutin-alt",
+   "view": "top",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/34l-happy": {
+   "file": "assets/db/lib/train-char/dragutin/34l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 149,
+   "h": 102,
+   "outline": 3,
+   "baseline": 99,
+   "anchor": [
+    74,
+    99
+   ],
+   "char": "dragutin",
+   "view": "front34",
+   "facing": 225,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/34l-neutral": {
+   "file": "assets/db/lib/train-char/dragutin/34l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 146,
+   "h": 102,
+   "outline": 3,
+   "baseline": 99,
+   "anchor": [
+    73,
+    99
+   ],
+   "char": "dragutin",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/34r-happy": {
+   "file": "assets/db/lib/train-char/dragutin/34r-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 159,
+   "h": 102,
+   "outline": 3,
+   "baseline": 99,
+   "anchor": [
+    79,
+    99
+   ],
+   "char": "dragutin",
+   "view": "front34",
+   "facing": 135,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/34r-neutral": {
+   "file": "assets/db/lib/train-char/dragutin/34r-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 157,
+   "h": 103,
+   "outline": 3,
+   "baseline": 100,
+   "anchor": [
+    78,
+    100
+   ],
+   "char": "dragutin",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/face-happy": {
+   "file": "assets/db/lib/train-char/dragutin/face-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 98,
+   "h": 105,
+   "outline": 3,
+   "baseline": 102,
+   "anchor": [
+    49,
+    102
+   ],
+   "char": "dragutin",
+   "view": "front",
+   "facing": 180,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/face-neutral": {
+   "file": "assets/db/lib/train-char/dragutin/face-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 97,
+   "h": 103,
+   "outline": 3,
+   "baseline": 100,
+   "anchor": [
+    48,
+    100
+   ],
+   "char": "dragutin",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/front": {
+   "file": "assets/db/lib/train-char/dragutin/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 103,
+   "h": 115,
+   "outline": 3,
+   "baseline": 112,
+   "anchor": [
+    51,
+    112
+   ],
+   "char": "dragutin",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/front-34l": {
+   "file": "assets/db/lib/train-char/dragutin/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 150,
+   "h": 105,
+   "outline": 3,
+   "baseline": 102,
+   "anchor": [
+    75,
+    102
+   ],
+   "char": "dragutin",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/front-34l-b": {
+   "file": "assets/db/lib/train-char/dragutin/front-34l-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 162,
+   "h": 123,
+   "outline": 3,
+   "baseline": 120,
+   "anchor": [
+    81,
+    120
+   ],
+   "char": "dragutin",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/front-34r": {
+   "file": "assets/db/lib/train-char/dragutin/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 168,
+   "h": 106,
+   "outline": 3,
+   "baseline": 103,
+   "anchor": [
+    84,
+    103
+   ],
+   "char": "dragutin",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/rear": {
+   "file": "assets/db/lib/train-char/dragutin/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 98,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    49,
+    97
+   ],
+   "char": "dragutin",
+   "view": "rear",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/rear-34l": {
+   "file": "assets/db/lib/train-char/dragutin/rear-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 140,
+   "h": 99,
+   "outline": 3,
+   "baseline": 96,
+   "anchor": [
+    70,
+    96
+   ],
+   "char": "dragutin",
+   "view": "rear34",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/rear-34r": {
+   "file": "assets/db/lib/train-char/dragutin/rear-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 167,
+   "h": 99,
+   "outline": 3,
+   "baseline": 96,
+   "anchor": [
+    83,
+    96
+   ],
+   "char": "dragutin",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/rear-34r-b": {
+   "file": "assets/db/lib/train-char/dragutin/rear-34r-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 135,
+   "h": 119,
+   "outline": 3,
+   "baseline": 116,
+   "anchor": [
+    67,
+    116
+   ],
+   "char": "dragutin",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/side-l": {
+   "file": "assets/db/lib/train-char/dragutin/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 244,
+   "h": 77,
+   "outline": 3,
+   "baseline": 74,
+   "anchor": [
+    122,
+    74
+   ],
+   "char": "dragutin",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/side-l-happy": {
+   "file": "assets/db/lib/train-char/dragutin/side-l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 197,
+   "h": 76,
+   "outline": 3,
+   "baseline": 73,
+   "anchor": [
+    98,
+    73
+   ],
+   "char": "dragutin",
+   "view": "side",
+   "facing": 270,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/side-l-neutral": {
+   "file": "assets/db/lib/train-char/dragutin/side-l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 196,
+   "h": 77,
+   "outline": 3,
+   "baseline": 74,
+   "anchor": [
+    98,
+    74
+   ],
+   "char": "dragutin",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/side-r": {
+   "file": "assets/db/lib/train-char/dragutin/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 242,
+   "h": 79,
+   "outline": 3,
+   "baseline": 76,
+   "anchor": [
+    121,
+    76
+   ],
+   "char": "dragutin",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/side-r-happy": {
+   "file": "assets/db/lib/train-char/dragutin/side-r-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 229,
+   "h": 76,
+   "outline": 3,
+   "baseline": 73,
+   "anchor": [
+    114,
+    73
+   ],
+   "char": "dragutin",
+   "view": "side",
+   "facing": 90,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/side-r-neutral": {
+   "file": "assets/db/lib/train-char/dragutin/side-r-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 227,
+   "h": 75,
+   "outline": 3,
+   "baseline": 72,
+   "anchor": [
+    113,
+    72
+   ],
+   "char": "dragutin",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-e": {
+   "file": "assets/db/lib/train-char/dragutin/top-e.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 231,
+   "h": 70,
+   "outline": 3,
+   "baseline": 67,
+   "anchor": [
+    115,
+    35
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-n": {
+   "file": "assets/db/lib/train-char/dragutin/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 68,
+   "h": 128,
+   "outline": 3,
+   "baseline": 125,
+   "anchor": [
+    34,
+    64
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-ne": {
+   "file": "assets/db/lib/train-char/dragutin/top-ne.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 126,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    63,
+    63
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-nw": {
+   "file": "assets/db/lib/train-char/dragutin/top-nw.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 126,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    63,
+    63
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-s": {
+   "file": "assets/db/lib/train-char/dragutin/top-s.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 60,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    30,
+    63
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-se": {
+   "file": "assets/db/lib/train-char/dragutin/top-se.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 126,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    63,
+    63
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-sw": {
+   "file": "assets/db/lib/train-char/dragutin/top-sw.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 126,
+   "h": 127,
+   "outline": 3,
+   "baseline": 124,
+   "anchor": [
+    63,
+    63
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/dragutin/top-w": {
+   "file": "assets/db/lib/train-char/dragutin/top-w.webp",
+   "cat": "train-char",
+   "tags": [
+    "dragutin",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_Dragutin Green Train Sprite Sheet-2.png",
+   "w": 259,
+   "h": 70,
+   "outline": 3,
+   "baseline": 67,
+   "anchor": [
+    129,
+    35
+   ],
+   "char": "dragutin",
+   "view": "top",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/goro-loco/front-34l": {
+   "file": "assets/db/lib/train-char/goro-loco/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "goro",
+    "logging",
+    "locomotive",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 243,
+   "h": 274,
+   "outline": 6,
+   "baseline": 271,
+   "anchor": [
+    121,
+    271
+   ],
+   "char": "goro-loco",
+   "view": "front34",
+   "facing": 225,
+   "pose": "front-34l",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 449,
+    "soft_after": 446
+   },
+   "tint": 33.4
+  },
+  "train-char/goro-loco/front-34r": {
+   "file": "assets/db/lib/train-char/goro-loco/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "goro",
+    "logging",
+    "locomotive",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): film-atlas",
+   "w": 261,
+   "h": 241,
+   "outline": 6,
+   "baseline": 238,
+   "anchor": [
+    130,
+    238
+   ],
+   "char": "goro-loco",
+   "view": "front34",
+   "facing": 135,
+   "pose": "front-34r",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 429,
+    "soft_after": 427
+   },
+   "tint": 31.0
+  },
+  "train-char/linus/34l-happy": {
+   "file": "assets/db/lib/train-char/linus/34l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 169,
+   "h": 136,
+   "outline": 3,
+   "baseline": 133,
+   "anchor": [
+    84,
+    133
+   ],
+   "char": "linus",
+   "view": "front34",
+   "facing": 225,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/34l-happy-b": {
+   "file": "assets/db/lib/train-char/linus/34l-happy-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 148,
+   "h": 137,
+   "outline": 3,
+   "baseline": 134,
+   "anchor": [
+    74,
+    134
+   ],
+   "char": "linus",
+   "view": "front34",
+   "facing": 225,
+   "expression": "happy",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/34l-sad": {
+   "file": "assets/db/lib/train-char/linus/34l-sad.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front34",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 164,
+   "h": 129,
+   "outline": 3,
+   "baseline": 126,
+   "anchor": [
+    82,
+    126
+   ],
+   "char": "linus",
+   "view": "front34",
+   "facing": 225,
+   "expression": "sad",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/34l-sad-b": {
+   "file": "assets/db/lib/train-char/linus/34l-sad-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front34",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 153,
+   "h": 130,
+   "outline": 3,
+   "baseline": 127,
+   "anchor": [
+    76,
+    127
+   ],
+   "char": "linus",
+   "view": "front34",
+   "facing": 225,
+   "expression": "sad",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/face-happy": {
+   "file": "assets/db/lib/train-char/linus/face-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 109,
+   "h": 140,
+   "outline": 3,
+   "baseline": 137,
+   "anchor": [
+    54,
+    137
+   ],
+   "char": "linus",
+   "view": "front",
+   "facing": 180,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/face-sad": {
+   "file": "assets/db/lib/train-char/linus/face-sad.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 109,
+   "h": 132,
+   "outline": 3,
+   "baseline": 129,
+   "anchor": [
+    54,
+    129
+   ],
+   "char": "linus",
+   "view": "front",
+   "facing": 180,
+   "expression": "sad",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/front": {
+   "file": "assets/db/lib/train-char/linus/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 126,
+   "h": 168,
+   "outline": 3,
+   "baseline": 165,
+   "anchor": [
+    63,
+    165
+   ],
+   "char": "linus",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/front-34l": {
+   "file": "assets/db/lib/train-char/linus/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 186,
+   "h": 158,
+   "outline": 4,
+   "baseline": 155,
+   "anchor": [
+    93,
+    155
+   ],
+   "char": "linus",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/front-34l-b": {
+   "file": "assets/db/lib/train-char/linus/front-34l-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 190,
+   "h": 159,
+   "outline": 4,
+   "baseline": 156,
+   "anchor": [
+    95,
+    156
+   ],
+   "char": "linus",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/front-34r": {
+   "file": "assets/db/lib/train-char/linus/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 165,
+   "h": 153,
+   "outline": 4,
+   "baseline": 150,
+   "anchor": [
+    82,
+    150
+   ],
+   "char": "linus",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/rear": {
+   "file": "assets/db/lib/train-char/linus/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "rear",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 114,
+   "h": 171,
+   "outline": 3,
+   "baseline": 168,
+   "anchor": [
+    57,
+    168
+   ],
+   "char": "linus",
+   "view": "rear",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/rear-34r": {
+   "file": "assets/db/lib/train-char/linus/rear-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 190,
+   "h": 164,
+   "outline": 4,
+   "baseline": 161,
+   "anchor": [
+    95,
+    161
+   ],
+   "char": "linus",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/rear-34r-b": {
+   "file": "assets/db/lib/train-char/linus/rear-34r-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 198,
+   "h": 165,
+   "outline": 4,
+   "baseline": 162,
+   "anchor": [
+    99,
+    162
+   ],
+   "char": "linus",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/rear-34r-c": {
+   "file": "assets/db/lib/train-char/linus/rear-34r-c.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 165,
+   "h": 163,
+   "outline": 4,
+   "baseline": 160,
+   "anchor": [
+    82,
+    160
+   ],
+   "char": "linus",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/side-l": {
+   "file": "assets/db/lib/train-char/linus/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 257,
+   "h": 152,
+   "outline": 4,
+   "baseline": 149,
+   "anchor": [
+    128,
+    149
+   ],
+   "char": "linus",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/side-l-happy": {
+   "file": "assets/db/lib/train-char/linus/side-l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 227,
+   "h": 137,
+   "outline": 3,
+   "baseline": 134,
+   "anchor": [
+    113,
+    134
+   ],
+   "char": "linus",
+   "view": "side",
+   "facing": 270,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/side-l-happy-b": {
+   "file": "assets/db/lib/train-char/linus/side-l-happy-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 225,
+   "h": 139,
+   "outline": 3,
+   "baseline": 136,
+   "anchor": [
+    112,
+    136
+   ],
+   "char": "linus",
+   "view": "side",
+   "facing": 270,
+   "expression": "happy",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/side-l-sad": {
+   "file": "assets/db/lib/train-char/linus/side-l-sad.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "side",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 227,
+   "h": 130,
+   "outline": 3,
+   "baseline": 127,
+   "anchor": [
+    113,
+    127
+   ],
+   "char": "linus",
+   "view": "side",
+   "facing": 270,
+   "expression": "sad",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/side-l-sad-b": {
+   "file": "assets/db/lib/train-char/linus/side-l-sad-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "side",
+    "sad",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 224,
+   "h": 130,
+   "outline": 3,
+   "baseline": 127,
+   "anchor": [
+    112,
+    127
+   ],
+   "char": "linus",
+   "view": "side",
+   "facing": 270,
+   "expression": "sad",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/side-r": {
+   "file": "assets/db/lib/train-char/linus/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 236,
+   "h": 152,
+   "outline": 4,
+   "baseline": 149,
+   "anchor": [
+    118,
+    149
+   ],
+   "char": "linus",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-e": {
+   "file": "assets/db/lib/train-char/linus/top-e.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 203,
+   "h": 80,
+   "outline": 3,
+   "baseline": 77,
+   "anchor": [
+    101,
+    40
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-n": {
+   "file": "assets/db/lib/train-char/linus/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 86,
+   "h": 176,
+   "outline": 3,
+   "baseline": 173,
+   "anchor": [
+    43,
+    88
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-ne": {
+   "file": "assets/db/lib/train-char/linus/top-ne.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 161,
+   "h": 173,
+   "outline": 4,
+   "baseline": 170,
+   "anchor": [
+    80,
+    86
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-nw": {
+   "file": "assets/db/lib/train-char/linus/top-nw.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 161,
+   "h": 173,
+   "outline": 4,
+   "baseline": 170,
+   "anchor": [
+    80,
+    86
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-s": {
+   "file": "assets/db/lib/train-char/linus/top-s.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 86,
+   "h": 176,
+   "outline": 3,
+   "baseline": 173,
+   "anchor": [
+    43,
+    88
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-s-alt": {
+   "file": "assets/db/lib/train-char/linus/top-s-alt.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 90,
+   "h": 179,
+   "outline": 3,
+   "baseline": 176,
+   "anchor": [
+    45,
+    89
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-se": {
+   "file": "assets/db/lib/train-char/linus/top-se.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 161,
+   "h": 173,
+   "outline": 4,
+   "baseline": 170,
+   "anchor": [
+    80,
+    86
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-sw": {
+   "file": "assets/db/lib/train-char/linus/top-sw.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 161,
+   "h": 173,
+   "outline": 4,
+   "baseline": 170,
+   "anchor": [
+    80,
+    86
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/linus/top-w": {
+   "file": "assets/db/lib/train-char/linus/top-w.webp",
+   "cat": "train-char",
+   "tags": [
+    "linus",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Linus_Blue locomotive sprite sheet with paired eyes.png",
+   "w": 258,
+   "h": 80,
+   "outline": 3,
+   "baseline": 77,
+   "anchor": [
+    129,
+    40
+   ],
+   "char": "linus",
+   "view": "top",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/34l-angry": {
+   "file": "assets/db/lib/train-char/malivlak/34l-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front34",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 205,
+   "h": 207,
+   "outline": 5,
+   "baseline": 204,
+   "anchor": [
+    102,
+    204
+   ],
+   "char": "malivlak",
+   "view": "front34",
+   "facing": 225,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/34l-happy": {
+   "file": "assets/db/lib/train-char/malivlak/34l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 206,
+   "h": 203,
+   "outline": 5,
+   "baseline": 200,
+   "anchor": [
+    103,
+    200
+   ],
+   "char": "malivlak",
+   "view": "front34",
+   "facing": 225,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/34r-angry": {
+   "file": "assets/db/lib/train-char/malivlak/34r-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front34",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 181,
+   "h": 207,
+   "outline": 4,
+   "baseline": 204,
+   "anchor": [
+    90,
+    204
+   ],
+   "char": "malivlak",
+   "view": "front34",
+   "facing": 135,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/34r-happy": {
+   "file": "assets/db/lib/train-char/malivlak/34r-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 197,
+   "h": 204,
+   "outline": 5,
+   "baseline": 201,
+   "anchor": [
+    98,
+    201
+   ],
+   "char": "malivlak",
+   "view": "front34",
+   "facing": 135,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/face-angry": {
+   "file": "assets/db/lib/train-char/malivlak/face-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 118,
+   "h": 211,
+   "outline": 3,
+   "baseline": 208,
+   "anchor": [
+    59,
+    208
+   ],
+   "char": "malivlak",
+   "view": "front",
+   "facing": 180,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/face-happy": {
+   "file": "assets/db/lib/train-char/malivlak/face-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 116,
+   "h": 207,
+   "outline": 3,
+   "baseline": 204,
+   "anchor": [
+    58,
+    204
+   ],
+   "char": "malivlak",
+   "view": "front",
+   "facing": 180,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/front": {
+   "file": "assets/db/lib/train-char/malivlak/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 118,
+   "h": 216,
+   "outline": 3,
+   "baseline": 213,
+   "anchor": [
+    59,
+    213
+   ],
+   "char": "malivlak",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/front-34l": {
+   "file": "assets/db/lib/train-char/malivlak/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 203,
+   "h": 208,
+   "outline": 5,
+   "baseline": 205,
+   "anchor": [
+    101,
+    205
+   ],
+   "char": "malivlak",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/front-34r": {
+   "file": "assets/db/lib/train-char/malivlak/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 175,
+   "h": 210,
+   "outline": 4,
+   "baseline": 207,
+   "anchor": [
+    87,
+    207
+   ],
+   "char": "malivlak",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/front-34r-b": {
+   "file": "assets/db/lib/train-char/malivlak/front-34r-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 206,
+   "h": 210,
+   "outline": 5,
+   "baseline": 207,
+   "anchor": [
+    103,
+    207
+   ],
+   "char": "malivlak",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/rear": {
+   "file": "assets/db/lib/train-char/malivlak/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "rear",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 122,
+   "h": 196,
+   "outline": 3,
+   "baseline": 193,
+   "anchor": [
+    61,
+    193
+   ],
+   "char": "malivlak",
+   "view": "rear",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/rear-34l": {
+   "file": "assets/db/lib/train-char/malivlak/rear-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 221,
+   "h": 206,
+   "outline": 5,
+   "baseline": 203,
+   "anchor": [
+    110,
+    203
+   ],
+   "char": "malivlak",
+   "view": "rear34",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/rear-34l-b": {
+   "file": "assets/db/lib/train-char/malivlak/rear-34l-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 184,
+   "h": 208,
+   "outline": 4,
+   "baseline": 205,
+   "anchor": [
+    92,
+    205
+   ],
+   "char": "malivlak",
+   "view": "rear34",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/rear-34r": {
+   "file": "assets/db/lib/train-char/malivlak/rear-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 213,
+   "h": 199,
+   "outline": 5,
+   "baseline": 196,
+   "anchor": [
+    106,
+    196
+   ],
+   "char": "malivlak",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/side-l": {
+   "file": "assets/db/lib/train-char/malivlak/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 259,
+   "h": 200,
+   "outline": 5,
+   "baseline": 197,
+   "anchor": [
+    129,
+    197
+   ],
+   "char": "malivlak",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/side-l-angry": {
+   "file": "assets/db/lib/train-char/malivlak/side-l-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "side",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 247,
+   "h": 196,
+   "outline": 5,
+   "baseline": 193,
+   "anchor": [
+    123,
+    193
+   ],
+   "char": "malivlak",
+   "view": "side",
+   "facing": 270,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/side-l-angry-b": {
+   "file": "assets/db/lib/train-char/malivlak/side-l-angry-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "side",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 243,
+   "h": 190,
+   "outline": 4,
+   "baseline": 187,
+   "anchor": [
+    121,
+    187
+   ],
+   "char": "malivlak",
+   "view": "side",
+   "facing": 270,
+   "expression": "angry",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/side-l-happy": {
+   "file": "assets/db/lib/train-char/malivlak/side-l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 244,
+   "h": 190,
+   "outline": 4,
+   "baseline": 187,
+   "anchor": [
+    122,
+    187
+   ],
+   "char": "malivlak",
+   "view": "side",
+   "facing": 270,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/side-l-happy-b": {
+   "file": "assets/db/lib/train-char/malivlak/side-l-happy-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 239,
+   "h": 188,
+   "outline": 4,
+   "baseline": 185,
+   "anchor": [
+    119,
+    185
+   ],
+   "char": "malivlak",
+   "view": "side",
+   "facing": 270,
+   "expression": "happy",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/side-r": {
+   "file": "assets/db/lib/train-char/malivlak/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 242,
+   "h": 195,
+   "outline": 5,
+   "baseline": 192,
+   "anchor": [
+    121,
+    192
+   ],
+   "char": "malivlak",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-e": {
+   "file": "assets/db/lib/train-char/malivlak/top-e.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 224,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    112,
+    50
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-n": {
+   "file": "assets/db/lib/train-char/malivlak/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 105,
+   "h": 217,
+   "outline": 3,
+   "baseline": 214,
+   "anchor": [
+    52,
+    108
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-ne": {
+   "file": "assets/db/lib/train-char/malivlak/top-ne.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 185,
+   "h": 228,
+   "outline": 4,
+   "baseline": 225,
+   "anchor": [
+    92,
+    114
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-nw": {
+   "file": "assets/db/lib/train-char/malivlak/top-nw.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 185,
+   "h": 228,
+   "outline": 4,
+   "baseline": 225,
+   "anchor": [
+    92,
+    114
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-s": {
+   "file": "assets/db/lib/train-char/malivlak/top-s.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 100,
+   "h": 221,
+   "outline": 3,
+   "baseline": 218,
+   "anchor": [
+    50,
+    110
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-se": {
+   "file": "assets/db/lib/train-char/malivlak/top-se.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 185,
+   "h": 228,
+   "outline": 4,
+   "baseline": 225,
+   "anchor": [
+    92,
+    114
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-sw": {
+   "file": "assets/db/lib/train-char/malivlak/top-sw.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 185,
+   "h": 228,
+   "outline": 4,
+   "baseline": 225,
+   "anchor": [
+    92,
+    114
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/malivlak/top-w": {
+   "file": "assets/db/lib/train-char/malivlak/top-w.webp",
+   "cat": "train-char",
+   "tags": [
+    "malivlak",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): malivlak_name_malivlak Vintage red-orange locomotive sprite sheet.png",
+   "w": 240,
+   "h": 106,
+   "outline": 3,
+   "baseline": 103,
+   "anchor": [
+    120,
+    53
+   ],
+   "char": "malivlak",
+   "view": "top",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/samson/34l-angry": {
+   "file": "assets/db/lib/train-char/samson/34l-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front34",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 177,
+   "h": 163,
+   "outline": 4,
+   "baseline": 160,
+   "anchor": [
+    88,
+    160
+   ],
+   "char": "samson",
+   "view": "front34",
+   "facing": 225,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/34l-neutral": {
+   "file": "assets/db/lib/train-char/samson/34l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 179,
+   "h": 158,
+   "outline": 4,
+   "baseline": 155,
+   "anchor": [
+    89,
+    155
+   ],
+   "char": "samson",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/34r-angry": {
+   "file": "assets/db/lib/train-char/samson/34r-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front34",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 153,
+   "h": 158,
+   "outline": 4,
+   "baseline": 155,
+   "anchor": [
+    76,
+    155
+   ],
+   "char": "samson",
+   "view": "front34",
+   "facing": 135,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/34r-neutral": {
+   "file": "assets/db/lib/train-char/samson/34r-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 158,
+   "h": 158,
+   "outline": 4,
+   "baseline": 155,
+   "anchor": [
+    79,
+    155
+   ],
+   "char": "samson",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/face-angry": {
+   "file": "assets/db/lib/train-char/samson/face-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 134,
+   "h": 168,
+   "outline": 3,
+   "baseline": 165,
+   "anchor": [
+    67,
+    165
+   ],
+   "char": "samson",
+   "view": "front",
+   "facing": 180,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/face-neutral": {
+   "file": "assets/db/lib/train-char/samson/face-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 129,
+   "h": 164,
+   "outline": 3,
+   "baseline": 161,
+   "anchor": [
+    64,
+    161
+   ],
+   "char": "samson",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/front": {
+   "file": "assets/db/lib/train-char/samson/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 132,
+   "h": 171,
+   "outline": 3,
+   "baseline": 168,
+   "anchor": [
+    66,
+    168
+   ],
+   "char": "samson",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/front-34l": {
+   "file": "assets/db/lib/train-char/samson/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 180,
+   "h": 155,
+   "outline": 4,
+   "baseline": 152,
+   "anchor": [
+    90,
+    152
+   ],
+   "char": "samson",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/front-34l-b": {
+   "file": "assets/db/lib/train-char/samson/front-34l-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 161,
+   "h": 160,
+   "outline": 4,
+   "baseline": 157,
+   "anchor": [
+    80,
+    157
+   ],
+   "char": "samson",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/front-34r": {
+   "file": "assets/db/lib/train-char/samson/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 145,
+   "h": 154,
+   "outline": 3,
+   "baseline": 151,
+   "anchor": [
+    72,
+    151
+   ],
+   "char": "samson",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/rear": {
+   "file": "assets/db/lib/train-char/samson/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "rear",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 107,
+   "h": 149,
+   "outline": 3,
+   "baseline": 146,
+   "anchor": [
+    53,
+    146
+   ],
+   "char": "samson",
+   "view": "rear",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/rear-34l": {
+   "file": "assets/db/lib/train-char/samson/rear-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 177,
+   "h": 137,
+   "outline": 3,
+   "baseline": 134,
+   "anchor": [
+    88,
+    134
+   ],
+   "char": "samson",
+   "view": "rear34",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/rear-34r": {
+   "file": "assets/db/lib/train-char/samson/rear-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 165,
+   "h": 123,
+   "outline": 3,
+   "baseline": 120,
+   "anchor": [
+    82,
+    120
+   ],
+   "char": "samson",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/rear-34r-b": {
+   "file": "assets/db/lib/train-char/samson/rear-34r-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 144,
+   "h": 163,
+   "outline": 3,
+   "baseline": 160,
+   "anchor": [
+    72,
+    160
+   ],
+   "char": "samson",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/side-l": {
+   "file": "assets/db/lib/train-char/samson/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 251,
+   "h": 112,
+   "outline": 3,
+   "baseline": 109,
+   "anchor": [
+    125,
+    109
+   ],
+   "char": "samson",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/side-l-angry": {
+   "file": "assets/db/lib/train-char/samson/side-l-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "side",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 217,
+   "h": 132,
+   "outline": 3,
+   "baseline": 129,
+   "anchor": [
+    108,
+    129
+   ],
+   "char": "samson",
+   "view": "side",
+   "facing": 270,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/side-l-neutral": {
+   "file": "assets/db/lib/train-char/samson/side-l-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 217,
+   "h": 133,
+   "outline": 3,
+   "baseline": 130,
+   "anchor": [
+    108,
+    130
+   ],
+   "char": "samson",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/side-r": {
+   "file": "assets/db/lib/train-char/samson/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 244,
+   "h": 101,
+   "outline": 3,
+   "baseline": 98,
+   "anchor": [
+    122,
+    98
+   ],
+   "char": "samson",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/side-r-angry": {
+   "file": "assets/db/lib/train-char/samson/side-r-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "side",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 203,
+   "h": 137,
+   "outline": 3,
+   "baseline": 134,
+   "anchor": [
+    101,
+    134
+   ],
+   "char": "samson",
+   "view": "side",
+   "facing": 90,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/side-r-neutral": {
+   "file": "assets/db/lib/train-char/samson/side-r-neutral.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 200,
+   "h": 130,
+   "outline": 3,
+   "baseline": 127,
+   "anchor": [
+    100,
+    127
+   ],
+   "char": "samson",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-e": {
+   "file": "assets/db/lib/train-char/samson/top-e.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 258,
+   "h": 73,
+   "outline": 3,
+   "baseline": 70,
+   "anchor": [
+    129,
+    36
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-n": {
+   "file": "assets/db/lib/train-char/samson/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 82,
+   "h": 207,
+   "outline": 3,
+   "baseline": 204,
+   "anchor": [
+    41,
+    103
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-ne": {
+   "file": "assets/db/lib/train-char/samson/top-ne.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 146,
+   "h": 193,
+   "outline": 3,
+   "baseline": 190,
+   "anchor": [
+    73,
+    96
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-nw": {
+   "file": "assets/db/lib/train-char/samson/top-nw.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 146,
+   "h": 193,
+   "outline": 3,
+   "baseline": 190,
+   "anchor": [
+    73,
+    96
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-rear-alt": {
+   "file": "assets/db/lib/train-char/samson/top-rear-alt.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 59,
+   "h": 203,
+   "outline": 3,
+   "baseline": 200,
+   "anchor": [
+    29,
+    101
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-s": {
+   "file": "assets/db/lib/train-char/samson/top-s.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 82,
+   "h": 207,
+   "outline": 3,
+   "baseline": 204,
+   "anchor": [
+    41,
+    103
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-s-alt": {
+   "file": "assets/db/lib/train-char/samson/top-s-alt.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 73,
+   "h": 206,
+   "outline": 3,
+   "baseline": 203,
+   "anchor": [
+    36,
+    103
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-se": {
+   "file": "assets/db/lib/train-char/samson/top-se.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 146,
+   "h": 193,
+   "outline": 3,
+   "baseline": 190,
+   "anchor": [
+    73,
+    96
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-sw": {
+   "file": "assets/db/lib/train-char/samson/top-sw.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 146,
+   "h": 193,
+   "outline": 3,
+   "baseline": 190,
+   "anchor": [
+    73,
+    96
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/samson/top-w": {
+   "file": "assets/db/lib/train-char/samson/top-w.webp",
+   "cat": "train-char",
+   "tags": [
+    "samson",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "w": 258,
+   "h": 73,
+   "outline": 3,
+   "baseline": 70,
+   "anchor": [
+    129,
+    36
+   ],
+   "char": "samson",
+   "view": "top",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-e",
+    "top-n",
+    "top-ne",
+    "top-nw",
+    "top-sw"
+   ]
+  },
+  "train-char/silver/34l-angry": {
+   "file": "assets/db/lib/train-char/silver/34l-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front34",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 240,
+   "h": 80,
+   "outline": 3,
+   "baseline": 77,
+   "anchor": [
+    120,
+    77
+   ],
+   "char": "silver",
+   "view": "front34",
+   "facing": 225,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/34l-happy": {
+   "file": "assets/db/lib/train-char/silver/34l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 184,
+   "h": 85,
+   "outline": 3,
+   "baseline": 82,
+   "anchor": [
+    92,
+    82
+   ],
+   "char": "silver",
+   "view": "front34",
+   "facing": 225,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/face-angry": {
+   "file": "assets/db/lib/train-char/silver/face-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 144,
+   "h": 97,
+   "outline": 3,
+   "baseline": 94,
+   "anchor": [
+    72,
+    94
+   ],
+   "char": "silver",
+   "view": "front",
+   "facing": 180,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/face-happy": {
+   "file": "assets/db/lib/train-char/silver/face-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 75,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    37,
+    97
+   ],
+   "char": "silver",
+   "view": "front",
+   "facing": 180,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/front": {
+   "file": "assets/db/lib/train-char/silver/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 75,
+   "h": 105,
+   "outline": 3,
+   "baseline": 102,
+   "anchor": [
+    37,
+    102
+   ],
+   "char": "silver",
+   "view": "front",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/front-34l": {
+   "file": "assets/db/lib/train-char/silver/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 178,
+   "h": 95,
+   "outline": 3,
+   "baseline": 92,
+   "anchor": [
+    89,
+    92
+   ],
+   "char": "silver",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/front-34l-b": {
+   "file": "assets/db/lib/train-char/silver/front-34l-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 145,
+   "h": 121,
+   "outline": 3,
+   "baseline": 118,
+   "anchor": [
+    72,
+    118
+   ],
+   "char": "silver",
+   "view": "front34",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/front-34r": {
+   "file": "assets/db/lib/train-char/silver/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "front34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 138,
+   "h": 102,
+   "outline": 3,
+   "baseline": 99,
+   "anchor": [
+    69,
+    99
+   ],
+   "char": "silver",
+   "view": "front34",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear": {
+   "file": "assets/db/lib/train-char/silver/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 83,
+   "h": 101,
+   "outline": 3,
+   "baseline": 98,
+   "anchor": [
+    41,
+    98
+   ],
+   "char": "silver",
+   "view": "rear",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear-34l": {
+   "file": "assets/db/lib/train-char/silver/rear-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 156,
+   "h": 94,
+   "outline": 3,
+   "baseline": 91,
+   "anchor": [
+    78,
+    91
+   ],
+   "char": "silver",
+   "view": "rear34",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear-34r": {
+   "file": "assets/db/lib/train-char/silver/rear-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 181,
+   "h": 96,
+   "outline": 3,
+   "baseline": 93,
+   "anchor": [
+    90,
+    93
+   ],
+   "char": "silver",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear-34r-angry": {
+   "file": "assets/db/lib/train-char/silver/rear-34r-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear34",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 142,
+   "h": 107,
+   "outline": 3,
+   "baseline": 104,
+   "anchor": [
+    71,
+    104
+   ],
+   "char": "silver",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear-34r-b": {
+   "file": "assets/db/lib/train-char/silver/rear-34r-b.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear34",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 133,
+   "h": 119,
+   "outline": 3,
+   "baseline": 116,
+   "anchor": [
+    66,
+    116
+   ],
+   "char": "silver",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": true,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear-34r-happy": {
+   "file": "assets/db/lib/train-char/silver/rear-34r-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear34",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 184,
+   "h": 91,
+   "outline": 3,
+   "baseline": 88,
+   "anchor": [
+    92,
+    88
+   ],
+   "char": "silver",
+   "view": "rear34",
+   "facing": 45,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear-angry": {
+   "file": "assets/db/lib/train-char/silver/rear-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 130,
+   "h": 105,
+   "outline": 3,
+   "baseline": 102,
+   "anchor": [
+    65,
+    102
+   ],
+   "char": "silver",
+   "view": "rear",
+   "facing": 0,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/rear-happy": {
+   "file": "assets/db/lib/train-char/silver/rear-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "rear",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 88,
+   "h": 97,
+   "outline": 3,
+   "baseline": 94,
+   "anchor": [
+    44,
+    94
+   ],
+   "char": "silver",
+   "view": "rear",
+   "facing": 0,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/side-l": {
+   "file": "assets/db/lib/train-char/silver/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 252,
+   "h": 79,
+   "outline": 3,
+   "baseline": 76,
+   "anchor": [
+    126,
+    76
+   ],
+   "char": "silver",
+   "view": "side",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/side-l-angry": {
+   "file": "assets/db/lib/train-char/silver/side-l-angry.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "side",
+    "angry",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 156,
+   "h": 94,
+   "outline": 3,
+   "baseline": 91,
+   "anchor": [
+    78,
+    91
+   ],
+   "char": "silver",
+   "view": "side",
+   "facing": 270,
+   "expression": "angry",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/side-l-happy": {
+   "file": "assets/db/lib/train-char/silver/side-l-happy.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "side",
+    "happy",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 243,
+   "h": 75,
+   "outline": 3,
+   "baseline": 72,
+   "anchor": [
+    121,
+    72
+   ],
+   "char": "silver",
+   "view": "side",
+   "facing": 270,
+   "expression": "happy",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/side-r": {
+   "file": "assets/db/lib/train-char/silver/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "side",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 260,
+   "h": 82,
+   "outline": 3,
+   "baseline": 79,
+   "anchor": [
+    130,
+    79
+   ],
+   "char": "silver",
+   "view": "side",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-e": {
+   "file": "assets/db/lib/train-char/silver/top-e.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 203,
+   "h": 66,
+   "outline": 3,
+   "baseline": 63,
+   "anchor": [
+    101,
+    33
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 90,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-n": {
+   "file": "assets/db/lib/train-char/silver/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 66,
+   "h": 114,
+   "outline": 3,
+   "baseline": 111,
+   "anchor": [
+    33,
+    57
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 0,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-ne": {
+   "file": "assets/db/lib/train-char/silver/top-ne.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 143,
+   "h": 125,
+   "outline": 3,
+   "baseline": 122,
+   "anchor": [
+    71,
+    62
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 45,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-nw": {
+   "file": "assets/db/lib/train-char/silver/top-nw.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 143,
+   "h": 125,
+   "outline": 3,
+   "baseline": 122,
+   "anchor": [
+    71,
+    62
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 315,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-s": {
+   "file": "assets/db/lib/train-char/silver/top-s.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 73,
+   "h": 121,
+   "outline": 3,
+   "baseline": 118,
+   "anchor": [
+    36,
+    60
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 180,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-se": {
+   "file": "assets/db/lib/train-char/silver/top-se.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 143,
+   "h": 125,
+   "outline": 3,
+   "baseline": 122,
+   "anchor": [
+    71,
+    62
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 135,
+   "expression": "neutral",
+   "alt": false,
+   "derived": true,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-sw": {
+   "file": "assets/db/lib/train-char/silver/top-sw.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 143,
+   "h": 125,
+   "outline": 3,
+   "baseline": 122,
+   "anchor": [
+    71,
+    62
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 225,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
+  },
+  "train-char/silver/top-w": {
+   "file": "assets/db/lib/train-char/silver/top-w.webp",
+   "cat": "train-char",
+   "tags": [
+    "silver",
+    "train",
+    "locomotive",
+    "top",
+    "neutral",
+    "cartoon"
+   ],
+   "source": "owner train sprite sheet (Downloads): HEllbent _name_win the war speed Bespectacled Silver Locomotive Sprite Sheet-1.png",
+   "w": 237,
+   "h": 68,
+   "outline": 3,
+   "baseline": 65,
+   "anchor": [
+    118,
+    34
+   ],
+   "char": "silver",
+   "view": "top",
+   "facing": 270,
+   "expression": "neutral",
+   "alt": false,
+   "derived": false,
+   "missing": [
+    "top-ne",
+    "top-nw",
+    "top-se"
+   ]
   },
   "vehicles/airplane": {
    "file": "assets/db/lib/vehicles/airplane.webp",
