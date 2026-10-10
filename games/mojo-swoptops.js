@@ -16,7 +16,10 @@
   var W = window, D = document
   if (W.lockGameAvatarSession) W.lockGameAvatarSession()
   var PG = W.ProgGrid, ML = W.MojoLevels, MA = W.MojoArt, MS = W.MojoSoal
-  var GAME_ID = 'g31', KEY = 'dunia-g31-mojo'
+  // a pack (games/mojo-pack.js) keeps its own save and its own words; none = Mojo Swoptops exactly as before
+  var PK = (W.MojoPack && W.MojoPack.def) || null
+  var GAME_ID = PK && PK.gameId || 'g31', KEY = PK && PK.saveKey || 'dunia-g31-mojo'
+  function nm (t) { return PK && PK.narrator && t ? String(t).replace(/\bBo\b/g, PK.narrator.name) : t }   // the narrator's name in every line
   function $ (id) { return D.getElementById(id) }
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
@@ -143,7 +146,7 @@
     if (W.MojoFX) MojoFX.clear()   // every board effect node and frame timer of the run   // a cancelled particle would sit at the board corner
   }
   var toastT = 0
-  function toast (m) { var t = $('toast'); t.textContent = m; t.className = 'toast show'; clearTimeout(toastT); toastT = W.setTimeout(function () { t.className = 'toast' }, 2400) }   // not later(): cancelPlayback must never strand a toast on screen
+  function toast (m) { var t = $('toast'); t.textContent = nm(m); t.className = 'toast show'; clearTimeout(toastT); toastT = W.setTimeout(function () { t.className = 'toast' }, 2400) }   // not later(): cancelPlayback must never strand a toast on screen
   function tap (id, fn) { var e = typeof id === 'string' ? $(id) : id; if (e) e.addEventListener('click', function (ev) { fn(ev) }) }
   function storePacing () {
     if (!G) return
@@ -168,7 +171,7 @@
     D.body.setAttribute('data-scr', id)
   }
   var SWOOSH_SCR = { 'scr-home': 1, 'scr-regions': 1, 'scr-map': 1, 'scr-play': 1 }
-  function overlay (id, html) { var o = $(id); if (html != null) { o.innerHTML = html; icons(o) } o.classList.add('on'); return o }
+  function overlay (id, html) { var o = $(id); if (html != null) { o.innerHTML = PK ? nm(html) : html; icons(o) } o.classList.add('on'); return o }
   function closeOv (id) { $(id).classList.remove('on') }
   function anim (e, frames, ms, ease, done) {
     if (!e) { if (done) done(); return null }
@@ -201,7 +204,9 @@
     $('home-bo').src = MA.src('char/bo')
     homeCounters()
     var cp = S.cp && ML.byId(S.cp.id)
-    $('play-t').textContent = cp ? 'Lanjutkan!' : Object.keys(S.lv).length ? 'Main Lagi!' : 'Ayo Main!'
+    var pl = PK && PK.text && PK.text.play
+    $('play-t').textContent = cp ? (pl ? pl[1] : 'Lanjutkan!') : Object.keys(S.lv).length ? (pl ? pl[2] : 'Main Lagi!') : (pl ? pl[0] : 'Ayo Main!')
+    if (PK && PK.onHome) PK.onHome({ save: S, next: nextLevelId(), done: Object.keys(S.lv).length })
   }
   function homeCounters () {
     var st = 0; for (var k in S.lv) st += S.lv[k].stars || 0
@@ -267,6 +272,7 @@
       c.innerHTML = '<h2 class="fk"><span class="ep">Episode ' + ep + '</span> ' + ch.title + ' <small>' + ch.sub + '</small></h2>'
       c.appendChild(row); box.appendChild(c)
     })
+    if (PK && PK.onMap) PK.onMap({ region: region, start: start, save: S, nextId: nextId })   // a pack adds its mission card
     var nx = box.querySelector('.lvl.next')
     if (nx) later(function () { if (nx.isConnected) nx.scrollIntoView({ block: 'nearest' }) }, 0)
   }
@@ -456,7 +462,8 @@
       } else if (k === '~') {
         if (water) drawTile(x, water, X, Y, s, 0.07); else { x.fillStyle = '#4FC3F7'; x.fillRect(X, Y, s, s) }
       } else {
-        if (road) { if (indoor) drawTile(x, road, X, Y, s, 0.04); else drawRoad(x, road, X, Y, s, roadShape(ch, r, c)) }
+        if (PK && PK.paintRoad) PK.paintRoad(x, ch, r, c, X, Y, s, grass, drawTile)   // a pack lays its own ground (rails)
+        else if (road) { if (indoor) drawTile(x, road, X, Y, s, 0.04); else drawRoad(x, road, X, Y, s, roadShape(ch, r, c)) }
         else { x.fillStyle = T.road; x.fillRect(X, Y, s, s) }
         if (k === 'o') { if (hole) drawTile(x, hole, X + s * 0.06, Y + s * 0.06, s * 0.88, 0.02); else { x.fillStyle = '#3E2723'; x.beginPath(); x.ellipse(X + s / 2, Y + s / 2, s * 0.36, s * 0.3, 0, 0, 7); x.fill() } }
         if (filled) {
@@ -465,7 +472,7 @@
         }
       }
     }
-    if (!indoor) kerbs(x, ch, R, Cn, s)
+    if (!indoor && !(PK && PK.noKerbs)) kerbs(x, ch, R, Cn, s)
     // cells Mojo must reach are shown by their objects (flag, people), never a path
   }
   // ROAD rule (2026-10-03): a stone kerb wherever road meets grass / trees / buildings, so the drivable road reads
@@ -498,6 +505,7 @@
   function faceMojo (h) {
     if (h === 1) faceEast = true; else if (h === 3) faceEast = false
     $('mojo').setAttribute('data-heading', h)
+    if (PK && PK.hero) { var f = (G && G.w && G.w.m.form) || 'normal', mm = $('mojo-mod'), key = f + h; if (mm.getAttribute('data-hk') !== key) { mm.innerHTML = MA.module(f, 'top', h); mm.setAttribute('data-hk', key) } mm.style.transform = ''; return }   // a pack's vehicle has one picture per heading
     $('mojo-mod').style.transform = faceEast ? 'scaleX(-1)' : ''
   }
   function placeMojo (m, snap) {
@@ -576,7 +584,7 @@
     w.objs.forEach(function (o) { if (OBJ[o.id]) OBJ[o.id].style.opacity = ''; renderObj(o) })
     placeAll(w)
     renderCargo(w)
-    $('mojo-mod').innerHTML = MA.module(w.m.form, 'top')
+    $('mojo-mod').innerHTML = MA.module(w.m.form, 'top', w.m.h); $('mojo-mod').setAttribute('data-hk', w.m.form + w.m.h)
     if (snap && !layoutDue) paint(w)   // a fresh board is painted once, by its first layout()
     renderHud()
   }
@@ -597,6 +605,7 @@
       case 'open': return { img: objImg(o || {}), t: 'Buka ' + lowName(o) }
       case 'place': return { img: objImg(o || {}), t: 'Pasang ' + lowName(o) }
       case 'carry': return { img: objImg(o || {}), t: 'Bawa ' + lowName(o) }
+      case 'wagons': return { img: MA.src('train/coach-annie'), t: 'Gandeng ' + ob.n + ' gerbong' }
       default: return { img: MA.src('obj/star'), t: '' }
     }
   }
@@ -633,7 +642,7 @@
   /* full: a hint rung shows its whole text in the bubble (it may grow to a few lines and scroll); the bubble then
      drops its bold task line so the objective is never said twice */
   function boSay (t, quiet, alert, full) {
-    boLine = t || ''
+    boLine = nm(t || '')
     var b = D.querySelector('.bubble'), p = $('bo-text')
     var first = boLine.match(/^.*?[.!?](?:\s|$)/), short = first ? first[0].trim() : boLine
     p.textContent = full ? boLine : short.length <= 64 ? short : 'Lihat pesan Bo untuk penjelasannya.'
@@ -1057,6 +1066,7 @@
     'need-water': function (inf) { return 'Perlu ' + inf.need + ' air, baru ada ' + inf.have + '. LEWATI tetes air biru.' },
     'cap-full': function (inf) { return inf.res === 'water' ? 'Tangki air sudah penuh! Isinya tetap di sana.' : inf.res === 'sand' ? 'Bak pasirnya sudah penuh! TUANG dulu di lubang.' : 'Kotak baut sudah penuh! Bautnya tetap di sana.' }
   }
+  if (PK && PK.msg) for (var mk in PK.msg) MSG[mk] = PK.msg[mk]   // a pack words its own stops (e.g. the turtle on the rail)
   function clue (res, cmd) {
     var m = MSG[res.reason]
     if (m == null) { console.warn('[Mojo] no message for reason', res.reason); return String(res.reason) }
@@ -1353,7 +1363,7 @@
   function boardSwop (e, done, quick) {
     var mod = $('mojo-mod'), rot = $('mojo-rot'), old = mod.innerHTML
     var ghost = el('div', 'mj-mod'); ghost.innerHTML = old; rot.appendChild(ghost)
-    mod.innerHTML = MA.module(e.to, 'top'); mod.style.opacity = '0'
+    mod.innerHTML = MA.module(e.to, 'top', G.w.m.h); mod.setAttribute('data-hk', e.to + G.w.m.h); mod.style.opacity = '0'
     var t = quick ? 0.5 : 1
     if (RM) {
       anim(ghost, [{ opacity: 1 }, { opacity: 0 }], 200, 'ease', function () { ghost.remove() })
@@ -1762,7 +1772,7 @@
     overlay('ov-card', '<div class="card result"><h2 class="fk">Hebat!</h2><div class="stars" id="res-stars">' + s + '</div>' +
       '<div class="res-cast"><img class="res-bo" alt="Bo" src="' + MA.lib('mojo-char/bo-celebrate') + '"><div class="mojo-side">' + MA.mojo(G.w.m.form, 'side') + '</div></div>' +
       '<p class="res-line">Misi <b>' + lv.title.replace(/[!.]+$/, '') + '</b> berhasil!</p><div class="why">' + why + '</div>' +
-      '<div class="row"><button class="btn b-retry fk" id="res-again" type="button"><i class="ico">' + MA.icon('undo') + '</i><span>Main Lagi</span></button>' +
+      '<div class="row"><button class="btn b-retry fk" id="res-again" type="button"><i class="ico">' + MA.icon('undo') + '</i><span>' + ((PK && PK.text && PK.text.again) || 'Main Lagi') + '</span></button>' +
       '<button class="btn b-map fk" id="res-map" type="button"><i class="ico">' + MA.icon('map') + '</i><span>Peta</span></button>' +
       (next ? '<button class="btn b-go fk" id="res-next" type="button"><span>Lanjut</span><i class="ico">' + MA.icon('run') + '</i></button>' : '') + '</div></div>')
     confetti()

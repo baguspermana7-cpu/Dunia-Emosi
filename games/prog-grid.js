@@ -675,6 +675,7 @@
       case 'open': return !!o && o.st === 'open'
       case 'place': return !!o && o.st === 'placed'
       case 'carry': return w.m.carry === ob.id
+      case 'wagons': return ((w.m.train || []).length) >= (ob.n || 1)   // a pack's "keep n wagons in tow" (Kereta Pemberani)
       case 'key': return !!w.keys[ob.key || ob.id]
       case 'tool': return !!w.tools[ob.tool]
       case 'collect': return (w.res[ob.res] || 0) >= ob.n

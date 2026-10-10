@@ -17,7 +17,11 @@
   'use strict'
   var W = window
   var BASE = '../'
-  function lib (k) { return (W.AssetIndex && AssetIndex.path(k)) || (BASE + 'assets/db/lib/' + k + '.webp') }
+  /* A PACK (games/data/<id>-pack.js, loaded by games/mojo-pack.js) re-skins the same engine: libmap swaps one library
+     key for another (tiles, narrator poses), hero draws the player's vehicle per heading, scene / background name the
+     painting. Without a pack every hook below is inert and the Mojo game is byte-for-byte what it was. */
+  var PACK = null
+  function lib (k) { if (PACK && PACK.libmap && PACK.libmap[k]) k = PACK.libmap[k]; return (W.AssetIndex && AssetIndex.path(k)) || (BASE + 'assets/db/lib/' + k + '.webp') }
   function url (s) { return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s) }
 
   // Owner sheets 02-29, catalogued by tools/ingest-mojo-sheets.py; mockup characters excluded.
@@ -104,12 +108,13 @@
   function sceneKey (theme) { return SCENE[theme] ? 'mojo-bg/' + SCENE[theme] : null }
   // background key (without -land/-port) for a level's beat; fallback = the region's own painting
   function scene (lv, beatIndex, region) {
+    if (PACK && PACK.scene) { var ps = PACK.scene(lv, beatIndex || 0, region); if (ps) return ps }
     var pick = LEVEL_SCENE[lv.id], theme = null
     if (pick) theme = typeof pick === 'string' ? pick : pick[Math.min(beatIndex || 0, pick.length - 1)]
     if (!theme) theme = sceneTheme(lv, (lv.beats || [])[beatIndex || 0])
     return sceneKey(theme) || regionScene(region)
   }
-  function regionScene (region) { return region ? (sceneKey(REGION_SCENE[region.id]) || region.bg) : sceneKey('road') }
+  function regionScene (region) { if (PACK && PACK.regionScene) { var pr = PACK.regionScene(region); if (pr) return pr } return region ? (sceneKey(REGION_SCENE[region.id]) || region.bg) : sceneKey('road') }
   function sceneFiles (port) {
     var o = []; for (var t in SCENE) { var k = 'mojo-bg/' + SCENE[t]; [port !== true && k + '-land', port !== false && k + '-port'].forEach(function (x) { if (x && o.indexOf(lib(x)) < 0) o.push(lib(x)) }) }
     return o
@@ -119,12 +124,14 @@
   var TOP_VB = '-10 -10 120 120', SIDE_VB = '0 0 220 150'
   function svg (vb, inner, cls) { return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '"' + (cls ? ' class="' + cls + '"' : '') + ' aria-hidden="true">' + inner + '</svg>' }
   function chassis () { return '' }
-  function module (form, view) {
+  function module (form, view, h) {
+    if (PACK && PACK.hero) { var ph = PACK.hero(form, view || 'top', h); if (ph) return ph }
     if (TOPS.indexOf(topKey(form)) < 0) throw new Error('Unknown Mojo artwork: ' + form)
     return ownerTop(form, view || 'top')
   }
   // menus and cards: the film art when the owner drew this form, else the workshop art
   function mojo (form, view) {
+    if (PACK && PACK.hero) { var ph = PACK.hero(form, view || 'side', 'e'); if (ph) return ph }
     var k = heroKey(form)
     return k ? '<img class="owner-mojo owner-hero owner-' + (view || 'side') + '" src="' + lib(k) + '" alt="">' : module(form, view || 'side')
   }
@@ -265,7 +272,9 @@
     sceneFiles().forEach(function (u) { if (o.indexOf(u) < 0) o.push(u) })
     return o }
 
-  W.MojoArt = { chassis: chassis, module: module, mojo: mojo, icon: icon, src: src,
+  function setPack (p) { PACK = p || null; cache = {} }
+  function extendLib (m) { for (var k in m) LIB[k] = m[k]; cache = {} }
+  W.MojoArt = { setPack: setPack, extendLib: extendLib, pack: function () { return PACK }, chassis: chassis, module: module, mojo: mojo, icon: icon, src: src,
     catalog: catalog, heroCatalog: heroCatalog, showcase: showcase, heroKey: heroKey, scene: scene, regionScene: regionScene,
     sceneTheme: sceneTheme, SCENE: SCENE, LEVEL_SCENE: LEVEL_SCENE, sceneFiles: sceneFiles, lib: lib, CAT: CAT, FORM: FORM, TOP_VB: TOP_VB, SIDE_VB: SIDE_VB, OVERRIDE: OVERRIDE, libFiles: libFiles, hasOverride: function (k) { return !!OVERRIDE[k] } }
 })()

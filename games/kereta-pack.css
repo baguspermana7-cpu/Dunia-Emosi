@@ -1,0 +1,161 @@
+/* =============================================================================
+ * kereta-pack.css — the Kereta Pemberani SKIN for the Mojo engine (loaded by games/mojo-pack.js only for ?pack=kereta).
+ * Primary reference: docs/kereta-maze-mockups/primary-linus-bright.png — bright, cheerful, kid-friendly: wooden-sign
+ * titles, cream rounded cards, red / blue / green candy buttons, a trail of numbered stops. (The darker brass sheets
+ * in the same folder are secondary.) Layout and behaviour stay Mojo's; this file only re-colours and re-seats.
+ * Every rule is keyed on html[data-pack="kereta"], so the plain Mojo page is untouched.
+ * ==========================================================================*/
+html[data-pack="kereta"]{
+  --wood1:#b27a42;--wood2:#8a5528;--wood3:#5c3817;--cream:#fff7df;--cream2:#f8e6b5;--ink:#4a2c12;--ink2:#7a5630;--paper:#fff7df;--line:rgba(74,44,18,.18);
+  --red1:#f0614f;--red2:#d23a2b;--blue1:#3fa4f2;--blue2:#1f74d0;--green:#34b85f;--green2:#1b8a42;--gold:#ffc83d;--gold2:#e09a00;--orange:#f59a2a;--orange2:#cf6d10;--yellow:#ffc83d;--yellow2:#e09a00;
+}
+html[data-pack="kereta"],html[data-pack="kereta"] body{background:#7cc4f0}
+html[data-pack="kereta"] .fk{font-family:'Fredoka One','Nunito',sans-serif;font-weight:400;letter-spacing:.02em}
+
+/* ── shared pieces ── */
+html[data-pack="kereta"] .b-go,html[data-pack="kereta"] .b-run{background:linear-gradient(180deg,#44cf6f,#1f9a4a);box-shadow:0 5px 0 #146c32,0 10px 16px rgba(0,0,0,.18),inset 0 0 0 2px rgba(255,255,255,.35)}
+html[data-pack="kereta"] .b-retry,html[data-pack="kereta"] .b-map{background:linear-gradient(180deg,var(--blue1),var(--blue2));box-shadow:0 5px 0 #14509a,0 10px 16px rgba(0,0,0,.18),inset 0 0 0 2px rgba(255,255,255,.35)}
+html[data-pack="kereta"] .b-soft{background:linear-gradient(180deg,#fff2c4,#f6d98a);color:var(--ink);box-shadow:0 5px 0 #b98a2c,0 10px 16px rgba(0,0,0,.14)}
+html[data-pack="kereta"] .b-hint{background:linear-gradient(180deg,#ffb84a,#f08a14);color:#fff;box-shadow:0 5px 0 #b35f06;text-shadow:0 2px 0 rgba(0,0,0,.2)}
+html[data-pack="kereta"] .b-hint .ico svg [fill="#fff"]{fill:#fff}
+html[data-pack="kereta"] .b-show{background:linear-gradient(180deg,#9b6ad8,#6c3fb0);color:#fff}
+html[data-pack="kereta"] .ibtn{background:linear-gradient(180deg,var(--blue1),var(--blue2));border-radius:50%;box-shadow:0 4px 0 #14509a,inset 0 0 0 3px #fff}
+html[data-pack="kereta"] .ibtn.sq{background:linear-gradient(180deg,#fff,#f4e6c4);border-radius:16px;box-shadow:0 4px 0 #c9a45a}
+/* a wooden sign: brown plank, cream border, rounded letters */
+html[data-pack="kereta"] .k-sign,html[data-pack="kereta"] .plate.banner,html[data-pack="kereta"] .menu-scene .plate{background:linear-gradient(180deg,#c28a4e,#9a6330);border-radius:18px;color:#fff6d6;
+  box-shadow:inset 0 0 0 3px #e9c78d,inset 0 0 0 6px #6b4220,0 6px 0 #4d2f12,0 12px 18px rgba(0,0,0,.25)}
+
+/* ── 1 LANDING (reference screen 1): wooden title sign, red MULAI MAIN, blue PILIH MISI, round Cara Main / Teman ── */
+html[data-pack="kereta"] #scr-home{--k-l1:clamp(20px,min(4.6vw,9vh),60px);--k-l2:clamp(44px,min(10.5vw,21vh),138px);background:#7cc4f0 url('../assets/kereta/bg/bg-bl-lembah-landscape.webp') center/cover no-repeat}
+html[data-pack="kereta"] #scr-home .town,html[data-pack="kereta"] #btn-exit,html[data-pack="kereta"] #scr-home .counter{display:none}
+html[data-pack="kereta"] #scr-home .home-brand{left:3.5%;right:auto;top:4%;width:min(47%,590px);max-width:none;text-align:center;z-index:3;padding:clamp(10px,2vh,22px) 22px clamp(18px,3vh,30px);
+  background:linear-gradient(180deg,#a66a33,#7b4a22);border-radius:22px;box-shadow:inset 0 0 0 4px #d9b078,inset 0 0 0 8px #5c3817,0 8px 0 #432810,0 18px 28px rgba(0,0,0,.28)}
+html[data-pack="kereta"] #scr-home .logo{align-items:center;line-height:.95}
+html[data-pack="kereta"] #scr-home .logo .l1{font-size:var(--k-l1);color:#ffd447;-webkit-text-stroke:clamp(3px,.5vw,6px) #6b3a10;paint-order:stroke fill;text-shadow:0 4px 0 #6b3a10;letter-spacing:.02em;text-transform:uppercase}
+html[data-pack="kereta"] #scr-home .logo .l2{font-size:var(--k-l2);color:#fff;-webkit-text-stroke:clamp(4px,.7vw,9px) #4b95e8;paint-order:stroke fill;text-shadow:0 6px 0 #1f5aa8;letter-spacing:.02em;text-transform:uppercase;margin-top:-.04em}
+html[data-pack="kereta"] #scr-home .tag{position:absolute;left:5%;right:5%;bottom:-16px;margin:0;font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(11px,1.45vw,18px);color:var(--ink);background:linear-gradient(180deg,#fff7df,#f1d9a0);border-radius:10px;padding:6px 12px;box-shadow:0 0 0 3px #8a5528,0 4px 0 rgba(0,0,0,.25);text-shadow:none}
+html[data-pack="kereta"] #scr-home .home-stage{left:auto;right:0;bottom:0;width:60%;height:78%;justify-content:center;align-items:flex-end;gap:0}
+html[data-pack="kereta"] #scr-home .home-mojo{width:min(42vw,640px);height:100%;aspect-ratio:auto;animation:none;display:flex;align-items:flex-end;justify-content:center;filter:drop-shadow(0 16px 18px rgba(0,0,0,.35));order:2;margin-bottom:3%}
+html[data-pack="kereta"] #scr-home .home-mojo img{width:100%;height:auto;max-height:100%;object-fit:contain}
+html[data-pack="kereta"] #scr-home .home-bo{height:min(44vh,380px);order:1;margin:0 -4% 3% 0;filter:drop-shadow(0 10px 12px rgba(0,0,0,.3));align-self:flex-end}
+html[data-pack="kereta"] #scr-home .home-cta{position:absolute;left:4.5%;right:auto;bottom:auto;top:calc(4vh + (var(--k-l1) + var(--k-l2)) * .95 + clamp(46px,7vh,70px));width:min(41%,500px);display:flex;flex-direction:column;gap:14px;z-index:4;align-items:stretch}
+html[data-pack="kereta"] #scr-home #btn-workshop,html[data-pack="kereta"] #scr-home #btn-learn,html[data-pack="kereta"] #scr-home #btn-race,html[data-pack="kereta"] #scr-home #btn-profile{display:none}
+html[data-pack="kereta"] #scr-home .home-cta .btn{justify-content:center;font-size:clamp(17px,2.4vw,30px);border-radius:999px;text-transform:uppercase;letter-spacing:.03em;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+html[data-pack="kereta"] #scr-home #btn-play{min-height:clamp(60px,10vh,86px);background:linear-gradient(180deg,#f46a58,#d83a2a);box-shadow:0 6px 0 #a02418,0 12px 18px rgba(0,0,0,.22),inset 0 0 0 3px rgba(255,255,255,.4)}
+html[data-pack="kereta"] #scr-home #btn-levels{width:78%;align-self:center;min-height:clamp(48px,7.4vh,64px);font-size:clamp(15px,2vw,24px);background:linear-gradient(180deg,#45b0ff,#1f78d6);box-shadow:0 5px 0 #14509a,0 10px 16px rgba(0,0,0,.2),inset 0 0 0 3px rgba(255,255,255,.4)}
+html[data-pack="kereta"] #scr-home .hico{width:34px;height:34px}
+html[data-pack="kereta"] .k-round{position:absolute;left:24%;bottom:3.5%;z-index:4;display:flex;gap:clamp(10px,2vw,22px)}
+html[data-pack="kereta"] .k-round button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:clamp(84px,11vw,124px);height:clamp(74px,10vw,110px);border-radius:46% 46% 22% 22%;
+  background:linear-gradient(180deg,#fff8e2,#f3dca4);color:var(--ink);box-shadow:0 5px 0 #b98a2c,0 10px 16px rgba(0,0,0,.2),inset 0 0 0 3px #fff;min-height:0;padding:0;font-size:clamp(13px,1.5vw,18px);text-shadow:none;text-transform:none;letter-spacing:0}
+html[data-pack="kereta"] .k-round button img{width:44%;height:auto;max-height:46%;object-fit:contain}
+html[data-pack="kereta"] .k-round button span{font-family:'Nunito',sans-serif;font-weight:900}
+html[data-pack="kereta"] .k-decor{position:absolute;inset:0;pointer-events:none;z-index:2}
+html[data-pack="kereta"] .k-rabbit{position:absolute;left:5%;bottom:4%;height:clamp(70px,16vh,150px);filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
+html[data-pack="kereta"] .k-turtle{position:absolute;left:14.5%;bottom:1.5%;height:clamp(46px,10vh,92px);filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
+
+/* ── 2 PILIH MISI (reference screen 2): a trail of stops on the valley, mission card + AYO MULAI ── */
+html[data-pack="kereta"] .menu-scene{background:#7cc4f0 center/cover no-repeat}
+html[data-pack="kereta"] #scr-map{background-color:#7cc4f0}
+html[data-pack="kereta"] .menu-scene .topbar,html[data-pack="kereta"] #scr-map .topbar{background:none;box-shadow:none}
+html[data-pack="kereta"] #scr-map .map-bg{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0) 40%,rgba(20,60,20,.18))}
+html[data-pack="kereta"] .plate.banner{padding:8px 34px;font-size:clamp(24px,3.6vw,40px);color:#4a2c12;background:linear-gradient(180deg,#fff0c4,#f1d58e);box-shadow:inset 0 0 0 3px #c28a4e,0 6px 0 #6b4220,0 12px 18px rgba(0,0,0,.2)}
+html[data-pack="kereta"] .menu-scene .topbar>.btn:first-child{border-radius:50%;background:linear-gradient(180deg,var(--blue1),var(--blue2));box-shadow:0 4px 0 #14509a,inset 0 0 0 3px #fff;font-size:0;min-width:56px;padding:0}
+html[data-pack="kereta"] .starpill{background:linear-gradient(180deg,#fff,#fff0c4);color:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.18);border-radius:999px;font-family:'Nunito',sans-serif;font-weight:900}
+html[data-pack="kereta"] #scr-map .chapters{padding-bottom:150px}
+html[data-pack="kereta"] .chap{background:rgba(255,247,223,.82);border-radius:22px;box-shadow:0 8px 0 rgba(92,56,23,.25),inset 0 0 0 3px #fff}
+html[data-pack="kereta"] .chap h2{color:var(--ink)}
+html[data-pack="kereta"] .chap h2 .ep{background:var(--wood2);color:#fff6d6;border-radius:999px}
+html[data-pack="kereta"] .lvls{position:relative;gap:clamp(8px,2.4vw,28px);justify-content:center}
+html[data-pack="kereta"] .lvls::before{content:'';position:absolute;left:4%;right:4%;top:48px;height:12px;border-radius:6px;background:repeating-linear-gradient(90deg,#8a5528 0 14px,transparent 14px 26px),linear-gradient(#cfd6df,#cfd6df) center/100% 3px no-repeat;opacity:.9}
+html[data-pack="kereta"] .lvl{position:relative;z-index:1}
+html[data-pack="kereta"] .lvl .tile{border-radius:50%;width:clamp(64px,8.6vw,96px);height:clamp(64px,8.6vw,96px);background:linear-gradient(180deg,#ffe27a,#f5b300);box-shadow:0 5px 0 #b47f00,inset 0 0 0 4px #fff}
+html[data-pack="kereta"] .lvl .n{color:#6a3e00;text-shadow:none;font-size:clamp(30px,4vw,44px)}
+html[data-pack="kereta"] .lvl.done .tile{background:linear-gradient(180deg,#52d77a,#25a24b);box-shadow:0 5px 0 #187034,inset 0 0 0 4px #fff}
+html[data-pack="kereta"] .lvl.done .n{color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+html[data-pack="kereta"] .lvl.lock .tile{background:linear-gradient(180deg,#c9cfd6,#939ca6);box-shadow:0 5px 0 #646d77,inset 0 0 0 4px #e6e9ed}
+html[data-pack="kereta"] .lvl.k-sel .tile{outline:5px solid #6fe3ff;outline-offset:3px}
+html[data-pack="kereta"] .lvl b{color:var(--ink);font-family:'Nunito',sans-serif;font-weight:900}
+html[data-pack="kereta"] .k-detail{position:absolute;left:3%;right:3%;bottom:calc(14px + var(--sab));display:flex;align-items:center;gap:clamp(10px,2vw,22px);padding:12px 14px;border-radius:24px;
+  background:linear-gradient(180deg,#fffaea,#f6e6bb);box-shadow:inset 0 0 0 3px #fff,0 8px 0 rgba(92,56,23,.28),0 16px 26px rgba(0,0,0,.25);z-index:6}
+html[data-pack="kereta"] .k-detail img{width:clamp(84px,14vw,170px);aspect-ratio:16/10;object-fit:cover;border-radius:16px;box-shadow:0 0 0 3px #fff,0 3px 8px rgba(0,0,0,.25);flex:none}
+html[data-pack="kereta"] .k-d-t{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;color:var(--ink)}
+html[data-pack="kereta"] .k-d-t b{font-size:clamp(16px,2.4vw,28px);line-height:1.1}
+html[data-pack="kereta"] .k-d-t small{font-size:clamp(12px,1.4vw,16px);font-weight:800;color:var(--ink2);line-height:1.25}
+html[data-pack="kereta"] .k-detail .btn{min-height:clamp(52px,8vh,70px);font-size:clamp(16px,2.2vw,26px);padding:0 clamp(16px,3vw,34px);border-radius:999px;flex:none}
+html[data-pack="kereta"] .region-map .region{background:linear-gradient(180deg,#fffaea,#f6e6bb);color:var(--ink);box-shadow:inset 0 0 0 3px #fff,0 5px 0 rgba(92,56,23,.28);border-radius:18px}
+html[data-pack="kereta"] .region-map .rnum{background:var(--wood2)}
+html[data-pack="kereta"] .map-pin{background:radial-gradient(circle at 35% 30%,#fff3b0,#ffc83d 65%,#e09a00);color:#6a3e00;box-shadow:0 0 0 4px #fff,0 5px 8px rgba(0,0,0,.35)}
+html[data-pack="kereta"] .map-pin.locked{background:radial-gradient(circle at 35% 30%,#dfe3e8,#939ca6 70%)}
+html[data-pack="kereta"] .wmap-img{box-shadow:0 0 0 5px #fff,0 10px 0 5px rgba(92,56,23,.28)}
+
+/* ── 3 THE BOARD (reference screen 3): wooden title sign, Henry's speech bubble, LANGKAHMU + PILIH KARTU, big JALAN! ── */
+html[data-pack="kereta"] #scr-play{background-color:#7cc4f0}
+html[data-pack="kereta"] .p-top{background:none;box-shadow:none;color:var(--ink);align-items:flex-start;padding-top:calc(8px + var(--sat))}
+html[data-pack="kereta"] .p-top .ibtn{width:50px;height:50px}
+html[data-pack="kereta"] .p-title{position:relative;padding:8px 22px 9px;border-radius:14px;background:linear-gradient(180deg,#fff0c4,#f1d58e);box-shadow:inset 0 0 0 3px #c28a4e,0 5px 0 #6b4220,0 10px 14px rgba(0,0,0,.2);max-width:44vw}
+html[data-pack="kereta"] .p-title b{font-size:clamp(17px,2.4vw,28px);color:#4a2c12;max-width:none;text-transform:uppercase;letter-spacing:.02em}
+html[data-pack="kereta"] .p-title[data-sub]::after{content:attr(data-sub);display:block;font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(11px,1.3vw,14px);color:var(--ink2);line-height:1.2}
+html[data-pack="kereta"] .p-title .beats{margin:2px 0 0}
+html[data-pack="kereta"] .beats i{background:rgba(74,44,18,.22)}html[data-pack="kereta"] .beats i.on{background:var(--orange)}html[data-pack="kereta"] .beats i.done{background:var(--green)}
+html[data-pack="kereta"] .ob-chip{background:linear-gradient(180deg,#fff,#fff0c4);color:var(--ink);box-shadow:0 3px 0 rgba(92,56,23,.28),inset 0 0 0 2px #fff;border-radius:999px}
+html[data-pack="kereta"] .ob-chip.ok{background:linear-gradient(180deg,#d9f7cf,#aee69c)}
+html[data-pack="kereta"] .board{box-shadow:0 0 0 6px #fff,0 0 0 10px rgba(92,56,23,.3),0 14px 30px rgba(0,0,0,.3);border-radius:18px}
+html[data-pack="kereta"] .p-strip{background:linear-gradient(180deg,#fff7df,#f8e6b5);box-shadow:0 -4px 0 rgba(92,56,23,.28);border-radius:22px 22px 0 0}
+html[data-pack="kereta"] .slot{background:linear-gradient(180deg,#fff,#fbefcd);border:3px dashed rgba(122,86,48,.4);border-radius:16px}
+html[data-pack="kereta"] .slot .no{background:var(--wood2);color:#fff6d6}
+html[data-pack="kereta"] .slot.next{border-color:#34b85f;background:#e8f8dc}
+html[data-pack="kereta"] .cmd{border-radius:16px;box-shadow:0 5px 0 rgba(0,0,0,.28),inset 0 0 0 3px rgba(255,255,255,.55)}
+html[data-pack="kereta"] .cmd span{font-family:'Nunito',sans-serif;font-weight:900}
+html[data-pack="kereta"] .palette-scroll-note{color:var(--ink);background:rgba(255,247,223,.92);border-radius:10px}
+@media(orientation:portrait){html[data-pack="kereta"] .palette-box,html[data-pack="kereta"] .palette{background:linear-gradient(180deg,#f8e6b5,#eed19a)}}
+html[data-pack="kereta"] .b-run{border-radius:999px;font-size:clamp(20px,2.6vw,30px)}
+/* Henry: round portrait, white rounded speech bubble */
+html[data-pack="kereta"] #bo .bo-img{width:60px;height:60px;border-radius:50%;object-fit:cover;object-view-box:inset(0 0 66% 0);background:radial-gradient(circle at 50% 35%,#fff7df,#ffd98a);box-shadow:0 0 0 3px #fff,0 4px 8px rgba(0,0,0,.3);filter:none}
+html[data-pack="kereta"] #bo{height:66px}
+html[data-pack="kereta"] .bubble{background:#fff;border-radius:22px;box-shadow:0 5px 0 rgba(92,56,23,.25),0 0 0 3px #fff}
+html[data-pack="kereta"] #bo .bubble{height:62px}
+html[data-pack="kereta"] .bubble p,html[data-pack="kereta"] .bo-copy strong{color:var(--ink)}
+html[data-pack="kereta"] .bo-copy small{color:var(--blue2)}
+html[data-pack="kereta"] .bubble .spk{background:linear-gradient(180deg,var(--blue1),var(--blue2));border-radius:50%}
+/* a train is longer than a cell */
+html[data-pack="kereta"] .mj-mod .owner-linus.owner-top.h-e,html[data-pack="kereta"] .mj-mod .owner-linus.owner-top.h-w{transform:scale(1.1)}
+html[data-pack="kereta"] .mj-mod .owner-linus.owner-top.h-n,html[data-pack="kereta"] .mj-mod .owner-linus.owner-top.h-s{transform:scale(1.1)}
+html[data-pack="kereta"] .mj-mod .owner-linus{filter:drop-shadow(0 4px 3px rgba(0,0,0,.4))}
+
+/* ── 4 HEBAT! MISI SELESAI (reference screen 4) + every other card: cream, white rim, wooden-sign headings ── */
+html[data-pack="kereta"] .overlay{background:rgba(40,70,110,.45)}
+html[data-pack="kereta"] .card,html[data-pack="kereta"] .mg{background:linear-gradient(180deg,#fffaea,#f8e6b5);color:var(--ink);border-radius:26px;box-shadow:inset 0 0 0 4px #fff,0 0 0 4px #c28a4e,0 20px 44px rgba(0,0,0,.4)}
+html[data-pack="kereta"] .card h2,html[data-pack="kereta"] .mg h2{color:var(--ink)}
+html[data-pack="kereta"] .card p{color:var(--ink2)}
+html[data-pack="kereta"] .intro .in-place,html[data-pack="kereta"] .intro-card .in-place{background:var(--wood2);color:#fff6d6;border-radius:999px}
+html[data-pack="kereta"] .bo-big{max-height:min(54vh,330px);width:auto;object-fit:contain}
+html[data-pack="kereta"] #ov-card:has(>.result){background:linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1)),#7cc4f0 url('../assets/kereta/bg/bg-bl-lembah-landscape.webp') center/cover no-repeat}
+@media(orientation:portrait){html[data-pack="kereta"] #ov-card:has(>.result){background-image:linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1)),url('../assets/kereta/bg/bg-bl-lembah-portrait.webp')}}
+html[data-pack="kereta"] .result{background:none;box-shadow:none}
+html[data-pack="kereta"] .result>h2{display:inline-block;padding:6px 40px 10px;border-radius:24px;font-size:clamp(40px,7vw,76px);color:#ffd447;-webkit-text-stroke:5px #7a3f10;paint-order:stroke fill;text-shadow:0 5px 0 #7a3f10;background:linear-gradient(180deg,#c28a4e,#8f5a2a);box-shadow:inset 0 0 0 4px #e9c78d,0 8px 0 #4d2f12;text-transform:uppercase}
+html[data-pack="kereta"] .result .res-line,html[data-pack="kereta"] .result .why{background:linear-gradient(180deg,#fffaea,#f8e6b5);border-radius:18px;box-shadow:inset 0 0 0 3px #fff,0 4px 0 rgba(92,56,23,.25);color:var(--ink)}
+html[data-pack="kereta"] .result .res-line{padding:8px 16px}
+html[data-pack="kereta"] .result .res-bo{display:none}
+html[data-pack="kereta"] .result .mojo-side img{max-height:100%;width:auto;object-fit:contain;filter:drop-shadow(0 10px 10px rgba(0,0,0,.3))}
+html[data-pack="kereta"] .toast{background:linear-gradient(180deg,#fffaea,#f8e6b5);color:var(--ink);box-shadow:inset 0 0 0 3px #fff,0 8px 20px rgba(0,0,0,.3);border-radius:18px}
+html[data-pack="kereta"] .k-howto{max-width:min(520px,92vw);text-align:left}
+html[data-pack="kereta"] .k-howto ol{list-style:none;margin:10px 0 14px;padding:0;display:flex;flex-direction:column;gap:10px}
+html[data-pack="kereta"] .k-howto li{display:flex;gap:12px;align-items:center;font-weight:800;font-size:17px}
+html[data-pack="kereta"] .k-howto li b{flex:none;width:38px;height:38px;border-radius:50%;background:var(--wood2);color:#fff6d6;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-weight:400}
+html[data-pack="kereta"] .form-card{background:linear-gradient(180deg,#fffaea,#f8e6b5);color:var(--ink);box-shadow:inset 0 0 0 3px #fff,0 5px 0 rgba(92,56,23,.28);border-radius:18px}
+html[data-pack="kereta"] .menu-lead,html[data-pack="kereta"] .form-gallery-head{color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+
+/* portrait phones / tablets: sign on top, Linus + Henry in the middle, buttons at the bottom */
+@media(orientation:portrait){
+  html[data-pack="kereta"] #scr-home{--k-l1:clamp(22px,7vw,52px);--k-l2:clamp(60px,20vw,150px);background-image:url('../assets/kereta/bg/bg-bl-lembah-portrait.webp')}
+  html[data-pack="kereta"] #scr-home .home-brand{left:50%;transform:translateX(-50%);top:9%;width:min(92%,560px)}
+  html[data-pack="kereta"] #scr-home .home-stage{left:0;right:0;width:100%;bottom:25%;height:34%;justify-content:center}
+  html[data-pack="kereta"] #scr-home .home-mojo{width:min(70vw,480px)}
+  html[data-pack="kereta"] #scr-home .home-bo{height:min(24vh,240px)}
+  html[data-pack="kereta"] #scr-home .home-cta{left:7%;right:7%;width:auto;top:auto;bottom:calc(14% + var(--sab));gap:10px}
+  html[data-pack="kereta"] #scr-home #btn-play{width:100%;min-height:62px}
+  html[data-pack="kereta"] #scr-home #btn-levels{width:72%;min-height:52px}
+  html[data-pack="kereta"] .k-round{left:50%;transform:translateX(-50%);bottom:2.5%}
+  html[data-pack="kereta"] .k-rabbit{left:2%;bottom:14%;height:clamp(60px,10vh,110px)}
+  html[data-pack="kereta"] .k-turtle{left:auto;right:3%;bottom:14%;height:clamp(40px,6vh,70px)}
+}

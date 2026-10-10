@@ -14,8 +14,12 @@
     var content = node('div', 'menu-content'); s.appendChild(content); API.show(id)
     return content
   }
+  // a pack (data/<id>-pack.js) re-skins text, painted backgrounds, the map art and its pins; none = the Mojo game as ever
+  function pk () { return A && A.pack && A.pack() }
+  function tx (name, fallback) { var P = pk(); return (P && P.text && P.text[name]) || fallback }
   function backdrop (key) {
-    var port = W.matchMedia('(orientation:portrait)').matches
+    var port = W.matchMedia('(orientation:portrait)').matches, P = pk()
+    if (P && P.background) { var pb = P.background(key, port); if (pb) return pb }
     return A.lib(key + (key === 'mojo-bg/construction' ? '' : port ? '-port' : '-land'))
   }
   // Peta Swoppiton (owner mockup "World Map"): the painted map with six numbered pins where its own
@@ -29,10 +33,10 @@
     return { done: done, stars: stars, total: r.levels.length }
   }
   function map () {
-    var c = screen('scr-regions', 'Peta Swoppiton'), nextRegion = W.MojoLevels.region(API.next()).id
+    var c = screen('scr-regions', tx('mapTitle', 'Peta Swoppiton')), nextRegion = W.MojoLevels.region(API.next()).id
     c.classList.add('region-map')
     var art = node('div', 'wmap'), cards = node('div', 'wcards'), stage = node('div', 'wmap-box')
-    var pic = node('img', 'wmap-img'); pic.src = A.lib('mojo-bg/map'); pic.alt = ''; stage.appendChild(pic)
+    var pic = node('img', 'wmap-img'); pic.src = pk() && pk().mapArt ? pk().mapArt(W.matchMedia('(orientation:portrait)').matches) : A.lib('mojo-bg/map'); pic.alt = ''; stage.appendChild(pic)
     art.appendChild(stage); c.appendChild(art); c.appendChild(cards)
     var head = D.querySelector('#scr-regions .topbar'), total = 0, max = 0
     W.MojoLevels.REGIONS.forEach(function (r, i) {
@@ -43,7 +47,7 @@
       // the pin on the painted map
       var pin = node('button', 'map-pin' + (ready ? '' : ' locked') + (r.id === nextRegion ? ' next' : ''))
       pin.type = 'button'; pin.setAttribute('data-pin', r.id); pin.setAttribute('aria-label', r.title + (ready ? '' : empty ? ' (segera)' : ' (terkunci)'))
-      pin.style.left = PINS[r.id][0] + '%'; pin.style.top = PINS[r.id][1] + '%'
+      var pp = (pk() && pk().pins && pk().pins[r.id]) || PINS[r.id]; pin.style.left = pp[0] + '%'; pin.style.top = pp[1] + '%'
       pin.innerHTML = ready ? '<b class="fk">' + (i + 1) + '</b>' : '<i class="ico">' + A.icon('lock') + '</i>'
       bind(pin, go); stage.appendChild(pin)
       // the region card
@@ -66,7 +70,7 @@
   }
   function info (item) {
     API.overlay('ov-card', '<div class="card collection-detail"><h2 class="fk">' + item.name + '</h2><img src="' + item.src + '" alt="' + item.name + '"><p>' +
-      (playable(item.id) ? 'Temukan kemampuan Mojo dalam misi penyelamatan.' : 'Rancangan Swop-Top di bengkel. Misi khususnya sedang disiapkan.') + '</p><div class="row"><button class="btn b-go fk" id="catalog-close">Kembali</button></div></div>')
+      (item.note || (playable(item.id) ? 'Temukan kemampuan Mojo dalam misi penyelamatan.' : 'Rancangan Swop-Top di bengkel. Misi khususnya sedang disiapkan.')) + '</p><div class="row"><button class="btn b-go fk" id="catalog-close">Kembali</button></div></div>')
     bind(D.getElementById('catalog-close'), function () { API.close('ov-card') })
   }
   function playable (id) {
@@ -76,11 +80,11 @@
     })
   }
   function collection () {
-    var c = screen('scr-collection', 'Koleksi Swoptops'), grid = node('div', 'form-gallery')
+    var c = screen('scr-collection', tx('collectionTitle', 'Koleksi Swoptops')), grid = node('div', 'form-gallery')
     // the owner's film Mojo first (sheet 30), then the 44 forms from the workshop drawing book
-    c.appendChild(node('p', 'menu-lead', A.heroCatalog.length + ' gaya Mojo versi film, lalu ' + A.catalog.length + ' wujud dari buku gambar bengkel. Ketuk untuk melihat.'))
+    c.appendChild(node('p', 'menu-lead', tx('collectionLead', A.heroCatalog.length + ' gaya Mojo versi film, lalu ' + A.catalog.length + ' wujud dari buku gambar bengkel. Ketuk untuk melihat.')))
     A.showcase.forEach(function (f, i) {
-      if (i === 0 || i === A.heroCatalog.length) grid.appendChild(node('h2', 'form-gallery-head fk', i === 0 ? 'Mojo Versi Film' : 'Buku Gambar Bengkel'))
+      if (i === 0 || i === A.heroCatalog.length) grid.appendChild(node('h2', 'form-gallery-head fk', i === 0 ? tx('collectionHead', 'Mojo Versi Film') : 'Buku Gambar Bengkel'))
       var b = button('', function () { info(f) }, 'form-card' + (f.film ? ' film' : ''))
       b.innerHTML = '<img loading="lazy" src="' + f.src + '" alt=""><strong>' + f.name + '</strong>'
       grid.appendChild(b)
@@ -130,7 +134,7 @@
   }
   function profile () {
     var c = screen('scr-profile', 'Petualang Hebat!'), s = API.save(), ids = Object.keys(s.lv), stars = ids.reduce(function (n,k) { return n + s.lv[k].stars },0)
-    c.innerHTML = '<img class="profile-bo" src="' + A.src('char/bo') + '" alt="Bo"><h2 class="fk">Tim Penyelamat Swoppiton</h2>'
+    c.innerHTML = '<img class="profile-bo" src="' + A.src('char/bo') + '" alt=""><h2 class="fk">Tim Penyelamat Swoppiton</h2>'
     var stats = node('div','profile-stats'); c.appendChild(stats)
     ;[[ids.length,'Misi selesai'],[stars,'Bintang'],[Object.keys(s.seen).length,'Wujud dicoba'],[s.rewardBolts,'Lencana baut']].forEach(function (item,i) {
       var p = node('p'), count = node('b'), label = node('span')
@@ -183,6 +187,7 @@
   function setup (api) {
     API = api; A = W.MojoArt
     ;[['btn-levels',map],['btn-workshop',workshop],['btn-collection',collection],['btn-learn',learn],['btn-profile',profile]].forEach(function (x) { bind(D.getElementById(x[0]),x[1]) })
+    if (pk()) return   // a pack's landing IS its home screen (no title-painting splash)
     var c = screen('scr-splash','',API.home); c.classList.add('splash-stage')
     // the owner's title painting (logo + film Mojo) cut ABOVE its painted buttons, so the only buttons
     // on screen are the real ones; the HTML logo stays for screen readers
