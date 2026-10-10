@@ -28,18 +28,18 @@ MALIVLAK = {
 }
 S = 'story-char/'
 BRAVE = {
- 1: [S+'henry/wave'], 2: [S+'henry/shovel'], 3: [S+'henry/point'], 4: [S+'henry/jongkok', 'animal/turtle/shell', 'animal/turtle/walk'],
+ 1: [S+'henry/wave'], 2: [S+'henry/shovel'], 3: [S+'henry/point'], 4: [S+'henry/jongkok', 'animal/turtle/shell', S+'anak-kura/hold'],
  5: [S+'henry/wave', 'animal/bird-blue/fly'], 6: [S+'baron/angkuh', S+'baron/stand'], 7: [S+'baron/stand', S+'henry/worried'], 8: [S+'baron/angkuh', S+'henry/worried'],
- 9: ['train-char/goro-loco/front-34l', S+'carter/hands-open', S+'james/arms-folded'], 10: [S+'james/scroll', 'train-char/goro-loco/front-34r'],
+ 9: ['train-char/goro-loco/front-34l', S+'carter/hands-hips', S+'james/arms-folded'], 10: [S+'james/scroll', 'train-char/rongsokan-a/v2', 'train-char/rongsokan-b/v5', 'train-char/goro-loco/front-34r'],
  11: [S+'scarlet/ramah', S+'henry/worried', S+'scarlet/stand'], 12: [S+'baron/stand', S+'baron/angkuh'], 13: [S+'baron/angkuh', S+'katrina/stand'],
- 14: [S+'carter/hands-open', S+'james/walk-scroll', S+'henry/worried'], 15: [S+'scarlet/cemas-atas', S+'baron/shocked'], 16: [S+'scarlet/cemas-atas', S+'henry/worried'],
- 17: [S+'carter/hands-open', 'train-char/goro-loco/front-34l'], 18: ['train-char/goro-loco/front-34r', 'animal/vulture/perch-1'], 19: [S+'james/point-scroll', 'train-char/goro-loco/front-34l'],
+ 14: [S+'carter/arms-crossed', S+'james/walk-scroll', S+'henry/worried'], 15: [S+'scarlet/cemas-atas', S+'baron/shocked'], 16: [S+'scarlet/cemas-atas', S+'henry/worried'],
+ 17: [S+'carter/point', 'train-char/goro-loco/front-34l'], 18: ['train-char/goro-loco/front-34r', S+'carter/surprised', 'animal/vulture/perch-1'], 19: [S+'james/point-scroll', S+'carter/defeated', 'train-char/goro-loco/front-34l'],
  20: [S+'henry/point', S+'katrina/khawatir'], 21: [S+'baron/stand', S+'katrina/stand', S+'henry/jongkok'], 22: [S+'henry/shovel', S+'katrina/shovel'],
  23: [S+'baron/shocked', S+'katrina/khawatir'], 24: [S+'henry/worried', S+'scarlet/worried'], 25: [S+'scarlet/worried', S+'henry/worried', S+'katrina/khawatir'],
- 26: ['animal/deer/stand', 'animal/rabbit/sit', 'animal/bird-blue/fly', 'animal/cardinal/fly'], 27: [S+'henry/wave', S+'scarlet/gesture', S+'scarlet/ramah'],
- 28: ['train-char/coach-green/side-l', S+'baron/stand'], 29: ['train-char/coach-green/front-34l', 'train-char/caboose-red/front-34l'],
- 30: [S+'henry/wave', S+'scarlet/stand', 'train-char/caboose-red/front-34r', 'animal/deer/graze', 'animal/rabbit/run', 'animal/vulture/perch-2', 'animal/turtle/stand'],
- 31: ['animal/deer/stand'], 32: ['train-char/coach-green/front-34l', 'train-char/caboose-red/front-34r', S+'henry/point'], 33: [S+'henry/worried'], 34: [S+'henry/point', 'animal/rabbit/sit'],
+ 26: ['animal/deer/stand', 'animal/rabbit/sit', 'animal/bird-blue/fly', 'animal/cardinal/fly'], 27: [S+'mekanik/wave', S+'pelukis/stand', S+'anak-cat/stand', S+'henry/wave'],
+ 28: [S+'pelukis/thumbs', S+'anak-cat/kneel', S+'mekanik-wanita/hips', S+'nyonya-topi/cheer', S+'anak-kura/hug'], 29: ['train-char/coach-green/front-34l', 'train-char/caboose-red/front-34l', S+'tuan-merah/stand'],
+ 30: [S+'henry/wave', S+'scarlet/stand', S+'anak-kura/shy', 'train-char/caboose-red/front-34r', 'animal/deer/graze', 'animal/rabbit/run', 'animal/vulture/perch-2', 'animal/turtle/stand'],
+ 31: ['animal/deer/stand'], 32: ['train-char/coach-green/front-34l', 'train-char/caboose-red/front-34r', S+'mekanik/stand'], 33: [S+'henry/worried'], 34: [S+'henry/point', 'animal/rabbit/sit'],
 }
 HELLBENT = {}
 def build():

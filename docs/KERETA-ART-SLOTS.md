@@ -1,5 +1,9 @@
 # Kereta Pemberani: Petualangan Rel - art slots
 
+STATUS 2026-10-10: ALL SLOTS DELIVERED and ingested (tools/ingest-kereta-art.py): 44 backgrounds (assets/kereta/bg/*.webp), 11 chapter
+cards (assets/kereta/cards/*.webp), 25 board tiles (kereta-tile/*), 25 story props (kereta-prop/*), Mr Carter safe poses. The fallbacks below stay
+only as safety nets. Workshop cast + wrecks: tools/ingest-workshop-cast.py.
+
 Prompts for the missing art: `~/Documents/temporary/game asset/train/kekurangan/PROMPTS-KERETA-PEMBERANI.md`; the owner delivers the files to `~/Documents/temporary/game asset/train/kekurangan/handoff and result/`.
 The game already runs without these files (fallbacks below); drop the owner's files in (delivery folder above) and ingest.
 

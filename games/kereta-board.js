@@ -21,6 +21,16 @@
   function tile (m, r, c) { return r >= 0 && c >= 0 && r < m.R && c < m.C ? m.grid[r][c] : ' ' }
 
   var PRE = {}
+  /* the owner's real tiles (kereta-tile/* in the shared database): loaded once, drawn over the procedural board; any tile that
+     is missing leaves the procedural drawing in place. The curve art comes in two shapes, W-N (curve-ne) and N-E (curve-nw);
+     the other two corners are those turned 180 degrees. */
+  var TILE_NAMES = ['rail-h', 'rail-v', 'curve-ne', 'curve-nw', 'switch-left', 'switch-right', 'crossing', 'grass', 'grass-flowers', 'water', 'dirt-path', 'bridge', 'gravel']
+  var TILES = {}, tilesP = null
+  function loadTiles () {
+    if (tilesP) return tilesP
+    tilesP = Promise.all(TILE_NAMES.map(function (n) { return new Promise(function (res) { var i = new Image(); i.onload = function () { TILES[n] = i; res() }; i.onerror = res; i.src = KA.src('kereta-tile/' + n) }) }))
+    return tilesP
+  }
   var PROF = { none: function (u) { return u }, start: function (u) { return 2 * u * u - u * u * u }, stop: function (u) { var v = 1 - u; return 1 - (2 * v * v - v * v * v) }, both: function (u) { return u * u * (3 - 2 * u) } }
   function create (host, lv, opts) {
     opts = opts || {}
@@ -34,7 +44,7 @@
 
     function px (r, c) { return { x: (c + 0.5) * cs, y: (r + 0.5) * cs } }
     function later (fn, ms) { var t = setTimeout(function () { if (!destroyed) fn() }, ms); timers.push(t); return t }
-    var speed = 1
+    var speed = 1, tilesReady = !!TILES['rail-h']
     function dur () { return (FX.reduced() ? 110 : 330) / speed }
 
     /* ── ground ──────────────────────────────────────────────────────────────────────────────────────── */
@@ -61,6 +71,25 @@
       dirs.forEach(function (d) { line(cx, cy, E[d][0], E[d][1], -off); line(cx, cy, E[d][0], E[d][1], off) })
       if (dirs.length === 1) { var d1 = dirs[0], o2 = (d1 + 2) % 4; line(cx, cy, E[o2][0] * 0.35 + cx * 0.65, E[o2][1] * 0.35 + cy * 0.65, 0) }
     }
+    function putTile (g, name, x, y, rot, flip, k) {
+      var im = TILES[name]; if (!im) return false
+      var sz = cs * (k || 1.2), h = cs / 2
+      g.save(); g.translate(x + h, y + h); if (rot) g.rotate(rot * Math.PI / 2); if (flip) g.scale(-1, 1)
+      g.drawImage(im, -sz / 2, -sz / 2, sz, sz); g.restore(); return true
+    }
+    function tileRail (g, x, y, ch, dirs) {   // true when the real tiles drew this rail cell
+      if (!TILES['rail-h'] || ch === 'F' || ch === 'U') return false
+      var has = function (d) { return dirs.indexOf(d) >= 0 }, n = dirs.length, N = has(0), E = has(1), S = has(2), Wd = has(3)
+      if (ch === 'B') { var vert = (N || S) && !(E || Wd); return putTile(g, 'bridge', x, y, vert ? 1 : 0, false, 1.2) }
+      if (n === 4) return putTile(g, 'crossing', x, y, 0, false)
+      if (n === 3) { if (!E) return putTile(g, 'switch-left', x, y, 0); if (!Wd) return putTile(g, 'switch-right', x, y, 0); return putTile(g, !S ? 'switch-left' : 'switch-right', x, y, 1) }
+      if (n === 2 && !((N && S) || (E && Wd))) {
+        if (Wd && N) return putTile(g, 'curve-ne', x, y, 0); if (N && E) return putTile(g, 'curve-nw', x, y, 0)
+        if (E && S) return putTile(g, 'curve-ne', x, y, 2); if (S && Wd) return putTile(g, 'curve-nw', x, y, 2)
+      }
+      var horiz = (E || Wd) && !(N || S) || (n === 0)
+      return putTile(g, horiz ? 'rail-h' : 'rail-v', x, y, 0)
+    }
     function drawGround () {
       var dpr = Math.min(2, W.devicePixelRatio || 1), w = C * cs, h = R * cs
       ;[ground, roof].forEach(function (c) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); c.style.width = w + 'px'; c.style.height = h + 'px' })
@@ -69,8 +98,9 @@
       for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
         ch = m.grid[r][c]; var x = c * cs, y = r * cs
         if (ch === ' ') continue
-        if (ch === '~') { g.fillStyle = '#6fb6df'; g.fillRect(x, y, cs, cs); g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 1.5; for (var k = 0; k < 2; k++) { var wx = x + cs * (0.2 + 0.4 * hash(r, c, k)), wy = y + cs * (0.25 + 0.45 * k); g.beginPath(); g.moveTo(wx, wy); g.quadraticCurveTo(wx + cs * 0.12, wy - cs * 0.07, wx + cs * 0.25, wy); g.stroke() } continue }
+        if (ch === '~') { g.fillStyle = '#6fb6df'; g.fillRect(x, y, cs, cs); if (putTile(g, 'water', x, y, 0, false, 1.1)) continue; g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 1.5; for (var k = 0; k < 2; k++) { var wx = x + cs * (0.2 + 0.4 * hash(r, c, k)), wy = y + cs * (0.25 + 0.45 * k); g.beginPath(); g.moveTo(wx, wy); g.quadraticCurveTo(wx + cs * 0.12, wy - cs * 0.07, wx + cs * 0.25, wy); g.stroke() } continue }
         g.fillStyle = (r + c) % 2 ? B.g1 : B.g2; g.fillRect(x, y, cs, cs)
+        if (TILES.grass && !KG.isRail(ch)) { putTile(g, hash(r, c, 8) > 0.82 && TILES['grass-flowers'] ? 'grass-flowers' : 'grass', x, y, (r * 3 + c) % 4 === 0 ? 2 : 0, false, 1.24); continue }
         if (ch === ',' || ch === 'T' || ch === '.') { g.fillStyle = 'rgba(255,255,255,.08)'; for (var q = 0; q < 2; q++) { g.beginPath(); g.arc(x + cs * hash(r, c, q + 3), y + cs * hash(r, c, q + 7), cs * 0.05, 0, 6.28); g.fill() } }
       }
       // rails
@@ -78,11 +108,19 @@
         ch = m.grid[r][c]; if (!KG.isRail(ch)) continue
         var X = c * cs, Y = r * cs, dirs = []
         for (var d = 0; d < 4; d++) if (isRail(m, r + DR[d], c + DC[d])) dirs.push(d)
-        drawRailCell(g, X, Y, ch, dirs, r, c)
+        if (TILES.grass) { putTile(g, 'grass', X, Y, (r + c) % 2 * 2, false, 1.24) }
+        if (!tileRail(g, X, Y, ch, dirs)) drawRailCell(g, X, Y, ch, dirs, r, c)
+        else if (ch === 'M' || ch === 'H' || ch === 'P' || ch === 'S') drawRailCellExtras(g, X, Y, ch, r, c)
       }
       // roof (tunnel mounds) on its own layer so the trains vanish inside
       var gr = roof.getContext('2d'); gr.setTransform(dpr, 0, 0, dpr, 0, 0); gr.clearRect(0, 0, w, h)
       for (r = 0; r < R; r++) for (c = 0; c < C; c++) if (m.grid[r][c] === 'U') drawMound(gr, c * cs, r * cs, r, c)
+    }
+    function drawRailCellExtras (g, x, y, ch, r, c) {
+      if (ch === 'M') { g.fillStyle = 'rgba(120,85,45,.55)'; for (var b = 0; b < 3; b++) { g.beginPath(); g.ellipse(x + cs * (0.2 + 0.3 * b), y + cs * (hash(r, c, b) > 0.5 ? 0.12 : 0.88), cs * 0.07, cs * 0.04, 0, 0, 6.28); g.fill() } }
+      if (ch === 'H') { g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 2; for (var s2 = 0; s2 < 2; s2++) { var ox = x + cs * (0.3 + 0.4 * s2); g.beginPath(); g.moveTo(ox - 4, y + cs * 0.55); g.lineTo(ox, y + cs * 0.4); g.lineTo(ox + 4, y + cs * 0.55); g.stroke() } }
+      if (ch === 'P') { g.fillStyle = 'rgba(111,182,223,.55)'; g.fillRect(x, y, cs, cs) }
+      if (ch === 'S') { g.fillStyle = 'rgba(216,205,180,.5)'; g.fillRect(x, y + cs * 0.06, cs, cs * 0.88) }
     }
     function drawRailCell (g, x, y, ch, dirs, r, c) {
       var off = cs * 0.17, hw = cs * 0.34
@@ -344,6 +382,7 @@
       size.w = C * cs; size.h = R * cs
       tilt.style.width = size.w + 'px'; tilt.style.height = size.h + 'px'
       drawGround(); fx.resize(size.w, size.h)
+      if (!tilesReady) loadTiles().then(function () { tilesReady = true; if (!destroyed) drawGround() })
       buildStatic(); buildThings(); buildTrains()
       if (last) sync(last)
       if (opts.onResize) opts.onResize(size)

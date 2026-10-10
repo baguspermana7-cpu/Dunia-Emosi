@@ -79,6 +79,18 @@ check(emo.length === 0, `no emoji in ${gameFiles.length} game files${emo.length 
 const sw = rd('sw.js'), missSw = gameFiles.filter(f => !f.endsWith('.html') && !sw.includes('./' + f + '?v=')).concat(sw.includes('./games/kereta-maze.html') ? [] : ['kereta-maze.html'])
 check(missSw.length === 0, `sw.js SHELL lists every game file${missSw.length ? ' - ' + missSw : ''}`)
 check(/games\/kereta-maze\.html/.test(rd('index.html')) && rd('index.html').includes('keretaClassic'), 'world-map tile opens the hub; hub hands the classic game back through a one-shot flag')
+{
+  const bgdir = path.join(ROOT, 'assets/kereta/bg'), cards = path.join(ROOT, 'assets/kereta/cards')
+  const bgs = fs.existsSync(bgdir) ? fs.readdirSync(bgdir) : [], cs = fs.existsSync(cards) ? fs.readdirSync(cards) : []
+  check(bgs.length === 44 && bgs.every(f => f.endsWith('.webp')) && cs.length === 11, `owner art shipped as webp only: ${bgs.length} backgrounds (22 x landscape + portrait), ${cs.length} chapter cards`)
+  const tileKeys = ['rail-h', 'rail-v', 'curve-ne', 'curve-nw', 'switch-left', 'switch-right', 'crossing', 'grass', 'grass-flowers', 'water', 'dirt-path', 'bridge', 'gravel', 'bridge-broken', 'tunnel-portal', 'signal-red', 'signal-green', 'platform', 'water-tower', 'coal-bunker']
+  check(tileKeys.every(k => idx['kereta-tile/' + k]) && Object.keys(idx).filter(k => k.startsWith('kereta-prop/')).length === 25 && Object.keys(idx).filter(k => k.startsWith('kereta-tile/')).length === 25, 'all 25 board tiles + 25 story props are in the database')
+  const sw2 = rd('sw.js'); check(['rail-h', 'curve-ne', 'grass', 'water'].every(k => sw2.includes('kereta-tile/' + k)), 'sw.js precaches the board tiles')
+  const need = ['story-char/carter/hands-hips', 'story-char/carter/point', 'story-char/carter/arms-crossed', 'story-char/carter/watch', 'story-char/carter/surprised', 'story-char/carter/defeated', 'story-char/pelukis/stand', 'story-char/anak-cat/stand', 'story-char/mekanik/stand', 'story-char/anak-kura/hold', 'story-char/mekanik-wanita/stand', 'story-char/nyonya-topi/stand-fan', 'story-char/tuan-merah/stand', 'train-char/rongsokan-a/v1', 'train-char/rongsokan-b/v1']
+  check(need.every(k => idx[k] && idx[k].name_id), 'Mr Carter (6 safe poses), the workshop cast and the wrecked engines are in the database with official names')
+  const forbid = Object.keys(idx).filter(k => /^story-char\/(carter\/(stand|arms-crossed-old)|james\/stand|lelaki-rompi)/.test(k) || (idx[k].name_id === 'Mr Carter' && idx[k].source && /Sprite Sheet|Ten-character/.test(idx[k].source) && idx[k].pose !== 'hands-open'))
+  check(forbid.length === 0, 'the wrong earlier Carter / James art is gone from the database')
+}
 const artSrc = rd('games/kereta-art.js')
 const bgKeys = [...artSrc.matchAll(/'(bg-(?:bl|mv|hb)-[a-z-]+)'/g)].map(m => m[1]), uniq = [...new Set(bgKeys)]
 check(uniq.length === 22 && fs.readFileSync(path.join(ROOT, 'docs/KERETA-ART-SLOTS.md'), 'utf8').length > 500 && uniq.every(k => rd('docs/KERETA-ART-SLOTS.md').includes(k)), `art map: ${uniq.length} owner background keys, all documented in docs/KERETA-ART-SLOTS.md`)
@@ -100,7 +112,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms))
 async function page (w = 1600, h = 900, init) {
   const p = await browser.newPage(); await p.setViewport({ width: w, height: h })
   p._errs = []; p.on('pageerror', e => p._errs.push(String(e).slice(0, 160))); p.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) p._errs.push('console: ' + m.text().slice(0, 140)) })
-  p.on('response', r => { if (r.status() >= 400 && /\/(games|assets)\//.test(r.url()) && !/assets\/kereta\/bg\//.test(r.url())) p._errs.push(r.status() + ' ' + r.url().slice(-70)) })
+  p.on('response', r => { if (r.status() >= 400 && /\/(games|assets)\//.test(r.url()) ) p._errs.push(r.status() + ' ' + r.url().slice(-70)) })
   if (init) await p.evaluateOnNewDocument(init)
   return p
 }
@@ -166,7 +178,7 @@ async function play (story, num, { avatar, reduced, expectQ } = {}) {
   let q = 0, ok = false, face = null
   for (let i = 0; i < 400; i++) {
     await sleep(200)
-    const st = await p.evaluate(() => { const o = document.querySelector('.kq-overlay'), cur = window.KeretaQuiz.current(); if (o && cur) { const bs = [...o.querySelectorAll('.kq-choice')]; return { q: 1, wrong: bs.findIndex(b => b.textContent.trim() !== String(cur.answer)), idx: bs.findIndex(b => b.textContent.trim().endsWith(String(cur.answer))) } } return { res: document.getElementById('ks-res').classList.contains('on') } })
+    const st = await p.evaluate(() => { const o = document.querySelector('.kq-overlay'), cur = window.KeretaQuiz.current(); if (o && cur) { const bs = [...o.querySelectorAll('.kq-choice')]; return { q: 1, wrong: bs.findIndex(b => b.textContent.trim() !== String(cur.answer)), idx: bs.findIndex(b => b.textContent.trim() === String(cur.answer)) } } return { res: document.getElementById('ks-res').classList.contains('on') } })
     if (st.q) { q++; if (q === 1 && st.wrong >= 0) { await p.evaluate(i => document.querySelectorAll('.kq-choice')[i].click(), st.wrong); await sleep(150); const kind = await p.evaluate(() => ({ msg: document.querySelector('.kq-msg').textContent, open: !!document.querySelector('.kq-overlay') })); check(kind.open && kind.msg.length > 5, `wrong answer: kind hint, card stays, retry (${story} ${num}): "${kind.msg.slice(0, 40)}"`) } await p.evaluate(i => document.querySelectorAll('.kq-choice')[i].click(), st.idx); continue }
     if (!face) face = await p.evaluate(() => { const G = window.KeretaPlay.debug().G; if (!G.world || !G.world.tick) return null; const t = G.world.trains[0], im = document.querySelector('.kb-train img'); return { d: t.d, src: im && im.getAttribute('src') } })
     if (st.res) { ok = true; break }
@@ -216,7 +228,7 @@ if (process.argv.includes('--perf') || load < 8) {
     for (const id of ids) { await p.click(`.ktab[data-t="${id}"]`); for (const a of plan) await p.click(`.kcmd[data-c="${a[id]}"]`) }
     await p.evaluate(() => { window.__dt = []; let last = performance.now(); (function f (t) { window.__dt.push(t - last); last = t; requestAnimationFrame(f) })(last) })
     await p.click('#kg-run')
-    for (let i = 0; i < 200; i++) { await sleep(150); const s = await p.evaluate(() => { const o = document.querySelector('.kq-overlay'), cur = window.KeretaQuiz.current(); if (o && cur) { const bs = [...o.querySelectorAll('.kq-choice')]; bs[bs.findIndex(b => b.textContent.trim().endsWith(String(cur.answer)))].click(); return 'q' } return document.getElementById('ks-res').classList.contains('on') ? 'r' : '' }); if (s === 'r') break }
+    for (let i = 0; i < 200; i++) { await sleep(150); const s = await p.evaluate(() => { const o = document.querySelector('.kq-overlay'), cur = window.KeretaQuiz.current(); if (o && cur) { const bs = [...o.querySelectorAll('.kq-choice')]; bs[bs.findIndex(b => b.textContent.trim() === String(cur.answer))].click(); return 'q' } return document.getElementById('ks-res').classList.contains('on') ? 'r' : '' }); if (s === 'r') break }
     const dt = (await p.evaluate(() => window.__dt)).slice(5).sort((a, b) => a - b), p90 = dt[Math.floor(dt.length * 0.9)], mx = dt[dt.length - 1]
     check(dt.length > 30 && p90 <= 16.8 && mx <= 33.4, `frame budget at 4x CPU on the busiest level: p90 ${p90.toFixed(1)} ms, worst ${mx.toFixed(1)} ms over ${dt.length} frames`)
     await p.close()

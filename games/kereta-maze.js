@@ -90,7 +90,7 @@
     if (isC) tray = '<span class="lab">Game Aslinya</span><div class="row"><button type="button" class="kcard" id="tr-classic"><span class="pic" style="background-image:url(' + KA.plate(st.cover, 640) + ')"></span><b>Lokomotif Pemberani</b><small>' + esc(st.blurb) + '</small></button></div>'
     else {
       var start = Math.min(cur, Math.max(0, chs.length - 3)), cards = ''
-      for (var i = start; i < Math.min(chs.length, start + 3); i++) cards += '<button type="button" class="kcard" data-i="' + i + '"><span class="pic" style="background-image:url(' + KA.plate(chs[i].plate, 640) + ')"></span><span class="num">' + (i + 1) + '</span><b>' + esc(chs[i].name) + '</b></button>'
+      for (var i = start; i < Math.min(chs.length, start + 3); i++) cards += '<button type="button" class="kcard" data-i="' + i + '"><span class="pic" style="background-image:url(' + KA.chapPic(chs[i]) + ')"></span><span class="num">' + (i + 1) + '</span><b>' + esc(chs[i].name) + '</b></button>'
       tray = '<span class="lab">Pilih Bab</span><div class="row">' + cards + '</div><div class="meta">' + done + ' dari ' + L.length + ' misi selesai • ' + totalStars(S.story) + ' bintang</div>'
     }
     $('kh-tray').innerHTML = tray
@@ -128,9 +128,9 @@
     var list = ''
     chs.forEach(function (ch, i) {
       var cnt = 0; for (var k = ch.from; k <= ch.to; k++) if (p.done.indexOf(k) >= 0) cnt++
-      list += '<button type="button" class="kp-ch" data-i="' + i + '" aria-pressed="' + (i === S.chap) + '"><span class="pic" style="background-image:url(' + KA.plate(ch.plate, 640) + ')"></span><span>' + esc(ch.name) + '<small>' + cnt + '/' + (ch.to - ch.from + 1) + ' misi</small></span>' + icon('chev') + '</button>'
+      list += '<button type="button" class="kp-ch" data-i="' + i + '" aria-pressed="' + (i === S.chap) + '"><span class="pic" style="background-image:url(' + KA.chapPic(ch) + ')"></span><span>' + esc(ch.name) + '<small>' + cnt + '/' + (ch.to - ch.from + 1) + ' misi</small></span>' + icon('chev') + '</button>'
     })
-    $('kp-side').innerHTML = '<div class="kp-bab">Bab ' + (S.chap + 1) + '</div><h2 class="kp-name">' + esc(c.name) + '</h2><div class="kp-thumb" style="background-image:url(' + KA.plate(c.plate, 640) + ')"></div>' +
+    $('kp-side').innerHTML = '<div class="kp-bab">Bab ' + (S.chap + 1) + '</div><h2 class="kp-name">' + esc(c.name) + '</h2><div class="kp-thumb" style="background-image:url(' + KA.chapPic(c) + ')"></div>' +
       '<div class="kp-prog">' + icon('star') + '<span>' + counts(S.story).main + ' misi cerita' + (counts(S.story).extra ? ' + ' + counts(S.story).extra + ' latihan' : '') + '</span><span class="bar"><i style="width:' + Math.round(done * 100 / n) + '%"></i></span><em>' + done + ' / ' + n + '</em></div><div class="kp-list">' + list + '</div>'
     ;[].forEach.call($('kp-side').querySelectorAll('.kp-ch'), function (b) { b.addEventListener('click', function () { sfxClick(); S.chap = +b.getAttribute('data-i'); S.level = firstOpen(S.chap); drawChap() }) })
     var pts = stopLayout(n)

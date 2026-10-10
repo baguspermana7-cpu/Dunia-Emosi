@@ -20,6 +20,7 @@
     var p = W.AssetIndex && W.AssetIndex.path ? W.AssetIndex.path(key) : null
     return p || (base() + 'assets/db/lib/' + key + '.webp')
   }
+  function chapPic (ch, w) { return ch && ch.card ? base() + 'assets/kereta/cards/' + ch.card + '.webp' : plate(ch.plate, w || 640) }
   function plate (n, w) { var s = (n < 10 ? '0' : '') + n; return base() + 'assets/train/backdrop/level' + s + '-' + (w || 1024) + '.webp' }
 
   var CARGO = {
@@ -129,25 +130,25 @@
   var STORIES = {
     brave: { id: 'brave', gid: 'g15b', title: 'The Brave Locomotive', sub: 'Linus dan Samson', blurb: '30 misi cerita + 4 latihan: lokomotif kecil yang berani menolong sahabatnya.', subtitle: 'Petualangan Linus', mainCount: 30, cover: 34, heroes: ['linus', 'samson'], plate: 43,
       chapters: [
-        { name: 'Lembah', from: 1, to: 5, plate: 16, desc: 'Linus memulai perjalanan pertamanya di lembah yang indah.' },
+        { card: 'card-bl-lembah-stasiun', name: 'Lembah', from: 1, to: 5, plate: 16, desc: 'Linus memulai perjalanan pertamanya di lembah yang indah.' },
         { name: 'Samson Datang', from: 6, to: 8, plate: 8, desc: 'Lokomotif raksasa tiba di depo besar.' },
-        { name: 'Hutan Kayu', from: 9, to: 14, plate: 10, desc: 'Linus bekerja di hutan yang gelap, tapi ia tetap bersemangat.' },
-        { name: 'Jembatan Miring', from: 15, to: 20, plate: 43, desc: 'Keadaan darurat! Linus bergegas menolong.' },
-        { name: 'Penyelamatan', from: 21, to: 25, plate: 38, desc: 'Bersama-sama menarik Samson ke daratan.' },
-        { name: 'Pulih dan Pulang', from: 26, to: 30, plate: 20, desc: 'Istirahat, perbaikan, dan perjalanan yang damai.' },
+        { card: 'card-bl-hutan-logging', name: 'Hutan Kayu', from: 9, to: 14, plate: 10, desc: 'Linus bekerja di hutan yang gelap, tapi ia tetap bersemangat.' },
+        { card: 'card-bl-penyelamatan-jembatan', name: 'Jembatan Miring', from: 15, to: 20, plate: 43, desc: 'Keadaan darurat! Linus bergegas menolong.' },
+        { card: 'card-bl-penyelamatan-jembatan', name: 'Penyelamatan', from: 21, to: 25, plate: 38, desc: 'Bersama-sama menarik Samson ke daratan.' },
+        { card: 'card-bl-pulang-rumah', name: 'Pulih dan Pulang', from: 26, to: 30, plate: 20, desc: 'Istirahat, perbaikan, dan perjalanan yang damai.' },
         { name: 'Latihan Rel', from: 31, to: 34, plate: 12, desc: 'Latihan tambahan: berbagi rel, merangkai gerbong, terowongan berkabut, dan mengantar ke tempat aman.' }] },
     malivlak: { id: 'malivlak', gid: 'g15m', title: 'Malivlak', sub: 'Dragutin dan Malivlak', blurb: '20 misi: dari stasiun, kolam, gunung, sampai museum.', cover: 16, subtitle: 'Petualangan Malivlak', heroes: ['malivlak', 'dragutin'], plate: 25,
       chapters: [
-        { name: 'Stasiun', from: 1, to: 3, plate: 8, desc: 'Dragutin tiba, memuat penumpang, dan berangkat.' },
-        { name: 'Jalur Bergelombang', from: 4, to: 5, plate: 16, desc: 'Malivlak yang kecil berjalan di jalur tidak rata.' },
+        { card: 'card-mv-stasiun', name: 'Stasiun', from: 1, to: 3, plate: 8, desc: 'Dragutin tiba, memuat penumpang, dan berangkat.' },
+        { card: 'card-mv-pedesaan', name: 'Jalur Bergelombang', from: 4, to: 5, plate: 16, desc: 'Malivlak yang kecil berjalan di jalur tidak rata.' },
         { name: 'Ladang dan Kolam', from: 6, to: 9, plate: 6, desc: 'Keluar rel, menyelam ke kolam, dan bertemu burung.' },
-        { name: 'Gunung', from: 10, to: 13, plate: 34, desc: 'Mendaki, terowongan gelap, dan beruang yang ramah.' },
-        { name: 'Kota dan Museum', from: 14, to: 20, plate: 40, desc: 'Penyambutan meriah dan perjalanan ke museum.' }] },
+        { card: 'card-mv-pegunungan', name: 'Gunung', from: 10, to: 13, plate: 34, desc: 'Mendaki, terowongan gelap, dan beruang yang ramah.' },
+        { card: 'card-mv-penyambutan', name: 'Kota dan Museum', from: 14, to: 20, plate: 40, desc: 'Penyambutan meriah dan perjalanan ke museum.' }] },
     hellbent: { id: 'hellbent', gid: 'g15h', title: 'Lomba ke Kota', sub: 'Kilat Perak dan Tuan Lemas', blurb: '10 misi: dua kereta, satu pesan: jangan menyerah.', cover: 33, subtitle: 'Lomba ke Kota', heroes: ['kilat', 'lemas'], plate: 33,
       chapters: [
-        { name: 'Mulai Lomba', from: 1, to: 3, plate: 16, desc: 'Kilat dan Tuan Lemas bersiap. Giliran bergantian!' },
-        { name: 'Saling Membantu', from: 4, to: 7, plate: 34, desc: 'Jalan bersamaan: tunggu, atur, dan bantu teman.' },
-        { name: 'Pesta di Kota', from: 8, to: 10, plate: 20, desc: 'Garis akhir dan pesta untuk semua.' }] },
+        { card: 'card-hb-start', name: 'Mulai Lomba', from: 1, to: 3, plate: 16, desc: 'Kilat dan Tuan Lemas bersiap. Giliran bergantian!' },
+        { card: 'card-hb-padang', name: 'Saling Membantu', from: 4, to: 7, plate: 34, desc: 'Jalan bersamaan: tunggu, atur, dan bantu teman.' },
+        { card: 'card-hb-kota', name: 'Pesta di Kota', from: 8, to: 10, plate: 20, desc: 'Garis akhir dan pesta untuk semua.' }] },
     classic: { id: 'classic', gid: 'g15', title: 'Lokomotif Pemberani', sub: 'Game aslinya', blurb: 'Game Lokomotif Pemberani yang lama, tetap seperti biasa.', subtitle: 'Game Aslinya', cover: 20, heroes: [], plate: 20, chapters: [] }
   }
 
@@ -186,6 +187,6 @@
     var im = new Image(); im.onload = function () { bgOk[url] = true; el.style.backgroundImage = 'url(' + url + ')' }; im.onerror = function () { bgOk[url] = false }; im.src = url
   }
   function slot (kind, name) { var k = 'kereta-' + kind + '/' + name; return W.AssetIndex && W.AssetIndex.path && W.AssetIndex.path(k) ? k : null }
-  W.KeretaArt = { bgKey: bgKey, setBg: setBg, bgUrl: bgUrl, slot: slot, BG_KEYS: BG_KEYS, TILE_SLOTS: TILE_SLOTS, PROP_SLOTS: PROP_SLOTS, src: src, plate: plate, cargo: function (k) { return CARGO[k] || CARGO.x }, critter: function (k) { return CRITTER[k] || null }, icon: icon, goalIcon: goalIcon, goalSprite: goalSprite, placeholder: placeholder,
+  W.KeretaArt = { chapPic: chapPic, bgKey: bgKey, setBg: setBg, bgUrl: bgUrl, slot: slot, BG_KEYS: BG_KEYS, TILE_SLOTS: TILE_SLOTS, PROP_SLOTS: PROP_SLOTS, src: src, plate: plate, cargo: function (k) { return CARGO[k] || CARGO.x }, critter: function (k) { return CRITTER[k] || null }, icon: icon, goalIcon: goalIcon, goalSprite: goalSprite, placeholder: placeholder,
     BIOMES: BIOMES, TRAINS: TRAINS, STORIES: STORIES, CARGO: CARGO, base: base }
 })(typeof window !== 'undefined' ? window : globalThis)

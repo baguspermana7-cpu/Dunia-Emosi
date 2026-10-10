@@ -8589,6 +8589,981 @@
    "h": 239,
    "psnr": 43.6
   },
+  "kereta-prop/barrel": {
+   "file": "assets/db/lib/kereta-prop/barrel.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "barrel",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 200,
+   "baseline": 179,
+   "anchor": [
+    100,
+    179
+   ],
+   "name_id": "barrel"
+  },
+  "kereta-prop/bird-nest": {
+   "file": "assets/db/lib/kereta-prop/bird-nest.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "bird-nest",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 178,
+   "baseline": 162,
+   "anchor": [
+    100,
+    162
+   ],
+   "name_id": "bird nest with eggs"
+  },
+  "kereta-prop/bush": {
+   "file": "assets/db/lib/kereta-prop/bush.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "bush",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 198,
+   "baseline": 167,
+   "anchor": [
+    100,
+    167
+   ],
+   "name_id": "bush"
+  },
+  "kereta-prop/coal-pile": {
+   "file": "assets/db/lib/kereta-prop/coal-pile.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "coal-pile",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 190,
+   "baseline": 165,
+   "anchor": [
+    100,
+    165
+   ],
+   "name_id": "coal pile"
+  },
+  "kereta-prop/crate": {
+   "file": "assets/db/lib/kereta-prop/crate.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "crate",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 179,
+   "baseline": 171,
+   "anchor": [
+    100,
+    171
+   ],
+   "name_id": "wooden crate"
+  },
+  "kereta-prop/engine-house": {
+   "file": "assets/db/lib/kereta-prop/engine-house.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "engine-house",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 200,
+   "baseline": 182,
+   "anchor": [
+    100,
+    182
+   ],
+   "name_id": "engine house"
+  },
+  "kereta-prop/farmhouse": {
+   "file": "assets/db/lib/kereta-prop/farmhouse.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "farmhouse",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 197,
+   "baseline": 177,
+   "anchor": [
+    100,
+    177
+   ],
+   "name_id": "farmhouse"
+  },
+  "kereta-prop/fence": {
+   "file": "assets/db/lib/kereta-prop/fence.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "fence",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 199,
+   "h": 200,
+   "baseline": 199,
+   "anchor": [
+    99,
+    199
+   ],
+   "name_id": "fence piece"
+  },
+  "kereta-prop/frying-pan-egg": {
+   "file": "assets/db/lib/kereta-prop/frying-pan-egg.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "frying-pan-egg",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 185,
+   "baseline": 145,
+   "anchor": [
+    100,
+    145
+   ],
+   "name_id": "frying pan with fried egg"
+  },
+  "kereta-prop/haystack": {
+   "file": "assets/db/lib/kereta-prop/haystack.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "haystack",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 200,
+   "baseline": 199,
+   "anchor": [
+    100,
+    199
+   ],
+   "name_id": "haystack"
+  },
+  "kereta-prop/lantern": {
+   "file": "assets/db/lib/kereta-prop/lantern.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "lantern",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 193,
+   "h": 200,
+   "baseline": 199,
+   "anchor": [
+    96,
+    199
+   ],
+   "name_id": "lantern"
+  },
+  "kereta-prop/log-single": {
+   "file": "assets/db/lib/kereta-prop/log-single.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "log-single",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 182,
+   "baseline": 181,
+   "anchor": [
+    100,
+    181
+   ],
+   "name_id": "single big log"
+  },
+  "kereta-prop/log-stack": {
+   "file": "assets/db/lib/kereta-prop/log-stack.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "log-stack",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 188,
+   "baseline": 156,
+   "anchor": [
+    100,
+    156
+   ],
+   "name_id": "stack of logs"
+  },
+  "kereta-prop/luggage-pile": {
+   "file": "assets/db/lib/kereta-prop/luggage-pile.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "luggage-pile",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 194,
+   "baseline": 185,
+   "anchor": [
+    100,
+    185
+   ],
+   "name_id": "passenger luggage pile"
+  },
+  "kereta-prop/mail-sacks": {
+   "file": "assets/db/lib/kereta-prop/mail-sacks.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "mail-sacks",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 190,
+   "baseline": 178,
+   "anchor": [
+    100,
+    178
+   ],
+   "name_id": "mail sacks with envelopes"
+  },
+  "kereta-prop/medal": {
+   "file": "assets/db/lib/kereta-prop/medal.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "medal",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 200,
+   "baseline": 166,
+   "anchor": [
+    100,
+    166
+   ],
+   "name_id": "medal with red ribbon"
+  },
+  "kereta-prop/pine": {
+   "file": "assets/db/lib/kereta-prop/pine.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "pine",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 189,
+   "h": 200,
+   "baseline": 188,
+   "anchor": [
+    94,
+    188
+   ],
+   "name_id": "pine tree"
+  },
+  "kereta-prop/rock": {
+   "file": "assets/db/lib/kereta-prop/rock.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "rock",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 197,
+   "baseline": 166,
+   "anchor": [
+    100,
+    166
+   ],
+   "name_id": "rock"
+  },
+  "kereta-prop/sawmill": {
+   "file": "assets/db/lib/kereta-prop/sawmill.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "sawmill",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 197,
+   "baseline": 178,
+   "anchor": [
+    100,
+    178
+   ],
+   "name_id": "sawmill shed"
+  },
+  "kereta-prop/signal-box": {
+   "file": "assets/db/lib/kereta-prop/signal-box.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "signal-box",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 197,
+   "h": 200,
+   "baseline": 183,
+   "anchor": [
+    98,
+    183
+   ],
+   "name_id": "signal box hut"
+  },
+  "kereta-prop/station-small": {
+   "file": "assets/db/lib/kereta-prop/station-small.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "station-small",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 196,
+   "baseline": 195,
+   "anchor": [
+    100,
+    195
+   ],
+   "name_id": "small station building"
+  },
+  "kereta-prop/ticket-booth": {
+   "file": "assets/db/lib/kereta-prop/ticket-booth.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "ticket-booth",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 186,
+   "h": 200,
+   "baseline": 199,
+   "anchor": [
+    93,
+    199
+   ],
+   "name_id": "ticket booth"
+  },
+  "kereta-prop/tree-round": {
+   "file": "assets/db/lib/kereta-prop/tree-round.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "tree-round",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 200,
+   "baseline": 184,
+   "anchor": [
+    100,
+    184
+   ],
+   "name_id": "round tree"
+  },
+  "kereta-prop/wheel-bandage": {
+   "file": "assets/db/lib/kereta-prop/wheel-bandage.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "wheel-bandage",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 200,
+   "baseline": 162,
+   "anchor": [
+    100,
+    162
+   ],
+   "name_id": "wheel bandage white cloth roll"
+  },
+  "kereta-prop/wreath": {
+   "file": "assets/db/lib/kereta-prop/wreath.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "wreath",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): props-cerita.png",
+   "w": 200,
+   "h": 193,
+   "baseline": 177,
+   "anchor": [
+    100,
+    177
+   ],
+   "name_id": "leaf wreath"
+  },
+  "kereta-tile/bridge": {
+   "file": "assets/db/lib/kereta-tile/bridge.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "bridge",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "wooden bridge straight"
+  },
+  "kereta-tile/bridge-broken": {
+   "file": "assets/db/lib/kereta-tile/bridge-broken.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "bridge-broken",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "bridge broken with gap"
+  },
+  "kereta-tile/bridge-sagging": {
+   "file": "assets/db/lib/kereta-tile/bridge-sagging.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "bridge-sagging",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "bridge sagging"
+  },
+  "kereta-tile/buffer": {
+   "file": "assets/db/lib/kereta-tile/buffer.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "buffer",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "buffer stop"
+  },
+  "kereta-tile/coal-bunker": {
+   "file": "assets/db/lib/kereta-tile/coal-bunker.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "coal-bunker",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "coal bunker"
+  },
+  "kereta-tile/crossing": {
+   "file": "assets/db/lib/kereta-tile/crossing.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "crossing",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "crossing"
+  },
+  "kereta-tile/curve-ne": {
+   "file": "assets/db/lib/kereta-tile/curve-ne.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "curve-ne",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "rail curve NE"
+  },
+  "kereta-tile/curve-nw": {
+   "file": "assets/db/lib/kereta-tile/curve-nw.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "curve-nw",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "rail curve NW"
+  },
+  "kereta-tile/curve-se": {
+   "file": "assets/db/lib/kereta-tile/curve-se.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "curve-se",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "rail curve SE"
+  },
+  "kereta-tile/curve-sw": {
+   "file": "assets/db/lib/kereta-tile/curve-sw.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "curve-sw",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "rail curve SW"
+  },
+  "kereta-tile/dirt-path": {
+   "file": "assets/db/lib/kereta-tile/dirt-path.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "dirt-path",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "dirt path"
+  },
+  "kereta-tile/grass": {
+   "file": "assets/db/lib/kereta-tile/grass.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "grass",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "grass tile"
+  },
+  "kereta-tile/grass-flowers": {
+   "file": "assets/db/lib/kereta-tile/grass-flowers.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "grass-flowers",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "grass with flowers"
+  },
+  "kereta-tile/gravel": {
+   "file": "assets/db/lib/kereta-tile/gravel.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "gravel",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "gravel/ballast tile"
+  },
+  "kereta-tile/level-crossing": {
+   "file": "assets/db/lib/kereta-tile/level-crossing.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "level-crossing",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "level crossing gate"
+  },
+  "kereta-tile/platform": {
+   "file": "assets/db/lib/kereta-tile/platform.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "platform",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "station platform piece"
+  },
+  "kereta-tile/rail-h": {
+   "file": "assets/db/lib/kereta-tile/rail-h.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "rail-h",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "rail straight horizontal"
+  },
+  "kereta-tile/rail-v": {
+   "file": "assets/db/lib/kereta-tile/rail-v.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "rail-v",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "rail straight vertical"
+  },
+  "kereta-tile/signal-green": {
+   "file": "assets/db/lib/kereta-tile/signal-green.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "signal-green",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "signal green"
+  },
+  "kereta-tile/signal-red": {
+   "file": "assets/db/lib/kereta-tile/signal-red.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "signal-red",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "signal red"
+  },
+  "kereta-tile/switch-left": {
+   "file": "assets/db/lib/kereta-tile/switch-left.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "switch-left",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "switch/wesel left"
+  },
+  "kereta-tile/switch-right": {
+   "file": "assets/db/lib/kereta-tile/switch-right.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "switch-right",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "switch/wesel right"
+  },
+  "kereta-tile/tunnel-portal": {
+   "file": "assets/db/lib/kereta-tile/tunnel-portal.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "tunnel-portal",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "tunnel portal"
+  },
+  "kereta-tile/water": {
+   "file": "assets/db/lib/kereta-tile/water.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "water",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "water tile"
+  },
+  "kereta-tile/water-tower": {
+   "file": "assets/db/lib/kereta-tile/water-tower.webp",
+   "cat": "kereta-tile",
+   "tags": [
+    "tile",
+    "rel",
+    "board",
+    "water-tower",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): tiles-rel.png",
+   "w": 160,
+   "h": 160,
+   "baseline": 159,
+   "anchor": [
+    80,
+    80
+   ],
+   "name_id": "water tower"
+  },
   "malivlak-char/masinis/ikan": {
    "file": "assets/db/lib/malivlak-char/masinis/ikan.webp",
    "cat": "malivlak-char",
@@ -33209,6 +34184,186 @@
    "w": 460,
    "h": 1044
   },
+  "story-char/anak-cat/kneel": {
+   "file": "assets/db/lib/story-char/anak-cat/kneel.webp",
+   "cat": "story-char",
+   "tags": [
+    "girl",
+    "hijab",
+    "painter",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 213,
+   "h": 243,
+   "outline": 5,
+   "baseline": 240,
+   "anchor": [
+    106,
+    240
+   ],
+   "char": "anak-cat",
+   "view": "front",
+   "facing": 180,
+   "pose": "kneel",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 997,
+    "soft_after": 803
+   },
+   "tint": 0.0,
+   "name_id": "Anak dengan Ember Cat"
+  },
+  "story-char/anak-cat/stand": {
+   "file": "assets/db/lib/story-char/anak-cat/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "girl",
+    "hijab",
+    "painter",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 110,
+   "h": 266,
+   "outline": 3,
+   "baseline": 263,
+   "anchor": [
+    55,
+    263
+   ],
+   "char": "anak-cat",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 657,
+    "soft_after": 515
+   },
+   "tint": 0.0,
+   "name_id": "Anak dengan Ember Cat"
+  },
+  "story-char/anak-cat/walk": {
+   "file": "assets/db/lib/story-char/anak-cat/walk.webp",
+   "cat": "story-char",
+   "tags": [
+    "girl",
+    "hijab",
+    "painter",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 185,
+   "h": 260,
+   "outline": 4,
+   "baseline": 257,
+   "anchor": [
+    92,
+    257
+   ],
+   "char": "anak-cat",
+   "view": "front",
+   "facing": 180,
+   "pose": "walk",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 1189,
+    "soft_after": 1028
+   },
+   "tint": 0.0,
+   "name_id": "Anak dengan Ember Cat"
+  },
+  "story-char/anak-kura/hold": {
+   "file": "assets/db/lib/story-char/anak-kura/hold.webp",
+   "cat": "story-char",
+   "tags": [
+    "girl",
+    "hijab",
+    "turtle",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 128,
+   "h": 241,
+   "outline": 3,
+   "baseline": 238,
+   "anchor": [
+    64,
+    238
+   ],
+   "char": "anak-kura",
+   "view": "front",
+   "facing": 180,
+   "pose": "hold",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 593,
+    "soft_after": 466
+   },
+   "tint": 0.0,
+   "name_id": "Anak Penyayang Kura-kura"
+  },
+  "story-char/anak-kura/hug": {
+   "file": "assets/db/lib/story-char/anak-kura/hug.webp",
+   "cat": "story-char",
+   "tags": [
+    "girl",
+    "hijab",
+    "turtle",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 154,
+   "h": 239,
+   "outline": 4,
+   "baseline": 236,
+   "anchor": [
+    77,
+    236
+   ],
+   "char": "anak-kura",
+   "view": "front",
+   "facing": 180,
+   "pose": "hug",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 589,
+    "soft_after": 493
+   },
+   "tint": 0.0,
+   "name_id": "Anak Penyayang Kura-kura"
+  },
+  "story-char/anak-kura/shy": {
+   "file": "assets/db/lib/story-char/anak-kura/shy.webp",
+   "cat": "story-char",
+   "tags": [
+    "girl",
+    "hijab",
+    "turtle",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 148,
+   "h": 267,
+   "outline": 3,
+   "baseline": 264,
+   "anchor": [
+    74,
+    264
+   ],
+   "char": "anak-kura",
+   "view": "front",
+   "facing": 180,
+   "pose": "shy",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 693,
+    "soft_after": 570
+   },
+   "tint": 0.0,
+   "name_id": "Anak Penyayang Kura-kura"
+  },
   "story-char/baron/angkuh": {
    "file": "assets/db/lib/story-char/baron/angkuh.webp",
    "cat": "story-char",
@@ -33296,6 +34451,96 @@
    "tint": 35.3,
    "name_id": "Baron Von Kapital"
   },
+  "story-char/carter/arms-crossed": {
+   "file": "assets/db/lib/story-char/carter/arms-crossed.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "man",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): carter-extra.png",
+   "w": 232,
+   "h": 314,
+   "outline": 5,
+   "baseline": 311,
+   "anchor": [
+    116,
+    311
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "arms-crossed",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 15950,
+    "soft_after": 1947
+   },
+   "tint": 0.0,
+   "name_id": "Mr Carter"
+  },
+  "story-char/carter/defeated": {
+   "file": "assets/db/lib/story-char/carter/defeated.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "man",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): carter-extra.png",
+   "w": 248,
+   "h": 316,
+   "outline": 6,
+   "baseline": 313,
+   "anchor": [
+    124,
+    313
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "defeated",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 18211,
+    "soft_after": 2116
+   },
+   "tint": 0.0,
+   "name_id": "Mr Carter"
+  },
+  "story-char/carter/hands-hips": {
+   "file": "assets/db/lib/story-char/carter/hands-hips.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "man",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): carter-extra.png",
+   "w": 261,
+   "h": 316,
+   "outline": 6,
+   "baseline": 313,
+   "anchor": [
+    130,
+    313
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "hands-hips",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 16178,
+    "soft_after": 2086
+   },
+   "tint": 0.0,
+   "name_id": "Mr Carter"
+  },
   "story-char/carter/hands-open": {
    "file": "assets/db/lib/story-char/carter/hands-open.webp",
    "cat": "story-char",
@@ -33323,6 +34568,96 @@
     "soft_after": 621
    },
    "tint": 16.0,
+   "name_id": "Mr Carter"
+  },
+  "story-char/carter/point": {
+   "file": "assets/db/lib/story-char/carter/point.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "man",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): carter-extra.png",
+   "w": 315,
+   "h": 318,
+   "outline": 7,
+   "baseline": 315,
+   "anchor": [
+    157,
+    315
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "point",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 20507,
+    "soft_after": 2205
+   },
+   "tint": 0.0,
+   "name_id": "Mr Carter"
+  },
+  "story-char/carter/surprised": {
+   "file": "assets/db/lib/story-char/carter/surprised.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "man",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): carter-extra.png",
+   "w": 286,
+   "h": 318,
+   "outline": 7,
+   "baseline": 315,
+   "anchor": [
+    143,
+    315
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "surprised",
+   "expression": "shocked",
+   "fringe": {
+    "soft_before": 22723,
+    "soft_after": 2831
+   },
+   "tint": 0.0,
+   "name_id": "Mr Carter"
+  },
+  "story-char/carter/watch": {
+   "file": "assets/db/lib/story-char/carter/watch.webp",
+   "cat": "story-char",
+   "tags": [
+    "carter",
+    "logger",
+    "man",
+    "cartoon"
+   ],
+   "source": "Codex art package (handoff and result): carter-extra.png",
+   "w": 271,
+   "h": 316,
+   "outline": 6,
+   "baseline": 313,
+   "anchor": [
+    135,
+    313
+   ],
+   "char": "carter",
+   "view": "front",
+   "facing": 180,
+   "pose": "watch",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 19203,
+    "soft_after": 2307
+   },
+   "tint": 0.0,
    "name_id": "Mr Carter"
   },
   "story-char/henry/jongkok": {
@@ -33681,6 +35016,357 @@
    "tint": 47.6,
    "name_id": "Katrina Von Kapital"
   },
+  "story-char/mekanik-wanita/bend": {
+   "file": "assets/db/lib/story-char/mekanik-wanita/bend.webp",
+   "cat": "story-char",
+   "tags": [
+    "woman",
+    "hijab",
+    "mechanic",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
+   "w": 226,
+   "h": 244,
+   "outline": 5,
+   "baseline": 241,
+   "anchor": [
+    113,
+    241
+   ],
+   "char": "mekanik-wanita",
+   "view": "front",
+   "facing": 180,
+   "pose": "bend",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 927,
+    "soft_after": 750
+   },
+   "tint": 0.0,
+   "name_id": "Mekanik Wanita"
+  },
+  "story-char/mekanik-wanita/hips": {
+   "file": "assets/db/lib/story-char/mekanik-wanita/hips.webp",
+   "cat": "story-char",
+   "tags": [
+    "woman",
+    "hijab",
+    "mechanic",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
+   "w": 182,
+   "h": 280,
+   "outline": 4,
+   "baseline": 277,
+   "anchor": [
+    91,
+    277
+   ],
+   "char": "mekanik-wanita",
+   "view": "front",
+   "facing": 180,
+   "pose": "hips",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 1004,
+    "soft_after": 817
+   },
+   "tint": 0.0,
+   "name_id": "Mekanik Wanita"
+  },
+  "story-char/mekanik-wanita/stand": {
+   "file": "assets/db/lib/story-char/mekanik-wanita/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "woman",
+    "hijab",
+    "mechanic",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
+   "w": 172,
+   "h": 273,
+   "outline": 4,
+   "baseline": 270,
+   "anchor": [
+    86,
+    270
+   ],
+   "char": "mekanik-wanita",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 766,
+    "soft_after": 639
+   },
+   "tint": 0.0,
+   "name_id": "Mekanik Wanita"
+  },
+  "story-char/mekanik/kneel": {
+   "file": "assets/db/lib/story-char/mekanik/kneel.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "mechanic",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 274,
+   "h": 256,
+   "outline": 6,
+   "baseline": 253,
+   "anchor": [
+    137,
+    253
+   ],
+   "char": "mekanik",
+   "view": "front",
+   "facing": 180,
+   "pose": "kneel",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1264,
+    "soft_after": 1088
+   },
+   "tint": 0.0,
+   "name_id": "Mekanik"
+  },
+  "story-char/mekanik/stand": {
+   "file": "assets/db/lib/story-char/mekanik/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "mechanic",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 165,
+   "h": 308,
+   "outline": 4,
+   "baseline": 305,
+   "anchor": [
+    82,
+    305
+   ],
+   "char": "mekanik",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 865,
+    "soft_after": 749
+   },
+   "tint": 0.0,
+   "name_id": "Mekanik"
+  },
+  "story-char/mekanik/wave": {
+   "file": "assets/db/lib/story-char/mekanik/wave.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "mechanic",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 204,
+   "h": 288,
+   "outline": 5,
+   "baseline": 285,
+   "anchor": [
+    102,
+    285
+   ],
+   "char": "mekanik",
+   "view": "front",
+   "facing": 180,
+   "pose": "wave",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 1254,
+    "soft_after": 1089
+   },
+   "tint": 0.0,
+   "name_id": "Mekanik"
+  },
+  "story-char/nyonya-topi/cheer": {
+   "file": "assets/db/lib/story-char/nyonya-topi/cheer.webp",
+   "cat": "story-char",
+   "tags": [
+    "woman",
+    "hijab",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
+   "w": 251,
+   "h": 277,
+   "outline": 6,
+   "baseline": 274,
+   "anchor": [
+    125,
+    274
+   ],
+   "char": "nyonya-topi",
+   "view": "front",
+   "facing": 180,
+   "pose": "cheer",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 1032,
+    "soft_after": 882
+   },
+   "tint": 0.0,
+   "name_id": "Nyonya Bertopi"
+  },
+  "story-char/nyonya-topi/stand-fan": {
+   "file": "assets/db/lib/story-char/nyonya-topi/stand-fan.webp",
+   "cat": "story-char",
+   "tags": [
+    "woman",
+    "hijab",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
+   "w": 218,
+   "h": 239,
+   "outline": 5,
+   "baseline": 236,
+   "anchor": [
+    109,
+    236
+   ],
+   "char": "nyonya-topi",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand-fan",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 775,
+    "soft_after": 643
+   },
+   "tint": 0.0,
+   "name_id": "Nyonya Bertopi"
+  },
+  "story-char/nyonya-topi/wave": {
+   "file": "assets/db/lib/story-char/nyonya-topi/wave.webp",
+   "cat": "story-char",
+   "tags": [
+    "woman",
+    "hijab",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
+   "w": 278,
+   "h": 260,
+   "outline": 6,
+   "baseline": 257,
+   "anchor": [
+    139,
+    257
+   ],
+   "char": "nyonya-topi",
+   "view": "front",
+   "facing": 180,
+   "pose": "wave",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 863,
+    "soft_after": 707
+   },
+   "tint": 0.0,
+   "name_id": "Nyonya Bertopi"
+  },
+  "story-char/pelukis/crouch-paint": {
+   "file": "assets/db/lib/story-char/pelukis/crouch-paint.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "painter",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 256,
+   "h": 231,
+   "outline": 5,
+   "baseline": 228,
+   "anchor": [
+    128,
+    228
+   ],
+   "char": "pelukis",
+   "view": "front",
+   "facing": 180,
+   "pose": "crouch-paint",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 1075,
+    "soft_after": 899
+   },
+   "tint": 0.0,
+   "name_id": "Pelukis"
+  },
+  "story-char/pelukis/stand": {
+   "file": "assets/db/lib/story-char/pelukis/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "painter",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 200,
+   "h": 313,
+   "outline": 5,
+   "baseline": 310,
+   "anchor": [
+    100,
+    310
+   ],
+   "char": "pelukis",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 1355,
+    "soft_after": 1143
+   },
+   "tint": 0.0,
+   "name_id": "Pelukis"
+  },
+  "story-char/pelukis/thumbs": {
+   "file": "assets/db/lib/story-char/pelukis/thumbs.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "painter",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 226,
+   "h": 288,
+   "outline": 5,
+   "baseline": 285,
+   "anchor": [
+    113,
+    285
+   ],
+   "char": "pelukis",
+   "view": "front",
+   "facing": 180,
+   "pose": "thumbs",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 1477,
+    "soft_after": 1260
+   },
+   "tint": 0.0,
+   "name_id": "Pelukis"
+  },
   "story-char/scarlet/cemas-atas": {
    "file": "assets/db/lib/story-char/scarlet/cemas-atas.webp",
    "cat": "story-char",
@@ -33830,6 +35516,93 @@
    },
    "tint": 91.9,
    "name_id": "Scarlet McCloud"
+  },
+  "story-char/tuan-merah/point": {
+   "file": "assets/db/lib/story-char/tuan-merah/point.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "red-coat",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 258,
+   "h": 263,
+   "outline": 6,
+   "baseline": 260,
+   "anchor": [
+    129,
+    260
+   ],
+   "char": "tuan-merah",
+   "view": "front",
+   "facing": 180,
+   "pose": "point",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 1156,
+    "soft_after": 965
+   },
+   "tint": 0.0,
+   "name_id": "Tuan Merah"
+  },
+  "story-char/tuan-merah/shocked": {
+   "file": "assets/db/lib/story-char/tuan-merah/shocked.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "red-coat",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 183,
+   "h": 278,
+   "outline": 4,
+   "baseline": 275,
+   "anchor": [
+    91,
+    275
+   ],
+   "char": "tuan-merah",
+   "view": "front",
+   "facing": 180,
+   "pose": "shocked",
+   "expression": "shocked",
+   "fringe": {
+    "soft_before": 1386,
+    "soft_after": 1151
+   },
+   "tint": 0.0,
+   "name_id": "Tuan Merah"
+  },
+  "story-char/tuan-merah/stand": {
+   "file": "assets/db/lib/story-char/tuan-merah/stand.webp",
+   "cat": "story-char",
+   "tags": [
+    "man",
+    "red-coat",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 231,
+   "h": 289,
+   "outline": 5,
+   "baseline": 286,
+   "anchor": [
+    115,
+    286
+   ],
+   "char": "tuan-merah",
+   "view": "front",
+   "facing": 180,
+   "pose": "stand",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 1163,
+    "soft_after": 980
+   },
+   "tint": 0.0,
+   "name_id": "Tuan Merah"
   },
   "things/alarm-clock": {
    "file": "assets/db/lib/things/alarm-clock.webp",
@@ -49370,6 +51143,440 @@
     "top-nw",
     "top-se"
    ]
+  },
+  "train-char/rongsokan-a/v1": {
+   "file": "assets/db/lib/train-char/rongsokan-a/v1.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 217,
+   "h": 203,
+   "outline": 5,
+   "baseline": 200,
+   "anchor": [
+    108,
+    200
+   ],
+   "char": "rongsokan-a",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v1",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 726,
+    "soft_after": 633
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-a/v2": {
+   "file": "assets/db/lib/train-char/rongsokan-a/v2.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 243,
+   "h": 214,
+   "outline": 5,
+   "baseline": 211,
+   "anchor": [
+    121,
+    211
+   ],
+   "char": "rongsokan-a",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v2",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 943,
+    "soft_after": 828
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-a/v3": {
+   "file": "assets/db/lib/train-char/rongsokan-a/v3.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 163,
+   "h": 206,
+   "outline": 4,
+   "baseline": 203,
+   "anchor": [
+    81,
+    203
+   ],
+   "char": "rongsokan-a",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v3",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 645,
+    "soft_after": 553
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-a/v4": {
+   "file": "assets/db/lib/train-char/rongsokan-a/v4.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 213,
+   "h": 215,
+   "outline": 5,
+   "baseline": 212,
+   "anchor": [
+    106,
+    212
+   ],
+   "char": "rongsokan-a",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v4",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 696,
+    "soft_after": 614
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-a/v5": {
+   "file": "assets/db/lib/train-char/rongsokan-a/v5.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 228,
+   "h": 178,
+   "outline": 4,
+   "baseline": 175,
+   "anchor": [
+    114,
+    175
+   ],
+   "char": "rongsokan-a",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v5",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 797,
+    "soft_after": 684
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-a/v6": {
+   "file": "assets/db/lib/train-char/rongsokan-a/v6.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 254,
+   "h": 217,
+   "outline": 5,
+   "baseline": 214,
+   "anchor": [
+    127,
+    214
+   ],
+   "char": "rongsokan-a",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v6",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 904,
+    "soft_after": 783
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-a/v7": {
+   "file": "assets/db/lib/train-char/rongsokan-a/v7.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 219,
+   "h": 190,
+   "outline": 4,
+   "baseline": 187,
+   "anchor": [
+    109,
+    187
+   ],
+   "char": "rongsokan-a",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v7",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 712,
+    "soft_after": 610
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-b/v1": {
+   "file": "assets/db/lib/train-char/rongsokan-b/v1.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 232,
+   "h": 202,
+   "outline": 5,
+   "baseline": 199,
+   "anchor": [
+    116,
+    199
+   ],
+   "char": "rongsokan-b",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v1",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 944,
+    "soft_after": 812
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-b/v2": {
+   "file": "assets/db/lib/train-char/rongsokan-b/v2.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 163,
+   "h": 197,
+   "outline": 4,
+   "baseline": 194,
+   "anchor": [
+    81,
+    194
+   ],
+   "char": "rongsokan-b",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v2",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 715,
+    "soft_after": 629
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-b/v3": {
+   "file": "assets/db/lib/train-char/rongsokan-b/v3.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 218,
+   "h": 188,
+   "outline": 4,
+   "baseline": 185,
+   "anchor": [
+    109,
+    185
+   ],
+   "char": "rongsokan-b",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v3",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 899,
+    "soft_after": 782
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-b/v4": {
+   "file": "assets/db/lib/train-char/rongsokan-b/v4.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 163,
+   "h": 194,
+   "outline": 4,
+   "baseline": 191,
+   "anchor": [
+    81,
+    191
+   ],
+   "char": "rongsokan-b",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v4",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 712,
+    "soft_after": 601
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-b/v5": {
+   "file": "assets/db/lib/train-char/rongsokan-b/v5.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 209,
+   "h": 199,
+   "outline": 5,
+   "baseline": 196,
+   "anchor": [
+    104,
+    196
+   ],
+   "char": "rongsokan-b",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v5",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 824,
+    "soft_after": 724
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-b/v6": {
+   "file": "assets/db/lib/train-char/rongsokan-b/v6.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 252,
+   "h": 156,
+   "outline": 4,
+   "baseline": 153,
+   "anchor": [
+    126,
+    153
+   ],
+   "char": "rongsokan-b",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v6",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 1048,
+    "soft_after": 925
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
+  },
+  "train-char/rongsokan-b/v7": {
+   "file": "assets/db/lib/train-char/rongsokan-b/v7.webp",
+   "cat": "train-char",
+   "tags": [
+    "wreck",
+    "rongsokan",
+    "junk",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
+   "w": 239,
+   "h": 186,
+   "outline": 4,
+   "baseline": 183,
+   "anchor": [
+    119,
+    183
+   ],
+   "char": "rongsokan-b",
+   "view": "angle",
+   "facing": 180,
+   "pose": "v7",
+   "expression": "sad",
+   "fringe": {
+    "soft_before": 1110,
+    "soft_after": 960
+   },
+   "tint": 0.0,
+   "name_id": "Lokomotif Rongsokan"
   },
   "train-char/samson/34l-angry": {
    "file": "assets/db/lib/train-char/samson/34l-angry.webp",
