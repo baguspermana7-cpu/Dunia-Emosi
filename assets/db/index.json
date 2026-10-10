@@ -12,13 +12,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 149,
-   "h": 250,
+   "w": 139,
+   "h": 240,
    "outline": 3,
-   "baseline": 247,
+   "baseline": 239,
    "anchor": [
-    74,
-    247
+    69,
+    239
    ],
    "char": "beruang",
    "view": "rear",
@@ -43,13 +43,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 138,
-   "h": 260,
+   "w": 128,
+   "h": 250,
    "outline": 3,
-   "baseline": 257,
+   "baseline": 249,
    "anchor": [
-    69,
-    257
+    64,
+    249
    ],
    "char": "beruang",
    "view": "front",
@@ -74,13 +74,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 175,
-   "h": 221,
+   "w": 163,
+   "h": 209,
    "outline": 4,
-   "baseline": 218,
+   "baseline": 208,
    "anchor": [
-    87,
-    218
+    81,
+    208
    ],
    "char": "beruang",
    "view": "front",
@@ -105,13 +105,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 244,
-   "h": 206,
+   "w": 230,
+   "h": 192,
    "outline": 5,
-   "baseline": 203,
+   "baseline": 191,
    "anchor": [
-    122,
-    203
+    115,
+    191
    ],
    "char": "beruang",
    "view": "side",
@@ -135,13 +135,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 130,
-   "h": 109,
+   "w": 120,
+   "h": 99,
    "outline": 3,
-   "baseline": 106,
+   "baseline": 98,
    "anchor": [
-    65,
-    106
+    60,
+    98
    ],
    "char": "bird-blue",
    "view": "side",
@@ -165,13 +165,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 115,
-   "h": 101,
+   "w": 105,
+   "h": 91,
    "outline": 3,
-   "baseline": 98,
+   "baseline": 89,
    "anchor": [
-    57,
-    98
+    52,
+    89
    ],
    "char": "cardinal",
    "view": "side",
@@ -195,13 +195,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 238,
-   "h": 175,
+   "w": 226,
+   "h": 163,
    "outline": 4,
-   "baseline": 172,
+   "baseline": 162,
    "anchor": [
-    119,
-    172
+    113,
+    162
    ],
    "char": "deer",
    "view": "side",
@@ -225,13 +225,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 201,
-   "h": 244,
+   "w": 187,
+   "h": 230,
    "outline": 5,
-   "baseline": 241,
+   "baseline": 229,
    "anchor": [
-    100,
-    241
+    93,
+    229
    ],
    "char": "deer",
    "view": "side",
@@ -256,13 +256,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 120,
-   "h": 55,
+   "w": 110,
+   "h": 45,
    "outline": 3,
-   "baseline": 52,
+   "baseline": 44,
    "anchor": [
-    60,
-    52
+    55,
+    44
    ],
    "char": "ikan",
    "view": "side",
@@ -287,13 +287,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 108,
-   "h": 52,
+   "w": 98,
+   "h": 42,
    "outline": 3,
-   "baseline": 49,
+   "baseline": 41,
    "anchor": [
-    54,
-    49
+    49,
+    41
    ],
    "char": "ikan",
    "view": "side",
@@ -318,13 +318,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 68,
-   "h": 171,
+   "w": 58,
+   "h": 161,
    "outline": 3,
-   "baseline": 168,
+   "baseline": 160,
    "anchor": [
-    34,
-    168
+    29,
+    160
    ],
    "char": "kelinci",
    "view": "side",
@@ -349,13 +349,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 92,
-   "h": 151,
+   "w": 82,
+   "h": 141,
    "outline": 3,
-   "baseline": 148,
+   "baseline": 140,
    "anchor": [
-    46,
-    148
+    41,
+    140
    ],
    "char": "kelinci",
    "view": "rear",
@@ -380,13 +380,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 159,
-   "h": 136,
+   "w": 149,
+   "h": 126,
    "outline": 3,
-   "baseline": 133,
+   "baseline": 125,
    "anchor": [
-    79,
-    133
+    74,
+    125
    ],
    "char": "kelinci",
    "view": "side",
@@ -411,13 +411,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 155,
-   "h": 118,
+   "w": 145,
+   "h": 108,
    "outline": 3,
-   "baseline": 115,
+   "baseline": 107,
    "anchor": [
-    77,
-    115
+    72,
+    107
    ],
    "char": "kelinci",
    "view": "side",
@@ -441,13 +441,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 180,
-   "h": 129,
+   "w": 170,
+   "h": 119,
    "outline": 3,
-   "baseline": 126,
+   "baseline": 118,
    "anchor": [
-    90,
-    126
+    85,
+    118
    ],
    "char": "rabbit",
    "view": "side",
@@ -471,13 +471,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 110,
-   "h": 175,
+   "w": 100,
+   "h": 165,
    "outline": 3,
-   "baseline": 172,
+   "baseline": 164,
    "anchor": [
-    55,
-    172
+    50,
+    164
    ],
    "char": "rabbit",
    "view": "side",
@@ -501,13 +501,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 126,
-   "h": 100,
+   "w": 116,
+   "h": 90,
    "outline": 3,
-   "baseline": 97,
+   "baseline": 88,
    "anchor": [
-    63,
-    97
+    58,
+    88
    ],
    "char": "turtle",
    "view": "side",
@@ -531,13 +531,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 154,
-   "h": 115,
+   "w": 144,
+   "h": 105,
    "outline": 3,
-   "baseline": 112,
+   "baseline": 104,
    "anchor": [
-    77,
-    112
+    72,
+    104
    ],
    "char": "turtle",
    "view": "side",
@@ -561,13 +561,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 160,
-   "h": 114,
+   "w": 150,
+   "h": 104,
    "outline": 3,
-   "baseline": 111,
+   "baseline": 103,
    "anchor": [
-    80,
-    111
+    75,
+    103
    ],
    "char": "turtle",
    "view": "side",
@@ -591,13 +591,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 162,
-   "h": 154,
+   "w": 150,
+   "h": 142,
    "outline": 4,
-   "baseline": 151,
+   "baseline": 140,
    "anchor": [
-    81,
-    151
+    75,
+    140
    ],
    "char": "vulture",
    "view": "side",
@@ -621,13 +621,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 155,
-   "h": 157,
+   "w": 143,
+   "h": 145,
    "outline": 4,
-   "baseline": 154,
+   "baseline": 143,
    "anchor": [
-    77,
-    154
+    71,
+    143
    ],
    "char": "vulture",
    "view": "side",
@@ -9575,13 +9575,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 217,
-   "h": 279,
+   "w": 203,
+   "h": 265,
    "outline": 5,
-   "baseline": 276,
+   "baseline": 264,
    "anchor": [
-    108,
-    276
+    101,
+    264
    ],
    "char": "masinis",
    "view": "side",
@@ -9606,13 +9606,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 192,
-   "h": 277,
+   "w": 180,
+   "h": 265,
    "outline": 4,
-   "baseline": 274,
+   "baseline": 264,
    "anchor": [
-    96,
-    274
+    90,
+    264
    ],
    "char": "masinis",
    "view": "side",
@@ -9637,13 +9637,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 201,
-   "h": 274,
+   "w": 187,
+   "h": 260,
    "outline": 5,
-   "baseline": 271,
+   "baseline": 259,
    "anchor": [
-    100,
-    271
+    93,
+    259
    ],
    "char": "masinis",
    "view": "side",
@@ -9668,13 +9668,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 229,
-   "h": 203,
+   "w": 215,
+   "h": 189,
    "outline": 5,
-   "baseline": 200,
+   "baseline": 188,
    "anchor": [
-    114,
-    200
+    107,
+    188
    ],
    "char": "masinis",
    "view": "side",
@@ -9699,13 +9699,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 183,
-   "h": 187,
+   "w": 171,
+   "h": 175,
    "outline": 4,
-   "baseline": 184,
+   "baseline": 173,
    "anchor": [
-    91,
-    184
+    85,
+    173
    ],
    "char": "masinis",
    "view": "side",
@@ -9730,13 +9730,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 163,
-   "h": 272,
+   "w": 151,
+   "h": 260,
    "outline": 4,
-   "baseline": 269,
+   "baseline": 259,
    "anchor": [
-    81,
-    269
+    75,
+    259
    ],
    "char": "masinis",
    "view": "side",
@@ -9761,13 +9761,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 159,
-   "h": 278,
+   "w": 147,
+   "h": 266,
    "outline": 4,
-   "baseline": 275,
+   "baseline": 265,
    "anchor": [
-    79,
-    275
+    73,
+    265
    ],
    "char": "masinis",
    "view": "side",
@@ -9792,13 +9792,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 197,
-   "h": 279,
+   "w": 183,
+   "h": 265,
    "outline": 5,
-   "baseline": 276,
+   "baseline": 264,
    "anchor": [
-    98,
-    276
+    91,
+    264
    ],
    "char": "masinis",
    "view": "side",
@@ -9823,13 +9823,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 204,
-   "h": 264,
+   "w": 190,
+   "h": 250,
    "outline": 5,
-   "baseline": 261,
+   "baseline": 249,
    "anchor": [
-    102,
-    261
+    95,
+    249
    ],
    "char": "masinis",
    "view": "side",
@@ -9854,13 +9854,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 227,
-   "h": 221,
+   "w": 213,
+   "h": 207,
    "outline": 5,
-   "baseline": 218,
+   "baseline": 206,
    "anchor": [
-    113,
-    218
+    106,
+    206
    ],
    "char": "orkes",
    "view": "side",
@@ -9885,13 +9885,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 255,
-   "h": 258,
+   "w": 239,
+   "h": 242,
    "outline": 6,
-   "baseline": 255,
+   "baseline": 241,
    "anchor": [
-    127,
-    255
+    119,
+    241
    ],
    "char": "orkes",
    "view": "side",
@@ -9916,13 +9916,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 175,
-   "h": 310,
+   "w": 163,
+   "h": 298,
    "outline": 4,
-   "baseline": 307,
+   "baseline": 297,
    "anchor": [
-    87,
-    307
+    81,
+    297
    ],
    "char": "orkes",
    "view": "side",
@@ -9947,13 +9947,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 178,
-   "h": 298,
+   "w": 166,
+   "h": 286,
    "outline": 4,
-   "baseline": 295,
+   "baseline": 285,
    "anchor": [
-    89,
-    295
+    83,
+    285
    ],
    "char": "orkes",
    "view": "side",
@@ -9978,13 +9978,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 204,
-   "h": 243,
+   "w": 190,
+   "h": 229,
    "outline": 5,
-   "baseline": 240,
+   "baseline": 228,
    "anchor": [
-    102,
-    240
+    95,
+    228
    ],
    "char": "orkes",
    "view": "side",
@@ -10009,13 +10009,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 236,
-   "h": 220,
+   "w": 222,
+   "h": 206,
    "outline": 5,
-   "baseline": 217,
+   "baseline": 205,
    "anchor": [
-    118,
-    217
+    111,
+    205
    ],
    "char": "orkes",
    "view": "side",
@@ -10040,13 +10040,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 192,
-   "h": 263,
+   "w": 180,
+   "h": 251,
    "outline": 4,
-   "baseline": 260,
+   "baseline": 250,
    "anchor": [
-    96,
-    260
+    90,
+    250
    ],
    "char": "orkes",
    "view": "side",
@@ -10071,13 +10071,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 150,
-   "h": 303,
+   "w": 140,
+   "h": 293,
    "outline": 3,
-   "baseline": 300,
+   "baseline": 292,
    "anchor": [
-    75,
-    300
+    70,
+    292
    ],
    "char": "orkes",
    "view": "side",
@@ -10102,13 +10102,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 179,
-   "h": 312,
+   "w": 167,
+   "h": 300,
    "outline": 4,
-   "baseline": 309,
+   "baseline": 299,
    "anchor": [
-    89,
-    309
+    83,
+    299
    ],
    "char": "orkes",
    "view": "side",
@@ -10133,13 +10133,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 180,
-   "h": 312,
+   "w": 168,
+   "h": 300,
    "outline": 4,
-   "baseline": 309,
+   "baseline": 299,
    "anchor": [
-    90,
-    309
+    84,
+    299
    ],
    "char": "orkes",
    "view": "side",
@@ -10164,13 +10164,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 220,
-   "h": 299,
+   "w": 206,
+   "h": 285,
    "outline": 5,
-   "baseline": 296,
+   "baseline": 284,
    "anchor": [
-    110,
-    296
+    103,
+    284
    ],
    "char": "orkes",
    "view": "side",
@@ -10195,13 +10195,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 204,
-   "h": 209,
+   "w": 190,
+   "h": 195,
    "outline": 5,
-   "baseline": 206,
+   "baseline": 194,
    "anchor": [
-    102,
-    206
+    95,
+    194
    ],
    "char": "pembaca-pidato",
    "view": "side",
@@ -10226,13 +10226,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 183,
-   "h": 208,
+   "w": 171,
+   "h": 196,
    "outline": 4,
-   "baseline": 205,
+   "baseline": 195,
    "anchor": [
-    91,
-    205
+    85,
+    195
    ],
    "char": "pembaca-pidato",
    "view": "side",
@@ -10257,13 +10257,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 203,
-   "h": 206,
+   "w": 189,
+   "h": 192,
    "outline": 5,
-   "baseline": 203,
+   "baseline": 191,
    "anchor": [
-    101,
-    203
+    94,
+    191
    ],
    "char": "pembaca-pidato",
    "view": "side",
@@ -10288,13 +10288,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 173,
-   "h": 274,
+   "w": 161,
+   "h": 262,
    "outline": 4,
-   "baseline": 271,
+   "baseline": 261,
    "anchor": [
-    86,
-    271
+    80,
+    261
    ],
    "char": "penumpang-jas-kotak",
    "view": "side",
@@ -10319,13 +10319,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 165,
-   "h": 258,
+   "w": 153,
+   "h": 246,
    "outline": 4,
-   "baseline": 255,
+   "baseline": 244,
    "anchor": [
-    82,
-    255
+    76,
+    244
    ],
    "char": "penumpang-jas-kotak",
    "view": "side",
@@ -10350,13 +10350,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 145,
-   "h": 285,
+   "w": 135,
+   "h": 275,
    "outline": 3,
-   "baseline": 282,
+   "baseline": 274,
    "anchor": [
-    72,
-    282
+    67,
+    274
    ],
    "char": "penumpang-ungu",
    "view": "side",
@@ -10381,13 +10381,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 188,
-   "h": 238,
+   "w": 176,
+   "h": 226,
    "outline": 4,
-   "baseline": 235,
+   "baseline": 225,
    "anchor": [
-    94,
-    235
+    88,
+    225
    ],
    "char": "penumpang-ungu",
    "view": "side",
@@ -10412,13 +10412,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 219,
-   "h": 277,
+   "w": 205,
+   "h": 263,
    "outline": 5,
-   "baseline": 274,
+   "baseline": 262,
    "anchor": [
-    109,
-    274
+    102,
+    262
    ],
    "char": "penumpang-ungu",
    "view": "side",
@@ -10443,13 +10443,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 262,
-   "h": 256,
+   "w": 246,
+   "h": 240,
    "outline": 6,
-   "baseline": 253,
+   "baseline": 239,
    "anchor": [
-    131,
-    253
+    123,
+    239
    ],
    "char": "penumpang-ungu",
    "view": "side",
@@ -10474,13 +10474,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 266,
-   "h": 260,
+   "w": 250,
+   "h": 244,
    "outline": 6,
-   "baseline": 257,
+   "baseline": 242,
    "anchor": [
-    133,
-    257
+    125,
+    242
    ],
    "char": "penumpang-ungu",
    "view": "side",
@@ -10505,13 +10505,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 125,
-   "h": 278,
+   "w": 115,
+   "h": 268,
    "outline": 3,
-   "baseline": 275,
+   "baseline": 267,
    "anchor": [
-    62,
-    275
+    57,
+    267
    ],
    "char": "penyambut",
    "view": "side",
@@ -10536,13 +10536,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 226,
-   "h": 269,
+   "w": 212,
+   "h": 255,
    "outline": 5,
-   "baseline": 266,
+   "baseline": 254,
    "anchor": [
-    113,
-    266
+    106,
+    254
    ],
    "char": "penyambut",
    "view": "side",
@@ -10567,13 +10567,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 113,
-   "h": 187,
+   "w": 103,
+   "h": 177,
    "outline": 3,
-   "baseline": 184,
+   "baseline": 176,
    "anchor": [
-    56,
-    184
+    51,
+    176
    ],
    "char": "penyambut",
    "view": "side",
@@ -10598,13 +10598,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 146,
-   "h": 201,
+   "w": 136,
+   "h": 191,
    "outline": 3,
-   "baseline": 198,
+   "baseline": 190,
    "anchor": [
-    73,
-    198
+    68,
+    190
    ],
    "char": "penyambut",
    "view": "side",
@@ -10629,13 +10629,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 239,
-   "h": 263,
+   "w": 223,
+   "h": 247,
    "outline": 6,
-   "baseline": 260,
+   "baseline": 246,
    "anchor": [
-    119,
-    260
+    111,
+    246
    ],
    "char": "petugas-bagasi",
    "view": "side",
@@ -10660,13 +10660,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 206,
-   "h": 245,
+   "w": 192,
+   "h": 231,
    "outline": 5,
-   "baseline": 242,
+   "baseline": 230,
    "anchor": [
-    103,
-    242
+    96,
+    230
    ],
    "char": "petugas-bagasi",
    "view": "side",
@@ -10691,13 +10691,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 222,
-   "h": 306,
+   "w": 208,
+   "h": 292,
    "outline": 5,
-   "baseline": 303,
+   "baseline": 291,
    "anchor": [
-    111,
-    303
+    104,
+    291
    ],
    "char": "petugas-stasiun",
    "view": "side",
@@ -10722,13 +10722,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 220,
-   "h": 275,
+   "w": 206,
+   "h": 261,
    "outline": 5,
-   "baseline": 272,
+   "baseline": 260,
    "anchor": [
-    110,
-    272
+    103,
+    260
    ],
    "char": "petugas-stasiun",
    "view": "side",
@@ -10753,13 +10753,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
-   "w": 161,
-   "h": 278,
+   "w": 149,
+   "h": 266,
    "outline": 4,
-   "baseline": 275,
+   "baseline": 265,
    "anchor": [
-    80,
-    275
+    74,
+    265
    ],
    "char": "petugas-stasiun",
    "view": "side",
@@ -10784,13 +10784,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
-   "w": 183,
-   "h": 287,
+   "w": 171,
+   "h": 275,
    "outline": 4,
-   "baseline": 284,
+   "baseline": 274,
    "anchor": [
-    91,
-    284
+    85,
+    274
    ],
    "char": "petugas-stasiun",
    "view": "side",
@@ -34194,13 +34194,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 213,
-   "h": 243,
+   "w": 199,
+   "h": 229,
    "outline": 5,
-   "baseline": 240,
+   "baseline": 228,
    "anchor": [
-    106,
-    240
+    99,
+    228
    ],
    "char": "anak-cat",
    "view": "front",
@@ -34224,13 +34224,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 110,
-   "h": 266,
+   "w": 100,
+   "h": 256,
    "outline": 3,
-   "baseline": 263,
+   "baseline": 255,
    "anchor": [
-    55,
-    263
+    50,
+    255
    ],
    "char": "anak-cat",
    "view": "front",
@@ -34254,13 +34254,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 185,
-   "h": 260,
+   "w": 173,
+   "h": 248,
    "outline": 4,
-   "baseline": 257,
+   "baseline": 247,
    "anchor": [
-    92,
-    257
+    86,
+    247
    ],
    "char": "anak-cat",
    "view": "front",
@@ -34284,13 +34284,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 128,
-   "h": 241,
+   "w": 118,
+   "h": 231,
    "outline": 3,
-   "baseline": 238,
+   "baseline": 230,
    "anchor": [
-    64,
-    238
+    59,
+    230
    ],
    "char": "anak-kura",
    "view": "front",
@@ -34314,13 +34314,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 154,
-   "h": 239,
+   "w": 142,
+   "h": 227,
    "outline": 4,
-   "baseline": 236,
+   "baseline": 226,
    "anchor": [
-    77,
-    236
+    71,
+    226
    ],
    "char": "anak-kura",
    "view": "front",
@@ -34344,13 +34344,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 148,
-   "h": 267,
+   "w": 138,
+   "h": 257,
    "outline": 3,
-   "baseline": 264,
+   "baseline": 255,
    "anchor": [
-    74,
-    264
+    69,
+    255
    ],
    "char": "anak-kura",
    "view": "front",
@@ -34373,13 +34373,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 254,
-   "h": 301,
+   "w": 238,
+   "h": 285,
    "outline": 6,
-   "baseline": 298,
+   "baseline": 284,
    "anchor": [
-    127,
-    298
+    119,
+    284
    ],
    "char": "baron",
    "view": "front",
@@ -34402,13 +34402,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 214,
-   "h": 257,
+   "w": 200,
+   "h": 243,
    "outline": 5,
-   "baseline": 254,
+   "baseline": 242,
    "anchor": [
-    107,
-    254
+    100,
+    242
    ],
    "char": "baron",
    "view": "front",
@@ -34431,13 +34431,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 239,
-   "h": 265,
+   "w": 223,
+   "h": 249,
    "outline": 6,
-   "baseline": 262,
+   "baseline": 248,
    "anchor": [
-    119,
-    262
+    111,
+    248
    ],
    "char": "baron",
    "view": "front",
@@ -34550,13 +34550,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
-   "w": 304,
-   "h": 285,
+   "w": 286,
+   "h": 267,
    "outline": 7,
-   "baseline": 282,
+   "baseline": 266,
    "anchor": [
-    152,
-    282
+    143,
+    266
    ],
    "char": "carter",
    "view": "front",
@@ -34670,13 +34670,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 234,
-   "h": 212,
+   "w": 220,
+   "h": 198,
    "outline": 5,
-   "baseline": 209,
+   "baseline": 197,
    "anchor": [
-    117,
-    209
+    110,
+    197
    ],
    "char": "henry",
    "view": "front",
@@ -34700,13 +34700,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 229,
-   "h": 296,
+   "w": 215,
+   "h": 282,
    "outline": 5,
-   "baseline": 293,
+   "baseline": 281,
    "anchor": [
-    114,
-    293
+    107,
+    281
    ],
    "char": "henry",
    "view": "front",
@@ -34730,13 +34730,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 221,
-   "h": 266,
+   "w": 207,
+   "h": 252,
    "outline": 5,
-   "baseline": 263,
+   "baseline": 251,
    "anchor": [
-    110,
-    263
+    103,
+    251
    ],
    "char": "henry",
    "view": "front",
@@ -34760,13 +34760,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 170,
-   "h": 312,
+   "w": 158,
+   "h": 300,
    "outline": 4,
-   "baseline": 309,
+   "baseline": 299,
    "anchor": [
-    85,
-    309
+    79,
+    299
    ],
    "char": "henry",
    "view": "front",
@@ -34790,13 +34790,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 152,
-   "h": 285,
+   "w": 140,
+   "h": 273,
    "outline": 4,
-   "baseline": 282,
+   "baseline": 272,
    "anchor": [
-    76,
-    282
+    70,
+    272
    ],
    "char": "henry",
    "view": "front",
@@ -34819,13 +34819,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
-   "w": 155,
-   "h": 290,
+   "w": 143,
+   "h": 278,
    "outline": 4,
-   "baseline": 287,
+   "baseline": 277,
    "anchor": [
-    77,
-    287
+    71,
+    277
    ],
    "char": "james",
    "view": "front",
@@ -34848,13 +34848,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
-   "w": 249,
-   "h": 279,
+   "w": 233,
+   "h": 263,
    "outline": 6,
-   "baseline": 276,
+   "baseline": 262,
    "anchor": [
-    124,
-    276
+    116,
+    262
    ],
    "char": "james",
    "view": "front",
@@ -34877,13 +34877,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
-   "w": 149,
-   "h": 276,
+   "w": 139,
+   "h": 266,
    "outline": 3,
-   "baseline": 273,
+   "baseline": 265,
    "anchor": [
-    74,
-    273
+    69,
+    265
    ],
    "char": "james",
    "view": "front",
@@ -34906,13 +34906,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
-   "w": 176,
-   "h": 265,
+   "w": 164,
+   "h": 253,
    "outline": 4,
-   "baseline": 262,
+   "baseline": 252,
    "anchor": [
-    88,
-    262
+    82,
+    252
    ],
    "char": "james",
    "view": "front",
@@ -34936,13 +34936,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 142,
-   "h": 292,
+   "w": 132,
+   "h": 282,
    "outline": 3,
-   "baseline": 289,
+   "baseline": 281,
    "anchor": [
-    71,
-    289
+    66,
+    281
    ],
    "char": "katrina",
    "view": "front",
@@ -34966,13 +34966,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 229,
-   "h": 260,
+   "w": 215,
+   "h": 246,
    "outline": 5,
-   "baseline": 257,
+   "baseline": 245,
    "anchor": [
-    114,
-    257
+    107,
+    245
    ],
    "char": "katrina",
    "view": "front",
@@ -34996,13 +34996,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 165,
-   "h": 260,
+   "w": 153,
+   "h": 248,
    "outline": 4,
-   "baseline": 257,
+   "baseline": 247,
    "anchor": [
-    82,
-    257
+    76,
+    247
    ],
    "char": "katrina",
    "view": "front",
@@ -35026,13 +35026,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
-   "w": 226,
-   "h": 244,
+   "w": 212,
+   "h": 230,
    "outline": 5,
-   "baseline": 241,
+   "baseline": 229,
    "anchor": [
-    113,
-    241
+    106,
+    229
    ],
    "char": "mekanik-wanita",
    "view": "front",
@@ -35056,13 +35056,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
-   "w": 182,
-   "h": 280,
+   "w": 170,
+   "h": 268,
    "outline": 4,
-   "baseline": 277,
+   "baseline": 266,
    "anchor": [
-    91,
-    277
+    85,
+    266
    ],
    "char": "mekanik-wanita",
    "view": "front",
@@ -35086,13 +35086,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
-   "w": 172,
-   "h": 273,
+   "w": 160,
+   "h": 261,
    "outline": 4,
-   "baseline": 270,
+   "baseline": 260,
    "anchor": [
-    86,
-    270
+    80,
+    260
    ],
    "char": "mekanik-wanita",
    "view": "front",
@@ -35115,13 +35115,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 274,
-   "h": 256,
+   "w": 258,
+   "h": 240,
    "outline": 6,
-   "baseline": 253,
+   "baseline": 239,
    "anchor": [
-    137,
-    253
+    129,
+    239
    ],
    "char": "mekanik",
    "view": "front",
@@ -35144,13 +35144,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 165,
-   "h": 308,
+   "w": 153,
+   "h": 296,
    "outline": 4,
-   "baseline": 305,
+   "baseline": 295,
    "anchor": [
-    82,
-    305
+    76,
+    295
    ],
    "char": "mekanik",
    "view": "front",
@@ -35173,13 +35173,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 204,
-   "h": 288,
+   "w": 190,
+   "h": 274,
    "outline": 5,
-   "baseline": 285,
+   "baseline": 273,
    "anchor": [
-    102,
-    285
+    95,
+    273
    ],
    "char": "mekanik",
    "view": "front",
@@ -35202,13 +35202,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
-   "w": 251,
-   "h": 277,
+   "w": 235,
+   "h": 261,
    "outline": 6,
-   "baseline": 274,
+   "baseline": 260,
    "anchor": [
-    125,
-    274
+    117,
+    260
    ],
    "char": "nyonya-topi",
    "view": "front",
@@ -35231,13 +35231,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
-   "w": 218,
-   "h": 239,
+   "w": 204,
+   "h": 225,
    "outline": 5,
-   "baseline": 236,
+   "baseline": 224,
    "anchor": [
-    109,
-    236
+    102,
+    224
    ],
    "char": "nyonya-topi",
    "view": "front",
@@ -35260,13 +35260,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Modest hijab edits",
-   "w": 278,
-   "h": 260,
+   "w": 262,
+   "h": 244,
    "outline": 6,
-   "baseline": 257,
+   "baseline": 243,
    "anchor": [
-    139,
-    257
+    131,
+    243
    ],
    "char": "nyonya-topi",
    "view": "front",
@@ -35289,13 +35289,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 256,
-   "h": 231,
+   "w": 242,
+   "h": 217,
    "outline": 5,
-   "baseline": 228,
+   "baseline": 216,
    "anchor": [
-    128,
-    228
+    121,
+    216
    ],
    "char": "pelukis",
    "view": "front",
@@ -35318,13 +35318,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 200,
-   "h": 313,
+   "w": 186,
+   "h": 299,
    "outline": 5,
-   "baseline": 310,
+   "baseline": 298,
    "anchor": [
-    100,
-    310
+    93,
+    298
    ],
    "char": "pelukis",
    "view": "front",
@@ -35347,13 +35347,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 226,
-   "h": 288,
+   "w": 212,
+   "h": 274,
    "outline": 5,
-   "baseline": 285,
+   "baseline": 272,
    "anchor": [
-    113,
-    285
+    106,
+    272
    ],
    "char": "pelukis",
    "view": "front",
@@ -35377,13 +35377,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 134,
-   "h": 241,
+   "w": 124,
+   "h": 231,
    "outline": 3,
-   "baseline": 238,
+   "baseline": 230,
    "anchor": [
-    67,
-    238
+    62,
+    230
    ],
    "char": "scarlet",
    "view": "front",
@@ -35407,13 +35407,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 211,
-   "h": 283,
+   "w": 197,
+   "h": 269,
    "outline": 5,
-   "baseline": 280,
+   "baseline": 268,
    "anchor": [
-    105,
-    280
+    98,
+    268
    ],
    "char": "scarlet",
    "view": "front",
@@ -35437,13 +35437,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 203,
-   "h": 266,
+   "w": 189,
+   "h": 252,
    "outline": 5,
-   "baseline": 263,
+   "baseline": 251,
    "anchor": [
-    101,
-    263
+    94,
+    251
    ],
    "char": "scarlet",
    "view": "front",
@@ -35467,13 +35467,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 161,
-   "h": 289,
+   "w": 149,
+   "h": 277,
    "outline": 4,
-   "baseline": 286,
+   "baseline": 276,
    "anchor": [
-    80,
-    286
+    74,
+    276
    ],
    "char": "scarlet",
    "view": "front",
@@ -35497,13 +35497,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 158,
-   "h": 278,
+   "w": 146,
+   "h": 266,
    "outline": 4,
-   "baseline": 275,
+   "baseline": 265,
    "anchor": [
-    79,
-    275
+    73,
+    265
    ],
    "char": "scarlet",
    "view": "front",
@@ -35526,13 +35526,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 258,
-   "h": 263,
+   "w": 242,
+   "h": 247,
    "outline": 6,
-   "baseline": 260,
+   "baseline": 246,
    "anchor": [
-    129,
-    260
+    121,
+    246
    ],
    "char": "tuan-merah",
    "view": "front",
@@ -35555,13 +35555,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 183,
-   "h": 278,
+   "w": 171,
+   "h": 266,
    "outline": 4,
-   "baseline": 275,
+   "baseline": 265,
    "anchor": [
-    91,
-    275
+    85,
+    265
    ],
    "char": "tuan-merah",
    "view": "front",
@@ -35584,13 +35584,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 231,
-   "h": 289,
+   "w": 217,
+   "h": 275,
    "outline": 5,
-   "baseline": 286,
+   "baseline": 274,
    "anchor": [
-    115,
-    286
+    108,
+    274
    ],
    "char": "tuan-merah",
    "view": "front",
@@ -46428,13 +46428,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 281,
-   "h": 283,
+   "w": 263,
+   "h": 265,
    "outline": 7,
-   "baseline": 280,
+   "baseline": 264,
    "anchor": [
-    140,
-    280
+    131,
+    264
    ],
    "char": "caboose-red",
    "view": "front34",
@@ -46459,13 +46459,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 274,
-   "h": 262,
+   "w": 258,
+   "h": 246,
    "outline": 6,
-   "baseline": 259,
+   "baseline": 245,
    "anchor": [
-    137,
-    259
+    129,
+    245
    ],
    "char": "caboose-red",
    "view": "front34",
@@ -46490,13 +46490,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 308,
-   "h": 242,
+   "w": 292,
+   "h": 226,
    "outline": 6,
-   "baseline": 239,
+   "baseline": 225,
    "anchor": [
-    154,
-    239
+    146,
+    225
    ],
    "char": "coach-green",
    "view": "front34",
@@ -46521,13 +46521,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 316,
-   "h": 247,
+   "w": 300,
+   "h": 231,
    "outline": 6,
-   "baseline": 244,
+   "baseline": 230,
    "anchor": [
-    158,
-    244
+    150,
+    230
    ],
    "char": "coach-green",
    "view": "side",
@@ -49240,13 +49240,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 283,
-   "h": 271,
+   "w": 267,
+   "h": 255,
    "outline": 6,
-   "baseline": 268,
+   "baseline": 254,
    "anchor": [
-    141,
-    268
+    133,
+    254
    ],
    "char": "goro-loco",
    "view": "front34",
@@ -49271,13 +49271,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 278,
-   "h": 268,
+   "w": 262,
+   "h": 252,
    "outline": 6,
-   "baseline": 265,
+   "baseline": 251,
    "anchor": [
-    139,
-    265
+    131,
+    251
    ],
    "char": "goro-loco",
    "view": "front34",
@@ -51155,13 +51155,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 217,
-   "h": 203,
+   "w": 203,
+   "h": 189,
    "outline": 5,
-   "baseline": 200,
+   "baseline": 188,
    "anchor": [
-    108,
-    200
+    101,
+    188
    ],
    "char": "rongsokan-a",
    "view": "angle",
@@ -51186,13 +51186,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 243,
-   "h": 214,
+   "w": 229,
+   "h": 200,
    "outline": 5,
-   "baseline": 211,
+   "baseline": 199,
    "anchor": [
-    121,
-    211
+    114,
+    199
    ],
    "char": "rongsokan-a",
    "view": "angle",
@@ -51217,13 +51217,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 163,
-   "h": 206,
+   "w": 151,
+   "h": 194,
    "outline": 4,
-   "baseline": 203,
+   "baseline": 193,
    "anchor": [
-    81,
-    203
+    75,
+    193
    ],
    "char": "rongsokan-a",
    "view": "angle",
@@ -51248,13 +51248,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 213,
-   "h": 215,
+   "w": 199,
+   "h": 201,
    "outline": 5,
-   "baseline": 212,
+   "baseline": 200,
    "anchor": [
-    106,
-    212
+    99,
+    200
    ],
    "char": "rongsokan-a",
    "view": "angle",
@@ -51279,13 +51279,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 228,
-   "h": 178,
+   "w": 216,
+   "h": 166,
    "outline": 4,
-   "baseline": 175,
+   "baseline": 165,
    "anchor": [
-    114,
-    175
+    108,
+    165
    ],
    "char": "rongsokan-a",
    "view": "angle",
@@ -51310,13 +51310,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 254,
-   "h": 217,
+   "w": 240,
+   "h": 203,
    "outline": 5,
-   "baseline": 214,
+   "baseline": 202,
    "anchor": [
-    127,
-    214
+    120,
+    202
    ],
    "char": "rongsokan-a",
    "view": "angle",
@@ -51341,13 +51341,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 219,
-   "h": 190,
+   "w": 207,
+   "h": 178,
    "outline": 4,
-   "baseline": 187,
+   "baseline": 177,
    "anchor": [
-    109,
-    187
+    103,
+    177
    ],
    "char": "rongsokan-a",
    "view": "angle",
@@ -51372,13 +51372,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 232,
-   "h": 202,
+   "w": 218,
+   "h": 188,
    "outline": 5,
-   "baseline": 199,
+   "baseline": 185,
    "anchor": [
-    116,
-    199
+    109,
+    185
    ],
    "char": "rongsokan-b",
    "view": "angle",
@@ -51403,13 +51403,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 163,
-   "h": 197,
+   "w": 151,
+   "h": 185,
    "outline": 4,
-   "baseline": 194,
+   "baseline": 184,
    "anchor": [
-    81,
-    194
+    75,
+    184
    ],
    "char": "rongsokan-b",
    "view": "angle",
@@ -51434,13 +51434,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 218,
-   "h": 188,
+   "w": 206,
+   "h": 176,
    "outline": 4,
-   "baseline": 185,
+   "baseline": 175,
    "anchor": [
-    109,
-    185
+    103,
+    175
    ],
    "char": "rongsokan-b",
    "view": "angle",
@@ -51465,13 +51465,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 163,
-   "h": 194,
+   "w": 151,
+   "h": 182,
    "outline": 4,
-   "baseline": 191,
+   "baseline": 180,
    "anchor": [
-    81,
-    191
+    75,
+    180
    ],
    "char": "rongsokan-b",
    "view": "angle",
@@ -51496,13 +51496,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 209,
-   "h": 199,
+   "w": 195,
+   "h": 185,
    "outline": 5,
-   "baseline": 196,
+   "baseline": 183,
    "anchor": [
-    104,
-    196
+    97,
+    183
    ],
    "char": "rongsokan-b",
    "view": "angle",
@@ -51527,13 +51527,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 252,
-   "h": 156,
+   "w": 240,
+   "h": 144,
    "outline": 4,
-   "baseline": 153,
+   "baseline": 142,
    "anchor": [
-    126,
-    153
+    120,
+    142
    ],
    "char": "rongsokan-b",
    "view": "angle",
@@ -51558,13 +51558,13 @@
     "cartoon"
    ],
    "source": "owner workshop cast atlas (Downloads): Workshop cast and wrecked engine",
-   "w": 239,
-   "h": 186,
+   "w": 227,
+   "h": 174,
    "outline": 4,
-   "baseline": 183,
+   "baseline": 172,
    "anchor": [
-    119,
-    183
+    113,
+    172
    ],
    "char": "rongsokan-b",
    "view": "angle",
