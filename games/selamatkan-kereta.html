@@ -11,7 +11,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v63.54-20261010a">
+<link rel="stylesheet" href="du-buttons.css?v=v63.55-20261010a">
 <title>Selamatkan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -209,29 +209,29 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.6</div>
-<script src="data/emoji-map.js?v=v63.54-20261010a"></script><script src="data/ui-sprites.js?v=v63.54-20261010a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v63.54-20261010a"></script>
-<script src="train-shared.js?v=v63.54-20261010a"></script>
-<script src="data/train-world.js?v=v63.54-20261010a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-picker.js?v=v63.54-20261010a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
-<script src="train-vfx.js?v=v63.54-20261010a"></script>
-<script src="motion.js?v=v63.54-20261010a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v63.54-20261010a"></script>
-<script src="data/bg-themes.js?v=v63.54-20261010a"></script>
-<script src="data/bg-renderers.js?v=v63.54-20261010a"></script>
-<script src="data/bg-npcs.js?v=v63.54-20261010a"></script>
-<script src="data/bg-audio.js?v=v63.54-20261010a"></script>
-<script src="data/bg-events.js?v=v63.54-20261010a"></script>
+<script src="data/emoji-map.js?v=v63.55-20261010a"></script><script src="data/ui-sprites.js?v=v63.55-20261010a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v63.55-20261010a"></script>
+<script src="train-shared.js?v=v63.55-20261010a"></script>
+<script src="data/train-world.js?v=v63.55-20261010a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-picker.js?v=v63.55-20261010a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
+<script src="train-vfx.js?v=v63.55-20261010a"></script>
+<script src="motion.js?v=v63.55-20261010a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v63.55-20261010a"></script>
+<script src="data/bg-themes.js?v=v63.55-20261010a"></script>
+<script src="data/bg-renderers.js?v=v63.55-20261010a"></script>
+<script src="data/bg-npcs.js?v=v63.55-20261010a"></script>
+<script src="data/bg-audio.js?v=v63.55-20261010a"></script>
+<script src="data/bg-events.js?v=v63.55-20261010a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G16 (Practice Mode) -->
-<script src="obstacle-engine.js?v=v63.54-20261010a"></script>
-<script src="data/kids-questions.js?v=v63.54-20261010a"></script>
-<script src="data/obstacles.js?v=v63.54-20261010a"></script>
-<script src="data/routes.js?v=v63.54-20261010a"></script>
-<script src="data/reward-catalog.js?v=v63.54-20261010a"></script>
-<script src="reward-gallery.js?v=v63.54-20261010a"></script>
-<script src="settings-modal.js?v=v63.54-20261010a"></script>
+<script src="obstacle-engine.js?v=v63.55-20261010a"></script>
+<script src="data/kids-questions.js?v=v63.55-20261010a"></script>
+<script src="data/obstacles.js?v=v63.55-20261010a"></script>
+<script src="data/routes.js?v=v63.55-20261010a"></script>
+<script src="data/reward-catalog.js?v=v63.55-20261010a"></script>
+<script src="reward-gallery.js?v=v63.55-20261010a"></script>
+<script src="settings-modal.js?v=v63.55-20261010a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v63.54-20261010a"></script>
+<script src="train-bgm.js?v=v63.55-20261010a"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.21 D1: READY-SET-GO countdown -->
@@ -299,14 +299,14 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
-<script src="../shared/rz-responsive.js?v=v63.54-20261010a"></script>
-<script src="data/freeze-watchdog.js?v=v63.54-20261010a"></script>
-<script src="data/save-engine.js?v=v63.54-20261010a"></script>
-<script src="game-modal.js?v=v63.54-20261010a"></script>
-<script src="train-character-sprite.js?v=v63.54-20261010a"></script>
+<script src="../shared/rz-responsive.js?v=v63.55-20261010a"></script>
+<script src="data/freeze-watchdog.js?v=v63.55-20261010a"></script>
+<script src="data/save-engine.js?v=v63.55-20261010a"></script>
+<script src="game-modal.js?v=v63.55-20261010a"></script>
+<script src="train-character-sprite.js?v=v63.55-20261010a"></script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v63.54-20261010a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
+<script src="vfx-engine.js?v=v63.55-20261010a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
 <script>
 'use strict'
 
@@ -3038,8 +3038,17 @@ function playSfxCrash(){
 
 function hideQuizPanel(){quizActive=false;quizLocked=false;document.getElementById('quiz-panel').classList.remove('show')}
 
+// shared VFX library moment (games/vfx-moments.js) at Pixi coordinates -> viewport; size follows the screen height
+function vfxMoment (kind, x, y, mult) {
+  try {
+    var M = window.VFX && VFX.Moment; if (!M || !M.ready() || !app) return
+    var cv = app.canvas || app.view, r = cv.getBoundingClientRect(), k = r.width / (app.screen.width || r.width)
+    M[kind]({ x: r.left + x * k, y: r.top + y * k }, { size: Math.max(110, app.screen.height * 0.2 * k * (mult || 1)) })
+  } catch (e) {}
+}
 function triggerDeath(){S.trainState='DEAD';S.deadTimer=1.2;S.gameOver=true;hideQuizPanel();flashScreen('#ff0000',0.55);
   // A-353 — shared explosion burst on the crashing loco (visual only)
+  if (trainContainer) vfxMoment('puff', trainContainer.x, trainContainer.y-20, 1)
   try{ if(window.ExplosionFX && trainContainer) ExplosionFX.pixi(stage, trainContainer.x, trainContainer.y-20, {variant:'smoke', scale:1.35}) }catch(_){}
 }
 function triggerArrival(){
@@ -3293,6 +3302,7 @@ function startArrivalCelebration(W,H){
   // self-ticks via rAF and honors reduced-motion (halves counts) internally.
   try {
     if (window.TrainVFX && window.PIXI && typeof stage !== 'undefined' && stage && trainContainer) {
+      vfxMoment('celebrate', trainContainer.x + 20, trainContainer.y - 70, 1.1)
       TrainVFX.particles.spawn({ type:'confetti', parent: stage, x: trainContainer.x + 20, y: trainContainer.y - 90, count: 26, speed: 4.5, upBias: 1.4, ttl: 85, spread: 140, gravity: 0.06 })
       TrainVFX.particles.spawn({ type:'sparkle',  parent: stage, x: trainContainer.x + 60, y: trainContainer.y - 50, count: 14, speed: 3,   ttl: 65, spread: 100 })
     }
@@ -3454,5 +3464,6 @@ window.addEventListener('resize',()=>{
   }, 120)
 })
 </script>
+<script src="data/vfx-db.js?v=v63.55-20261010a"></script><script src="vfx-moments.js?v=v63.55-20261010a"></script>
 </body>
 </html>

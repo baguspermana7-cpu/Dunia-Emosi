@@ -207,6 +207,8 @@
     })
   }
   function flyToken () {
+    // shared VFX library: a gold sparkle burst over the scene for a right answer (size follows the stage; reduced motion = fade)
+    try { var st = $('stage'); if (window.VFX && VFX.Moment && st) { var sr = st.getBoundingClientRect(); VFX.Moment.reward({ x: sr.left + sr.width / 2, y: sr.top + sr.height * 0.4 }, { size: Math.min(sr.width, sr.height) * 0.55 }) } } catch (e) {}
     var dot = $('dots').children[SES.i]; if (!dot || reduced()) return
     var t = document.createElement('img'); t.className = 'token'; t.src = lib('game/star'); t.alt = ''
     var from = $('btn-check').getBoundingClientRect(), to = dot.getBoundingClientRect()
@@ -231,6 +233,7 @@
     $('d-sticker').src = lib(w.icon)
     $('d-sub').textContent = SES.right + ' dari 5 kartu kamu jawab benar. ' + (newSticker ? 'Kamu mendapat stiker ' + w.id + '!' : 'Terus berlatih, kamu makin pintar!')
     show('scr-done'); sfx('good')
+    try { var sk = $('d-sticker'); if (window.VFX && VFX.Moment && sk) setTimeout(function () { var kr = sk.getBoundingClientRect(); VFX.Moment.celebrate({ x: kr.left + kr.width / 2, y: kr.top + kr.height / 2 }, { size: Math.max(140, kr.height * 1.3) }) }, 250) } catch (e) {}   // world complete
   }
 
   /* ── parent gate + settings ──────────────────────────────────────────── */
