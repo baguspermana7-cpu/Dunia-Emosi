@@ -79,7 +79,7 @@
     pre: 'Seekor burung membuat sarang di cerobong dan tidak mau pindah! Bunyikan peluit sampai ia terbang.',
     post: 'Sarang terpental dan burung terbang riang. Masinis memasak telur di wajan, harum sekali.',
     rows: [',,T,,,,,,,T,,', '1=====C====Z', ',,e,,,,,,,,,'],
-    trains: [M()], critters: [{ kind: 'burung', sprite: 'animal/bird-blue/fly' }], verbs: ['tiup', 'muat'],
+    trains: [M()], decor: [{ r: 0, c: 6, sprite: 'kereta-prop/bird-nest', label: 'Sarang burung' }], critters: [{ kind: 'burung', sprite: 'animal/bird-blue/fly' }], verbs: ['tiup', 'muat'],
     goal: [{ t: 'critter', label: 'Burung terbang', icon: 'bird' }, { t: 'load', kind: 'telur', label: 'Telur dimasak', icon: 'telur' }, { t: 'reach', label: 'Lanjut jalan', icon: 'flag' }], slots: 8 })
 
   L({ id: 'mv10', n: 10, title: 'Mendaki dan Perpotongan Jalur', bg: 34, biome: 'mountain',
@@ -115,7 +115,7 @@
     pre: 'Roda gerbong paling belakang lecet. Ambil perban, lalu balut roda itu. Setelah itu perjalanan boleh lanjut.',
     post: 'Roda gerbong terbalut perban putih. Tidak sakit sama sekali. Kereta berjalan lagi dengan hati-hati.',
     rows: [',,T,,,,,,,,,,', ',,n,,,,,,A,,,,', '=1==========Z', ',,,,,,,,,,,,,'],
-    trains: [M({ wagons: 1 })], legend: { n: { kind: 'perban', sprite: 'real/things/bandage', q: 'muat' } }, stops: { A: { accepts: 'perban', label: 'Roda gerbong', q: 'loket', sprite: 'real/things/bandage' } }, verbs: ['muat', 'turun'],
+    trains: [M({ wagons: 1 })], legend: { n: { kind: 'perban', sprite: 'kereta-prop/wheel-bandage', q: 'muat' } }, stops: { A: { accepts: 'perban', label: 'Roda gerbong', q: 'loket', sprite: 'kereta-prop/wheel-bandage' } }, verbs: ['muat', 'turun'],
     goal: [{ t: 'load', kind: 'perban', label: 'Ambil perban', icon: 'bandage' }, { t: 'deliver', stop: 'A', label: 'Roda terbalut', icon: 'bandage' }, { t: 'reach', label: 'Lanjut perjalanan', icon: 'flag' }], slots: 8 })
 
   L({ id: 'mv15', n: 15, title: 'Persiapan Penyambutan', bg: 8, biome: 'station',
@@ -150,7 +150,7 @@
     pre: 'Saatnya penghargaan! Terima karangan daun untuk kereta dan medali untuk masinis. Mereka siap di tepi peron.',
     post: 'Malivlak berangkat dengan karangan daun di depan. Masinis memakai medali dan tersenyum lebar.',
     rows: [',,,,,,,,,,,,', ',w,,,,m,,,,,,', '1==========Z', ',,,,,,,,,,,,'],
-    trains: [M()], legend: { w: { kind: 'karangan', sprite: 'nature/maple-leaf', q: 'muat' }, m: { kind: 'medali', sprite: 'game/trophy-gold' } }, verbs: ['muat'],
+    trains: [M()], legend: { w: { kind: 'karangan', sprite: 'kereta-prop/wreath', q: 'muat' }, m: { kind: 'medali', sprite: 'kereta-prop/medal' } }, verbs: ['muat'],
     goal: [{ t: 'load', kind: 'karangan', label: 'Karangan daun', icon: 'wreath' }, { t: 'load', kind: 'medali', label: 'Medali masinis', icon: 'medal' }, { t: 'reach', label: 'Berangkat', icon: 'flag' }], slots: 7 })
 
   L({ id: 'mv20', n: 20, title: 'Masuk Museum', bg: 40, biome: 'museum',

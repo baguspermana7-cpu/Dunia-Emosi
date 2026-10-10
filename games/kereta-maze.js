@@ -212,7 +212,8 @@
     var st = ST[S.story]
     try { if (typeof W.saveLevelProgress === 'function') W.saveLevelProgress(st.gid, lv.n, r.stars) } catch (e) {}
     KA.setBg($('kr-bg'), lv, 1600)
-    $('kr-hero').innerHTML = '<div class="kh-glow"></div>' + lv.trains.map(function (t, i) { return '<div class="kh-hero ' + (i ? 'b' : 'a') + '"><img alt="" src="' + face(t.id, 'happy', i ? 'se' : 'sw') + '"></div>' }).join('')
+    var cheer = castOf(lv).filter(function (k) { return /^(story-char|malivlak-char)\//.test(k) }).slice(0, 2).map(function (k, i) { return '<div class="kr-cheer" style="left:' + (i ? 66 : 54) + '%;animation-delay:' + (i * .25) + 's"><img alt="" src="' + KA.src(k) + '"></div>' }).join('')
+    $('kr-hero').innerHTML = cheer + '<div class="kh-glow"></div>' + lv.trains.map(function (t, i) { return '<div class="kh-hero ' + (i ? 'b' : 'a') + '"><img alt="" src="' + face(t.id, 'happy', i ? 'se' : 'sw') + '"></div>' }).join('')
     var rows = r.progress.map(function (g) { return '<div class="krow">' + KA.goalIcon(g) + '<span class="nm">' + esc(g.label) + '</span><b>' + g.have + '/' + g.need + '</b><span class="ok">' + icon('check') + '</span></div>' }).join('')
     var last = lv.n >= levels(S.story).length
     $('kr-wrap').innerHTML = '<img class="kr-trophy" alt="" src="' + KA.src('game/trophy-gold') + '"><div class="kr-stars" aria-label="' + r.stars + ' bintang">' + starsHtml(r.stars) + '</div><h2 class="kplaque kr-title">Misi Selesai</h2><div class="kr-card kpar"><p><b>' + esc(lv.title) + '</b></p><p>' + esc(lv.post) + '</p>' + rows + routeHtml(r) + '<p class="kb-draft">Langkah dipakai: ' + r.used + (r.opt ? ' (paling singkat: ' + r.opt + ')' : '') + '</p></div>' +

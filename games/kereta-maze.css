@@ -455,3 +455,13 @@ h1, h2, h3 { font-family: var(--serif); }
 .kc-title { white-space: nowrap; }
 .knav-tab { white-space: nowrap; }
 @media (max-aspect-ratio: 1/1), (max-width: 760px) { .kg-panel { grid-template-columns: minmax(0, 1fr); } .kg-panel > * { min-width: 0; } .kg-box { max-width: none; } .kg-run .kbtn { min-width: 0; } .knav-tab { padding: .45em .6em; font-size: 10px; } }
+
+.kb-bird { position: absolute; left: 0; width: calc(var(--cs) * .9); height: auto; z-index: 3; pointer-events: none; filter: drop-shadow(0 4px 3px rgba(0,0,0,.3)); }
+.kb-deco.cast.scene { width: calc(var(--cs) * 1.5); max-height: calc(var(--cs) * 1.7); }
+.kb-gimg { position: absolute; left: 0; top: 0; transform: translate(-50%, -62%); width: calc(var(--cs) * .9); height: auto; filter: drop-shadow(0 3px 2px rgba(0,0,0,.35)); transition: opacity .25s var(--ease); }
+.kb-gate.barrier.open .kb-gimg { opacity: .55; }
+.kb-gate .kb-gateico, .kb-gate .kb-lamp { display: none; }
+.kr-cheer { position: absolute; bottom: 0; width: min(24%, 200px); filter: drop-shadow(0 10px 12px rgba(0,0,0,.5)); animation: kcheer .9s cubic-bezier(.23,1,.32,1) infinite alternate; }
+.kr-cheer img { display: block; width: 100%; height: auto; }
+@keyframes kcheer { to { translate: 0 -14px; } }
+@media (prefers-reduced-motion: reduce) { .kr-cheer, .kb-bird { animation: none; } }

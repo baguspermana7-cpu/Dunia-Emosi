@@ -24,7 +24,7 @@
   /* the owner's real tiles (kereta-tile/* in the shared database): loaded once, drawn over the procedural board; any tile that
      is missing leaves the procedural drawing in place. The curve art comes in two shapes, W-N (curve-ne) and N-E (curve-nw);
      the other two corners are those turned 180 degrees. */
-  var TILE_NAMES = ['rail-h', 'rail-v', 'curve-ne', 'curve-nw', 'switch-left', 'switch-right', 'crossing', 'grass', 'grass-flowers', 'water', 'dirt-path', 'bridge', 'gravel']
+  var TILE_NAMES = ['rail-h', 'rail-v', 'curve-ne', 'curve-nw', 'switch-left', 'switch-right', 'crossing', 'grass', 'grass-flowers', 'water', 'dirt-path', 'bridge', 'gravel', 'bridge-sagging', 'tunnel-portal', 'buffer', 'level-crossing']
   var TILES = {}, tilesP = null
   function loadTiles () {
     if (tilesP) return tilesP
@@ -71,22 +71,26 @@
       dirs.forEach(function (d) { line(cx, cy, E[d][0], E[d][1], -off); line(cx, cy, E[d][0], E[d][1], off) })
       if (dirs.length === 1) { var d1 = dirs[0], o2 = (d1 + 2) % 4; line(cx, cy, E[o2][0] * 0.35 + cx * 0.65, E[o2][1] * 0.35 + cy * 0.65, 0) }
     }
+    function hasPin (r, c) { for (var k in m.pins) if (m.pins[k][0] === r && m.pins[k][1] === c) return true; return false }
+    function startAt (r, c) { for (var i = 0; i < m.trains.length; i++) if (m.trains[i].r === r && m.trains[i].c === c) return true; return false }
     function putTile (g, name, x, y, rot, flip, k) {
       var im = TILES[name]; if (!im) return false
       var sz = cs * (k || 1.2), h = cs / 2
       g.save(); g.translate(x + h, y + h); if (rot) g.rotate(rot * Math.PI / 2); if (flip) g.scale(-1, 1)
       g.drawImage(im, -sz / 2, -sz / 2, sz, sz); g.restore(); return true
     }
-    function tileRail (g, x, y, ch, dirs) {   // true when the real tiles drew this rail cell
+    var sag = lv.ch === 'brave' && [15, 23, 24].indexOf(lv.n) >= 0   // the bridge chapters that tilt: a sagging span, still safe to cross
+    function tileRail (g, x, y, ch, dirs, r, c) {   // true when the real tiles drew this rail cell
       if (!TILES['rail-h'] || ch === 'F' || ch === 'U') return false
       var has = function (d) { return dirs.indexOf(d) >= 0 }, n = dirs.length, N = has(0), E = has(1), S = has(2), Wd = has(3)
-      if (ch === 'B') { var vert = (N || S) && !(E || Wd); return putTile(g, 'bridge', x, y, vert ? 1 : 0, false, 1.2) }
+      if (ch === 'B') { var vert = (N || S) && !(E || Wd); return putTile(g, sag ? 'bridge-sagging' : 'bridge', x, y, vert ? 1 : 0, false, 1.2) }
       if (n === 4) return putTile(g, 'crossing', x, y, 0, false)
       if (n === 3) { if (!E) return putTile(g, 'switch-left', x, y, 0); if (!Wd) return putTile(g, 'switch-right', x, y, 0); return putTile(g, !S ? 'switch-left' : 'switch-right', x, y, 1) }
       if (n === 2 && !((N && S) || (E && Wd))) {
         if (Wd && N) return putTile(g, 'curve-ne', x, y, 0); if (N && E) return putTile(g, 'curve-nw', x, y, 0)
         if (E && S) return putTile(g, 'curve-ne', x, y, 2); if (S && Wd) return putTile(g, 'curve-nw', x, y, 2)
       }
+      if (n === 1 && !hasPin(r, c) && !startAt(r, c)) { var od = dirs[0]; return putTile(g, 'buffer', x, y, { 2: 0, 3: 1, 0: 2, 1: 3 }[od], false, 1.1) }
       var horiz = (E || Wd) && !(N || S) || (n === 0)
       return putTile(g, horiz ? 'rail-h' : 'rail-v', x, y, 0)
     }
@@ -109,12 +113,18 @@
         var X = c * cs, Y = r * cs, dirs = []
         for (var d = 0; d < 4; d++) if (isRail(m, r + DR[d], c + DC[d])) dirs.push(d)
         if (TILES.grass) { putTile(g, 'grass', X, Y, (r + c) % 2 * 2, false, 1.24) }
-        if (!tileRail(g, X, Y, ch, dirs)) drawRailCell(g, X, Y, ch, dirs, r, c)
+        if (!tileRail(g, X, Y, ch, dirs, r, c)) drawRailCell(g, X, Y, ch, dirs, r, c)
         else if (ch === 'M' || ch === 'H' || ch === 'P' || ch === 'S') drawRailCellExtras(g, X, Y, ch, r, c)
       }
       // roof (tunnel mounds) on its own layer so the trains vanish inside
       var gr = roof.getContext('2d'); gr.setTransform(dpr, 0, 0, dpr, 0, 0); gr.clearRect(0, 0, w, h)
-      for (r = 0; r < R; r++) for (c = 0; c < C; c++) if (m.grid[r][c] === 'U') drawMound(gr, c * cs, r * cs, r, c)
+      for (r = 0; r < R; r++) for (c = 0; c < C; c++) if (m.grid[r][c] === 'U') {
+        var endU = tile(m, r, c - 1) !== 'U' || tile(m, r, c + 1) !== 'U'
+        if (TILES['tunnel-portal'] && endU) putTile(gr, 'tunnel-portal', c * cs, r * cs, 0, false, 1.5); else drawMound(gr, c * cs, r * cs, r, c)
+      }
+      var g2 = ground.getContext('2d')
+      if (lv.biome === 'night') { g2.fillStyle = 'rgba(14,24,70,.42)'; g2.fillRect(0, 0, w, h) }
+      else if (lv.biome === 'dream') { g2.fillStyle = 'rgba(168,150,255,.22)'; g2.fillRect(0, 0, w, h); for (var q = 0; q < 14; q++) { g2.fillStyle = 'rgba(255,248,200,.8)'; g2.beginPath(); g2.arc(w * hash(q, 3, 1), h * hash(q, 5, 2), 1.5 + hash(q, 7, 3) * 2, 0, 6.28); g2.fill() } }
     }
     function drawRailCellExtras (g, x, y, ch, r, c) {
       if (ch === 'M') { g.fillStyle = 'rgba(120,85,45,.55)'; for (var b = 0; b < 3; b++) { g.beginPath(); g.ellipse(x + cs * (0.2 + 0.3 * b), y + cs * (hash(r, c, b) > 0.5 ? 0.12 : 0.88), cs * 0.07, cs * 0.04, 0, 0, 6.28); g.fill() } }
@@ -194,6 +204,8 @@
         if (!free[i] || (crit.kura && /turtle/.test(k)) || (crit.beruang && /beruang/.test(k)) || (crit.burung && /bird/.test(k))) return
         var ce = img(k, 'kb-deco cast'); place(ce, free[i][0], free[i][1], 0, -0.18); ce.title = (W.KeretaCast.names || {})[k] || ''; decor.appendChild(ce)
       })
+      var scn = { station: ['kereta-tile/water-tower', 'kereta-prop/ticket-booth'], town: ['kereta-prop/station-small'], home: ['kereta-prop/farmhouse'], forest: ['kereta-prop/log-stack', 'kereta-prop/sawmill'], valley: ['kereta-prop/haystack'], country: ['kereta-prop/haystack', 'kereta-prop/farmhouse'], field: ['kereta-prop/haystack'] }[lv.biome] || []
+      scn.forEach(function (k, i) { var f = free[free.length - 1 - i * 3]; if (!f) return; var se = img(k, 'kb-deco cast scene'); place(se, f[0], f[1], 0, -0.2); decor.appendChild(se) })
       ;(lv.decor || []).forEach(function (d) { var e2 = img(d.sprite, 'kb-deco peek'); place(e2, d.r, d.c, 0, -0.05); if (d.label) e2.title = d.label; decor.appendChild(e2) })
     }
     function pinEl (r, c, goal) {
@@ -207,11 +219,11 @@
         e.setAttribute('data-id', o.id)
         if (o.type === 'cargo') { inner = img(o.sprite || KA.cargo(o.kind), 'kb-img cargo'); e.appendChild(inner); place(e, o.r, o.c, 0, -0.04) }
         else if (o.type === 'stop') {
-          e.appendChild(img('mojo-prop/building-station', 'kb-img bldg'))
+          e.appendChild(img('kereta-tile/platform', 'kb-img bldg'))
           var tag = el('div', 'kb-stoptag', '<span class="kb-stopicon">' + KA.goalIcon({ icon: o.accepts, sprite: o.sprite }) + '</span><b class="kb-stopcount">0/' + o.need + '</b>')
           e.appendChild(tag); place(e, o.r, o.c, 0, -0.1)
         } else if (o.type === 'lever') { e.innerHTML = KA.icon('tuas', 'kb-leverico') + (o.q ? '<i class="kb-qmark">?</i>' : ''); place(e, o.r, o.c, 0, 0) }
-        else if (o.type === 'gate') { e.className += ' ' + (o.look === 'barrier' ? 'barrier' : 'signal'); e.innerHTML = o.look === 'barrier' ? '<i class="kb-bar"></i>' : KA.icon('signal', 'kb-gateico') + '<i class="kb-lamp"></i>'; place(e, o.r, o.c, 0, -0.12); gateEl[o.id] = e }
+        else if (o.type === 'gate') { e.className += ' ' + (o.look === 'barrier' ? 'barrier' : 'signal'); e.innerHTML = o.look === 'barrier' ? '<img class="kb-gimg" alt="" src="' + KA.src('kereta-tile/level-crossing') + '"><i class="kb-bar"></i>' : '<img class="kb-gimg" alt="" src="' + KA.src('kereta-tile/signal-red') + '">'; place(e, o.r, o.c, 0, -0.18); gateEl[o.id] = e }
         else if (o.type === 'critter') {
           var key = KA.critter(o.kind) || o.sprite
           if (key) e.appendChild(img(key, 'kb-img critter')); else { e.innerHTML = KA.placeholder('Goro'); e.className += ' ph' }
@@ -255,10 +267,10 @@
       KG.world(lv).things.forEach(function (o) { warm(o.sprite || (o.type === 'cargo' ? KA.cargo(o.kind) : o.type === 'critter' ? KA.critter(o.kind) : null)) })
       ;(lv.decor || []).forEach(function (d) { warm(d.sprite) })
     }
-    function setEngine (id, x, y, d, rot) {
+    function setEngine (id, x, y, d, rot, bob) {
       var T = trainEl[id], s = engineSize(id, d)
       if (T.key !== s.key) { T.img.src = KA.src(s.key); T.key = s.key; T.img.style.width = s.w + 'px'; T.img.style.height = s.h + 'px'; T.head.style.transformOrigin = (s.w / 2) + 'px ' + (s.h / 2) + 'px' }
-      T.head.style.transform = 'translate3d(' + (x - s.w / 2).toFixed(2) + 'px,' + (y - s.h / 2).toFixed(2) + 'px,0)' + (rot ? ' rotate(' + rot.toFixed(2) + 'deg)' : '')
+      T.head.style.transform = 'translate3d(' + (x - s.w / 2).toFixed(2) + 'px,' + (y - s.h / 2).toFixed(2) + 'px,0)' + (rot ? ' rotate(' + rot.toFixed(2) + 'deg)' : '') + (bob && bob !== 1 ? ' scale(' + bob.toFixed(3) + ')' : '')
       T.d = d
     }
     function setWagon (T, i, x, y, horiz, id) {
@@ -269,7 +281,7 @@
     function trimWagons (T, n) { while (T.wag.length > n) { var w = T.wag.pop(); if (w.parentNode) w.parentNode.removeChild(w) } }
     function placeTrain (t, pos) { // pos: {head:[r,c], tail:[[r,c]...], rot}
       var T = trainEl[t.id], hp = px(pos.head[0], pos.head[1])
-      setEngine(t.id, hp.x, hp.y, pos.d != null ? pos.d : t.d, pos.rot || 0)
+      setEngine(t.id, hp.x, hp.y, pos.d != null ? pos.d : t.d, pos.rot || 0, pos.bob)
       trimWagons(T, pos.tail.length)
       var prev = pos.head
       pos.tail.forEach(function (c, i) {
@@ -290,7 +302,7 @@
         if (o.type === 'cargo') { e.style.display = gone ? 'none' : ''; place(e, o.r, o.c, 0, -0.04) }
         else if (o.type === 'critter') { e.style.display = o.gone ? 'none' : '' }
         else if (o.type === 'wagon') { e.style.display = o.taken ? 'none' : ''; e.firstChild.className = 'kb-wag ' + (o.parked ? 'parked' : 'free') + (lv.wagonSprite === 'mojo-prop/logs' ? ' logs' : ''); place(e, o.r, o.c, 0, 0) }
-        else if (o.type === 'gate') { e.classList.toggle('open', !!o.open) }
+        else if (o.type === 'gate') { e.classList.toggle('open', !!o.open); var gi = e.querySelector('.kb-gimg'); if (gi && o.look !== 'barrier') { var gs = KA.src('kereta-tile/signal-' + (o.open ? 'green' : 'red')); if (gi.getAttribute('src') !== gs) gi.setAttribute('src', gs) } }
         else if (o.type === 'lever') { e.classList.toggle('on', !!o.on) }
         else if (o.type === 'stop') { var cn = e.querySelector('.kb-stopcount'); if (cn) cn.textContent = o.count + '/' + o.need; e.classList.toggle('done', o.count >= o.need) }
       })
@@ -329,9 +341,9 @@
         tween(D, function (e, u) {
           hd[0] = tb.r + (ta.r - tb.r) * e; hd[1] = tb.c + (ta.c - tb.c) * e
           for (var j = 0; j < newTail.length; j++) { var o = steps[j] || steps[steps.length - 1]; tail[j][0] = o[0] + (newTail[j][0] - o[0]) * e; tail[j][1] = o[1] + (newTail[j][1] - o[1]) * e }
-          pos.rot = turn * (1 - e) + (FX.reduced() ? 0 : Math.sin(u * Math.PI) * 0.7)
+          pos.rot = turn * (1 - e) + (FX.reduced() ? 0 : Math.sin(u * Math.PI * 4) * 0.6); pos.bob = FX.reduced() ? 1 : 1 + Math.sin(u * Math.PI * 6) * 0.012
           placeTrain(ta, pos)
-          if (puffed < 3 && u > puffed / 3 + 0.05) { puffed++; var hp = px(hd[0], hd[1]); fx.emit('steam', hp.x + DC[toD] * cs * 0.18, hp.y + DR[toD] * cs * 0.18 - cs * 0.15, { dx: -DC[toD] * 0.6, r: cs * 0.1 }); if (tg === 'M') fx.emit('dust', hp.x, hp.y + cs * 0.2); if (tg === 'P') fx.emit('ripple', hp.x, hp.y) }
+          if (puffed < 5 && u > puffed / 5 + 0.04) { puffed++; var hp = px(hd[0], hd[1]); fx.emit('steam', hp.x + DC[toD] * cs * 0.18, hp.y + DR[toD] * cs * 0.18 - cs * 0.15, { dx: -DC[toD] * 0.6, r: cs * 0.1 }); if (tg === 'M') fx.emit('dust', hp.x, hp.y + cs * 0.2); if (tg === 'P') fx.emit('ripple', hp.x, hp.y) }
         }, function () { pending--; if (!pending) verbs() }, prof)
       })
     }
@@ -370,7 +382,9 @@
       fx.emit('dust', p.x + DC[d] * cs * 0.5, p.y + DR[d] * cs * 0.5)
     }
     function celebrate () {
-      FX.sound.fanfare()
+      FX.sound.whistle(); later(function () { FX.sound.fanfare() }, 650)
+      Object.keys(trainEl).forEach(function (id) { var h = trainEl[id].head; if (!FX.reduced() && h.animate) h.animate([{ translate: '0 0' }, { translate: '0 -' + cs * 0.18 + 'px' }, { translate: '0 0' }, { translate: '0 -' + cs * 0.1 + 'px' }, { translate: '0 0' }], { duration: 800, easing: 'cubic-bezier(.23,1,.32,1)' }) })
+      if (last) last.trains.forEach(function (t) { var p = px(t.r, t.c); fx.emit('ring', p.x, p.y - cs * 0.2); fx.burst('star', p.x, p.y - cs * 0.3, 6) })
       for (var i = 0; i < 4; i++) later(function () { fx.burst('confetti', Math.random() * C * cs, R * cs * 0.2, 14) }, i * 180)
     }
 
@@ -389,7 +403,21 @@
     }
     var ro = null
     if (W.ResizeObserver) { var pend = 0; ro = new W.ResizeObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; if (!destroyed) layout() }) }); ro.observe(host) }
-    function reset (world) { last = world; layout(); sync(world); preload() }
+    var lifeT = 0
+    function life () {   // board idle life: a bird crosses now and then, animals on the grass hop (reduced motion: none)
+      if (destroyed || FX.reduced()) return
+      var open = /country|valley|field|pond|station|town|mountain|bridge/.test(lv.biome || '')
+      if (open && Math.random() < 0.5 && W.Element && Element.prototype.animate) {
+        var b = img('animal/bird-blue/fly', 'kb-bird'); b.style.top = (5 + Math.random() * 25) + '%'; tilt.appendChild(b)
+        var dir = Math.random() < 0.5 ? 1 : -1; b.style.transform = dir < 0 ? 'scaleX(-1)' : ''
+        var an = b.animate([{ translate: (dir > 0 ? '-12%' : '112%') + ' 0', opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.92 }, { translate: (dir > 0 ? '112%' : '-12%') + ' -30px', opacity: 0 }], { duration: 7000 + Math.random() * 3000, easing: 'linear' })
+        an.onfinish = function () { if (b.parentNode) b.parentNode.removeChild(b) }
+      }
+      var hop = [].filter.call(decor.querySelectorAll('.kb-deco.cast'), function (e) { return /rabbit|kelinci|bird|turtle|deer/.test(e.getAttribute('src') || '') })
+      if (hop.length && Element.prototype.animate) { var h = hop[Math.floor(Math.random() * hop.length)]; h.animate([{ translate: '0 0' }, { translate: '0 -' + cs * 0.22 + 'px', offset: 0.4 }, { translate: '0 0' }], { duration: 420, easing: 'cubic-bezier(.23,1,.32,1)', iterations: 2 }) }
+      lifeT = later(life, 3200 + Math.random() * 3500)
+    }
+    function reset (world) { last = world; layout(); sync(world); preload(); clearTimeout(lifeT); lifeT = later(life, 1800) }
     function destroy () { destroyed = true; timers.forEach(clearTimeout); if (ro) ro.disconnect(); fx.clear() }
     return { preload: preload, setSpeed: function (k) { speed = k || 1 }, reset: reset, apply: apply, sync: sync, bonk: bonk, celebrate: celebrate, destroy: destroy, cell: function (r, c) { var p = px(r, c); return { x: p.x, y: p.y, s: cs } }, get size () { return size }, root: root, fx: fx }
   }

@@ -24,17 +24,17 @@
   function plate (n, w) { var s = (n < 10 ? '0' : '') + n; return base() + 'assets/train/backdrop/level' + s + '-' + (w || 1024) + '.webp' }
 
   var CARGO = {
-    penumpang: 'malivlak-char/penumpang-ungu/berdiri', tamu: 'malivlak-char/penumpang-jas-kotak/jalan', koper: 'tk-prop/suitcase-5', surat: 'tk-prop/sealed-letter', kayu: 'mojo-prop/logs',
-    batubara: 'tk-prop/coal-pile', ikan: 'animal/ikan/samping', telur: 'real/food/eggs', medali: 'game/trophy-gold', karangan: 'nature/maple-leaf',
-    beruang: 'animal/beruang/depan', perban: 'real/things/bandage', koran: 'school/notebook', baut: 'mojo-prop/bolt', bintang: 'game/star',
+    penumpang: 'malivlak-char/penumpang-ungu/berdiri', tamu: 'malivlak-char/penumpang-jas-kotak/jalan', koper: 'kereta-prop/luggage-pile', surat: 'kereta-prop/mail-sacks', kayu: 'kereta-prop/log-stack',
+    batubara: 'kereta-prop/coal-pile', ikan: 'animal/ikan/samping', telur: 'kereta-prop/frying-pan-egg', medali: 'kereta-prop/medal', karangan: 'kereta-prop/wreath',
+    beruang: 'animal/beruang/depan', perban: 'kereta-prop/wheel-bandage', koran: 'school/notebook', baut: 'mojo-prop/bolt', bintang: 'game/star',
     bendera: 'game/flag-red', musisi: 'toys/trumpet', peti: 'game/crate-wood', x: 'toys/drum'
   }
   var CRITTER = { kura: 'animal/turtle/walk', burung: 'animal/bird-blue/fly', beruang: 'animal/beruang/depan', goro: 'train-char/goro-loco/front-34l' }
   var GOAL = { // goal glyph -> sprite key (or an svg name)
-    penumpang: 'malivlak-char/penumpang-ungu/berdiri', koper: 'tk-prop/suitcase-5', surat: 'tk-prop/sealed-letter', flag: 'game/flag-red', coal: 'tk-prop/coal-pile', wagon: 'mojo-train/coach-annie',
-    whistle: 'tk-prop/whistle', star: 'game/star', bird: 'animal/bird-blue/fly', bear: 'animal/beruang/depan', turtle: 'animal/turtle/walk', bandage: 'real/things/bandage',
-    log: 'mojo-prop/logs', news: 'school/notebook', bolt: 'mojo-prop/bolt', music: 'toys/trumpet', medal: 'game/trophy-gold', wreath: 'nature/maple-leaf', ikan: 'animal/ikan/samping',
-    telur: 'real/food/eggs', tunnel: 'mojo-prop/tunnel', signal: '#signal', door: '#door', carpet: '#carpet', goro: '#goro', stop: '#stop', wait: '#wait', lamp: '#lamp', consist: 'mojo-train/coach-annie', load: 'game/crate-wood', deliver: 'mojo-prop/building-station'
+    penumpang: 'malivlak-char/penumpang-ungu/berdiri', koper: 'kereta-prop/luggage-pile', surat: 'kereta-prop/mail-sacks', flag: 'game/flag-red', coal: 'kereta-prop/coal-pile', wagon: 'mojo-train/coach-annie',
+    whistle: 'tk-prop/whistle', star: 'game/star', bird: 'animal/bird-blue/fly', bear: 'animal/beruang/depan', turtle: 'animal/turtle/walk', bandage: 'kereta-prop/wheel-bandage',
+    log: 'kereta-prop/log-stack', news: 'school/notebook', bolt: 'mojo-prop/bolt', music: 'toys/trumpet', medal: 'kereta-prop/medal', wreath: 'kereta-prop/wreath', ikan: 'animal/ikan/samping',
+    telur: 'kereta-prop/frying-pan-egg', tunnel: 'mojo-prop/tunnel', signal: '#signal', door: '#door', carpet: '#carpet', goro: '#goro', stop: '#stop', wait: '#wait', lamp: '#lamp', consist: 'mojo-train/coach-annie', load: 'game/crate-wood', deliver: 'mojo-prop/building-station'
   }
 
   /* ── SVG command icons (24x24, currentColor) ─────────────────────────────────────────────────────── */
