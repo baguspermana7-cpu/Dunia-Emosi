@@ -54,3 +54,5 @@ assets/train/_bg-clean-OLD-reference-only/
 # (tools/qa-*.mjs) and is committed; _qa-* is scratch from a single session.
 tools/_qa-*.mjs
 docs/blippi/mockups/
+prompt/image/
+tools/qa-screenshots/
