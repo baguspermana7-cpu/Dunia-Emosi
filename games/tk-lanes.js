@@ -995,6 +995,14 @@
       pops.appendChild(e)
       later(function () { if (e.parentNode) e.parentNode.removeChild(e) }, big ? 1900 : 1100)
     }
+    // shared VFX library moment (games/vfx-moments.js) at a lane position; size from the ship's on-screen length
+    function moment (kind, x, z, mult) {
+      try {
+        var M = window.VFX && VFX.Moment; if (!M || !M.ready()) return
+        proj(x, z); var r = pops.getBoundingClientRect()
+        M[kind]({ x: r.left + PX, y: r.top + PY }, { size: Math.max(110, Math.min(vw, vh) * 0.2 * (mult || 1)) })
+      } catch (e) {}
+    }
     function sparkleAt (x, z, n) {
       if (reduced) return
       for (var i = 0; i < n && parts.length < 140; i++) {
@@ -1162,6 +1170,7 @@
             S.lastStarT = S.t
             if (o.type === 'star') { S.stars++; S.score += 10; pop(S.combo >= 3 ? 'Kombo x' + S.combo + '!' : '+10', o.x, o.z) } else { S.tokens++; S.score += 25; pop('Kompas +25', o.x, o.z) }
             if (SEA) sparkleAt(o.x, o.z, 10 + Math.min(12, S.combo * 3))
+            moment('reward', o.x, o.z, 0.8)
             audio.chime(false)
           }
           continue
@@ -1220,6 +1229,7 @@
         // the shield bubble takes this bump: no slow-down, no question
         S.shield = false; o.hit = true; o.passed = true; S.inv = 1.2
         spray(o.x, o.z, 16, 90, 'ice'); sparkleAt(S.x, S.d, 16); audio.chime(false)
+        moment('reward', S.x, S.d, 1)
         pop('Perisai melindungi!', S.x, S.d + SHIP_L * 0.6)
         return
       }
@@ -1274,7 +1284,7 @@
       if (reason === 'collide') {
         recover(res)
         // reward: a shield bubble that takes the next bump
-        if (ok) { S.shield = true; sparkleAt(S.x, S.d, 22) }
+        if (ok) { S.shield = true; sparkleAt(S.x, S.d, 22); moment('reward', S.x, S.d, 1) }
         S.easeT = 0
         return
       }
@@ -1284,13 +1294,13 @@
         if (ok) {
           S.bonus++; S.score += 30
           S.boostT = 3; S.rewardBoost = 3; S.boosted = true
-          sparkleAt(obj.x, obj.z, 30); if (confetti && !reduced) confetti.burst(vw / 2, vh * 0.45, 40)
+          sparkleAt(obj.x, obj.z, 30); moment('reward', obj.x, obj.z, 1.2); if (confetti && !reduced) confetti.burst(vw / 2, vh * 0.45, 40)
           pop(obj.kind === 'chest' ? 'Harta bonus! Melaju cepat!' : 'Bintang bonus! Melaju cepat!', 0, 0, true)
         } else pop('Tetap semangat!', 0, 0, true)
         audio.chime(ok)
       } else if (reason === 'gate') {
         var drop = function () { obj.dropping = true; audio.splash(1) }
-        if (ok) { drop(); S.score += 20; S.boostT = 2; S.rewardBoost = 2; sparkleAt(0, obj.z, 26); pop('Gerbang terbuka!', 0, 0, true) } else { pop('Gerbang tetap dibuka!', 0, 0, true); later(drop, 900) }
+        if (ok) { drop(); S.score += 20; S.boostT = 2; S.rewardBoost = 2; sparkleAt(0, obj.z, 26); moment('splash', 0, obj.z, 1.1); pop('Gerbang terbuka!', 0, 0, true) } else { pop('Gerbang tetap dibuka!', 0, 0, true); later(drop, 900) }
         audio.chime(ok)
       }
       if (!paused && !D.hidden) start()
@@ -1324,6 +1334,7 @@
     }
     function beginFinish () {
       S.finishing = 0.001
+      moment('celebrate', S.x, S.d, 1.1)
       if (confetti && !reduced) { confetti.burst(vw * 0.3, vh * 0.5, 60); confetti.burst(vw * 0.7, vh * 0.5, 60) }
       showBanner('Hebat! Ladang es terlewati!', 'Kamu kapten yang hebat.')
       audio.chime(true)

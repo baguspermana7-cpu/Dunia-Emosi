@@ -1306,6 +1306,7 @@
     }
     // correct: a small ring of star sprites pops out of the answer
     function burst (from) {
+      try { if (window.VFX && VFX.Moment && VFX.Moment.reward(from, { size: Math.max(150, from.getBoundingClientRect().height * 1.9) })) return } catch (e) {}   // shared library burst
       if (reduced) return
       var a = from.getBoundingClientRect(), cx = a.left + a.width / 2 - 13, cy = a.top + a.height / 2 - 13
       for (var k = 0; k < 7; k++) {

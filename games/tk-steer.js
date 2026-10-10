@@ -1195,6 +1195,14 @@
       var z = scale * S.zoom
       return { x: vw / 2 + (x - S.camX) * z, y: midY + (y - S.camY) * z }
     }
+    // shared VFX library moment (games/vfx-moments.js) at a world position; size follows the vessel's on-screen length
+    function moment (kind, x, y, mult) {
+      try {
+        var M = window.VFX && VFX.Moment; if (!M || !M.ready()) return
+        var p = worldToScreen(x, y), r = pops.getBoundingClientRect()
+        M[kind]({ x: r.left + p.x, y: r.top + p.y }, { size: Math.max(110, V.L * scale * S.zoom * 1.7 * (mult || 1)) })
+      } catch (e) {}
+    }
     function pop (text, x, y, good) {
       var p = worldToScreen(x, y)
       var e = el('div', 'tks-pop' + (good ? ' is-good' : '') + (SEA ? ' tkx-pop' : ''))
@@ -1458,7 +1466,7 @@
       if (S.shield) {
         // the shield bubble takes this bump: no slow-down, no question
         S.shield = false; b.bumped = true; S.bumpCd = 1.3
-        spray(b.x + nx * b.r, b.y + ny * b.r, 16, 80, nx, ny); sparkle(S.x, S.y, 18)
+        spray(b.x + nx * b.r, b.y + ny * b.r, 16, 80, nx, ny); sparkle(S.x, S.y, 18); moment('reward', S.x, S.y, 1)
         pop('Perisai melindungi!', S.x, S.y - V.L * 0.7, true); audio.chime(false)
         return
       }
@@ -1546,16 +1554,16 @@
       S.easeT = 0
       if (!ok) sayBrief(Q_WRONG)
       if (reason === 'collide') {
-        if (ok) { S.shield = true; sparkle(S.x, S.y, 22); pop('Perisai aktif!', S.x, S.y - V.L * 0.7, true) } else pop('Tetap semangat!', S.x, S.y - V.L * 0.7, true)
+        if (ok) { S.shield = true; sparkle(S.x, S.y, 22); moment('reward', S.x, S.y, 1); pop('Perisai aktif!', S.x, S.y - V.L * 0.7, true) } else pop('Tetap semangat!', S.x, S.y - V.L * 0.7, true)
       } else if (reason === 'buoy') {
         if (ok) {
           S.bonus++; S.boostT = 3
-          sparkle(obj.x, obj.y, 30); if (confetti && !reduced) confetti.burst(vw / 2, vh * 0.45, 40)
+          sparkle(obj.x, obj.y, 30); moment('reward', obj.x, obj.y, 1.2); if (confetti && !reduced) confetti.burst(vw / 2, vh * 0.45, 40)
           pop(obj.kind === 'chest' ? 'Harta bonus! Melaju cepat!' : 'Bintang bonus! Melaju cepat!', S.x, S.y - V.L * 0.8, true)
         } else pop('Tetap semangat!', S.x, S.y - V.L * 0.7, true)
       } else if (reason === 'gate') {
         var drop = function () { if (!dead) { obj.dropping = true; audio.splash(1) } }
-        if (ok) { drop(); S.boostT = 2; sparkle(obj.x, obj.y, 26); pop('Gerbang terbuka!', S.x, S.y - V.L * 0.8, true) } else { pop('Gerbang tetap dibuka!', S.x, S.y - V.L * 0.7, true); setTimeout(drop, 900) }
+        if (ok) { drop(); S.boostT = 2; sparkle(obj.x, obj.y, 26); moment('splash', obj.x, obj.y, 1.1); pop('Gerbang terbuka!', S.x, S.y - V.L * 0.8, true) } else { pop('Gerbang tetap dibuka!', S.x, S.y - V.L * 0.7, true); setTimeout(drop, 900) }
       }
       if (ok && S.qCombo >= 2) setTimeout(function () { if (!dead) pop('Kombo Pintar x' + S.qCombo + '!', S.x, S.y - V.L, true) }, 500)
       audio.chime(ok)
@@ -1606,7 +1614,7 @@
             g.passed = true; g.glow = 1
             spray(g.x - g.w / 2, g.y, 10, 60, 0, 0); spray(g.x + g.w / 2, g.y, 10, 60, 0, 0)
             S.combo = (S.combo || 0) + 1
-            sparkle(g.x, g.y, 18 + S.combo * 4)
+            sparkle(g.x, g.y, 18 + S.combo * 4); moment('reward', g.x, g.y, 0.9)
             pop(S.combo >= 2 ? 'Hebat! Kombo x' + S.combo : 'Hebat!', g.x, g.y, true)
             audio.chime(false)
           } else {
@@ -1623,6 +1631,7 @@
     }
     function beginFinish () {
       S.finishing = 0.0001
+      moment('celebrate', S.x, S.y, 1.1)
       if (confetti && !reduced) { confetti.burst(vw * 0.3, vh * 0.55, 60); confetti.burst(vw * 0.7, vh * 0.55, 60) }
       S.done = true
       goalChip.classList.add('is-done')
