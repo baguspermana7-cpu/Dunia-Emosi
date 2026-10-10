@@ -129,6 +129,13 @@ const SHELL = [
   // G32 Blippi Petualangan Penemuan (owner PRD v3): the Discovery Garage hub page and the
   // library art it shows, so the landing tile opens offline too.
   './games/blippi.html',
+  './games/blippi.css?v=v63.46-20261010b',
+  './games/blippi.js?v=v63.46-20261010b',
+  './games/blippi-mission.js?v=v63.46-20261010b',
+  './games/blippi-jalan.js?v=v63.46-20261010b',
+  './games/blippi-panels.js?v=v63.46-20261010b',
+  './games/data/blippi-art.js?v=v63.46-20261010b',
+  './games/data/blippi-missions.js?v=v63.46-20261010b',
   './assets/db/lib/mojo-bg/garage.webp',
   './assets/db/lib/vehicles/excavator.webp',
   './assets/db/lib/vehicles/car-red.webp',
