@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<meta name="theme-color" content="#1F6FD1">
+<title>Blippi Petualangan Penemuan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<!--
+  G32 "Blippi: Mega Discovery Adventure" (owner PRD v3, 2026-10-10).
+  First slice: the Discovery Garage hub (PRD 5.2) as a real screen -- its five
+  places, what each is for, and a way home. Gameplay, UI and Blippi art come from
+  the owner in stages; this page is where they land. Art here is the shared
+  library (sprites only, never emoji) until the owner's Blippi assets arrive.
+-->
+<style>
+:root{--ink:#16324F;--blue:#1F6FD1;--orange:#FF8A1F;--card:#FFFFFFEE;--ease:cubic-bezier(.23,1,.32,1)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#0E2A4A;font-family:Nunito,system-ui,sans-serif;color:var(--ink);
+  -webkit-user-select:none;user-select:none;touch-action:manipulation}
+#bg{position:fixed;inset:0;background:url('../assets/db/lib/mojo-bg/garage.webp') center/cover no-repeat;transform:scale(1.04)}
+#bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,42,74,.25),rgba(14,42,74,.55))}
+.scr{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;padding:max(14px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom))}
+.scr.on{display:flex}
+.top{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btn{border:0;border-radius:18px;background:var(--card);color:var(--ink);font:800 17px Nunito,sans-serif;min-height:52px;padding:0 18px;
+  display:inline-flex;align-items:center;gap:8px;box-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer;transition:transform .16s var(--ease)}
+.btn:active{transform:translateY(3px) scale(.97);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn svg{width:22px;height:22px}
+.btn.go{background:linear-gradient(180deg,#FFB347,var(--orange));color:#fff;font-size:24px;min-height:68px;padding:0 34px;border-radius:24px}
+/* title */
+#title{justify-content:center;gap:16px;text-align:center}
+.logo{display:flex;flex-direction:column;align-items:center;gap:4px}
+.logo img{width:min(46vmin,260px);filter:drop-shadow(0 10px 14px rgba(0,0,0,.35));animation:bob 2.6s ease-in-out infinite}
+.logo h1{margin:0;font:700 clamp(30px,6.4vmin,52px)/1.05 Fredoka,sans-serif;color:#fff;text-shadow:0 4px 0 #0B4FA3,0 8px 16px rgba(0,0,0,.35)}
+.logo h1 b{color:#FFD23F}
+.logo p{margin:0;font-weight:800;font-size:clamp(15px,2.6vmin,20px);color:#E8F2FF}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-1.5deg)}}
+/* hub */
+#hub h2{margin:4px 0 0;font:700 clamp(22px,4.2vmin,32px) Fredoka,sans-serif;color:#fff;text-shadow:0 3px 0 #0B4FA3}
+.say{margin:8px 0 12px;max-width:760px;background:var(--card);border-radius:18px;padding:10px 16px;font-weight:800;font-size:clamp(14px,2.4vmin,18px);
+  text-align:center;box-shadow:0 4px 0 rgba(0,0,0,.15);min-height:44px;display:flex;align-items:center;justify-content:center}
+.places{flex:1;width:100%;max-width:1100px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-content:center}
+.place{background:var(--card);border-radius:24px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  box-shadow:0 6px 0 rgba(0,0,0,.18);cursor:pointer;border:3px solid transparent;transition:transform .2s var(--ease),border-color .2s}
+.place:active{transform:scale(.96)}
+.place.sel{border-color:var(--orange);transform:translateY(-4px)}
+.place img{width:100%;max-width:120px;aspect-ratio:1;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(0,0,0,.2));transition:transform .3s var(--ease)}
+.place.sel img{transform:scale(1.08) rotate(-3deg)}
+.place b{font:700 clamp(15px,2.3vmin,19px)/1.1 Fredoka,sans-serif;text-align:center}
+.place span{font-size:13px;font-weight:700;color:#4A6480;text-align:center;line-height:1.25}
+@media (max-aspect-ratio:1/1){
+  .places{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;overflow:auto;padding-bottom:8px}
+  .place:last-child{grid-column:1/-1}
+  .place img{max-width:96px}
+}
+@media (prefers-reduced-motion:reduce){.logo img{animation:none}.place,.place img,.btn{transition:none}}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+
+<section class="scr on" id="title" aria-label="Judul">
+  <div class="logo">
+    <img src="../assets/db/lib/vehicles/excavator.webp" alt="">
+    <h1>Blippi<br><b>Petualangan Penemuan</b></h1>
+    <p>Kendarai, buat, coba, dan lihat kotamu tumbuh!</p>
+  </div>
+  <button class="btn go" id="btn-start">Ayo Mulai</button>
+  <button class="btn" id="btn-home-t" aria-label="Kembali ke beranda">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Beranda</button>
+</section>
+
+<section class="scr" id="hub" aria-label="Discovery Garage">
+  <div class="top">
+    <button class="btn" id="btn-back" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Kembali</button>
+    <h2>Discovery Garage</h2>
+    <button class="btn" id="btn-home" aria-label="Kembali ke beranda">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></button>
+  </div>
+  <div class="say" id="say">Kota sedang menyiapkan Festival Kendaraan. Ketuk satu tempat untuk melihat isinya!</div>
+  <div class="places" id="places"></div>
+</section>
+
+<script src="sw-reload.js?v=v63.46-20261010b"></script>
+<script>
+(function () {
+  'use strict'
+  var $ = function (id) { return document.getElementById(id) }
+  var LIB = '../assets/db/lib/'
+  // PRD 5.2: the hub's five places, each one tap away and readable without reading a long menu
+  var PLACES = [
+    { id: 'map',    name: 'Peta Meja',       art: 'mojo-prop/treasure-map', what: 'Pilih dunia dan misi',
+      line: 'Peta Meja: di sini kamu memilih dunia dan misi. Diorama kecilnya bergerak!' },
+    { id: 'park',   name: 'Parkiran',        art: 'vehicles/car-red',       what: 'Pilih kendaraanmu',
+      line: 'Parkiran: pilih kendaraan dan lihat apa yang bisa dilakukannya.' },
+    { id: 'shop',   name: 'Bengkel',         art: 'mojo-prop/toolbox',      what: 'Perbaiki dan uji komponen',
+      line: 'Bengkel: perbesar komponen, perbaiki, lalu uji sebelum dan sesudah.' },
+    { id: 'wall',   name: 'Dinding Penemuan', art: 'school/telescope',      what: 'Stiker dan hasil percobaan',
+      line: 'Dinding Penemuan: semua hasil percobaanmu tersimpan di sini sebagai stiker.' },
+    { id: 'yard',   name: 'Halaman Main',    art: 'mojo-prop/playground',   what: 'Bermain bebas',
+      line: 'Halaman Main: tanjakan, pasir, kerucut, dan klakson. Main bebas kapan saja!' }
+  ]
+  function tap () {
+    try { var c = new (window.AudioContext || window.webkitAudioContext)(), o = c.createOscillator(), g = c.createGain()
+      o.frequency.setValueAtTime(660, c.currentTime); o.frequency.exponentialRampToValueAtTime(990, c.currentTime + 0.08)
+      g.gain.setValueAtTime(0.08, c.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.12)
+      o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + 0.13); setTimeout(function () { c.close() }, 300) } catch (e) {}
+  }
+  function show (id) {
+    ;['title', 'hub'].forEach(function (s) { $(s).classList.toggle('on', s === id) })
+  }
+  function home () { location.href = '../index.html' }
+  function build () {
+    var box = $('places'); box.innerHTML = ''
+    PLACES.forEach(function (p) {
+      var d = document.createElement('div')
+      d.className = 'place'; d.setAttribute('role', 'button'); d.setAttribute('data-place', p.id)
+      d.innerHTML = '<img src="' + LIB + p.art + '.webp" alt=""><b>' + p.name + '</b><span>' + p.what + '</span>'
+      d.addEventListener('click', function () {
+        tap()
+        Array.prototype.forEach.call(box.children, function (c) { c.classList.toggle('sel', c === d) })
+        $('say').textContent = p.line
+      })
+      box.appendChild(d)
+    })
+  }
+  $('btn-start').addEventListener('click', function () { tap(); build(); show('hub') })
+  $('btn-back').addEventListener('click', function () { tap(); show('title') })
+  $('btn-home').addEventListener('click', home)
+  $('btn-home-t').addEventListener('click', home)
+  window.__g32 = { show: show, places: function () { return PLACES.map(function (p) { return p.id }) } }
+})()
+</script>
+</body>
+</html>

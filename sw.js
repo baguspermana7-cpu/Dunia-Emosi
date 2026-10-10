@@ -126,6 +126,16 @@ const SHELL = [
   './games/data/asset-index.js?v=v63.46-20261010b',
   './assets/db/lib/sd/logo.webp',
   './assets/db/lib/sd/logo-sd.webp',
+  // G32 Blippi Petualangan Penemuan (owner PRD v3): the Discovery Garage hub page and the
+  // library art it shows, so the landing tile opens offline too.
+  './games/blippi.html',
+  './assets/db/lib/mojo-bg/garage.webp',
+  './assets/db/lib/vehicles/excavator.webp',
+  './assets/db/lib/vehicles/car-red.webp',
+  './assets/db/lib/mojo-prop/treasure-map.webp',
+  './assets/db/lib/mojo-prop/toolbox.webp',
+  './assets/db/lib/mojo-prop/playground.webp',
+  './assets/db/lib/school/telescope.webp',
   // G29 Garasi Tempur: page + app + engine + card/fx/quiz modules + data, and the
   // shared sfx/vfx/save engines it loads. Truck sprites, arena backdrops and FX
   // frames are warmed by the page itself when it is idle (games/garasi-tempur.js).
