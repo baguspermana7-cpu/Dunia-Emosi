@@ -39,7 +39,7 @@ check(badMeta.length === 0, `view/facing/expression/anchor/baseline/missing pres
 const cast = allKeys.filter(k => idx[k].pose)
 const NEED = ['train-char/goro-loco/front-34l', 'train-char/goro-loco/front-34r', 'train-char/coach-green/side-l', 'train-char/caboose-red/front-34l',
   'story-char/henry/wave', 'story-char/henry/point', 'story-char/henry/worried', 'story-char/henry/shovel', 'story-char/scarlet/stand', 'story-char/scarlet/gesture', 'story-char/scarlet/worried',
-  'story-char/baron/stand', 'story-char/baron/shocked', 'story-char/katrina/stand', 'story-char/katrina/shovel', 'story-char/james/stand', 'story-char/carter/stand', 'story-char/carter/arms-crossed',
+  'story-char/baron/stand', 'story-char/baron/shocked', 'story-char/katrina/stand', 'story-char/katrina/shovel', 'story-char/carter/hands-open', 'story-char/james/arms-folded', 'story-char/james/scroll', 'story-char/james/walk-scroll', 'story-char/james/point-scroll',
   'animal/turtle/stand', 'animal/turtle/walk', 'animal/rabbit/sit', 'animal/rabbit/run', 'animal/deer/stand', 'animal/deer/graze', 'animal/bird-blue/fly', 'animal/cardinal/fly', 'animal/vulture/perch-1', 'animal/vulture/perch-2']
 check(NEED.every(k => idx[k]), `all ${NEED.length} supporting-cast keys present${NEED.filter(k => !idx[k]).length ? ' - missing ' + NEED.filter(k => !idx[k]) : ''}`)
 check(!allKeys.some(k => /linus|samson/.test(k) && idx[k].cat !== 'train-char'), 'no Linus / Samson in the cast families (they come from the earlier sheets)')

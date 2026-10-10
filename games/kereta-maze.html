@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#2b1a0e">
+<link rel="icon" href="../assets/db/lib/train-char/linus/front.webp">
+<title>Kereta Pemberani: Petualangan Rel</title>
+<!--
+  "Kereta Pemberani: Petualangan Rel" — rail-maze / planning side game of Lokomotif Pemberani (owner 2026-10-10).
+  Four storylines on one landing: Brave Locomotive (Linus & Samson), Malivlak, "Lomba ke Kota", and the classic
+  Lokomotif Pemberani game. Standalone page like G27-G31: offline PWA, per-avatar save, no API calls.
+  Modules: data/train-sprites (sprite DB helper) + kereta-grid (headless engine + solver) + data/kereta-levels-*
+  (60 levels) + data/soal-pack-kereta (SoalEngine questions) + kereta-art / kereta-fx / kereta-quiz / kereta-board
+  + kereta-maze (the screens). Art slots still owed by the owner: docs/KERETA-ART-SLOTS.md. No emoji.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kereta-maze.css?v=v63.51-20261010a">
+</head>
+<body>
+<main id="app" class="app" data-screen="home">
+
+  <!-- top navigation, on every screen: back arrow, BERANDA . PETA CERITA . KARAKTER, sound + settings -->
+  <nav class="knav" id="knav" aria-label="Navigasi utama">
+    <button class="kbtn-round" id="n-back" type="button" aria-label="Kembali"></button>
+    <span class="knav-loco" id="n-loco" aria-hidden="true"></span>
+    <div class="knav-tabs">
+      <button class="knav-tab" id="n-home" type="button" data-t="home">Beranda</button>
+      <button class="knav-tab" id="n-map" type="button" data-t="map">Peta Cerita</button>
+      <button class="knav-tab" id="n-char" type="button" data-t="char">Karakter</button>
+    </div>
+    <span class="knav-sp"></span>
+    <button class="kbtn-round" id="n-snd" type="button" aria-label="Suara"></button>
+    <button class="kbtn-round" id="n-set" type="button" aria-label="Pengaturan"></button>
+  </nav>
+
+  <!-- 1. landing: the hub of the four storylines -->
+  <section class="ks" id="ks-home" aria-label="Beranda">
+    <div class="kh-bg" id="kh-bg"></div>
+    <div class="kh-shade"></div>
+    <nav class="kh-stories" id="kh-stories" aria-label="Pilih cerita"></nav>
+    <div class="kh-left">
+      <div class="kh-logo" role="img" aria-label="Kereta Pemberani, Petualangan Rel">
+        <span class="kh-loco" id="kh-loco"></span>
+        <span class="kh-t1" id="kh-t1">Kereta Pemberani</span>
+        <span class="kh-t2" id="kh-t2">Petualangan Rel</span>
+      </div>
+      <p class="kh-tag">Susun langkah. Jalankan misi. Jadilah pemberani.</p>
+      <button class="kbtn kbtn-teal kbtn-xl" id="b-start" type="button"><span id="t-start">Mulai Petualangan</span><span class="kbtn-ic" id="ic-start"></span></button>
+      <button class="kbtn kbtn-wood kbtn-lg" id="b-chap" type="button"><span>Pilih Bab</span><span class="kbtn-ic" id="ic-chap"></span></button>
+      <button class="klink" id="b-guide" type="button"><span class="kbtn-ic" id="ic-guide"></span><span>Cara Bermain</span></button>
+    </div>
+    <div class="kh-heroes" id="kh-heroes" aria-hidden="true"></div>
+    <div class="kh-plan kplank" id="kh-plan" aria-hidden="true"></div>
+    <div class="kh-tray" id="kh-tray"></div>
+  </section>
+
+  <!-- 2. PETA CERITA: chapter list + the story map with numbered mission stops -->
+  <section class="ks" id="ks-chap" aria-label="Peta cerita">
+    <div class="kh-bg" id="kc-bg"></div>
+    <div class="kh-shade"></div>
+    <aside class="kp-side kplank" id="kp-side"></aside>
+    <div class="kp-map" id="kp-map"></div>
+    <div class="kc-card kpar" id="kc-card"></div>
+  </section>
+
+  <!-- 3. mission briefing -->
+  <section class="ks" id="ks-brief" aria-label="Briefing misi">
+    <div class="kh-bg" id="kb-bg"></div>
+    <div class="kh-shade"></div>
+    <div class="kb-paper kpar" id="kb-paper"></div>
+    <div class="kb-say kpar" id="kb-say"></div>
+    <div class="kb-hero" id="kb-hero"></div>
+  </section>
+
+  <!-- 4. the board -->
+  <section class="ks" id="ks-game" aria-label="Papan misi">
+    <div class="kg-bg" id="kg-bg"></div>
+    <header class="kg-top">
+      <div class="kg-title kplaque" id="kg-title"></div>
+      <div class="kg-hud" id="kg-hud" aria-live="polite"></div>
+      <div class="kg-aksi kplaque" id="kg-aksi" hidden></div>
+    </header>
+    <div class="kg-stage">
+      <div class="kg-board" id="kg-board"></div>
+      <aside class="kg-card kpar" id="kg-card" aria-label="Misi"></aside>
+      <div class="kg-bubble" id="kg-bubble" role="status" aria-live="polite" hidden></div>
+    </div>
+    <footer class="kg-panel kplank" id="kg-panel">
+      <div class="kg-box">
+        <div class="kg-boxlabel">Kotak Aksi</div>
+        <div class="kg-pal" id="kg-pal" role="group" aria-label="Kotak aksi"></div>
+      </div>
+      <div class="kg-seqwrap">
+        <div class="kg-seqhead"><span class="kg-seqlabel">Urutan Langkah</span><b id="kg-count">0/8</b><div class="kg-tabs" id="kg-tabs"></div>
+          <button class="kbtn kbtn-wood kbtn-sm" id="kg-clear" type="button"><span class="kbtn-ic" data-ico="clear"></span><span>Hapus</span></button>
+          <button class="kbtn kbtn-wood kbtn-sm" id="kg-reset" type="button"><span class="kbtn-ic" data-ico="reset"></span><span>Ulangi</span></button></div>
+        <div class="kg-lanes" id="kg-lanes"></div>
+        <div class="kg-slotbar" id="kg-slotbar" hidden></div>
+      </div>
+      <div class="kg-run">
+        <button class="kbtn kbtn-teal kbtn-lg" id="kg-run" type="button"><span class="kbtn-ic" data-ico="play"></span><span id="kg-run-t">Jalankan</span></button>
+        <div class="kg-live" id="kg-live" hidden><button class="kbtn kbtn-wood" id="kg-pause" type="button"><span class="kbtn-ic" data-ico="pause"></span><span>Jeda</span></button><button class="kbtn kbtn-blue" id="kg-speed" type="button" aria-label="Kecepatan">1x</button></div>
+        <div class="kg-mini"><button class="kbtn kbtn-wood kbtn-icon" id="kg-undo" type="button" aria-label="Hapus langkah terakhir"><span class="kbtn-ic" data-ico="undo"></span></button>
+        <button class="kbtn kbtn-wood" id="kg-hint" type="button"><span class="kbtn-ic" data-ico="hint"></span><span>Petunjuk</span></button></div>
+      </div>
+    </footer>
+  </section>
+
+  <!-- 5. result -->
+  <section class="ks" id="ks-res" aria-label="Misi selesai">
+    <div class="kh-bg" id="kr-bg"></div>
+    <div class="kh-shade"></div>
+    <canvas class="kr-fx" id="kr-fx" aria-hidden="true"></canvas>
+    <div class="kr-hero" id="kr-hero"></div>
+    <div class="kr-wrap" id="kr-wrap"></div>
+  </section>
+
+  <!-- 6. character collection -->
+  <section class="ks" id="ks-coll" aria-label="Koleksi karakter">
+    <div class="kh-bg" id="kk-bg"></div>
+    <div class="kh-shade"></div>
+    <h2 class="kplaque kc-title">Koleksi Karakter</h2>
+    <div class="kk-tabsrow" id="kk-tabsrow"></div>
+    <div class="kk-grid" id="kk-grid"></div>
+    <div class="kk-detail kpar" id="kk-detail"></div>
+  </section>
+
+  <div class="kov" id="kov" role="dialog" aria-modal="true" hidden></div>
+</main>
+
+<script src="data/asset-index.js?v=v63.51-20261010a"></script>
+<script src="data/save-engine.js?v=v63.51-20261010a"></script>
+<script src="data/sfx-engine.js?v=v63.51-20261010a"></script>
+<script src="data/soal-engine.js?v=v63.51-20261010a"></script>
+<script src="data/soal-gen-matematika.js?v=v63.51-20261010a"></script>
+<script src="data/soal-pack-kereta.js?v=v63.51-20261010a"></script>
+<script src="data/train-sprites.js?v=v63.51-20261010a"></script>
+<script src="kereta-grid.js?v=v63.51-20261010a"></script>
+<script src="data/kereta-cast.js?v=v63.51-20261010a"></script>
+<script src="data/kereta-levels-malivlak.js?v=v63.51-20261010a"></script>
+<script src="data/kereta-levels-hellbent.js?v=v63.51-20261010a"></script>
+<script src="data/kereta-levels-brave.js?v=v63.51-20261010a"></script>
+<script src="kereta-art.js?v=v63.51-20261010a"></script>
+<script src="kereta-fx.js?v=v63.51-20261010a"></script>
+<script src="kereta-quiz.js?v=v63.51-20261010a"></script>
+<script src="kereta-board.js?v=v63.51-20261010a"></script>
+<script src="kereta-play.js?v=v63.51-20261010a"></script>
+<script src="kereta-maze.js?v=v63.51-20261010a"></script>
+<script src="sw-reload.js?v=v63.51-20261010a"></script>
+</body>
+</html>

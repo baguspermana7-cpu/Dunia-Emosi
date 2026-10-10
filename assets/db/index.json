@@ -1,6 +1,130 @@
 {
  "_note": "Named shared sprites (owner sheets, tools/ingest-asset-sheets.py). Key = \"<category>/<name>\". Reuse before cropping anything new.",
  "assets": {
+  "animal/beruang/belakang": {
+   "file": "assets/db/lib/animal/beruang/belakang.webp",
+   "cat": "animal",
+   "tags": [
+    "bear",
+    "beruang",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 149,
+   "h": 250,
+   "outline": 3,
+   "baseline": 247,
+   "anchor": [
+    74,
+    247
+   ],
+   "char": "beruang",
+   "view": "rear",
+   "facing": 0,
+   "pose": "belakang",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 296,
+    "soft_after": 296
+   },
+   "tint": 18.2,
+   "name_id": "Beruang (tampak belakang)"
+  },
+  "animal/beruang/depan": {
+   "file": "assets/db/lib/animal/beruang/depan.webp",
+   "cat": "animal",
+   "tags": [
+    "bear",
+    "beruang",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 138,
+   "h": 260,
+   "outline": 3,
+   "baseline": 257,
+   "anchor": [
+    69,
+    257
+   ],
+   "char": "beruang",
+   "view": "front",
+   "facing": 180,
+   "pose": "depan",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 266,
+    "soft_after": 266
+   },
+   "tint": 16.2,
+   "name_id": "Beruang (tampak depan)"
+  },
+  "animal/beruang/duduk": {
+   "file": "assets/db/lib/animal/beruang/duduk.webp",
+   "cat": "animal",
+   "tags": [
+    "bear",
+    "beruang",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 175,
+   "h": 221,
+   "outline": 4,
+   "baseline": 218,
+   "anchor": [
+    87,
+    218
+   ],
+   "char": "beruang",
+   "view": "front",
+   "facing": 90,
+   "pose": "duduk",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 207,
+    "soft_after": 207
+   },
+   "tint": 12.8,
+   "name_id": "Beruang (duduk tegak)"
+  },
+  "animal/beruang/jalan": {
+   "file": "assets/db/lib/animal/beruang/jalan.webp",
+   "cat": "animal",
+   "tags": [
+    "bear",
+    "beruang",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 244,
+   "h": 206,
+   "outline": 5,
+   "baseline": 203,
+   "anchor": [
+    122,
+    203
+   ],
+   "char": "beruang",
+   "view": "side",
+   "facing": 90,
+   "pose": "jalan",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 327,
+    "soft_after": 327
+   },
+   "tint": 11.5,
+   "name_id": "Beruang (berjalan dengan empat kaki)"
+  },
   "animal/bird-blue/fly": {
    "file": "assets/db/lib/animal/bird-blue/fly.webp",
    "cat": "animal",
@@ -28,7 +152,8 @@
     "soft_before": 480,
     "soft_after": 477
    },
-   "tint": 0.9
+   "tint": 0.9,
+   "name_id": "Burung Biru"
   },
   "animal/cardinal/fly": {
    "file": "assets/db/lib/animal/cardinal/fly.webp",
@@ -39,14 +164,14 @@
     "animal",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 124,
-   "h": 107,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 115,
+   "h": 101,
    "outline": 3,
-   "baseline": 104,
+   "baseline": 98,
    "anchor": [
-    62,
-    104
+    57,
+    98
    ],
    "char": "cardinal",
    "view": "side",
@@ -54,10 +179,11 @@
    "pose": "fly",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 510,
-    "soft_after": 503
+    "soft_before": 439,
+    "soft_after": 409
    },
-   "tint": 77.7
+   "tint": 74.9,
+   "name_id": "Burung Merah"
   },
   "animal/deer/graze": {
    "file": "assets/db/lib/animal/deer/graze.webp",
@@ -68,14 +194,14 @@
     "animal",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 235,
-   "h": 187,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 238,
+   "h": 175,
    "outline": 4,
-   "baseline": 184,
+   "baseline": 172,
    "anchor": [
-    117,
-    184
+    119,
+    172
    ],
    "char": "deer",
    "view": "side",
@@ -83,10 +209,11 @@
    "pose": "graze",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 819,
-    "soft_after": 806
+    "soft_before": 678,
+    "soft_after": 676
    },
-   "tint": 61.2
+   "tint": 57.6,
+   "name_id": "Rusa"
   },
   "animal/deer/stand": {
    "file": "assets/db/lib/animal/deer/stand.webp",
@@ -97,14 +224,14 @@
     "animal",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 160,
-   "h": 242,
-   "outline": 4,
-   "baseline": 239,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 201,
+   "h": 244,
+   "outline": 5,
+   "baseline": 241,
    "anchor": [
-    80,
-    239
+    100,
+    241
    ],
    "char": "deer",
    "view": "side",
@@ -112,10 +239,197 @@
    "pose": "stand",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 745,
-    "soft_after": 741
+    "soft_before": 662,
+    "soft_after": 658
    },
-   "tint": 62.8
+   "tint": 58.6,
+   "name_id": "Rusa"
+  },
+  "animal/ikan/kanan": {
+   "file": "assets/db/lib/animal/ikan/kanan.webp",
+   "cat": "animal",
+   "tags": [
+    "fish",
+    "ikan",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 120,
+   "h": 55,
+   "outline": 3,
+   "baseline": 52,
+   "anchor": [
+    60,
+    52
+   ],
+   "char": "ikan",
+   "view": "side",
+   "facing": 90,
+   "pose": "kanan",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 222,
+    "soft_after": 222
+   },
+   "tint": 4.1,
+   "name_id": "Ikan (menghadap ke kanan dengan tubuh mendatar)"
+  },
+  "animal/ikan/samping": {
+   "file": "assets/db/lib/animal/ikan/samping.webp",
+   "cat": "animal",
+   "tags": [
+    "fish",
+    "ikan",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 108,
+   "h": 52,
+   "outline": 3,
+   "baseline": 49,
+   "anchor": [
+    54,
+    49
+   ],
+   "char": "ikan",
+   "view": "side",
+   "facing": 90,
+   "pose": "samping",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 191,
+    "soft_after": 191
+   },
+   "tint": 8.8,
+   "name_id": "Ikan"
+  },
+  "animal/kelinci/berdiri": {
+   "file": "assets/db/lib/animal/kelinci/berdiri.webp",
+   "cat": "animal",
+   "tags": [
+    "rabbit",
+    "kelinci",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 68,
+   "h": 171,
+   "outline": 3,
+   "baseline": 168,
+   "anchor": [
+    34,
+    168
+   ],
+   "char": "kelinci",
+   "view": "side",
+   "facing": 90,
+   "pose": "berdiri",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 354,
+    "soft_after": 354
+   },
+   "tint": 24.9,
+   "name_id": "Kelinci Berdiri"
+  },
+  "animal/kelinci/duduk-belakang": {
+   "file": "assets/db/lib/animal/kelinci/duduk-belakang.webp",
+   "cat": "animal",
+   "tags": [
+    "rabbit",
+    "kelinci",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 92,
+   "h": 151,
+   "outline": 3,
+   "baseline": 148,
+   "anchor": [
+    46,
+    148
+   ],
+   "char": "kelinci",
+   "view": "rear",
+   "facing": 0,
+   "pose": "duduk-belakang",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 273,
+    "soft_after": 273
+   },
+   "tint": 16.4,
+   "name_id": "Kelinci (duduk membelakangi sambil menoleh)"
+  },
+  "animal/kelinci/jongkok": {
+   "file": "assets/db/lib/animal/kelinci/jongkok.webp",
+   "cat": "animal",
+   "tags": [
+    "rabbit",
+    "kelinci",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 159,
+   "h": 136,
+   "outline": 3,
+   "baseline": 133,
+   "anchor": [
+    79,
+    133
+   ],
+   "char": "kelinci",
+   "view": "side",
+   "facing": 90,
+   "pose": "jongkok",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 374,
+    "soft_after": 374
+   },
+   "tint": 24.7,
+   "name_id": "Kelinci Jongkok"
+  },
+  "animal/kelinci/lompat": {
+   "file": "assets/db/lib/animal/kelinci/lompat.webp",
+   "cat": "animal",
+   "tags": [
+    "rabbit",
+    "kelinci",
+    "animal",
+    "malivlak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 155,
+   "h": 118,
+   "outline": 3,
+   "baseline": 115,
+   "anchor": [
+    77,
+    115
+   ],
+   "char": "kelinci",
+   "view": "side",
+   "facing": 90,
+   "pose": "lompat",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 369,
+    "soft_after": 369
+   },
+   "tint": 17.0,
+   "name_id": "Kelinci (melompat)"
   },
   "animal/rabbit/run": {
    "file": "assets/db/lib/animal/rabbit/run.webp",
@@ -126,14 +440,14 @@
     "animal",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
    "w": 180,
-   "h": 135,
+   "h": 129,
    "outline": 3,
-   "baseline": 132,
+   "baseline": 126,
    "anchor": [
     90,
-    132
+    126
    ],
    "char": "rabbit",
    "view": "side",
@@ -141,10 +455,11 @@
    "pose": "run",
    "expression": "happy",
    "fringe": {
-    "soft_before": 507,
-    "soft_after": 504
+    "soft_before": 409,
+    "soft_after": 409
    },
-   "tint": 65.4
+   "tint": 56.5,
+   "name_id": "Kelinci"
   },
   "animal/rabbit/sit": {
    "file": "assets/db/lib/animal/rabbit/sit.webp",
@@ -155,14 +470,14 @@
     "animal",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 101,
-   "h": 144,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 110,
+   "h": 175,
    "outline": 3,
-   "baseline": 141,
+   "baseline": 172,
    "anchor": [
-    50,
-    141
+    55,
+    172
    ],
    "char": "rabbit",
    "view": "side",
@@ -170,10 +485,41 @@
    "pose": "sit",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 395,
-    "soft_after": 392
+    "soft_before": 305,
+    "soft_after": 305
    },
-   "tint": 65.3
+   "tint": 49.7,
+   "name_id": "Kelinci"
+  },
+  "animal/turtle/shell": {
+   "file": "assets/db/lib/animal/turtle/shell.webp",
+   "cat": "animal",
+   "tags": [
+    "turtle",
+    "kura-kura",
+    "animal",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 126,
+   "h": 100,
+   "outline": 3,
+   "baseline": 97,
+   "anchor": [
+    63,
+    97
+   ],
+   "char": "turtle",
+   "view": "side",
+   "facing": 90,
+   "pose": "shell",
+   "expression": "worried",
+   "fringe": {
+    "soft_before": 225,
+    "soft_after": 225
+   },
+   "tint": 18.1,
+   "name_id": "Kura-kura"
   },
   "animal/turtle/stand": {
    "file": "assets/db/lib/animal/turtle/stand.webp",
@@ -202,7 +548,8 @@
     "soft_before": 357,
     "soft_after": 355
    },
-   "tint": 29.9
+   "tint": 29.9,
+   "name_id": "Kura-kura"
   },
   "animal/turtle/walk": {
    "file": "assets/db/lib/animal/turtle/walk.webp",
@@ -231,7 +578,8 @@
     "soft_before": 409,
     "soft_after": 409
    },
-   "tint": 19.6
+   "tint": 19.6,
+   "name_id": "Kura-kura"
   },
   "animal/vulture/perch-1": {
    "file": "assets/db/lib/animal/vulture/perch-1.webp",
@@ -242,14 +590,14 @@
     "animal",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 160,
-   "h": 128,
-   "outline": 3,
-   "baseline": 125,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 162,
+   "h": 154,
+   "outline": 4,
+   "baseline": 151,
    "anchor": [
-    80,
-    125
+    81,
+    151
    ],
    "char": "vulture",
    "view": "side",
@@ -257,10 +605,11 @@
    "pose": "perch-1",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 482,
-    "soft_after": 473
+    "soft_before": 583,
+    "soft_after": 572
    },
-   "tint": 20.8
+   "tint": 16.7,
+   "name_id": "Burung Nasar"
   },
   "animal/vulture/perch-2": {
    "file": "assets/db/lib/animal/vulture/perch-2.webp",
@@ -271,14 +620,14 @@
     "animal",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 149,
-   "h": 123,
-   "outline": 3,
-   "baseline": 120,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 155,
+   "h": 157,
+   "outline": 4,
+   "baseline": 154,
    "anchor": [
-    74,
-    120
+    77,
+    154
    ],
    "char": "vulture",
    "view": "side",
@@ -286,10 +635,11 @@
    "pose": "perch-2",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 438,
-    "soft_after": 428
+    "soft_before": 563,
+    "soft_after": 557
    },
-   "tint": 28.3
+   "tint": 18.1,
+   "name_id": "Burung Nasar"
   },
   "animals/bee": {
    "file": "assets/db/lib/animals/bee.webp",
@@ -8238,6 +8588,1246 @@
    "w": 233,
    "h": 239,
    "psnr": 43.6
+  },
+  "malivlak-char/masinis/ikan": {
+   "file": "assets/db/lib/malivlak-char/masinis/ikan.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis (mengangkat ikan)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 217,
+   "h": 279,
+   "outline": 5,
+   "baseline": 276,
+   "anchor": [
+    108,
+    276
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "ikan",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 443,
+    "soft_after": 443
+   },
+   "tint": 19.3,
+   "name_id": "Masinis (mengangkat ikan)"
+  },
+  "malivlak-char/masinis/jalan": {
+   "file": "assets/db/lib/malivlak-char/masinis/jalan.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis (berjalan)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 192,
+   "h": 277,
+   "outline": 4,
+   "baseline": 274,
+   "anchor": [
+    96,
+    274
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "jalan",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 429,
+    "soft_after": 429
+   },
+   "tint": 26.2,
+   "name_id": "Masinis (berjalan)"
+  },
+  "malivlak-char/masinis/medali": {
+   "file": "assets/db/lib/malivlak-char/masinis/medali.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis bermedali",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 201,
+   "h": 274,
+   "outline": 5,
+   "baseline": 271,
+   "anchor": [
+    100,
+    271
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "medali",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 443,
+    "soft_after": 443
+   },
+   "tint": 40.9,
+   "name_id": "Masinis Bermedali"
+  },
+  "malivlak-char/masinis/palu": {
+   "file": "assets/db/lib/malivlak-char/masinis/palu.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis memegang palu",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 229,
+   "h": 203,
+   "outline": 5,
+   "baseline": 200,
+   "anchor": [
+    114,
+    200
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "palu",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 406,
+    "soft_after": 406
+   },
+   "tint": 28.1,
+   "name_id": "Masinis Memegang Palu"
+  },
+  "malivlak-char/masinis/periksa": {
+   "file": "assets/db/lib/malivlak-char/masinis/periksa.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis (berjongkok dan memeriksa ke bawah)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 183,
+   "h": 187,
+   "outline": 4,
+   "baseline": 184,
+   "anchor": [
+    91,
+    184
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "periksa",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 297,
+    "soft_after": 297
+   },
+   "tint": 28.6,
+   "name_id": "Masinis (berjongkok dan memeriksa ke bawah)"
+  },
+  "malivlak-char/masinis/pipa": {
+   "file": "assets/db/lib/malivlak-char/masinis/pipa.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis berpipa",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 163,
+   "h": 272,
+   "outline": 4,
+   "baseline": 269,
+   "anchor": [
+    81,
+    269
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "pipa",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 399,
+    "soft_after": 399
+   },
+   "tint": 30.6,
+   "name_id": "Masinis Berpipa"
+  },
+  "malivlak-char/masinis/pipa-2": {
+   "file": "assets/db/lib/malivlak-char/masinis/pipa-2.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis (berdiri dengan pipa di mulut)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 159,
+   "h": 278,
+   "outline": 4,
+   "baseline": 275,
+   "anchor": [
+    79,
+    275
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "pipa-2",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 349,
+    "soft_after": 349
+   },
+   "tint": 22.0,
+   "name_id": "Masinis (berdiri dengan pipa di mulut)"
+  },
+  "malivlak-char/masinis/terkejut": {
+   "file": "assets/db/lib/malivlak-char/masinis/terkejut.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis (terkejut sambil mengangkat tangan)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 197,
+   "h": 279,
+   "outline": 5,
+   "baseline": 276,
+   "anchor": [
+    98,
+    276
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "terkejut",
+   "expression": "shocked",
+   "fringe": {
+    "soft_before": 460,
+    "soft_after": 459
+   },
+   "tint": 30.1,
+   "name_id": "Masinis (terkejut sambil mengangkat tangan)"
+  },
+  "malivlak-char/masinis/wajan": {
+   "file": "assets/db/lib/malivlak-char/masinis/wajan.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "masinis",
+    "malivlak",
+    "cartoon",
+    "masinis membawa wajan",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 204,
+   "h": 264,
+   "outline": 5,
+   "baseline": 261,
+   "anchor": [
+    102,
+    261
+   ],
+   "char": "masinis",
+   "view": "side",
+   "facing": 90,
+   "pose": "wajan",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 421,
+    "soft_after": 421
+   },
+   "tint": 32.8,
+   "name_id": "Masinis Membawa Wajan"
+  },
+  "malivlak-char/orkes/drum": {
+   "file": "assets/db/lib/malivlak-char/orkes/drum.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain drum",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 227,
+   "h": 221,
+   "outline": 5,
+   "baseline": 218,
+   "anchor": [
+    113,
+    218
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "drum",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 345,
+    "soft_after": 345
+   },
+   "tint": 41.6,
+   "name_id": "Pemain Drum"
+  },
+  "malivlak-char/orkes/drum-angkat": {
+   "file": "assets/db/lib/malivlak-char/orkes/drum-angkat.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain drum (mengangkat pemukul drum)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 255,
+   "h": 258,
+   "outline": 6,
+   "baseline": 255,
+   "anchor": [
+    127,
+    255
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "drum-angkat",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 395,
+    "soft_after": 395
+   },
+   "tint": 24.4,
+   "name_id": "Pemain Drum (mengangkat pemukul drum)"
+  },
+  "malivlak-char/orkes/kontrabas": {
+   "file": "assets/db/lib/malivlak-char/orkes/kontrabas.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain kontrabas",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 175,
+   "h": 310,
+   "outline": 4,
+   "baseline": 307,
+   "anchor": [
+    87,
+    307
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "kontrabas",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 495,
+    "soft_after": 495
+   },
+   "tint": 42.4,
+   "name_id": "Pemain Kontrabas"
+  },
+  "malivlak-char/orkes/kontrabas-2": {
+   "file": "assets/db/lib/malivlak-char/orkes/kontrabas-2.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain kontrabas (memainkan kontrabas)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 178,
+   "h": 298,
+   "outline": 4,
+   "baseline": 295,
+   "anchor": [
+    89,
+    295
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "kontrabas-2",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 428,
+    "soft_after": 428
+   },
+   "tint": 19.2,
+   "name_id": "Pemain Kontrabas (memainkan kontrabas)"
+  },
+  "malivlak-char/orkes/pemimpin": {
+   "file": "assets/db/lib/malivlak-char/orkes/pemimpin.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemimpin orkes",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 204,
+   "h": 243,
+   "outline": 5,
+   "baseline": 240,
+   "anchor": [
+    102,
+    240
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "pemimpin",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 413,
+    "soft_after": 401
+   },
+   "tint": 11.2,
+   "name_id": "Pemimpin Orkes"
+  },
+  "malivlak-char/orkes/pemimpin-kiri": {
+   "file": "assets/db/lib/malivlak-char/orkes/pemimpin-kiri.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemimpin orkes (mengarahkan tongkat ke kiri)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 236,
+   "h": 220,
+   "outline": 5,
+   "baseline": 217,
+   "anchor": [
+    118,
+    217
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "pemimpin-kiri",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 359,
+    "soft_after": 358
+   },
+   "tint": 4.8,
+   "name_id": "Pemimpin Orkes (mengarahkan tongkat ke kiri)"
+  },
+  "malivlak-char/orkes/pemimpin-tongkat": {
+   "file": "assets/db/lib/malivlak-char/orkes/pemimpin-tongkat.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemimpin orkes mengayun tongkat",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 192,
+   "h": 263,
+   "outline": 4,
+   "baseline": 260,
+   "anchor": [
+    96,
+    260
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "pemimpin-tongkat",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 391,
+    "soft_after": 387
+   },
+   "tint": 12.4,
+   "name_id": "Pemimpin Orkes Mengayun Tongkat"
+  },
+  "malivlak-char/orkes/terompet": {
+   "file": "assets/db/lib/malivlak-char/orkes/terompet.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain terompet",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 150,
+   "h": 303,
+   "outline": 3,
+   "baseline": 300,
+   "anchor": [
+    75,
+    300
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "terompet",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 426,
+    "soft_after": 424
+   },
+   "tint": 36.0,
+   "name_id": "Pemain Terompet"
+  },
+  "malivlak-char/orkes/terompet-atas": {
+   "file": "assets/db/lib/malivlak-char/orkes/terompet-atas.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain terompet (meniup terompet mengarah ke atas)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 179,
+   "h": 312,
+   "outline": 4,
+   "baseline": 309,
+   "anchor": [
+    89,
+    309
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "terompet-atas",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 461,
+    "soft_after": 460
+   },
+   "tint": 30.1,
+   "name_id": "Pemain Terompet (meniup terompet mengarah ke atas)"
+  },
+  "malivlak-char/orkes/tuba": {
+   "file": "assets/db/lib/malivlak-char/orkes/tuba.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain tuba",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 180,
+   "h": 312,
+   "outline": 4,
+   "baseline": 309,
+   "anchor": [
+    90,
+    309
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "tuba",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 466,
+    "soft_after": 464
+   },
+   "tint": 76.9,
+   "name_id": "Pemain Tuba"
+  },
+  "malivlak-char/orkes/tuba-tekuk": {
+   "file": "assets/db/lib/malivlak-char/orkes/tuba-tekuk.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "orkes",
+    "malivlak",
+    "cartoon",
+    "pemain tuba (meniup tuba sambil menekuk lutut)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 220,
+   "h": 299,
+   "outline": 5,
+   "baseline": 296,
+   "anchor": [
+    110,
+    296
+   ],
+   "char": "orkes",
+   "view": "side",
+   "facing": 90,
+   "pose": "tuba-tekuk",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 457,
+    "soft_after": 451
+   },
+   "tint": 42.5,
+   "name_id": "Pemain Tuba (meniup tuba sambil menekuk lutut)"
+  },
+  "malivlak-char/pembaca-pidato/gestur": {
+   "file": "assets/db/lib/malivlak-char/pembaca-pidato/gestur.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "pembaca",
+    "malivlak",
+    "cartoon",
+    "pembaca pidato bergestur",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 204,
+   "h": 209,
+   "outline": 5,
+   "baseline": 206,
+   "anchor": [
+    102,
+    206
+   ],
+   "char": "pembaca-pidato",
+   "view": "side",
+   "facing": 90,
+   "pose": "gestur",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 317,
+    "soft_after": 316
+   },
+   "tint": 30.2,
+   "name_id": "Pembaca Pidato Bergestur"
+  },
+  "malivlak-char/pembaca-pidato/kertas": {
+   "file": "assets/db/lib/malivlak-char/pembaca-pidato/kertas.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "pembaca",
+    "malivlak",
+    "cartoon",
+    "pembaca pidato",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 183,
+   "h": 208,
+   "outline": 4,
+   "baseline": 205,
+   "anchor": [
+    91,
+    205
+   ],
+   "char": "pembaca-pidato",
+   "view": "side",
+   "facing": 90,
+   "pose": "kertas",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 298,
+    "soft_after": 296
+   },
+   "tint": 23.9,
+   "name_id": "Pembaca Pidato"
+  },
+  "malivlak-char/pembaca-pidato/terkejut": {
+   "file": "assets/db/lib/malivlak-char/pembaca-pidato/terkejut.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "pembaca",
+    "malivlak",
+    "cartoon",
+    "pembaca pidato (memegang kertas dengan ekspresi terkejut)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 203,
+   "h": 206,
+   "outline": 5,
+   "baseline": 203,
+   "anchor": [
+    101,
+    203
+   ],
+   "char": "pembaca-pidato",
+   "view": "side",
+   "facing": 90,
+   "pose": "terkejut",
+   "expression": "shocked",
+   "fringe": {
+    "soft_before": 289,
+    "soft_after": 288
+   },
+   "tint": 19.3,
+   "name_id": "Pembaca Pidato (memegang kertas dengan ekspresi terkejut)"
+  },
+  "malivlak-char/penumpang-jas-kotak/jalan": {
+   "file": "assets/db/lib/malivlak-char/penumpang-jas-kotak/jalan.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang berjas kotak",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 173,
+   "h": 274,
+   "outline": 4,
+   "baseline": 271,
+   "anchor": [
+    86,
+    271
+   ],
+   "char": "penumpang-jas-kotak",
+   "view": "side",
+   "facing": 90,
+   "pose": "jalan",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 403,
+    "soft_after": 402
+   },
+   "tint": 47.7,
+   "name_id": "Penumpang Berjas Kotak"
+  },
+  "malivlak-char/penumpang-jas-kotak/jam-saku": {
+   "file": "assets/db/lib/malivlak-char/penumpang-jas-kotak/jam-saku.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang berjas kotak (memeriksa jam saku)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 165,
+   "h": 258,
+   "outline": 4,
+   "baseline": 255,
+   "anchor": [
+    82,
+    255
+   ],
+   "char": "penumpang-jas-kotak",
+   "view": "side",
+   "facing": 90,
+   "pose": "jam-saku",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 392,
+    "soft_after": 392
+   },
+   "tint": 31.4,
+   "name_id": "Penumpang Berjas Kotak (memeriksa jam saku)"
+  },
+  "malivlak-char/penumpang-ungu/berdiri": {
+   "file": "assets/db/lib/malivlak-char/penumpang-ungu/berdiri.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang ungu (berdiri membawa koper)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 145,
+   "h": 285,
+   "outline": 3,
+   "baseline": 282,
+   "anchor": [
+    72,
+    282
+   ],
+   "char": "penumpang-ungu",
+   "view": "side",
+   "facing": 90,
+   "pose": "berdiri",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 368,
+    "soft_after": 366
+   },
+   "tint": 30.9,
+   "name_id": "Penumpang Ungu (berdiri membawa koper)"
+  },
+  "malivlak-char/penumpang-ungu/duduk": {
+   "file": "assets/db/lib/malivlak-char/penumpang-ungu/duduk.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang ungu (duduk memegang koper di pangkuan)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 188,
+   "h": 238,
+   "outline": 4,
+   "baseline": 235,
+   "anchor": [
+    94,
+    235
+   ],
+   "char": "penumpang-ungu",
+   "view": "side",
+   "facing": 90,
+   "pose": "duduk",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 291,
+    "soft_after": 291
+   },
+   "tint": 28.3,
+   "name_id": "Penumpang Ungu (duduk memegang koper di pangkuan)"
+  },
+  "malivlak-char/penumpang-ungu/koper": {
+   "file": "assets/db/lib/malivlak-char/penumpang-ungu/koper.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang ungu berkoper",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 219,
+   "h": 277,
+   "outline": 5,
+   "baseline": 274,
+   "anchor": [
+    109,
+    274
+   ],
+   "char": "penumpang-ungu",
+   "view": "side",
+   "facing": 90,
+   "pose": "koper",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 501,
+    "soft_after": 500
+   },
+   "tint": 44.3,
+   "name_id": "Penumpang Ungu Berkoper"
+  },
+  "malivlak-char/penumpang-ungu/lari": {
+   "file": "assets/db/lib/malivlak-char/penumpang-ungu/lari.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang ungu berlari",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 262,
+   "h": 256,
+   "outline": 6,
+   "baseline": 253,
+   "anchor": [
+    131,
+    253
+   ],
+   "char": "penumpang-ungu",
+   "view": "side",
+   "facing": 90,
+   "pose": "lari",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 624,
+    "soft_after": 623
+   },
+   "tint": 41.4,
+   "name_id": "Penumpang Ungu Berlari"
+  },
+  "malivlak-char/penumpang-ungu/lari-2": {
+   "file": "assets/db/lib/malivlak-char/penumpang-ungu/lari-2.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang ungu (berlari membawa koper)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 266,
+   "h": 260,
+   "outline": 6,
+   "baseline": 257,
+   "anchor": [
+    133,
+    257
+   ],
+   "char": "penumpang-ungu",
+   "view": "side",
+   "facing": 90,
+   "pose": "lari-2",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 544,
+    "soft_after": 544
+   },
+   "tint": 31.2,
+   "name_id": "Penumpang Ungu (berlari membawa koper)"
+  },
+  "malivlak-char/penyambut/jangkung": {
+   "file": "assets/db/lib/malivlak-char/penyambut/jangkung.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penyambut",
+    "malivlak",
+    "cartoon",
+    "penyambut jangkung",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 125,
+   "h": 278,
+   "outline": 3,
+   "baseline": 275,
+   "anchor": [
+    62,
+    275
+   ],
+   "char": "penyambut",
+   "view": "side",
+   "facing": 90,
+   "pose": "jangkung",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 337,
+    "soft_after": 337
+   },
+   "tint": 32.4,
+   "name_id": "Penyambut Jangkung"
+  },
+  "malivlak-char/penyambut/jangkung-bungkuk": {
+   "file": "assets/db/lib/malivlak-char/penyambut/jangkung-bungkuk.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penyambut",
+    "malivlak",
+    "cartoon",
+    "penyambut jangkung (membungkuk dengan tangan di dada)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 226,
+   "h": 269,
+   "outline": 5,
+   "baseline": 266,
+   "anchor": [
+    113,
+    266
+   ],
+   "char": "penyambut",
+   "view": "side",
+   "facing": 90,
+   "pose": "jangkung-bungkuk",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 344,
+    "soft_after": 343
+   },
+   "tint": 16.2,
+   "name_id": "Penyambut Jangkung (membungkuk dengan tangan di dada)"
+  },
+  "malivlak-char/penyambut/pendek": {
+   "file": "assets/db/lib/malivlak-char/penyambut/pendek.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penyambut",
+    "malivlak",
+    "cartoon",
+    "penyambut pendek",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 113,
+   "h": 187,
+   "outline": 3,
+   "baseline": 184,
+   "anchor": [
+    56,
+    184
+   ],
+   "char": "penyambut",
+   "view": "side",
+   "facing": 90,
+   "pose": "pendek",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 204,
+    "soft_after": 203
+   },
+   "tint": 21.2,
+   "name_id": "Penyambut Pendek"
+  },
+  "malivlak-char/penyambut/pendek-medali": {
+   "file": "assets/db/lib/malivlak-char/penyambut/pendek-medali.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penyambut",
+    "malivlak",
+    "cartoon",
+    "penyambut pendek (memegang medali berpita merah)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 146,
+   "h": 201,
+   "outline": 3,
+   "baseline": 198,
+   "anchor": [
+    73,
+    198
+   ],
+   "char": "penyambut",
+   "view": "side",
+   "facing": 90,
+   "pose": "pendek-medali",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 283,
+    "soft_after": 283
+   },
+   "tint": 32.4,
+   "name_id": "Penyambut Pendek (memegang medali berpita merah)"
+  },
+  "malivlak-char/petugas-bagasi/angkat": {
+   "file": "assets/db/lib/malivlak-char/petugas-bagasi/angkat.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "petugas",
+    "malivlak",
+    "cartoon",
+    "petugas bagasi",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 239,
+   "h": 263,
+   "outline": 6,
+   "baseline": 260,
+   "anchor": [
+    119,
+    260
+   ],
+   "char": "petugas-bagasi",
+   "view": "side",
+   "facing": 90,
+   "pose": "angkat",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 501,
+    "soft_after": 499
+   },
+   "tint": 51.7,
+   "name_id": "Petugas Bagasi"
+  },
+  "malivlak-char/petugas-bagasi/koper-besar": {
+   "file": "assets/db/lib/malivlak-char/petugas-bagasi/koper-besar.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "petugas",
+    "malivlak",
+    "cartoon",
+    "petugas bagasi (membawa koper besar)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 206,
+   "h": 245,
+   "outline": 5,
+   "baseline": 242,
+   "anchor": [
+    103,
+    242
+   ],
+   "char": "petugas-bagasi",
+   "view": "side",
+   "facing": 90,
+   "pose": "koper-besar",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 356,
+    "soft_after": 356
+   },
+   "tint": 26.4,
+   "name_id": "Petugas Bagasi (membawa koper besar)"
+  },
+  "malivlak-char/petugas-stasiun/bendera": {
+   "file": "assets/db/lib/malivlak-char/petugas-stasiun/bendera.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "petugas",
+    "malivlak",
+    "cartoon",
+    "petugas stasiun mengangkat bendera",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 222,
+   "h": 306,
+   "outline": 5,
+   "baseline": 303,
+   "anchor": [
+    111,
+    303
+   ],
+   "char": "petugas-stasiun",
+   "view": "side",
+   "facing": 90,
+   "pose": "bendera",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 383,
+    "soft_after": 383
+   },
+   "tint": 51.6,
+   "name_id": "Petugas Stasiun Mengangkat Bendera"
+  },
+  "malivlak-char/petugas-stasiun/bendera-bawah": {
+   "file": "assets/db/lib/malivlak-char/petugas-stasiun/bendera-bawah.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "petugas",
+    "malivlak",
+    "cartoon",
+    "petugas stasiun (memegang bendera merah mengarah ke bawah)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 220,
+   "h": 275,
+   "outline": 5,
+   "baseline": 272,
+   "anchor": [
+    110,
+    272
+   ],
+   "char": "petugas-stasiun",
+   "view": "side",
+   "facing": 90,
+   "pose": "bendera-bawah",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 351,
+    "soft_after": 351
+   },
+   "tint": 41.9,
+   "name_id": "Petugas Stasiun (memegang bendera merah mengarah ke bawah)"
+  },
+  "malivlak-char/petugas-stasiun/berdiri": {
+   "file": "assets/db/lib/malivlak-char/petugas-stasiun/berdiri.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "petugas",
+    "malivlak",
+    "cartoon",
+    "petugas stasiun",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas",
+   "w": 161,
+   "h": 278,
+   "outline": 4,
+   "baseline": 275,
+   "anchor": [
+    80,
+    275
+   ],
+   "char": "petugas-stasiun",
+   "view": "side",
+   "facing": 90,
+   "pose": "berdiri",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 265,
+    "soft_after": 265
+   },
+   "tint": 37.4,
+   "name_id": "Petugas Stasiun"
+  },
+  "malivlak-char/petugas-stasiun/peluit": {
+   "file": "assets/db/lib/malivlak-char/petugas-stasiun/peluit.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "petugas",
+    "malivlak",
+    "cartoon",
+    "petugas stasiun (meniup peluit sambil mengangkat tangan)",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): malivlak-atlas-2",
+   "w": 183,
+   "h": 287,
+   "outline": 4,
+   "baseline": 284,
+   "anchor": [
+    91,
+    284
+   ],
+   "char": "petugas-stasiun",
+   "view": "side",
+   "facing": 90,
+   "pose": "peluit",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 350,
+    "soft_after": 350
+   },
+   "tint": 31.8,
+   "name_id": "Petugas Stasiun (meniup peluit sambil mengangkat tangan)"
   },
   "mojo-bg/beach-cove-land": {
    "file": "assets/db/lib/mojo-bg/beach-cove-land.webp",
@@ -31619,6 +33209,35 @@
    "w": 460,
    "h": 1044
   },
+  "story-char/baron/angkuh": {
+   "file": "assets/db/lib/story-char/baron/angkuh.webp",
+   "cat": "story-char",
+   "tags": [
+    "baron",
+    "man",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 254,
+   "h": 301,
+   "outline": 6,
+   "baseline": 298,
+   "anchor": [
+    127,
+    298
+   ],
+   "char": "baron",
+   "view": "front",
+   "facing": 180,
+   "pose": "angkuh",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 676,
+    "soft_after": 672
+   },
+   "tint": 47.7,
+   "name_id": "Baron Von Kapital"
+  },
   "story-char/baron/shocked": {
    "file": "assets/db/lib/story-char/baron/shocked.webp",
    "cat": "story-char",
@@ -31629,12 +33248,12 @@
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
    "w": 214,
-   "h": 256,
+   "h": 257,
    "outline": 5,
-   "baseline": 253,
+   "baseline": 254,
    "anchor": [
     107,
-    253
+    254
    ],
    "char": "baron",
    "view": "front",
@@ -31645,7 +33264,8 @@
     "soft_before": 561,
     "soft_after": 555
    },
-   "tint": 37.3
+   "tint": 37.3,
+   "name_id": "Baron Von Kapital"
   },
   "story-char/baron/stand": {
    "file": "assets/db/lib/story-char/baron/stand.webp",
@@ -31657,12 +33277,12 @@
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
    "w": 239,
-   "h": 264,
+   "h": 265,
    "outline": 6,
-   "baseline": 261,
+   "baseline": 262,
    "anchor": [
     119,
-    261
+    262
    ],
    "char": "baron",
    "view": "front",
@@ -31673,67 +33293,67 @@
     "soft_before": 670,
     "soft_after": 662
    },
-   "tint": 35.3
+   "tint": 35.3,
+   "name_id": "Baron Von Kapital"
   },
-  "story-char/carter/arms-crossed": {
-   "file": "assets/db/lib/story-char/carter/arms-crossed.webp",
+  "story-char/carter/hands-open": {
+   "file": "assets/db/lib/story-char/carter/hands-open.webp",
    "cat": "story-char",
    "tags": [
     "carter",
-    "logger",
-    "lumberyard",
-    "man",
+    "cartoon",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 187,
-   "h": 252,
-   "outline": 4,
-   "baseline": 249,
+   "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
+   "w": 304,
+   "h": 285,
+   "outline": 7,
+   "baseline": 282,
    "anchor": [
-    93,
-    249
+    152,
+    282
    ],
    "char": "carter",
    "view": "front",
    "facing": 180,
-   "pose": "arms-crossed",
+   "pose": "hands-open",
    "expression": "angry",
    "fringe": {
-    "soft_before": 447,
-    "soft_after": 441
+    "soft_before": 623,
+    "soft_after": 621
    },
-   "tint": 18.1
+   "tint": 16.0,
+   "name_id": "Mr Carter"
   },
-  "story-char/carter/stand": {
-   "file": "assets/db/lib/story-char/carter/stand.webp",
+  "story-char/henry/jongkok": {
+   "file": "assets/db/lib/story-char/henry/jongkok.webp",
    "cat": "story-char",
    "tags": [
-    "carter",
-    "logger",
-    "lumberyard",
+    "henry",
+    "engineer",
     "man",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 245,
-   "h": 241,
-   "outline": 6,
-   "baseline": 238,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 234,
+   "h": 212,
+   "outline": 5,
+   "baseline": 209,
    "anchor": [
-    122,
-    238
+    117,
+    209
    ],
-   "char": "carter",
+   "char": "henry",
    "view": "front",
    "facing": 180,
-   "pose": "stand",
-   "expression": "angry",
+   "pose": "jongkok",
+   "expression": "neutral",
    "fringe": {
-    "soft_before": 402,
-    "soft_after": 399
+    "soft_before": 648,
+    "soft_after": 646
    },
-   "tint": 28.8
+   "tint": 13.1,
+   "name_id": "Henry McCloud"
   },
   "story-char/henry/point": {
    "file": "assets/db/lib/story-char/henry/point.webp",
@@ -31744,14 +33364,14 @@
     "man",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 249,
-   "h": 292,
-   "outline": 6,
-   "baseline": 289,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 229,
+   "h": 296,
+   "outline": 5,
+   "baseline": 293,
    "anchor": [
-    124,
-    289
+    114,
+    293
    ],
    "char": "henry",
    "view": "front",
@@ -31759,10 +33379,11 @@
    "pose": "point",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 841,
-    "soft_after": 805
+    "soft_before": 830,
+    "soft_after": 812
    },
-   "tint": 20.1
+   "tint": 16.7,
+   "name_id": "Henry McCloud"
   },
   "story-char/henry/shovel": {
    "file": "assets/db/lib/story-char/henry/shovel.webp",
@@ -31773,14 +33394,14 @@
     "man",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 256,
-   "h": 286,
-   "outline": 6,
-   "baseline": 283,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 221,
+   "h": 266,
+   "outline": 5,
+   "baseline": 263,
    "anchor": [
-    128,
-    283
+    110,
+    263
    ],
    "char": "henry",
    "view": "front",
@@ -31788,10 +33409,11 @@
    "pose": "shovel",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 795,
-    "soft_after": 765
+    "soft_before": 602,
+    "soft_after": 598
    },
-   "tint": 15.4
+   "tint": 12.7,
+   "name_id": "Henry McCloud"
   },
   "story-char/henry/wave": {
    "file": "assets/db/lib/story-char/henry/wave.webp",
@@ -31803,13 +33425,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 169,
-   "h": 311,
+   "w": 170,
+   "h": 312,
    "outline": 4,
-   "baseline": 308,
+   "baseline": 309,
    "anchor": [
-    84,
-    308
+    85,
+    309
    ],
    "char": "henry",
    "view": "front",
@@ -31820,7 +33442,8 @@
     "soft_before": 772,
     "soft_after": 761
    },
-   "tint": 20.5
+   "tint": 20.5,
+   "name_id": "Henry McCloud"
   },
   "story-char/henry/worried": {
    "file": "assets/db/lib/story-char/henry/worried.webp",
@@ -31833,12 +33456,12 @@
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
    "w": 152,
-   "h": 284,
+   "h": 285,
    "outline": 4,
-   "baseline": 281,
+   "baseline": 282,
    "anchor": [
     76,
-    281
+    282
    ],
    "char": "henry",
    "view": "front",
@@ -31849,36 +33472,154 @@
     "soft_before": 602,
     "soft_after": 589
    },
-   "tint": 12.7
+   "tint": 12.7,
+   "name_id": "Henry McCloud"
   },
-  "story-char/james/stand": {
-   "file": "assets/db/lib/story-char/james/stand.webp",
+  "story-char/james/arms-folded": {
+   "file": "assets/db/lib/story-char/james/arms-folded.webp",
    "cat": "story-char",
    "tags": [
     "james",
-    "forestry",
-    "man",
+    "cartoon",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 121,
-   "h": 310,
-   "outline": 3,
-   "baseline": 307,
+   "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
+   "w": 155,
+   "h": 290,
+   "outline": 4,
+   "baseline": 287,
    "anchor": [
-    60,
-    307
+    77,
+    287
    ],
    "char": "james",
    "view": "front",
    "facing": 180,
-   "pose": "stand",
-   "expression": "neutral",
+   "pose": "arms-folded",
+   "expression": "angry",
    "fringe": {
-    "soft_before": 745,
-    "soft_after": 737
+    "soft_before": 432,
+    "soft_after": 432
    },
-   "tint": 39.6
+   "tint": 15.9,
+   "name_id": "James Wethworth"
+  },
+  "story-char/james/point-scroll": {
+   "file": "assets/db/lib/story-char/james/point-scroll.webp",
+   "cat": "story-char",
+   "tags": [
+    "james",
+    "cartoon",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
+   "w": 249,
+   "h": 279,
+   "outline": 6,
+   "baseline": 276,
+   "anchor": [
+    124,
+    276
+   ],
+   "char": "james",
+   "view": "front",
+   "facing": 180,
+   "pose": "point-scroll",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 524,
+    "soft_after": 521
+   },
+   "tint": 17.2,
+   "name_id": "James Wethworth"
+  },
+  "story-char/james/scroll": {
+   "file": "assets/db/lib/story-char/james/scroll.webp",
+   "cat": "story-char",
+   "tags": [
+    "james",
+    "cartoon",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
+   "w": 149,
+   "h": 276,
+   "outline": 3,
+   "baseline": 273,
+   "anchor": [
+    74,
+    273
+   ],
+   "char": "james",
+   "view": "front",
+   "facing": 180,
+   "pose": "scroll",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 417,
+    "soft_after": 413
+   },
+   "tint": 17.6,
+   "name_id": "James Wethworth"
+  },
+  "story-char/james/walk-scroll": {
+   "file": "assets/db/lib/story-char/james/walk-scroll.webp",
+   "cat": "story-char",
+   "tags": [
+    "james",
+    "cartoon",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): carter-james-sheet",
+   "w": 176,
+   "h": 265,
+   "outline": 4,
+   "baseline": 262,
+   "anchor": [
+    88,
+    262
+   ],
+   "char": "james",
+   "view": "front",
+   "facing": 180,
+   "pose": "walk-scroll",
+   "expression": "angry",
+   "fringe": {
+    "soft_before": 434,
+    "soft_after": 430
+   },
+   "tint": 14.5,
+   "name_id": "James Wethworth"
+  },
+  "story-char/katrina/khawatir": {
+   "file": "assets/db/lib/story-char/katrina/khawatir.webp",
+   "cat": "story-char",
+   "tags": [
+    "katrina",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 142,
+   "h": 292,
+   "outline": 3,
+   "baseline": 289,
+   "anchor": [
+    71,
+    289
+   ],
+   "char": "katrina",
+   "view": "front",
+   "facing": 180,
+   "pose": "khawatir",
+   "expression": "worried",
+   "fringe": {
+    "soft_before": 438,
+    "soft_after": 434
+   },
+   "tint": 62.6,
+   "name_id": "Katrina Von Kapital"
   },
   "story-char/katrina/shovel": {
    "file": "assets/db/lib/story-char/katrina/shovel.webp",
@@ -31890,13 +33631,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 228,
-   "h": 259,
+   "w": 229,
+   "h": 260,
    "outline": 5,
-   "baseline": 256,
+   "baseline": 257,
    "anchor": [
     114,
-    256
+    257
    ],
    "char": "katrina",
    "view": "front",
@@ -31907,7 +33648,8 @@
     "soft_before": 668,
     "soft_after": 650
    },
-   "tint": 42.7
+   "tint": 42.7,
+   "name_id": "Katrina Von Kapital"
   },
   "story-char/katrina/stand": {
    "file": "assets/db/lib/story-char/katrina/stand.webp",
@@ -31936,7 +33678,38 @@
     "soft_before": 508,
     "soft_after": 459
    },
-   "tint": 47.6
+   "tint": 47.6,
+   "name_id": "Katrina Von Kapital"
+  },
+  "story-char/scarlet/cemas-atas": {
+   "file": "assets/db/lib/story-char/scarlet/cemas-atas.webp",
+   "cat": "story-char",
+   "tags": [
+    "scarlet",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 134,
+   "h": 241,
+   "outline": 3,
+   "baseline": 238,
+   "anchor": [
+    67,
+    238
+   ],
+   "char": "scarlet",
+   "view": "front",
+   "facing": 180,
+   "pose": "cemas-atas",
+   "expression": "worried",
+   "fringe": {
+    "soft_before": 268,
+    "soft_after": 268
+   },
+   "tint": 84.8,
+   "name_id": "Scarlet McCloud"
   },
   "story-char/scarlet/gesture": {
    "file": "assets/db/lib/story-char/scarlet/gesture.webp",
@@ -31948,13 +33721,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 210,
-   "h": 282,
+   "w": 211,
+   "h": 283,
    "outline": 5,
-   "baseline": 279,
+   "baseline": 280,
    "anchor": [
     105,
-    279
+    280
    ],
    "char": "scarlet",
    "view": "front",
@@ -31965,7 +33738,38 @@
     "soft_before": 476,
     "soft_after": 476
    },
-   "tint": 93.3
+   "tint": 93.3,
+   "name_id": "Scarlet McCloud"
+  },
+  "story-char/scarlet/ramah": {
+   "file": "assets/db/lib/story-char/scarlet/ramah.webp",
+   "cat": "story-char",
+   "tags": [
+    "scarlet",
+    "hijab",
+    "woman",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 203,
+   "h": 266,
+   "outline": 5,
+   "baseline": 263,
+   "anchor": [
+    101,
+    263
+   ],
+   "char": "scarlet",
+   "view": "front",
+   "facing": 180,
+   "pose": "ramah",
+   "expression": "happy",
+   "fringe": {
+    "soft_before": 412,
+    "soft_after": 412
+   },
+   "tint": 82.1,
+   "name_id": "Scarlet McCloud"
   },
   "story-char/scarlet/stand": {
    "file": "assets/db/lib/story-char/scarlet/stand.webp",
@@ -31977,13 +33781,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 160,
-   "h": 288,
+   "w": 161,
+   "h": 289,
    "outline": 4,
-   "baseline": 285,
+   "baseline": 286,
    "anchor": [
     80,
-    285
+    286
    ],
    "char": "scarlet",
    "view": "front",
@@ -31994,7 +33798,8 @@
     "soft_before": 342,
     "soft_after": 342
    },
-   "tint": 89.6
+   "tint": 89.6,
+   "name_id": "Scarlet McCloud"
   },
   "story-char/scarlet/worried": {
    "file": "assets/db/lib/story-char/scarlet/worried.webp",
@@ -32006,13 +33811,13 @@
     "cartoon"
    ],
    "source": "owner supporting-cast atlas (Downloads): brave-atlas",
-   "w": 157,
-   "h": 277,
+   "w": 158,
+   "h": 278,
    "outline": 4,
-   "baseline": 274,
+   "baseline": 275,
    "anchor": [
-    78,
-    274
+    79,
+    275
    ],
    "char": "scarlet",
    "view": "front",
@@ -32023,7 +33828,8 @@
     "soft_before": 357,
     "soft_after": 357
    },
-   "tint": 91.9
+   "tint": 91.9,
+   "name_id": "Scarlet McCloud"
   },
   "things/alarm-clock": {
    "file": "assets/db/lib/things/alarm-clock.webp",
@@ -42866,7 +44672,70 @@
     "soft_before": 818,
     "soft_after": 794
    },
-   "tint": 41.5
+   "tint": 41.5,
+   "name_id": "Gerbong Caboose Merah"
+  },
+  "train-char/caboose-red/front-34r": {
+   "file": "assets/db/lib/train-char/caboose-red/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "caboose",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 274,
+   "h": 262,
+   "outline": 6,
+   "baseline": 259,
+   "anchor": [
+    137,
+    259
+   ],
+   "char": "caboose-red",
+   "view": "front34",
+   "facing": 135,
+   "pose": "front-34r",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 698,
+    "soft_after": 682
+   },
+   "tint": 31.9,
+   "name_id": "Gerbong Caboose Merah"
+  },
+  "train-char/coach-green/front-34l": {
+   "file": "assets/db/lib/train-char/coach-green/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon"
+   ],
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 308,
+   "h": 242,
+   "outline": 6,
+   "baseline": 239,
+   "anchor": [
+    154,
+    239
+   ],
+   "char": "coach-green",
+   "view": "front34",
+   "facing": 225,
+   "pose": "front-34l",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 489,
+    "soft_after": 469
+   },
+   "tint": 1.7,
+   "name_id": "Gerbong Penumpang Hijau"
   },
   "train-char/coach-green/side-l": {
    "file": "assets/db/lib/train-char/coach-green/side-l.webp",
@@ -42896,7 +44765,8 @@
     "soft_before": 387,
     "soft_after": 387
    },
-   "tint": 1.5
+   "tint": 1.5,
+   "name_id": "Gerbong Penumpang Hijau"
   },
   "train-char/defeatist/34l-neutral": {
    "file": "assets/db/lib/train-char/defeatist/34l-neutral.webp",
@@ -45596,14 +47466,14 @@
     "train",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 243,
-   "h": 274,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 283,
+   "h": 271,
    "outline": 6,
-   "baseline": 271,
+   "baseline": 268,
    "anchor": [
-    121,
-    271
+    141,
+    268
    ],
    "char": "goro-loco",
    "view": "front34",
@@ -45611,10 +47481,11 @@
    "pose": "front-34l",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 449,
-    "soft_after": 446
+    "soft_before": 518,
+    "soft_after": 517
    },
-   "tint": 33.4
+   "tint": 16.8,
+   "name_id": "Goro"
   },
   "train-char/goro-loco/front-34r": {
    "file": "assets/db/lib/train-char/goro-loco/front-34r.webp",
@@ -45626,14 +47497,14 @@
     "train",
     "cartoon"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 261,
-   "h": 241,
+   "source": "owner supporting-cast atlas (Downloads): brave-final",
+   "w": 278,
+   "h": 268,
    "outline": 6,
-   "baseline": 238,
+   "baseline": 265,
    "anchor": [
-    130,
-    238
+    139,
+    265
    ],
    "char": "goro-loco",
    "view": "front34",
@@ -45641,10 +47512,11 @@
    "pose": "front-34r",
    "expression": "neutral",
    "fringe": {
-    "soft_before": 429,
-    "soft_after": 427
+    "soft_before": 513,
+    "soft_after": 512
    },
-   "tint": 31.0
+   "tint": 16.4,
+   "name_id": "Goro"
   },
   "train-char/linus/34l-happy": {
    "file": "assets/db/lib/train-char/linus/34l-happy.webp",
