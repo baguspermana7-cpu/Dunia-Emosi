@@ -606,15 +606,22 @@
     var b = centerOf(toEl)
     // A-355 — layer the real "lempar api" particle projectile alongside the emoji
     // orb, attacker→defender, type-matched (visual-only; onHit still fires below).
+    var libFly = false
     try {
-      if (global.VFX && opts.type) {
+      // VFX library: type-unique projectile head + trail + impact (lands at `dur`, same as the orb)
+      if (global.VFX && global.VFX.Poke && opts.type && global.VFX.Poke.ready()) {
+        libFly = global.VFX.Poke.launch(opts.type, fromEl, toEl, { duration: opts.duration || 300, size: 70, superEff: !!opts.superEff, crit: !!opts.crit, arena: (document.querySelector('.ba-field') || {}).parentNode })
+      }
+    } catch (_) {}
+    try {
+      if (!libFly && global.VFX && opts.type) {
         global.VFX.domProjectile({ x: a.x, y: a.y }, { x: b.x, y: b.y },
           { fx: global.VFX.typeFx(opts.type).proj, size: 76, duration: opts.duration || 300 })
       }
     } catch (_) {}
     // A-339 P4 — if a type/emoji is given, fly N spinning type-emoji particles
     // (leaves/embers/…) instead of the generic orb. Falls back to the orb.
-    var emoji = opts.emoji || baTypeEmoji(opts.type)
+    var emoji = null   // owner: no emoji projectile — library sprite, else the glowing CSS orb
     var orb, motes = []
     if (emoji) {
       orb = el('div', 'ba-proj', document.body)
@@ -632,6 +639,7 @@
     } else {
       orb = el('div', 'ba-orb', document.body)
       orb.style.setProperty('--ba-c', color)
+      if (libFly) orb.style.display = 'none'   // library sprite is the visible projectile
     }
     var dur = opts.duration || 300
     var start = performance.now()
@@ -664,7 +672,7 @@
         motes[i].el.style.left = (x + motes[i].off * (1 - t)) + 'px'
         motes[i].el.style.top = (y + Math.sin(t * Math.PI * 2 + motes[i].ph) * 12) + 'px'
       }
-      if (!emoji && now - lastTrail > 42) { // orb trail dot (emoji leaves its own spin trail)
+      if (!emoji && !libFly && now - lastTrail > 42) { // orb trail dot (emoji leaves its own spin trail)
         lastTrail = now
         var d = el('div', 'ba-orb-trail', document.body)
         d.style.setProperty('--ba-c', color)
@@ -695,13 +703,15 @@
     ring.style.setProperty('--ba-c', color)
     // A-355 — layer the real particle AURA ("api berputar") on the body during
     // wind-up, on top of the emoji ring/motes. Type-matched, visual-only.
-    var _vfxAura = null
+    var _vfxAura = null, _libAura = false
     try {
-      if (global.VFX && fighter.img) {
+      if (global.VFX && global.VFX.Poke && fighter.img && opts.type && global.VFX.Poke.windup(opts.type, fighter.img, { duration: 420 })) {
+        _libAura = true
+      } else if (global.VFX && fighter.img) {
         _vfxAura = global.VFX.domAura(fighter.img, { fx: global.VFX.typeFx(opts.type).aura, duration: 420, scale: 1.35 })
       }
     } catch (_) {}
-    var emoji = opts.emoji || baTypeEmoji(opts.type)
+    var emoji = null
     var motes = []
     if (emoji) {
       var c = centerOf(fighter.img)
@@ -758,7 +768,11 @@
       hitReact(toSide)
       if (onHit) onHit()
     }
-    if (REDUCED) { setTimeout(land, 60); return }
+    try { if (global.VFX && global.VFX.Poke && opts.type) global.VFX.Poke.prime([opts.type]) } catch (_) {}
+    if (REDUCED) {
+      try { if (global.VFX && global.VFX.Poke && opts.type) global.VFX.Poke.impact(opts.type, tgt.img, { superEff: !!opts.superEff }) } catch (_) {}
+      setTimeout(land, 60); return
+    }
     // A-339 P4 — WIND-UP charge first (type aura swirls around the attacker ~0.4s),
     // THEN the lunge + projectile launch. Matches the reference video's attack beat.
     chargeUp(atk, opts, function () { doLunge() })

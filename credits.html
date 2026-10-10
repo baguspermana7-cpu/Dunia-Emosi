@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kredit Efek Visual - Dunia Emosi</title>
+<style>
+:root{--bg:#f6f7fb;--fg:#1d2433;--mut:#5b6478;--card:#fff;--line:#dfe3ee;--acc:#3b6fd8}
+@media(prefers-color-scheme:dark){:root{--bg:#12151d;--fg:#e8ecf5;--mut:#9aa4ba;--card:#1b2030;--line:#2b3247;--acc:#7fa5ff}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.1rem;margin:1.6em 0 .4em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.card b{display:block}.mut{color:var(--mut);font-size:.9rem}
+.tag{display:inline-block;font-size:.75rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-right:4px}
+a{color:var(--acc)}
+</style></head><body><main>
+<h1>Kredit efek visual</h1>
+<p class="mut">Efek serangan, ledakan lembut, dan kilauan di game ini memakai paket gratis berikut. Terima kasih kepada para pembuatnya.</p>
+<div id="packs"><p class="mut">Memuat...</p></div>
+<h2>Paket lama (sudah ada sebelumnya)</h2>
+<div class="card"><b>Explosion Pack - Luis Zuno (@ansimuz)</b><span class="tag">CC0</span><span class="mut">assets/vfx/explosion/</span></div>
+<div class="card"><b>Particle FX 1.3 (Free) - Raphael Hatencia (@RaphaelHatencia), RagnaPixel Studio</b><span class="tag">CC BY 4.0</span><span class="mut">assets/vfx/particles/ - subset ramah anak, dikonversi ke WebP</span></div>
+<script>
+fetch('assets/vfx/vfx-db.json').then(function(r){return r.json()}).then(function(d){
+  var by={};d.effects.forEach(function(e){var k=e.pack+'|'+e.license.status;(by[k]=by[k]||{e:e,n:0}).n++});
+  var h='';Object.keys(by).forEach(function(k){var g=by[k],l=g.e.license;
+    h+='<div class="card"><b></b><span class="tag"></span><span class="mut"></span><div class="mut"></div></div>'});
+  var box=document.getElementById('packs');box.innerHTML=h;
+  var cards=box.querySelectorAll('.card');Object.keys(by).forEach(function(k,i){var g=by[k],l=g.e.license,c=cards[i];
+    c.querySelector('b').textContent=l.credit;
+    c.querySelector('.tag').textContent=l.status+' ('+g.n+' efek)';
+    c.querySelector('.mut').textContent=l.terms;
+    c.querySelector('div').textContent='Teks lisensi: '+l.file});
+}).catch(function(){document.getElementById('packs').textContent='Daftar kredit tidak dapat dimuat.'});
+</script></main></body></html>

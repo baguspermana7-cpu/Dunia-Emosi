@@ -6647,6 +6647,7 @@ function g10RenderHp(fillId, numsId, hp, maxHp){
 
 function g10GenQuestion(){
   const s=g10State
+  try { if (window.VFX && VFX.Poke && s.playerPoke && s.enemyPoke) VFX.Poke.prime([String(s.playerPoke.type).toLowerCase(), String(s.enemyPoke.type).toLowerCase()]) } catch(_) {}  // pre-decode this fight's effect sheets
   // Hotfix #112-H: delegate to shared math-rules per user mandate.
   // Easy = anak TK / SD kelas 1; G10 has 20 levels.
   const _diff = state.selectedLevel || 'easy'
@@ -6900,7 +6901,7 @@ function g10DoAttack(type, fromSide, toSide, onDone){
       const _fEl = document.getElementById(fromSide === 'player' ? 'g10-pspr' : 'g10-espr') || fromWrapEl
       const _tEl = document.getElementById(toSide === 'enemy' ? 'g10-espr' : 'g10-pspr') || document.getElementById(toSide === 'enemy' ? 'g10-espr-wrap' : 'g10-pspr-wrap')
       VFX.Poke.windup(typeLow, _fEl, { duration: 340 })
-      _vfxLaunched = VFX.Poke.launch(typeLow, _fEl, _tEl, { duration: 340, size: 84, superEff: _vm >= 1.15, big: _vm >= 1.15 })
+      _vfxLaunched = VFX.Poke.launch(typeLow, _fEl, _tEl, { duration: 340, size: 70, superEff: _vm >= 1.15, big: _vm >= 1.15, arena: document.getElementById('g10-field') })
     }
   } catch(e){ console.warn('[g10DoAttack] vfx lib:', e) }
 
@@ -6922,7 +6923,8 @@ function g10DoAttack(type, fromSide, toSide, onDone){
       /* library projectile is flying — keep the legacy emoji hidden */
     } else {
     if (emojiEl) {
-      emojiEl.textContent = emoji
+      emojiEl.textContent = ''   // no emoji projectile: plain glowing orb in the type colour
+      emojiEl.style.cssText += `;display:block;width:44px;height:44px;border-radius:50%;margin:auto;background:radial-gradient(circle at 38% 36%,#fff,${auraColor} 60%,transparent 72%);box-shadow:0 0 22px ${auraColor}`
       emojiEl.style.animation = 'none'
       void emojiEl.offsetWidth
     }
@@ -9440,6 +9442,7 @@ function g13GenQuestion() {
 
 function g13NextQuestion() {
   const s = g13State
+  try { if (window.VFX && VFX.Poke && s.chain) VFX.Poke.prime([String(s.chain.player.type).toLowerCase(), String(s.chain.wild.type).toLowerCase()]) } catch(_) {}  // pre-decode effect sheets
   if (s.locked || s.phase === 'victory' || s.phase === 'defeat' || s.phase === 'evo_ready') return
   const q = g13GenQuestion()
   s.currentAnswer = q.ans
@@ -9508,7 +9511,7 @@ function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field', fxOpts) {
       let _vm = 1
       try { if (fxOpts && fxOpts.defType && typeof calcFullMult === 'function') _vm = calcFullMult(type, type, fxOpts.defType) } catch(_){}
       VFX.Poke.windup(type, _fa, { duration: 300 })
-      if (VFX.Poke.launch(type, _fa, _fb, { duration: fieldId === 'g13b-field' ? 240 : 300, size: 78, superEff: _vm >= 1.15, big: _vm >= 1.15 })) return
+      if (VFX.Poke.launch(type, _fa, _fb, { duration: fieldId === 'g13b-field' ? 240 : 300, size: 70, superEff: _vm >= 1.15, big: _vm >= 1.15, arena: field })) return
     }
   } catch(e){ console.warn('[g13SpawnAttackEffect] vfx lib:', e) }
   const proj = document.createElement('div')
@@ -9516,7 +9519,7 @@ function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field', fxOpts) {
   if (hasImg) {
     proj.style.width = '44px'; proj.style.height = '44px'; proj.style.fontSize = '0'
     proj.innerHTML = `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,255,255,0.8))" alt="">`
-  } else { proj.textContent = emoji }
+  } else { proj.style.cssText += ';width:40px;height:40px;border-radius:50%;font-size:0;background:radial-gradient(circle at 38% 36%,#fff,' + pokeTypeColor((type||'').toLowerCase()) + ' 60%,transparent 72%)' }
   proj.style.setProperty('--from-x', fromX)
   proj.style.setProperty('--from-y', fromY)
   proj.style.setProperty('--to-x',   toX)
@@ -9530,7 +9533,7 @@ function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field', fxOpts) {
     const trail = document.createElement('div')
     trail.className = 'g13-proj-trail'
     if (hasImg) { trail.style.width = '22px'; trail.style.height = '22px'; trail.style.fontSize = '0'; trail.innerHTML = `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain;opacity:0.6" alt="">` }
-    else { trail.textContent = emoji }
+    else { trail.style.cssText += ';width:18px;height:18px;border-radius:50%;font-size:0;background:' + pokeTypeColor((type||'').toLowerCase()) + ';opacity:.6' }
     trail.style.left = `calc(${fromX} + ${(Math.random()-0.5)*20}%)`
     trail.style.top  = `calc(${fromY} + ${(Math.random()-0.5)*20}%)`
     trail.style.animationDelay = `${i*0.08}s`
@@ -10472,6 +10475,7 @@ function g13bSpawnWild() {
 
 function g13bNextQuestion() {
   const s = g13bState
+  try { if (window.VFX && VFX.Poke && g13bSavedPoke) VFX.Poke.prime([String(g13bSavedPoke.type).toLowerCase()]) } catch(_) {}
   if (s.phase !== 'playing') return
 
   // Hotfix #112-H: delegate to shared math-rules per user mandate.
