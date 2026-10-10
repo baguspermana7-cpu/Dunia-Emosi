@@ -29,7 +29,14 @@ check(missingRefs.length === 0,
 // ---- 2 + 3. word pictures, word clips, letter clips --------------------
 global.window = global
 const D = (await import(path.join(ROOT, 'games/data/spelling-data.js'))).default || global.SpellingData
-const noPic = D.WORDS.filter(w => !exists(`assets/spelling/${w.dir}/${w.pic}.webp`)).map(w => w.w)
+const noPic = D.WORDS.filter(w => !exists(D.picPath(w))).map(w => w.w)
+// the 2026-10-06 categories carry an owner-art icon (iconSrc); the first ones keep assets/spelling/cat/<icon>.webp
+const noIco = D.CATEGORIES.filter(c => !exists(c.iconSrc || `assets/spelling/cat/${c.icon}.webp`)).map(c => c.key)
+check(noIco.length === 0, `every category has its icon${noIco.length ? ' — MISSING: ' + noIco.join(', ') : ''}`)
+const noTxt = D.WORDS.filter(w => !w.clue || !w.say || !w.id || w.say.toLowerCase().indexOf(w.w) < 0).map(w => w.w)
+check(noTxt.length === 0, `every word has a meaning, a definition and a sentence that says it${noTxt.length ? ' — BAD: ' + noTxt.join(', ') : ''}`)
+const dup = D.WORDS.map(w => w.w).filter((w, i, a) => a.indexOf(w) !== i)
+check(dup.length === 0, `no word appears twice${dup.length ? ' — ' + dup.join(', ') : ''}`)
 const noAud = D.WORDS.filter(w => !exists(`assets/spelling/audio/words/${w.w}.webm`)).map(w => w.w)
 check(D.WORDS.length >= 30, `word list has ${D.WORDS.length} words`)
 check(noPic.length === 0, `every word has a picture${noPic.length ? ' — MISSING: ' + noPic.join(', ') : ''}`)

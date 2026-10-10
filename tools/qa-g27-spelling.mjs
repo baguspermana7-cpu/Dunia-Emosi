@@ -88,7 +88,8 @@ try {
     const cards = await page.$$('#cat-grid .card:not(.locked)')
     const wantCats = await page.evaluate(() => SpellingData.CATEGORIES.filter(c => c.ready).length)
     const lockedCats = await page.$$eval('#cat-grid .card.locked', l => l.length)
-    check(cards.length === wantCats && wantCats === 6, `all six categories are playable (${cards.length}/${wantCats})`)
+    // six at first; the 2026-10-06 expansion (owner: "tambah banyak kategori") added nineteen
+    check(cards.length === wantCats && wantCats >= 25, `every category is playable (${cards.length}/${wantCats})`)
     check(lockedCats === 0, `no category is left as "Segera Hadir" (${lockedCats})`)
     await cards[0].click(); await sleep(500)
     const wc = await page.$$('#word-grid .wcard:not(.soon)')

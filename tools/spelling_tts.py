@@ -54,8 +54,11 @@ PHONEMES = {'quran': 'kʊɹˈɑːn'}
 
 
 def words():
-    js = open(os.path.join(ROOT, 'games', 'data', 'spelling-data.js')).read()
-    return re.findall(r"\{\s*w:\s*'([a-z]+)'", js)
+    # Loaded through node, not a regex: the 2026-10-06 expansion writes its rows as arrays.
+    out = subprocess.run(['node', '-e', "global.window=global;const D=require('./games/data/spelling-data.js');"
+                          "console.log(JSON.stringify(D.WORDS.map(w=>w.w)))"],
+                         cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    return json.loads(out)
 
 
 def texts():
@@ -73,8 +76,24 @@ def POS():
     return json.loads(out)
 
 
+# Whisper cannot hear spelling: a homophone, a digit or a split compound is the right
+# sound written another way. Applied to BOTH sides (wanted text and what was heard),
+# so it only ever forgives a spelling, never a different sound.
+HOMO = {'dear': 'deer', 'b': 'bee', 'be': 'bee', 'pair': 'pear', 'pare': 'pear', 'chilly': 'chili',
+        'chile': 'chili', 'pallet': 'palette', 'i': 'eye', 'too': 'two', 'to': 'two', 'meet': 'meat',
+        'doughnut': 'donut', 'learned': 'learn',
+        '1': 'one', '2': 'two', '3': 'three', '4': 'four', '5': 'five', '6': 'six', '7': 'seven',
+        '8': 'eight', '9': 'nine', '10': 'ten'}
+COMPOUND = [('fire truck', 'firetruck'), ('yo yo', 'yoyo'), ('wild cat', 'wildcat'), ('a round', 'around')]
+
+
 def norm_toks(text):
-    return [t.lower() for t in re.findall(r"[A-Za-z]+", text.replace("'", '').replace('’', ''))]
+    t = ' ' + text.lower().replace("'", '').replace('’', '').replace('-', ' ') + ' '
+    t = ' '.join(HOMO.get(w, w) for w in re.findall(r"[a-z0-9]+", t))
+    t = ' ' + t + ' '
+    for a, b in COMPOUND:
+        t = t.replace(' ' + a + ' ', ' ' + b + ' ')
+    return t.split()
 
 
 def speech_passes(key, want, got, need_word=True):
@@ -85,7 +104,7 @@ def speech_passes(key, want, got, need_word=True):
     for i in range(len(a)):
         for j in range(len(b)):
             dp[i + 1][j + 1] = dp[i][j] + 1 if a[i] == b[j] else max(dp[i][j + 1], dp[i + 1][j])
-    ok_word = any(t in WORD_OK.get(key, [key]) for t in b)
+    ok_word = any(t in [norm_toks(w)[0] for w in WORD_OK.get(key, [key])] for t in b)
     return (ok_word or not need_word) and dp[-1][-1] >= 0.85 * len(a)
 
 
@@ -141,8 +160,11 @@ def heard(asr, x16, kind):
 
 
 def passes(kind, key, text):
-    toks = [t.lower() for t in re.findall(r"[A-Za-z]+", text.replace("'", '').replace('’', ''))]
-    ok = LETTER_OK[key] if kind == 'letters' else WORD_OK.get(key, [key])
+    if kind == 'letters':
+        toks = [t.lower() for t in re.findall(r"[A-Za-z]+", text.replace("'", '').replace('’', ''))]
+        return len(toks) == 1 and toks[0] in LETTER_OK[key]
+    toks = norm_toks(text)
+    ok = [norm_toks(w)[0] for w in WORD_OK.get(key, [key])]
     return len(toks) == 1 and toks[0] in ok
 
 

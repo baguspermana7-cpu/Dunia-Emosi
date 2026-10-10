@@ -1,13 +1,63 @@
 {
+ "definitions/accordion": {
+  "sha1": "cdc1596a2505be8b8a23832b74134350221d80d3",
+  "heard": "You squeeze it in and out and press its keys.",
+  "text": "You squeeze it in and out and press its keys."
+ },
+ "definitions/apple": {
+  "sha1": "028da2beda81227fa929662680deb9c8966435e4",
+  "heard": "Around red or green fruit that is crunchy.",
+  "text": "A round red or green fruit that is crunchy."
+ },
+ "definitions/arm": {
+  "sha1": "3fa321bd1fcb8c121f0d9ac40f638055fa93dc40",
+  "heard": "It is between your shoulder and your hand.",
+  "text": "It is between your shoulder and your hand."
+ },
+ "definitions/astronaut": {
+  "sha1": "a494b02213c2a309d553a71edc771970b2789ebb",
+  "heard": "This person travels into space.",
+  "text": "This person travels into space."
+ },
+ "definitions/avocado": {
+  "sha1": "749095f200a4ad3ed0d28617cbb7bb5286143625",
+  "heard": "A green fruit with one big seed in the middle.",
+  "text": "A green fruit with one big seed in the middle."
+ },
+ "definitions/backpack": {
+  "sha1": "7fa082e37e914a556ec0f63fdfbf5fe1e0f55c00",
+  "heard": "A bag you carry on your back.",
+  "text": "A bag you carry on your back."
+ },
  "definitions/bag": {
   "sha1": "1c27f6303d7c97f3bd97411e7acf7d82a92d72d6",
   "heard": "You carry your books to school in it.",
   "text": "You carry your books to school in it."
  },
+ "definitions/ball": {
+  "sha1": "60cdc5986b9c819d4716f1da04739a422605d49f",
+  "heard": "A round tie you kick or throw.",
+  "text": "A round toy you kick or throw."
+ },
+ "definitions/balloon": {
+  "sha1": "4ca4c336c682a1ee30e773451af4f8bb8c1628a5",
+  "heard": "A rubber toy you fill with air.",
+  "text": "A rubber toy you fill with air."
+ },
+ "definitions/banana": {
+  "sha1": "0aa61c53754e6e7e58e29b80279c052cd9de1d28",
+  "heard": "A long yellow fruit. Monkeys love it.",
+  "text": "A long yellow fruit. Monkeys love it."
+ },
  "definitions/basket": {
   "sha1": "e3566008f6c6cade8780ee37a3b2092e7b9b6d3f",
   "heard": "You carry fruit or clothes in it.",
   "text": "You carry fruit or clothes in it."
+ },
+ "definitions/basketball": {
+  "sha1": "e695285a8a80e93e8f6f6ca23df7ef10fafb438f",
+  "heard": "An orange ball you throw into a high hoop.",
+  "text": "An orange ball you throw into a high hoop."
  },
  "definitions/bathtub": {
   "sha1": "22fa5ef62fad7ce5bd5799ce5bed2991102b9c8a",
@@ -19,10 +69,35 @@
   "heard": "You count them while you say de-hicker.",
   "text": "You count them while you say dhikr."
  },
+ "definitions/beans": {
+  "sha1": "36f4e2def89120b7baf426f0968167db87574e70",
+  "heard": "Long, thin green vegetables.",
+  "text": "Long thin green vegetables."
+ },
+ "definitions/bear": {
+  "sha1": "1462991e32b3f210b64ae6d405daa3595b9bd63b",
+  "heard": "A big furry animal. It loves honey.",
+  "text": "A big furry animal. It loves honey."
+ },
  "definitions/bed": {
   "sha1": "aa0f77e95bdd07b3a9888a0cd99e75cd66b66f4a",
   "heard": "You sleep on it at night.",
   "text": "You sleep on it at night."
+ },
+ "definitions/bee": {
+  "sha1": "aa37650fbe35ce73144217355e793fb4d5721fd8",
+  "heard": "A flying insect that makes honey. It buzzes.",
+  "text": "A flying insect that makes honey. It buzzes."
+ },
+ "definitions/bell": {
+  "sha1": "50e44ac635bd5420544743db59a9a09396a126b0",
+  "heard": "It rings ding dong.",
+  "text": "It rings ding dong."
+ },
+ "definitions/bicycle": {
+  "sha1": "f7d23bc178d2b578c8d1cd873bc6cbe4af7a5a42",
+  "heard": "It has two wheels and pedals.",
+  "text": "It has two wheels and pedals."
  },
  "definitions/black": {
   "sha1": "6dc63d9ec9d94b821ae74d8f3eb41e5b053d7f22",
@@ -39,10 +114,25 @@
   "heard": "The teacher writes on it at the front of the class.",
   "text": "The teacher writes on it at the front of the class."
  },
+ "definitions/boat": {
+  "sha1": "fa3995aabb274514138833b98aeb6eb0e6847cea",
+  "heard": "A small vehicle that floats on water.",
+  "text": "A small vehicle that floats on water."
+ },
+ "definitions/bone": {
+  "sha1": "212c6b6a07d1410496eac74ba35faa2dd5b8fbcf",
+  "heard": "It is hard and inside your body. Dogs love to chew one.",
+  "text": "It is hard and inside your body. Dogs love to chew one."
+ },
  "definitions/book": {
   "sha1": "5d764672bc3bf8a60867eb2007f1570b23585a94",
   "heard": "You read it. It has pages and a cover.",
   "text": "You read it. It has pages and a cover."
+ },
+ "definitions/boot": {
+  "sha1": "b42f48c043d1422f008ea7d46e8aecf6b5f6a848",
+  "heard": "A tall shoe you wear in the rain.",
+  "text": "A tall shoe you wear in the rain."
  },
  "definitions/bottle": {
   "sha1": "333925874cd696a9e0a0e3760a9fca414b03b302",
@@ -53,6 +143,21 @@
   "sha1": "ac3113224256a978329451e2a28419a47827eeda",
   "heard": "A deep brown dish for soup or cereal.",
   "text": "A deep round dish for soup or cereal."
+ },
+ "definitions/brain": {
+  "sha1": "5967021cf8f88210a2ff2905cc4b8ac295f65bcf",
+  "heard": "It is inside your head. You think with it.",
+  "text": "It is inside your head. You think with it."
+ },
+ "definitions/bread": {
+  "sha1": "4a7593c123a0a7c144815e29e91ed2d9366522b3",
+  "heard": "A soft food made from flour. You make sandwiches with it.",
+  "text": "A soft food made from flour. You make sandwiches with it."
+ },
+ "definitions/broccoli": {
+  "sha1": "d28f6531f36ce7d6f6feede9ca66506d999d30ce",
+  "heard": "A green vegetable that looks like a little tree.",
+  "text": "A green vegetable that looks like a little tree."
  },
  "definitions/broom": {
   "sha1": "11d3f82718bffa35c65d918afa6974c951fe1ff0",
@@ -69,6 +174,41 @@
   "heard": "You carry water in it. It has a handle.",
   "text": "You carry water in it. It has a handle."
  },
+ "definitions/builder": {
+  "sha1": "1d8660a293ec2f3951eef0a48b9c67c7696f03f4",
+  "heard": "This person makes houses. They wear a hard hat.",
+  "text": "This person makes houses. They wear a hard hat."
+ },
+ "definitions/burger": {
+  "sha1": "e3aea70e2714d7056a8a30c715c1fa17d680901e",
+  "heard": "Meet inside a round bun.",
+  "text": "Meat inside a round bun."
+ },
+ "definitions/bus": {
+  "sha1": "7b3ceefa524fb578fb4a2bc2833852d05fd1995f",
+  "heard": "a big long vehicle that carries many people.",
+  "text": "A big long vehicle that carries many people."
+ },
+ "definitions/butterfly": {
+  "sha1": "36efb89e3723524354fe83e09083b305d50ef24c",
+  "heard": "An insect with big colorful wings.",
+  "text": "An insect with big colorful wings."
+ },
+ "definitions/cabbage": {
+  "sha1": "20080da0fa467477bc5a36fd25d0e99836e183bf",
+  "heard": "around green vegetable made of many leaves.",
+  "text": "A round green vegetable made of many leaves."
+ },
+ "definitions/cactus": {
+  "sha1": "27e118c19fb934ba564f1f4a1a9f5aac463a9815",
+  "heard": "A spiky plant that needs very little water.",
+  "text": "A spiky plant that needs very little water."
+ },
+ "definitions/cake": {
+  "sha1": "12a613fb34e52db20436c756f8d26cb2980ac92d",
+  "heard": "A sweet, soft food for birthdays.",
+  "text": "A sweet soft food for birthdays."
+ },
  "definitions/calculator": {
   "sha1": "0a6add26241de7da031384578213e83e44805a6d",
   "heard": "It helps you add and take away numbers.",
@@ -84,25 +224,155 @@
   "heard": "It gives light when you light it with fire.",
   "text": "It gives light when you light it with fire."
  },
+ "definitions/cap": {
+  "sha1": "5e29a5a505076c7451d3dc73a52484f261f75268",
+  "heard": "A hat with a front part that keeps the sun out of your eyes.",
+  "text": "A hat with a front part that keeps the sun out of your eyes."
+ },
+ "definitions/car": {
+  "sha1": "0fefee9114dbbf5102dea05b2ead8b98cd08f3a1",
+  "heard": "It has four wheels. Dad drives it on the road.",
+  "text": "It has four wheels. Dad drives it on the road."
+ },
+ "definitions/cards": {
+  "sha1": "a3eb48e45ba6a26ddf6a4c14a1c9397c81fa3f64",
+  "heard": "Small paper pieces you use to play games.",
+  "text": "Small paper pieces you use to play games."
+ },
+ "definitions/carrot": {
+  "sha1": "38a6c4d2945be943152018af60744a93910fa7dd",
+  "heard": "A long orange vegetable. Rabbits love it.",
+  "text": "A long orange vegetable. Rabbits love it."
+ },
+ "definitions/cat": {
+  "sha1": "61953b4119aeb37f25c21b0ec28929d202185704",
+  "heard": "A soft pet that says meow.",
+  "text": "A soft pet that says meow."
+ },
  "definitions/chair": {
   "sha1": "900b7fff8281857aebe72f68c0d42b0430e34f68",
   "heard": "You sit on it. It has four legs and a back.",
   "text": "You sit on it. It has four legs and a back."
+ },
+ "definitions/cheese": {
+  "sha1": "49071a313d6bbf59d42f614561faa7ed03fd449f",
+  "heard": "A yellow food made from milk. Mice love it.",
+  "text": "A yellow food made from milk. Mice love it."
+ },
+ "definitions/chef": {
+  "sha1": "4777c5c72524f032be6d8290a8552e450aafb251",
+  "heard": "This person cooks food in a restaurant.",
+  "text": "This person cooks food in a restaurant."
+ },
+ "definitions/cherry": {
+  "sha1": "dcd920382b6c4399fe1a1d4a7ffcc2ef4d3e12c6",
+  "heard": "A tiny red fruit on a long stem.",
+  "text": "A tiny red fruit on a long stem."
+ },
+ "definitions/chicken": {
+  "sha1": "724df70ffdd07f88060422beef0e320e0700bfbe",
+  "heard": "A farm bird that lays eggs.",
+  "text": "A farm bird that lays eggs."
+ },
+ "definitions/chili": {
+  "sha1": "ce4aa2ff1177cf98a4f90e2bc94b714030583d81",
+  "heard": "A small red vegetable that is very hot.",
+  "text": "A small red vegetable that is very hot."
+ },
+ "definitions/chocolate": {
+  "sha1": "88fb3e92a9f11e418a87fbdc27b613272d477075",
+  "heard": "A sweet brown snack.",
+  "text": "A sweet brown snack."
+ },
+ "definitions/circle": {
+  "sha1": "91705b2c153a9ffb732f7e9edfb28d9fa73bd949",
+  "heard": "A round shape with no corners.",
+  "text": "A round shape with no corners."
  },
  "definitions/clock": {
   "sha1": "e2d3e84c5b778fdc2da82523e3619d03f9e1b84d",
   "heard": "It tells you the time.",
   "text": "It tells you the time."
  },
+ "definitions/cloud": {
+  "sha1": "ae8911316106b6645cea1603c6752eca221929a5",
+  "heard": "It is white and fluffy and floats in the sky.",
+  "text": "It is white and fluffy and floats in the sky."
+ },
+ "definitions/clownfish": {
+  "sha1": "b6002566afc5af8081935af42f3392033e5fc338",
+  "heard": "A small orange fish with white stripes.",
+  "text": "A small orange fish with white stripes."
+ },
+ "definitions/coconut": {
+  "sha1": "e06cd9c53a24592bc7b3ab992a0b5036e0bf5752",
+  "heard": "A big hard fruit from a palm tree. It has water inside.",
+  "text": "A big hard fruit from a palm tree. It has water inside."
+ },
  "definitions/computer": {
   "sha1": "eb2bfd10321f05a60a12e2fee5eeb89f72cac238",
   "heard": "A machine with a screen and a keyboard.",
   "text": "A machine with a screen and a keyboard."
  },
+ "definitions/cookie": {
+  "sha1": "c884ec36ceb38965b4e0c7b078c8129b6285ca8c",
+  "heard": "A small round sweet snack.",
+  "text": "A small round sweet snack."
+ },
+ "definitions/corn": {
+  "sha1": "b8d82505a1b4388ae57fa2bf8e19c9f4dfca9a5c",
+  "heard": "A yellow vegetable with many small seeds and rows.",
+  "text": "A yellow vegetable with many small seeds in rows."
+ },
+ "definitions/cow": {
+  "sha1": "30d44c054ee9187c128cb50cb2ace4b663fc18d3",
+  "heard": "A big farm animal that gives us milk.",
+  "text": "A big farm animal that gives us milk."
+ },
+ "definitions/crab": {
+  "sha1": "bbe827c148d4ba397562c0469b9eb64bd68f5941",
+  "heard": "A sea animal with claws that walk sideways.",
+  "text": "A sea animal with claws that walks sideways."
+ },
  "definitions/crayon": {
   "sha1": "1c8fbed248acd1b8f38880dc11e7fbba756c9843",
   "heard": "A colored wax stick for drawing pictures.",
   "text": "A colored wax stick for drawing pictures."
+ },
+ "definitions/crocodile": {
+  "sha1": "cdf9d331f5d3f8d1edbf3768feed6d6877a56b34",
+  "heard": "A long animal with sharp teeth that lives in rivers.",
+  "text": "A long animal with sharp teeth that lives in rivers."
+ },
+ "definitions/cube": {
+  "sha1": "acd0b8c98731426614312cf1fc9125f1aa9d4ec9",
+  "heard": "A box shape with six square sides.",
+  "text": "A box shape with six square sides."
+ },
+ "definitions/cucumber": {
+  "sha1": "c9a502ccaefc68bc04d270138dad320364bebed3",
+  "heard": "A long green vegetable that is cool and crunchy.",
+  "text": "A long green vegetable that is cool and crunchy."
+ },
+ "definitions/cup": {
+  "sha1": "946a5bfbe95613de7adba9adf7169f27682fcc22",
+  "heard": "You drink hot tea from it. It has a handle.",
+  "text": "You drink hot tea from it. It has a handle."
+ },
+ "definitions/cupboard": {
+  "sha1": "ba93a4b35f627eab86f6b98f037d3b16bd04c01b",
+  "heard": "A tall box with doors to keep clothes or plates.",
+  "text": "A tall box with doors to keep clothes or plates."
+ },
+ "definitions/cupcake": {
+  "sha1": "888d213bd8a4e0068c0ccee45af66f484bba97d3",
+  "heard": "A small sweet cake in a paper cup.",
+  "text": "A small sweet cake in a paper cup."
+ },
+ "definitions/deer": {
+  "sha1": "5be5112fd9d50694047e0884cef309ba6033dbac",
+  "heard": "A gentle forest animal. The father has antlers.",
+  "text": "A gentle forest animal. The father has antlers."
  },
  "definitions/desert": {
   "sha1": "8c85f0a3c1556dc8eb22fc5d3952f84258767161",
@@ -114,20 +384,255 @@
   "heard": "A table where you study and write at school.",
   "text": "A table where you study and write at school."
  },
+ "definitions/diamond": {
+  "sha1": "1adeb050dfc2d785760b055593cd02ca33cf4f96",
+  "heard": "A shape like a kite with four corners.",
+  "text": "A shape like a kite with four corners."
+ },
+ "definitions/doctor": {
+  "sha1": "4d42d387398da6688b3a95664c8a4c5217684548",
+  "heard": "This person helps sick people get better.",
+  "text": "This person helps sick people get better."
+ },
+ "definitions/dog": {
+  "sha1": "db03e54ec845512726ed670b4f56020006f04bd6",
+  "heard": "A pet that barks and wags its tail.",
+  "text": "A pet that barks and wags its tail."
+ },
+ "definitions/doll": {
+  "sha1": "668979c03491fad831a70146aee52ee9e1e2e31a",
+  "heard": "a tie that looks like a little person.",
+  "text": "A toy that looks like a little person."
+ },
+ "definitions/dolphin": {
+  "sha1": "3666a35ca14b97e4d9086e27c02a10aadd3e57b9",
+  "heard": "A smart sea animal that jumps and plays.",
+  "text": "A smart sea animal that jumps and plays."
+ },
+ "definitions/donkey": {
+  "sha1": "e1955e722ed1cf32218db8555df68c562d3c5b06",
+  "heard": "An animal like a small horse with long ears.",
+  "text": "An animal like a small horse with long ears."
+ },
+ "definitions/donut": {
+  "sha1": "e9368ee6a8c35a77aa2a852204bc16f4983e1389",
+  "heard": "A sweet round snack with a hole in the middle.",
+  "text": "A sweet round snack with a hole in the middle."
+ },
  "definitions/door": {
   "sha1": "2aa01dda982c7d06325f0273dfe1f23e7de9a1c4",
   "heard": "You open it to go into a room.",
   "text": "You open it to go into a room."
+ },
+ "definitions/drum": {
+  "sha1": "584cb1e884bc3bb8514f3fa923ab6c7833b008b8",
+  "heard": "You hit it with sticks. It goes boom boom.",
+  "text": "You hit it with sticks. It goes boom boom."
+ },
+ "definitions/duck": {
+  "sha1": "0836ca9c4be272c1a5e0175928657064f3f34450",
+  "heard": "A bird that swims and says quack.",
+  "text": "A bird that swims and says quack."
+ },
+ "definitions/durian": {
+  "sha1": "fed1204e5a4ab493efee93384b1537821020e3ff",
+  "heard": "A big spiky fruit with a very strong smell.",
+  "text": "A big spiky fruit with a very strong smell."
+ },
+ "definitions/eagle": {
+  "sha1": "da70b0198c308cb3e4a9b50c3f58bbca9fdd38ce",
+  "heard": "A big strong bird that flies very high.",
+  "text": "A big strong bird that flies very high."
+ },
+ "definitions/ear": {
+  "sha1": "9821905e1a1f5a858612c653e24124710743082d",
+  "heard": "You hear with it.",
+  "text": "You hear with it."
+ },
+ "definitions/earth": {
+  "sha1": "288dde5245a35f043876873589b3933c6157e218",
+  "heard": "The planet we live on.",
+  "text": "The planet we live on."
+ },
+ "definitions/egg": {
+  "sha1": "164fcb8277837ac97de0f351b695ab4d99470fad",
+  "heard": "A chicken lays it. You can fry or boil it.",
+  "text": "A chicken lays it. You can fry or boil it."
+ },
+ "definitions/eggplant": {
+  "sha1": "b8ec8c21c46492cc1bbea02cb4ead0516966be12",
+  "heard": "A long purple vegetable.",
+  "text": "A long purple vegetable."
+ },
+ "definitions/eight": {
+  "sha1": "a228875f565b9df18b9551b81248f32a660653e6",
+  "heard": "The number eight.",
+  "text": "The number 8."
+ },
+ "definitions/elephant": {
+  "sha1": "1a95b234d48f1ebeec15fdce9e4822c8954c674e",
+  "heard": "A huge gray animal with a long trunk.",
+  "text": "A huge grey animal with a long trunk."
  },
  "definitions/eraser": {
   "sha1": "5d1f8b96329101b4275f8736e81ca44bd97d5d73",
   "heard": "It rubs out pencil mistakes.",
   "text": "It rubs out pencil mistakes."
  },
+ "definitions/excavator": {
+  "sha1": "b36f9b5d47d2a812e384363901c9163bd1b4a70c",
+  "heard": "A digging machine with a big arm and a bucket.",
+  "text": "A digging machine with a big arm and a bucket."
+ },
+ "definitions/eye": {
+  "sha1": "a1eecdf76c68104cd31a0bf58a3151b5f7e03290",
+  "heard": "You see with it.",
+  "text": "You see with it."
+ },
+ "definitions/farmer": {
+  "sha1": "adc800b4acd27a0a04f0b187c1f551f75218ddf5",
+  "heard": "This person grows rice and vegetables.",
+  "text": "This person grows rice and vegetables."
+ },
+ "definitions/firefighter": {
+  "sha1": "0618cc7bc7711e057e3581722e8dbbc891f96689",
+  "heard": "This person puts out fires.",
+  "text": "This person puts out fires."
+ },
+ "definitions/firetruck": {
+  "sha1": "1ae0df060571827c122877d8540ddbf3d662c018",
+  "heard": "A red vehicle with a ladder that helps put out fires.",
+  "text": "A red vehicle with a ladder that helps put out fires."
+ },
+ "definitions/fish": {
+  "sha1": "b73908be1ae4a010ec9e19dba9a1ee10256de0a9",
+  "heard": "An animal that lives in water and swims with fins.",
+  "text": "An animal that lives in water and swims with fins."
+ },
+ "definitions/five": {
+  "sha1": "8990e685f63526cd81a08a452384c0ac77e5030f",
+  "heard": "The number five.",
+  "text": "The number 5."
+ },
+ "definitions/flamingo": {
+  "sha1": "683ba47bd0c90d576aac9e0c7edc2b5b31dbc4b2",
+  "heard": "A pink bird that stands on one leg.",
+  "text": "A pink bird that stands on one leg."
+ },
+ "definitions/flower": {
+  "sha1": "6d09b5165b7d744f5d1724795b8942ef8daba798",
+  "heard": "A pretty, colorful part of a plant that smells nice.",
+  "text": "A pretty, colorful part of a plant that smells nice."
+ },
+ "definitions/flute": {
+  "sha1": "873bd09ed2b0e7be5a58cd4b281c3603438f60f8",
+  "heard": "A long, thin pipe you blow to make music.",
+  "text": "A long thin pipe you blow to make music."
+ },
+ "definitions/foot": {
+  "sha1": "431dc72cf754f03127cfa197b0d016c8b0cf2bf6",
+  "heard": "You stand and walk on it. It has five toes.",
+  "text": "You stand and walk on it. It has five toes."
+ },
+ "definitions/four": {
+  "sha1": "b57b4642c724a22e9901d4a60f9cc89f5e896d54",
+  "heard": "The number four.",
+  "text": "The number 4."
+ },
+ "definitions/fox": {
+  "sha1": "fa895d2cf8652fe295ee140b1549f3f3a046066b",
+  "heard": "A wild animal with orange fur and a fluffy tail.",
+  "text": "A wild animal with orange fur and a fluffy tail."
+ },
+ "definitions/fridge": {
+  "sha1": "5649bd948f07f403e6945dd6f66fc45660f42238",
+  "heard": "A cold box in the kitchen that keeps food fresh.",
+  "text": "A cold box in the kitchen that keeps food fresh."
+ },
+ "definitions/fries": {
+  "sha1": "3a929b11d32d8855d423f0c443ebb7f80e906007",
+  "heard": "Long, thin pieces of potato cooked in oil.",
+  "text": "Long thin pieces of potato cooked in oil."
+ },
+ "definitions/frog": {
+  "sha1": "c1058a97a1e30c356ffeab90a51301411dee2df4",
+  "heard": "A green animal that hops and says, Ribbit.",
+  "text": "A green animal that hops and says ribbit."
+ },
+ "definitions/gamepad": {
+  "sha1": "7a4da0de8c1aa509d75b4c1af227607a0b47976b",
+  "heard": "You hold it with two hands to play video games.",
+  "text": "You hold it with two hands to play video games."
+ },
+ "definitions/garlic": {
+  "sha1": "e253c3914b8e8d5a34a9355c8893c5972f1835d8",
+  "heard": "A small white plant with a strong smell used in cooking.",
+  "text": "A small white plant with a strong smell, used in cooking."
+ },
+ "definitions/gift": {
+  "sha1": "d71a6318b2c3dd03bcbd874882cf304f5cf6db67",
+  "heard": "A present in a box with a ribbon.",
+  "text": "A present in a box with a ribbon."
+ },
+ "definitions/giraffe": {
+  "sha1": "569fe0aae128f2d90010b315bbf68fe61e6c2ed5",
+  "heard": "The tallest animal, it has a very long neck.",
+  "text": "The tallest animal. It has a very long neck."
+ },
+ "definitions/glass": {
+  "sha1": "086e50100c5a565266c3e8252caaf47d8c070eba",
+  "heard": "You drink water from it, you can see through it.",
+  "text": "You drink water from it. You can see through it."
+ },
+ "definitions/glasses": {
+  "sha1": "5861f2c6a247e570767446813cbe8b0bfc7a2b1c",
+  "heard": "You wear them on your nose to see better.",
+  "text": "You wear them on your nose to see better."
+ },
+ "definitions/globe": {
+  "sha1": "d6c86bcabaa657f4cbf0112474fc9cf3ea461219",
+  "heard": "A round map of the world that spins.",
+  "text": "A round map of the world that spins."
+ },
+ "definitions/gloves": {
+  "sha1": "36f9f48a79dd75a6914ee515f06fe4361df131d8",
+  "heard": "You wear them on your hands to keep them warm.",
+  "text": "You wear them on your hands to keep them warm."
+ },
  "definitions/glue": {
   "sha1": "4d9a4b54a3328a823f92da78edca63e8008799fb",
   "heard": "It sticks paper together.",
   "text": "It sticks paper together."
+ },
+ "definitions/goal": {
+  "sha1": "0d166b3268416ad305e3bb23bc7e584c53dbe53d",
+  "heard": "The net where you kick the ball to score.",
+  "text": "The net where you kick the ball to score."
+ },
+ "definitions/goat": {
+  "sha1": "89b7f63dc19b936b67a15fe37fe95f7b9d183354",
+  "heard": "A farm animal with horns and a little beard.",
+  "text": "A farm animal with horns and a little beard."
+ },
+ "definitions/goose": {
+  "sha1": "29bc20a17f3fe181223bd536230276de21106365",
+  "heard": "A big white bird with a long neck. It hunks.",
+  "text": "A big white bird with a long neck. It honks."
+ },
+ "definitions/gorilla": {
+  "sha1": "841a421c22378e87296a40e1e6469841e0083f75",
+  "heard": "A very big and strong ape.",
+  "text": "A very big and strong ape."
+ },
+ "definitions/grapes": {
+  "sha1": "007bee5572cc3c304ce2344bf780171f69528fc4",
+  "heard": "Small round fruits that grow in a bunch.",
+  "text": "Small round fruits that grow in a bunch."
+ },
+ "definitions/grass": {
+  "sha1": "bc57a13b0d6b2843a40611c3250fdc813399af90",
+  "heard": "thin green plants that cover the ground.",
+  "text": "Thin green plants that cover the ground."
  },
  "definitions/gray": {
   "sha1": "aa63be5df923942d02358a47b7c17ed7ad96a444",
@@ -139,25 +644,195 @@
   "heard": "It is a color. Grass and leaves are this color.",
   "text": "It is a color. Grass and leaves are this color."
  },
+ "definitions/guitar": {
+  "sha1": "d714c39d9b2343ec4dc571881cb3569680603b11",
+  "heard": "You play it by pulling its strings.",
+  "text": "You play it by pulling its strings."
+ },
+ "definitions/hair": {
+  "sha1": "739af1a3d5f72739d8c797e615af7482f45af7ee",
+  "heard": "It grows on your head. You comb it.",
+  "text": "It grows on your head. You comb it."
+ },
+ "definitions/hamster": {
+  "sha1": "0762626f569392a61a9cd9544fa22c55ec41adc9",
+  "heard": "A small round pet that keeps food in its cheeks.",
+  "text": "A small round pet that keeps food in its cheeks."
+ },
+ "definitions/hand": {
+  "sha1": "61b5573ffd29787a3d4456558e799d30b4dd467a",
+  "heard": "It has five fingers. You wave with it.",
+  "text": "It has five fingers. You wave with it."
+ },
+ "definitions/harp": {
+  "sha1": "d59954f531183b2fffeb57e9bd01954a1e0e8a1b",
+  "heard": "A tall instrument with many strings.",
+  "text": "A tall instrument with many strings."
+ },
+ "definitions/heart": {
+  "sha1": "942a60d19ed2fab9938c7be331d057293d573d9d",
+  "heard": "A shape that means love.",
+  "text": "A shape that means love."
+ },
+ "definitions/helicopter": {
+  "sha1": "60be352581c7a654f766ee2ddd03b4e9e2cf9cb0",
+  "heard": "It flies with big spinning blades on top.",
+  "text": "It flies with big spinning blades on top."
+ },
+ "definitions/hexagon": {
+  "sha1": "718b489e505c89f7ba6e97766960d726631a90ef",
+  "heard": "A shape with six sides, like a bee's honeycomb.",
+  "text": "A shape with six sides, like a bee's honeycomb."
+ },
+ "definitions/hoop": {
+  "sha1": "4151cdba2c3348d59436e721b3ffe3d679d6ca66",
+  "heard": "A ring with a net. You throw the ball through it.",
+  "text": "A ring with a net. You throw the ball through it."
+ },
+ "definitions/horse": {
+  "sha1": "24be9c6a407e37fde3dfe6f0995efe4027d9ca00",
+  "heard": "A big animal you can ride. It runs very fast.",
+  "text": "A big animal you can ride. It runs very fast."
+ },
+ "definitions/ice": {
+  "sha1": "75a7f03c11ec88b40352b953f0319c4193ce053e",
+  "heard": "Water that is frozen hard and cold.",
+  "text": "Water that is frozen hard and cold."
+ },
+ "definitions/jacket": {
+  "sha1": "1762c89a34176fc23c76fd792682bedc9663fd2d",
+  "heard": "A warm coat you wear when it is cold.",
+  "text": "A warm coat you wear when it is cold."
+ },
+ "definitions/jellyfish": {
+  "sha1": "7e9505c448cb8f9c013bc6085c7f964bb26321be",
+  "heard": "A soft sea animal you can see through. Do not touch it.",
+  "text": "A soft sea animal you can see through. Do not touch it!"
+ },
+ "definitions/juice": {
+  "sha1": "a677d6977217e67838720c61218060a3f5148758",
+  "heard": "A sweet drink made from fruit.",
+  "text": "A sweet drink made from fruit."
+ },
  "definitions/kaaba": {
   "sha1": "580709a3b7db1c6a7e86f8cd069b45cb036962be",
   "heard": "The black cube in Makkah. Muslims face it when they pray.",
   "text": "The black cube in Makkah. Muslims face it when they pray."
+ },
+ "definitions/kangaroo": {
+  "sha1": "16095162e2b31fd93ea07104d3633750a33512c2",
+  "heard": "An animal that jumps and carries its baby in a pouch.",
+  "text": "An animal that jumps and carries its baby in a pouch."
  },
  "definitions/key": {
   "sha1": "2239e7364b4b087b0611360a951b6fdfcb570770",
   "heard": "You use it to open and lock the door.",
   "text": "You use it to open and lock the door."
  },
+ "definitions/kite": {
+  "sha1": "151c7568d7f4724c93e5fbe2332845fedade8f7f",
+  "heard": "A toy that flies in the wind on a long string.",
+  "text": "A toy that flies in the wind on a long string."
+ },
+ "definitions/kiwi": {
+  "sha1": "ee5a844e630da59f01a564c24f1f0b3ba8609e8b",
+  "heard": "A brown fuzzy fruit green inside.",
+  "text": "A brown fuzzy fruit, green inside."
+ },
+ "definitions/koala": {
+  "sha1": "cd704eaca95f736d67621780722cb7f132a7294d",
+  "heard": "A gray animal that sleeps in trees all day.",
+  "text": "A grey animal that sleeps in trees all day."
+ },
+ "definitions/ladybug": {
+  "sha1": "10358c8a5cb58632360e30579b107a3c37a7417c",
+  "heard": "A small red insect with black spots.",
+  "text": "A small red insect with black spots."
+ },
+ "definitions/lamp": {
+  "sha1": "bc48647de5e007d56bb9aa745f5f0767a05f41a9",
+  "heard": "It gives light in a room.",
+  "text": "It gives light in a room."
+ },
+ "definitions/laptop": {
+  "sha1": "7b3838afe569f3431da19a5a084453dd6cc32e3e",
+  "heard": "A small computer you can fold and carry.",
+  "text": "A small computer you can fold and carry."
+ },
+ "definitions/leaf": {
+  "sha1": "7fe666a2b5a835f4743934b879de887e8dcfee4c",
+  "heard": "A flat green part of a plant.",
+  "text": "A flat green part of a plant."
+ },
+ "definitions/lion": {
+  "sha1": "57f507b1a8727bb4f1071a79db1945cdd0504713",
+  "heard": "The king of the jungle. It roars loudly.",
+  "text": "The king of the jungle. It roars loudly."
+ },
+ "definitions/lips": {
+  "sha1": "92a38524fddd81bd6f9de2da928adb4e1e1ddc09",
+  "heard": "The soft edges of your mouth.",
+  "text": "The soft edges of your mouth."
+ },
+ "definitions/lobster": {
+  "sha1": "b1de5063e3af54e1915595744ec8b9d9aaff542d",
+  "heard": "A Red Sea animal with two big claws.",
+  "text": "A red sea animal with two big claws."
+ },
+ "definitions/lock": {
+  "sha1": "8eabd67c37f91eb91af82608b7695095f6c3eef0",
+  "heard": "You need a key to open it.",
+  "text": "You need a key to open it."
+ },
+ "definitions/magnet": {
+  "sha1": "7ad3a80a97a02239ad57077721dfb6fb09a15f2d",
+  "heard": "It pulls things made of iron.",
+  "text": "It pulls things made of iron."
+ },
+ "definitions/mango": {
+  "sha1": "2fbe6f308d7ffa1604267f530253df66ed030f6f",
+  "heard": "A sweet fruit yellow and juicy inside.",
+  "text": "A sweet fruit, yellow and juicy inside."
+ },
+ "definitions/map": {
+  "sha1": "64b01fea04bd9584dfc5e7c3084bc003471b918c",
+  "heard": "a picture that shows places and roads.",
+  "text": "A picture that shows places and roads."
+ },
+ "definitions/maracas": {
+  "sha1": "e5745221842bab679b481503a2157342cd714ef9",
+  "heard": "Two round shakers that make a rattle sound.",
+  "text": "Two round shakers that make a rattle sound."
+ },
  "definitions/marker": {
   "sha1": "7250dcfbec9d2ecc1156e93c14aa0b95dd42515f",
   "heard": "A pen with thick color for writing on the board.",
   "text": "A pen with thick color for writing on the board."
  },
+ "definitions/microscope": {
+  "sha1": "fda3ad7579c8e95193103011d083d9b1fc7045e0",
+  "heard": "It makes tiny things look big.",
+  "text": "It makes tiny things look big."
+ },
+ "definitions/microwave": {
+  "sha1": "ed6e0c30b3c660f45e1b89ad3372b157fae66d31",
+  "heard": "A kitchen box that heats food fast.",
+  "text": "A kitchen box that heats food fast."
+ },
+ "definitions/milk": {
+  "sha1": "009a60aeb063e8ae13fc5883f02aeddddbcaa565",
+  "heard": "A white drink from cows, it makes bones strong.",
+  "text": "A white drink from cows. It makes bones strong."
+ },
  "definitions/mirror": {
   "sha1": "71fd085b8b6c095fb5e90cca20a9766e537205e6",
   "heard": "You see yourself in it.",
   "text": "You see yourself in it."
+ },
+ "definitions/monkey": {
+  "sha1": "dad7cb0a16a390472f67d15d5c6e645d5eedf359",
+  "heard": "A clever animal that climbs trees and eats bananas.",
+  "text": "A clever animal that climbs trees and eats bananas."
  },
  "definitions/moon": {
   "sha1": "fc286fdf2c55336ec8619211b301cdabea0768fb",
@@ -169,15 +844,130 @@
   "heard": "Muslims go there to pray together.",
   "text": "Muslims go there to pray together."
  },
+ "definitions/motorcycle": {
+  "sha1": "6055290bf96b92c7f1ca26e67939edd2e9fdd7f0",
+  "heard": "It has two wheels and an engine.",
+  "text": "It has two wheels and an engine."
+ },
+ "definitions/mountain": {
+  "sha1": "5c3617ae639d1e5bb0e943fd3afce1dbc328becf",
+  "heard": "A very high hill.",
+  "text": "A very high hill."
+ },
+ "definitions/mouse": {
+  "sha1": "4f297f00e29e1b44645f4aeed302144e59085711",
+  "heard": "A tiny animal with a long tail. It likes cheese.",
+  "text": "A tiny animal with a long tail. It likes cheese."
+ },
+ "definitions/mug": {
+  "sha1": "f5a167431420b224af4d40440715494949132524",
+  "heard": "A big cup with a handle for hot drinks.",
+  "text": "A big cup with a handle for hot drinks."
+ },
+ "definitions/mushroom": {
+  "sha1": "c42e184060c6ca4f11d0895bf8489d63e3186aeb",
+  "heard": "It grows in wet places and looks like a little umbrella.",
+  "text": "It grows in wet places and looks like a little umbrella."
+ },
+ "definitions/neck": {
+  "sha1": "174017803c115b75f16a21ea3bbf432affa17643",
+  "heard": "It holds up your head.",
+  "text": "It holds up your head."
+ },
+ "definitions/nine": {
+  "sha1": "552860dffb51e021594fbffcdb083e009c81ff16",
+  "heard": "The number nine.",
+  "text": "The number 9."
+ },
+ "definitions/nose": {
+  "sha1": "86587284b9111ed304debd7b350e69610fb34e39",
+  "heard": "You smell with it.",
+  "text": "You smell with it."
+ },
+ "definitions/notebook": {
+  "sha1": "ad9c3d4fe5a7acfb8dc1878e1bd982292ce41af4",
+  "heard": "A book with empty pages for writing.",
+  "text": "A book with empty pages for writing."
+ },
+ "definitions/octopus": {
+  "sha1": "d52afb880630bc998be67e0004997f76152a1869",
+  "heard": "A sea animal with eight long arms.",
+  "text": "A sea animal with eight long arms."
+ },
+ "definitions/one": {
+  "sha1": "f228f1ec5b85678018f53fd81011816fb148a8cd",
+  "heard": "The number one.",
+  "text": "The number 1."
+ },
+ "definitions/onion": {
+  "sha1": "021aa212ac3a958e6d1b971fdf7ca019839245bd",
+  "heard": "A round vegetable that can make you cry when you cut it.",
+  "text": "A round vegetable that can make you cry when you cut it."
+ },
  "definitions/orange": {
   "sha1": "0c7f99d97ad3d97eacea6ef265b7cefb074c5433",
   "heard": "It is a color and a fruit. Carrots are this color.",
   "text": "It is a color and a fruit. Carrots are this color."
  },
+ "definitions/oval": {
+  "sha1": "d66531f0500bd6455dadb5cfb138e4d1b2d1cf11",
+  "heard": "A round shape that looks like an egg.",
+  "text": "A round shape that looks like an egg."
+ },
+ "definitions/owl": {
+  "sha1": "f443b9a97051dac6ea04ddf586f7eb646485ba10",
+  "heard": "A bird with big eyes that is awake at night.",
+  "text": "A bird with big eyes that is awake at night."
+ },
+ "definitions/painter": {
+  "sha1": "2f33780b5bcb4b5b81aedcf346042a20c6e7ae94",
+  "heard": "This person makes pictures with paint.",
+  "text": "This person makes pictures with paint."
+ },
+ "definitions/palette": {
+  "sha1": "50ed980f2a4eedb0a01f5f64e71829aee0fac1ff",
+  "heard": "A board that holds paint for painting.",
+  "text": "A board that holds paint for painting."
+ },
  "definitions/palm": {
   "sha1": "dc5c20a93edbfaeed73c8f9dcf5c86b6985b9f8f",
   "heard": "A tall tree dates grow on it.",
   "text": "A tall tree. Dates grow on it."
+ },
+ "definitions/pancakes": {
+  "sha1": "37907616e7751d75b0d4d37d34b6d2e4ed9850ea",
+  "heard": "Flat round cakes for breakfast with honey on top.",
+  "text": "Flat round cakes for breakfast, with honey on top."
+ },
+ "definitions/panda": {
+  "sha1": "68978816226244402c949c5fa98332609f32452b",
+  "heard": "A black and white bear that eats bamboo.",
+  "text": "A black and white bear that eats bamboo."
+ },
+ "definitions/pants": {
+  "sha1": "7626f7dc96d82d9f3967bc6e8e07bfbc8782fe68",
+  "heard": "You wear them on your legs.",
+  "text": "You wear them on your legs."
+ },
+ "definitions/papaya": {
+  "sha1": "a14b14fd8538a8e805c6cbafc4db7189533274f4",
+  "heard": "An orange fruit with many black seeds inside.",
+  "text": "An orange fruit with many black seeds inside."
+ },
+ "definitions/parrot": {
+  "sha1": "aead51110d0a01842d2992395d0a712b8964fa7d",
+  "heard": "a colorful bird that can copy words.",
+  "text": "A colorful bird that can copy words."
+ },
+ "definitions/peacock": {
+  "sha1": "260d5201a2ae8094001e5b555d7dcaaa7eb2d82c",
+  "heard": "A bird with a big tail of blue and green feathers.",
+  "text": "A bird with a big tail of blue and green feathers."
+ },
+ "definitions/pear": {
+  "sha1": "54a7d6a39cc848703a331b0064fc83e6ae85f7b6",
+  "heard": "A green fruit, round at the bottom and thin at the top.",
+  "text": "A green fruit, round at the bottom and thin at the top."
  },
  "definitions/pen": {
   "sha1": "8728746db80363ef41873e92524a7edf9c5ffa5c",
@@ -189,15 +979,90 @@
   "heard": "You write and draw with it. You can erase it.",
   "text": "You write and draw with it. You can erase it."
  },
+ "definitions/penguin": {
+  "sha1": "50c25dcae3991f315f042255939daaec62b94086",
+  "heard": "A black and white bird that swims but cannot fly.",
+  "text": "A black and white bird that swims but cannot fly."
+ },
+ "definitions/pentagon": {
+  "sha1": "2a2358275b27022daee71049feae9c609fc3ee38",
+  "heard": "A shape with five sides.",
+  "text": "A shape with five sides."
+ },
+ "definitions/piano": {
+  "sha1": "5db7dca1ba22c142bd5fec564fb6275b4b95d1c9",
+  "heard": "A big instrument with black and white keys.",
+  "text": "A big instrument with black and white keys."
+ },
+ "definitions/pillow": {
+  "sha1": "5f222ef4b0f9ffa35447760763060e4e02256ce3",
+  "heard": "A soft thing for your head on the bed.",
+  "text": "A soft thing for your head on the bed."
+ },
+ "definitions/pilot": {
+  "sha1": "d537cc5673c8207cd1d37a41c6d25ae1b2cd5050",
+  "heard": "This person flies a plane.",
+  "text": "This person flies a plane."
+ },
+ "definitions/pineapple": {
+  "sha1": "fe3f83bf41aef7cd14db848a5244c0d7a54fd63d",
+  "heard": "A yellow fruit with spiky skin and leaves on top.",
+  "text": "A yellow fruit with spiky skin and leaves on top."
+ },
  "definitions/pink": {
   "sha1": "e6d4bd5e893999cafc56808693ec2bce1e8fefc8",
   "heard": "It is a color. Flamingos and bubble gum are this color.",
   "text": "It is a color. Flamingos and bubble gum are this color."
  },
+ "definitions/pizza": {
+  "sha1": "9bf478be688156ce47b29593a2405e5940189137",
+  "heard": "A flat-round food with cheese and tomato on top.",
+  "text": "A flat round food with cheese and tomato on top."
+ },
+ "definitions/plane": {
+  "sha1": "46faa673e5cc0e8feadcbdf91b30c36f027e3dab",
+  "heard": "It has wings and flies in the sky.",
+  "text": "It has wings and flies in the sky."
+ },
+ "definitions/planet": {
+  "sha1": "70e85a71808b71b17daca2528af3e35775b6d46f",
+  "heard": "A big round world in space that goes around the sun.",
+  "text": "A big round world in space that goes around the sun."
+ },
+ "definitions/plate": {
+  "sha1": "7f3888d7b564fd3a95722e1be76e167bcbdf3e0e",
+  "heard": "A flat-round dish for food.",
+  "text": "A flat round dish for food."
+ },
+ "definitions/police": {
+  "sha1": "25e6118f5dfe190873e26f3d4f1067dbc9451296",
+  "heard": "They keep people safe and help in traffic.",
+  "text": "They keep people safe and help in traffic."
+ },
+ "definitions/postman": {
+  "sha1": "606017f7df2acc9533f8f212fcff6d05b5a1ccef",
+  "heard": "This person brings letters to your house.",
+  "text": "This person brings letters to your house."
+ },
+ "definitions/pot": {
+  "sha1": "6c85f1cfccedd596beed48bb2256bea9743b1f23",
+  "heard": "A deep metal dish for cooking soup.",
+  "text": "A deep metal dish for cooking soup."
+ },
+ "definitions/potato": {
+  "sha1": "238484ecd24d4a6eaeca066d6a2ea80f03aa5d2f",
+  "heard": "A brown vegetable that grows under the ground.",
+  "text": "A brown vegetable that grows under the ground."
+ },
  "definitions/prayer": {
   "sha1": "6e0648340778a546a6816b4f3d299cf4fcf6ec11",
   "heard": "You raise your hands and ask Allah for help.",
   "text": "You raise your hands and ask Allah for help."
+ },
+ "definitions/pumpkin": {
+  "sha1": "69891a65875926a6f4a638768bd6cf9b5b8375d2",
+  "heard": "A big round orange vegetable.",
+  "text": "A big round orange vegetable."
  },
  "definitions/purple": {
   "sha1": "1d982078b1f654c9abd88e91e2fe57d8e1816ac5",
@@ -209,35 +1074,200 @@
   "heard": "The Holy Book that Muslims Read",
   "text": "The holy book that Muslims read."
  },
+ "definitions/rabbit": {
+  "sha1": "64ec5b45271660ab40af127d63ca97e6a73604be",
+  "heard": "A small animal with long ears that hops.",
+  "text": "A small animal with long ears that hops."
+ },
+ "definitions/racket": {
+  "sha1": "105cd6f116129cf78fb6c9b7f03772b86b543ff4",
+  "heard": "You hit a ball or shuttlecock with it.",
+  "text": "You hit a ball or shuttlecock with it."
+ },
  "definitions/radio": {
   "sha1": "65025a940ecd0e68691a33d1f659c08204a8e24b",
   "heard": "You listen to music and news on it.",
   "text": "You listen to music and news on it."
+ },
+ "definitions/rain": {
+  "sha1": "b2c59e85d70535fdff3694de3c9fe4c9752583e2",
+  "heard": "Water that falls from dark clouds.",
+  "text": "Water that falls from dark clouds."
+ },
+ "definitions/rainbow": {
+  "sha1": "a80dd6a9be1aba46174db5bad148ce05a66029b6",
+  "heard": "colorful stripes in the sky after the rain.",
+  "text": "Colorful stripes in the sky after the rain."
+ },
+ "definitions/rambutan": {
+  "sha1": "dd2ef64a02fc73ce47f837b4c8a6c28ef2eab301",
+  "heard": "A red-hairy fruit, white and sweet inside.",
+  "text": "A red hairy fruit, white and sweet inside."
+ },
+ "definitions/rectangle": {
+  "sha1": "7e6e77ff05cb8482e45f7804863e12fffcb0462c",
+  "heard": "A shape with four sides, too long and too short.",
+  "text": "A shape with four sides, two long and two short."
  },
  "definitions/red": {
   "sha1": "c9e02393a1d8230e85f3fc7bfa45f7a9d2ae9caf",
   "heard": "It is a color. Strawberries and fire trucks are this color.",
   "text": "It is a color. Strawberries and fire trucks are this color."
  },
+ "definitions/rice": {
+  "sha1": "1a8ac4279fc456c381e4532a24d27c9e70eb026e",
+  "heard": "Small white grains we eat every day.",
+  "text": "Small white grains we eat every day."
+ },
+ "definitions/robot": {
+  "sha1": "c893ad9b5d6f2782c4dab2de59c4666af01afb08",
+  "heard": "a metal machine tie that can move.",
+  "text": "A metal machine toy that can move."
+ },
+ "definitions/rock": {
+  "sha1": "3c21fc489a1b88c55ff5bca9675c6c4ef368e989",
+  "heard": "A hard gray piece of the ground.",
+  "text": "A hard grey piece of the ground."
+ },
+ "definitions/rocket": {
+  "sha1": "dfb19aa6b2cacfe9dcc458373f39cab2db7f7c9a",
+  "heard": "It flies up into space.",
+  "text": "It flies up into space."
+ },
+ "definitions/rose": {
+  "sha1": "9ad92c643addcb24e7c0586e35970aa917cfa055",
+  "heard": "A red flower with thorns on its stem.",
+  "text": "A red flower with thorns on its stem."
+ },
  "definitions/ruler": {
   "sha1": "9ddbc5ea3bec79168feba8adfb60ff4f0950a8c2",
   "heard": "You draw straight lines and measure with it.",
   "text": "You draw straight lines and measure with it."
+ },
+ "definitions/salad": {
+  "sha1": "e0310ce761ecf3f5b8af250dd9e1b9d9bb5fa1fa",
+  "heard": "A bowl of fresh vegetables mixed together.",
+  "text": "A bowl of fresh vegetables mixed together."
+ },
+ "definitions/scarf": {
+  "sha1": "17d1981dc45c7a97f51a719aabd33c6508d8360b",
+  "heard": "You wear it around your neck to keep warm.",
+  "text": "You wear it around your neck to keep warm."
  },
  "definitions/scissors": {
   "sha1": "572bb8ee71ba275898ffa928f1d7e84884d293e1",
   "heard": "You cut paper with it. It has two blades.",
   "text": "You cut paper with it. It has two blades."
  },
+ "definitions/seahorse": {
+  "sha1": "1e916fe0baf224e8ce2b54c0ec3e363aaccdbf87",
+  "heard": "A tiny sea animal with a head like a horse.",
+  "text": "A tiny sea animal with a head like a horse."
+ },
+ "definitions/seed": {
+  "sha1": "41ecf994ea4104faabeaa15a5dc5c2e23dc8e4cc",
+  "heard": "A plant grows from it when you put it in soil.",
+  "text": "A plant grows from it when you put it in soil."
+ },
+ "definitions/seven": {
+  "sha1": "e7fc17e11183c2df96ab0b2a593ea3c8cd91655f",
+  "heard": "The number seven.",
+  "text": "The number 7."
+ },
+ "definitions/shark": {
+  "sha1": "d036a509d72a4b36b269e966b69182abc4b3225d",
+  "heard": "A big sea animal with many sharp teeth.",
+  "text": "A big sea animal with many sharp teeth."
+ },
+ "definitions/sheep": {
+  "sha1": "a6269c41c66b80319a4a53de3f6256eca5ac86b2",
+  "heard": "A farm animal with soft white wool.",
+  "text": "A farm animal with soft white wool."
+ },
+ "definitions/shell": {
+  "sha1": "e3d7069566c151e3394c897ecc6e6451b6f32864",
+  "heard": "A hard home of a sea animal. You find it on the beach.",
+  "text": "A hard home of a sea animal. You find it on the beach."
+ },
+ "definitions/ship": {
+  "sha1": "3a50e54602ca768bb83fb848790f6aee622a6827",
+  "heard": "A very big vehicle that sails on the sea.",
+  "text": "A very big vehicle that sails on the sea."
+ },
+ "definitions/shirt": {
+  "sha1": "7c7ba6b4b2dd3b43abd691bd5e05090e12fe4065",
+  "heard": "You wear it on the top of your body.",
+  "text": "You wear it on the top of your body."
+ },
+ "definitions/shoes": {
+  "sha1": "956d7c665ce8518ead147403659adf91b591ab92",
+  "heard": "You wear them on your feet when you go out.",
+  "text": "You wear them on your feet when you go out."
+ },
+ "definitions/six": {
+  "sha1": "2d3977749e069cd8bce88f75fc2d2e7e3220b6d7",
+  "heard": "The number six.",
+  "text": "The number 6."
+ },
+ "definitions/skateboard": {
+  "sha1": "312fd797fbad308a4145342c3af78d1c2f7a6347",
+  "heard": "A board with four wheels that you ride.",
+  "text": "A board with four wheels that you ride."
+ },
+ "definitions/skates": {
+  "sha1": "335421b81f37f2039ee97ea05ffcca08eb27a25f",
+  "heard": "Shoes with wheels for rolling fast.",
+  "text": "Shoes with wheels for rolling fast."
+ },
+ "definitions/skirt": {
+  "sha1": "43c1c5877b840ca3fbe4f63d2eec3c60d972c0ac",
+  "heard": "Girls wear it around the waist.",
+  "text": "Girls wear it around the waist."
+ },
+ "definitions/snail": {
+  "sha1": "c4d8a148492f795595064e9f189840ca9acef7b0",
+  "heard": "A slow animal that carries its shell.",
+  "text": "A slow animal that carries its shell."
+ },
+ "definitions/snowflake": {
+  "sha1": "d2579cc0c2800b73cdb630ae3169763e4ac44f27",
+  "heard": "a tiny piece of frozen water that falls from the sky.",
+  "text": "A tiny piece of frozen water that falls from the sky."
+ },
+ "definitions/snowman": {
+  "sha1": "27954480b0b5cd43033b8c188bd26d7bbf6fd53d",
+  "heard": "A big doll made of snow with a carrot nose.",
+  "text": "A big doll made of snow with a carrot nose."
+ },
  "definitions/soap": {
   "sha1": "91e35acb7ee69efea33f5eac3375fea2a52fc9fb",
   "heard": "You wash your hands with it. It makes bubbles.",
   "text": "You wash your hands with it. It makes bubbles."
  },
+ "definitions/socks": {
+  "sha1": "8bc6549fda53a20b16025381fef2b88afba0bbc9",
+  "heard": "You wear them on your feet inside your shoes.",
+  "text": "You wear them on your feet inside your shoes."
+ },
  "definitions/sofa": {
   "sha1": "7dbd869831e8562f5a9da9a49504157d1f2b106f",
   "heard": "A soft, long seat in the living room.",
   "text": "A soft long seat in the living room."
+ },
+ "definitions/soldier": {
+  "sha1": "6035c0edcf80b6a9b0a789c59f986cfb8f17b7d2",
+  "heard": "This person protects the country.",
+  "text": "This person protects the country."
+ },
+ "definitions/soup": {
+  "sha1": "c8f3fe80c16fa6eb969dfc065fa48c8229ca8835",
+  "heard": "A hot food with water, vegetables, and a spoon.",
+  "text": "A hot food with water, vegetables and a spoon."
+ },
+ "definitions/spinach": {
+  "sha1": "af9ebf4e1b5a4b77bc559bfed14a1e3bd6d16f3f",
+  "heard": "A green, leafy vegetable. It makes you strong.",
+  "text": "A green leafy vegetable. It makes you strong."
  },
  "definitions/sponge": {
   "sha1": "5fb60eac889c95fabe082bfa3d1762b1e23f1e5b",
@@ -249,6 +1279,21 @@
   "heard": "You eat soup and rice with it.",
   "text": "You eat soup and rice with it."
  },
+ "definitions/sprout": {
+  "sha1": "4f18403522e5b7e4836698ae4110f95e0b83d733",
+  "heard": "A tiny new plant coming out of the soil.",
+  "text": "A tiny new plant coming out of the soil."
+ },
+ "definitions/square": {
+  "sha1": "05619bfddf21d58630ec4da592e2d18166a7dba1",
+  "heard": "A shape with four sides that are all the same.",
+  "text": "A shape with four sides that are all the same."
+ },
+ "definitions/squid": {
+  "sha1": "03f432eca9c68918b118d7a9839f4c318fd69e80",
+  "heard": "A sea animal with ten arms that squirts ink.",
+  "text": "A sea animal with ten arms that squirts ink."
+ },
  "definitions/stapler": {
   "sha1": "c9265c96cc7ccf714a9cc396999bb2de4d6747be",
   "heard": "It joins sheets of paper with a small metal clip.",
@@ -258,6 +1303,46 @@
   "sha1": "46e1a863de1a85e874740531e88ccc290df2bc88",
   "heard": "It twinkles in the night sky.",
   "text": "It twinkles in the night sky."
+ },
+ "definitions/starfish": {
+  "sha1": "e4a3847f44f26c58ec3c364b8c6a2b4132895917",
+  "heard": "A sea animal shaped like a star.",
+  "text": "A sea animal shaped like a star."
+ },
+ "definitions/stingray": {
+  "sha1": "c81c4e6397f2ade120e0f9cfd5d91cb34830121a",
+  "heard": "A flat sea animal that glides like a kite.",
+  "text": "A flat sea animal that glides like a kite."
+ },
+ "definitions/storm": {
+  "sha1": "be25e46b45e61446a3ef3eb50d1c4221483968c9",
+  "heard": "Strong wind, heavy rain and lightning.",
+  "text": "Strong wind, heavy rain and lightning."
+ },
+ "definitions/strawberry": {
+  "sha1": "c3561061b356a75204604d3371c8136077f6397c",
+  "heard": "A small red fruit with tiny seeds outside.",
+  "text": "A small red fruit with tiny seeds outside."
+ },
+ "definitions/submarine": {
+  "sha1": "387a633c9e9167150e01b5d0c64301995070c358",
+  "heard": "A ship that goes under the sea.",
+  "text": "A ship that goes under the sea."
+ },
+ "definitions/sun": {
+  "sha1": "b57975d3fd3be0bd9432c4111062956145fc1fa3",
+  "heard": "It shines in the sky in the day and keeps us warm.",
+  "text": "It shines in the sky in the day and keeps us warm."
+ },
+ "definitions/sunflower": {
+  "sha1": "5fd66992d6bef445151de07e4b294f5d247c4bfc",
+  "heard": "A tall yellow flower that looks at the sun.",
+  "text": "A tall yellow flower that looks at the sun."
+ },
+ "definitions/sunglasses": {
+  "sha1": "88e4727421d28d11b36c4e7c971d0ba6630bea2e",
+  "heard": "Dark lenses you wear when the sun is bright.",
+  "text": "Dark lenses you wear when the sun is bright."
  },
  "definitions/sunrise": {
   "sha1": "2351acf866495ee59e374399a9e242b4ce3bc4f5",
@@ -269,50 +1354,215 @@
   "heard": "You eat or work on it. It has a flat top and legs.",
   "text": "You eat or work on it. It has a flat top and legs."
  },
+ "definitions/tambourine": {
+  "sha1": "65b076feb5b0765d8df4da36a6e83bea34711b3b",
+  "heard": "You shake it or tap it. It jingles.",
+  "text": "You shake it or tap it. It jingles."
+ },
+ "definitions/target": {
+  "sha1": "e3e5179448d2505707d2ba1699d23231ce60a0c3",
+  "heard": "A round board with rings you aim at the middle.",
+  "text": "A round board with rings. You aim at the middle."
+ },
+ "definitions/taxi": {
+  "sha1": "22dc21ca3f33d3d3b224c093fa64c98524eceece",
+  "heard": "A yellow car you pay to ride in.",
+  "text": "A yellow car you pay to ride in."
+ },
  "definitions/teapot": {
   "sha1": "2d10ab14022b45e17d8383e69172535007c1258b",
   "heard": "You pour hot tea from it.",
   "text": "You pour hot tea from it."
+ },
+ "definitions/teddy": {
+  "sha1": "26c851f63783801739683707c3e7ffea1dc9b87f",
+  "heard": "A soft toy bear you can hug.",
+  "text": "A soft toy bear you can hug."
+ },
+ "definitions/telescope": {
+  "sha1": "0d633d834e8fc2d82dfb9963c37d4885142ee5af",
+  "heard": "a long tube that makes faraway stars look near.",
+  "text": "A long tube that makes faraway stars look near."
  },
  "definitions/television": {
   "sha1": "2f7a59a5eb8d98e62a6aad9a001b81e52f00ccf6",
   "heard": "You watch cartoons on it.",
   "text": "You watch cartoons on it."
  },
+ "definitions/ten": {
+  "sha1": "33a7b88b7edeb7e84144de5173a51da0511f027b",
+  "heard": "The number 10.",
+  "text": "The number 10."
+ },
+ "definitions/three": {
+  "sha1": "1282b6b352f23d0f365cd2790c75db5b0c869168",
+  "heard": "The number three.",
+  "text": "The number 3."
+ },
+ "definitions/tie": {
+  "sha1": "104d17c6d4d23096fcc950667cac6ebb75199955",
+  "heard": "A long piece of cloth worn around the neck with a shirt.",
+  "text": "A long piece of cloth worn around the neck with a shirt."
+ },
+ "definitions/tiger": {
+  "sha1": "9acd782dc9047798f9f988e4a430610f1ccad934",
+  "heard": "A big wildcat with orange fur and black stripes.",
+  "text": "A big wild cat with orange fur and black stripes."
+ },
+ "definitions/toaster": {
+  "sha1": "cf92e8e8e39be5e75b9741dfe5d7780f2e244a06",
+  "heard": "A kitchen machine that makes bread hot and crispy.",
+  "text": "A kitchen machine that makes bread hot and crispy."
+ },
  "definitions/toilet": {
   "sha1": "b244fe2e680ccffbd964cc8fa95be7879603a644",
   "heard": "It is in the bathroom. You flush it.",
   "text": "It is in the bathroom. You flush it."
+ },
+ "definitions/tomato": {
+  "sha1": "0eb4627adcd89f2fb6bcece600933c656699ffa6",
+  "heard": "Around red vegetable, used in soup and salad.",
+  "text": "A round red vegetable used in soup and salad."
+ },
+ "definitions/tongue": {
+  "sha1": "b10671d459e08cdb1c94ee5cf5791d91aa9d27ca",
+  "heard": "It is pink and inside your mouth. You taste with it.",
+  "text": "It is pink and inside your mouth. You taste with it."
+ },
+ "definitions/tooth": {
+  "sha1": "2ab99d45603b182d16a0bae1e5fff3132ee36bf1",
+  "heard": "It is white and hard. You chew with it.",
+  "text": "It is white and hard. You chew with it."
  },
  "definitions/toothbrush": {
   "sha1": "336e4906d2ea8805a498655baba5b09583075e1b",
   "heard": "You clean your teeth with it.",
   "text": "You clean your teeth with it."
  },
+ "definitions/tornado": {
+  "sha1": "fd7796697ed3458a32f48c7eacf4cdce3e11f755",
+  "heard": "A strong wind that spins round and round.",
+  "text": "A strong wind that spins round and round."
+ },
+ "definitions/towel": {
+  "sha1": "8f917d8441adb7dd666801587c289abda37d0615",
+  "heard": "You dry your body with it after a bath.",
+  "text": "You dry your body with it after a bath."
+ },
+ "definitions/tractor": {
+  "sha1": "4c19f46af78efcad62fb4ba863f854491591b60e",
+  "heard": "A farm vehicle with big back wheels.",
+  "text": "A farm vehicle with big back wheels."
+ },
+ "definitions/train": {
+  "sha1": "715c29982f15e7cffa11f68fcc81297507624ef1",
+  "heard": "a long vehicle that runs on a track.",
+  "text": "A long vehicle that runs on a track."
+ },
+ "definitions/tree": {
+  "sha1": "bbaf296d2b08f0cfa9cba642eb6ff16aa4136a38",
+  "heard": "A tall plant with a trunk, branches and leaves.",
+  "text": "A tall plant with a trunk, branches and leaves."
+ },
+ "definitions/triangle": {
+  "sha1": "f568f367d8dd3d3f5715f4efea71871e33da7d54",
+  "heard": "A shape with three sides and three corners.",
+  "text": "A shape with three sides and three corners."
+ },
+ "definitions/trophy": {
+  "sha1": "a5ca49568a57855d616900b767882746d6b40f76",
+  "heard": "A gold cup you win for being the best.",
+  "text": "A gold cup you win for being the best."
+ },
+ "definitions/truck": {
+  "sha1": "98acca93a63889d6f6fbdedfe346cebd65edc798",
+  "heard": "A big vehicle that carries heavy things.",
+  "text": "A big vehicle that carries heavy things."
+ },
+ "definitions/trumpet": {
+  "sha1": "fd0ca6a335878472bc34e73113a50c0644f52b56",
+  "heard": "A shiny instrument you blow into. It is loud.",
+  "text": "A shiny instrument you blow into. It is loud."
+ },
+ "definitions/turtle": {
+  "sha1": "8427acbefe355670e43e7cadc2b7ab427011f5ce",
+  "heard": "A slow animal with a hard shell. It can swim.",
+  "text": "A slow animal with a hard shell. It can swim."
+ },
+ "definitions/two": {
+  "sha1": "042b36c04c61e6cb265117d08b19653bf54351f4",
+  "heard": "The number two.",
+  "text": "The number 2."
+ },
+ "definitions/ukulele": {
+  "sha1": "07ddb3510a65e8080b86eaaa3eac5f7d92674938",
+  "heard": "A small instrument with four strings.",
+  "text": "A small instrument with four strings."
+ },
  "definitions/umbrella": {
   "sha1": "3f5b0e9dc89bb1b4c234630b227937d4a5fc6be1",
   "heard": "It keeps you dry when it rains.",
   "text": "It keeps you dry when it rains."
+ },
+ "definitions/violin": {
+  "sha1": "96f989cc820b4ee4f021dd1c79f51e614110b490",
+  "heard": "You play it with a bow under your chin.",
+  "text": "You play it with a bow under your chin."
+ },
+ "definitions/volcano": {
+  "sha1": "0283a9fd5bc741d7230b458ad278273394a4d7ab",
+  "heard": "A mountain that can shoot out hot lava.",
+  "text": "A mountain that can shoot out hot lava."
  },
  "definitions/water": {
   "sha1": "352a39191b464aecb38934dac1dff52878f2ab24",
   "heard": "You drink it when you are thirsty.",
   "text": "You drink it when you are thirsty."
  },
+ "definitions/watermelon": {
+  "sha1": "9d7fc24b37899f1e659b80cfbd9a7ef9af441b68",
+  "heard": "A big green fruit, red and juicy inside.",
+  "text": "A big green fruit, red and juicy inside."
+ },
+ "definitions/whistle": {
+  "sha1": "30fecb9d224a04e4f9506ea068c8ff3a018f4463",
+  "heard": "You blow it to make a loud sound in a game.",
+  "text": "You blow it to make a loud sound in a game."
+ },
  "definitions/white": {
   "sha1": "181e0a1c1795dbecc84e1bd665121ff5fc32ed2f",
   "heard": "It is a color. Snow and milk are this color.",
   "text": "It is a color. Snow and milk are this color."
+ },
+ "definitions/wind": {
+  "sha1": "9535e499ac4a41eca97f45f09cc1261c78dd8100",
+  "heard": "Moving air, it makes kites fly.",
+  "text": "Moving air. It makes kites fly."
  },
  "definitions/window": {
   "sha1": "f219d351e9aad504130bfad67dde6e17394b9900",
   "heard": "You look outside through it. It is made of glass.",
   "text": "You look outside through it. It is made of glass."
  },
+ "definitions/xylophone": {
+  "sha1": "d75cca96ddfa3b0f3baf7b363faa366d27e8e001",
+  "heard": "You hit its colored bars to make music.",
+  "text": "You hit its colored bars to make music."
+ },
  "definitions/yellow": {
   "sha1": "5fcbcae09c50f025c252045e010b8686052d5ee6",
   "heard": "It is a color. The sun and bananas are this color.",
   "text": "It is a color. The sun and bananas are this color."
+ },
+ "definitions/yoyo": {
+  "sha1": "60f4104cc2828588c1f1e22ea0f1535a33c580bc",
+  "heard": "A round toy that goes up and down on a string.",
+  "text": "A round toy that goes up and down on a string."
+ },
+ "definitions/zebra": {
+  "sha1": "02747c9e56686dd2fda5c670d22f67dac370a153",
+  "heard": "A wild horse with black and white stripes.",
+  "text": "A wild horse with black and white stripes."
  },
  "letters/a": {
   "sha1": "6bcd9511079e45704e0f8ed9c7c4ded416ce2f63",
@@ -454,15 +1704,65 @@
   "heard": "Noun",
   "carrier": "Here is the next word."
  },
+ "sentences/accordion": {
+  "sha1": "953bf5efd07e9b5056ccce55ca60a471290d18f4",
+  "heard": "Grandpa plays the accordion.",
+  "text": "Grandpa plays the accordion."
+ },
+ "sentences/apple": {
+  "sha1": "ee3a80a87aee65a3735319e20bca655be7f2723f",
+  "heard": "I eat an apple every day.",
+  "text": "I eat an apple every day."
+ },
+ "sentences/arm": {
+  "sha1": "16019aad6b6cecd18e57a552f7dfab7d104d1cd0",
+  "heard": "I hurt my arm.",
+  "text": "I hurt my arm."
+ },
+ "sentences/astronaut": {
+  "sha1": "0fc85d0ba249f90eabd21f8240b6d7c1c3f0407b",
+  "heard": "The astronaut walks on the moon.",
+  "text": "The astronaut walks on the moon."
+ },
+ "sentences/avocado": {
+  "sha1": "47201296fbd8c01ccbf0c1b9df3e30aa9a8198a8",
+  "heard": "Mom makes juice from an avocado.",
+  "text": "Mom makes juice from an avocado."
+ },
+ "sentences/backpack": {
+  "sha1": "6988eb5be7efa711921514ccf663f057f55d21e3",
+  "heard": "My books are in my backpack.",
+  "text": "My books are in my backpack."
+ },
  "sentences/bag": {
   "sha1": "55c61a75b743f5dc8504dc9ebed91d72720ae743",
   "heard": "Put your lunch in your bag.",
   "text": "Put your lunch in your bag."
  },
+ "sentences/ball": {
+  "sha1": "96c61b8983156190d021161768856bfe8ad9e5fb",
+  "heard": "Kick the ball to me.",
+  "text": "Kick the ball to me."
+ },
+ "sentences/balloon": {
+  "sha1": "0c99907a2d6d4c98ed367cee2d597bc511a78cf8",
+  "heard": "The red balloon flies away.",
+  "text": "The red balloon flies away."
+ },
+ "sentences/banana": {
+  "sha1": "0431ca2273f3c700c1dbca9fdeeefb664e50af22",
+  "heard": "The banana is yellow and sweet.",
+  "text": "The banana is yellow and sweet."
+ },
  "sentences/basket": {
   "sha1": "5d85db7486f2bfae7d1fde491a6fd2d95451289e",
   "heard": "Put the fruit in the basket.",
   "text": "Put the fruit in the basket."
+ },
+ "sentences/basketball": {
+  "sha1": "faaa9927002fdd5228746ab0950201457e400142",
+  "heard": "We play basketball after school.",
+  "text": "We play basketball after school."
  },
  "sentences/bathtub": {
   "sha1": "76a90be42d7bd22beccb208e480731fa819cc209",
@@ -474,10 +1774,35 @@
   "heard": "Grandpa counts his prayer beads.",
   "text": "Grandpa counts his prayer beads."
  },
+ "sentences/beans": {
+  "sha1": "02f0cdbf9f31d11650ce9511074e3c10f66684a2",
+  "heard": "I like green beans.",
+  "text": "I like green beans."
+ },
+ "sentences/bear": {
+  "sha1": "d859580135c02345af3e0f05db9c4f64d16c2b60",
+  "heard": "The bear catches a fish.",
+  "text": "The bear catches a fish."
+ },
  "sentences/bed": {
   "sha1": "7476f3ad73c4aa7569003779ed45ea1d148e6deb",
   "heard": "I go to bed at eight o'clock.",
   "text": "I go to bed at eight o'clock."
+ },
+ "sentences/bee": {
+  "sha1": "853aaa4804b0a711f140c00df0fac76bb2da734a",
+  "heard": "The bee flies to the flower.",
+  "text": "The bee flies to the flower."
+ },
+ "sentences/bell": {
+  "sha1": "a54b29d6e686cc2906f76fbea1a1573d3c13d936",
+  "heard": "The school bell rings.",
+  "text": "The school bell rings."
+ },
+ "sentences/bicycle": {
+  "sha1": "c0ac2e724a7d99e984db628fb9059e1db303e400",
+  "heard": "I ride my bicycle to the park.",
+  "text": "I ride my bicycle to the park."
  },
  "sentences/black": {
   "sha1": "582c215a5cca059ee9391db8f82d7a4167898eb4",
@@ -494,10 +1819,25 @@
   "heard": "The teacher wrote the date on the board.",
   "text": "The teacher wrote the date on the board."
  },
+ "sentences/boat": {
+  "sha1": "19272a83d233e7f63e032f504cbdf103516e7843",
+  "heard": "We row the boat on the lake.",
+  "text": "We row the boat on the lake."
+ },
+ "sentences/bone": {
+  "sha1": "d2d81e0b4a008c164eadf2d308e91761ba723e13",
+  "heard": "The dog chews a bone.",
+  "text": "The dog chews a bone."
+ },
  "sentences/book": {
   "sha1": "03f7d7892784072c1355e7a395c5a79d99fad657",
   "heard": "I read a book before bedtime.",
   "text": "I read a book before bedtime."
+ },
+ "sentences/boot": {
+  "sha1": "f22f433317e4698ba1d1463dede56f2e08758381",
+  "heard": "I jump in puddles with my boot.",
+  "text": "I jump in puddles with my boot."
  },
  "sentences/bottle": {
   "sha1": "1960d823bba3d0606a2328985da49ee94c9b11ac",
@@ -508,6 +1848,21 @@
   "sha1": "8f2d637520ada5eaf0af3c9058b20c0f3187ce7b",
   "heard": "pour the cereal into a bowl.",
   "text": "Pour the cereal into a bowl."
+ },
+ "sentences/brain": {
+  "sha1": "1108e26e91b86f5fae2ab9588d972c2d52c31450",
+  "heard": "Your brain helps you learn.",
+  "text": "Your brain helps you learn."
+ },
+ "sentences/bread": {
+  "sha1": "cd9f08b21d9edd6daa36348b303c9840010a85f8",
+  "heard": "I eat bread for breakfast.",
+  "text": "I eat bread for breakfast."
+ },
+ "sentences/broccoli": {
+  "sha1": "56b898225fd8c5f3a64586727186269081ce5828",
+  "heard": "Broccoli is good for you.",
+  "text": "Broccoli is good for you."
  },
  "sentences/broom": {
   "sha1": "12c31da0282ce8d5f1adcf3adb9a99a37c240135",
@@ -524,6 +1879,41 @@
   "heard": "Carry the water in a bucket.",
   "text": "Carry the water in a bucket."
  },
+ "sentences/builder": {
+  "sha1": "bdcc968b61b419e11fd01bd3f48f6fcd63a4f23f",
+  "heard": "The builder makes a new house.",
+  "text": "The builder makes a new house."
+ },
+ "sentences/burger": {
+  "sha1": "d179b86f4c201b4ab4d183d3c594d9e49e27f0f2",
+  "heard": "Dad eats a big burger.",
+  "text": "Dad eats a big burger."
+ },
+ "sentences/bus": {
+  "sha1": "80c7470e8cbb0dfb202e78358918428139c7a61e",
+  "heard": "The children ride the school bus.",
+  "text": "The children ride the school bus."
+ },
+ "sentences/butterfly": {
+  "sha1": "9485b6f62652f04b63bfdf002b434dd744d48006",
+  "heard": "A butterfly sits on the flower.",
+  "text": "A butterfly sits on the flower."
+ },
+ "sentences/cabbage": {
+  "sha1": "1e0ce2a08554c2241396c6807eb1c4e81c337294",
+  "heard": "Mom cuts the cabbage for soup.",
+  "text": "Mom cuts the cabbage for soup."
+ },
+ "sentences/cactus": {
+  "sha1": "860723455623d9bac7d34d948d76d0aedccf549a",
+  "heard": "Do not touch the cactus.",
+  "text": "Do not touch the cactus."
+ },
+ "sentences/cake": {
+  "sha1": "ddee4fad662d39c10ce341995dfe38fbc0419aa9",
+  "heard": "We eat cake at the party.",
+  "text": "We eat cake at the party."
+ },
  "sentences/calculator": {
   "sha1": "002653bfb4f30f444eb10638fc5614b26b2e3494",
   "heard": "Check your answer with a calculator.",
@@ -539,25 +1929,155 @@
   "heard": "Blow out the candle on the cake.",
   "text": "Blow out the candle on the cake."
  },
+ "sentences/cap": {
+  "sha1": "bf179f20097d2525f61fa2877f0b44baa07e7eff",
+  "heard": "I wear a cap in the sun.",
+  "text": "I wear a cap in the sun."
+ },
+ "sentences/car": {
+  "sha1": "d35b3c629d6f189b404eb582233142fb8d1c1816",
+  "heard": "We go to school by car.",
+  "text": "We go to school by car."
+ },
+ "sentences/cards": {
+  "sha1": "870ff35b6636077150be0b7c22a5334f4943226d",
+  "heard": "We play cards together.",
+  "text": "We play cards together."
+ },
+ "sentences/carrot": {
+  "sha1": "3d43ad39de4cd700e516d1a3641366ef1afb8e6b",
+  "heard": "The rabbit eats a carrot.",
+  "text": "The rabbit eats a carrot."
+ },
+ "sentences/cat": {
+  "sha1": "2971f5aac4e3ece1d61b4648c27fd276c2c6f12c",
+  "heard": "The cat is sleeping on the mat.",
+  "text": "The cat is sleeping on the mat."
+ },
  "sentences/chair": {
   "sha1": "ef6c2cfa47735b12f47e0d5adde741799c506272",
   "heard": "Please sit on the chair.",
   "text": "Please sit on the chair."
+ },
+ "sentences/cheese": {
+  "sha1": "32e6e81e6a804c792694f9fd34129cbddfa405f9",
+  "heard": "I put cheese on my bread.",
+  "text": "I put cheese on my bread."
+ },
+ "sentences/chef": {
+  "sha1": "9825ae17494c53f8e6873b39d4e6124956a07308",
+  "heard": "The chef makes yummy noodles.",
+  "text": "The chef makes yummy noodles."
+ },
+ "sentences/cherry": {
+  "sha1": "7abf0ebfe0003e0b94819ae913973e8757e6d862",
+  "heard": "There is a cherry on my cake.",
+  "text": "There is a cherry on my cake."
+ },
+ "sentences/chicken": {
+  "sha1": "8f02197fbcc4cb7ba2bcc84b464790661d9eeefb",
+  "heard": "The chicken lays an egg every day.",
+  "text": "The chicken lays an egg every day."
+ },
+ "sentences/chili": {
+  "sha1": "330142fb2080a5fd8f28c58b071d9ef728f22de5",
+  "heard": "The chili is too hot for me.",
+  "text": "The chili is too hot for me."
+ },
+ "sentences/chocolate": {
+  "sha1": "4afbb35fdbe61fdba5a95775794d38ae1c133d90",
+  "heard": "The chocolate melts in the sun.",
+  "text": "The chocolate melts in the sun."
+ },
+ "sentences/circle": {
+  "sha1": "d6029f306b79f26bcf21f25c1009879936885899",
+  "heard": "Draw a circle like a ball.",
+  "text": "Draw a circle like a ball."
  },
  "sentences/clock": {
   "sha1": "75b584c2e7b80f1f4daaadd7cf53d749373ab6dc",
   "heard": "The clock says it is time for school.",
   "text": "The clock says it is time for school."
  },
+ "sentences/cloud": {
+  "sha1": "63914a2729ad10b358dcc234ad6166247d0f9c89",
+  "heard": "The cloud looks like a sheep.",
+  "text": "The cloud looks like a sheep."
+ },
+ "sentences/clownfish": {
+  "sha1": "deb32a35d68b8f935e7eb6341844528107bdfd97",
+  "heard": "The clownfish hides in the sea plants.",
+  "text": "The clownfish hides in the sea plants."
+ },
+ "sentences/coconut": {
+  "sha1": "58288c6cdbe62569c3d127de80e4de4a09ac4b43",
+  "heard": "We drink water from a coconut.",
+  "text": "We drink water from a coconut."
+ },
  "sentences/computer": {
   "sha1": "ee0f4d0eee07801e876ea49e5f493da60dd1e145",
   "heard": "We type our story on the computer.",
   "text": "We type our story on the computer."
  },
+ "sentences/cookie": {
+  "sha1": "f44f6f4e3b0573ab63ed61d30b368f6e86599624",
+  "heard": "May I have a cookie, please?",
+  "text": "May I have a cookie, please?"
+ },
+ "sentences/corn": {
+  "sha1": "8592be499ed807d952ca683d49201532aa40a6d2",
+  "heard": "Dad grills corn for dinner.",
+  "text": "Dad grills corn for dinner."
+ },
+ "sentences/cow": {
+  "sha1": "641bcb1430a8e9a4d485fd5bad9d450f0b582756",
+  "heard": "The cow eats green grass.",
+  "text": "The cow eats green grass."
+ },
+ "sentences/crab": {
+  "sha1": "ba82ba4ae49bc30d49104473e71b262c1df8b6c5",
+  "heard": "The crab walks on the sand.",
+  "text": "The crab walks on the sand."
+ },
  "sentences/crayon": {
   "sha1": "5c71e996b6a38f24cf9d3af94a007649f3b4a3d0",
   "heard": "She drew a rainbow with a crayon.",
   "text": "She drew a rainbow with a crayon."
+ },
+ "sentences/crocodile": {
+  "sha1": "48722624bc101f2cc647f8cc17742022b390c31f",
+  "heard": "The crocodile swims in the river.",
+  "text": "The crocodile swims in the river."
+ },
+ "sentences/cube": {
+  "sha1": "cae6a4ccedc5e67b1a470b41bf10ad07675a0b2b",
+  "heard": "The dice is a cube.",
+  "text": "The dice is a cube."
+ },
+ "sentences/cucumber": {
+  "sha1": "6cdafd990d0fd060e55f789b1acce3342d0ac992",
+  "heard": "I eat a cucumber with rice.",
+  "text": "I eat a cucumber with rice."
+ },
+ "sentences/cup": {
+  "sha1": "3e9c5b83d856e764d5a61b596cb422f3015f6525",
+  "heard": "Grandpa drinks tea from a cup.",
+  "text": "Grandpa drinks tea from a cup."
+ },
+ "sentences/cupboard": {
+  "sha1": "5d936cb2e2f013f664f69ef20d12c04d88edff17",
+  "heard": "The plates are in the cupboard.",
+  "text": "The plates are in the cupboard."
+ },
+ "sentences/cupcake": {
+  "sha1": "d8d96999e4f8e2ec3d6a810636c6ea9459e850bf",
+  "heard": "I bake a cupcake with mom.",
+  "text": "I bake a cupcake with Mom."
+ },
+ "sentences/deer": {
+  "sha1": "abb4ee7d7d114b2cb3e1273974cb563202c8f486",
+  "heard": "The deer runs through the forest.",
+  "text": "The deer runs through the forest."
  },
  "sentences/desert": {
   "sha1": "5d749623fe1d902825132d3e80fa8868dc770809",
@@ -569,20 +2089,255 @@
   "heard": "My pencil case is on my desk.",
   "text": "My pencil case is on my desk."
  },
+ "sentences/diamond": {
+  "sha1": "1122cff59fa18e9682b5e65c029ec4e79a0dae44",
+  "heard": "The kite is shaped like a diamond.",
+  "text": "The kite is shaped like a diamond."
+ },
+ "sentences/doctor": {
+  "sha1": "1201a12a2e5c70870ae846d1ed57e45d977aeb39",
+  "heard": "The doctor checks my heart.",
+  "text": "The doctor checks my heart."
+ },
+ "sentences/dog": {
+  "sha1": "26d84118ceffa9d1f10a2ee117c01f7bc3c6d882",
+  "heard": "My dog likes to play with a ball.",
+  "text": "My dog likes to play with a ball."
+ },
+ "sentences/doll": {
+  "sha1": "544f2a4a7cec16d569da11c251efcd6d28ec4f65",
+  "heard": "My sister hugs her doll.",
+  "text": "My sister hugs her doll."
+ },
+ "sentences/dolphin": {
+  "sha1": "95fe9d22f9b0bd85f6a0fa75d52b4ded23ae6ea6",
+  "heard": "The dolphin jumps out of the water.",
+  "text": "The dolphin jumps out of the water."
+ },
+ "sentences/donkey": {
+  "sha1": "6f9589e0cd520db1f03a03893b0155af8a4c0f5a",
+  "heard": "The donkey carries a heavy bag.",
+  "text": "The donkey carries a heavy bag."
+ },
+ "sentences/donut": {
+  "sha1": "ce43f4520f9d2884f2f7c13a113f0f8e0339c9e9",
+  "heard": "The doughnut has pink icing.",
+  "text": "The donut has pink icing."
+ },
  "sentences/door": {
   "sha1": "96f42a0715889e412fd841316db446a35e9ba2fa",
   "heard": "Please close the door quietly.",
   "text": "Please close the door quietly."
+ },
+ "sentences/drum": {
+  "sha1": "c80842eb5dde3bceb9328bf36f6eb9db8c50b410",
+  "heard": "He hits the drum loudly.",
+  "text": "He hits the drum loudly."
+ },
+ "sentences/duck": {
+  "sha1": "f6381d6d6e7d44113618474a707ce96929ec977d",
+  "heard": "The duck swims in the pond.",
+  "text": "The duck swims in the pond."
+ },
+ "sentences/durian": {
+  "sha1": "131bd57ae84258c009ee738760213b8171b33e2f",
+  "heard": "Dad loves to eat durian.",
+  "text": "Dad loves to eat durian."
+ },
+ "sentences/eagle": {
+  "sha1": "bd10edbc7dd947f63b556d59f90aefd0dc50cc7e",
+  "heard": "The eagle flies over the mountain.",
+  "text": "The eagle flies over the mountain."
+ },
+ "sentences/ear": {
+  "sha1": "329edac481a37a153a79f0ddd9eb08f2a449928e",
+  "heard": "Whisper in my ear.",
+  "text": "Whisper in my ear."
+ },
+ "sentences/earth": {
+  "sha1": "018cfcd6577f2b229edaae9a1c239b64743d9f47",
+  "heard": "We live on the earth.",
+  "text": "We live on the earth."
+ },
+ "sentences/egg": {
+  "sha1": "f83754d936d6075a2c0740361124a6c59401c9af",
+  "heard": "I eat a boiled egg.",
+  "text": "I eat a boiled egg."
+ },
+ "sentences/eggplant": {
+  "sha1": "e96eca0cacfd187645b9b05ab5dd188ba429c000",
+  "heard": "Grandma cooks the eggplant.",
+  "text": "Grandma cooks the eggplant."
+ },
+ "sentences/eight": {
+  "sha1": "c3775c51f1411abc0f9010a02c3037728cfcaff4",
+  "heard": "An octopus has eight arms.",
+  "text": "An octopus has eight arms."
+ },
+ "sentences/elephant": {
+  "sha1": "e97cd6a7696e60207f4175f2e829059c3c029476",
+  "heard": "The elephant sprays water with its trunk.",
+  "text": "The elephant sprays water with its trunk."
  },
  "sentences/eraser": {
   "sha1": "0b0df0b974c06702e4fd8f428697da16baf44c20",
   "heard": "I fixed my mistake with an eraser.",
   "text": "I fixed my mistake with an eraser."
  },
+ "sentences/excavator": {
+  "sha1": "0355cd39888ebcad78ec0d8a19a70df5a914b10e",
+  "heard": "The excavator digs a big hole.",
+  "text": "The excavator digs a big hole."
+ },
+ "sentences/eye": {
+  "sha1": "7b01044cf647d0597ca2e9108251cd64acbb59ee",
+  "heard": "Close one eye and look.",
+  "text": "Close one eye and look."
+ },
+ "sentences/farmer": {
+  "sha1": "03e6d247a902857c3250ca9d0a9c8a6e8ddd3302",
+  "heard": "The farmer plants rice in the field.",
+  "text": "The farmer plants rice in the field."
+ },
+ "sentences/firefighter": {
+  "sha1": "20917eab233c42a2bae8c4391624496577916e80",
+  "heard": "The firefighter is very brave.",
+  "text": "The firefighter is very brave."
+ },
+ "sentences/firetruck": {
+  "sha1": "dfb6c10369792e9630ea15a03474cdf061af8957",
+  "heard": "The fire truck has a long ladder.",
+  "text": "The firetruck has a long ladder."
+ },
+ "sentences/fish": {
+  "sha1": "deb4e13a10f05b523da0ea31f16dc35e3a1e5f65",
+  "heard": "The fish swims in the sea.",
+  "text": "The fish swims in the sea."
+ },
+ "sentences/five": {
+  "sha1": "77cddb39f47c03389414b5c36e3c624727b0aa18",
+  "heard": "I have five fingers on my hand.",
+  "text": "I have five fingers on my hand."
+ },
+ "sentences/flamingo": {
+  "sha1": "ea64a8509be75381888216d91953e4f843632167",
+  "heard": "The flamingo stands on one leg.",
+  "text": "The flamingo stands on one leg."
+ },
+ "sentences/flower": {
+  "sha1": "8341db6baf2942384b1307ae853655e23e043930",
+  "heard": "I give mom a flower.",
+  "text": "I give Mom a flower."
+ },
+ "sentences/flute": {
+  "sha1": "14675c28e8bd23e1ab2003511f156c371691329f",
+  "heard": "I play a song on the flute.",
+  "text": "I play a song on the flute."
+ },
+ "sentences/foot": {
+  "sha1": "57ba7ea5b38e7a80024f6323f4f35cba52746caf",
+  "heard": "My foot is in the water.",
+  "text": "My foot is in the water."
+ },
+ "sentences/four": {
+  "sha1": "36ebed478b7e11cce378c3ae9a6bf9ee1a807d0b",
+  "heard": "A cat has four legs.",
+  "text": "A cat has four legs."
+ },
+ "sentences/fox": {
+  "sha1": "92ac685c0312b161b9238fcaf2b0a08a20c97833",
+  "heard": "The fox hides in the forest.",
+  "text": "The fox hides in the forest."
+ },
+ "sentences/fridge": {
+  "sha1": "c3674567c6827f2f1678b73a69919748e86bfd48",
+  "heard": "The milk is in the fridge.",
+  "text": "The milk is in the fridge."
+ },
+ "sentences/fries": {
+  "sha1": "ecd05726be32e93ad01f284eff4a00c53c29adc6",
+  "heard": "I eat fries with my burger.",
+  "text": "I eat fries with my burger."
+ },
+ "sentences/frog": {
+  "sha1": "99709c945eca5e7a2319750b40fc4327d6540184",
+  "heard": "The frog jumps into the water.",
+  "text": "The frog jumps into the water."
+ },
+ "sentences/gamepad": {
+  "sha1": "d384d84a6024b6bf1ac0842412dfb263eb928d3c",
+  "heard": "Pass me the gamepad.",
+  "text": "Pass me the gamepad."
+ },
+ "sentences/garlic": {
+  "sha1": "d2c066de46743e53dd143915ed7d2de5e10fac06",
+  "heard": "Mom fries the garlic.",
+  "text": "Mom fries the garlic."
+ },
+ "sentences/gift": {
+  "sha1": "8b20e6fc18ff88f5ffff18d30eb48c0b024644ef",
+  "heard": "I got a gift for my birthday.",
+  "text": "I got a gift for my birthday."
+ },
+ "sentences/giraffe": {
+  "sha1": "81e80d781b6d5c6e661ace915f409063d0420932",
+  "heard": "The giraffe eats leaves from tall trees.",
+  "text": "The giraffe eats leaves from tall trees."
+ },
+ "sentences/glass": {
+  "sha1": "77ae418f1913831cee909e2abe5d0741a385d145",
+  "heard": "Pour the milk into a glass.",
+  "text": "Pour the milk into a glass."
+ },
+ "sentences/glasses": {
+  "sha1": "de28171006045432a8f8bdab2bfe030c6bb7a16b",
+  "heard": "Grandpa reads with his glasses.",
+  "text": "Grandpa reads with his glasses."
+ },
+ "sentences/globe": {
+  "sha1": "720b326ab156262ed80f4b9860914793c0f7907a",
+  "heard": "Find Indonesia on the globe.",
+  "text": "Find Indonesia on the globe."
+ },
+ "sentences/gloves": {
+  "sha1": "dcb172ac4179ad22a4c079b45d95fb9efb5f99d6",
+  "heard": "I wear gloves when it is cold.",
+  "text": "I wear gloves when it is cold."
+ },
  "sentences/glue": {
   "sha1": "3dd3108e0a824ebddca1ccb77e2b881d506ea2ad",
   "heard": "Use glue to stick the paper.",
   "text": "Use glue to stick the paper."
+ },
+ "sentences/goal": {
+  "sha1": "abf5e931379547e52500abc00371d5a9feaa0d4a",
+  "heard": "He kicks the ball into the goal.",
+  "text": "He kicks the ball into the goal."
+ },
+ "sentences/goat": {
+  "sha1": "1cc12aebcac1443df71597d54c6c03b049350c76",
+  "heard": "The goat climbs up the hill.",
+  "text": "The goat climbs up the hill."
+ },
+ "sentences/goose": {
+  "sha1": "9eff43230a2b839f95cb920609c483a7ce5eae06",
+  "heard": "The goose walks to the lake.",
+  "text": "The goose walks to the lake."
+ },
+ "sentences/gorilla": {
+  "sha1": "9395414c21361d9bff8194fe55cd53bdf7f7f152",
+  "heard": "The gorilla beats its chest.",
+  "text": "The gorilla beats its chest."
+ },
+ "sentences/grapes": {
+  "sha1": "eb06c78944ce8905f1a3b3ff4cf48633c3936a02",
+  "heard": "I like purple grapes.",
+  "text": "I like purple grapes."
+ },
+ "sentences/grass": {
+  "sha1": "3bde51b69dca24ca5d99df29673cb761f718e58a",
+  "heard": "Cows eat green grass.",
+  "text": "Cows eat green grass."
  },
  "sentences/gray": {
   "sha1": "a5a5d63766595523f5ef839a8fb9c531100b0d76",
@@ -594,25 +2349,195 @@
   "heard": "The frog sat on a green leaf.",
   "text": "The frog sat on a green leaf."
  },
+ "sentences/guitar": {
+  "sha1": "039c9d22ec4c66cd26b64fe44cbbe3ccab6eddfa",
+  "heard": "My brother plays the guitar.",
+  "text": "My brother plays the guitar."
+ },
+ "sentences/hair": {
+  "sha1": "b07c63461809b513dba9509ef6a5c49e2f25f218",
+  "heard": "I brush my hair every morning.",
+  "text": "I brush my hair every morning."
+ },
+ "sentences/hamster": {
+  "sha1": "83d37c10b3b87f92838b26f1b8152f09e4482f75",
+  "heard": "My hamster runs on its wheel.",
+  "text": "My hamster runs on its wheel."
+ },
+ "sentences/hand": {
+  "sha1": "07f3e3282839da60b7a9c7619ddbba89590b4897",
+  "heard": "Raise your hand to answer.",
+  "text": "Raise your hand to answer."
+ },
+ "sentences/harp": {
+  "sha1": "5117fc98c2c5d153d056d73713b4a3e5ca95fbf2",
+  "heard": "The harp makes a soft sound.",
+  "text": "The harp makes a soft sound."
+ },
+ "sentences/heart": {
+  "sha1": "4523e58d9d0815aa7e5dd4e3dba0cb731e8698e5",
+  "heard": "I draw a heart for mom.",
+  "text": "I draw a heart for Mom."
+ },
+ "sentences/helicopter": {
+  "sha1": "d0bfb7fb4d17c87dd6e820a164cc62d675624e52",
+  "heard": "The helicopter lands on the roof.",
+  "text": "The helicopter lands on the roof."
+ },
+ "sentences/hexagon": {
+  "sha1": "bf946dd01c5a7c3def1a688de21b7d0c71d71ab0",
+  "heard": "Each hole in a honeycomb is a hexagon.",
+  "text": "Each hole in a honeycomb is a hexagon."
+ },
+ "sentences/hoop": {
+  "sha1": "f0761dd1f1426e54742bf292f3890bc4d75b9cdd",
+  "heard": "Throw the ball into the hoop.",
+  "text": "Throw the ball into the hoop."
+ },
+ "sentences/horse": {
+  "sha1": "acb3cab43d71e2a90365322479418db5b30eb7f2",
+  "heard": "The horse runs in the field.",
+  "text": "The horse runs in the field."
+ },
+ "sentences/ice": {
+  "sha1": "972d0ab2089f61964d3347d292df8f63978a87ea",
+  "heard": "Put some ice in my juice.",
+  "text": "Put some ice in my juice."
+ },
+ "sentences/jacket": {
+  "sha1": "1c5af142c365f35fd1800f44e4acd53bdae5e96d",
+  "heard": "Wear your jacket. It is cold.",
+  "text": "Wear your jacket, it is cold."
+ },
+ "sentences/jellyfish": {
+  "sha1": "499772d5560572a284c8b04c93993eb400329854",
+  "heard": "A jellyfish floats in the water.",
+  "text": "A jellyfish floats in the water."
+ },
+ "sentences/juice": {
+  "sha1": "27ea13655a9383ce2c87b350078ad21b7fb1571b",
+  "heard": "I drink orange juice.",
+  "text": "I drink orange juice."
+ },
  "sentences/kaaba": {
   "sha1": "d77e08161679e4e83ba3c8eaf00a3e311022027c",
   "heard": "The Kaaba is in the city of Makka.",
   "text": "The Kaaba is in the city of Makkah."
+ },
+ "sentences/kangaroo": {
+  "sha1": "ea6ba789787980b8063cd21d8a48b22964aaec50",
+  "heard": "The kangaroo jumps very high.",
+  "text": "The kangaroo jumps very high."
  },
  "sentences/key": {
   "sha1": "6d33f62ae64c2c3cae915e92ab4a8aa3ff5c7968",
   "heard": "Dad opens the door with a key.",
   "text": "Dad opens the door with a key."
  },
+ "sentences/kite": {
+  "sha1": "9db64f63c6e5998388b4382e2e0180f3ebe717cc",
+  "heard": "We fly a kite on the beach.",
+  "text": "We fly a kite on the beach."
+ },
+ "sentences/kiwi": {
+  "sha1": "f4a5bb298b3e82973f8446ee3aaa392f9df97cd8",
+  "heard": "The kiwi is green inside.",
+  "text": "The kiwi is green inside."
+ },
+ "sentences/koala": {
+  "sha1": "5deace76fdafc84a88e0cfb4a37a65899d987f93",
+  "heard": "The koala hugs the tree.",
+  "text": "The koala hugs the tree."
+ },
+ "sentences/ladybug": {
+  "sha1": "85b5766f4dc6583d03a83aa1dc052db386c3bc47",
+  "heard": "The ladybug walks on a leaf.",
+  "text": "The ladybug walks on a leaf."
+ },
+ "sentences/lamp": {
+  "sha1": "7dbd43645c5ebf8b73bbedb1112275caf0d82b17",
+  "heard": "Turn on the lamp please.",
+  "text": "Turn on the lamp, please."
+ },
+ "sentences/laptop": {
+  "sha1": "af35ee14d4da906220ed2ee726deaf47024f7361",
+  "heard": "Dad works on his laptop.",
+  "text": "Dad works on his laptop."
+ },
+ "sentences/leaf": {
+  "sha1": "60d2c57177c4db96d5fc3a941af7a86cb7f11297",
+  "heard": "A leaf falls from the tree.",
+  "text": "A leaf falls from the tree."
+ },
+ "sentences/lion": {
+  "sha1": "7aeefc26bb24a5a669ae9954db5a8d07ad8d8d3f",
+  "heard": "The lion has a big mane.",
+  "text": "The lion has a big mane."
+ },
+ "sentences/lips": {
+  "sha1": "5aa0aaa772fb4aaff744e97e1341e2455b4f327c",
+  "heard": "Put the cup to your lips.",
+  "text": "Put the cup to your lips."
+ },
+ "sentences/lobster": {
+  "sha1": "0dfd2738d196018836430897eb828c85decc348f",
+  "heard": "The lobster lives under a rock.",
+  "text": "The lobster lives under a rock."
+ },
+ "sentences/lock": {
+  "sha1": "44960bd46a67cb4e8b0f59f75643d1530338f56a",
+  "heard": "Dad puts a lock on the gate.",
+  "text": "Dad puts a lock on the gate."
+ },
+ "sentences/magnet": {
+  "sha1": "93d6dee99998fcf0f4149ef8f58d8923051cfe5a",
+  "heard": "The magnet picks up the clips.",
+  "text": "The magnet picks up the clips."
+ },
+ "sentences/mango": {
+  "sha1": "fa1a61b3e91e7e9fbd32e0cda5f75e51e44d378d",
+  "heard": "This mango is very sweet.",
+  "text": "This mango is very sweet."
+ },
+ "sentences/map": {
+  "sha1": "9e965a6495b4954057ffab09ec9e4f007e4b3314",
+  "heard": "We look at the map to find the way.",
+  "text": "We look at the map to find the way."
+ },
+ "sentences/maracas": {
+  "sha1": "e8dd0552f3447c38a96fb5bfadf43abc33884b8b",
+  "heard": "Shake the maracas, shake, shake.",
+  "text": "Shake the maracas, shake, shake!"
+ },
  "sentences/marker": {
   "sha1": "1e4d4e8b20a58178e56de9c3da74c8e8f3417508",
   "heard": "Write your name with a marker.",
   "text": "Write your name with a marker."
  },
+ "sentences/microscope": {
+  "sha1": "9018092e94343f012d02b4a43295ad4a9cdb4969",
+  "heard": "We look at a leaf under the microscope.",
+  "text": "We look at a leaf under the microscope."
+ },
+ "sentences/microwave": {
+  "sha1": "d891cbeca5d2014810e549d979375d32a57c863e",
+  "heard": "Warm the milk in the microwave.",
+  "text": "Warm the milk in the microwave."
+ },
+ "sentences/milk": {
+  "sha1": "9ccadd4ce233cc415ff221811949856dc1cc0bef",
+  "heard": "I drink milk every morning.",
+  "text": "I drink milk every morning."
+ },
  "sentences/mirror": {
   "sha1": "5c2cb076a2ea43865ee98f0b864e67e5c5075509",
   "heard": "I brush my hair in front of the mirror.",
   "text": "I brush my hair in front of the mirror."
+ },
+ "sentences/monkey": {
+  "sha1": "398ec309531dfea1a657110ca2fab25bcf3d37c0",
+  "heard": "The monkey swings from tree to tree.",
+  "text": "The monkey swings from tree to tree."
  },
  "sentences/moon": {
   "sha1": "f66e9d93a4fe761f8fbf08e5c2adbb027418dcaa",
@@ -624,15 +2549,130 @@
   "heard": "We pray together at the mosque.",
   "text": "We pray together at the mosque."
  },
+ "sentences/motorcycle": {
+  "sha1": "dab246231189403d078f31a281287d6f31319964",
+  "heard": "Dad rides a motorcycle to work.",
+  "text": "Dad rides a motorcycle to work."
+ },
+ "sentences/mountain": {
+  "sha1": "8a88d57198a9b95f34deff1aa1a613fa9621901f",
+  "heard": "We climb the mountain.",
+  "text": "We climb the mountain."
+ },
+ "sentences/mouse": {
+  "sha1": "e8d8ca65747db7874a346bdfe1b8b02fce9fa417",
+  "heard": "The mouse runs into a hole.",
+  "text": "The mouse runs into a hole."
+ },
+ "sentences/mug": {
+  "sha1": "f95d32534cd45db5b21da65b3c479ae2de18059c",
+  "heard": "I drink hot cocoa from a mug.",
+  "text": "I drink hot cocoa from a mug."
+ },
+ "sentences/mushroom": {
+  "sha1": "8adc11d3467ce9f8beeec693fb7fa98ff250eb5d",
+  "heard": "There is a mushroom in my soup.",
+  "text": "There is a mushroom in my soup."
+ },
+ "sentences/neck": {
+  "sha1": "52cc3da5371b99f77da60e95ef1866a6e2eadf33",
+  "heard": "The giraffe has a long neck.",
+  "text": "The giraffe has a long neck."
+ },
+ "sentences/nine": {
+  "sha1": "4eef8400a71ff36d47c3388374d30a266132417d",
+  "heard": "My little brother is nine years old.",
+  "text": "My little brother is nine years old."
+ },
+ "sentences/nose": {
+  "sha1": "69f35d6a03d10b06b670eaa7d48123af5de1de8c",
+  "heard": "The flower tickles my nose.",
+  "text": "The flower tickles my nose."
+ },
+ "sentences/notebook": {
+  "sha1": "cca98b9e08fbf07d51afb98a0ddf2e4c0e7b7dfd",
+  "heard": "I write in my notebook.",
+  "text": "I write in my notebook."
+ },
+ "sentences/octopus": {
+  "sha1": "fca66ef56a6791962d0b915ca0473eeb36d2f08a",
+  "heard": "The octopus has eight arms.",
+  "text": "The octopus has eight arms."
+ },
+ "sentences/one": {
+  "sha1": "f5cf4663788f51d24cd86020af20e889e8c7991f",
+  "heard": "I have one nose.",
+  "text": "I have one nose."
+ },
+ "sentences/onion": {
+  "sha1": "8520bb1e8fd37dc99ec7ded0d47b3b3dcf7053df",
+  "heard": "Cutting an onion makes me cry.",
+  "text": "Cutting an onion makes me cry."
+ },
  "sentences/orange": {
   "sha1": "9a6727ea110f60a8e6c9e728dbb9a3be53b4d386",
   "heard": "He colored the pumpkin orange.",
   "text": "He colored the pumpkin orange."
  },
+ "sentences/oval": {
+  "sha1": "29478902e341873ef355a3a480dce27c560b5e5b",
+  "heard": "An egg has an oval shape.",
+  "text": "An egg has an oval shape."
+ },
+ "sentences/owl": {
+  "sha1": "e5bf5e097784c390c190ef460d4bc5a5d22bf568",
+  "heard": "The owl says hoot at night.",
+  "text": "The owl says hoot at night."
+ },
+ "sentences/painter": {
+  "sha1": "873635c87089eff48ea6903203c3530ca7bfc151",
+  "heard": "The painter paints a flower.",
+  "text": "The painter paints a flower."
+ },
+ "sentences/palette": {
+  "sha1": "067fdb6695fdb211f82856d2f95589e63d6823a0",
+  "heard": "Mix the colors on the palette.",
+  "text": "Mix the colors on the palette."
+ },
  "sentences/palm": {
   "sha1": "51044e0992cd7291b09a7b4e9b7bcbb43a310319",
   "heard": "Dates grow on a palm tree.",
   "text": "Dates grow on a palm tree."
+ },
+ "sentences/pancakes": {
+  "sha1": "e7e073a33d0909fb712cd10e75f75b0efa7a6e5a",
+  "heard": "Mom makes pancakes on Sunday.",
+  "text": "Mom makes pancakes on Sunday."
+ },
+ "sentences/panda": {
+  "sha1": "a044a874ca5c43af5eafef32691e82ee2c9e1ce7",
+  "heard": "The panda eats bamboo all day.",
+  "text": "The panda eats bamboo all day."
+ },
+ "sentences/pants": {
+  "sha1": "82da862234447b55e39c11fc077d3a66764900d1",
+  "heard": "My pants are too long.",
+  "text": "My pants are too long."
+ },
+ "sentences/papaya": {
+  "sha1": "e6f7e87eabc22919adc083326c2d26b72e14222d",
+  "heard": "Grandma gives me a papaya.",
+  "text": "Grandma gives me a papaya."
+ },
+ "sentences/parrot": {
+  "sha1": "4e733bb2ff153f743d3afe192947d18d9e932aa1",
+  "heard": "The parrot can say hello.",
+  "text": "The parrot can say hello."
+ },
+ "sentences/peacock": {
+  "sha1": "664d3ab7b7d0193fb799f6a722edfbe6a619bce2",
+  "heard": "The peacock opens its beautiful tail.",
+  "text": "The peacock opens its beautiful tail."
+ },
+ "sentences/pear": {
+  "sha1": "1d411a285ecebe2d32ae35e849d2e9c364e77ab9",
+  "heard": "The pair is soft and juicy.",
+  "text": "The pear is soft and juicy."
  },
  "sentences/pen": {
   "sha1": "a49d26507a75dda02164143e2458f707ff63967f",
@@ -644,15 +2684,90 @@
   "heard": "Sharpen your pencil before the test.",
   "text": "Sharpen your pencil before the test."
  },
+ "sentences/penguin": {
+  "sha1": "bbbcb881d170cd8b1b4f00190db9d7c2c93aa2d0",
+  "heard": "The penguin walks on the ice.",
+  "text": "The penguin walks on the ice."
+ },
+ "sentences/pentagon": {
+  "sha1": "7dfc8f5187a303efde65e4d2e7a7e5e3c470b7ee",
+  "heard": "A pentagon has five corners.",
+  "text": "A pentagon has five corners."
+ },
+ "sentences/piano": {
+  "sha1": "76a677cab74202ff616af3d90aec64f436b88284",
+  "heard": "She plays the piano well.",
+  "text": "She plays the piano well."
+ },
+ "sentences/pillow": {
+  "sha1": "6f9a3adce541cf4c45d8dac3a5518cc4f03f5b40",
+  "heard": "I sleep on a soft pillow.",
+  "text": "I sleep on a soft pillow."
+ },
+ "sentences/pilot": {
+  "sha1": "c8c9fd6e2151c39225e764326d518474009a8da4",
+  "heard": "The pilot flies the plane.",
+  "text": "The pilot flies the plane."
+ },
+ "sentences/pineapple": {
+  "sha1": "4ec02ef15c1b597d30338cad9f8d0d12a6ff2996",
+  "heard": "Mom cuts the pineapple.",
+  "text": "Mom cuts the pineapple."
+ },
  "sentences/pink": {
   "sha1": "e9b0b1f4e12f5ddfb98f8458aab1156ece50a54f",
   "heard": "She wore a pink dress to the party.",
   "text": "She wore a pink dress to the party."
  },
+ "sentences/pizza": {
+  "sha1": "f0e25ae7f16551234d6498e4ed2e63a30b2b5fb4",
+  "heard": "We share a big pizza.",
+  "text": "We share a big pizza."
+ },
+ "sentences/plane": {
+  "sha1": "e13a5d40b78f31fabcf7399d439d8e9e38fff20b",
+  "heard": "The plane flies above the clouds.",
+  "text": "The plane flies above the clouds."
+ },
+ "sentences/planet": {
+  "sha1": "4eb65a2cc38e74fd43eaff78a84c64742250355d",
+  "heard": "Saturn is a planet with rings.",
+  "text": "Saturn is a planet with rings."
+ },
+ "sentences/plate": {
+  "sha1": "20518ec4214b7f964bb8b015d8e8ad50cf3ac58d",
+  "heard": "Put the rice on the plate.",
+  "text": "Put the rice on the plate."
+ },
+ "sentences/police": {
+  "sha1": "7642311c72beebef29d35b3719525413d6ce97d8",
+  "heard": "The police help us cross the road.",
+  "text": "The police help us cross the road."
+ },
+ "sentences/postman": {
+  "sha1": "ddbcb80a8bcbead8f8d802b704c44556c612895e",
+  "heard": "The postman brings a letter.",
+  "text": "The postman brings a letter."
+ },
+ "sentences/pot": {
+  "sha1": "5c5eb4e094817a55e9a74d0761b23684763a91cd",
+  "heard": "Mom cooks soup in a pot.",
+  "text": "Mom cooks soup in a pot."
+ },
+ "sentences/potato": {
+  "sha1": "0e4274067f421319966c01ff566f3e6b193388ba",
+  "heard": "We make fries from a potato.",
+  "text": "We make fries from a potato."
+ },
  "sentences/prayer": {
   "sha1": "b4f470efcc0cc32e2efb8b6184168f9fc1aa12a1",
   "heard": "We say a prayer before we eat.",
   "text": "We say a prayer before we eat."
+ },
+ "sentences/pumpkin": {
+  "sha1": "b80889598819db6c8872da9f7ee794ede4e259a4",
+  "heard": "The pumpkin is very heavy.",
+  "text": "The pumpkin is very heavy."
  },
  "sentences/purple": {
   "sha1": "4408fbb8936e571f3504795d955b8da21e3d4b8a",
@@ -664,35 +2779,200 @@
   "heard": "We read the Quran every evening.",
   "text": "We read the Quran every evening."
  },
+ "sentences/rabbit": {
+  "sha1": "58a388e1d1a8292e27eda239ad16213d9a4b94a0",
+  "heard": "The rabbit eats a carrot.",
+  "text": "The rabbit eats a carrot."
+ },
+ "sentences/racket": {
+  "sha1": "a7e3ea9eb19bc9c075318c2664fd376b8d1c3cd0",
+  "heard": "I hold the racket with one hand.",
+  "text": "I hold the racket with one hand."
+ },
  "sentences/radio": {
   "sha1": "f69299bac01a459421763bb86aa030bdae129714",
   "heard": "We listen to songs on the radio.",
   "text": "We listen to songs on the radio."
+ },
+ "sentences/rain": {
+  "sha1": "19b4b5c3f1ff6cfe6049608f0d291a4fab0259c0",
+  "heard": "The rain makes puddles.",
+  "text": "The rain makes puddles."
+ },
+ "sentences/rainbow": {
+  "sha1": "291f7711c28c6b4c81283b7f6d60a8474a6f7316",
+  "heard": "We see a rainbow after the rain.",
+  "text": "We see a rainbow after the rain."
+ },
+ "sentences/rambutan": {
+  "sha1": "458882fcd0e5dfff56d5fe8f4164a4930dc8e680",
+  "heard": "We pick rambutan from the tree.",
+  "text": "We pick rambutan from the tree."
+ },
+ "sentences/rectangle": {
+  "sha1": "56e672676ec5f61c065f88dc47c30dac74e17372",
+  "heard": "The door is a rectangle.",
+  "text": "The door is a rectangle."
  },
  "sentences/red": {
   "sha1": "9dfdf47cfd2667c19b5a000bccc0d1a13d5754b2",
   "heard": "The apple is red and shiny.",
   "text": "The apple is red and shiny."
  },
+ "sentences/rice": {
+  "sha1": "3f93b9deb59194e543912b1d4c4d1a810dc5df07",
+  "heard": "We eat rice for lunch.",
+  "text": "We eat rice for lunch."
+ },
+ "sentences/robot": {
+  "sha1": "6f74d28046ec1da43f71ae1a74f6752a29373020",
+  "heard": "My robot can walk.",
+  "text": "My robot can walk."
+ },
+ "sentences/rock": {
+  "sha1": "6435cc9bd3689c7d081482b81c0a5ea8266d4b76",
+  "heard": "I sit on a big rock.",
+  "text": "I sit on a big rock."
+ },
+ "sentences/rocket": {
+  "sha1": "9b41b4efb9974e3a48d0158703f83807420c03db",
+  "heard": "The rocket flies to the moon.",
+  "text": "The rocket flies to the moon."
+ },
+ "sentences/rose": {
+  "sha1": "149ee973a48d49145a90bb14823678e450b0f691",
+  "heard": "The rose smells nice.",
+  "text": "The rose smells nice."
+ },
  "sentences/ruler": {
   "sha1": "5e27c9342379bbeed21a836a203ad908653029dd",
   "heard": "Draw a straight line with a ruler.",
   "text": "Draw a straight line with a ruler."
+ },
+ "sentences/salad": {
+  "sha1": "d7dd12b0bb69b57431b83ba0902e25e9d9ae0fe1",
+  "heard": "I eat salad with tomatoes.",
+  "text": "I eat salad with tomatoes."
+ },
+ "sentences/scarf": {
+  "sha1": "5680417e2321c94c9576ae74855d815108c99c95",
+  "heard": "Grandma made me a red scarf.",
+  "text": "Grandma made me a red scarf."
  },
  "sentences/scissors": {
   "sha1": "673937f4f4a09def524f75dd64d50d99f95cbbc4",
   "heard": "Cut the paper carefully with scissors.",
   "text": "Cut the paper carefully with scissors."
  },
+ "sentences/seahorse": {
+  "sha1": "2cfd08ac3477dc50d8701a2cc2251f12005785f1",
+  "heard": "The seahorse holds on with its tail.",
+  "text": "The seahorse holds on with its tail."
+ },
+ "sentences/seed": {
+  "sha1": "52e4bbac17001f298981b246c7b7ebcbcdff5043",
+  "heard": "Plant the seed and water it.",
+  "text": "Plant the seed and water it."
+ },
+ "sentences/seven": {
+  "sha1": "184a1a42dad41e5547808f3635baa721be6dfcbd",
+  "heard": "There are seven days in a week.",
+  "text": "There are seven days in a week."
+ },
+ "sentences/shark": {
+  "sha1": "5dfb96343572439a3ca8a452af4c038b4b39d2ce",
+  "heard": "The shark has a big fin.",
+  "text": "The shark has a big fin."
+ },
+ "sentences/sheep": {
+  "sha1": "c5fa04cfdb93527783d7bdc055aa1245a7d35fab",
+  "heard": "The sheep has thick wool.",
+  "text": "The sheep has thick wool."
+ },
+ "sentences/shell": {
+  "sha1": "2e03903477a8a3104e1364a6219ebb078a478533",
+  "heard": "I put the shell next to my ear.",
+  "text": "I put the shell next to my ear."
+ },
+ "sentences/ship": {
+  "sha1": "4791c75979d31ac68a679ddd60e9d93767a64265",
+  "heard": "The ship sails across the sea.",
+  "text": "The ship sails across the sea."
+ },
+ "sentences/shirt": {
+  "sha1": "f902bc2d2b8bc5a7303d10f68cd9b3dcb2da9f79",
+  "heard": "I wear a blue shirt.",
+  "text": "I wear a blue shirt."
+ },
+ "sentences/shoes": {
+  "sha1": "e6a8312ae0fcb692592e05e8e5aabb0ef959677b",
+  "heard": "Put on your shoes, please.",
+  "text": "Put on your shoes, please."
+ },
+ "sentences/six": {
+  "sha1": "2cb2115b77905292e0d028289bb9184dcb8d1fc6",
+  "heard": "An ant has six legs.",
+  "text": "An ant has six legs."
+ },
+ "sentences/skateboard": {
+  "sha1": "2f1f710af6dec5327bc29af40e701383790ff24c",
+  "heard": "He rides a skateboard in the park.",
+  "text": "He rides a skateboard in the park."
+ },
+ "sentences/skates": {
+  "sha1": "e976552325510143f5945464c104e7d929193c84",
+  "heard": "She rolls on her skates.",
+  "text": "She rolls on her skates."
+ },
+ "sentences/skirt": {
+  "sha1": "7379203b5cee23c0666ff0b15b69e043f7181f70",
+  "heard": "My sister wears a pink skirt.",
+  "text": "My sister wears a pink skirt."
+ },
+ "sentences/snail": {
+  "sha1": "99e711799e1d3c73e8c54257abbee3c2f34c4beb",
+  "heard": "The snail moves very slowly.",
+  "text": "The snail moves very slowly."
+ },
+ "sentences/snowflake": {
+  "sha1": "00c376c5dcf16ac08216e35bd183352882097ebe",
+  "heard": "A snowflake melts on my hand.",
+  "text": "A snowflake melts on my hand."
+ },
+ "sentences/snowman": {
+  "sha1": "b58576ab9d9b56c9eb11d22f715870216618cebb",
+  "heard": "We build a snowman.",
+  "text": "We build a snowman."
+ },
  "sentences/soap": {
   "sha1": "82d3298477ae3e58e113ccd5e798a4e75761938d",
   "heard": "Wash your hands with soap.",
   "text": "Wash your hands with soap."
  },
+ "sentences/socks": {
+  "sha1": "dfb40236d4ca9847d8c9a5cc28823ce433a576b7",
+  "heard": "My socks are white.",
+  "text": "My socks are white."
+ },
  "sentences/sofa": {
   "sha1": "9d822e949287d789ff7441282bad399aaacae40d",
   "heard": "Grandma is sitting on the sofa.",
   "text": "Grandma is sitting on the sofa."
+ },
+ "sentences/soldier": {
+  "sha1": "6ebabcb7a12e8a4722ae3917b87095cba0cda3fa",
+  "heard": "The soldier stands very straight.",
+  "text": "The soldier stands very straight."
+ },
+ "sentences/soup": {
+  "sha1": "191c5c77755db3841c40d7d2eae4638a3a8217a9",
+  "heard": "Grandma makes chicken soup.",
+  "text": "Grandma makes chicken soup."
+ },
+ "sentences/spinach": {
+  "sha1": "7c40efb9b276fc285ba7d7cb986cc20b7087b4ac",
+  "heard": "We eat spinach soup.",
+  "text": "We eat spinach soup."
  },
  "sentences/sponge": {
   "sha1": "59cf3543266c9aef8f1f40ad95b5eed0feb65016",
@@ -704,6 +2984,21 @@
   "heard": "Eat your soup with a spoon.",
   "text": "Eat your soup with a spoon."
  },
+ "sentences/sprout": {
+  "sha1": "2a0afe178da50593e322121c843280c766f780a0",
+  "heard": "A green sprout comes up.",
+  "text": "A green sprout comes up."
+ },
+ "sentences/square": {
+  "sha1": "321b24d667e843a044701af134eceff2bf5ca493",
+  "heard": "The window is a square.",
+  "text": "The window is a square."
+ },
+ "sentences/squid": {
+  "sha1": "b66a927a0e8ff554fecc1f02ae1dca69724941bc",
+  "heard": "The squid swims fast.",
+  "text": "The squid swims fast."
+ },
  "sentences/stapler": {
   "sha1": "5141d25f8b871d6623f6263e0339f4dd2cc9933c",
   "heard": "Join the pages with a stapler.",
@@ -713,6 +3008,46 @@
   "sha1": "d12cd8f84501b9a4de9a55858b6aeed61b411c8c",
   "heard": "I saw a bright star in the sky.",
   "text": "I saw a bright star in the sky."
+ },
+ "sentences/starfish": {
+  "sha1": "8ef5432822dfe3d5898954c8db6347ff6274aaa0",
+  "heard": "I found a starfish on the beach.",
+  "text": "I found a starfish on the beach."
+ },
+ "sentences/stingray": {
+  "sha1": "33b22a62fcd1eb4511b5fecaf86c8e24afc64515",
+  "heard": "The stingray glides over the sand.",
+  "text": "The stingray glides over the sand."
+ },
+ "sentences/storm": {
+  "sha1": "a1d0d3351df691ba05406f029953dac1b815a2d8",
+  "heard": "We stay inside during the storm.",
+  "text": "We stay inside during the storm."
+ },
+ "sentences/strawberry": {
+  "sha1": "27c33dd3609e27c58b111547a286eb41668995a1",
+  "heard": "The strawberry is red and sweet.",
+  "text": "The strawberry is red and sweet."
+ },
+ "sentences/submarine": {
+  "sha1": "d9ff24a1e69153748cbd25f5b569059fe51daf96",
+  "heard": "The submarine dives deep.",
+  "text": "The submarine dives deep."
+ },
+ "sentences/sun": {
+  "sha1": "931831904805f0453371c92425c1a720f9158340",
+  "heard": "The sun is very hot today.",
+  "text": "The sun is very hot today."
+ },
+ "sentences/sunflower": {
+  "sha1": "55f230fa3a60c209e5a73252f135e0c5aa6f1c88",
+  "heard": "The sunflower is taller than me.",
+  "text": "The sunflower is taller than me."
+ },
+ "sentences/sunglasses": {
+  "sha1": "9201e020ebc49ad8e34eb85f74907c2519926597",
+  "heard": "I wear sunglasses at the beach.",
+  "text": "I wear sunglasses at the beach."
  },
  "sentences/sunrise": {
   "sha1": "d96f33859e8abbd5277068012096dca6e2c40d10",
@@ -724,59 +3059,274 @@
   "heard": "We eat dinner at the table.",
   "text": "We eat dinner at the table."
  },
+ "sentences/tambourine": {
+  "sha1": "568345d92651e663ca6d1e685f9c970884df556b",
+  "heard": "Shake the tambourine to the music.",
+  "text": "Shake the tambourine to the music."
+ },
+ "sentences/target": {
+  "sha1": "99c59437b02c1d51a7fa61ed917fdf8e98a30c88",
+  "heard": "The arrow hits the target.",
+  "text": "The arrow hits the target."
+ },
+ "sentences/taxi": {
+  "sha1": "196cd6d7b45851081e133f48834b90dc4ce0feeb",
+  "heard": "We take a taxi to the airport.",
+  "text": "We take a taxi to the airport."
+ },
  "sentences/teapot": {
   "sha1": "ac8fc89a1058147a88e377bfe360c6f346c272a6",
   "heard": "The hot tea is in the teapot.",
   "text": "The hot tea is in the teapot."
+ },
+ "sentences/teddy": {
+  "sha1": "a994864f54a585ce9bd222a66aa9c0f430f06f7a",
+  "heard": "I sleep with my teddy.",
+  "text": "I sleep with my teddy."
+ },
+ "sentences/telescope": {
+  "sha1": "5d4dfb0fa8a8ad4509a450488054f29da8f143be",
+  "heard": "We see the moon through a telescope.",
+  "text": "We see the moon through a telescope."
  },
  "sentences/television": {
   "sha1": "96a7b8f75cb03b2677e6c703ee24e973a8aca40b",
   "heard": "We watch cartoons on the television.",
   "text": "We watch cartoons on the television."
  },
+ "sentences/ten": {
+  "sha1": "c09cbffa45c415ee58beb2a06892f6761c10f90e",
+  "heard": "I have ten toes.",
+  "text": "I have ten toes."
+ },
+ "sentences/three": {
+  "sha1": "20434d498e19ad57b58ffb8b1c9b524c4ee7648b",
+  "heard": "A triangle has three sides.",
+  "text": "A triangle has three sides."
+ },
+ "sentences/tie": {
+  "sha1": "47ec4452fb56df4739b2fb09fffcb0ad267d8979",
+  "heard": "Dad wears a tie to work.",
+  "text": "Dad wears a tie to work."
+ },
+ "sentences/tiger": {
+  "sha1": "1074ae5bf81f79bf26a4c9a4e630bbc165ca60f5",
+  "heard": "The tiger sleeps under a tree.",
+  "text": "The tiger sleeps under a tree."
+ },
+ "sentences/toaster": {
+  "sha1": "1401bdc2d3cdb686cd704b37544850a4c9cdf044",
+  "heard": "The bread pops out of the toaster.",
+  "text": "The bread pops out of the toaster."
+ },
  "sentences/toilet": {
   "sha1": "5ad63cdad7bbb2d3d8065a92d18faef428bb4bf7",
   "heard": "Flush the toilet after you use it.",
   "text": "Flush the toilet after you use it."
+ },
+ "sentences/tomato": {
+  "sha1": "1a5840ac510035973507e109b453ef9823a853b5",
+  "heard": "Mom puts a tomato in the salad.",
+  "text": "Mom puts a tomato in the salad."
+ },
+ "sentences/tongue": {
+  "sha1": "5760778192231e9cd6da0175e4680c7dd3a240e2",
+  "heard": "Stick out your tongue.",
+  "text": "Stick out your tongue."
+ },
+ "sentences/tooth": {
+  "sha1": "954ffa9965044f2c84311ce13b964159e03c868f",
+  "heard": "My front tooth is loose.",
+  "text": "My front tooth is loose."
  },
  "sentences/toothbrush": {
   "sha1": "03116dd960118a1aa2aed59c1a00397c2d74dc58",
   "heard": "Brush your teeth with your toothbrush.",
   "text": "Brush your teeth with your toothbrush."
  },
+ "sentences/tornado": {
+  "sha1": "2a33b2d4e2175e715fee9cd343d892a09a35d40d",
+  "heard": "A tornado spins very fast.",
+  "text": "A tornado spins very fast."
+ },
+ "sentences/towel": {
+  "sha1": "c15c6088b474a0a0ed038754c8243ee8fe1a45db",
+  "heard": "Dry your hands with a towel.",
+  "text": "Dry your hands with a towel."
+ },
+ "sentences/tractor": {
+  "sha1": "2fc65d278b84ff7d5a4b51075ceae7eb0efcfbf5",
+  "heard": "The farmer drives a tractor.",
+  "text": "The farmer drives a tractor."
+ },
+ "sentences/train": {
+  "sha1": "4f7e15f4921bd726a1083d00520659c415e24d47",
+  "heard": "The train goes very fast.",
+  "text": "The train goes very fast."
+ },
+ "sentences/tree": {
+  "sha1": "f7c451a3dc53a9775d3e89143c70600f0a68bbfc",
+  "heard": "Birds sit in the tree.",
+  "text": "Birds sit in the tree."
+ },
+ "sentences/triangle": {
+  "sha1": "c0da8e81e4adee389dc1e8e5e6e3e8c7192948f1",
+  "heard": "The roof looks like a triangle.",
+  "text": "The roof looks like a triangle."
+ },
+ "sentences/trophy": {
+  "sha1": "16c23c1018a9bd7dd1fced0a8ccc0049f81ef671",
+  "heard": "Our team won a trophy.",
+  "text": "Our team won a trophy."
+ },
+ "sentences/truck": {
+  "sha1": "e27409fea8f6b203ca6b939cd247575b8ddc0e92",
+  "heard": "The truck carries sand.",
+  "text": "The truck carries sand."
+ },
+ "sentences/trumpet": {
+  "sha1": "61e3bb667486f26742f6ee0dbf7918a1b9a8a37e",
+  "heard": "He blows the trumpet at the parade.",
+  "text": "He blows the trumpet at the parade."
+ },
+ "sentences/turtle": {
+  "sha1": "c8138421536823649b4f92041d4ad2242ba5f645",
+  "heard": "The turtle swims to the beach.",
+  "text": "The turtle swims to the beach."
+ },
+ "sentences/two": {
+  "sha1": "d244c67407e58dd1950560de503b2440cd06391a",
+  "heard": "I have two eyes.",
+  "text": "I have two eyes."
+ },
+ "sentences/ukulele": {
+  "sha1": "6418880f6cbf363f6b4c0b0f726ff32d3c1367ac",
+  "heard": "I learned to play the ukulele.",
+  "text": "I learn to play the ukulele."
+ },
  "sentences/umbrella": {
   "sha1": "610fac124c5e83f2944ebfbc637ed0b0536ef10e",
   "heard": "Take an umbrella when it rains.",
   "text": "Take an umbrella when it rains."
+ },
+ "sentences/violin": {
+  "sha1": "de15a33d15b252bd7ce0b1431cf3f0e660883373",
+  "heard": "The violin sounds sweet.",
+  "text": "The violin sounds sweet."
+ },
+ "sentences/volcano": {
+  "sha1": "6945a1d4a5c551236b7832671dc0a9a753c120ff",
+  "heard": "Smoke comes out of the volcano.",
+  "text": "Smoke comes out of the volcano."
  },
  "sentences/water": {
   "sha1": "7a3473925be5626374836561e34b317a9729e255",
   "heard": "Drink water when you are thirsty.",
   "text": "Drink water when you are thirsty."
  },
+ "sentences/watermelon": {
+  "sha1": "72c34a50022da1b3730d4c86fe7f0ee0585c2681",
+  "heard": "We share a big watermelon.",
+  "text": "We share a big watermelon."
+ },
+ "sentences/whistle": {
+  "sha1": "fb5cbaca0faf0c99e5d8bed82f84dab8cef5ef9e",
+  "heard": "The coach blows the whistle.",
+  "text": "The coach blows the whistle."
+ },
  "sentences/white": {
   "sha1": "300c743ed28a39490e714007fe8db8c231ee446d",
   "heard": "The clouds are white and fluffy.",
   "text": "The clouds are white and fluffy."
+ },
+ "sentences/wind": {
+  "sha1": "b01e17b8faa64087df1fdd3d11d7aab674da8af3",
+  "heard": "The wind blows my kite up high.",
+  "text": "The wind blows my kite up high."
  },
  "sentences/window": {
   "sha1": "e7d63a2d30a1f99627b87e832375932339afe4b2",
   "heard": "I can see the rain through the window.",
   "text": "I can see the rain through the window."
  },
+ "sentences/xylophone": {
+  "sha1": "960d709d024d681bc1507614983a4719ca5d9478",
+  "heard": "I play notes on the xylophone.",
+  "text": "I play notes on the xylophone."
+ },
  "sentences/yellow": {
   "sha1": "fa9436dce18cba0d111617671ac9a5f084cd1d20",
   "heard": "The sun looks yellow in the sky.",
   "text": "The sun looks yellow in the sky."
+ },
+ "sentences/yoyo": {
+  "sha1": "157f80eef5527eb27d478ff5839169f06769628e",
+  "heard": "I can play with a yo-yo.",
+  "text": "I can play with a yoyo."
+ },
+ "sentences/zebra": {
+  "sha1": "4ee57b9d0b08ae3de317a30204b9d70ddc694b42",
+  "heard": "The zebra drinks at the river.",
+  "text": "The zebra drinks at the river."
+ },
+ "words/accordion": {
+  "sha1": "4ae56b3323aa9cd5ebc209c5745a61ace3e24438",
+  "heard": "accordion",
+  "carrier": "Here is the next word."
+ },
+ "words/apple": {
+  "sha1": "20271da8e4292dfa13bd85043ba651232b503017",
+  "heard": "Apple",
+  "carrier": "Here is the next word."
+ },
+ "words/arm": {
+  "sha1": "5fc33b23390d21c38c7bec7caf6ce741c87fdb4b",
+  "heard": "arm",
+  "carrier": "Here is the next word."
+ },
+ "words/astronaut": {
+  "sha1": "c56e0a823f76c7c4068ba7178e2f3d714cacfd2d",
+  "heard": "Astronaut",
+  "carrier": "Here is the next word."
+ },
+ "words/avocado": {
+  "sha1": "e444ecccdb43b2aa86c96c5cf553bb200e9a6418",
+  "heard": "Avocado",
+  "carrier": "Here is the next word."
+ },
+ "words/backpack": {
+  "sha1": "ade203036e7ed05fa190d7287a0bee849cd42181",
+  "heard": "backpack",
+  "carrier": "Here is the next word."
  },
  "words/bag": {
   "sha1": "697c34e24ed46e8ee1925d22636596363caabc53",
   "heard": "bag",
   "carrier": "Here is the next word."
  },
+ "words/ball": {
+  "sha1": "0e243eb6a00e51e435586ba7e1bed16d09a7a8a7",
+  "heard": "ball",
+  "carrier": "Here is the next word."
+ },
+ "words/balloon": {
+  "sha1": "3c56781243c3095ec17f0088b20b5b077f2baaf1",
+  "heard": "Balloon",
+  "carrier": "Here is the next word."
+ },
+ "words/banana": {
+  "sha1": "f256078754cf46b3d3def00c588f60b879b0e6a7",
+  "heard": "Banana.",
+  "carrier": "Here is the next word."
+ },
  "words/basket": {
   "sha1": "9f5bf26e93044a32a194e92e7c402afc8d0e2df5",
   "heard": "basket",
+  "carrier": "Here is the next word."
+ },
+ "words/basketball": {
+  "sha1": "ef92413dca5ca7f006c928495989cb429803592f",
+  "heard": "basketball",
   "carrier": "Here is the next word."
  },
  "words/bathtub": {
@@ -789,9 +3339,34 @@
   "heard": "beads",
   "carrier": "Here is the next word."
  },
+ "words/beans": {
+  "sha1": "d0b5c5c0f03fc38795d31bc110dad6db9375ec67",
+  "heard": "Beans",
+  "carrier": "Here is the next word."
+ },
+ "words/bear": {
+  "sha1": "6a9fb6d30fc662cb2114f686cf4241243df8d83d",
+  "heard": "Bear",
+  "carrier": "Here is the next word."
+ },
  "words/bed": {
   "sha1": "df12df2afe93f762c01832a6b820a3ac4be302b8",
   "heard": "bed",
+  "carrier": "Here is the next word."
+ },
+ "words/bee": {
+  "sha1": "a9e306e367278173b0ed2e7686b47156b0294884",
+  "heard": "B",
+  "carrier": "Here is the next word."
+ },
+ "words/bell": {
+  "sha1": "62535a02acec21f5ba8bf8e96cf4b2f833a6ca11",
+  "heard": "Bell",
+  "carrier": "Here is the next word."
+ },
+ "words/bicycle": {
+  "sha1": "e8d8787ec2d6b0d825513d8ec6328bb077d65793",
+  "heard": "bicycle",
   "carrier": "Here is the next word."
  },
  "words/black": {
@@ -809,10 +3384,25 @@
   "heard": "Bored",
   "carrier": "Here is the next word."
  },
+ "words/boat": {
+  "sha1": "513aea014a4d132f4ffbb0948d145eff4edb707d",
+  "heard": "boat",
+  "carrier": "Here is the next word."
+ },
+ "words/bone": {
+  "sha1": "0c03eb65004256770e935c5887212097906f12d3",
+  "heard": "Bone",
+  "carrier": "Here is the next word."
+ },
  "words/book": {
   "sha1": "2eb2abce91b8e9573b6380b2f1c8ae6688d4201a",
   "heard": "book",
   "carrier": "Now spell this word."
+ },
+ "words/boot": {
+  "sha1": "88d5ee904ba7d68e1ff9a50498f3ff3491292c51",
+  "heard": "boot",
+  "carrier": "Here is the next word."
  },
  "words/bottle": {
   "sha1": "e4e15b651104b67a573488cc6b2f293bf3922a69",
@@ -822,6 +3412,21 @@
  "words/bowl": {
   "sha1": "964c3fa10ba0503b7d7844bc16277108506aa966",
   "heard": "bowl",
+  "carrier": "Here is the next word."
+ },
+ "words/brain": {
+  "sha1": "03db177df5fe16a2bae20cee63ab84c6b79200cf",
+  "heard": "Brain",
+  "carrier": "Here is the next word."
+ },
+ "words/bread": {
+  "sha1": "e8f32deeeb5c889ba337b6c13bcc9288543192c9",
+  "heard": "Bread",
+  "carrier": "Here is the next word."
+ },
+ "words/broccoli": {
+  "sha1": "8b1b437e167eadb9f24972a543ef3e5222dddfc2",
+  "heard": "Broccoli",
   "carrier": "Here is the next word."
  },
  "words/broom": {
@@ -839,6 +3444,41 @@
   "heard": "bucket",
   "carrier": "Here is the next word."
  },
+ "words/builder": {
+  "sha1": "c90f53ed1ce7424d2be57b783bb32ea587818146",
+  "heard": "Builder",
+  "carrier": "Here is the next word."
+ },
+ "words/burger": {
+  "sha1": "0b8cd0bc186a77c84ac1930991bec89fd9f5ac18",
+  "heard": "Burger.",
+  "carrier": "Now spell this word."
+ },
+ "words/bus": {
+  "sha1": "d76a428c5356d9568f53923b0a7bb4ff407de95c",
+  "heard": "bus",
+  "carrier": "Here is the next word."
+ },
+ "words/butterfly": {
+  "sha1": "4cae31a777fb26ff9c6d4a02bf8a283438f8bdf3",
+  "heard": "Butterfly",
+  "carrier": "Here is the next word."
+ },
+ "words/cabbage": {
+  "sha1": "9894efc685e7d2d73a812ebb5b308566dae024b8",
+  "heard": "cabbage",
+  "carrier": "Here is the next word."
+ },
+ "words/cactus": {
+  "sha1": "0a245ffa64d9e4688fbb6984cadf4a7b0a405d5a",
+  "heard": "cactus",
+  "carrier": "Here is the next word."
+ },
+ "words/cake": {
+  "sha1": "16a35afe287b70573bbbd538665b329a74959c86",
+  "heard": "cake",
+  "carrier": "Here is the next word."
+ },
  "words/calculator": {
   "sha1": "2df8d86344519bbe068283cc1c449aed1aabbde6",
   "heard": "Calculator",
@@ -854,9 +3494,69 @@
   "heard": "Candle",
   "carrier": "Here is the next word."
  },
+ "words/cap": {
+  "sha1": "a9d152fed48c1e2183051bbfa0d2fad3217a3469",
+  "heard": "cap",
+  "carrier": "Here is the next word."
+ },
+ "words/car": {
+  "sha1": "051b716dd55f1770ed2dfc1fa505863db7c0c1ff",
+  "heard": "car",
+  "carrier": "Here is the next word."
+ },
+ "words/cards": {
+  "sha1": "f668f73514ffe61b2a466b2db1f6a1fc877d207d",
+  "heard": "cards",
+  "carrier": "Here is the next word."
+ },
+ "words/carrot": {
+  "sha1": "3d82bb7088bf5e96ea911befb32e53e18081c0d0",
+  "heard": "carrot",
+  "carrier": "Here is the next word."
+ },
+ "words/cat": {
+  "sha1": "1b775cecaae701d1cb759148e5ef2369071d71ae",
+  "heard": "cat",
+  "carrier": "Here is the next word."
+ },
  "words/chair": {
   "sha1": "08ad457173bf98bc1dd8b36c2cec5955fa323bbb",
   "heard": "chair",
+  "carrier": "Here is the next word."
+ },
+ "words/cheese": {
+  "sha1": "b1b56d7a75be01a2f646e6d487e9041076a4bf4b",
+  "heard": "cheese",
+  "carrier": "Here is the next word."
+ },
+ "words/chef": {
+  "sha1": "178d22f43967c45632d2c99fef8e5cac52f62099",
+  "heard": "Chef",
+  "carrier": "Here is the next word."
+ },
+ "words/cherry": {
+  "sha1": "57e424bcf3664545bd7f86d46d510f58693841e9",
+  "heard": "Cherry",
+  "carrier": "Here is the next word."
+ },
+ "words/chicken": {
+  "sha1": "49e8fef4c6072b521fbfede4bb85211414b55a04",
+  "heard": "chicken.",
+  "carrier": "Here is the next word."
+ },
+ "words/chili": {
+  "sha1": "a9dc26c990f0333aba460028f08ab2823aa982b6",
+  "heard": "Chilly",
+  "carrier": "Here is the next word."
+ },
+ "words/chocolate": {
+  "sha1": "7089f65cb0403bf67fd0dd5ab829847c08a8d47a",
+  "heard": "chocolate",
+  "carrier": "Here is the next word."
+ },
+ "words/circle": {
+  "sha1": "c71eff0618f84d625e9ee8ba9096c6eecbe01ec4",
+  "heard": "Circle",
   "carrier": "Here is the next word."
  },
  "words/clock": {
@@ -864,14 +3564,84 @@
   "heard": "clock",
   "carrier": "Here is the next word."
  },
+ "words/cloud": {
+  "sha1": "5e8c734dac6d2d890969a1578e0d8a3646fd1e1a",
+  "heard": "cloud",
+  "carrier": "Here is the next word."
+ },
+ "words/clownfish": {
+  "sha1": "111b5157241e831f105d2d9befe78eb2a99e8d68",
+  "heard": "Clownfish",
+  "carrier": "Here is the next word."
+ },
+ "words/coconut": {
+  "sha1": "a3286f9022dd28726ea99e1283332b6aa27d8950",
+  "heard": "Coconut",
+  "carrier": "Here is the next word."
+ },
  "words/computer": {
   "sha1": "9c54527de5fc0206a29ad5f50aa98010d3b9936d",
   "heard": "Computer.",
   "carrier": "Here is the next word."
  },
+ "words/cookie": {
+  "sha1": "f95d2a90757ff5cde23ca76c7772463dbd6781ed",
+  "heard": "cookie",
+  "carrier": "Here is the next word."
+ },
+ "words/corn": {
+  "sha1": "deaa3d88b6a964a6a4ad5812a7b546b36708f6e0",
+  "heard": "corn.",
+  "carrier": "Here is the next word."
+ },
+ "words/cow": {
+  "sha1": "5e89b5a4beb285c39e294f77283c13a4f2de0d5c",
+  "heard": "cow",
+  "carrier": "Here is the next word."
+ },
+ "words/crab": {
+  "sha1": "62bc96d430de9cb5fa14678e72744bb4546d7a7c",
+  "heard": "Crab",
+  "carrier": "Here is the next word."
+ },
  "words/crayon": {
   "sha1": "6ce900f6544e4dea52b40ecd78d91ef913e845f8",
   "heard": "crayon",
+  "carrier": "Here is the next word."
+ },
+ "words/crocodile": {
+  "sha1": "28377a26650f53a07a6733646764d1e74d786f47",
+  "heard": "Crocodile",
+  "carrier": "Here is the next word."
+ },
+ "words/cube": {
+  "sha1": "58cd2b951bd22884b7b154a8d8fe6884f808b608",
+  "heard": "cube",
+  "carrier": "Here is the next word."
+ },
+ "words/cucumber": {
+  "sha1": "7d78394f10bf9a63089cede43babc49e4fb9b1b6",
+  "heard": "Cucumber",
+  "carrier": "Here is the next word."
+ },
+ "words/cup": {
+  "sha1": "04f52f37bf660af56377c8306b136cc2f735806d",
+  "heard": "cup",
+  "carrier": "Here is the next word."
+ },
+ "words/cupboard": {
+  "sha1": "25204f9d3c87eee9cbaa1cf3985a0fa5c77e3b20",
+  "heard": "cupboard",
+  "carrier": "Here is the next word."
+ },
+ "words/cupcake": {
+  "sha1": "fb5dd0bfa9bf4a41a1b53b75ddac7064b47aa419",
+  "heard": "Cupcake",
+  "carrier": "Here is the next word."
+ },
+ "words/deer": {
+  "sha1": "6e9245493de0990119def562bc1b83bfd287b9dc",
+  "heard": "Dear.",
   "carrier": "Here is the next word."
  },
  "words/desert": {
@@ -884,9 +3654,94 @@
   "heard": "desk",
   "carrier": "Here is the next word."
  },
+ "words/diamond": {
+  "sha1": "e05853410242478861009e164584b2b436dae2de",
+  "heard": "Diamond",
+  "carrier": "Here is the next word."
+ },
+ "words/doctor": {
+  "sha1": "f4016810881c67ea63f57caae2f1bacf4496c4e0",
+  "heard": "Doctor.",
+  "carrier": "Listen to this word."
+ },
+ "words/dog": {
+  "sha1": "514a7ad37e027c4a6b9c7656f3abed7e8a9494cc",
+  "heard": "dog",
+  "carrier": "Here is the next word."
+ },
+ "words/doll": {
+  "sha1": "543ddbd262c6858300ff55bb7e200a010c0ac0f6",
+  "heard": "doll",
+  "carrier": "Here is the next word."
+ },
+ "words/dolphin": {
+  "sha1": "d5e377649b803f86bf0614e3aebb582e3c82dd78",
+  "heard": "Dolphin",
+  "carrier": "Here is the next word."
+ },
+ "words/donkey": {
+  "sha1": "47c6a91fd7424252f4257a1dfa91bb0913375d9e",
+  "heard": "donkey",
+  "carrier": "Here is the next word."
+ },
+ "words/donut": {
+  "sha1": "9807f17ca24513a507d5caeaac924abe5a4e6fec",
+  "heard": "Donut",
+  "carrier": "Here is the next word."
+ },
  "words/door": {
   "sha1": "57b047e31986326401d878be2444dc2a3c2c03d0",
   "heard": "door",
+  "carrier": "Here is the next word."
+ },
+ "words/drum": {
+  "sha1": "8ca15c132a826f8df629f9d9bda7577345494d6c",
+  "heard": "drum",
+  "carrier": "Here is the next word."
+ },
+ "words/duck": {
+  "sha1": "5f9fe530d0cca09d05d242d23826d17467153efe",
+  "heard": "duck",
+  "carrier": "Here is the next word."
+ },
+ "words/durian": {
+  "sha1": "573ad65fbf6f44543f0ace21fdfa077351ab015d",
+  "heard": "durian",
+  "carrier": "Here is the next word."
+ },
+ "words/eagle": {
+  "sha1": "7a867cc25bd970cc6e65215835c8eea7ff8a7765",
+  "heard": "Eagle",
+  "carrier": "Here is the next word."
+ },
+ "words/ear": {
+  "sha1": "80c0d62dff338f026f1b92ea3d66c759ebd98196",
+  "heard": "ear.",
+  "carrier": "Here is the next word."
+ },
+ "words/earth": {
+  "sha1": "3b5975baf6bb933b6f28c8da591ac099fb40048b",
+  "heard": "Earth.",
+  "carrier": "Here is the next word."
+ },
+ "words/egg": {
+  "sha1": "10f07a449bc89cf87cb630d39bb206e06fcd750a",
+  "heard": "egg.",
+  "carrier": "Here is the next word."
+ },
+ "words/eggplant": {
+  "sha1": "b5d0913e4ff78cb906af5a026f5a6b693700e61a",
+  "heard": "eggplant",
+  "carrier": "Here is the next word."
+ },
+ "words/eight": {
+  "sha1": "c39b9de68ab018fcc79bbc3c688d4179553db25a",
+  "heard": "8.",
+  "carrier": "Here is the next word."
+ },
+ "words/elephant": {
+  "sha1": "c8ee1d36cec593b0de31271b7b4cfde32ab29c51",
+  "heard": "Elephant",
   "carrier": "Here is the next word."
  },
  "words/eraser": {
@@ -894,9 +3749,159 @@
   "heard": "Eraser",
   "carrier": "Here is the next word."
  },
+ "words/excavator": {
+  "sha1": "5bb64b91dd332b0b2384a113c8f0cef43ce588b0",
+  "heard": "Excavator",
+  "carrier": "Here is the next word."
+ },
+ "words/eye": {
+  "sha1": "a30dfacc06abd337e4b5dd7277be4b868d0ed306",
+  "heard": "I",
+  "carrier": "Here is the next word."
+ },
+ "words/farmer": {
+  "sha1": "735d8e8b5ac0bd0fd3353c35bc78bbdbe5edddc1",
+  "heard": "Farmer",
+  "carrier": "Here is the next word."
+ },
+ "words/firefighter": {
+  "sha1": "011133059c616e7fbe0bd0a95c5af27143edd833",
+  "heard": "Firefighter",
+  "carrier": "Here is the next word."
+ },
+ "words/firetruck": {
+  "sha1": "33e06c88d508b80300e59a94fca615cfd1079d8e",
+  "heard": "Fire Truck",
+  "carrier": "Here is the next word."
+ },
+ "words/fish": {
+  "sha1": "1c408923edf156f5581ce0752cef764405cc9da0",
+  "heard": "fish",
+  "carrier": "Here is the next word."
+ },
+ "words/five": {
+  "sha1": "c735bc2480211ba1348f104bb3e376cbdbeb1d4c",
+  "heard": "5.",
+  "carrier": "Here is the next word."
+ },
+ "words/flamingo": {
+  "sha1": "d172d33ffa307d24546acdc7ce2468f212aa1fd8",
+  "heard": "Flamingo",
+  "carrier": "Here is the next word."
+ },
+ "words/flower": {
+  "sha1": "57a0a5676ad4f579ba8ae1c1153e44d179a46be2",
+  "heard": "flower.",
+  "carrier": "Here is the next word."
+ },
+ "words/flute": {
+  "sha1": "90a3ae393b8676e13211cf6d0461724220efe64d",
+  "heard": "Flute",
+  "carrier": "Here is the next word."
+ },
+ "words/foot": {
+  "sha1": "8ec76a2087aa2cdea1a992907aa573e4ab34f32b",
+  "heard": "foot",
+  "carrier": "Here is the next word."
+ },
+ "words/four": {
+  "sha1": "12724967bddaa150806cc3feeaa54a7cdcb6f4b6",
+  "heard": "4.",
+  "carrier": "Here is the next word."
+ },
+ "words/fox": {
+  "sha1": "22d584a2f14d34d246f5e13afcbe910eba2d539b",
+  "heard": "Fox.",
+  "carrier": "Here is the next word."
+ },
+ "words/fridge": {
+  "sha1": "5c66404c3e931c8f84eeaf94dee2cc7d1c75a3ba",
+  "heard": "fridge",
+  "carrier": "Here is the next word."
+ },
+ "words/fries": {
+  "sha1": "cb2a6dc3179e26c35d6de60fc07e42db838ee47e",
+  "heard": "Fries",
+  "carrier": "Here is the next word."
+ },
+ "words/frog": {
+  "sha1": "36a452a6db8c4c68f76185ea38a33f25e933317a",
+  "heard": "frog",
+  "carrier": "Here is the next word."
+ },
+ "words/gamepad": {
+  "sha1": "67f9b18ce5a55c4bfa195f5b528f9c83ba28a8da",
+  "heard": "Gamepad",
+  "carrier": "Here is the next word."
+ },
+ "words/garlic": {
+  "sha1": "55b0fbc80b684472baa79467388bb4fb63c7225c",
+  "heard": "garlic",
+  "carrier": "Here is the next word."
+ },
+ "words/gift": {
+  "sha1": "c5f7235bb865d890b0dbd2604c142ebcba0afae5",
+  "heard": "gift",
+  "carrier": "Here is the next word."
+ },
+ "words/giraffe": {
+  "sha1": "a379c76c060d57d1e432ff6e9d6a916151361e42",
+  "heard": "giraffe",
+  "carrier": "Here is the next word."
+ },
+ "words/glass": {
+  "sha1": "ce22228a86463860a6bb45dce08ef4037b19dafe",
+  "heard": "glass",
+  "carrier": "Here is the next word."
+ },
+ "words/glasses": {
+  "sha1": "035286f86a67c2f4c6af30193104ffd9ae80fe1f",
+  "heard": "glasses",
+  "carrier": "Here is the next word."
+ },
+ "words/globe": {
+  "sha1": "afd31619e6c6ec7aa9964094a42c13baffbc91c6",
+  "heard": "globe",
+  "carrier": "Here is the next word."
+ },
+ "words/gloves": {
+  "sha1": "ff2dcdf1e503303f6089ecce8bc9925cc323a4a6",
+  "heard": "gloves",
+  "carrier": "Here is the next word."
+ },
  "words/glue": {
   "sha1": "3257b22cb0566ee28ad96382ea916490cfe1b1bd",
   "heard": "glue",
+  "carrier": "Here is the next word."
+ },
+ "words/goal": {
+  "sha1": "527cb359470359fe20ab79f92723be55f4166e2e",
+  "heard": "Goal",
+  "carrier": "Here is the next word."
+ },
+ "words/goat": {
+  "sha1": "ff21d5248c4de4343481579b6b7b2b55b3c7de36",
+  "heard": "Goat",
+  "carrier": "Here is the next word."
+ },
+ "words/goose": {
+  "sha1": "2830dd2929603c57a87da29447970a81cfa76bb4",
+  "heard": "Goose",
+  "carrier": "Here is the next word."
+ },
+ "words/gorilla": {
+  "sha1": "3e1e0b77d6a4670aa28f91e1fe4c2c6aa0b86d70",
+  "heard": "Gorilla",
+  "carrier": "Here is the next word."
+ },
+ "words/grapes": {
+  "sha1": "5e36766dd4632c82040e8f96bc6a204285312e13",
+  "heard": "grapes",
+  "carrier": "Here is the next word."
+ },
+ "words/grass": {
+  "sha1": "7fb4e86f66fd4304277cb65275a76e400f482b68",
+  "heard": "grass",
   "carrier": "Here is the next word."
  },
  "words/gray": {
@@ -909,9 +3914,84 @@
   "heard": "green",
   "carrier": "Here is the next word."
  },
+ "words/guitar": {
+  "sha1": "f9a2e3e8b856fff0058d8c22bb4df2fa538601af",
+  "heard": "guitar",
+  "carrier": "Here is the next word."
+ },
+ "words/hair": {
+  "sha1": "8753602589456921602ca9620fb447121ddad07d",
+  "heard": "hair.",
+  "carrier": "Here is the next word."
+ },
+ "words/hamster": {
+  "sha1": "2c932a092a3c0631c541df274b0753fba6bffc58",
+  "heard": "Hamster",
+  "carrier": "Here is the next word."
+ },
+ "words/hand": {
+  "sha1": "9dbeae3ab5c277550fcbb2752bb47435bd519ee6",
+  "heard": "hand",
+  "carrier": "Here is the next word."
+ },
+ "words/harp": {
+  "sha1": "062d8cfa79addbb866e1a6b683e39efa9830d2f7",
+  "heard": "harp",
+  "carrier": "Here is the next word."
+ },
+ "words/heart": {
+  "sha1": "3130be800b796484e71c5d85c70ccffd3ea96512",
+  "heard": "heart.",
+  "carrier": "Here is the next word."
+ },
+ "words/helicopter": {
+  "sha1": "e3d2d48150898ac504f060a1f97b16f7c71ba73b",
+  "heard": "Helicopter",
+  "carrier": "Here is the next word."
+ },
+ "words/hexagon": {
+  "sha1": "49e532ce005a2962bb8d4772d95debde456f41ae",
+  "heard": "Hexagon",
+  "carrier": "Here is the next word."
+ },
+ "words/hoop": {
+  "sha1": "2c9707c3cb23c0f8681735d6f4ab33959e1c0c39",
+  "heard": "hoop",
+  "carrier": "Here is the next word."
+ },
+ "words/horse": {
+  "sha1": "7722faea6c23f9a89d6b7f230737535c94c10592",
+  "heard": "horse",
+  "carrier": "Here is the next word."
+ },
+ "words/ice": {
+  "sha1": "33b6d90ea209490a8560f944f1eb73cf5be33d30",
+  "heard": "Ice.",
+  "carrier": "Here is the next word."
+ },
+ "words/jacket": {
+  "sha1": "be33b18d49738ce154fb72afbef3d1ce6374a57c",
+  "heard": "Jacket",
+  "carrier": "Here is the next word."
+ },
+ "words/jellyfish": {
+  "sha1": "ca1d17f173d5abaa1898552f0ae344a081b86363",
+  "heard": "jellyfish",
+  "carrier": "Here is the next word."
+ },
+ "words/juice": {
+  "sha1": "f92c863d8657658de9b46aa355c50db504300826",
+  "heard": "juice",
+  "carrier": "Here is the next word."
+ },
  "words/kaaba": {
   "sha1": "d78b3a4a1b8369bf023c15b7374839ad300bf93c",
   "heard": "Kaaba",
+  "carrier": "Here is the next word."
+ },
+ "words/kangaroo": {
+  "sha1": "08e3dd9bd4e31ebc0e336f649a53fc8125bdf9c4",
+  "heard": "kangaroo",
   "carrier": "Here is the next word."
  },
  "words/key": {
@@ -919,14 +3999,109 @@
   "heard": "key.",
   "carrier": "Here is the next word."
  },
+ "words/kite": {
+  "sha1": "9bc28f775b08ad7ba11c93a7a332ba0e5756ee58",
+  "heard": "kite",
+  "carrier": "Here is the next word."
+ },
+ "words/kiwi": {
+  "sha1": "9ad618b60be23d51def2a27f757ac773026c29ef",
+  "heard": "Kiwi",
+  "carrier": "Here is the next word."
+ },
+ "words/koala": {
+  "sha1": "fa94dd7f15781cbb9f0b40d7bbf8a735e0063889",
+  "heard": "koala",
+  "carrier": "Here is the next word."
+ },
+ "words/ladybug": {
+  "sha1": "4d40799b2c026ed6a19d53d76d4dd8a4b9462d19",
+  "heard": "Ladybug",
+  "carrier": "Here is the next word."
+ },
+ "words/lamp": {
+  "sha1": "8a96ba2983fe15d54c8bf901e1bdd13888bbd46f",
+  "heard": "lamp",
+  "carrier": "Here is the next word."
+ },
+ "words/laptop": {
+  "sha1": "c20b9bfe6a6e7ad123a62cbe56c39c8f50f3df27",
+  "heard": "laptop",
+  "carrier": "Here is the next word."
+ },
+ "words/leaf": {
+  "sha1": "c4f4634afd4aa8635f6f9cc072f1bc3630688aac",
+  "heard": "leaf",
+  "carrier": "Here is the next word."
+ },
+ "words/lion": {
+  "sha1": "800804ced721068a8761485eda160978a0ac4bc5",
+  "heard": "lion",
+  "carrier": "Here is the next word."
+ },
+ "words/lips": {
+  "sha1": "9939536ef24fc5a1da8734407079ba6d2664b2a8",
+  "heard": "lips",
+  "carrier": "Here is the next word."
+ },
+ "words/lobster": {
+  "sha1": "37ce8b2fc9b44eda8968c30a0f410a8a1d7a8fae",
+  "heard": "Lobster",
+  "carrier": "Here is the next word."
+ },
+ "words/lock": {
+  "sha1": "bc25e6527d5fec4745438a97b26c6f7fe19fc40d",
+  "heard": "lock",
+  "carrier": "Here is the next word."
+ },
+ "words/magnet": {
+  "sha1": "45115435b8de93520e3f7407fd987826bf6dc6a3",
+  "heard": "magnet",
+  "carrier": "Here is the next word."
+ },
+ "words/mango": {
+  "sha1": "c19af52f17cc4f17156de8374c94b4e35d43fc40",
+  "heard": "Mango",
+  "carrier": "Here is the next word."
+ },
+ "words/map": {
+  "sha1": "45882837f4a53d59aff7509f415ac63707910a5d",
+  "heard": "map",
+  "carrier": "Here is the next word."
+ },
+ "words/maracas": {
+  "sha1": "8dfc11be317cf27ef4180622e15ca65e546ad3dc",
+  "heard": "Maracas",
+  "carrier": "Here is the next word."
+ },
  "words/marker": {
   "sha1": "7ff82ccf7bc914c7383ced8fef89f02397241357",
   "heard": "marker",
   "carrier": "Here is the next word."
  },
+ "words/microscope": {
+  "sha1": "08cac18b1edc35ff99eda1b6766b67c785b74680",
+  "heard": "microscope.",
+  "carrier": "Here is the next word."
+ },
+ "words/microwave": {
+  "sha1": "213d7b5c254821b6661bb3f098e4c03f561c29ba",
+  "heard": "microwave",
+  "carrier": "Here is the next word."
+ },
+ "words/milk": {
+  "sha1": "60f96c857b04b50d8c8efc185961098295bea841",
+  "heard": "milk",
+  "carrier": "Here is the next word."
+ },
  "words/mirror": {
   "sha1": "e9d0d5cdd5a5ed24c67e73b401a9115a766efbb6",
   "heard": "mirror",
+  "carrier": "Here is the next word."
+ },
+ "words/monkey": {
+  "sha1": "28a757c9b8613fe55da553626682b460d1b00589",
+  "heard": "monkey",
   "carrier": "Here is the next word."
  },
  "words/moon": {
@@ -939,14 +4114,129 @@
   "heard": "Mosque",
   "carrier": "Here is the next word."
  },
+ "words/motorcycle": {
+  "sha1": "b5dce83613c5014159454476ee461df4b1a4b637",
+  "heard": "motorcycle.",
+  "carrier": "Here is the next word."
+ },
+ "words/mountain": {
+  "sha1": "e87a5a510cfb7f150dc7021bfd4796f389c27405",
+  "heard": "Mountain",
+  "carrier": "Here is the next word."
+ },
+ "words/mouse": {
+  "sha1": "c3b5dce3568c48420d1b5aea33802afc1fd4aee0",
+  "heard": "mouse",
+  "carrier": "Here is the next word."
+ },
+ "words/mug": {
+  "sha1": "e8cae29bfb9d97d166bf50f118eb26951e7a894e",
+  "heard": "mug",
+  "carrier": "Here is the next word."
+ },
+ "words/mushroom": {
+  "sha1": "a21a23df80b17de2da8b51972dc948eb2a47bbc4",
+  "heard": "Mushroom",
+  "carrier": "Here is the next word."
+ },
+ "words/neck": {
+  "sha1": "e30bc3a56ce3a2f7e73dd9047c5a11d2221c3817",
+  "heard": "neck",
+  "carrier": "Here is the next word."
+ },
+ "words/nine": {
+  "sha1": "a98dd9bb3ed306c172ab2acd798d565b91471449",
+  "heard": "9.",
+  "carrier": "Here is the next word."
+ },
+ "words/nose": {
+  "sha1": "7e7a978110d89d692c0d1cd33ce3919e7f9cd07b",
+  "heard": "nose",
+  "carrier": "Here is the next word."
+ },
+ "words/notebook": {
+  "sha1": "94bf4f7c034b76eb726e00a6ecfd019b0787dbd3",
+  "heard": "notebook",
+  "carrier": "Here is the next word."
+ },
+ "words/octopus": {
+  "sha1": "058c481bef0494a0cfb9c2614187082c3d60f887",
+  "heard": "Octopus",
+  "carrier": "Here is the next word."
+ },
+ "words/one": {
+  "sha1": "a554a16692c3fc212a4eb26fe8137e5ba7742046",
+  "heard": "1.",
+  "carrier": "Here is the next word."
+ },
+ "words/onion": {
+  "sha1": "1db4ddfa2ac850d0802812e804f87578a50e61b9",
+  "heard": "onion",
+  "carrier": "Here is the next word."
+ },
  "words/orange": {
   "sha1": "1ae3f2bb63545bb72b40a23c7dcf5eadf1df6612",
   "heard": "Orange.",
   "carrier": "Here is the next word."
  },
+ "words/oval": {
+  "sha1": "2a3e79dbc4c1efc072160f9a9f538f212add8b92",
+  "heard": "Oval",
+  "carrier": "Here is the next word."
+ },
+ "words/owl": {
+  "sha1": "77d8427df25979762c4de7c9d7fe313533a0aea1",
+  "heard": "Owl",
+  "carrier": "Here is the next word."
+ },
+ "words/painter": {
+  "sha1": "bfd0d6f548dc6b7c9ef937bc8bfd9feb601da667",
+  "heard": "Painter",
+  "carrier": "Here is the next word."
+ },
+ "words/palette": {
+  "sha1": "44193fe354174516504423a39c80fbc2b01b7b76",
+  "heard": "pallet",
+  "carrier": "Here is the next word."
+ },
  "words/palm": {
   "sha1": "397e4aff2fa9ebd4ed4acd6cfcbc893d19748320",
   "heard": "palm",
+  "carrier": "Here is the next word."
+ },
+ "words/pancakes": {
+  "sha1": "29b0f16f93cada5d5fbf29e31f35cb1833859477",
+  "heard": "pancakes.",
+  "carrier": "Here is the next word."
+ },
+ "words/panda": {
+  "sha1": "7aace6edf3fa03abe1e10395d3ce1093a0f785a1",
+  "heard": "Panda",
+  "carrier": "Here is the next word."
+ },
+ "words/pants": {
+  "sha1": "0db5c50ae717ff3fbc9359edb5c744cf3e3ebf8c",
+  "heard": "Pants",
+  "carrier": "Here is the next word."
+ },
+ "words/papaya": {
+  "sha1": "51b41e445369ab944b8f6ff4d77239b32d37ebf8",
+  "heard": "papaya",
+  "carrier": "Here is the next word."
+ },
+ "words/parrot": {
+  "sha1": "50a3052a9f54db6077a4677cc2c4064e085cdb45",
+  "heard": "parrot",
+  "carrier": "Here is the next word."
+ },
+ "words/peacock": {
+  "sha1": "ced807c73ded01fe9d014f3fdbbb3bb62be37767",
+  "heard": "Peacock",
+  "carrier": "Here is the next word."
+ },
+ "words/pear": {
+  "sha1": "5d47d1618326d274dbc8b89e1e6e0159427abf15",
+  "heard": "pair",
   "carrier": "Here is the next word."
  },
  "words/pen": {
@@ -959,14 +4249,89 @@
   "heard": "pencil",
   "carrier": "Here is the next word."
  },
+ "words/penguin": {
+  "sha1": "312a260d811bb81049757551210b7a6e51c72979",
+  "heard": "Penguin",
+  "carrier": "Here is the next word."
+ },
+ "words/pentagon": {
+  "sha1": "42a3232726178c33bafbcbf7c7f65dd64a7c1097",
+  "heard": "Pentagon",
+  "carrier": "Here is the next word."
+ },
+ "words/piano": {
+  "sha1": "1d5f9a21dc94aaa49d689b1be25baa11d2736278",
+  "heard": "piano",
+  "carrier": "Here is the next word."
+ },
+ "words/pillow": {
+  "sha1": "574b34bd4bb9072e29c487ebfdff3aa3a25db6e3",
+  "heard": "pillow",
+  "carrier": "Here is the next word."
+ },
+ "words/pilot": {
+  "sha1": "51c7b56840b2ae47d3ec7660310c44de453de8b2",
+  "heard": "pilot",
+  "carrier": "Here is the next word."
+ },
+ "words/pineapple": {
+  "sha1": "b1031e71232f830a40854c2e434f983c4b5931ea",
+  "heard": "Pineapple",
+  "carrier": "Here is the next word."
+ },
  "words/pink": {
   "sha1": "f803aed10ffddd0547467078ae96467233fa5a27",
   "heard": "pink.",
   "carrier": "Here is the next word."
  },
+ "words/pizza": {
+  "sha1": "9c8430bc2d33ca018fef931d522fdad1d32df4d2",
+  "heard": "pizza",
+  "carrier": "Here is the next word."
+ },
+ "words/plane": {
+  "sha1": "beb0dcf8860e3dff5be97932abf6679da43b86d7",
+  "heard": "plane",
+  "carrier": "Here is the next word."
+ },
+ "words/planet": {
+  "sha1": "cbc31801f2da1366337594e1ba5b101bfb4969af",
+  "heard": "Planet",
+  "carrier": "Here is the next word."
+ },
+ "words/plate": {
+  "sha1": "2615f091360b6993afc897c2ebe35d16817ea59c",
+  "heard": "plate",
+  "carrier": "Here is the next word."
+ },
+ "words/police": {
+  "sha1": "0e910e425c7600853034c4827471275a84c19ca5",
+  "heard": "police",
+  "carrier": "Here is the next word."
+ },
+ "words/postman": {
+  "sha1": "bfac8d27e8e520100b4c8d4758593a8f6786ef1a",
+  "heard": "Postman",
+  "carrier": "Here is the next word."
+ },
+ "words/pot": {
+  "sha1": "5f815ec38ec9891076f60638dda39b40fd205d4b",
+  "heard": "pot",
+  "carrier": "Here is the next word."
+ },
+ "words/potato": {
+  "sha1": "5bf572c85123f6daf894fe5874c508512ae9eb50",
+  "heard": "Potato",
+  "carrier": "Here is the next word."
+ },
  "words/prayer": {
   "sha1": "09c883171acbed883fac7d6074bdfff291e9a9a7",
   "heard": "prayer",
+  "carrier": "Here is the next word."
+ },
+ "words/pumpkin": {
+  "sha1": "7891cfd5d78f5ee767efedb86ef200fc99596c12",
+  "heard": "Pumpkin",
   "carrier": "Here is the next word."
  },
  "words/purple": {
@@ -979,9 +4344,39 @@
   "heard": "Quran",
   "carrier": "Here is the next word."
  },
+ "words/rabbit": {
+  "sha1": "75523c28cd0ec777585616105a58ab5acc5ab1be",
+  "heard": "rabbit",
+  "carrier": "Here is the next word."
+ },
+ "words/racket": {
+  "sha1": "90fa0011b9f4e1ab7c2203e3777e9f762e22a900",
+  "heard": "racket",
+  "carrier": "Here is the next word."
+ },
  "words/radio": {
   "sha1": "d4c18ba098892b0c8901dedd45e9f984624863fc",
   "heard": "radio",
+  "carrier": "Here is the next word."
+ },
+ "words/rain": {
+  "sha1": "828679d156b1ff0e49205ce5175728ae4e8096d8",
+  "heard": "RAIN",
+  "carrier": "Here is the next word."
+ },
+ "words/rainbow": {
+  "sha1": "d794c131efde0b8f989e1544b6d02a25cae6cf1f",
+  "heard": "Rainbow",
+  "carrier": "Here is the next word."
+ },
+ "words/rambutan": {
+  "sha1": "8499881aa7cf5ca136ca6e8e85061d648b6319cc",
+  "heard": "Rambutan",
+  "carrier": "Here is the next word."
+ },
+ "words/rectangle": {
+  "sha1": "cece8137663b5b2c2784bc1a726571def6f01111",
+  "heard": "Rectangle",
   "carrier": "Here is the next word."
  },
  "words/red": {
@@ -989,9 +4384,44 @@
   "heard": "red",
   "carrier": "Here is the next word."
  },
+ "words/rice": {
+  "sha1": "a9cf4875e80a2ee31e8f7b83bb5064b482e0ea3c",
+  "heard": "Rice",
+  "carrier": "Here is the next word."
+ },
+ "words/robot": {
+  "sha1": "9c477f1c4a4079cb15020cc78a954a5755a24a88",
+  "heard": "robot",
+  "carrier": "Here is the next word."
+ },
+ "words/rock": {
+  "sha1": "69b6ed5deddf3db1c25cbb434ba64deddf881cfd",
+  "heard": "rock",
+  "carrier": "Here is the next word."
+ },
+ "words/rocket": {
+  "sha1": "a29248cfd7c38fcdf6cb624d2283493d506160f2",
+  "heard": "rocket",
+  "carrier": "Here is the next word."
+ },
+ "words/rose": {
+  "sha1": "d85ff8ee59d3131fbcd80ad07a8b86e173c86154",
+  "heard": "rose",
+  "carrier": "Here is the next word."
+ },
  "words/ruler": {
   "sha1": "ac33a5c8147d3b5bc2a3321dcc8aec603556f146",
   "heard": "ruler",
+  "carrier": "Here is the next word."
+ },
+ "words/salad": {
+  "sha1": "c4624afd44a6d3e2b25a1c213be457d0adbf3743",
+  "heard": "Salad",
+  "carrier": "Here is the next word."
+ },
+ "words/scarf": {
+  "sha1": "67467781c1d5dc2fab0ef532dc966d2df12a7538",
+  "heard": "Scarf",
   "carrier": "Here is the next word."
  },
  "words/scissors": {
@@ -999,14 +4429,114 @@
   "heard": "scissors.",
   "carrier": "Here is the next word."
  },
+ "words/seahorse": {
+  "sha1": "a86c24fe1297b5b031e76f8ce84154e1f6fc21a6",
+  "heard": "Seahorse",
+  "carrier": "Here is the next word."
+ },
+ "words/seed": {
+  "sha1": "8603b1306b832191134ceac22e5f30ba4dd25eea",
+  "heard": "seed",
+  "carrier": "Here is the next word."
+ },
+ "words/seven": {
+  "sha1": "7fffa2460bca020571f8c7631c02cfbdfe74a258",
+  "heard": "7.",
+  "carrier": "Here is the next word."
+ },
+ "words/shark": {
+  "sha1": "6d232db2ba3eb2ffbfb83a6ceb28c631f86f93bb",
+  "heard": "shark.",
+  "carrier": "Here is the next word."
+ },
+ "words/sheep": {
+  "sha1": "992df6af29fbfa527415226c949f71fcbce6adab",
+  "heard": "sheep",
+  "carrier": "Here is the next word."
+ },
+ "words/shell": {
+  "sha1": "6311f301e404f3ac0b1d10fa5b479b5d4cbdbf0a",
+  "heard": "shell",
+  "carrier": "Here is the next word."
+ },
+ "words/ship": {
+  "sha1": "f83cc81e91ba1babefabb9c2998184457e8ce514",
+  "heard": "ship",
+  "carrier": "Here is the next word."
+ },
+ "words/shirt": {
+  "sha1": "dc69e870ec82d982835754212a6daff515836688",
+  "heard": "shirt.",
+  "carrier": "Here is the next word."
+ },
+ "words/shoes": {
+  "sha1": "2f06a96ae7057b92815fca35f54df8b7c97754b0",
+  "heard": "Shoes",
+  "carrier": "Here is the next word."
+ },
+ "words/six": {
+  "sha1": "0c35d425814f59dd884ed8c82048b2754e96eb9b",
+  "heard": "6.",
+  "carrier": "Now spell this word."
+ },
+ "words/skateboard": {
+  "sha1": "d9ec36616c89270e6e74fb878aa4396aa2975db1",
+  "heard": "Skateboard",
+  "carrier": "Here is the next word."
+ },
+ "words/skates": {
+  "sha1": "0dccbdc3628626587ee6ccf4745e26c9bbd5b288",
+  "heard": "Skates.",
+  "carrier": "Here is the next word."
+ },
+ "words/skirt": {
+  "sha1": "0ff3f4e2abf66407f9d112d92e1f7f109db31bcd",
+  "heard": "skirt",
+  "carrier": "Here is the next word."
+ },
+ "words/snail": {
+  "sha1": "ba2274e840614cd426ca9384ccca1a8940c83b30",
+  "heard": "snail",
+  "carrier": "Here is the next word."
+ },
+ "words/snowflake": {
+  "sha1": "dc51daeb530e81ee9b6287146d2b49d3542d33e2",
+  "heard": "snowflake",
+  "carrier": "Here is the next word."
+ },
+ "words/snowman": {
+  "sha1": "7f36bafc0e415d4d607125f717ff4e524110eb01",
+  "heard": "Snowman",
+  "carrier": "Here is the next word."
+ },
  "words/soap": {
   "sha1": "519533e6a411c796b4fb429726d0f00b5f29de01",
   "heard": "soap",
   "carrier": "Here is the next word."
  },
+ "words/socks": {
+  "sha1": "98c83a2287500283ccecef0d55a205e50d7692b6",
+  "heard": "socks",
+  "carrier": "Here is the next word."
+ },
  "words/sofa": {
   "sha1": "2c8fdab445f0be820bf0aba560a19e2b121501bf",
   "heard": "sofa",
+  "carrier": "Here is the next word."
+ },
+ "words/soldier": {
+  "sha1": "05e3414845b07345778b6aec63c6b025dd5f0070",
+  "heard": "soldier",
+  "carrier": "Here is the next word."
+ },
+ "words/soup": {
+  "sha1": "f02d529179e761c6f0a8add707b95e52b6f8f194",
+  "heard": "soup",
+  "carrier": "Here is the next word."
+ },
+ "words/spinach": {
+  "sha1": "32f2b3ab80f691e5ac0350fd4096d16712eecdbc",
+  "heard": "Spinach",
   "carrier": "Here is the next word."
  },
  "words/sponge": {
@@ -1019,6 +4549,21 @@
   "heard": "spoon",
   "carrier": "Here is the next word."
  },
+ "words/sprout": {
+  "sha1": "7ae45897d3e223ec47ad315538e54d50294b516f",
+  "heard": "Sprout",
+  "carrier": "Here is the next word."
+ },
+ "words/square": {
+  "sha1": "ef60590b398eb2de3cbdbe51a39a6e02fd2bd1ce",
+  "heard": "Square",
+  "carrier": "Here is the next word."
+ },
+ "words/squid": {
+  "sha1": "f650487f33cd92c975f47dba631c7ba7bcf6f6c6",
+  "heard": "Squid",
+  "carrier": "Here is the next word."
+ },
  "words/stapler": {
   "sha1": "7b416d8ac640625bcb097ce35412319a9c9ca977",
   "heard": "stapler",
@@ -1027,6 +4572,46 @@
  "words/star": {
   "sha1": "f3ebd106c474cfa4faee4eaebf3d78ca9e2bc316",
   "heard": "Star",
+  "carrier": "Here is the next word."
+ },
+ "words/starfish": {
+  "sha1": "d9017c5348ec93134567239af44203913a1cabe3",
+  "heard": "Starfish",
+  "carrier": "Here is the next word."
+ },
+ "words/stingray": {
+  "sha1": "9b7d1fe75bee26a41e7609fe0c54fcf6b1f66bee",
+  "heard": "Stingray",
+  "carrier": "Here is the next word."
+ },
+ "words/storm": {
+  "sha1": "c535ad0cede575cc5f9994c091b7a6326f0024a0",
+  "heard": "Storm.",
+  "carrier": "Here is the next word."
+ },
+ "words/strawberry": {
+  "sha1": "c9681eb1effe1fe08810deafa1640ec31fa35586",
+  "heard": "Strawberry.",
+  "carrier": "Here is the next word."
+ },
+ "words/submarine": {
+  "sha1": "31f94df1f7a4aad727ffa39ac96818631c031d90",
+  "heard": "Submarine",
+  "carrier": "Here is the next word."
+ },
+ "words/sun": {
+  "sha1": "037435e3706a80b8056e929fd63032620bc3729b",
+  "heard": "Sun.",
+  "carrier": "Here is the next word."
+ },
+ "words/sunflower": {
+  "sha1": "9ee8b54ed671ec80ddb85b113d1dbb6dbefa5355",
+  "heard": "Sunflower",
+  "carrier": "Here is the next word."
+ },
+ "words/sunglasses": {
+  "sha1": "cd23ca9c3e6971017d9f94cfeda9e42e6786a029",
+  "heard": "sunglasses",
   "carrier": "Here is the next word."
  },
  "words/sunrise": {
@@ -1039,9 +4624,34 @@
   "heard": "table",
   "carrier": "Here is the next word."
  },
+ "words/tambourine": {
+  "sha1": "326b4b054b70ea7d8719c696f155c4342bf10c09",
+  "heard": "Tambourine",
+  "carrier": "Here is the next word."
+ },
+ "words/target": {
+  "sha1": "f10775ee0d4e47ce89674c70d4166d7528cb0afc",
+  "heard": "Target.",
+  "carrier": "Here is the next word."
+ },
+ "words/taxi": {
+  "sha1": "fa5bdcc21555b68ae62d8302ab963dfe2e08b695",
+  "heard": "Taxi",
+  "carrier": "Here is the next word."
+ },
  "words/teapot": {
   "sha1": "62cb5c7594f82317d541f37806271db5132a2697",
   "heard": "teapot",
+  "carrier": "Here is the next word."
+ },
+ "words/teddy": {
+  "sha1": "facc52d9fdb2467db8f7d695519eb60632116abf",
+  "heard": "Teddy.",
+  "carrier": "Here is the next word."
+ },
+ "words/telescope": {
+  "sha1": "e795c45bc09498d73f2169511719605114c5e202",
+  "heard": "telescope",
   "carrier": "Here is the next word."
  },
  "words/television": {
@@ -1049,9 +4659,49 @@
   "heard": "television",
   "carrier": "Here is the next word."
  },
+ "words/ten": {
+  "sha1": "8ff8e156cab0f7e024483bb45df594deaaaffd52",
+  "heard": "10",
+  "carrier": "Here is the next word."
+ },
+ "words/three": {
+  "sha1": "cf4437e1bb729b5567035cae98733ce3dccbc0b9",
+  "heard": "3.",
+  "carrier": "Here is the next word."
+ },
+ "words/tie": {
+  "sha1": "d5600b775814bbead38212d169556eb5ba5f506b",
+  "heard": "tie.",
+  "carrier": "Here is the next word."
+ },
+ "words/tiger": {
+  "sha1": "9ef4952c9c104ff4d144437ee8b88fd237608ef6",
+  "heard": "Tiger",
+  "carrier": "Here is the next word."
+ },
+ "words/toaster": {
+  "sha1": "06ca761c257cce537854552f2f87e248425adbc3",
+  "heard": "toaster",
+  "carrier": "Here is the next word."
+ },
  "words/toilet": {
   "sha1": "21dd6f9f9a4125f463e0161dbb4071c81cd07057",
   "heard": "Toilet",
+  "carrier": "Here is the next word."
+ },
+ "words/tomato": {
+  "sha1": "578f9c03de7e935f033d604b21f509ce754bca89",
+  "heard": "tomato",
+  "carrier": "Here is the next word."
+ },
+ "words/tongue": {
+  "sha1": "e2a79de460de65ff3ef594cace9e33e729c68198",
+  "heard": "tongue",
+  "carrier": "Here is the next word."
+ },
+ "words/tooth": {
+  "sha1": "6c8decffb4b370c691937291d14914e21030c7d3",
+  "heard": "tooth",
   "carrier": "Here is the next word."
  },
  "words/toothbrush": {
@@ -1059,9 +4709,79 @@
   "heard": "Toothbrush",
   "carrier": "Here is the next word."
  },
+ "words/tornado": {
+  "sha1": "f12cf53a7fa30bca7d067aad5970580ddc090dd0",
+  "heard": "Tornado",
+  "carrier": "Here is the next word."
+ },
+ "words/towel": {
+  "sha1": "744a663f8dad6d5349f1eb94a59929f745719369",
+  "heard": "Towel",
+  "carrier": "Here is the next word."
+ },
+ "words/tractor": {
+  "sha1": "940da50d416a013307b99818a47d0bd37108e99c",
+  "heard": "tractor",
+  "carrier": "Here is the next word."
+ },
+ "words/train": {
+  "sha1": "d77e01b6f09b0c790cb2b180b4c87bef8e2efe66",
+  "heard": "train",
+  "carrier": "Here is the next word."
+ },
+ "words/tree": {
+  "sha1": "ac411b74784727026c775e3ee9127dff138df717",
+  "heard": "tree",
+  "carrier": "Here is the next word."
+ },
+ "words/triangle": {
+  "sha1": "bc70aeec24f1d6cde8a7a31bd5eaa73269e157f8",
+  "heard": "Triangle",
+  "carrier": "Here is the next word."
+ },
+ "words/trophy": {
+  "sha1": "d7d68f0ce26b32bd9243fe26025b052d5558b717",
+  "heard": "trophy",
+  "carrier": "Here is the next word."
+ },
+ "words/truck": {
+  "sha1": "73587478ab7f0388bc245383ae353b1398bdf08a",
+  "heard": "truck",
+  "carrier": "Here is the next word."
+ },
+ "words/trumpet": {
+  "sha1": "cf3108f01930bae3d3f6278c8ce70bfb57fd99dd",
+  "heard": "trumpet",
+  "carrier": "Here is the next word."
+ },
+ "words/turtle": {
+  "sha1": "661001cd52760a621b96e1f4f50ccb4214416863",
+  "heard": "turtle",
+  "carrier": "Here is the next word."
+ },
+ "words/two": {
+  "sha1": "1690287795a97c8252a04a54e026ac624c2eba93",
+  "heard": "two.",
+  "carrier": "Now spell this word."
+ },
+ "words/ukulele": {
+  "sha1": "f559178a2c84195ce329a6638e0d54458f124396",
+  "heard": "ukulele",
+  "carrier": "Here is the next word."
+ },
  "words/umbrella": {
   "sha1": "6a5f6360471ca1bb6f844ee355d82e4b1f811d2f",
   "heard": "Umbrella",
+  "carrier": "Here is the next word."
+ },
+ "words/violin": {
+  "sha1": "7ae2854e4d0592f6d708eaea88dda2d6aceeb24e",
+  "heard": "violin",
+  "carrier": "Here is the next word."
+ },
+ "words/volcano": {
+  "sha1": "0551614b5049b378a0acfe89e47314ab09491931",
+  "heard": "Volcano",
   "carrier": "Here is the next word."
  },
  "words/water": {
@@ -1069,9 +4789,24 @@
   "heard": "Water",
   "carrier": "Here is the next word."
  },
+ "words/watermelon": {
+  "sha1": "fff1f03fc16408cef15f1de2772eaf111fc8cf67",
+  "heard": "Watermelon",
+  "carrier": "Here is the next word."
+ },
+ "words/whistle": {
+  "sha1": "b48a081f8c9a35e2d6c9d76f618857b5169102bf",
+  "heard": "whistle",
+  "carrier": "Here is the next word."
+ },
  "words/white": {
   "sha1": "5543d26eb6e01b3e288037da35e3a5d86996da25",
   "heard": "white",
+  "carrier": "Here is the next word."
+ },
+ "words/wind": {
+  "sha1": "fd6cab4a65def1e046257ffe06b2677bcb9b625f",
+  "heard": "wind",
   "carrier": "Here is the next word."
  },
  "words/window": {
@@ -1079,9 +4814,24 @@
   "heard": "Window",
   "carrier": "Here is the next word."
  },
+ "words/xylophone": {
+  "sha1": "4fea6e321dc8dce55f16ab9f6685da8ce3857dcb",
+  "heard": "Xylophone",
+  "carrier": "Here is the next word."
+ },
  "words/yellow": {
   "sha1": "ad90d24eeab9686851a62bce0efa5e6399ee0e23",
   "heard": "yellow",
+  "carrier": "Here is the next word."
+ },
+ "words/yoyo": {
+  "sha1": "df252d8885d0b8aab23c7235ecc72b737e618aa7",
+  "heard": "yo-yo",
+  "carrier": "Here is the next word."
+ },
+ "words/zebra": {
+  "sha1": "f3efd1a3f8486dbe10e8b77589e97e19b44928f5",
+  "heard": "Zebra",
   "carrier": "Here is the next word."
  }
 }

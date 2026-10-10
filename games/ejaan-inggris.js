@@ -99,7 +99,7 @@
      So once the page is open online, warm every clip and word picture
      (~2.9 MB, ~280 files: words, letters and pictures first, then the Ask
      answers), a few at a time, when the browser is idle. */
-  var warmed = false
+  var warmed = false, warmLeft = -1          // warmLeft: files still to fetch (-1 = not started)
   function warmClips () {
     // __G27_NO_WARM: test seam, lets the offline gate prove the gap this closes
     if (warmed || window.__G27_NO_WARM || !navigator.onLine || !('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return
@@ -113,10 +113,11 @@
       .concat(D.WORDS.map(function (x) { return url('audio/sentences/' + x.w + '.webm') }))
       .concat(['noun', 'adjective'].map(function (p) { return url('audio/pos/' + p + '.webm') }))
     var i = 0
+    warmLeft = urls.length
     function next () {
       if (i >= urls.length) return
       var u = urls[i++]
-      fetch(u, { cache: 'no-cache' }).catch(function () {}).then(function () { setTimeout(next, 30) })
+      fetch(u, { cache: 'no-cache' }).catch(function () {}).then(function () { warmLeft--; setTimeout(next, 30) })
     }
     for (var k = 0; k < 3; k++) next()
   }
@@ -271,9 +272,12 @@
   }
   /* one scene per screen; words + play take their category's scene */
   var CAT_SCENE = { colors: 'park', school: 'classroom', everyday: 'bedroom', mixed: 'town', athome: 'bedroom', quran: 'night' }
+  /* the 2026-10-06 categories name a scene; the ones without their own backdrop borrow the nearest one */
+  var SCENE_OF = { sunrise: 'sunrise', park: 'park', town: 'town', classroom: 'classroom', bedroom: 'bedroom',
+                   jungle: 'park', ocean: 'sunrise', sky: 'sunrise' }
   function sceneFor (id) {
     if (id === 'scr-title') return 'construction'
-    if (id === 'scr-words' || id === 'scr-play') return CAT_SCENE[S.cat] || 'town'
+    if (id === 'scr-words' || id === 'scr-play') { var c = catInfo(S.cat); return CAT_SCENE[S.cat] || SCENE_OF[c && c.scene] || 'town' }
     if (id === 'scr-progress') return 'sunrise'
     return 'town'
   }
@@ -288,7 +292,8 @@
     for (var i = 0; i < 3; i++) h += '<img src="' + url('ui/' + (i < n ? 'star' : 'star-empty') + '.webp') + '" alt="">'
     return h
   }
-  function picURL (x) { return url(x.dir + '/' + x.pic + '.webp') }
+  function picURL (x) { return BASE + D.picPath(x) }
+  function catIcon (c) { return c && c.iconSrc ? BASE + c.iconSrc : url('cat/' + (c ? c.icon : 'colors') + '.webp') }
 
   /* ── category screen ───────────────────────────────────────────────── */
   function buildCategories () {
@@ -298,7 +303,8 @@
       var d = document.createElement('div')
       d.className = 'card cat-' + c.key + (c.ready ? '' : ' locked')
       d.setAttribute('role', 'button')
-      d.innerHTML = '<img class="cico" src="' + url('cat/' + c.icon + '.webp') + '" alt="">' +
+      if (c.tint) d.style.background = c.tint
+      d.innerHTML = '<img class="cico" src="' + catIcon(c) + '" alt="">' +
         '<div class="cname">' + c.name + '</div>' +
         (c.ready ? '<div class="cmeta"><img src="' + url('ui/star.webp') + '" alt="">' + earned(pool) + '/' + pool.length + '</div>'
                  : '<div class="cmeta">Segera Hadir</div>')
@@ -357,7 +363,7 @@
     S.word = x; S.placed = new Array(x.w.length).fill(null); S.wrong = 0; S.solved = false
     trayLetters = shuffled(x.w.split('')); picked = null
     var cat = catInfo(S.cat)
-    $('play-cat-ico').src = url('cat/' + (cat ? cat.icon : 'colors') + '.webp')
+    $('play-cat-ico').src = catIcon(cat)
     $('play-cat-name').textContent = cat ? cat.name : ''
     $('play-count').textContent = (S.idx + 1) + ' / ' + S.queue.length
     $('play-stars').innerHTML = starRow(starsOf(x.w))
@@ -662,7 +668,7 @@
       var pool = D.list(c.key), got = earned(pool)
       var pct = pool.length ? Math.round(got / pool.length * 100) : 0
       var row = document.createElement('div'); row.className = 'prow'
-      row.innerHTML = '<img src="' + url('cat/' + c.icon + '.webp') + '" alt="" style="width:34px;height:34px;object-fit:contain">' +
+      row.innerHTML = '<img src="' + catIcon(c) + '" alt="" style="width:34px;height:34px;object-fit:contain">' +
         '<span class="pname">' + c.name + '</span>' +
         '<div class="bar"><i style="width:' + pct + '%;background:' + (BAR[c.key] || '#58C45E') + '"></i></div>' +
         '<span class="cnt">' + got + '/' + pool.length + '</span>'
@@ -793,6 +799,7 @@
     reset: function () { ST = { stars: {}, opt: {} }; writeStore(); syncSwitches(); return 'ok' },
     audioURL: function (kind, name) { return url('audio/' + kind + '/' + name + '.webm') },
     warmed: function () { return warmed },
+    warmDone: function () { return warmLeft === 0 },
     warmCount: function () { return D.WORDS.length * 2 + 26 },
   }
 

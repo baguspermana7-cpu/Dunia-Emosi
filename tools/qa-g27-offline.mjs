@@ -70,9 +70,11 @@ try {
   await sleep(3500)
   if (!NO_WARM) {
     await page.waitForFunction(() => window.__g27.warmed(), { timeout: 30000 }).catch(() => {})
-    await sleep(6000)                           // let the idle warm-up finish
+    // the 2026-10-06 expansion made it ~1,600 files: wait for the warm-up to FINISH, not a fixed nap
+    await page.waitForFunction(() => window.__g27.warmDone(), { timeout: 240000, polling: 1000 }).catch(() => {})
+    await sleep(500)
   }
-  check(NO_WARM || await page.evaluate(() => window.__g27.warmed()), 'the clip and picture warm-up ran while online')
+  check(NO_WARM || await page.evaluate(() => window.__g27.warmed() && window.__g27.warmDone()), 'the clip and picture warm-up ran AND finished while online')
 
   // 2. pull the plug
   await kill()
