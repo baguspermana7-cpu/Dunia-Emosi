@@ -79,7 +79,7 @@ check(['malam', 'tol-malam', 'antariksa'].every(id => CH.stage(id).night === tru
 const launched = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-gpu-blocklist'].concat(GPU ? ['--use-angle=vulkan', '--enable-gpu'] : []) })
 // pages bypass the service worker: another session editing sw.js mid-run would otherwise reload a page (sw-reload.js)
 const browser = { newPage: async () => { const pg = await launched.newPage(); await pg.setBypassServiceWorker(true); return pg }, close: () => launched.close() }
-// QA_ONLY=brok runs section C2 (the BROK gate) alone; unset = the whole gate, which is what ships
+// QA_ONLY=brok runs section C2 (the BROK gate) alone, QA_ONLY=jumper the back-to-back pothole hop; unset = the whole gate, which is what ships
 const ONLY = process.env.QA_ONLY || ''
 try {
   if (!ONLY) {
@@ -357,7 +357,7 @@ try {
   /* ── J. the jumper clears HOLES (owner 2026-10-04 "Pelompat bisa lompat batu tapi tidak bisa lompat lubang"): every
      spawned lane becomes a pothole, so Mojo must drive into pothole rows back to back (also while still airborne);
      each one is a hop, never a BROK, a slip or a slowdown. ───────────────────────────────────────────────────── */
-  if (!ONLY) {
+  if (!ONLY || ONLY === 'jumper') {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 }); const errors = []
     p.on('pageerror', e => errors.push(e.message))
     await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)

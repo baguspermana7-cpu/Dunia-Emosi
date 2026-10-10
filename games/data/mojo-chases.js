@@ -251,6 +251,14 @@
     { id: 'boat', name: 'Perahu', perk: 'splash', line: 'Meluncur di atas pelampung, jalan basah tidak licin!', side: 'mojo-turn/boat-side', preview: 'mojo-turn/boat-diag', rear: 'mojo-turn/boat-rear', kind: 'amph', unlock: 0 },
     // turnaround row DUMP TRUCK: yellow tipper bed with the red lift arm on a blue 6-wheel cab (side / diag / rear)
     { id: 'dump', name: 'Dump Truck', perk: 'recover', line: 'Bak besar dan kuat, cepat pulih lagi!', side: 'mojo-turn/dump-side', preview: 'mojo-turn/dump-diag', rear: 'mojo-turn/dump-rear', kind: 'ground', unlock: 0 },
+    // owner 2026-10-10 NEW forms (baru_ sheet): side / diagonal / rear of one machine each (tools/ingest-mojo-kark.py).
+    // ids excavator2 / jet2 because 'excavator' and 'jet' are older forms; their art keys are mojo-turn/excavator-*, jet-*
+    { id: 'excavator2', name: 'Ekskavator Besar', perk: 'grip', line: 'Lumpur dan batu tidak masalah, lengan kuat menggali!', side: 'mojo-turn/excavator-side', preview: 'mojo-turn/excavator-diag', rear: 'mojo-turn/excavator-rear', kind: 'ground', unlock: 3 },
+    { id: 'grapple', name: 'Derek Pencengkeram', perk: 'smash', line: 'Capit besar menerobos peti, drum dan ban!', side: 'mojo-turn/grapple-side', preview: 'mojo-turn/grapple-diag', rear: 'mojo-turn/grapple-rear', kind: 'ground', unlock: 3 },
+    { id: 'shuttle', name: 'Pesawat Antariksa', perk: 'jump', line: 'Melompat tinggi seperti roket!', side: 'mojo-turn/shuttle-side', preview: 'mojo-turn/shuttle-diag', rear: 'mojo-turn/shuttle-rear', kind: 'ground', unlock: 4 },
+    { id: 'jet2', name: 'Jet Pelesat', perk: 'boost', line: 'Melesat sangat cepat!', side: 'mojo-turn/jet-side', preview: 'mojo-turn/jet-diag', rear: 'mojo-turn/jet-rear', kind: 'ground', unlock: 4 },
+    { id: 'police', name: 'Truk Polisi', perk: 'heal', line: 'Sirene menenangkan, semangat cepat terisi lagi!', side: 'mojo-turn/police-side', preview: 'mojo-turn/police-diag', rear: 'mojo-turn/police-rear', kind: 'ground', unlock: 2 },
+    { id: 'skidder', name: 'Penarik Kayu', perk: 'recover', line: 'Kuat mengangkut kayu, cepat pulih lagi!', side: 'mojo-turn/skidder-side', preview: 'mojo-turn/skidder-diag', rear: 'mojo-turn/skidder-rear', kind: 'ground', unlock: 4 },
     { id: 'rescue', name: 'Ambulans', perk: 'heal', line: 'Semangat cepat terisi lagi!', side: 'mojo-top/ambulance', rear: 'ambulance', kind: 'ground', unlock: 1 },
     // aerial-ladder / ladder: white ladder boom on the roof with red-white trim in both
     { id: 'fire', name: 'Pemadam', perk: 'heal', line: 'Semangat cepat terisi lagi!', side: 'mojo-top/aerial-ladder', rear: 'ladder', kind: 'ground', unlock: 1 },

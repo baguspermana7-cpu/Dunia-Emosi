@@ -184,6 +184,22 @@ function measureFit () {
   return { arts: arts.map(a => ({ key: a.key, id: a.id, type: a.type, ch: map[a.r].charAt(a.c), w: a.w, h: a.h })), over, heroes: window.MojoBoardLook.HEROES }
 }
 
+/* a baby / child must draw SMALLER than the adult it shares a level with (owner 2026-10-10: the chick was a whole
+   cell and its mother small). Box = layout box x sticker ring, in cells, of each character's own picture. */
+function measureKin () {
+  const board = document.getElementById('board'), cell = parseFloat(board.style.getPropertyValue('--cell'))
+  const lv = window.MojoLevels.byId(window.__mojo.state().id), BABY = { burung: 1, anjing: 1, timmy: 1, neon: 1, ash: 1, pip: 1, pinguin: 1 }
+  const out = []
+  ;(lv.objects || []).forEach(o => {
+    const baby = !!(o.who && BABY[o.who]), adult = o.art === 'char/induk' || o.who === 'grandad' || o.who === 'kapten' || o.who === 'penyelam'
+    if (!baby && !adult) return
+    const d = document.querySelector('#objs > .ob[data-id="' + o.id + '"]'), im = d && d.querySelector('img.main'); if (!im || !im.offsetWidth) return
+    const k = parseFloat(im.style.scale) || 1
+    out.push({ id: o.id, baby, adult, w: im.offsetWidth * k / cell, h: im.offsetHeight * k / cell })
+  })
+  return out
+}
+
 const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'], protocolTimeout: 30000 })
 try {
   for (const [w, h] of sizes) {
@@ -222,6 +238,11 @@ try {
       check(!notHero.length, `${w}x${h} ${id}: only a hero key passes 1.4 cells (${notHero.slice(0, 3).map(sz).join('; ')})`)
       const huge = f.arts.filter(a => Math.max(a.w, a.h) > 1.9)
       check(!huge.length, `${w}x${h} ${id}: nothing passes 1.9 cells (${huge.slice(0, 3).map(sz).join('; ')})`)
+      const kin = await p.evaluate(measureKin), ad = kin.filter(a => a.adult), ba = kin.filter(a => a.baby)
+      ba.forEach(b => {
+        check(b.h <= 1.05 && b.w <= 1.0, `${w}x${h} ${id}: baby/child ${b.id} stays under person size (${b.w.toFixed(2)}x${b.h.toFixed(2)})`)
+        ad.forEach(a => check(b.h < a.h && b.w < a.w, `${w}x${h} ${id}: baby/child ${b.id} (${b.w.toFixed(2)}x${b.h.toFixed(2)}) is smaller than adult ${a.id} (${a.w.toFixed(2)}x${a.h.toFixed(2)})`))
+      })
       check(!f.over.length, `${w}x${h} ${id}: no art over a neighbour's road, item, target or Mojo (${f.over.slice(0, 3).join('; ')})`)
       check(!m.hits.length, `${w}x${h} ${id}: no art over the chrome (${m.hits.slice(0, 3).join('; ')})`)
       check(!m.palette.length, `${w}x${h} ${id}: palette buttons take the tap (${m.palette.slice(0, 3).join('; ')})`)

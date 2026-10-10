@@ -36,6 +36,12 @@ def ring_of(key):
     return (INDEX.get(key) or {}).get('outline')
 
 
+def from_kark(key):
+    """Cut by tools/ingest-mojo-kark.py from the owner's already background-removed sheets (2026-10-10): there is no
+    sheet page colour to find, so the page-colour slab / freshness checks of the older cutters do not apply."""
+    return (INDEX.get(key) or {}).get('source') == 'owner bg-removed sheets 2026-10-10'
+
+
 def art_only(key, rgba):
     """The published sprite with its deliberate white outline peeled off (fringe measures look at the art)."""
     t = ring_of(key)
@@ -222,6 +228,9 @@ class SpriteCleanTests(unittest.TestCase):
         """Every published cut-out: no enclosed slab of its sheet's background colour unless audited as white art."""
         failures, checked = [], 0
         for name, a, alpha, bbox, preserve in clean.source_crops():
+            if from_kark(name):
+                checked += 1
+                continue
             page = clean.page_colour(a, alpha)
             raw = np.asarray(Image.open(clean.LIB / (name + '.webp')).convert('RGBA'))
             rgba, at_ring = art_only(name, raw), outline_contact(name, raw)
@@ -309,6 +318,8 @@ class HeroArtTests(unittest.TestCase):
             im, _, _, trim = hero.build(name, cell, report)
             seen += 1
             path = hero.LIB / hero.CAT / (name + '.webp')
+            if from_kark(hero.CAT + '/' + name):
+                continue
             if not path.exists() or path.read_bytes() != hero.encode(im):
                 stale.append(name)
             self.assertLessEqual(im.width, box[2] - box[0], name)
@@ -344,6 +355,8 @@ class HeroArtTests(unittest.TestCase):
             self.skipTest('owner primary Mojo sheet 30 unavailable')
         failures = []
         for name, _, _, cell in hero.sources():
+            if from_kark(hero.CAT + '/' + name):
+                continue
             _, _, page, trim = hero.build(name, cell, [])
             raw = np.asarray(Image.open(hero.LIB / hero.CAT / (name + '.webp')).convert('RGBA'))
             rgba, at_ring = art_only(hero.CAT + '/' + name, raw), outline_contact(hero.CAT + '/' + name, raw)
@@ -512,7 +525,7 @@ class SpriteFringeTests(unittest.TestCase):
 # Owner 2026-10-03: "There's still a little white. We should give it a white outline line to disguise it."
 # family -> (expected outlined sprite count, one shared thickness or None = per pose)
 OUTLINED = {
-    'mojo-hero': (25, 5), 'mojo-char': (47, None), 'mojo-top': (47, 8), 'mojo-rear': (25, 5), 'mojo-turn': (9, 5),
+    'mojo-hero': (25, 5), 'mojo-char': (47, None), 'mojo-top': (47, 8), 'mojo-rear': (25, 5), 'mojo-turn': (27, 5),
     'mojo-chase/robbers': (4, 5), 'mojo-chase/vehicles': (44, 5), 'mojo-chase/items': (8, 4),
 }
 NEVER_OUTLINED = ('mojo-bg', 'mojo-prop', 'mojo-fx', 'mojo-tile', 'mojo-ui', 'mojo-chase/props', 'mojo-chase/signs',

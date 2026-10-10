@@ -49,10 +49,17 @@
     'who:cat': { voice: 'meow' },
     /* the delivery family (owner 2026-10-07): the passengers are person-sized, the rake fits the cell width,
        and the ones with a voice idle with it while the board is on screen. */
-    rider: { w: 1.00, h: 1.14 }, parcel: { w: 0.85, h: 0.85 }, part: { w: 1.05, h: 0.75 },
-    wagon: { w: 1.16, h: 1.05 }, key: { w: 0.80, h: 0.80 }, mark: { w: 0.80, h: 0.80 },
+    rider: { w: 1.00, h: 1.14 }, parcel: { w: 0.72, h: 0.72 }, part: { w: 1.05, h: 0.75 },
+    wagon: { w: 1.16, h: 1.05 }, key: { w: 0.62, h: 0.62 }, mark: { w: 0.76, h: 0.76 },
     pile: { w: 1.05, h: 0.90 }, hole: { w: 1.00, h: 0.80 }, patrol: { w: 1.00, h: 1.14, voice: 'siren' },
-    'who:burung': { voice: 'chirp' }, 'who:anjing': { voice: 'bark' },
+    /* WHO overrides the box of the type (owner 2026-10-10: "the baby bird is as big as a whole cell and its mother is
+       small"). Real-world order, Mojo as the reference: adult person 1.14 > child ~1.0 > puppy / robot .74 > penguin .78
+       > baby bird .52. A BABY (BABY below) must always draw smaller than the adult it is paired with. */
+    'who:burung': { voice: 'chirp', w: 0.52, h: 0.52 }, 'who:anjing': { voice: 'bark', w: 0.74, h: 0.74 },
+    'who:timmy': { w: 0.86, h: 0.98 }, 'who:ash': { w: 0.92, h: 1.04 }, 'who:neon': { w: 0.88, h: 1.0 },
+    'who:pinguin': { w: 0.72, h: 0.8 }, 'who:pip': { w: 0.76, h: 0.76 },
+    /* the mother bird perched on her tree: clearly bigger than her chick, still smaller than the tree */
+    'art:char/induk': { friend: { w: 0.84, h: 0.84 } },
     tree: { w: 1.03, h: 1.18 },        // 'T' decor: scenery, so it never reaches into the cell above it
     building: { w: 1.12, h: 1.18 }     // '#' outside: the picture fits the CELL WIDTH (canvas keeps its small one underneath)
   }
@@ -65,7 +72,23 @@
     if (o.type === 'repair' && LOOK['repair:' + (o.what || 'gate')]) return 'repair:' + (o.what || 'gate')
     return LOOK[o.type] ? o.type : null
   }
-  function lookFor (o) { var k = keyFor(o); return k ? LOOK[k] : null }
+  var MERGED = {}
+  /* the LOOK of an object: its type/perch entry, then the box of its WHO (a baby is not person-sized), then the
+     override of its art (the mother bird's friend box). Merged once per combination; LOOK itself is never mutated. */
+  function lookFor (o) {
+    var k = keyFor(o); if (!k) return null
+    var wv = o.who && LOOK['who:' + o.who], av = o.art && LOOK['art:' + o.art]
+    if (!(wv && wv.w) && !av) return LOOK[k]
+    var id = k + '|' + (wv && wv.w ? o.who : '') + '|' + (av ? o.art : '')
+    if (!MERGED[id]) {
+      var m = {}, b = LOOK[k], q
+      for (q in b) m[q] = b[q]
+      if (wv && wv.w && !b.friend && !b.facade) { m.w = wv.w; m.h = wv.h }
+      if (av) for (q in av) m[q] = av[q]
+      MERGED[id] = m
+    }
+    return MERGED[id]
+  }
   /* the sticker ring the game bakes into the art (img.style.scale, origin at the foot) multiplies whatever
      box CSS gives the picture. Divide it out so the box on screen is exactly the LOOK number: --mbl-w/h is
      the CSS box, --mbl-ew/eh the size it ends up at, which is what everything else (shadow, the friend on a
@@ -146,6 +169,7 @@
         if (L.h >= 1.24) d.classList.add('mbl-tall')
       }
       if (!d.querySelector('.mbl-sh')) d.insertBefore(node('i', 'mbl-sh'), d.firstChild)
+      liveClass(d, o, L)
       if (o.who === 'cat' && !cat) cat = d
       edge(d, o.at[1], cols, (L.w || 1))
     })
@@ -159,6 +183,16 @@
     headroom()
     depth()
     start()
+  }
+  /* idle life for the characters (transform on the picture only; the ring scale lives in `scale`, so they never fight):
+     a breath for people, riders and the patrol car; the chick hops and chirps, the mother flaps. A level has few of
+     them. mbl-live objects also hop when Mojo comes within two cells (see depth()). */
+  var LIVE = { person: 1, rider: 1, patrol: 1 }
+  function liveClass (d, o, L) {
+    if (!(LIVE[o.type] || o.art === 'char/induk') || d.classList.contains('mbl-cat')) return
+    d.classList.add('mbl-live'); d.style.setProperty('--mbl-ph', (-((o.id || '').length * 0.37 % 3)).toFixed(2) + 's')
+    if (o.who === 'burung') d.classList.add('mbl-chick')
+    if (o.art === 'char/induk') d.classList.add('mbl-induk')
   }
   function node (tag, cls) { var e = D.createElement(tag); e.className = cls; e.setAttribute('aria-hidden', 'true'); return e }
   // art on an edge column grows inward, never past the board
@@ -277,6 +311,10 @@
     ;[].forEach.call(D.querySelectorAll('#objs > .ob'), function (d) { var rc = cellOf(d); if (rc) setZ(d, rc[0] * 10 + (d.classList.contains('pickup') ? 5 : 4)) })
     var mj = $('mojo'), mr = mj && cellOf(mj)
     if (mr) setZ(mj, (mr[0] + 1) * 10 + 3)
+    if (mr) [].forEach.call(D.querySelectorAll('#objs > .ob.mbl-live:not(.gone)'), function (d) {
+      var rc = cellOf(d), nr = !!rc && Math.abs(mr[0] - rc[0]) + Math.abs(mr[1] - rc[1]) <= 2
+      if (nr !== d.classList.contains('mbl-near')) d.classList.toggle('mbl-near', nr)
+    })
     if (cat) {
       var gone = cat.classList.contains('gone'), cr = cellOf(cat)
       if (gone && !catRescued) { catRescued = true; voice('purr'); W.setTimeout(function () { voice('meow', 1.25, 'happy') }, 700) }

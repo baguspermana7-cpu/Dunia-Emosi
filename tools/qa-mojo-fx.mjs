@@ -67,6 +67,12 @@ const liveNodes=p=>p.evaluate(()=>document.querySelectorAll('#board .mfx').lengt
  ok(await p.evaluate(()=>__mojo.assets().failed.length)===0,'every warmed picture loaded');
  const cached=await p.evaluate(async fs=>{let n=0;for(const f of fs)if(await caches.match(new URL(f,location.href).href,{ignoreSearch:true}))n++;return n},files);
  ok(cached===files.length,'every effect picture is in the offline cache ('+cached+'/'+files.length+')');
+ // the rescue chase's art (built at run time, so not in the board warm list) follows in an idle second phase
+ await p.waitForFunction(()=>{const c=__mojo.chaseAssets();return c.total>0&&c.left===0},{timeout:300000,polling:1000});
+ const ch=await p.evaluate(()=>__mojo.chaseAssets());
+ ok(ch.total>=400&&ch.failed===0,'every chase picture warmed ('+ch.total+' files, '+ch.failed+' failed)');
+ const chSample=await p.evaluate(async()=>{const ks=AssetIndex.keys().filter(k=>/^mojo-(chase|turn|rear|top)\//.test(k));let n=0;for(const k of ks)if(await caches.match(new URL(AssetIndex.path(k),location.href).href,{ignoreSearch:true}))n++;return [n,ks.length]});
+ ok(chSample[0]===chSample[1],'every chase, turnaround, rear and top picture is in the offline cache ('+chSample[0]+'/'+chSample[1]+')');
  await p._ctx.close()}
 console.log('cap / Berhenti / offline PASS');
 

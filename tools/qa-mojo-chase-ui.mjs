@@ -175,8 +175,9 @@ try {
     })
     check(sched.s1 === 7, `unlock: stage 1 with nothing cleared offers 7 selectable forms (4 + the 3 turnaround forms) (${sched.s1})`)
     // owner 2026-10-04 "every level opens 2-3 characters": +2..3 per cleared stage until all are open
+    // (2026-10-10: six new turnaround forms join the ladder at stages 2-4, so all are open after 4 stages)
     const u = sched.out.map(r => r.unlocked)
-    check(u[0] === 7 && u.slice(1).every((n, i) => n === sched.n || (n - u[i] >= 2 && n - u[i] <= 3)) && u[3] === sched.n, `unlock: 7 at start, +2..3 per cleared stage, all ${sched.n} after 3 stages (${u.slice(0, 5).join(',')})`)
+    check(u[0] === 7 && u.slice(1).every((n, i) => n === sched.n || (n - u[i] >= 2 && n - u[i] <= 3)) && u[4] === sched.n, `unlock: 7 at start, +2..3 per cleared stage, all ${sched.n} after 4 stages (${u.slice(0, 5).join(',')})`)
     check(sched.out.every((r, i) => i === 0 || r.unlocked >= sched.out[i - 1].unlocked), `unlock: the unlocked count grows monotonically (${sched.out.map(r => r.unlocked).join(',')})`)
     check(sched.out.filter(r => r.k >= sched.out.length - 6).every(r => r.unlocked === sched.n), `unlock: every form unlocked by the final stages (${sched.out.find(r => r.unlocked === sched.n).k} cleared of ${sched.out.length - 1})`)
     check(sched.out.every(r => r.recOk), 'unlock: the stage\'s recommended form is always selectable, at every progress level')

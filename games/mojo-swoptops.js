@@ -1913,9 +1913,30 @@
     warming = true
     WARM.forEach(function (u) {
       var i = new Image()
-      function finish (ok) { if (!ok) assetLoad.failed.push(u); assetLoad.pending--; assetLoad.ready = assetLoad.pending === 0 && assetLoad.failed.length === 0 }
+      function finish (ok) { if (!ok) assetLoad.failed.push(u); assetLoad.pending--; assetLoad.ready = assetLoad.pending === 0 && assetLoad.failed.length === 0; if (assetLoad.pending === 0) idle(warmChase) }
       i.onload = function () { finish(true) }; i.onerror = function () { finish(false) }; i.src = u
     })
+  }
+  /* The rescue chase builds its art keys at run time (biome, robber, turnaround form), so none of it is in WARM and a
+     chase never played online had no pictures offline. Second phase, after the board art: every chase directory
+     (~15 MB), three at a time, idle only, through the service worker's asset cache. */
+  var CHASE_DIRS = ['mojo-chase/', 'mojo-turn/', 'mojo-rear/', 'mojo-top/', 'mojo-hero/', 'mojo-char/', 'mojo-fx/']
+  var chaseLoad = { total:-1, left:-1, failed:0 }
+  function warmChase () {
+    if (chaseLoad.total >= 0 || !W.AssetIndex || !W.fetch || !navigator.onLine) return
+    var have = {}
+    WARM.forEach(function (u) { have[u] = 1 })
+    var urls = AssetIndex.keys().filter(function (k) { return CHASE_DIRS.some(function (d) { return k.indexOf(d) === 0 }) })
+      .map(function (k) { return AssetIndex.path(k) }).filter(function (u) { return u && !have[u] })
+    chaseLoad.total = chaseLoad.left = urls.length
+    var i = 0
+    function next () {
+      if (i >= urls.length) return
+      var u = urls[i++]
+      fetch(u).then(function (r) { if (!r.ok) chaseLoad.failed++ }, function () { chaseLoad.failed++ })
+        .then(function () { chaseLoad.left--; idle(next) })
+    }
+    for (var k = 0; k < 3; k++) next()
   }
   W.addEventListener('pagehide', function () { storePacing(); flushAwards(); cancelPlayback(); hush() })
   /* M5: the first level used to pay ~40 ms of first-use font work inside its layout (the browser builds a font
@@ -1962,7 +1983,7 @@
     alt: function (forbid) { return G ? PG.solve(G.cp, beat(), { forbid: forbid }) : null },
     mg: function () { return MG ? { kind: MG.kind, answer: MG.answer, theme: MG.theme, noun: MG.noun, prompt: MG.prompt } : null },
     themes: function (id) { var lv = ML.byId(id || (G && G.lv.id)); return lv ? levelThemes(lv).map(function (k) { return THEME_ART[k][0] }) : [] },
-    eventQuestion:eventQuestion, assets:function () { return JSON.parse(JSON.stringify(assetLoad)) },
+    eventQuestion:eventQuestion, assets:function () { return JSON.parse(JSON.stringify(assetLoad)) }, chaseAssets:function () { return JSON.parse(JSON.stringify(chaseLoad)) },
     save: function () { return JSON.parse(JSON.stringify(S)) }, warm: function () { return WARM.slice() }, start: start, map: map, home: home
   }
   W.render_game_to_text = function () { return JSON.stringify({ screen:D.body.getAttribute('data-scr'), coordinates:'row,col; origin top left; headings 0 north,1 east,2 south,3 west', game:W.__mojo.state(), microgame:W.__mojo.mg() }) }
