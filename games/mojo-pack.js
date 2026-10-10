@@ -11,7 +11,7 @@
 (function (W, D) {
   'use strict'
   var PACKS = { kereta: { css: 'kereta-pack.css', data: ['data/kereta-pack-levels.js', 'data/kereta-pack.js'] } }
-  var V = '?v=v63.56-20261010a'
+  var me = D.currentScript && D.currentScript.src, V = me && me.indexOf('?') > 0 ? me.slice(me.indexOf('?')) : ''   // the page's own cache token
   var id = (/[?&]pack=([a-z0-9-]+)/.exec(W.location.search) || [])[1]
   if (!id || !PACKS[id]) return
   if (!W.MojoPack) {

@@ -132,6 +132,18 @@ if (!process.argv.includes('--headless')) {
     await p._ctx.close()
   }
   {
+    // the hub: only built storylines + the classic game; no "segera hadir"; the classic game opens; a card starts the pack
+    for (const [w, h] of [[1280, 800], [390, 844]]) {
+      const p = await page(w, h, URL + '&hub=1')
+      const cards = await p.evaluate(() => [...document.querySelectorAll('.k-hub-card')].map(c => { const r = c.getBoundingClientRect(); return { id: c.dataset.story, ok: r.width > 80 && r.right <= innerWidth + 1 && r.left >= -1 } }))
+      check(cards.some(c => c.id === 'brave') && cards.some(c => c.id === 'classic') && cards.every(c => c.ok), `${w}x${h}: hub shows Brave + classic inside the viewport ${JSON.stringify(cards)}`)
+      check(!(await p.evaluate(() => /segera/i.test(document.body.innerText))), `${w}x${h}: no "segera hadir" on the hub`)
+      await Promise.all([p.waitForNavigation({ waitUntil: 'load' }), p.click('[data-story="classic"]')])
+      check(/lokomotif-pemberani\.html/.test(p.url()), `${w}x${h}: the classic card opens the classic game`)
+      await p._ctx.close()
+    }
+  }
+  {
     const p = await page(1280, 800, 'http://localhost:8081/games/mojo-swoptops.html')
     check(await p.evaluate(() => !document.documentElement.getAttribute('data-pack') && __mojo.levels()[0] === 't1' && /Swoptops/.test(document.querySelector('.logo').textContent)), 'the plain Mojo page is not skinned')
     await p._ctx.close()

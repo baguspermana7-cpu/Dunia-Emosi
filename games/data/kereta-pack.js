@@ -71,31 +71,78 @@
   function scene (lv) { return lv.bg || 'bg-bl-lembah' }
   function regionScene (r) { return r.bg }
 
-  /* ── rails: each road cell takes the tile that joins its road neighbours ──────────────────────────── */
+  /* ── rails: ONE continuous track. Every road cell paints the same bed / sleepers / steel from its cell centre to
+     each connected edge (a corner is one arc), at fixed widths and fixed sleeper phase, so neighbouring cells share
+     edges exactly and no per-cell border or grass gap appears. Colours and the gravel bed come from the owner's
+     kereta-tile art (gravel texture; bridge cells use planks). ── */
   var TILE = {}
-  ;['rail-h', 'rail-v', 'curve-ne', 'crossing', 'bridge'].forEach(function (n) { if (!W.Image) return; var im = new W.Image(); im.src = lib('kereta-tile/' + n); TILE[n] = im })
-  function ready (n) { var im = TILE[n]; return im && im.complete && im.naturalWidth ? im : null }
+  ;['gravel'].forEach(function (n) { if (!W.Image) return; var im = new W.Image(); im.src = lib('kereta-tile/' + n); TILE[n] = im })
+  var GROUND = '#86bf55'
   function isRoad (k) { return k === '.' || k === '=' || k === 'o' }
-  function paintRoad (x, ch, r, c, X, Y, s, grass, drawTile) {
-    if (grass) drawTile(x, grass, X, Y, s, 0.07); else { x.fillStyle = '#7DB85A'; x.fillRect(X, Y, s, s) }
-    var n = isRoad(ch(r - 1, c)), e = isRoad(ch(r, c + 1)), so = isRoad(ch(r + 1, c)), w = isRoad(ch(r, c - 1))
-    if (ch(r, c) === '=') { var bi = ready('bridge'); if (bi) { x.drawImage(bi, X - s * 0.02, Y - s * 0.02, s * 1.04, s * 1.04); return } }   // a bridge cell: the owner's bridge tile
-    var cnt = (n ? 1 : 0) + (e ? 1 : 0) + (so ? 1 : 0) + (w ? 1 : 0), draws = []
-    if (cnt === 4) draws.push(['crossing', 1, 1])
-    else if (cnt === 3) {   // a T: the through line, then a half-cell stub toward the branch
-      var vertical = n && so, stub = vertical ? (e ? 'e' : 'w') : (n ? 'n' : 's')
-      draws.push([vertical ? 'rail-v' : 'rail-h', 1, 1, null], [vertical ? 'rail-h' : 'rail-v', 1, 1, stub])
-    } else if (cnt === 2 && !(n && so) && !(e && w)) draws.push(['curve-ne', e ? -1 : 1, so ? -1 : 1])   // the sheet draws N+W; mirror for the other three
-    else draws.push([(n || so) && !(e || w) ? 'rail-v' : 'rail-h', 1, 1])
-    var pad = s * 0.02
-    draws.forEach(function (d) {
-      var im = ready(d[0])
-      if (!im) { x.fillStyle = '#8A7A66'; x.fillRect(X + s * 0.1, Y + s * 0.1, s * 0.8, s * 0.8); return }
-      x.save()
-      if (d[3]) { x.beginPath(); var h = s / 2; x.rect(d[3] === 'e' ? X + h : X, d[3] === 's' ? Y + h : Y, (d[3] === 'e' || d[3] === 'w') ? h : s, (d[3] === 'n' || d[3] === 's') ? h : s); x.clip() }
-      x.translate(X + s / 2, Y + s / 2); x.scale(d[1], d[2])
-      x.drawImage(im, -s / 2 - pad, -s / 2 - pad, s + 2 * pad, s + 2 * pad); x.restore()
+  var PAT = null
+  function bed (x) {
+    var im = TILE.gravel
+    if (!PAT && im && im.complete && im.naturalWidth) { try { PAT = x.createPattern(im, 'repeat') } catch (e) { PAT = null } }
+    return PAT || '#a08f78'
+  }
+  // points of one track arm: from the cell centre to the middle of an edge (or, for a corner, edge to edge)
+  function arm (X, Y, s, d) { var cx = X + s / 2, cy = Y + s / 2, V = { n: [0, -1], e: [1, 0], s: [0, 1], w: [-1, 0] }[d]; return [[cx, cy], [cx + V[0] * s / 2, cy + V[1] * s / 2]] }
+  function line (a, b, n) { var o = []; for (var i = 0; i <= n; i++) o.push([a[0] + (b[0] - a[0]) * i / n, a[1] + (b[1] - a[1]) * i / n]); return o }
+  function curve (a, c, b, n) { var o = []; for (var i = 0; i <= n; i++) { var t = i / n, u = 1 - t; o.push([u * u * a[0] + 2 * u * t * c[0] + t * t * b[0], u * u * a[1] + 2 * u * t * c[1] + t * t * b[1]]) } return o }
+  function strokePts (x, pts) { x.beginPath(); pts.forEach(function (p, i) { if (i) x.lineTo(p[0], p[1]); else x.moveTo(p[0], p[1]) }); x.stroke() }
+  function offset (pts, d) {
+    return pts.map(function (p, i) {
+      var a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.sqrt(dx * dx + dy * dy) || 1
+      return [p[0] - dy / l * d, p[1] + dx / l * d]
     })
+  }
+  function sleepers (x, pts, s, ts) {
+    x.lineCap = 'butt'
+    ts.forEach(function (t) {
+      var k = Math.max(1, Math.min(pts.length - 2, Math.round(t * (pts.length - 1)))), p = pts[k], a = pts[k - 1], b = pts[k + 1], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / l, ny = dx / l, h = s * 0.25
+      x.beginPath(); x.moveTo(p[0] - nx * h, p[1] - ny * h); x.lineTo(p[0] + nx * h, p[1] + ny * h); x.stroke()
+    })
+  }
+  function paintRoad (x, ch, r, c, X, Y, s, grass, drawTile) {
+    x.fillStyle = GROUND; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
+    if (grass) drawTile(x, grass, X, Y, s, 0.07)
+    var D4 = { n: isRoad(ch(r - 1, c)), e: isRoad(ch(r, c + 1)), s: isRoad(ch(r + 1, c)), w: isRoad(ch(r, c - 1)) }
+    var dirs = ['n', 'e', 's', 'w'].filter(function (d) { return D4[d] }), bridge = ch(r, c) === '='
+    if (!dirs.length) dirs = ['e', 'w']
+    var paths = [], isCorner = dirs.length === 2 && !(D4.n && D4.s) && !(D4.e && D4.w)
+    if (isCorner) {
+      var a = arm(X, Y, s, dirs[0])[1], b = arm(X, Y, s, dirs[1])[1]
+      paths.push({ pts: curve(a, [X + s / 2, Y + s / 2], b, 18), ts: [0.14, 0.38, 0.62, 0.86] })
+    } else if (dirs.length === 1) {   // a dead end: arm plus the opposite half so the line reads as a buffer-stop stub
+      var o = { n: 's', s: 'n', e: 'w', w: 'e' }[dirs[0]]
+      paths.push({ pts: line(arm(X, Y, s, dirs[0])[1], arm(X, Y, s, dirs[0])[0], 8), ts: [0.25, 0.75].map(function (t) { return t * 0.5 + 0.0 }) })
+    } else {
+      dirs.forEach(function (d) { var a2 = arm(X, Y, s, d); paths.push({ pts: line(a2[0], a2[1], 8), ts: [0.25, 0.75] }) })
+    }
+    var all = []; paths.forEach(function (p) { all = all.concat(p.pts) })
+    x.save(); x.lineJoin = 'round'
+    // soft shadow, then the gravel (or plank) bed, drawn 1px long at both ends so cells overlap exactly
+    x.lineCap = 'butt'
+    x.lineWidth = s * 0.56; x.strokeStyle = bridge ? '#8b5a2b' : '#9d8d76'
+    paths.forEach(function (p) { strokePts(x, p.pts) })
+    if (dirs.length > 2 || isCorner) { x.beginPath(); x.rect(X + s * 0.22, Y + s * 0.22, s * 0.56, s * 0.56); x.fillStyle = bridge ? '#8b5a2b' : '#9d8d76'; x.fill() }
+    if (!bridge) {   // the owner's gravel texture over the solid bed (its own transparent rim never shows)
+      x.globalAlpha = 0.55; x.strokeStyle = bed(x)
+      paths.forEach(function (p) { strokePts(x, p.pts) })
+      if (dirs.length > 2 || isCorner) { x.fillStyle = bed(x); x.fillRect(X + s * 0.22, Y + s * 0.22, s * 0.56, s * 0.56) } x.globalAlpha = 1
+    }
+    // sleepers
+    x.strokeStyle = bridge ? '#5c3a18' : '#7a4a22'; x.lineWidth = s * 0.085
+    paths.forEach(function (p) { sleepers(x, p.pts, s, p.ts) })
+    // steel: dark underline, then the bright rail, both sides
+    paths.forEach(function (p) {
+      ;[-1, 1].forEach(function (sd) {
+        var o2 = offset(p.pts, sd * s * 0.13)
+        x.lineCap = 'butt'; x.strokeStyle = '#4b4f57'; x.lineWidth = s * 0.055; strokePts(x, o2)
+        x.strokeStyle = '#d3d9e0'; x.lineWidth = s * 0.03; strokePts(x, o2)
+      })
+    })
+    x.restore()
   }
 
   /* ── home: the owner's bright landing (primary-linus-bright.png): wooden sign, red MULAI MAIN, blue PILIH MISI,
@@ -165,6 +212,38 @@
     pick(info.nextId)
   }
 
+
+  /* ── HUB: the title screen of Lokomotif Pemberani. ?pack=kereta&hub=1 shows it; a card reloads the page with
+     the storyline's own level set (?pack=kereta&story=<id>, brave when absent). The fourth card is the classic game
+     unchanged. A storyline that is not built yet has no card at all (children never see "segera hadir"). ── */
+  var STORIES = [
+    { id: 'brave', title: 'Petualangan Linus', sub: 'The Brave Locomotive', pic: '../assets/kereta/cards/card-bl-lembah-stasiun.webp', built: true },
+    { id: 'malivlak', title: 'Dragutin dan Malivlak', sub: 'Dari stasiun sampai museum', pic: '../assets/kereta/cards/card-mv-stasiun.webp', built: false },
+    { id: 'hellbent', title: 'Lomba ke Kota', sub: 'Kilat Perak dan Tuan Lemas', pic: '../assets/kereta/cards/card-hb-start.webp', built: false },
+    { id: 'classic', title: 'Lokomotif Pemberani', sub: 'Game aslinya', pic: '../assets/train/backdrop/level20-640.webp', built: true, href: 'lokomotif-pemberani.html' }
+  ]
+  function buildHub () {
+    if (!/[?&]hub=1/.test(W.location.search) || D.getElementById('k-hub')) return
+    var h = D.createElement('section'); h.id = 'k-hub'; h.setAttribute('aria-label', 'Pilih cerita')
+    h.innerHTML = '<button type="button" class="ibtn" id="k-hub-back" aria-label="Kembali ke peta Dunia"><i class="ico" data-ico="map"></i></button>' +
+      '<div class="k-hub-sign fk"><span>Lokomotif</span><b>PEMBERANI</b><small>Pilih ceritamu!</small></div><div class="k-hub-cards" id="k-hub-cards"></div>'
+    D.body.appendChild(h)
+    var back = h.querySelector('#k-hub-back'); back.innerHTML = MA ? MA.icon('map') : ''
+    back.addEventListener('click', function () { W.location.href = '../index.html' })
+    var box = h.querySelector('#k-hub-cards')
+    STORIES.filter(function (st) { return st.built }).forEach(function (st) {
+      var b = D.createElement('button'); b.type = 'button'; b.className = 'k-hub-card'; b.setAttribute('data-story', st.id)
+      b.innerHTML = '<img alt="" src="' + st.pic + '"><span class="fk">' + st.title + '</span><small>' + st.sub + '</small>'
+      b.addEventListener('click', function () { W.location.href = st.href || ('mojo-swoptops.html?pack=kereta' + (st.id === 'brave' ? '' : '&story=' + st.id)) })
+      box.appendChild(b)
+    })
+  }
+  // inside a storyline the back button returns to the hub, not to the world map
+  function rewireExit () {
+    var b = D.getElementById('btn-exit'); if (!b) return
+    b.addEventListener('click', function (e) { e.stopImmediatePropagation(); W.location.href = 'mojo-swoptops.html?pack=kereta&hub=1' }, true)
+  }
+
   var def = {
     id: 'kereta', gameId: 'g15k', saveKey: 'dunia-g15k-kereta',
     narrator: { name: 'Henry', full: 'Henry McCloud' },
@@ -174,7 +253,7 @@
     libmap: libmap, hero: hero, scene: scene, regionScene: regionScene, background: background,
     pins: { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
     mapArt: function (port) { return background('bg-bl-lembah', port) },
-    art: ART, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
+    groundFill: GROUND, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
   }
   P.def = def
   if (MA) {
@@ -193,6 +272,7 @@
     swap(MA.showcase, CAST.map(function (c) { return { id: c.id, name: c.name, ability: c.ability, src: lib(c.key), film: true, note: c.ability } }))
   }
   if (D && D.addEventListener) {
-    if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', reskinStatic); else reskinStatic()
+    var ready = function () { reskinStatic(); buildHub(); rewireExit() }
+    if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', ready); else ready()
   }
 })(typeof window !== 'undefined' ? window : globalThis)

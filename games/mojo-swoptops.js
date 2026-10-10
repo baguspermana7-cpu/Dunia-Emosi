@@ -451,6 +451,7 @@
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
       var k = ch(r, c), X = c * s, Y = r * s, filled = !!w.fill[r + ',' + c]
       if (k === ',' || k === 'T' || (k === '#' && !indoor)) {
+        if (PK && PK.groundFill) { x.fillStyle = PK.groundFill; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1) }   // a pack's lawn is one continuous colour under the tiles
         if (grass) drawTile(x, grass, X, Y, s, 0.07); else { x.fillStyle = T.grass; x.fillRect(X, Y, s, s) }
         if (k === '#' && !onCell[r + ',' + c]) {
           var b = tileImg('b:' + BUILDINGS[(r * 3 + c * 5) % BUILDINGS.length])

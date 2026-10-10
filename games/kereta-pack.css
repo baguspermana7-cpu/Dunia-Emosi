@@ -27,7 +27,7 @@ html[data-pack="kereta"] .k-sign,html[data-pack="kereta"] .plate.banner,html[dat
 
 /* ── 1 LANDING (reference screen 1): wooden title sign, red MULAI MAIN, blue PILIH MISI, round Cara Main / Teman ── */
 html[data-pack="kereta"] #scr-home{--k-l1:clamp(20px,min(4.6vw,9vh),60px);--k-l2:clamp(44px,min(10.5vw,21vh),138px);background:#7cc4f0 url('../assets/kereta/bg/bg-bl-lembah-landscape.webp') center/cover no-repeat}
-html[data-pack="kereta"] #scr-home .town,html[data-pack="kereta"] #btn-exit,html[data-pack="kereta"] #scr-home .counter{display:none}
+html[data-pack="kereta"] #scr-home .town,html[data-pack="kereta"] #scr-home .counter{display:none}
 html[data-pack="kereta"] #scr-home .home-brand{left:3.5%;right:auto;top:4%;width:min(47%,590px);max-width:none;text-align:center;z-index:3;padding:clamp(10px,2vh,22px) 22px clamp(18px,3vh,30px);
   background:linear-gradient(180deg,#a66a33,#7b4a22);border-radius:22px;box-shadow:inset 0 0 0 4px #d9b078,inset 0 0 0 8px #5c3817,0 8px 0 #432810,0 18px 28px rgba(0,0,0,.28)}
 html[data-pack="kereta"] #scr-home .logo{align-items:center;line-height:.95}
@@ -159,3 +159,22 @@ html[data-pack="kereta"] .menu-lead,html[data-pack="kereta"] .form-gallery-head{
   html[data-pack="kereta"] .k-rabbit{left:2%;bottom:14%;height:clamp(60px,10vh,110px)}
   html[data-pack="kereta"] .k-turtle{left:auto;right:3%;bottom:14%;height:clamp(40px,6vh,70px)}
 }
+
+/* ── HUB: wooden sign + one big picture card per storyline (same bright look) ── */
+#k-hub{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,3vh,28px);padding:calc(14px + var(--sat)) 16px calc(16px + var(--sab));overflow:auto;
+  background:#7cc4f0 url('../assets/kereta/bg/bg-bl-lembah-landscape.webp') center/cover no-repeat}
+@media(orientation:portrait){#k-hub{background-image:url('../assets/kereta/bg/bg-bl-lembah-portrait.webp')}}
+#k-hub .ibtn{position:absolute;left:calc(12px + var(--sal));top:calc(12px + var(--sat))}
+.k-hub-sign{display:flex;flex-direction:column;align-items:center;margin-top:clamp(0px,2vh,16px);padding:clamp(8px,1.6vh,16px) clamp(24px,5vw,60px) clamp(14px,2.4vh,22px);border-radius:22px;text-align:center;position:relative;
+  background:linear-gradient(180deg,#a66a33,#7b4a22);box-shadow:inset 0 0 0 4px #d9b078,inset 0 0 0 8px #5c3817,0 8px 0 #432810,0 18px 28px rgba(0,0,0,.28)}
+.k-hub-sign span{font-size:clamp(18px,3.4vw,38px);color:#ffd447;-webkit-text-stroke:4px #6b3a10;paint-order:stroke fill;text-transform:uppercase}
+.k-hub-sign b{font-weight:400;font-size:clamp(34px,7vw,84px);color:#fff;-webkit-text-stroke:6px #4b95e8;paint-order:stroke fill;text-shadow:0 5px 0 #1f5aa8;letter-spacing:.02em;line-height:1}
+.k-hub-sign small{position:absolute;left:8%;right:8%;bottom:-15px;font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(12px,1.5vw,17px);color:#4a2c12;background:linear-gradient(180deg,#fff7df,#f1d9a0);border-radius:10px;padding:5px 10px;box-shadow:0 0 0 3px #8a5528}
+.k-hub-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(12px,2.4vw,28px);margin-top:12px;width:100%;max-width:1100px}
+.k-hub-card{display:flex;flex-direction:column;gap:6px;width:clamp(150px,21vw,250px);padding:10px 10px 12px;border-radius:22px;text-align:center;color:#4a2c12;
+  background:linear-gradient(180deg,#fffaea,#f6e6bb);box-shadow:inset 0 0 0 3px #fff,0 8px 0 rgba(92,56,23,.3),0 16px 24px rgba(0,0,0,.22);transition:transform .15s cubic-bezier(.23,1,.32,1)}
+.k-hub-card:active{transform:scale(.97)}
+.k-hub-card img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:14px;box-shadow:0 0 0 3px #fff}
+.k-hub-card span{font-size:clamp(16px,1.9vw,22px);line-height:1.1}
+.k-hub-card small{font-weight:800;font-size:clamp(11px,1.2vw,14px);color:#7a5630}
+@media(hover:hover){.k-hub-card:hover{transform:translateY(-4px)}}
