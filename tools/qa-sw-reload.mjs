@@ -8,8 +8,10 @@ const source = fs.readFileSync(new URL('../games/sw-reload.js', import.meta.url)
 let passes = 0
 const failures = []
 
-function page({ controlled = false, blockedStorage = false, stored = {}, busy = false } = {}) {
-  const listeners = {}, timers = [], registrations = [], warnings = []
+function page({ controlled = false, blockedStorage = false, stored = {}, busy = false, visible = false } = {}) {
+  const listeners = {}, timers = [], registrations = [], warnings = [], docL = {}
+  // v63.30+: a visible page defers the reload until it is hidden; the default here is a hidden page
+  const doc = { visibilityState: visible ? 'visible' : 'hidden', addEventListener(t, fn) { docL[t] = fn }, removeEventListener(t) { delete docL[t] } }
   let reloads = 0
   const worker = {
     controller: controlled ? {} : null,
@@ -23,6 +25,7 @@ function page({ controlled = false, blockedStorage = false, stored = {}, busy = 
       getItem(key) { if (blockedStorage) throw new Error('Storage denied'); return stored[key] },
       setItem(key, value) { if (blockedStorage) throw new Error('Storage denied'); stored[key] = value }
     },
+    document: doc,
     location: { reload() { reloads++ } },
     console: { warn(...args) { warnings.push(args) } },
     setTimeout(fn, ms) { timers.push({ fn, ms }) }
@@ -34,6 +37,7 @@ function page({ controlled = false, blockedStorage = false, stored = {}, busy = 
       listeners[type]({ data: { type: 'SW_UPDATED', version } })
     },
     setBusy(value) { busy = value },
+    hide() { doc.visibilityState = 'hidden'; if (docL.visibilitychange) docL.visibilitychange() },
     reloads: () => reloads, registrations, timers, warnings
   }
 }
@@ -42,6 +46,31 @@ function check(name, test) {
   try { test(); passes++; console.log('PASS ' + name) }
   catch (error) { failures.push(name + ': ' + error.message); console.error('FAIL ' + name + ': ' + error.message) }
 }
+
+check('a deploy while the child is playing waits until the app is hidden', () => {
+  const p = page({ controlled: true, visible: true })
+  p.emit('message')
+  assert.equal(p.reloads(), 0, 'no reload while visible')
+  p.hide()
+  assert.equal(p.reloads(), 1, 'reloads once hidden')
+})
+
+// the hub (game.js) has its own SW_UPDATED handler: same rules (2026-10-10, a Blippi tile tap was lost to it)
+check('hub: first visit never reloads, a deploy waits until hidden', () => {
+  const src = fs.readFileSync(new URL('../game.js', import.meta.url), 'utf8')
+  const i = src.indexOf('const swCtlAtLoad'), j = src.indexOf("window.addEventListener('load'", i)
+  assert.ok(i > 0 && j > i, 'hub SW_UPDATED handler found')
+  for (const [controlled, visible, want] of [[false, true, 0], [false, false, 0], [true, true, 0], [true, false, 1]]) {
+    let reloads = 0, onMsg = null, onVis = null
+    const doc = { visibilityState: visible ? 'visible' : 'hidden', addEventListener(t, fn) { onVis = fn }, removeEventListener() { onVis = null } }
+    const ctx = { navigator: { serviceWorker: { controller: controlled ? {} : null, addEventListener(t, fn) { if (t === 'message') onMsg = fn } } },
+      document: doc, location: { reload() { reloads++ } }, sessionStorage: { getItem() { return null }, setItem() {} } }
+    vm.runInNewContext(src.slice(i, j), ctx)
+    onMsg({ data: { type: 'SW_UPDATED', version: 'v1' } })
+    assert.equal(reloads, want, `controlled=${controlled} visible=${visible}`)
+    if (controlled && visible) { doc.visibilityState = 'hidden'; onVis && onVis(); assert.equal(reloads, 1, 'reloads after hide') }
+  }
+})
 
 check('direct standalone visit registers the root worker', () => {
   const p = page()

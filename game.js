@@ -6887,6 +6887,23 @@ function g10DoAttack(type, fromSide, toSide, onDone){
 
   try { g10TypeFX(type, toSide) } catch(e){ console.warn('[g10DoAttack] typeFX:', e) }
 
+  // VFX library (assets/vfx): type-unique wind-up aura + projectile head/trail + impact burst.
+  // Lands at 340 ms = the same moment the defender flashes + HP drains. Falls back to the
+  // emoji projectile below when the library is not loaded. Reduced motion = fade only (engine).
+  let _vfxLaunched = false
+  try {
+    if (window.VFX && VFX.Poke && VFX.Poke.ready()) {
+      const _atkPk = fromSide === 'player' ? g10State.playerPoke : g10State.enemyPoke
+      const _defPk = fromSide === 'player' ? g10State.enemyPoke : g10State.playerPoke
+      let _vm = 1
+      try { if (typeof calcFullMult === 'function' && _atkPk && _defPk) _vm = calcFullMult(type, _atkPk.type, _defPk.type) } catch(_){}
+      const _fEl = document.getElementById(fromSide === 'player' ? 'g10-pspr' : 'g10-espr') || fromWrapEl
+      const _tEl = document.getElementById(toSide === 'enemy' ? 'g10-espr' : 'g10-pspr') || document.getElementById(toSide === 'enemy' ? 'g10-espr-wrap' : 'g10-pspr-wrap')
+      VFX.Poke.windup(typeLow, _fEl, { duration: 340 })
+      _vfxLaunched = VFX.Poke.launch(typeLow, _fEl, _tEl, { duration: 340, size: 84, superEff: _vm >= 1.15, big: _vm >= 1.15 })
+    }
+  } catch(e){ console.warn('[g10DoAttack] vfx lib:', e) }
+
   // Projectile geometry — null-guard target wrap
   let dx = 0, dy = 0, startX = 0, startY = 0
   try {
@@ -6901,6 +6918,9 @@ function g10DoAttack(type, fromSide, toSide, onDone){
   } catch(e){ console.warn('[g10DoAttack] geom:', e) }
 
   try {
+    if (_vfxLaunched) {
+      /* library projectile is flying — keep the legacy emoji hidden */
+    } else {
     if (emojiEl) {
       emojiEl.textContent = emoji
       emojiEl.style.animation = 'none'
@@ -6916,6 +6936,7 @@ function g10DoAttack(type, fromSide, toSide, onDone){
         {transform:`translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${dy * 0.5}px)) scale(1.3)`, opacity:1, offset:0.6},
         {transform:`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.8)`, opacity:0}
       ], {duration:360, easing:'ease-in', fill:'forwards'})
+    }
     }
   } catch(e){ console.warn('[g10DoAttack] projectile:', e) }
 
@@ -7449,14 +7470,21 @@ if('serviceWorker' in navigator){
   } else {
     // Listen for "SW updated" broadcast — auto-reload to pick up fresh assets.
     // Guards against double-reload via session flag.
+    // 2026-10-10: the hub reloaded the moment SW_UPDATED arrived - on a FIRST visit too (the first activation
+    // broadcasts it) and mid-use after every deploy, so a child's tap on a game tile in that second was lost
+    // (live test: the Blippi tile "did nothing"). Same rule as games/sw-reload.js: a page that loaded without a
+    // controller is already running fresh bytes; otherwise reload only once the app is hidden.
+    const swCtlAtLoad = !!navigator.serviceWorker.controller
     navigator.serviceWorker.addEventListener('message', (e) => {
-      if (e.data && e.data.type === 'SW_UPDATED') {
-        const flag = 'dunia-sw-reloaded-' + (e.data.version || '')
-        if (!sessionStorage.getItem(flag)) {
-          sessionStorage.setItem(flag, '1')
-          location.reload()
-        }
-      }
+      if (!(e.data && e.data.type === 'SW_UPDATED') || !swCtlAtLoad) return
+      const flag = 'dunia-sw-reloaded-' + (e.data.version || '')
+      try { if (sessionStorage.getItem(flag)) return; sessionStorage.setItem(flag, '1') } catch (_) {}
+      if (document.visibilityState !== 'visible') { location.reload(); return }
+      document.addEventListener('visibilitychange', function onHide () {
+        if (document.visibilityState !== 'hidden') return
+        document.removeEventListener('visibilitychange', onHide)
+        location.reload()
+      })
     })
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js', { scope: './' })
@@ -9438,7 +9466,7 @@ function g13NextQuestion() {
   })
 }
 
-function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field') {
+function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field', fxOpts) {
   const field = document.getElementById(fieldId)
   if (!field) return
   const typeImg = {Fire:'attack-fx-fire.webp',Water:'attack-fx-water.webp',Grass:'attack-fx-grass.webp',Electric:'attack-fx-electric.webp'}
@@ -9472,6 +9500,17 @@ function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field') {
     toX   = fromPlayer ? '75%' : '15%'
     toY   = fromPlayer ? '15%' : '70%'
   }
+  // VFX library (assets/vfx) — G13 Evolusi Math + G13B Quick Fire: type-unique wind-up, projectile
+  // + trail, impact. Lands when the existing defender hit-flash fires (300 ms; Quick Fire 240 ms).
+  try {
+    if (window.VFX && VFX.Poke && VFX.Poke.ready() && playerWrap && wildWrap) {
+      const _fa = fromPlayer ? playerWrap : wildWrap, _fb = fromPlayer ? wildWrap : playerWrap
+      let _vm = 1
+      try { if (fxOpts && fxOpts.defType && typeof calcFullMult === 'function') _vm = calcFullMult(type, type, fxOpts.defType) } catch(_){}
+      VFX.Poke.windup(type, _fa, { duration: 300 })
+      if (VFX.Poke.launch(type, _fa, _fb, { duration: fieldId === 'g13b-field' ? 240 : 300, size: 78, superEff: _vm >= 1.15, big: _vm >= 1.15 })) return
+    }
+  } catch(e){ console.warn('[g13SpawnAttackEffect] vfx lib:', e) }
   const proj = document.createElement('div')
   proj.className = 'g13-proj'
   if (hasImg) {
@@ -9578,7 +9617,7 @@ function g13Answer(val, btn) {
       const _curForm = s.megaForm ? s.chain.mega : s.evolved2 ? s.chain.evolved2 : s.evolved ? s.chain.evolved : s.chain.player
       const atkType = _curForm.type
       playAttackSound(atkType)
-      g13SpawnAttackEffect(atkType, true)
+      g13SpawnAttackEffect(atkType, true, 'g13-field', { defType: _defType })
       const playerSlugG13 = _curForm.slug
       showMovePopup(document.getElementById('g13-pspr-wrap'), getPokeMove(playerSlugG13, atkType), pokeTypeColor(atkType))
       // Attacker aura (DOM) — Pixi path reserved for g13b-pixi-canvas
