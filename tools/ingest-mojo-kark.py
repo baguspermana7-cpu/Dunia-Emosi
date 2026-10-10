@@ -66,15 +66,21 @@ BANNED = {
 }
 
 # directory group -> (sheets searched, may mirror, max score, kind)
+P2_FIRST = 14        # first phase 2 sheet index
+P2_TRUCKS = [14, 16, 17, 18, 19, 24]
 GROUPS = {
     'mojo-char': dict(sheets=[0, 4, 6], flip=True, thr=0.30),
     'mojo-hero': dict(sheets=[8], flip=True, thr=0.34),
     'mojo-rear': dict(sheets=[3], flip=False, thr=0.34),
-    'mojo-top': dict(sheets=[0, 8, 1, 13], flip=False, thr=0.0),       # no counterpart in the sheets: see report
+    # phase 2 (2026-10-10, sheets 14+): the 3-view utility-truck sets (front, side, rear per form) and the Racing Asset Sheet (21)
+    'mojo-top': dict(sheets=P2_TRUCKS, flip=False, thr=0.30),
+    'mojo-prop': dict(sheets=[21], flip=False, thr=0.24, margin=0.04),
+    'mojo-ui': dict(sheets=[21], flip=False, thr=0.26, margin=0.03),
+    'mojo-fx': dict(sheets=[21], flip=False, thr=0.30, margin=0.03),
     'mojo-chase/vehicles': dict(sheets=[7, 11], flip=False, thr=0.34),
     'mojo-chase/robbers': dict(sheets=[5], flip=False, thr=0.34),
-    'mojo-chase/items': dict(sheets=[5, 10, 4, 6, 0], flip=True, thr=0.30),
-    'mojo-chase/props': dict(sheets=[5, 2, 10, 12, 9], flip=False, thr=0.22, margin=0.05),
+    'mojo-chase/items': dict(sheets=[5, 10, 4, 6, 0, 21], flip=True, thr=0.30),
+    'mojo-chase/props': dict(sheets=[5, 2, 10, 12, 9, 21], flip=False, thr=0.22, margin=0.05),
 }
 # identity checked by eye: the generic matcher picks a look-alike (a plain crate for the question block, a 3-stack for
 # the 2-stack) or the old art carries something the new one lacks (zzz, question mark, hearts): keep the old file.
@@ -82,10 +88,22 @@ FORCE_KEEP = {
     'mojo-chase/items/mystery': 'new sheets have no question block (best match is a plain crate)',
     'mojo-chase/items/tyres-2': 'new sheets only have the 3-stack',
     'mojo-char/oona-sleep': 'old art carries the zzz; new sleeping dog has none',
+    # phase 2 matches rejected by eye: text / identity differs from the only look-alike on the Racing Asset Sheet
+    'mojo-prop/coin-crown': 'old coin carries a crown, the new one a star', 'mojo-prop/wrench-token': 'old coin carries a wrench',
+    'mojo-ui/blank-blue-sheet15': 'blank button, no counterpart', 'mojo-ui/blank-red-sheet15': 'blank button, no counterpart',
+    'mojo-ui/blank-yellow-sheet15': 'blank button, no counterpart', 'mojo-ui/btn-jalan': 'Indonesian label, new button says PLAY',
+    'mojo-ui/play-sheet15': 'bare play triangle, new button carries the word PLAY', 'mojo-ui/ico-bahasa': 'globe icon, not a portal',
+    'mojo-ui/ico-info': 'info icon, not a portal', 'mojo-ui/map-sheet15': 'map icon, not the loading panel',
+    'mojo-ui/settings-sheet15': 'gear icon, not the loading panel', 'mojo-ui/upgrade-token': 'arrow token, not a coin',
+    'mojo-ui/mission-complete-sheet13': 'old shows three stars, new Well Done panel shows one',
+    'mojo-ui/collection-panel-sheet15': 'different panel layout', 'mojo-ui/pause-menu2': 'old panel has a SETTINGS row the new one lacks',
     'mojo-char/float-curious': 'old art carries the question mark', 'mojo-char/float-love': 'old art carries the hearts',
 }
 # identity checked by eye where the score is poor only because the old art carries sparkles / a different crop
-FORCE_MATCH = {'mojo-chase/items/rocket': (5, 8), 'mojo-chase/items/stopwatch': (6, 56)}
+FORCE_MATCH = {'mojo-chase/items/rocket': (5, 8), 'mojo-chase/items/stopwatch': (6, 56),
+               # phase 2 Racing Asset Sheet: same drawing as the old crop, only the old one is a low-res cut
+               'mojo-fx/explosion': (21, 63), 'mojo-fx/explosion2': (21, 63), 'mojo-fx/explosion-sheet13': (21, 63),
+               'mojo-fx/speed-trail': (21, 64), 'mojo-fx/repair': (21, 65)}
 # keys that are matched by the generic matcher only when the best score is this good (identity needs care)
 STRICT_MARGIN = 0.0
 
@@ -324,6 +342,9 @@ def run_matching(index, sprites, report):
             banned_best = allr[0][1]
         if key in FORCE_KEEP:
             row['reason'] = 'KEEP: ' + FORCE_KEEP[key]
+        elif index[key].get('source') == SRCTAG and k0[0] < P2_FIRST:
+            # a phase 1 result is never re-fitted (each re-fit would shave the sprite a little): only a phase 2 sprite may replace it
+            row['reason'] = 'KEEP: phase 1 result'
         elif key in FORCE_MATCH and FORCE_MATCH[key] in sprites:
             k0 = FORCE_MATCH[key]
             row.update(sheet=k0[0], n=k0[1], score=0.0, margin=0.0)
@@ -340,7 +361,9 @@ def run_matching(index, sprites, report):
         else:
             src = sprites[k0]
             src = src[:, ::-1].copy() if fl else src
-            built = place_on_old(src, old, t)
+            # the Racing Asset Sheet art has a pale rim highlight that reads as ring when the ring is peeled: build the ring 1 px
+            # thicker (the published index value stays t, the gate allows t-1.5 .. t+1)
+            built = place_on_old(src, old, t + 1 if (t and k0[0] >= P2_FIRST) else t)
             if built is None:
                 row['reason'] = 'KEEP: new sprite too small (would need > %.1fx upscale)' % MAX_UP
             else:
@@ -472,6 +495,62 @@ def build_turn(sprites):
     return entries, files, {f'mojo-turn/{f}-rear': anchors[f'{f}-rear'] for f, _, _, _ in TURN_FORMS}, ks
 
 
+
+# ------------------------------------------------------------------------------------- phase 2: NEW database entries
+SRC2TAG = 'owner bg-removed sheets phase 2 2026-10-10'
+# Mojo Swoptops Racing Asset Sheet (sheet 21): n -> (name, tags). Sprites 0-3 are the sheet's own background strips.
+P2_ITEMS = {
+    4: ('road-straight', 'tile road'), 5: ('road-curve', 'tile road'), 6: ('road-boost', 'tile road boost'),
+    7: ('dirt-track', 'tile track'), 8: ('bridge', 'tile bridge'), 9: ('tunnel', 'tile tunnel'),
+    10: ('ice-blocks', 'tile ice'), 11: ('lava-rocks', 'tile lava'), 12: ('cone', 'obstacle prop'),
+    13: ('barrier', 'obstacle prop'), 14: ('tyres', 'obstacle prop tire'), 15: ('crate', 'obstacle prop box'),
+    16: ('rock', 'obstacle prop'), 17: ('bush', 'prop plant'), 18: ('mud', 'hazard'), 19: ('ice-crystal', 'prop ice'),
+    20: ('oil-slick', 'hazard'), 21: ('coin-side', 'coin collectible'), 22: ('coin', 'coin collectible'),
+    23: ('star', 'star collectible'), 24: ('wrench', 'tool'), 25: ('screwdriver', 'tool'), 26: ('hammer', 'tool'),
+    27: ('drill', 'tool'), 28: ('spray-gun', 'tool'), 29: ('wheel', 'part'), 30: ('engine', 'part'),
+    31: ('spoiler', 'part'), 32: ('turbo', 'part boost'), 33: ('magnet', 'powerup'), 34: ('nitro', 'part boost'),
+    35: ('spring', 'part'), 36: ('propeller', 'part'), 37: ('siren-bar', 'part'), 38: ('bumper', 'part'),
+    39: ('flame-panel', 'part decal'), 40: ('paint-swatches', 'tool paint'), 41: ('boost-comet', 'fx boost'),
+    42: ('star-badge', 'star ui'), 43: ('checkered-flag', 'flag race'), 44: ('horn', 'part'), 45: ('exhausts', 'part'),
+    46: ('seat-blue', 'part'), 47: ('seat-orange', 'part'), 48: ('face-panel', 'part face'), 49: ('logo', 'ui logo'),
+    50: ('btn-play', 'ui button'), 51: ('btn-garage', 'ui button'), 52: ('btn-customize', 'ui button'),
+    53: ('avatar-bo', 'ui avatar'), 54: ('panel-level-select', 'ui panel'), 55: ('panel-garage', 'ui panel'),
+    56: ('panel-mission', 'ui panel'), 57: ('panel-reward', 'ui panel'), 58: ('panel-pause', 'ui panel'),
+    59: ('panel-settings', 'ui panel'), 60: ('panel-confirm', 'ui panel'), 61: ('panel-loading', 'ui panel'),
+    62: ('smoke-cloud', 'fx smoke'), 63: ('explosion', 'fx'), 64: ('speed-lines', 'fx speed'),
+    65: ('spark-burst', 'fx'), 66: ('portal', 'fx'),
+}
+# the 3-view utility-truck sets of the phase 2 sheets: form -> (sheet, (front, side, rear) sprite numbers); None = not drawn
+P2_FORMS = {
+    'sweeper': (14, (3, 4, 5)), 'workshop': (14, (6, 7, 8)), 'delivery': (16, (0, 1, 2)), 'ambulance': (16, (6, 7, 8)),
+    'garbage': (17, (0, 1, 2)), 'snowplow': (17, (3, 4, 5)), 'mixer': (17, (6, 7, 8)), 'base': (18, (0, 1, 2)),
+    'fire': (18, (3, 4, 5)), 'chopper': (18, (6, 7, 8)), 'dozer': (24, (0, 1, 2)), 'crane': (24, (3, None, 5)),
+}
+P2_VIEWS = ('front', 'side', 'rear')
+
+
+def build_p2_new(sprites):
+    """New shared-database entries from the phase 2 sheets (items under mojo-item/, 3-view forms under mojo-form/)."""
+    entries, files = {}, {}
+    for n, (name, tags) in P2_ITEMS.items():
+        key = f'mojo-item/{name}'
+        a = tight(sprites[(21, n)])
+        files[LIB / (key + '.webp')] = encode(a)
+        entries[key] = {'file': f'assets/db/lib/{key}.webp', 'cat': 'mojo-item', 'tags': tags.split() + ['mojo', 'racing', 'cartoon'],
+                        'source': SRC2TAG, 'w': a.shape[1], 'h': a.shape[0]}
+    T = 5
+    for form, (sh, ns) in P2_FORMS.items():
+        for view, n in zip(P2_VIEWS, ns):
+            if n is None:
+                continue
+            a = ringed(tight(sprites[(sh, n)]), T)
+            key = f'mojo-form/{form}-{view}'
+            files[LIB / (key + '.webp')] = encode(a)
+            entries[key] = {'file': f'assets/db/lib/{key}.webp', 'cat': 'mojo-form',
+                            'tags': [form, view, 'mojo', 'vehicle', 'utility', 'truck', 'turnaround', 'cartoon'],
+                            'source': SRC2TAG, 'w': a.shape[1], 'h': a.shape[0], 'outline': T}
+    return entries, files
+
 # ------------------------------------------------------------------------------------------------------- contact sheets
 def contact_before_after(rows, path, sprites=None, cols=4, tw=300, th=190):
     """rows: [(key, old_arr, new_arr|None)]. Old left, new right, key labelled."""
@@ -528,6 +607,9 @@ def main():
     # the old turnaround files are replaced by the rebuilt set
     files.update(t_files)
     entries.update(t_entries)
+    n_entries, n_files = build_p2_new(sprites)
+    files.update(n_files)
+    entries.update(n_entries)
     by_dir = {}
     for r in report:
         by_dir.setdefault(r['key'].rsplit('/', 1)[0] if r['key'].startswith('mojo-chase') else r['key'].split('/')[0], []).append(r)

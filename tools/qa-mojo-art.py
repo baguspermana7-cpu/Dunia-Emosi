@@ -522,6 +522,59 @@ class SpriteFringeTests(unittest.TestCase):
         self.assertGreater(fringe_metrics(img)['smear'], 100)
 
 
+def washed_edge(rgba, t):
+    """Edge wash of one sprite: median colour saturation 3.5-6.5 px inside the art silhouette (its sticker ring peeled)
+    divided by the median saturation of the core (> 10 px deep). 1.0 = a saturated body right up to its outline; a
+    low ratio = the crop kept a band of page-mixed, whitened pixels round the art (owner 2026-10-10: "the star in the
+    game has white bits because the crop was imperfect"; the old mojo-prop/star measured 0.87, every clean star 0.98+).
+    None when the sprite is too small or not chromatic (white / grey art has no saturation to lose)."""
+    a = mo.peel(rgba, t) if t else np.asarray(rgba)
+    art = a[..., 3] >= 200
+    if art.sum() < 400:
+        return None
+    depth = ndimage.distance_transform_edt(np.pad(art, 1))[1:-1, 1:-1]
+    c = a[..., :3].astype(float)
+    sat = (c.max(2) - c.min(2)) / np.maximum(c.max(2), 1)
+    band, core = art & (depth > 3.5) & (depth <= 6.5), art & (depth > 10)
+    if band.sum() < 30 or core.sum() < 30 or np.median(sat[core]) < 0.25:
+        return None
+    return float(np.median(sat[band]) / np.median(sat[core]))
+
+
+# the yellow collectibles the game draws everywhere (board star, chase star / coin, result stars, counters)
+COLLECTIBLE = re.compile(r'^mojo-(prop|ui|item|chase/items)/(special-)?(star|coin)(-?(\d|2b|sheet\d+|side|star))?$')
+WASH_MIN = 0.93
+
+
+class CollectibleEdgeTests(unittest.TestCase):
+    """Stars and coins are drawn on every screen: no whitened crop band round the art."""
+    def test_every_shipped_star_and_coin_has_a_saturated_edge(self):
+        bad, seen = [], 0
+        for key, entry in INDEX.items():
+            if not COLLECTIBLE.match(key):
+                continue
+            w = washed_edge(np.asarray(Image.open(ROOT / entry['file']).convert('RGBA')), ring_of(key) or 0)
+            seen += 1
+            if w is not None and w < WASH_MIN:
+                bad.append(f'{key}: edge saturation {w:.2f} of the core < {WASH_MIN} (re-ingest from the owner sheets)')
+        self.assertGreater(seen, 15)
+        self.assertEqual(bad, [])
+
+    def test_metric_flags_a_whitened_edge_band_but_not_a_clean_star(self):
+        yy, xx = np.mgrid[:120, :120]
+        r = np.hypot(yy - 60, xx - 60)
+        clean = np.zeros((120, 120, 4), np.uint8)
+        clean[r < 46] = (250, 190, 20, 255)
+        self.assertGreater(washed_edge(clean, 0), 0.98)
+        washed = clean.copy()
+        band = (r < 46) & (r >= 41)                       # 5 px of page-mixed pale yellow, as the old star had
+        washed[band] = (252, 232, 150, 255)
+        self.assertLess(washed_edge(washed, 0), WASH_MIN)
+
+    def test_phase2_star_replaced_the_old_crop(self):
+        self.assertEqual(INDEX['mojo-prop/star']['source'], 'owner bg-removed sheets 2026-10-10')
+
+
 # Owner 2026-10-03: "There's still a little white. We should give it a white outline line to disguise it."
 # family -> (expected outlined sprite count, one shared thickness or None = per pose)
 OUTLINED = {

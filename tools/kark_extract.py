@@ -39,12 +39,31 @@ def is_label(rgb, a, box, H):
     return w > 2.2 * h and h < 0.1 * H and fill > 0.7
 
 
+PHASE2 = os.path.join(SRC, 'phase 2')
+
+
 def sheets():
-    return sorted(glob.glob(os.path.join(SRC, '*.png')))
+    """Phase 1 sheets (indices 0-13, never reorder: BANNED / TIDY / TURN_FORMS refer to them) then the phase 2
+    sheets (2026-10-10, indices 14+). KARK_SRC replaces the phase 1 dir, KARK_SRC2 the phase 2 dir."""
+    p1 = sorted(glob.glob(os.path.join(os.environ.get('KARK_SRC', SRC), '*.png')))
+    p2 = sorted(glob.glob(os.path.join(os.environ.get('KARK_SRC2', PHASE2), '*.png')))
+    return p1 + p2
+
+
+def load_rgba(path):
+    """RGBA of a sheet, or None for a sheet whose page was NOT removed (phase 2: catalog, 3x3 grid, topper lineup,
+    nine-mode: white page + label pills; keying white eats the white van bodies, and every form on them is already
+    in mojo-top / the alpha sheets, so they are skipped rather than keyed)."""
+    im = Image.open(path)
+    if im.mode == 'RGBA' and np.asarray(im)[..., 3].min() < 250:
+        return im
+    return None
 
 
 def extract(path):
-    im = Image.open(path).convert('RGBA')
+    im = load_rgba(path)
+    if im is None:
+        return []
     arr = np.asarray(im)
     a = arr[..., 3]
     H, W = a.shape

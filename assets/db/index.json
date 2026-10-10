@@ -16252,6 +16252,636 @@
    "outline": 3,
    "baseline": 114
   },
+  "mojo-form/ambulance-front": {
+   "file": "assets/db/lib/mojo-form/ambulance-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "ambulance",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 313,
+   "h": 339,
+   "outline": 5
+  },
+  "mojo-form/ambulance-rear": {
+   "file": "assets/db/lib/mojo-form/ambulance-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "ambulance",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 311,
+   "h": 339,
+   "outline": 5
+  },
+  "mojo-form/ambulance-side": {
+   "file": "assets/db/lib/mojo-form/ambulance-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "ambulance",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 462,
+   "h": 333,
+   "outline": 5
+  },
+  "mojo-form/base-front": {
+   "file": "assets/db/lib/mojo-form/base-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "base",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 325,
+   "h": 325,
+   "outline": 5
+  },
+  "mojo-form/base-rear": {
+   "file": "assets/db/lib/mojo-form/base-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "base",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 290,
+   "h": 331,
+   "outline": 5
+  },
+  "mojo-form/base-side": {
+   "file": "assets/db/lib/mojo-form/base-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "base",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 378,
+   "h": 332,
+   "outline": 5
+  },
+  "mojo-form/chopper-front": {
+   "file": "assets/db/lib/mojo-form/chopper-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "chopper",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 378,
+   "h": 345,
+   "outline": 5
+  },
+  "mojo-form/chopper-rear": {
+   "file": "assets/db/lib/mojo-form/chopper-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "chopper",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 379,
+   "h": 344,
+   "outline": 5
+  },
+  "mojo-form/chopper-side": {
+   "file": "assets/db/lib/mojo-form/chopper-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "chopper",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 498,
+   "h": 343,
+   "outline": 5
+  },
+  "mojo-form/crane-front": {
+   "file": "assets/db/lib/mojo-form/crane-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "crane",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 302,
+   "h": 351,
+   "outline": 5
+  },
+  "mojo-form/crane-rear": {
+   "file": "assets/db/lib/mojo-form/crane-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "crane",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 316,
+   "h": 356,
+   "outline": 5
+  },
+  "mojo-form/delivery-front": {
+   "file": "assets/db/lib/mojo-form/delivery-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "delivery",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 301,
+   "h": 344,
+   "outline": 5
+  },
+  "mojo-form/delivery-rear": {
+   "file": "assets/db/lib/mojo-form/delivery-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "delivery",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 316,
+   "h": 342,
+   "outline": 5
+  },
+  "mojo-form/delivery-side": {
+   "file": "assets/db/lib/mojo-form/delivery-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "delivery",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 462,
+   "h": 342,
+   "outline": 5
+  },
+  "mojo-form/dozer-front": {
+   "file": "assets/db/lib/mojo-form/dozer-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "dozer",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 367,
+   "h": 365,
+   "outline": 5
+  },
+  "mojo-form/dozer-rear": {
+   "file": "assets/db/lib/mojo-form/dozer-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "dozer",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 324,
+   "h": 364,
+   "outline": 5
+  },
+  "mojo-form/dozer-side": {
+   "file": "assets/db/lib/mojo-form/dozer-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "dozer",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 530,
+   "h": 365,
+   "outline": 5
+  },
+  "mojo-form/fire-front": {
+   "file": "assets/db/lib/mojo-form/fire-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "fire",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 309,
+   "h": 359,
+   "outline": 5
+  },
+  "mojo-form/fire-rear": {
+   "file": "assets/db/lib/mojo-form/fire-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "fire",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 300,
+   "h": 360,
+   "outline": 5
+  },
+  "mojo-form/fire-side": {
+   "file": "assets/db/lib/mojo-form/fire-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "fire",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 437,
+   "h": 356,
+   "outline": 5
+  },
+  "mojo-form/garbage-front": {
+   "file": "assets/db/lib/mojo-form/garbage-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "garbage",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 305,
+   "h": 342,
+   "outline": 5
+  },
+  "mojo-form/garbage-rear": {
+   "file": "assets/db/lib/mojo-form/garbage-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "garbage",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 319,
+   "h": 342,
+   "outline": 5
+  },
+  "mojo-form/garbage-side": {
+   "file": "assets/db/lib/mojo-form/garbage-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "garbage",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 482,
+   "h": 346,
+   "outline": 5
+  },
+  "mojo-form/mixer-front": {
+   "file": "assets/db/lib/mojo-form/mixer-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "mixer",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 331,
+   "h": 344,
+   "outline": 5
+  },
+  "mojo-form/mixer-rear": {
+   "file": "assets/db/lib/mojo-form/mixer-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "mixer",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 302,
+   "h": 345,
+   "outline": 5
+  },
+  "mojo-form/mixer-side": {
+   "file": "assets/db/lib/mojo-form/mixer-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "mixer",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 537,
+   "h": 349,
+   "outline": 5
+  },
+  "mojo-form/snowplow-front": {
+   "file": "assets/db/lib/mojo-form/snowplow-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "snowplow",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 368,
+   "h": 312,
+   "outline": 5
+  },
+  "mojo-form/snowplow-rear": {
+   "file": "assets/db/lib/mojo-form/snowplow-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "snowplow",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 298,
+   "h": 309,
+   "outline": 5
+  },
+  "mojo-form/snowplow-side": {
+   "file": "assets/db/lib/mojo-form/snowplow-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "snowplow",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 604,
+   "h": 313,
+   "outline": 5
+  },
+  "mojo-form/sweeper-front": {
+   "file": "assets/db/lib/mojo-form/sweeper-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "sweeper",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 341,
+   "h": 311,
+   "outline": 5
+  },
+  "mojo-form/sweeper-rear": {
+   "file": "assets/db/lib/mojo-form/sweeper-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "sweeper",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 326,
+   "h": 307,
+   "outline": 5
+  },
+  "mojo-form/sweeper-side": {
+   "file": "assets/db/lib/mojo-form/sweeper-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "sweeper",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 503,
+   "h": 309,
+   "outline": 5
+  },
+  "mojo-form/workshop-front": {
+   "file": "assets/db/lib/mojo-form/workshop-front.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "workshop",
+    "front",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 316,
+   "h": 321,
+   "outline": 5
+  },
+  "mojo-form/workshop-rear": {
+   "file": "assets/db/lib/mojo-form/workshop-rear.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "workshop",
+    "rear",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 335,
+   "h": 318,
+   "outline": 5
+  },
+  "mojo-form/workshop-side": {
+   "file": "assets/db/lib/mojo-form/workshop-side.webp",
+   "cat": "mojo-form",
+   "tags": [
+    "workshop",
+    "side",
+    "mojo",
+    "vehicle",
+    "utility",
+    "truck",
+    "turnaround",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 523,
+   "h": 325,
+   "outline": 5
+  },
   "mojo-fx/boost-flame-sheet13": {
    "file": "assets/db/lib/mojo-fx/boost-flame-sheet13.webp",
    "cat": "mojo-fx",
@@ -16361,7 +16991,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 101,
    "h": 69
   },
@@ -16385,7 +17015,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 68,
    "h": 62
   },
@@ -16398,7 +17028,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 101,
    "h": 78
   },
@@ -16410,7 +17040,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 92,
    "h": 75
   },
@@ -16512,7 +17142,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 101,
    "h": 91
   },
@@ -16525,7 +17155,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 80,
    "h": 76
   },
@@ -16537,7 +17167,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 78,
    "h": 73
   },
@@ -16549,7 +17179,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 87,
    "h": 78
   },
@@ -16673,7 +17303,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 93,
    "h": 60
   },
@@ -17122,6 +17752,869 @@
    "facing": "r",
    "outline": 5
   },
+  "mojo-item/avatar-bo": {
+   "file": "assets/db/lib/mojo-item/avatar-bo.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "avatar",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 118,
+   "h": 120
+  },
+  "mojo-item/barrier": {
+   "file": "assets/db/lib/mojo-item/barrier.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "obstacle",
+    "prop",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 113,
+   "h": 92
+  },
+  "mojo-item/boost-comet": {
+   "file": "assets/db/lib/mojo-item/boost-comet.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "fx",
+    "boost",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 116,
+   "h": 76
+  },
+  "mojo-item/bridge": {
+   "file": "assets/db/lib/mojo-item/bridge.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "bridge",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 161,
+   "h": 130
+  },
+  "mojo-item/btn-customize": {
+   "file": "assets/db/lib/mojo-item/btn-customize.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "button",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 142,
+   "h": 77
+  },
+  "mojo-item/btn-garage": {
+   "file": "assets/db/lib/mojo-item/btn-garage.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "button",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 133,
+   "h": 77
+  },
+  "mojo-item/btn-play": {
+   "file": "assets/db/lib/mojo-item/btn-play.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "button",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 113,
+   "h": 77
+  },
+  "mojo-item/bumper": {
+   "file": "assets/db/lib/mojo-item/bumper.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 127,
+   "h": 84
+  },
+  "mojo-item/bush": {
+   "file": "assets/db/lib/mojo-item/bush.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "prop",
+    "plant",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 106,
+   "h": 100
+  },
+  "mojo-item/checkered-flag": {
+   "file": "assets/db/lib/mojo-item/checkered-flag.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "flag",
+    "race",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 76,
+   "h": 104
+  },
+  "mojo-item/coin": {
+   "file": "assets/db/lib/mojo-item/coin.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "coin",
+    "collectible",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 90,
+   "h": 98
+  },
+  "mojo-item/coin-side": {
+   "file": "assets/db/lib/mojo-item/coin-side.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "coin",
+    "collectible",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 63,
+   "h": 83
+  },
+  "mojo-item/cone": {
+   "file": "assets/db/lib/mojo-item/cone.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "obstacle",
+    "prop",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 97,
+   "h": 115
+  },
+  "mojo-item/crate": {
+   "file": "assets/db/lib/mojo-item/crate.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "obstacle",
+    "prop",
+    "box",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 106,
+   "h": 104
+  },
+  "mojo-item/dirt-track": {
+   "file": "assets/db/lib/mojo-item/dirt-track.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "track",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 171,
+   "h": 103
+  },
+  "mojo-item/drill": {
+   "file": "assets/db/lib/mojo-item/drill.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tool",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 99,
+   "h": 99
+  },
+  "mojo-item/engine": {
+   "file": "assets/db/lib/mojo-item/engine.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 106,
+   "h": 102
+  },
+  "mojo-item/exhausts": {
+   "file": "assets/db/lib/mojo-item/exhausts.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 84,
+   "h": 95
+  },
+  "mojo-item/explosion": {
+   "file": "assets/db/lib/mojo-item/explosion.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "fx",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 108,
+   "h": 102
+  },
+  "mojo-item/face-panel": {
+   "file": "assets/db/lib/mojo-item/face-panel.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "face",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 104,
+   "h": 48
+  },
+  "mojo-item/flame-panel": {
+   "file": "assets/db/lib/mojo-item/flame-panel.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "decal",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 116,
+   "h": 53
+  },
+  "mojo-item/hammer": {
+   "file": "assets/db/lib/mojo-item/hammer.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tool",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 75,
+   "h": 117
+  },
+  "mojo-item/horn": {
+   "file": "assets/db/lib/mojo-item/horn.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 95,
+   "h": 97
+  },
+  "mojo-item/ice-blocks": {
+   "file": "assets/db/lib/mojo-item/ice-blocks.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "ice",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 154,
+   "h": 106
+  },
+  "mojo-item/ice-crystal": {
+   "file": "assets/db/lib/mojo-item/ice-crystal.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "prop",
+    "ice",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 100,
+   "h": 97
+  },
+  "mojo-item/lava-rocks": {
+   "file": "assets/db/lib/mojo-item/lava-rocks.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "lava",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 169,
+   "h": 143
+  },
+  "mojo-item/logo": {
+   "file": "assets/db/lib/mojo-item/logo.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "logo",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 211,
+   "h": 114
+  },
+  "mojo-item/magnet": {
+   "file": "assets/db/lib/mojo-item/magnet.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "powerup",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 98,
+   "h": 93
+  },
+  "mojo-item/mud": {
+   "file": "assets/db/lib/mojo-item/mud.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "hazard",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 121,
+   "h": 60
+  },
+  "mojo-item/nitro": {
+   "file": "assets/db/lib/mojo-item/nitro.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "boost",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 61,
+   "h": 103
+  },
+  "mojo-item/oil-slick": {
+   "file": "assets/db/lib/mojo-item/oil-slick.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "hazard",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 108,
+   "h": 82
+  },
+  "mojo-item/paint-swatches": {
+   "file": "assets/db/lib/mojo-item/paint-swatches.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tool",
+    "paint",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 119,
+   "h": 95
+  },
+  "mojo-item/panel-confirm": {
+   "file": "assets/db/lib/mojo-item/panel-confirm.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 149,
+   "h": 118
+  },
+  "mojo-item/panel-garage": {
+   "file": "assets/db/lib/mojo-item/panel-garage.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 173,
+   "h": 119
+  },
+  "mojo-item/panel-level-select": {
+   "file": "assets/db/lib/mojo-item/panel-level-select.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 159,
+   "h": 119
+  },
+  "mojo-item/panel-loading": {
+   "file": "assets/db/lib/mojo-item/panel-loading.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 152,
+   "h": 119
+  },
+  "mojo-item/panel-mission": {
+   "file": "assets/db/lib/mojo-item/panel-mission.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 167,
+   "h": 119
+  },
+  "mojo-item/panel-pause": {
+   "file": "assets/db/lib/mojo-item/panel-pause.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 132,
+   "h": 118
+  },
+  "mojo-item/panel-reward": {
+   "file": "assets/db/lib/mojo-item/panel-reward.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 157,
+   "h": 118
+  },
+  "mojo-item/panel-settings": {
+   "file": "assets/db/lib/mojo-item/panel-settings.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "ui",
+    "panel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 161,
+   "h": 118
+  },
+  "mojo-item/portal": {
+   "file": "assets/db/lib/mojo-item/portal.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "fx",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 93,
+   "h": 92
+  },
+  "mojo-item/propeller": {
+   "file": "assets/db/lib/mojo-item/propeller.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 89,
+   "h": 110
+  },
+  "mojo-item/road-boost": {
+   "file": "assets/db/lib/mojo-item/road-boost.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "road",
+    "boost",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 156,
+   "h": 114
+  },
+  "mojo-item/road-curve": {
+   "file": "assets/db/lib/mojo-item/road-curve.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "road",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 129,
+   "h": 127
+  },
+  "mojo-item/road-straight": {
+   "file": "assets/db/lib/mojo-item/road-straight.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "road",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 151,
+   "h": 109
+  },
+  "mojo-item/rock": {
+   "file": "assets/db/lib/mojo-item/rock.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "obstacle",
+    "prop",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 99,
+   "h": 101
+  },
+  "mojo-item/screwdriver": {
+   "file": "assets/db/lib/mojo-item/screwdriver.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tool",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 82,
+   "h": 117
+  },
+  "mojo-item/seat-blue": {
+   "file": "assets/db/lib/mojo-item/seat-blue.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 86,
+   "h": 91
+  },
+  "mojo-item/seat-orange": {
+   "file": "assets/db/lib/mojo-item/seat-orange.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 87,
+   "h": 98
+  },
+  "mojo-item/siren-bar": {
+   "file": "assets/db/lib/mojo-item/siren-bar.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 127,
+   "h": 79
+  },
+  "mojo-item/smoke-cloud": {
+   "file": "assets/db/lib/mojo-item/smoke-cloud.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "fx",
+    "smoke",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 124,
+   "h": 105
+  },
+  "mojo-item/spark-burst": {
+   "file": "assets/db/lib/mojo-item/spark-burst.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "fx",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 97,
+   "h": 86
+  },
+  "mojo-item/speed-lines": {
+   "file": "assets/db/lib/mojo-item/speed-lines.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "fx",
+    "speed",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 108,
+   "h": 68
+  },
+  "mojo-item/spoiler": {
+   "file": "assets/db/lib/mojo-item/spoiler.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 101,
+   "h": 72
+  },
+  "mojo-item/spray-gun": {
+   "file": "assets/db/lib/mojo-item/spray-gun.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tool",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 122,
+   "h": 118
+  },
+  "mojo-item/spring": {
+   "file": "assets/db/lib/mojo-item/spring.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 41,
+   "h": 119
+  },
+  "mojo-item/star": {
+   "file": "assets/db/lib/mojo-item/star.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "star",
+    "collectible",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 83,
+   "h": 90
+  },
+  "mojo-item/star-badge": {
+   "file": "assets/db/lib/mojo-item/star-badge.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "star",
+    "ui",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 64,
+   "h": 62
+  },
+  "mojo-item/tunnel": {
+   "file": "assets/db/lib/mojo-item/tunnel.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tile",
+    "tunnel",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 159,
+   "h": 133
+  },
+  "mojo-item/turbo": {
+   "file": "assets/db/lib/mojo-item/turbo.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "boost",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 102,
+   "h": 98
+  },
+  "mojo-item/tyres": {
+   "file": "assets/db/lib/mojo-item/tyres.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "obstacle",
+    "prop",
+    "tire",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 100,
+   "h": 103
+  },
+  "mojo-item/wheel": {
+   "file": "assets/db/lib/mojo-item/wheel.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "part",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 90,
+   "h": 108
+  },
+  "mojo-item/wrench": {
+   "file": "assets/db/lib/mojo-item/wrench.webp",
+   "cat": "mojo-item",
+   "tags": [
+    "tool",
+    "mojo",
+    "racing",
+    "cartoon"
+   ],
+   "source": "owner bg-removed sheets phase 2 2026-10-10",
+   "w": 75,
+   "h": 112
+  },
   "mojo-prop/apple-cart": {
    "file": "assets/db/lib/mojo-prop/apple-cart.webp",
    "cat": "mojo-prop",
@@ -17281,7 +18774,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 103,
    "h": 77
   },
@@ -17509,7 +19002,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 150,
    "h": 111
   },
@@ -17584,7 +19077,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 125,
    "h": 75
   },
@@ -17622,7 +19115,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 77,
    "h": 71
   },
@@ -17634,7 +19127,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 89,
    "h": 79
   },
@@ -17806,7 +19299,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 51,
    "h": 55
   },
@@ -17845,7 +19338,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 74,
    "h": 74
   },
@@ -17858,7 +19351,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 73,
    "h": 73
   },
@@ -17871,7 +19364,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 79,
    "h": 87
   },
@@ -17883,7 +19376,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 53,
    "h": 74
   },
@@ -17933,7 +19426,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 76,
    "h": 85
   },
@@ -17945,7 +19438,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 86,
    "h": 96
   },
@@ -18007,7 +19500,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 89,
    "h": 84
   },
@@ -18031,7 +19524,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 197,
    "h": 190
   },
@@ -18165,7 +19658,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 27,
    "h": 29
   },
@@ -18257,7 +19750,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 86,
    "h": 87
   },
@@ -18269,7 +19762,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 96,
    "h": 94
   },
@@ -18294,7 +19787,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 76,
    "h": 84
   },
@@ -18357,7 +19850,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 79,
    "h": 98
   },
@@ -18648,7 +20141,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 68,
    "h": 105
   },
@@ -18758,7 +20251,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 73,
    "h": 78
   },
@@ -18951,7 +20444,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 140,
    "h": 127
   },
@@ -19087,7 +20580,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 81,
    "h": 84
   },
@@ -19385,7 +20878,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 106,
    "h": 46
   },
@@ -19497,7 +20990,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 104,
    "h": 68
   },
@@ -19522,7 +21015,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 107,
    "h": 81
   },
@@ -19644,7 +21137,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 155,
    "h": 104
   },
@@ -19669,7 +21162,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 82,
    "h": 84
   },
@@ -19722,7 +21215,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 72,
    "h": 72
   },
@@ -19735,7 +21228,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 92,
    "h": 93
   },
@@ -19861,7 +21354,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 84,
    "h": 117,
    "outline": 3
@@ -20147,7 +21640,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 61,
    "h": 61
   },
@@ -20210,7 +21703,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 112,
    "h": 105
   },
@@ -20247,7 +21740,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 91,
    "h": 91,
    "outline": 3
@@ -20261,7 +21754,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 57,
    "h": 57
   },
@@ -20274,7 +21767,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 76,
    "h": 72
   },
@@ -20287,7 +21780,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 68,
    "h": 67
   },
@@ -20299,7 +21792,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 79,
    "h": 83
   },
@@ -20311,7 +21804,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 177,
    "h": 172
   },
@@ -20450,7 +21943,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 54,
    "h": 94
   },
@@ -20464,7 +21957,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 35,
    "h": 100
   },
@@ -20669,7 +22162,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 139,
    "h": 92
   },
@@ -20824,7 +22317,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 148,
    "h": 120
   },
@@ -20912,7 +22405,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 138,
    "h": 86
   },
@@ -20999,7 +22492,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 83,
    "h": 97
   },
@@ -21012,7 +22505,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 68,
    "h": 71
   },
@@ -24185,7 +25678,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 95,
    "h": 96
   },
@@ -24251,7 +25744,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 136,
    "h": 64
   },
@@ -24264,7 +25757,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 127,
    "h": 64
   },
@@ -24500,7 +25993,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 132,
    "h": 99
   },
@@ -24603,7 +26096,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 178,
    "h": 110
   },
@@ -24852,7 +26345,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 165,
    "h": 110
   },
@@ -24893,7 +26386,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 134,
    "h": 99
   },
@@ -24917,7 +26410,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 176,
    "h": 94
   },
@@ -24983,7 +26476,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 158,
    "h": 110
   },
@@ -25050,7 +26543,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 129,
    "h": 109
   },
@@ -25284,7 +26777,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 137,
    "h": 108
   },
@@ -25321,7 +26814,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 154,
    "h": 110
   },
@@ -25385,7 +26878,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 42,
    "h": 42
   },
@@ -25398,7 +26891,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 43,
    "h": 43
   },
@@ -25411,7 +26904,7 @@
     "mojo",
     "cartoon"
    ],
-   "source": "owner mojo sheets 2026-09-30",
+   "source": "owner bg-removed sheets 2026-10-10",
    "w": 51,
    "h": 48
   },

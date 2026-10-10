@@ -1,241 +1,707 @@
 key	sheet	n	score	margin	flip	scale	result
 mojo-char/bird	00	022	0.424	0.017	-	-	KEEP: score 0.42 / margin 0.02 not confident
-mojo-char/bo	00	000	0.112	0.204	-	0.87	REPLACE
-mojo-char/bo-celebrate	06	004	0.123	0.257	-	0.93	REPLACE
-mojo-char/bo-excited	00	004	0.106	0.126	-	0.84	REPLACE
-mojo-char/bo-goggles	06	008	0.118	0.218	-	0.95	REPLACE
-mojo-char/bo-jump	06	001	0.114	0.179	-	0.94	REPLACE
-mojo-char/bo-main	00	000	0.122	0.189	-	0.48	REPLACE
-mojo-char/bo-sheet10	00	003	0.123	0.188	F	0.64	REPLACE
-mojo-char/bo-sit	06	007	0.106	0.358	-	0.93	REPLACE
-mojo-char/bo-surprised	06	005	0.112	0.213	-	0.95	REPLACE
-mojo-char/bo-tablet	06	002	0.115	0.233	-	0.95	REPLACE
-mojo-char/bo-think	00	003	0.114	0.199	-	0.86	REPLACE
-mojo-char/bo-think2	06	003	0.110	0.198	-	0.93	REPLACE
-mojo-char/bo-thumbs	06	000	0.121	0.184	-	0.96	REPLACE
-mojo-char/bo-tools	00	002	0.138	0.203	-	0.84	REPLACE
-mojo-char/bo-wave	00	001	0.115	0.106	-	0.84	REPLACE
-mojo-char/bo-wink	06	006	0.104	0.243	-	0.95	REPLACE
-mojo-char/build-bot	04	007	0.141	0.278	-	0.97	REPLACE
+mojo-char/bo	00	000	0.112	0.204	-	-	KEEP: phase 1 result
+mojo-char/bo-celebrate	06	004	0.123	0.257	-	-	KEEP: phase 1 result
+mojo-char/bo-excited	00	004	0.106	0.126	-	-	KEEP: phase 1 result
+mojo-char/bo-goggles	06	008	0.118	0.218	-	-	KEEP: phase 1 result
+mojo-char/bo-jump	06	001	0.114	0.179	-	-	KEEP: phase 1 result
+mojo-char/bo-main	00	000	0.122	0.189	-	-	KEEP: phase 1 result
+mojo-char/bo-sheet10	00	003	0.123	0.188	F	-	KEEP: phase 1 result
+mojo-char/bo-sit	06	007	0.106	0.358	-	-	KEEP: phase 1 result
+mojo-char/bo-surprised	06	005	0.112	0.213	-	-	KEEP: phase 1 result
+mojo-char/bo-tablet	06	002	0.115	0.233	-	-	KEEP: phase 1 result
+mojo-char/bo-think	00	003	0.114	0.199	-	-	KEEP: phase 1 result
+mojo-char/bo-think2	06	003	0.110	0.198	-	-	KEEP: phase 1 result
+mojo-char/bo-thumbs	06	000	0.121	0.184	-	-	KEEP: phase 1 result
+mojo-char/bo-tools	00	002	0.138	0.203	-	-	KEEP: phase 1 result
+mojo-char/bo-wave	00	001	0.115	0.106	-	-	KEEP: phase 1 result
+mojo-char/bo-wink	06	006	0.104	0.243	-	-	KEEP: phase 1 result
+mojo-char/build-bot	04	007	0.139	0.278	-	-	KEEP: phase 1 result
 mojo-char/cat	04	086	0.464	0.007	F	-	KEEP: score 0.46 / margin 0.01 not confident
 mojo-char/cow	00	022	0.445	0.035	F	-	KEEP: score 0.45 / margin 0.03 not confident
 mojo-char/dog	04	086	0.397	0.010	F	-	KEEP: score 0.40 / margin 0.01 not confident
-mojo-char/float	00	008	0.146	0.163	-	0.84	REPLACE
+mojo-char/float	00	008	0.146	0.163	-	-	KEEP: phase 1 result
 mojo-char/float-curious	06	010	0.323	0.063	-	-	KEEP: old art carries the question mark
-mojo-char/float-happy	06	009	0.181	0.189	-	0.92	REPLACE
+mojo-char/float-happy	06	009	0.181	0.189	-	-	KEEP: phase 1 result
 mojo-char/float-love	06	011	0.389	0.070	-	-	KEEP: old art carries the hearts
 mojo-char/float-sheet10	06	010	0.339	0.003	-	-	KEEP: score 0.34 / margin 0.00 not confident
-mojo-char/float2	04	004	0.162	0.166	-	0.95	REPLACE
-mojo-char/grandad	00	007	0.118	0.073	-	0.88	REPLACE
-mojo-char/grandad-arms	06	017	0.162	0.253	-	0.89	REPLACE
-mojo-char/grandad-sheet10	04	002	0.140	0.078	-	1.28	REPLACE
-mojo-char/grandad-thumbs	06	016	0.122	0.189	-	0.87	REPLACE
-mojo-char/grandad-wrench	06	018	0.144	0.150	-	0.88	REPLACE
-mojo-char/grandad2	04	002	0.108	0.093	-	0.98	REPLACE
-mojo-char/mechanic-bot	04	005	0.139	0.268	-	0.97	REPLACE
-mojo-char/neon	04	001	0.115	0.279	-	1.20	REPLACE
-mojo-char/neon2	04	001	0.135	0.260	-	1.02	REPLACE
-mojo-char/oona	00	006	0.133	0.231	-	0.83	REPLACE
-mojo-char/oona-play	06	014	0.132	0.335	-	0.92	REPLACE
+mojo-char/float2	04	004	0.162	0.164	-	-	KEEP: phase 1 result
+mojo-char/grandad	00	007	0.118	0.073	-	-	KEEP: phase 1 result
+mojo-char/grandad-arms	06	017	0.162	0.253	-	-	KEEP: phase 1 result
+mojo-char/grandad-sheet10	04	002	0.140	0.078	-	-	KEEP: phase 1 result
+mojo-char/grandad-thumbs	06	016	0.122	0.189	-	-	KEEP: phase 1 result
+mojo-char/grandad-wrench	06	018	0.144	0.150	-	-	KEEP: phase 1 result
+mojo-char/grandad2	04	002	0.108	0.093	-	-	KEEP: phase 1 result
+mojo-char/mechanic-bot	04	005	0.139	0.268	-	-	KEEP: phase 1 result
+mojo-char/neon	04	001	0.115	0.279	-	-	KEEP: phase 1 result
+mojo-char/neon2	04	001	0.134	0.263	-	-	KEEP: phase 1 result
+mojo-char/oona	00	006	0.133	0.231	-	-	KEEP: phase 1 result
+mojo-char/oona-play	06	014	0.132	0.335	-	-	KEEP: phase 1 result
 mojo-char/oona-run	06	013	0.307	0.138	-	-	KEEP: score 0.31 / margin 0.14 not confident
-mojo-char/oona-sheet10	00	006	0.129	0.233	-	0.85	REPLACE
-mojo-char/oona-sit	06	012	0.163	0.182	-	0.92	REPLACE
+mojo-char/oona-sheet10	00	006	0.130	0.232	-	-	KEEP: phase 1 result
+mojo-char/oona-sit	06	012	0.163	0.182	-	-	KEEP: phase 1 result
 mojo-char/oona-sleep	06	074	0.528	0.020	-	-	KEEP: old art carries the zzz; new sleeping dog has none
-mojo-char/oona2	04	003	0.135	0.210	-	0.99	REPLACE
-mojo-char/painter-bot	04	006	0.169	0.280	-	0.99	REPLACE
+mojo-char/oona2	04	003	0.138	0.204	-	-	KEEP: phase 1 result
+mojo-char/painter-bot	04	006	0.169	0.280	-	-	KEEP: phase 1 result
 mojo-char/rabbit	06	014	0.541	0.015	F	-	KEEP: score 0.54 / margin 0.01 not confident
-mojo-char/race-bot	04	008	0.160	0.297	-	1.00	REPLACE
+mojo-char/race-bot	04	008	0.160	0.297	-	-	KEEP: phase 1 result
 mojo-char/sheep	00	022	0.435	0.017	F	-	KEEP: score 0.44 / margin 0.02 not confident
-mojo-chase/items/banana	05	015	0.013	0.543	-	0.91	REPLACE
-mojo-chase/items/barrel	05	011	0.014	0.139	-	0.88	REPLACE
-mojo-chase/items/barrier	05	013	0.013	0.530	-	0.87	REPLACE
-mojo-chase/items/boost-pad	05	018	0.012	0.412	-	0.93	REPLACE
-mojo-chase/items/bridge	04	026	0.393	0.005	F	-	KEEP: score 0.39 / margin 0.00 not confident
-mojo-chase/items/coin	10	001	0.096	0.041	-	0.97	REPLACE
-mojo-chase/items/cone	05	014	0.010	0.240	-	0.89	REPLACE
-mojo-chase/items/crate	05	010	0.012	0.160	-	0.87	REPLACE
-mojo-chase/items/heart	00	029	0.097	0.076	F	1.73	REPLACE
-mojo-chase/items/magnet	05	007	0.116	0.399	-	0.95	REPLACE
-mojo-chase/items/mystery	10	013	0.267	0.010	-	-	KEEP: new sheets have no question block (best match is a plain crate)
-mojo-chase/items/oil	05	017	0.011	0.453	-	0.92	REPLACE
-mojo-chase/items/pothole	04	019	0.401	0.004	-	-	KEEP: score 0.40 / margin 0.00 not confident
-mojo-chase/items/ramp	05	019	0.012	0.393	-	0.94	REPLACE
-mojo-chase/items/rocket	05	008	0.000	0.000	-	0.98	REPLACE (identity forced by eye)
-mojo-chase/items/shield	05	009	0.134	0.181	-	0.98	REPLACE
-mojo-chase/items/star	05	005	0.072	0.080	-	0.96	REPLACE
-mojo-chase/items/stopwatch	06	056	0.000	0.000	-	2.00	REPLACE (identity forced by eye)
-mojo-chase/items/tyres-2	05	012	0.252	0.046	-	-	KEEP: new sheets only have the 3-stack
-mojo-chase/items/tyres-3	05	012	0.008	0.231	-	0.85	REPLACE
-mojo-chase/props/banner-blue	12	004	0.620	0.066	-	-	KEEP: score 0.62 / margin 0.07 not confident
-mojo-chase/props/banner-red	12	004	0.584	0.075	-	-	KEEP: score 0.58 / margin 0.08 not confident
-mojo-chase/props/barrel-oil	05	012	0.393	0.069	-	-	KEEP: score 0.39 / margin 0.07 not confident
+mojo-chase/items/banana	05	015	0.013	0.541	-	-	KEEP: phase 1 result
+mojo-chase/items/barrel	05	011	0.014	0.139	-	-	KEEP: phase 1 result
+mojo-chase/items/barrier	05	013	0.013	0.451	-	-	KEEP: phase 1 result
+mojo-chase/items/boost-pad	05	018	0.011	0.409	-	-	KEEP: phase 1 result
+mojo-chase/items/bridge	21	007	0.375	0.017	F	-	KEEP: score 0.38 / margin 0.02 not confident
+mojo-chase/items/coin	10	001	0.093	0.042	-	-	KEEP: phase 1 result
+mojo-chase/items/cone	05	014	0.010	0.240	-	-	KEEP: phase 1 result
+mojo-chase/items/crate	05	010	0.012	0.160	-	-	KEEP: phase 1 result
+mojo-chase/items/heart	00	029	0.093	0.077	F	-	KEEP: phase 1 result
+mojo-chase/items/magnet	05	007	0.111	0.391	-	-	KEEP: phase 1 result
+mojo-chase/items/mystery	21	015	0.231	0.036	F	-	KEEP: new sheets have no question block (best match is a plain crate)
+mojo-chase/items/oil	05	017	0.011	0.453	-	-	KEEP: phase 1 result
+mojo-chase/items/pothole	21	020	0.396	0.005	-	-	KEEP: score 0.40 / margin 0.00 not confident
+mojo-chase/items/ramp	05	019	0.012	0.393	-	-	KEEP: phase 1 result
+mojo-chase/items/rocket	05	008	0.088	0.223	-	-	KEEP: phase 1 result
+mojo-chase/items/shield	05	009	0.129	0.185	-	-	KEEP: phase 1 result
+mojo-chase/items/star	05	005	0.069	0.081	-	-	KEEP: phase 1 result
+mojo-chase/items/stopwatch	06	056	0.152	0.105	-	-	KEEP: phase 1 result
+mojo-chase/items/tyres-2	05	012	0.252	0.019	-	-	KEEP: new sheets only have the 3-stack
+mojo-chase/items/tyres-3	05	012	0.008	0.231	-	-	KEEP: phase 1 result
+mojo-chase/props/banner-blue	21	035	0.528	0.092	-	-	KEEP: score 0.53 / margin 0.09 not confident
+mojo-chase/props/banner-red	21	035	0.535	0.049	-	-	KEEP: score 0.53 / margin 0.05 not confident
+mojo-chase/props/barrel-oil	21	029	0.387	0.006	-	-	KEEP: score 0.39 / margin 0.01 not confident
 mojo-chase/props/boulders	10	017	0.259	0.013	-	-	KEEP: score 0.26 / margin 0.01 not confident
-mojo-chase/props/bush	05	020	0.011	0.284	-	0.91	REPLACE
-mojo-chase/props/cactus	05	022	0.014	0.413	-	0.89	REPLACE
+mojo-chase/props/bush	05	020	0.011	0.284	-	-	KEEP: phase 1 result
+mojo-chase/props/cactus	05	022	0.014	0.413	-	-	KEEP: phase 1 result
 mojo-chase/props/cactus-2	05	022	0.460	0.012	-	-	KEEP: score 0.46 / margin 0.01 not confident
 mojo-chase/props/fence	09	021	0.478	0.050	-	-	KEEP: score 0.48 / margin 0.05 not confident
 mojo-chase/props/guardrail	02	017	0.399	0.040	-	-	KEEP: score 0.40 / margin 0.04 not confident
-mojo-chase/props/guardrail-2	02	010	0.507	0.008	-	-	KEEP: score 0.51 / margin 0.01 not confident
+mojo-chase/props/guardrail-2	02	010	0.507	0.000	-	-	KEEP: score 0.51 / margin 0.00 not confident
 mojo-chase/props/hay	10	013	0.309	0.008	-	-	KEEP: score 0.31 / margin 0.01 not confident
 mojo-chase/props/hedge	02	018	0.408	0.015	-	-	KEEP: score 0.41 / margin 0.01 not confident
 mojo-chase/props/jersey	02	018	0.452	0.022	-	-	KEEP: score 0.45 / margin 0.02 not confident
-mojo-chase/props/jersey-2	05	019	0.479	0.041	-	-	KEEP: score 0.48 / margin 0.04 not confident
-mojo-chase/props/lamp	05	023	0.038	0.409	-	0.95	REPLACE
+mojo-chase/props/jersey-2	21	062	0.476	0.001	-	-	KEEP: score 0.48 / margin 0.00 not confident
+mojo-chase/props/lamp	05	023	0.016	0.427	-	-	KEEP: phase 1 result
 mojo-chase/props/palm	02	003	0.501	0.010	-	-	KEEP: score 0.50 / margin 0.01 not confident
 mojo-chase/props/pine	02	001	0.414	0.066	-	-	KEEP: score 0.41 / margin 0.07 not confident
 mojo-chase/props/planter	02	018	0.427	0.006	-	-	KEEP: score 0.43 / margin 0.01 not confident
-mojo-chase/props/rail-wood	02	010	0.532	0.039	-	-	KEEP: score 0.53 / margin 0.04 not confident
-mojo-chase/props/rock	05	021	0.008	0.314	-	0.93	REPLACE
-mojo-chase/props/rocks	05	021	0.283	0.054	-	-	KEEP: score 0.28 / margin 0.05 not confident
+mojo-chase/props/rail-wood	21	013	0.465	0.054	-	-	KEEP: score 0.47 / margin 0.05 not confident
+mojo-chase/props/rock	05	021	0.008	0.289	-	-	KEEP: phase 1 result
+mojo-chase/props/rocks	21	016	0.282	0.001	-	-	KEEP: score 0.28 / margin 0.00 not confident
 mojo-chase/props/sign	05	024	0.352	0.092	-	-	KEEP: score 0.35 / margin 0.09 not confident
 mojo-chase/props/snow-pine	02	001	0.503	0.022	-	-	KEEP: score 0.50 / margin 0.02 not confident
-mojo-chase/props/stone-wall	09	010	0.405	0.001	-	-	KEEP: score 0.41 / margin 0.00 not confident
+mojo-chase/props/stone-wall	21	016	0.392	0.013	-	-	KEEP: score 0.39 / margin 0.01 not confident
 mojo-chase/props/tree-round	05	022	0.455	0.015	-	-	KEEP: score 0.46 / margin 0.02 not confident
 mojo-chase/props/tree-small	02	000	0.370	0.004	-	-	KEEP: score 0.37 / margin 0.00 not confident
 mojo-chase/props/windmill	12	004	0.507	0.036	-	-	KEEP: score 0.51 / margin 0.04 not confident
-mojo-chase/robbers/robber-beanie	05	000	0.129	0.182	-	0.90	REPLACE
-mojo-chase/robbers/robber-cap	05	001	0.109	0.218	-	0.92	REPLACE
-mojo-chase/robbers/robber-cowboy	05	002	0.105	0.206	-	0.91	REPLACE
-mojo-chase/robbers/robber-helmet	05	004	0.122	0.238	-	0.92	REPLACE
-mojo-chase/vehicles/army	07	022	0.134	0.133	-	1.01	REPLACE
-mojo-chase/vehicles/bad1	07	000	0.166	0.160	-	1.02	REPLACE
-mojo-chase/vehicles/big	07	016	0.156	0.149	-	1.00	REPLACE
-mojo-chase/vehicles/cash	07	003	0.152	0.121	-	0.99	REPLACE
-mojo-chase/vehicles/chaos	07	013	0.156	0.164	-	0.98	REPLACE
-mojo-chase/vehicles/fuel	07	012	0.148	0.140	-	0.99	REPLACE
-mojo-chase/vehicles/joke	07	010	0.158	0.163	-	1.00	REPLACE
-mojo-chase/vehicles/junk	07	017	0.146	0.115	-	1.00	REPLACE
-mojo-chase/vehicles/logs	07	011	0.144	0.147	-	0.99	REPLACE
-mojo-chase/vehicles/loot	07	006	0.149	0.157	-	0.99	REPLACE
-mojo-chase/vehicles/police-van	07	015	0.170	0.101	-	1.00	REPLACE
-mojo-chase/vehicles/rich	07	019	0.162	0.097	-	0.99	REPLACE
-mojo-chase/vehicles/speed	07	023	0.170	0.155	-	1.00	REPLACE
-mojo-chase/vehicles/steal	07	005	0.151	0.134	-	1.00	REPLACE
-mojo-chase/vehicles/striped-01	11	000	0.195	0.177	-	1.01	REPLACE
-mojo-chase/vehicles/striped-02	11	001	0.157	0.145	-	0.98	REPLACE
-mojo-chase/vehicles/striped-03	11	002	0.174	0.127	-	0.99	REPLACE
-mojo-chase/vehicles/striped-04	11	003	0.166	0.167	-	1.00	REPLACE
-mojo-chase/vehicles/striped-05	11	004	0.164	0.197	-	1.00	REPLACE
-mojo-chase/vehicles/striped-06	11	005	0.196	0.254	-	1.02	REPLACE
-mojo-chase/vehicles/striped-07	11	006	0.172	0.131	-	0.97	REPLACE
-mojo-chase/vehicles/striped-08	11	007	0.185	0.139	-	0.96	REPLACE
-mojo-chase/vehicles/striped-09	11	008	0.164	0.094	-	0.97	REPLACE
-mojo-chase/vehicles/striped-10	11	009	0.139	0.191	-	1.00	REPLACE
-mojo-chase/vehicles/striped-11	11	010	0.182	0.086	-	1.00	REPLACE
-mojo-chase/vehicles/striped-12	11	011	0.164	0.153	-	1.01	REPLACE
-mojo-chase/vehicles/striped-13	11	012	0.176	0.173	-	1.00	REPLACE
-mojo-chase/vehicles/striped-14	11	013	0.172	0.131	-	0.98	REPLACE
-mojo-chase/vehicles/striped-15	11	014	0.174	0.131	-	0.99	REPLACE
-mojo-chase/vehicles/striped-16	11	015	0.185	0.182	-	1.02	REPLACE
-mojo-chase/vehicles/striped-17	11	016	0.142	0.173	-	1.02	REPLACE
-mojo-chase/vehicles/striped-18	11	017	0.157	0.132	-	1.00	REPLACE
-mojo-chase/vehicles/striped-19	11	018	0.196	0.096	-	0.99	REPLACE
-mojo-chase/vehicles/striped-20	11	019	0.186	0.092	-	1.00	REPLACE
-mojo-chase/vehicles/striped-21	11	020	0.198	0.141	-	0.99	REPLACE
-mojo-chase/vehicles/striped-22	11	021	0.179	0.154	-	0.99	REPLACE
-mojo-chase/vehicles/striped-24	11	023	0.129	0.198	-	1.03	REPLACE
-mojo-chase/vehicles/striped-25	11	024	0.173	0.169	-	0.96	REPLACE
-mojo-chase/vehicles/sweet	07	008	0.172	0.215	-	0.99	REPLACE
-mojo-chase/vehicles/thief	07	001	0.137	0.168	-	1.01	REPLACE
-mojo-chase/vehicles/trash	07	009	0.161	0.154	-	0.98	REPLACE
-mojo-chase/vehicles/vroom	07	002	0.151	0.150	-	1.00	REPLACE
-mojo-chase/vehicles/work	07	020	0.158	0.145	-	1.02	REPLACE
-mojo-chase/vehicles/yum	07	018	0.172	0.232	-	1.00	REPLACE
-mojo-hero/base-1	08	000	0.188	0.175	-	0.95	REPLACE
-mojo-hero/base-2	08	001	0.189	0.193	-	0.94	REPLACE
-mojo-hero/base-bo	08	012	0.189	0.075	-	1.01	REPLACE
-mojo-hero/base-bo-front	08	015	0.181	0.083	-	1.01	REPLACE
-mojo-hero/base-front	08	011	0.180	0.096	-	0.96	REPLACE
-mojo-hero/boat	08	016	0.167	0.302	-	0.94	REPLACE
-mojo-hero/cargo	08	017	0.176	0.176	-	1.00	REPLACE
-mojo-hero/chopper-1	08	003	0.192	0.192	-	0.96	REPLACE
-mojo-hero/chopper-2	08	022	0.203	0.177	-	0.96	REPLACE
-mojo-hero/chopper-3	08	023	0.216	0.165	-	0.92	REPLACE
-mojo-hero/chopper-4	08	024	0.194	0.223	-	0.95	REPLACE
-mojo-hero/dozer-1	08	004	0.169	0.138	-	0.92	REPLACE
-mojo-hero/dozer-2	08	005	0.175	0.122	-	0.96	REPLACE
-mojo-hero/dozer-3	08	006	0.163	0.255	-	0.91	REPLACE
-mojo-hero/jet-1	08	018	0.136	0.357	-	1.03	REPLACE
-mojo-hero/jet-2	08	019	0.153	0.170	-	0.98	REPLACE
-mojo-hero/jet-3	08	020	0.143	0.203	-	1.00	REPLACE
-mojo-hero/jet-4	08	021	0.146	0.344	-	0.93	REPLACE
-mojo-hero/monster-1	08	007	0.131	0.259	-	0.95	REPLACE
-mojo-hero/monster-2	08	008	0.140	0.253	-	0.88	REPLACE
-mojo-hero/monster-3	08	009	0.133	0.310	-	0.90	REPLACE
-mojo-hero/offroad	08	014	0.176	0.176	-	0.94	REPLACE
-mojo-hero/racer	08	002	0.165	0.354	-	0.96	REPLACE
-mojo-hero/rescue	08	013	0.186	0.208	-	0.95	REPLACE
-mojo-hero/van	08	010	0.185	0.264	-	0.97	REPLACE
-mojo-rear/ambulance	03	015	0.194	0.191	-	0.98	REPLACE
-mojo-rear/base	03	011	0.188	0.167	-	1.05	REPLACE
-mojo-rear/base-neon	03	010	0.227	0.060	-	1.01	REPLACE
-mojo-rear/boat	03	016	0.167	0.348	-	0.93	REPLACE
-mojo-rear/cargo	03	012	0.217	0.075	-	1.00	REPLACE
-mojo-rear/chopper	03	003	0.177	0.215	-	0.99	REPLACE
-mojo-rear/chopper-2	03	022	0.187	0.137	-	1.06	REPLACE
-mojo-rear/chopper-3	03	023	0.203	0.144	-	1.04	REPLACE
-mojo-rear/crane	03	000	0.218	0.136	-	1.02	REPLACE
-mojo-rear/crane-2	03	001	0.238	0.113	-	1.02	REPLACE
-mojo-rear/delivery	03	017	0.197	0.122	-	1.02	REPLACE
-mojo-rear/digger	03	006	0.135	0.233	-	0.99	REPLACE
-mojo-rear/dumper	03	013	0.193	0.165	-	1.00	REPLACE
-mojo-rear/excavator	03	004	0.163	0.313	-	0.98	REPLACE
-mojo-rear/hover	03	024	0.160	0.292	-	0.97	REPLACE
-mojo-rear/jet	03	018	0.128	0.093	-	1.04	REPLACE
-mojo-rear/jet-2	03	019	0.144	0.092	-	1.04	REPLACE
-mojo-rear/ladder	03	002	0.243	0.259	-	0.96	REPLACE
-mojo-rear/loader	03	005	0.151	0.209	-	0.99	REPLACE
-mojo-rear/monster	03	007	0.139	0.119	-	0.97	REPLACE
-mojo-rear/monster-2	03	008	0.143	0.075	-	0.98	REPLACE
-mojo-rear/plane	03	020	0.142	0.316	-	1.01	REPLACE
-mojo-rear/prop-plane	03	021	0.128	0.261	-	0.98	REPLACE
-mojo-rear/snow	03	014	0.189	0.156	-	1.00	REPLACE
-mojo-rear/tow	03	009	0.164	0.195	-	0.97	REPLACE
-mojo-top/aerial-ladder	00	022	0.414	0.043	-	-	KEEP: no counterpart in the sheets
-mojo-top/ambulance	13	013	0.414	0.027	-	-	KEEP: no counterpart in the sheets
-mojo-top/balloon	00	022	0.448	0.041	-	-	KEEP: no counterpart in the sheets
-mojo-top/base	00	005	0.243	0.196	-	-	KEEP: no counterpart in the sheets
-mojo-top/base-sheet04	00	005	0.384	0.094	-	-	KEEP: no counterpart in the sheets
-mojo-top/base-sheet05	00	005	0.359	0.107	-	-	KEEP: no counterpart in the sheets
-mojo-top/base-sheet10	00	005	0.324	0.102	-	-	KEEP: no counterpart in the sheets
-mojo-top/boat	00	005	0.421	0.031	-	-	KEEP: no counterpart in the sheets
-mojo-top/bridge	00	022	0.436	0.030	-	-	KEEP: no counterpart in the sheets
-mojo-top/camera	00	022	0.460	0.007	-	-	KEEP: no counterpart in the sheets
-mojo-top/cargo-crane	00	022	0.448	0.008	-	-	KEEP: no counterpart in the sheets
-mojo-top/chopper	00	022	0.479	0.025	-	-	KEEP: no counterpart in the sheets
-mojo-top/crane	00	022	0.468	0.010	-	-	KEEP: no counterpart in the sheets
-mojo-top/delivery	13	013	0.414	0.029	-	-	KEEP: no counterpart in the sheets
-mojo-top/dozer	00	005	0.464	0.024	-	-	KEEP: no counterpart in the sheets
-mojo-top/drill	00	022	0.439	0.031	-	-	KEEP: no counterpart in the sheets
-mojo-top/drilling	00	005	0.393	0.022	-	-	KEEP: no counterpart in the sheets
-mojo-top/dumper	00	005	0.433	0.018	-	-	KEEP: no counterpart in the sheets
-mojo-top/farm	13	013	0.389	0.047	-	-	KEEP: no counterpart in the sheets
-mojo-top/fire	00	022	0.416	0.000	-	-	KEEP: no counterpart in the sheets
-mojo-top/forklift	08	008	0.454	0.009	-	-	KEEP: no counterpart in the sheets
-mojo-top/fuel	13	013	0.450	0.006	-	-	KEEP: no counterpart in the sheets
-mojo-top/garbage	00	022	0.440	0.005	-	-	KEEP: no counterpart in the sheets
-mojo-top/harvester	08	005	0.426	0.003	-	-	KEEP: no counterpart in the sheets
-mojo-top/ice-cream	00	005	0.442	0.020	-	-	KEEP: no counterpart in the sheets
-mojo-top/jet	00	005	0.465	0.019	-	-	KEEP: no counterpart in the sheets
-mojo-top/jumper	08	014	0.385	0.001	-	-	KEEP: no counterpart in the sheets
-mojo-top/lift	00	022	0.434	0.011	-	-	KEEP: no counterpart in the sheets
-mojo-top/logging	00	005	0.420	0.022	-	-	KEEP: no counterpart in the sheets
-mojo-top/mixer	00	005	0.447	0.003	-	-	KEEP: no counterpart in the sheets
-mojo-top/monster	08	014	0.377	0.003	-	-	KEEP: no counterpart in the sheets
-mojo-top/police	00	005	0.381	0.045	-	-	KEEP: no counterpart in the sheets
-mojo-top/racer	00	005	0.401	0.053	-	-	KEEP: no counterpart in the sheets
-mojo-top/recycling	00	005	0.395	0.001	-	-	KEEP: no counterpart in the sheets
-mojo-top/rescue	00	022	0.473	0.023	-	-	KEEP: no counterpart in the sheets
-mojo-top/rocket	00	005	0.442	0.020	-	-	KEEP: no counterpart in the sheets
-mojo-top/satellite	00	022	0.421	0.055	-	-	KEEP: no counterpart in the sheets
-mojo-top/searchlight	00	022	0.454	0.030	-	-	KEEP: no counterpart in the sheets
-mojo-top/snow-plow	08	006	0.424	0.003	-	-	KEEP: no counterpart in the sheets
-mojo-top/space-lab	00	022	0.420	0.028	-	-	KEEP: no counterpart in the sheets
-mojo-top/submarine	00	005	0.445	0.007	-	-	KEEP: no counterpart in the sheets
-mojo-top/sweeper	13	013	0.440	0.051	-	-	KEEP: no counterpart in the sheets
-mojo-top/towing	00	005	0.474	0.017	-	-	KEEP: no counterpart in the sheets
-mojo-top/tree-cutter	00	022	0.453	0.022	-	-	KEEP: no counterpart in the sheets
-mojo-top/water	00	005	0.416	0.005	-	-	KEEP: no counterpart in the sheets
-mojo-top/workshop	08	017	0.415	0.004	-	-	KEEP: no counterpart in the sheets
-mojo-top/wrecking-ball	00	022	0.475	0.014	-	-	KEEP: no counterpart in the sheets
-# mojo-turn rebuilt from sheet 01 (3 forms) + sheet 13 (6 forms); scale per sheet {1: 0.696, 13: 0.886}
+mojo-chase/robbers/robber-beanie	05	000	0.125	0.185	-	-	KEEP: phase 1 result
+mojo-chase/robbers/robber-cap	05	001	0.107	0.221	-	-	KEEP: phase 1 result
+mojo-chase/robbers/robber-cowboy	05	002	0.102	0.208	-	-	KEEP: phase 1 result
+mojo-chase/robbers/robber-helmet	05	004	0.117	0.245	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/army	07	022	0.128	0.137	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/bad1	07	000	0.160	0.163	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/big	07	016	0.149	0.154	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/cash	07	003	0.147	0.125	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/chaos	07	013	0.151	0.168	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/fuel	07	012	0.143	0.144	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/joke	07	010	0.151	0.170	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/junk	07	017	0.142	0.117	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/logs	07	011	0.139	0.151	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/loot	07	006	0.142	0.161	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/police-van	07	015	0.164	0.106	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/rich	07	019	0.155	0.104	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/speed	07	023	0.164	0.161	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/steal	07	005	0.145	0.138	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-01	11	000	0.186	0.184	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-02	11	001	0.152	0.149	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-03	11	002	0.167	0.130	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-04	11	003	0.161	0.170	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-05	11	004	0.158	0.202	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-06	11	005	0.189	0.260	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-07	11	006	0.164	0.135	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-08	11	007	0.177	0.147	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-09	11	008	0.157	0.097	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-10	11	009	0.135	0.194	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-11	11	010	0.176	0.088	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-12	11	011	0.157	0.158	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-13	11	012	0.168	0.181	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-14	11	013	0.167	0.134	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-15	11	014	0.167	0.136	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-16	11	015	0.178	0.188	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-17	11	016	0.136	0.178	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-18	11	017	0.152	0.134	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-19	11	018	0.187	0.100	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-20	11	019	0.180	0.095	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-21	11	020	0.191	0.146	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-22	11	021	0.172	0.157	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-24	11	023	0.125	0.202	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/striped-25	11	024	0.167	0.174	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/sweet	07	008	0.166	0.221	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/thief	07	001	0.131	0.172	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/trash	07	009	0.155	0.160	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/vroom	07	002	0.146	0.154	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/work	07	020	0.151	0.152	-	-	KEEP: phase 1 result
+mojo-chase/vehicles/yum	07	018	0.164	0.240	-	-	KEEP: phase 1 result
+mojo-fx/boost-flame-sheet13	21	062	0.482	0.006	-	-	KEEP: score 0.48 / margin 0.01 not confident
+mojo-fx/checkpoint	21	062	0.493	0.078	-	-	KEEP: score 0.49 / margin 0.08 not confident
+mojo-fx/collect	21	062	0.574	0.077	-	-	KEEP: score 0.57 / margin 0.08 not confident
+mojo-fx/confetti	21	062	0.556	0.084	-	-	KEEP: score 0.56 / margin 0.08 not confident
+mojo-fx/confetti-sheet03	21	062	0.609	0.024	-	-	KEEP: score 0.61 / margin 0.02 not confident
+mojo-fx/confetti-sheet13	21	041	0.705	0.014	-	-	KEEP: score 0.70 / margin 0.01 not confident
+mojo-fx/confetti2	21	062	0.646	0.019	-	-	KEEP: score 0.65 / margin 0.02 not confident
+mojo-fx/dust	21	062	0.378	0.115	-	-	KEEP: score 0.38 / margin 0.12 not confident
+mojo-fx/dust-cloud	21	062	0.254	0.162	-	0.66	REPLACE
+mojo-fx/effects	21	018	0.629	0.037	-	-	KEEP: score 0.63 / margin 0.04 not confident
+mojo-fx/explosion	21	063	0.000	0.000	-	0.61	REPLACE (identity forced by eye)
+mojo-fx/explosion-sheet13	21	063	0.000	0.000	-	0.75	REPLACE (identity forced by eye)
+mojo-fx/explosion2	21	063	0.000	0.000	-	0.73	REPLACE (identity forced by eye)
+mojo-fx/fireworks	21	062	0.610	0.030	-	-	KEEP: score 0.61 / margin 0.03 not confident
+mojo-fx/flame-road	21	012	0.420	0.067	-	-	KEEP: score 0.42 / margin 0.07 not confident
+mojo-fx/highlight	21	057	0.440	0.007	-	-	KEEP: score 0.44 / margin 0.01 not confident
+mojo-fx/invalid	21	015	0.369	0.022	-	-	KEEP: score 0.37 / margin 0.02 not confident
+mojo-fx/level-up	21	062	0.541	0.034	-	-	KEEP: score 0.54 / margin 0.03 not confident
+mojo-fx/mud-splash	21	006	0.445	0.017	-	-	KEEP: score 0.45 / margin 0.02 not confident
+mojo-fx/path-preview-reference-sheet03	21	059	0.352	0.003	-	-	KEEP: score 0.35 / margin 0.00 not confident
+mojo-fx/portal	21	066	0.273	0.061	-	0.99	REPLACE
+mojo-fx/portal-sheet13	21	066	0.236	0.071	-	0.83	REPLACE
+mojo-fx/portal2	21	066	0.280	0.084	-	0.79	REPLACE
+mojo-fx/repair	21	065	0.000	0.000	-	0.90	REPLACE (identity forced by eye)
+mojo-fx/repair-sparks	21	062	0.499	0.082	-	-	KEEP: score 0.50 / margin 0.08 not confident
+mojo-fx/selection	21	057	0.467	0.025	-	-	KEEP: score 0.47 / margin 0.02 not confident
+mojo-fx/skid	21	062	0.525	0.026	-	-	KEEP: score 0.53 / margin 0.03 not confident
+mojo-fx/smoke	21	019	0.449	0.015	-	-	KEEP: score 0.45 / margin 0.02 not confident
+mojo-fx/snow-spray	21	062	0.501	0.070	-	-	KEEP: score 0.50 / margin 0.07 not confident
+mojo-fx/sparkle	21	063	0.470	0.018	-	-	KEEP: score 0.47 / margin 0.02 not confident
+mojo-fx/sparks	21	062	0.463	0.036	-	-	KEEP: score 0.46 / margin 0.04 not confident
+mojo-fx/sparks2	21	062	0.423	0.124	-	-	KEEP: score 0.42 / margin 0.12 not confident
+mojo-fx/speed-boost	21	056	0.380	0.006	-	-	KEEP: score 0.38 / margin 0.01 not confident
+mojo-fx/speed-trail	21	064	0.000	0.000	-	0.86	REPLACE (identity forced by eye)
+mojo-fx/splash	21	036	0.489	0.061	-	-	KEEP: score 0.49 / margin 0.06 not confident
+mojo-fx/tire-smoke	21	062	0.313	0.146	-	-	KEEP: score 0.31 / margin 0.15 not confident
+mojo-fx/valid	21	019	0.441	0.041	-	-	KEEP: score 0.44 / margin 0.04 not confident
+mojo-fx/water-splash	21	010	0.434	0.013	-	-	KEEP: score 0.43 / margin 0.01 not confident
+mojo-hero/base-1	08	000	0.188	0.175	-	-	KEEP: phase 1 result
+mojo-hero/base-2	08	001	0.191	0.190	-	-	KEEP: phase 1 result
+mojo-hero/base-bo	08	012	0.191	0.072	-	-	KEEP: phase 1 result
+mojo-hero/base-bo-front	08	015	0.181	0.083	-	-	KEEP: phase 1 result
+mojo-hero/base-front	08	011	0.180	0.096	-	-	KEEP: phase 1 result
+mojo-hero/boat	08	016	0.167	0.302	-	-	KEEP: phase 1 result
+mojo-hero/cargo	08	017	0.175	0.178	-	-	KEEP: phase 1 result
+mojo-hero/chopper-1	08	003	0.192	0.192	-	-	KEEP: phase 1 result
+mojo-hero/chopper-2	08	022	0.203	0.177	-	-	KEEP: phase 1 result
+mojo-hero/chopper-3	08	023	0.216	0.165	-	-	KEEP: phase 1 result
+mojo-hero/chopper-4	08	024	0.194	0.223	-	-	KEEP: phase 1 result
+mojo-hero/dozer-1	08	004	0.169	0.139	-	-	KEEP: phase 1 result
+mojo-hero/dozer-2	08	005	0.173	0.122	-	-	KEEP: phase 1 result
+mojo-hero/dozer-3	08	006	0.164	0.255	-	-	KEEP: phase 1 result
+mojo-hero/jet-1	08	018	0.136	0.357	-	-	KEEP: phase 1 result
+mojo-hero/jet-2	08	019	0.155	0.166	-	-	KEEP: phase 1 result
+mojo-hero/jet-3	08	020	0.144	0.204	-	-	KEEP: phase 1 result
+mojo-hero/jet-4	08	021	0.146	0.344	-	-	KEEP: phase 1 result
+mojo-hero/monster-1	08	007	0.131	0.259	-	-	KEEP: phase 1 result
+mojo-hero/monster-2	08	008	0.140	0.253	-	-	KEEP: phase 1 result
+mojo-hero/monster-3	08	009	0.133	0.310	-	-	KEEP: phase 1 result
+mojo-hero/offroad	08	014	0.177	0.175	-	-	KEEP: phase 1 result
+mojo-hero/racer	08	002	0.165	0.354	-	-	KEEP: phase 1 result
+mojo-hero/rescue	08	013	0.186	0.208	-	-	KEEP: phase 1 result
+mojo-hero/van	08	010	0.187	0.264	-	-	KEEP: phase 1 result
+mojo-prop/apple-cart	21	015	0.372	0.049	-	-	KEEP: score 0.37 / margin 0.05 not confident
+mojo-prop/attachments	21	018	0.541	0.107	-	-	KEEP: score 0.54 / margin 0.11 not confident
+mojo-prop/backpack	21	016	0.319	0.048	-	-	KEEP: score 0.32 / margin 0.05 not confident
+mojo-prop/banana	21	022	0.491	0.020	-	-	KEEP: score 0.49 / margin 0.02 not confident
+mojo-prop/banana-banner	21	047	0.536	0.010	-	-	KEEP: score 0.54 / margin 0.01 not confident
+mojo-prop/banana-crate	21	015	0.252	0.111	-	-	KEEP: score 0.25 / margin 0.11 not confident
+mojo-prop/banner-crown	21	034	0.630	0.010	-	-	KEEP: score 0.63 / margin 0.01 not confident
+mojo-prop/banner-steps	21	012	0.459	0.084	-	-	KEEP: score 0.46 / margin 0.08 not confident
+mojo-prop/barrel	21	029	0.277	0.083	-	-	KEEP: score 0.28 / margin 0.08 not confident
+mojo-prop/barrel-rope	21	029	0.283	0.097	-	-	KEEP: score 0.28 / margin 0.10 not confident
+mojo-prop/barrel2	21	029	0.257	0.093	-	-	KEEP: score 0.26 / margin 0.09 not confident
+mojo-prop/barrier-sheet15	21	013	0.454	0.125	-	-	KEEP: score 0.45 / margin 0.12 not confident
+mojo-prop/barrier2	21	013	0.164	0.348	-	0.83	REPLACE
+mojo-prop/battery	21	029	0.426	0.086	-	-	KEEP: score 0.43 / margin 0.09 not confident
+mojo-prop/battery-sheet03	21	016	0.485	0.010	-	-	KEEP: score 0.48 / margin 0.01 not confident
+mojo-prop/battery2	21	029	0.470	0.091	-	-	KEEP: score 0.47 / margin 0.09 not confident
+mojo-prop/beach-shells	21	062	0.446	0.041	-	-	KEEP: score 0.45 / margin 0.04 not confident
+mojo-prop/bell	21	043	0.558	0.018	-	-	KEEP: score 0.56 / margin 0.02 not confident
+mojo-prop/bench	21	004	0.386	0.018	-	-	KEEP: score 0.39 / margin 0.02 not confident
+mojo-prop/big-tree	21	030	0.411	0.008	-	-	KEEP: score 0.41 / margin 0.01 not confident
+mojo-prop/bird-blue	21	016	0.498	0.027	-	-	KEEP: score 0.50 / margin 0.03 not confident
+mojo-prop/block-grass	21	015	0.342	0.056	-	-	KEEP: score 0.34 / margin 0.06 not confident
+mojo-prop/blossom-tree	21	016	0.428	0.037	-	-	KEEP: score 0.43 / margin 0.04 not confident
+mojo-prop/blueprint	21	019	0.318	0.009	-	-	KEEP: score 0.32 / margin 0.01 not confident
+mojo-prop/bodies-sheet12	21	018	0.520	0.075	-	-	KEEP: score 0.52 / margin 0.07 not confident
+mojo-prop/bolt	21	024	0.448	0.009	-	-	KEEP: score 0.45 / margin 0.01 not confident
+mojo-prop/bolt-sheet03	21	016	0.435	0.017	-	-	KEEP: score 0.44 / margin 0.02 not confident
+mojo-prop/bridge	21	061	0.380	0.007	-	-	KEEP: score 0.38 / margin 0.01 not confident
+mojo-prop/bridge-arch	21	008	0.394	0.070	-	-	KEEP: score 0.39 / margin 0.07 not confident
+mojo-prop/bridge-broken	21	059	0.404	0.007	-	-	KEEP: score 0.40 / margin 0.01 not confident
+mojo-prop/bridge-road	21	008	0.215	0.221	-	0.84	REPLACE
+mojo-prop/bridge-rope	21	006	0.524	0.021	-	-	KEEP: score 0.52 / margin 0.02 not confident
+mojo-prop/bridge-wood	21	032	0.482	0.023	-	-	KEEP: score 0.48 / margin 0.02 not confident
+mojo-prop/bridge2	21	004	0.394	0.017	-	-	KEEP: score 0.39 / margin 0.02 not confident
+mojo-prop/building-station	21	004	0.424	0.016	-	-	KEEP: score 0.42 / margin 0.02 not confident
+mojo-prop/bumpers	21	004	0.556	0.054	-	-	KEEP: score 0.56 / margin 0.05 not confident
+mojo-prop/bumpers2	21	038	0.189	0.286	-	0.88	REPLACE
+mojo-prop/bush	21	017	0.378	0.031	-	-	KEEP: score 0.38 / margin 0.03 not confident
+mojo-prop/bush-flowers	21	017	0.343	0.054	-	-	KEEP: score 0.34 / margin 0.05 not confident
+mojo-prop/bush-sheet15	21	017	0.192	0.127	-	0.68	REPLACE
+mojo-prop/bush2	21	017	0.198	0.088	-	0.76	REPLACE
+mojo-prop/bush3	21	017	0.275	0.119	-	-	KEEP: score 0.27 / margin 0.12 not confident
+mojo-prop/cactus	21	017	0.416	0.017	-	-	KEEP: score 0.42 / margin 0.02 not confident
+mojo-prop/cactus2	21	016	0.491	0.012	-	-	KEEP: score 0.49 / margin 0.01 not confident
+mojo-prop/campfire	21	012	0.412	0.057	-	-	KEEP: score 0.41 / margin 0.06 not confident
+mojo-prop/cement-swoptop	21	009	0.379	0.013	-	-	KEEP: score 0.38 / margin 0.01 not confident
+mojo-prop/chassis	21	018	0.589	0.027	-	-	KEEP: score 0.59 / margin 0.03 not confident
+mojo-prop/checkered-flag	21	016	0.529	0.024	-	-	KEEP: score 0.53 / margin 0.02 not confident
+mojo-prop/chest	21	015	0.285	0.038	-	-	KEEP: score 0.28 / margin 0.04 not confident
+mojo-prop/chest-gold	21	015	0.252	0.077	-	-	KEEP: score 0.25 / margin 0.08 not confident
+mojo-prop/chest-iron	21	016	0.335	0.004	-	-	KEEP: score 0.34 / margin 0.00 not confident
+mojo-prop/chevron	21	039	0.375	0.023	-	-	KEEP: score 0.37 / margin 0.02 not confident
+mojo-prop/cliff	21	017	0.382	0.007	-	-	KEEP: score 0.38 / margin 0.01 not confident
+mojo-prop/cloud	21	019	0.470	0.007	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-prop/coin	21	022	0.209	0.087	-	0.56	REPLACE
+mojo-prop/coin-crown	21	022	0.117	0.105	-	-	KEEP: old coin carries a crown, the new one a star
+mojo-prop/coin-sack	21	011	0.407	0.043	-	-	KEEP: score 0.41 / margin 0.04 not confident
+mojo-prop/coin-sheet13	21	022	0.149	0.101	-	0.76	REPLACE
+mojo-prop/coin-sheet15	21	022	0.130	0.105	-	0.73	REPLACE
+mojo-prop/coin-star	21	022	0.140	0.082	-	0.83	REPLACE
+mojo-prop/coin2	21	021	0.153	0.097	-	0.83	REPLACE
+mojo-prop/collectibles	21	000	0.498	0.063	-	-	KEEP: score 0.50 / margin 0.06 not confident
+mojo-prop/collectibles2	21	038	0.556	0.083	-	-	KEEP: score 0.56 / margin 0.08 not confident
+mojo-prop/cone-barrier	21	018	0.588	0.008	-	-	KEEP: score 0.59 / margin 0.01 not confident
+mojo-prop/cone-sheet15	21	012	0.197	0.264	-	0.73	REPLACE
+mojo-prop/cone2	21	012	0.172	0.313	-	0.83	REPLACE
+mojo-prop/cone3	21	012	0.241	0.260	-	-	KEEP: score 0.24 / margin 0.26 not confident
+mojo-prop/construction-swoptop	21	016	0.473	0.009	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-prop/consumables	21	038	0.626	0.018	-	-	KEEP: score 0.63 / margin 0.02 not confident
+mojo-prop/crate-sheet15	21	015	0.245	0.091	-	-	KEEP: score 0.24 / margin 0.09 not confident
+mojo-prop/crate2	21	015	0.130	0.191	-	0.80	REPLACE
+mojo-prop/crate3	21	015	0.244	0.081	-	-	KEEP: score 0.24 / margin 0.08 not confident
+mojo-prop/crate4	21	015	0.214	0.146	-	1.83	REPLACE
+mojo-prop/crates	21	016	0.360	0.005	-	-	KEEP: score 0.36 / margin 0.01 not confident
+mojo-prop/crystal	21	019	0.429	0.050	-	-	KEEP: score 0.43 / margin 0.05 not confident
+mojo-prop/crystal-rocks	21	016	0.445	0.028	-	-	KEEP: score 0.45 / margin 0.03 not confident
+mojo-prop/crystal2	21	016	0.474	0.016	-	-	KEEP: score 0.47 / margin 0.02 not confident
+mojo-prop/decal-flag-sheet12	21	029	0.578	0.004	-	-	KEEP: score 0.58 / margin 0.00 not confident
+mojo-prop/decal-flame-sheet12	21	018	0.487	0.007	-	-	KEEP: score 0.49 / margin 0.01 not confident
+mojo-prop/decal-heart-sheet12	21	015	0.358	0.081	-	-	KEEP: score 0.36 / margin 0.08 not confident
+mojo-prop/decal-lightning-sheet12	21	034	0.490	0.057	-	-	KEEP: score 0.49 / margin 0.06 not confident
+mojo-prop/decal-rainbow-sheet12	21	037	0.463	0.028	-	-	KEEP: score 0.46 / margin 0.03 not confident
+mojo-prop/decal-star-1-sheet12	21	023	0.202	0.193	-	0.31	REPLACE
+mojo-prop/decal-star-2-sheet12	21	042	0.387	0.028	-	-	KEEP: score 0.39 / margin 0.03 not confident
+mojo-prop/decal-star-3-sheet12	21	042	0.375	0.025	-	-	KEEP: score 0.38 / margin 0.03 not confident
+mojo-prop/diamond	21	066	0.410	0.057	-	-	KEEP: score 0.41 / margin 0.06 not confident
+mojo-prop/direction-sign	21	018	0.454	0.101	-	-	KEEP: score 0.45 / margin 0.10 not confident
+mojo-prop/dock	21	054	0.400	0.020	-	-	KEEP: score 0.40 / margin 0.02 not confident
+mojo-prop/dock-bridge	21	062	0.412	0.009	-	-	KEEP: score 0.41 / margin 0.01 not confident
+mojo-prop/drill	21	027	0.224	0.285	-	0.86	REPLACE
+mojo-prop/engine	21	030	0.164	0.150	-	0.88	REPLACE
+mojo-prop/env-props	21	018	0.603	0.043	-	-	KEEP: score 0.60 / margin 0.04 not confident
+mojo-prop/exhaust	21	045	0.152	0.334	-	0.87	REPLACE
+mojo-prop/exhausts	21	004	0.563	0.009	-	-	KEEP: score 0.56 / margin 0.01 not confident
+mojo-prop/face-panels	21	038	0.535	0.043	-	-	KEEP: score 0.53 / margin 0.04 not confident
+mojo-prop/face-panels2	21	058	0.431	0.038	-	-	KEEP: score 0.43 / margin 0.04 not confident
+mojo-prop/factory	21	016	0.413	0.021	-	-	KEEP: score 0.41 / margin 0.02 not confident
+mojo-prop/fan	21	036	0.161	0.349	-	0.89	REPLACE
+mojo-prop/fence	21	018	0.423	0.095	-	-	KEEP: score 0.42 / margin 0.09 not confident
+mojo-prop/fence-wood	21	015	0.497	0.014	-	-	KEEP: score 0.50 / margin 0.01 not confident
+mojo-prop/fence2	21	059	0.570	0.015	-	-	KEEP: score 0.57 / margin 0.02 not confident
+mojo-prop/fire-bowl	21	012	0.477	0.017	-	-	KEEP: score 0.48 / margin 0.02 not confident
+mojo-prop/flag-board	21	036	0.542	0.053	-	-	KEEP: score 0.54 / margin 0.05 not confident
+mojo-prop/flag-sheet15	21	043	0.528	0.037	-	-	KEEP: score 0.53 / margin 0.04 not confident
+mojo-prop/flags	21	043	0.307	0.270	-	-	KEEP: score 0.31 / margin 0.27 not confident
+mojo-prop/flower-cactus	21	012	0.498	0.006	-	-	KEEP: score 0.50 / margin 0.01 not confident
+mojo-prop/fountain	21	046	0.463	0.039	-	-	KEEP: score 0.46 / margin 0.04 not confident
+mojo-prop/fountain-wall	21	016	0.369	0.031	-	-	KEEP: score 0.37 / margin 0.03 not confident
+mojo-prop/fuel-can	21	021	0.403	0.003	-	-	KEEP: score 0.40 / margin 0.00 not confident
+mojo-prop/garage	21	016	0.383	0.006	-	-	KEEP: score 0.38 / margin 0.01 not confident
+mojo-prop/garage2	21	016	0.409	0.015	-	-	KEEP: score 0.41 / margin 0.01 not confident
+mojo-prop/gas-station	21	004	0.501	0.007	-	-	KEEP: score 0.50 / margin 0.01 not confident
+mojo-prop/gear	21	016	0.296	0.094	-	-	KEEP: score 0.30 / margin 0.09 not confident
+mojo-prop/gear-sheet03	21	016	0.330	0.092	-	-	KEEP: score 0.33 / margin 0.09 not confident
+mojo-prop/gear-sheet15	21	016	0.287	0.073	-	-	KEEP: score 0.29 / margin 0.07 not confident
+mojo-prop/gem	21	040	0.517	0.005	-	-	KEEP: score 0.52 / margin 0.00 not confident
+mojo-prop/golden-banana	21	062	0.441	0.042	-	-	KEEP: score 0.44 / margin 0.04 not confident
+mojo-prop/gorilla	21	014	0.338	0.006	-	-	KEEP: score 0.34 / margin 0.01 not confident
+mojo-prop/grass-tuft	21	017	0.343	0.092	-	-	KEEP: score 0.34 / margin 0.09 not confident
+mojo-prop/hammer	21	028	0.510	0.010	-	-	KEEP: score 0.51 / margin 0.01 not confident
+mojo-prop/hammer2	21	026	0.148	0.336	-	0.89	REPLACE
+mojo-prop/hay-bale	21	063	0.409	0.037	-	-	KEEP: score 0.41 / margin 0.04 not confident
+mojo-prop/hay-cart	21	015	0.351	0.036	-	-	KEEP: score 0.35 / margin 0.04 not confident
+mojo-prop/haystack	21	012	0.405	0.012	-	-	KEEP: score 0.41 / margin 0.01 not confident
+mojo-prop/haystack2	21	023	0.370	0.014	-	-	KEEP: score 0.37 / margin 0.01 not confident
+mojo-prop/headlights	21	038	0.516	0.028	-	-	KEEP: score 0.52 / margin 0.03 not confident
+mojo-prop/heart	21	015	0.361	0.086	-	-	KEEP: score 0.36 / margin 0.09 not confident
+mojo-prop/heart2	21	015	0.381	0.102	-	-	KEEP: score 0.38 / margin 0.10 not confident
+mojo-prop/hill	21	007	0.243	0.038	-	-	KEEP: score 0.24 / margin 0.04 not confident
+mojo-prop/horns	21	044	0.214	0.317	-	0.74	REPLACE
+mojo-prop/hospital	21	062	0.445	0.039	-	-	KEEP: score 0.44 / margin 0.04 not confident
+mojo-prop/house	21	062	0.400	0.044	-	-	KEEP: score 0.40 / margin 0.04 not confident
+mojo-prop/hut	21	030	0.423	0.017	-	-	KEEP: score 0.42 / margin 0.02 not confident
+mojo-prop/ice-block	21	019	0.241	0.111	-	-	KEEP: score 0.24 / margin 0.11 not confident
+mojo-prop/ice-crystal	21	019	0.390	0.081	-	-	KEEP: score 0.39 / margin 0.08 not confident
+mojo-prop/ice-crystals	21	019	0.469	0.025	-	-	KEEP: score 0.47 / margin 0.02 not confident
+mojo-prop/igloo	21	019	0.426	0.033	-	-	KEEP: score 0.43 / margin 0.03 not confident
+mojo-prop/invincibility	21	022	0.276	0.082	-	-	KEEP: score 0.28 / margin 0.08 not confident
+mojo-prop/jump-boost	21	036	0.443	0.021	-	-	KEEP: score 0.44 / margin 0.02 not confident
+mojo-prop/jungle-fruit	21	016	0.466	0.017	-	-	KEEP: score 0.47 / margin 0.02 not confident
+mojo-prop/lamp-post	21	035	0.606	0.151	-	-	KEEP: score 0.61 / margin 0.15 not confident
+mojo-prop/lamp-post2	21	035	0.624	0.101	-	-	KEEP: score 0.62 / margin 0.10 not confident
+mojo-prop/lantern-post	21	029	0.533	0.030	-	-	KEEP: score 0.53 / margin 0.03 not confident
+mojo-prop/lava-rock	21	011	0.348	0.047	-	-	KEEP: score 0.35 / margin 0.05 not confident
+mojo-prop/lava-track	21	011	0.182	0.129	-	0.81	REPLACE
+mojo-prop/letter-a	21	047	0.356	0.054	-	-	KEEP: score 0.36 / margin 0.05 not confident
+mojo-prop/letter-b	21	029	0.416	0.047	-	-	KEEP: score 0.42 / margin 0.05 not confident
+mojo-prop/letter-c	21	066	0.444	0.010	-	-	KEEP: score 0.44 / margin 0.01 not confident
+mojo-prop/level-markers	21	000	0.655	0.026	-	-	KEEP: score 0.66 / margin 0.03 not confident
+mojo-prop/lighthouse	21	012	0.488	0.078	-	-	KEEP: score 0.49 / margin 0.08 not confident
+mojo-prop/lighthouse2	21	062	0.515	0.003	-	-	KEEP: score 0.51 / margin 0.00 not confident
+mojo-prop/lighthouse3	21	012	0.450	0.066	-	-	KEEP: score 0.45 / margin 0.07 not confident
+mojo-prop/log2	21	011	0.376	0.039	-	-	KEEP: score 0.38 / margin 0.04 not confident
+mojo-prop/logs	21	009	0.395	0.010	-	-	KEEP: score 0.40 / margin 0.01 not confident
+mojo-prop/magnet	21	015	0.438	0.053	-	-	KEEP: score 0.44 / margin 0.05 not confident
+mojo-prop/magnet2	21	033	0.215	0.245	-	0.81	REPLACE
+mojo-prop/magnet3	21	033	0.282	0.183	-	-	KEEP: score 0.28 / margin 0.18 not confident
+mojo-prop/market-stall	21	015	0.434	0.012	-	-	KEEP: score 0.43 / margin 0.01 not confident
+mojo-prop/materials	21	018	0.566	0.012	-	-	KEEP: score 0.57 / margin 0.01 not confident
+mojo-prop/medal-sheet15	21	021	0.465	0.035	-	-	KEEP: score 0.47 / margin 0.03 not confident
+mojo-prop/mine-cart-cave	21	016	0.324	0.018	-	-	KEEP: score 0.32 / margin 0.02 not confident
+mojo-prop/mine-cave	21	016	0.323	0.043	-	-	KEEP: score 0.32 / margin 0.04 not confident
+mojo-prop/mission-items	21	000	0.526	0.106	-	-	KEEP: score 0.53 / margin 0.11 not confident
+mojo-prop/mod-bucket	21	015	0.375	0.006	-	-	KEEP: score 0.37 / margin 0.01 not confident
+mojo-prop/mod-cargo	21	066	0.333	0.023	-	-	KEEP: score 0.33 / margin 0.02 not confident
+mojo-prop/mod-chassis	21	007	0.402	0.013	-	-	KEEP: score 0.40 / margin 0.01 not confident
+mojo-prop/mod-crane	21	016	0.493	0.024	-	-	KEEP: score 0.49 / margin 0.02 not confident
+mojo-prop/mod-drill	21	062	0.373	0.028	-	-	KEEP: score 0.37 / margin 0.03 not confident
+mojo-prop/mod-ladder	21	016	0.395	0.031	-	-	KEEP: score 0.40 / margin 0.03 not confident
+mojo-prop/mod-mixer	21	047	0.392	0.028	-	-	KEEP: score 0.39 / margin 0.03 not confident
+mojo-prop/mod-rescue	21	015	0.311	0.064	-	-	KEEP: score 0.31 / margin 0.06 not confident
+mojo-prop/mod-rocket	21	032	0.450	0.029	-	-	KEEP: score 0.45 / margin 0.03 not confident
+mojo-prop/mod-swap	21	015	0.360	0.042	-	-	KEEP: score 0.36 / margin 0.04 not confident
+mojo-prop/monkey-orange	21	047	0.450	0.005	-	-	KEEP: score 0.45 / margin 0.01 not confident
+mojo-prop/monkey-red	21	016	0.426	0.009	-	-	KEEP: score 0.43 / margin 0.01 not confident
+mojo-prop/monkey-white	21	012	0.517	0.026	-	-	KEEP: score 0.52 / margin 0.03 not confident
+mojo-prop/mossy-rock	21	016	0.310	0.012	-	-	KEEP: score 0.31 / margin 0.01 not confident
+mojo-prop/mossy-rocks	21	016	0.402	0.009	-	-	KEEP: score 0.40 / margin 0.01 not confident
+mojo-prop/mud-puddle	21	018	0.221	0.188	-	0.73	REPLACE
+mojo-prop/multiplier	21	002	0.471	0.024	-	-	KEEP: score 0.47 / margin 0.02 not confident
+mojo-prop/mushroom	21	015	0.368	0.046	-	-	KEEP: score 0.37 / margin 0.05 not confident
+mojo-prop/mushrooms	21	005	0.444	0.012	-	-	KEEP: score 0.44 / margin 0.01 not confident
+mojo-prop/number-1	21	029	0.629	0.009	-	-	KEEP: score 0.63 / margin 0.01 not confident
+mojo-prop/number-2	21	021	0.369	0.047	-	-	KEEP: score 0.37 / margin 0.05 not confident
+mojo-prop/number-3	21	021	0.299	0.063	-	-	KEEP: score 0.30 / margin 0.06 not confident
+mojo-prop/observatory	21	016	0.385	0.019	-	-	KEEP: score 0.39 / margin 0.02 not confident
+mojo-prop/obstacles	21	018	0.575	0.102	-	-	KEEP: score 0.58 / margin 0.10 not confident
+mojo-prop/oil-spill	21	020	0.223	0.153	-	0.83	REPLACE
+mojo-prop/package	21	015	0.205	0.040	-	-	KEEP: score 0.21 / margin 0.04 not confident
+mojo-prop/paint-colors	21	040	0.217	0.249	-	0.84	REPLACE
+mojo-prop/palm	21	029	0.525	0.032	-	-	KEEP: score 0.53 / margin 0.03 not confident
+mojo-prop/person-adult	21	029	0.498	0.035	-	-	KEEP: score 0.50 / margin 0.04 not confident
+mojo-prop/playground	21	062	0.451	0.007	-	-	KEEP: score 0.45 / margin 0.01 not confident
+mojo-prop/pond	21	016	0.364	0.030	-	-	KEEP: score 0.36 / margin 0.03 not confident
+mojo-prop/pond2	21	019	0.407	0.043	-	-	KEEP: score 0.41 / margin 0.04 not confident
+mojo-prop/potion	21	016	0.461	0.041	-	-	KEEP: score 0.46 / margin 0.04 not confident
+mojo-prop/powerups	21	038	0.658	0.033	-	-	KEEP: score 0.66 / margin 0.03 not confident
+mojo-prop/propellers	21	062	0.633	0.019	-	-	KEEP: score 0.63 / margin 0.02 not confident
+mojo-prop/race-swoptop	21	062	0.425	0.041	-	-	KEEP: score 0.43 / margin 0.04 not confident
+mojo-prop/ramp	21	006	0.226	0.105	-	0.90	REPLACE
+mojo-prop/road-barrier	21	013	0.502	0.014	-	-	KEEP: score 0.50 / margin 0.01 not confident
+mojo-prop/rock	21	016	0.132	0.187	-	0.82	REPLACE
+mojo-prop/rock-cluster	21	062	0.335	0.030	-	-	KEEP: score 0.33 / margin 0.03 not confident
+mojo-prop/rock-grass	21	004	0.357	0.061	-	-	KEEP: score 0.36 / margin 0.06 not confident
+mojo-prop/rock-road	21	004	0.382	0.029	-	-	KEEP: score 0.38 / margin 0.03 not confident
+mojo-prop/rock-sheet15	21	016	0.148	0.163	-	0.69	REPLACE
+mojo-prop/rocket-part	21	032	0.229	0.148	-	0.89	REPLACE
+mojo-prop/rocks	21	062	0.358	0.006	-	-	KEEP: score 0.36 / margin 0.01 not confident
+mojo-prop/roofs	21	037	0.286	0.150	-	-	KEEP: score 0.29 / margin 0.15 not confident
+mojo-prop/roofs-lights	21	018	0.599	0.018	-	-	KEEP: score 0.60 / margin 0.02 not confident
+mojo-prop/rope-bridge	21	032	0.459	0.072	-	-	KEEP: score 0.46 / margin 0.07 not confident
+mojo-prop/rope-bridge2	21	032	0.494	0.014	-	-	KEEP: score 0.49 / margin 0.01 not confident
+mojo-prop/rowboat	21	009	0.380	0.022	-	-	KEEP: score 0.38 / margin 0.02 not confident
+mojo-prop/ruin-arch	21	016	0.443	0.052	-	-	KEEP: score 0.44 / margin 0.05 not confident
+mojo-prop/ruin-pillar	21	045	0.480	0.028	-	-	KEEP: score 0.48 / margin 0.03 not confident
+mojo-prop/school	21	062	0.426	0.038	-	-	KEEP: score 0.43 / margin 0.04 not confident
+mojo-prop/screwdriver	21	025	0.194	0.308	-	0.95	REPLACE
+mojo-prop/seats	21	018	0.452	0.086	-	-	KEEP: score 0.45 / margin 0.09 not confident
+mojo-prop/shield	21	066	0.320	0.070	-	-	KEEP: score 0.32 / margin 0.07 not confident
+mojo-prop/shield-sheet15	21	066	0.465	0.040	-	-	KEEP: score 0.47 / margin 0.04 not confident
+mojo-prop/shop	21	062	0.410	0.032	-	-	KEEP: score 0.41 / margin 0.03 not confident
+mojo-prop/side-panels	21	005	0.477	0.010	-	-	KEEP: score 0.48 / margin 0.01 not confident
+mojo-prop/sign-arrow	21	016	0.407	0.006	-	-	KEEP: score 0.41 / margin 0.01 not confident
+mojo-prop/sign-arrow-wood	21	029	0.409	0.045	-	-	KEEP: score 0.41 / margin 0.04 not confident
+mojo-prop/sign-curve	21	063	0.369	0.044	-	-	KEEP: score 0.37 / margin 0.04 not confident
+mojo-prop/sign-left	21	015	0.425	0.007	-	-	KEEP: score 0.43 / margin 0.01 not confident
+mojo-prop/sign-left-sheet13	21	063	0.391	0.018	-	-	KEEP: score 0.39 / margin 0.02 not confident
+mojo-prop/sign-right	21	015	0.421	0.012	-	-	KEEP: score 0.42 / margin 0.01 not confident
+mojo-prop/sign-right-sheet13	21	063	0.392	0.006	-	-	KEEP: score 0.39 / margin 0.01 not confident
+mojo-prop/sign-speed	21	015	0.463	0.014	-	-	KEEP: score 0.46 / margin 0.01 not confident
+mojo-prop/sign-stop	21	015	0.308	0.033	-	-	KEEP: score 0.31 / margin 0.03 not confident
+mojo-prop/sign-wood	21	005	0.497	0.006	-	-	KEEP: score 0.50 / margin 0.01 not confident
+mojo-prop/sign-yield	21	008	0.558	0.013	-	-	KEEP: score 0.56 / margin 0.01 not confident
+mojo-prop/signpost	21	016	0.556	0.008	-	-	KEEP: score 0.56 / margin 0.01 not confident
+mojo-prop/sirens	21	008	0.592	0.010	-	-	KEEP: score 0.59 / margin 0.01 not confident
+mojo-prop/snow-tree	21	016	0.516	0.021	-	-	KEEP: score 0.52 / margin 0.02 not confident
+mojo-prop/space-swoptop	21	062	0.357	0.143	-	-	KEEP: score 0.36 / margin 0.14 not confident
+mojo-prop/special-parts	21	037	0.599	0.040	-	-	KEEP: score 0.60 / margin 0.04 not confident
+mojo-prop/special-star	21	023	0.175	0.189	-	0.67	REPLACE
+mojo-prop/speed-boost2	21	056	0.355	0.024	-	-	KEEP: score 0.35 / margin 0.02 not confident
+mojo-prop/spiral-stone	21	016	0.300	0.021	-	-	KEEP: score 0.30 / margin 0.02 not confident
+mojo-prop/spoiler	21	031	0.344	0.205	-	-	KEEP: score 0.34 / margin 0.21 not confident
+mojo-prop/spoilers	21	007	0.587	0.035	-	-	KEEP: score 0.59 / margin 0.04 not confident
+mojo-prop/spray-paint	21	028	0.224	0.244	-	0.87	REPLACE
+mojo-prop/spring	21	029	0.486	0.003	-	-	KEEP: score 0.49 / margin 0.00 not confident
+mojo-prop/stairs-stone	21	062	0.398	0.016	-	-	KEEP: score 0.40 / margin 0.02 not confident
+mojo-prop/star	21	023	0.213	0.157	-	0.94	REPLACE
+mojo-prop/star-sheet03	21	023	0.168	0.191	-	0.62	REPLACE
+mojo-prop/star-sheet13	21	023	0.170	0.187	-	0.78	REPLACE
+mojo-prop/star-sheet15	21	023	0.116	0.246	-	0.73	REPLACE
+mojo-prop/star2	21	023	0.119	0.265	-	0.90	REPLACE
+mojo-prop/star4	21	023	0.141	0.216	-	1.89	REPLACE
+mojo-prop/status-icons	21	018	0.559	0.027	-	-	KEEP: score 0.56 / margin 0.03 not confident
+mojo-prop/stickers	21	041	0.586	0.046	-	-	KEEP: score 0.59 / margin 0.05 not confident
+mojo-prop/stone-arch	21	016	0.426	0.031	-	-	KEEP: score 0.43 / margin 0.03 not confident
+mojo-prop/stone-arch2	21	018	0.483	0.067	-	-	KEEP: score 0.48 / margin 0.07 not confident
+mojo-prop/stone-block	21	016	0.334	0.002	-	-	KEEP: score 0.33 / margin 0.00 not confident
+mojo-prop/stone-face-pillar	21	047	0.426	0.021	-	-	KEEP: score 0.43 / margin 0.02 not confident
+mojo-prop/street-lamp	21	026	0.676	0.033	-	-	KEEP: score 0.68 / margin 0.03 not confident
+mojo-prop/stump	21	009	0.373	0.020	-	-	KEEP: score 0.37 / margin 0.02 not confident
+mojo-prop/stump2	21	009	0.351	0.043	-	-	KEEP: score 0.35 / margin 0.04 not confident
+mojo-prop/sunflower	21	047	0.493	0.025	-	-	KEEP: score 0.49 / margin 0.03 not confident
+mojo-prop/suspension	21	034	0.164	0.364	-	0.84	REPLACE
+mojo-prop/suspension-spring-sheet11	21	035	0.181	0.491	-	0.82	REPLACE
+mojo-prop/swap-stand	21	062	0.552	0.047	-	-	KEEP: score 0.55 / margin 0.05 not confident
+mojo-prop/swoptop-faces	21	000	0.600	0.083	-	-	KEEP: score 0.60 / margin 0.08 not confident
+mojo-prop/swoptops-example	21	062	0.582	0.015	-	-	KEEP: score 0.58 / margin 0.02 not confident
+mojo-prop/teddy	21	047	0.430	0.025	-	-	KEEP: score 0.43 / margin 0.03 not confident
+mojo-prop/tent	21	062	0.468	0.009	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-prop/tiki-mask	21	029	0.449	0.001	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-prop/time-extend	21	019	0.422	0.008	-	-	KEEP: score 0.42 / margin 0.01 not confident
+mojo-prop/tire-stack	21	014	0.243	0.117	-	-	KEEP: score 0.24 / margin 0.12 not confident
+mojo-prop/tires	21	008	0.520	0.003	-	-	KEEP: score 0.52 / margin 0.00 not confident
+mojo-prop/toolbox	21	015	0.370	0.027	-	-	KEEP: score 0.37 / margin 0.03 not confident
+mojo-prop/tools	21	008	0.644	0.000	-	-	KEEP: score 0.64 / margin 0.00 not confident
+mojo-prop/tower	21	036	0.578	0.008	-	-	KEEP: score 0.58 / margin 0.01 not confident
+mojo-prop/town-house-sheet13	21	007	0.422	0.025	-	-	KEEP: score 0.42 / margin 0.02 not confident
+mojo-prop/town-square-sheet13	21	062	0.430	0.037	-	-	KEEP: score 0.43 / margin 0.04 not confident
+mojo-prop/track-curve	21	005	0.278	0.162	-	-	KEEP: score 0.28 / margin 0.16 not confident
+mojo-prop/track-straight	21	004	0.169	0.150	-	0.84	REPLACE
+mojo-prop/track-tiles	21	018	0.539	0.041	-	-	KEEP: score 0.54 / margin 0.04 not confident
+mojo-prop/traffic-light	21	035	0.471	0.005	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-prop/traffic-light2	21	035	0.369	0.285	-	-	KEEP: score 0.37 / margin 0.28 not confident
+mojo-prop/treasure-chest	21	016	0.449	0.002	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-prop/treasure-map	21	062	0.369	0.025	-	-	KEEP: score 0.37 / margin 0.03 not confident
+mojo-prop/tree-large	21	029	0.445	0.005	-	-	KEEP: score 0.44 / margin 0.00 not confident
+mojo-prop/tree-pine	21	017	0.513	0.004	-	-	KEEP: score 0.51 / margin 0.00 not confident
+mojo-prop/tree-round	21	030	0.459	0.005	-	-	KEEP: score 0.46 / margin 0.01 not confident
+mojo-prop/tree-sheet15	21	016	0.443	0.008	-	-	KEEP: score 0.44 / margin 0.01 not confident
+mojo-prop/tree-small	21	017	0.517	0.018	-	-	KEEP: score 0.52 / margin 0.02 not confident
+mojo-prop/treehouse	21	009	0.349	0.012	-	-	KEEP: score 0.35 / margin 0.01 not confident
+mojo-prop/tunnel	21	009	0.171	0.175	-	0.89	REPLACE
+mojo-prop/tunnel2	21	009	0.288	0.124	-	-	KEEP: score 0.29 / margin 0.12 not confident
+mojo-prop/vine-bridge	21	016	0.473	0.003	-	-	KEEP: score 0.47 / margin 0.00 not confident
+mojo-prop/volcano	21	016	0.370	0.036	-	-	KEEP: score 0.37 / margin 0.04 not confident
+mojo-prop/wall-stone	21	062	0.364	0.073	-	-	KEEP: score 0.36 / margin 0.07 not confident
+mojo-prop/watchtower	21	012	0.547	0.006	-	-	KEEP: score 0.55 / margin 0.01 not confident
+mojo-prop/water-tower	21	012	0.425	0.042	-	-	KEEP: score 0.42 / margin 0.04 not confident
+mojo-prop/water-track	21	010	0.216	0.226	-	0.81	REPLACE
+mojo-prop/waterdrop-sheet15	21	019	0.322	0.103	-	-	KEEP: score 0.32 / margin 0.10 not confident
+mojo-prop/waterfall	21	016	0.414	0.016	-	-	KEEP: score 0.41 / margin 0.02 not confident
+mojo-prop/waterfall2	21	019	0.381	0.033	-	-	KEEP: score 0.38 / margin 0.03 not confident
+mojo-prop/waterfall3	21	019	0.366	0.067	-	-	KEEP: score 0.37 / margin 0.07 not confident
+mojo-prop/well-blue	21	016	0.454	0.006	-	-	KEEP: score 0.45 / margin 0.01 not confident
+mojo-prop/well-red	21	029	0.446	0.004	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-prop/wheel	21	029	0.148	0.223	-	0.88	REPLACE
+mojo-prop/wheel-sheet15	21	029	0.168	0.143	-	0.65	REPLACE
+mojo-prop/wheels	21	018	0.534	0.048	-	-	KEEP: score 0.53 / margin 0.05 not confident
+mojo-prop/windmill	21	045	0.510	0.008	-	-	KEEP: score 0.51 / margin 0.01 not confident
+mojo-prop/windmill2	21	012	0.486	0.013	-	-	KEEP: score 0.49 / margin 0.01 not confident
+mojo-prop/windmill3	21	047	0.532	0.006	-	-	KEEP: score 0.53 / margin 0.01 not confident
+mojo-prop/windmill4	21	036	0.526	0.018	-	-	KEEP: score 0.53 / margin 0.02 not confident
+mojo-prop/windshields-sheet12	21	004	0.584	0.012	-	-	KEEP: score 0.58 / margin 0.01 not confident
+mojo-prop/workbench	21	009	0.370	0.020	-	-	KEEP: score 0.37 / margin 0.02 not confident
+mojo-prop/wrench	21	024	0.279	0.182	-	-	KEEP: score 0.28 / margin 0.18 not confident
+mojo-prop/wrench-sheet03	21	062	0.401	0.058	-	-	KEEP: score 0.40 / margin 0.06 not confident
+mojo-prop/wrench-sheet15	21	024	0.396	0.070	-	-	KEEP: score 0.40 / margin 0.07 not confident
+mojo-prop/wrench-token	21	022	0.209	0.082	-	-	KEEP: old coin carries a wrench
+mojo-rear/ambulance	03	015	0.186	0.197	-	-	KEEP: phase 1 result
+mojo-rear/base	03	011	0.178	0.172	-	-	KEEP: phase 1 result
+mojo-rear/base-neon	03	010	0.217	0.068	-	-	KEEP: phase 1 result
+mojo-rear/boat	03	016	0.161	0.353	-	-	KEEP: phase 1 result
+mojo-rear/cargo	03	012	0.208	0.078	-	-	KEEP: phase 1 result
+mojo-rear/chopper	03	003	0.172	0.218	-	-	KEEP: phase 1 result
+mojo-rear/chopper-2	03	022	0.180	0.142	-	-	KEEP: phase 1 result
+mojo-rear/chopper-3	03	023	0.195	0.153	-	-	KEEP: phase 1 result
+mojo-rear/crane	03	000	0.209	0.141	-	-	KEEP: phase 1 result
+mojo-rear/crane-2	03	001	0.228	0.117	-	-	KEEP: phase 1 result
+mojo-rear/delivery	03	017	0.189	0.128	-	-	KEEP: phase 1 result
+mojo-rear/digger	03	006	0.129	0.239	-	-	KEEP: phase 1 result
+mojo-rear/dumper	03	013	0.185	0.168	-	-	KEEP: phase 1 result
+mojo-rear/excavator	03	004	0.156	0.320	-	-	KEEP: phase 1 result
+mojo-rear/hover	03	024	0.153	0.299	-	-	KEEP: phase 1 result
+mojo-rear/jet	03	018	0.123	0.098	-	-	KEEP: phase 1 result
+mojo-rear/jet-2	03	019	0.138	0.096	-	-	KEEP: phase 1 result
+mojo-rear/ladder	03	002	0.234	0.267	-	-	KEEP: phase 1 result
+mojo-rear/loader	03	005	0.145	0.213	-	-	KEEP: phase 1 result
+mojo-rear/monster	03	007	0.132	0.121	-	-	KEEP: phase 1 result
+mojo-rear/monster-2	03	008	0.136	0.079	-	-	KEEP: phase 1 result
+mojo-rear/plane	03	020	0.136	0.323	-	-	KEEP: phase 1 result
+mojo-rear/prop-plane	03	021	0.123	0.265	-	-	KEEP: phase 1 result
+mojo-rear/snow	03	014	0.180	0.165	-	-	KEEP: phase 1 result
+mojo-rear/tow	03	009	0.157	0.199	-	-	KEEP: phase 1 result
+mojo-top/aerial-ladder	18	003	0.434	0.000	-	-	KEEP: score 0.43 / margin 0.00 not confident
+mojo-top/ambulance	18	001	0.441	0.000	-	-	KEEP: score 0.44 / margin 0.00 not confident
+mojo-top/balloon	18	003	0.463	0.000	-	-	KEEP: score 0.46 / margin 0.00 not confident
+mojo-top/base	18	001	0.411	0.000	-	-	KEEP: score 0.41 / margin 0.00 not confident
+mojo-top/base-sheet04	18	001	0.425	0.000	-	-	KEEP: score 0.42 / margin 0.00 not confident
+mojo-top/base-sheet05	18	001	0.355	0.000	-	-	KEEP: score 0.36 / margin 0.00 not confident
+mojo-top/base-sheet10	18	000	0.447	0.000	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-top/boat	14	000	0.431	0.037	-	-	KEEP: score 0.43 / margin 0.04 not confident
+mojo-top/bridge	14	000	0.456	0.027	-	-	KEEP: score 0.46 / margin 0.03 not confident
+mojo-top/camera	14	000	0.437	0.048	-	-	KEEP: score 0.44 / margin 0.05 not confident
+mojo-top/cargo-crane	14	000	0.402	0.059	-	-	KEEP: score 0.40 / margin 0.06 not confident
+mojo-top/chopper	14	000	0.458	0.056	-	-	KEEP: score 0.46 / margin 0.06 not confident
+mojo-top/crane	18	003	0.468	0.000	-	-	KEEP: score 0.47 / margin 0.00 not confident
+mojo-top/delivery	18	001	0.437	0.000	-	-	KEEP: score 0.44 / margin 0.00 not confident
+mojo-top/dozer	18	001	0.500	0.000	-	-	KEEP: score 0.50 / margin 0.00 not confident
+mojo-top/drill	14	000	0.423	0.045	-	-	KEEP: score 0.42 / margin 0.04 not confident
+mojo-top/drilling	18	000	0.428	0.000	-	-	KEEP: score 0.43 / margin 0.00 not confident
+mojo-top/dumper	14	000	0.467	0.005	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-top/farm	18	004	0.413	0.000	-	-	KEEP: score 0.41 / margin 0.00 not confident
+mojo-top/fire	18	003	0.423	0.000	-	-	KEEP: score 0.42 / margin 0.00 not confident
+mojo-top/forklift	14	003	0.479	0.005	-	-	KEEP: score 0.48 / margin 0.01 not confident
+mojo-top/fuel	18	001	0.467	0.000	-	-	KEEP: score 0.47 / margin 0.00 not confident
+mojo-top/garbage	14	003	0.447	0.003	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-top/harvester	17	003	0.489	0.002	-	-	KEEP: score 0.49 / margin 0.00 not confident
+mojo-top/ice-cream	18	001	0.468	0.000	-	-	KEEP: score 0.47 / margin 0.00 not confident
+mojo-top/jet	18	006	0.466	0.000	-	-	KEEP: score 0.47 / margin 0.00 not confident
+mojo-top/jumper	18	000	0.425	0.000	-	-	KEEP: score 0.43 / margin 0.00 not confident
+mojo-top/lift	18	003	0.458	0.000	-	-	KEEP: score 0.46 / margin 0.00 not confident
+mojo-top/logging	18	000	0.449	0.000	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-top/mixer	17	006	0.430	0.034	-	-	KEEP: score 0.43 / margin 0.03 not confident
+mojo-top/monster	17	006	0.416	0.002	-	-	KEEP: score 0.42 / margin 0.00 not confident
+mojo-top/police	18	000	0.432	0.000	-	-	KEEP: score 0.43 / margin 0.00 not confident
+mojo-top/racer	18	001	0.453	0.000	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-top/recycling	18	000	0.407	0.000	-	-	KEEP: score 0.41 / margin 0.00 not confident
+mojo-top/rescue	14	000	0.467	0.013	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-top/rocket	17	006	0.451	0.004	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-top/satellite	18	003	0.427	0.000	-	-	KEEP: score 0.43 / margin 0.00 not confident
+mojo-top/searchlight	17	006	0.465	0.003	-	-	KEEP: score 0.47 / margin 0.00 not confident
+mojo-top/snow-plow	24	000	0.497	0.000	-	-	KEEP: score 0.50 / margin 0.00 not confident
+mojo-top/space-lab	14	000	0.446	0.006	-	-	KEEP: score 0.45 / margin 0.01 not confident
+mojo-top/submarine	14	000	0.412	0.054	-	-	KEEP: score 0.41 / margin 0.05 not confident
+mojo-top/sweeper	18	004	0.487	0.000	-	-	KEEP: score 0.49 / margin 0.00 not confident
+mojo-top/towing	18	006	0.454	0.000	-	-	KEEP: score 0.45 / margin 0.00 not confident
+mojo-top/tree-cutter	14	000	0.473	0.012	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-top/water	14	000	0.440	0.002	-	-	KEEP: score 0.44 / margin 0.00 not confident
+mojo-top/workshop	14	000	0.413	0.017	-	-	KEEP: score 0.41 / margin 0.02 not confident
+mojo-top/wrecking-ball	14	000	0.414	0.080	-	-	KEEP: score 0.41 / margin 0.08 not confident
+mojo-ui/arrow-down	21	021	0.514	0.042	-	-	KEEP: score 0.51 / margin 0.04 not confident
+mojo-ui/arrows	21	056	0.378	0.056	-	-	KEEP: score 0.38 / margin 0.06 not confident
+mojo-ui/back-sheet15	21	066	0.264	0.062	-	-	KEEP: score 0.26 / margin 0.06 not confident
+mojo-ui/blank-blue-sheet15	21	056	0.215	0.049	-	-	KEEP: blank button, no counterpart
+mojo-ui/blank-green-sheet15	21	050	0.277	0.143	-	-	KEEP: score 0.28 / margin 0.14 not confident
+mojo-ui/blank-red-sheet15	21	051	0.196	0.051	-	-	KEEP: blank button, no counterpart
+mojo-ui/blank-yellow-sheet15	21	051	0.203	0.113	-	-	KEEP: blank button, no counterpart
+mojo-ui/bo-dialogue-sheet13	21	054	0.363	0.013	-	-	KEEP: score 0.36 / margin 0.01 not confident
+mojo-ui/bo-dialogue-sheet15	21	059	0.383	0.016	-	-	KEEP: score 0.38 / margin 0.02 not confident
+mojo-ui/bo-profile-sheet11	21	053	0.141	0.193	-	0.79	REPLACE
+mojo-ui/bo-result-sheet15	21	059	0.348	0.037	-	-	KEEP: score 0.35 / margin 0.04 not confident
+mojo-ui/btn-action	21	000	0.532	0.098	-	-	KEEP: score 0.53 / margin 0.10 not confident
+mojo-ui/btn-bantuan	21	027	0.567	0.053	-	-	KEEP: score 0.57 / margin 0.05 not confident
+mojo-ui/btn-berhenti	21	027	0.572	0.000	-	-	KEEP: score 0.57 / margin 0.00 not confident
+mojo-ui/btn-customize	21	052	0.218	0.175	-	0.83	REPLACE
+mojo-ui/btn-garage	21	051	0.216	0.108	-	0.83	REPLACE
+mojo-ui/btn-hapus	21	052	0.373	0.006	-	-	KEEP: score 0.37 / margin 0.01 not confident
+mojo-ui/btn-jalan	21	050	0.259	0.084	-	-	KEEP: Indonesian label, new button says PLAY
+mojo-ui/btn-kembali	21	005	0.623	0.012	-	-	KEEP: score 0.62 / margin 0.01 not confident
+mojo-ui/btn-langkah	21	051	0.327	0.092	-	-	KEEP: score 0.33 / margin 0.09 not confident
+mojo-ui/btn-lanjut	21	045	0.585	0.016	-	-	KEEP: score 0.58 / margin 0.02 not confident
+mojo-ui/btn-main	21	000	0.540	0.052	-	-	KEEP: score 0.54 / margin 0.05 not confident
+mojo-ui/btn-missions	21	056	0.341	0.049	-	-	KEEP: score 0.34 / margin 0.05 not confident
+mojo-ui/btn-nav	21	056	0.398	0.057	-	-	KEEP: score 0.40 / margin 0.06 not confident
+mojo-ui/btn-pause	21	045	0.606	0.002	-	-	KEEP: score 0.61 / margin 0.00 not confident
+mojo-ui/btn-play	21	050	0.285	0.145	-	-	KEEP: score 0.29 / margin 0.14 not confident
+mojo-ui/btn-reset	21	056	0.154	0.028	-	-	KEEP: score 0.15 / margin 0.03 not confident
+mojo-ui/btn-settings	21	000	0.572	0.093	-	-	KEEP: score 0.57 / margin 0.09 not confident
+mojo-ui/buttons	21	048	0.611	0.001	-	-	KEEP: score 0.61 / margin 0.00 not confident
+mojo-ui/chevron-left-sheet15	21	021	0.493	0.029	-	-	KEEP: score 0.49 / margin 0.03 not confident
+mojo-ui/chevron-right-sheet15	21	021	0.504	0.032	-	-	KEEP: score 0.50 / margin 0.03 not confident
+mojo-ui/coin-counter	21	000	0.532	0.123	-	-	KEEP: score 0.53 / margin 0.12 not confident
+mojo-ui/collection-panel-sheet15	21	056	0.236	0.056	-	-	KEEP: different panel layout
+mojo-ui/confirm-sheet11	21	060	0.185	0.081	-	0.84	REPLACE
+mojo-ui/customize-ui	21	059	0.263	0.054	-	-	KEEP: score 0.26 / margin 0.05 not confident
+mojo-ui/drag-hand	21	065	0.628	0.025	-	-	KEEP: score 0.63 / margin 0.03 not confident
+mojo-ui/drop-slot	21	059	0.494	0.001	-	-	KEEP: score 0.49 / margin 0.00 not confident
+mojo-ui/energy-counter-sheet03	21	048	0.523	0.049	-	-	KEEP: score 0.52 / margin 0.05 not confident
+mojo-ui/feedback-icons	21	000	0.519	0.059	-	-	KEEP: score 0.52 / margin 0.06 not confident
+mojo-ui/forbidden	21	015	0.342	0.000	-	-	KEEP: score 0.34 / margin 0.00 not confident
+mojo-ui/frames	21	018	0.483	0.028	-	-	KEEP: score 0.48 / margin 0.03 not confident
+mojo-ui/garage-sheet11	21	055	0.219	0.096	-	0.92	REPLACE
+mojo-ui/garage-ui2	21	056	0.226	0.014	-	-	KEEP: score 0.23 / margin 0.01 not confident
+mojo-ui/hint-panel-sheet03	21	051	0.360	0.041	-	-	KEEP: score 0.36 / margin 0.04 not confident
+mojo-ui/home-sheet15	21	051	0.302	0.104	-	-	KEEP: score 0.30 / margin 0.10 not confident
+mojo-ui/hud	21	000	0.471	0.085	-	-	KEEP: score 0.47 / margin 0.08 not confident
+mojo-ui/ico-audio	21	066	0.464	0.049	-	-	KEEP: score 0.46 / margin 0.05 not confident
+mojo-ui/ico-bahasa	21	066	0.256	0.069	-	-	KEEP: globe icon, not a portal
+mojo-ui/ico-bengkel	21	046	0.437	0.050	-	-	KEEP: score 0.44 / margin 0.05 not confident
+mojo-ui/ico-episode	21	060	0.391	0.006	-	-	KEEP: score 0.39 / margin 0.01 not confident
+mojo-ui/ico-home	21	016	0.512	0.004	-	-	KEEP: score 0.51 / margin 0.00 not confident
+mojo-ui/ico-info	21	066	0.231	0.095	-	-	KEEP: info icon, not a portal
+mojo-ui/ico-keluar	21	015	0.354	0.039	-	-	KEEP: score 0.35 / margin 0.04 not confident
+mojo-ui/ico-koleksi	21	015	0.363	0.073	-	-	KEEP: score 0.36 / margin 0.07 not confident
+mojo-ui/ico-orangtua	21	009	0.560	0.006	-	-	KEEP: score 0.56 / margin 0.01 not confident
+mojo-ui/ico-pengaturan	21	066	0.317	0.053	-	-	KEEP: score 0.32 / margin 0.05 not confident
+mojo-ui/ico-peta	21	019	0.432	0.007	-	-	KEEP: score 0.43 / margin 0.01 not confident
+mojo-ui/icons	21	018	0.672	0.039	-	-	KEEP: score 0.67 / margin 0.04 not confident
+mojo-ui/info-panel-sheet03	21	059	0.383	0.001	-	-	KEEP: score 0.38 / margin 0.00 not confident
+mojo-ui/item-counter-sheet03	21	059	0.515	0.015	-	-	KEEP: score 0.52 / margin 0.01 not confident
+mojo-ui/level-select-sheet11	21	054	0.196	0.094	-	0.92	REPLACE
+mojo-ui/level-select-sheet13	21	056	0.348	0.030	-	-	KEEP: score 0.35 / margin 0.03 not confident
+mojo-ui/life-hearts-sheet03	21	000	0.559	0.003	-	-	KEEP: score 0.56 / margin 0.00 not confident
+mojo-ui/loading-sheet11	21	061	0.166	0.030	-	0.83	REPLACE
+mojo-ui/loading2	21	061	0.194	0.015	-	-	KEEP: score 0.19 / margin 0.01 not confident
+mojo-ui/logo	21	049	0.135	0.264	-	0.82	REPLACE
+mojo-ui/map-sheet15	21	061	0.210	0.042	-	-	KEEP: map icon, not the loading panel
+mojo-ui/map-ui	21	054	0.338	0.018	-	-	KEEP: score 0.34 / margin 0.02 not confident
+mojo-ui/menu-buttons	21	000	0.508	0.074	-	-	KEEP: score 0.51 / margin 0.07 not confident
+mojo-ui/mission-complete-sheet13	21	057	0.242	0.101	-	-	KEEP: old shows three stars, new Well Done panel shows one
+mojo-ui/mission-panel	21	056	0.177	0.057	-	0.92	REPLACE
+mojo-ui/mission-ui	21	059	0.388	0.038	-	-	KEEP: score 0.39 / margin 0.04 not confident
+mojo-ui/next-sheet15	21	066	0.271	0.053	-	-	KEEP: score 0.27 / margin 0.05 not confident
+mojo-ui/objective-panel-sheet03	21	059	0.431	0.024	-	-	KEEP: score 0.43 / margin 0.02 not confident
+mojo-ui/oona-dialogue-sheet15	21	059	0.317	0.045	-	-	KEEP: score 0.32 / margin 0.05 not confident
+mojo-ui/pause-menu	21	058	0.164	0.117	-	0.92	REPLACE
+mojo-ui/pause-menu2	21	058	0.170	0.149	-	-	KEEP: old panel has a SETTINGS row the new one lacks
+mojo-ui/pause-menu3	21	059	0.254	0.007	-	-	KEEP: score 0.25 / margin 0.01 not confident
+mojo-ui/play-sheet15	21	050	0.196	0.229	-	-	KEEP: bare play triangle, new button carries the word PLAY
+mojo-ui/progress-bar-sheet03	21	000	0.818	0.028	-	-	KEEP: score 0.82 / margin 0.03 not confident
+mojo-ui/progress-green-sheet15	21	000	0.803	0.028	-	-	KEEP: score 0.80 / margin 0.03 not confident
+mojo-ui/progress-red-sheet15	21	039	0.742	0.038	-	-	KEEP: score 0.74 / margin 0.04 not confident
+mojo-ui/progress-yellow-sheet15	21	039	0.788	0.038	-	-	KEEP: score 0.79 / margin 0.04 not confident
+mojo-ui/pulse	21	066	0.311	0.019	-	-	KEEP: score 0.31 / margin 0.02 not confident
+mojo-ui/reference-customize-sheet16	21	059	0.372	0.003	-	-	KEEP: score 0.37 / margin 0.00 not confident
+mojo-ui/reference-gameplay-sheet16	21	054	0.302	0.050	-	-	KEEP: score 0.30 / margin 0.05 not confident
+mojo-ui/reference-garage-sheet16	21	058	0.374	0.004	-	-	KEEP: score 0.37 / margin 0.00 not confident
+mojo-ui/reference-level-select-sheet16	21	058	0.471	0.017	-	-	KEEP: score 0.47 / margin 0.02 not confident
+mojo-ui/reference-main-menu-sheet16	21	058	0.348	0.012	-	-	KEEP: score 0.35 / margin 0.01 not confident
+mojo-ui/reference-map-sheet16	21	058	0.371	0.021	-	-	KEEP: score 0.37 / margin 0.02 not confident
+mojo-ui/reference-pause-sheet16	21	058	0.458	0.003	-	-	KEEP: score 0.46 / margin 0.00 not confident
+mojo-ui/reference-result-sheet16	21	058	0.378	0.012	-	-	KEEP: score 0.38 / margin 0.01 not confident
+mojo-ui/reward-panel	21	057	0.172	0.166	-	0.85	REPLACE
+mojo-ui/ring	21	019	0.338	0.017	-	-	KEEP: score 0.34 / margin 0.02 not confident
+mojo-ui/ripple	21	036	0.575	0.018	-	-	KEEP: score 0.57 / margin 0.02 not confident
+mojo-ui/settings-panel	21	059	0.200	0.085	-	0.93	REPLACE
+mojo-ui/settings-sheet15	21	061	0.238	0.034	-	-	KEEP: gear icon, not the loading panel
+mojo-ui/sliders	21	018	0.635	0.025	-	-	KEEP: score 0.64 / margin 0.02 not confident
+mojo-ui/star-0	21	042	0.384	0.048	-	-	KEEP: score 0.38 / margin 0.05 not confident
+mojo-ui/star-1	21	023	0.385	0.101	-	-	KEEP: score 0.38 / margin 0.10 not confident
+mojo-ui/star-2	21	023	0.209	0.155	-	0.44	REPLACE
+mojo-ui/star-2b	21	023	0.179	0.164	-	0.46	REPLACE
+mojo-ui/star-3	21	023	0.217	0.129	-	0.52	REPLACE
+mojo-ui/star-counter	21	056	0.469	0.012	-	-	KEEP: score 0.47 / margin 0.01 not confident
+mojo-ui/step-counter-sheet03	21	059	0.521	0.004	-	-	KEEP: score 0.52 / margin 0.00 not confident
+mojo-ui/success-panel-sheet03	21	055	0.416	0.009	-	-	KEEP: score 0.42 / margin 0.01 not confident
+mojo-ui/tap-hand	21	036	0.584	0.077	-	-	KEEP: score 0.58 / margin 0.08 not confident
+mojo-ui/timer-sheet03	21	048	0.508	0.039	-	-	KEEP: score 0.51 / margin 0.04 not confident
+mojo-ui/upgrade-token	21	022	0.256	0.067	-	-	KEEP: arrow token, not a coin
+mojo-ui/warning-panel-sheet03	21	052	0.350	0.016	-	-	KEEP: score 0.35 / margin 0.02 not confident
+# mojo-turn rebuilt from sheet 01 (3 forms) + sheet 13 (6 forms); scale per sheet {1: 0.688, 13: 0.886}
