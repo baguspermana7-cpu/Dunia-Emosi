@@ -78,6 +78,16 @@
   var TILE = {}
   ;['gravel'].forEach(function (n) { if (!W.Image) return; var im = new W.Image(); im.src = lib('kereta-tile/' + n); TILE[n] = im })
   var GROUND = '#86bf55'
+  // the whole lawn first: every non-water cell gets the grass tile drawn 12% oversize, so tiles overlap and no cell rim shows
+  function paintGround (x, ch, R, Cn, s, grass) {
+    x.fillStyle = GROUND; x.fillRect(0, 0, Cn * s, R * s)
+    if (!grass) return
+    var iw = grass.naturalWidth, ih = grass.naturalHeight, ix = iw * 0.1, iy = ih * 0.1
+    for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
+      if (ch(r, c) === '~') continue
+      x.drawImage(grass, ix, iy, iw - 2 * ix, ih - 2 * iy, c * s - s * 0.07, r * s - s * 0.07, s * 1.14, s * 1.14)
+    }
+  }
   function isRoad (k) { return k === '.' || k === '=' || k === 'o' }
   var PAT = null
   function bed (x) {
@@ -104,8 +114,6 @@
     })
   }
   function paintRoad (x, ch, r, c, X, Y, s, grass, drawTile) {
-    x.fillStyle = GROUND; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
-    if (grass) drawTile(x, grass, X, Y, s, 0.07)
     var D4 = { n: isRoad(ch(r - 1, c)), e: isRoad(ch(r, c + 1)), s: isRoad(ch(r + 1, c)), w: isRoad(ch(r, c - 1)) }
     var dirs = ['n', 'e', 's', 'w'].filter(function (d) { return D4[d] }), bridge = ch(r, c) === '='
     if (!dirs.length) dirs = ['e', 'w']
@@ -123,13 +131,15 @@
     x.save(); x.lineJoin = 'round'
     // soft shadow, then the gravel (or plank) bed, drawn 1px long at both ends so cells overlap exactly
     x.lineCap = 'butt'
-    x.lineWidth = s * 0.56; x.strokeStyle = bridge ? '#8b5a2b' : '#9d8d76'
+    x.lineWidth = s * 0.62; x.strokeStyle = bridge ? '#5c3a18' : 'rgba(70,52,30,.55)'
     paths.forEach(function (p) { strokePts(x, p.pts) })
-    if (dirs.length > 2 || isCorner) { x.beginPath(); x.rect(X + s * 0.22, Y + s * 0.22, s * 0.56, s * 0.56); x.fillStyle = bridge ? '#8b5a2b' : '#9d8d76'; x.fill() }
+    x.lineWidth = s * 0.54; x.strokeStyle = bridge ? '#8b5a2b' : '#8c7b64'
+    paths.forEach(function (p) { strokePts(x, p.pts) })
+    if (dirs.length > 2) { x.beginPath(); x.rect(X + s * 0.23, Y + s * 0.23, s * 0.54, s * 0.54); x.fillStyle = bridge ? '#8b5a2b' : '#8c7b64'; x.fill() }
     if (!bridge) {   // the owner's gravel texture over the solid bed (its own transparent rim never shows)
-      x.globalAlpha = 0.55; x.strokeStyle = bed(x)
+      x.globalAlpha = 0.7; x.strokeStyle = bed(x)
       paths.forEach(function (p) { strokePts(x, p.pts) })
-      if (dirs.length > 2 || isCorner) { x.fillStyle = bed(x); x.fillRect(X + s * 0.22, Y + s * 0.22, s * 0.56, s * 0.56) } x.globalAlpha = 1
+      if (dirs.length > 2) { x.fillStyle = bed(x); x.fillRect(X + s * 0.23, Y + s * 0.23, s * 0.54, s * 0.54) } x.globalAlpha = 1
     }
     // sleepers
     x.strokeStyle = bridge ? '#5c3a18' : '#7a4a22'; x.lineWidth = s * 0.085
@@ -143,6 +153,12 @@
       })
     })
     x.restore()
+  }
+
+  // the turtle tucks into its shell when Linus is close and walks when it is safe
+  function objArt (o, w) {
+    if (o.id !== 'kura' || !w || !w.m) return null
+    return Math.abs(o.r - w.m.r) + Math.abs(o.c - w.m.c) <= 2 ? 'animal/turtle/shell' : 'animal/turtle/walk'
   }
 
   /* ── home: the owner's bright landing (primary-linus-bright.png): wooden sign, red MULAI MAIN, blue PILIH MISI,
@@ -253,7 +269,7 @@
     libmap: libmap, hero: hero, scene: scene, regionScene: regionScene, background: background,
     pins: { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
     mapArt: function (port) { return background('bg-bl-lembah', port) },
-    groundFill: GROUND, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
+    paintGround: paintGround, objArt: objArt, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
   }
   P.def = def
   if (MA) {

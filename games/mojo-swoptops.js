@@ -340,6 +340,9 @@
         var t = el('div', 'dec'); t.innerHTML = '<img alt="" src="' + MA.src('obj/tree') + '">'; t.setAttribute('data-rc', r + ',' + c); fitRing(t.firstChild); decorF.appendChild(t)
       }
     })
+    ;(lv.decor || []).forEach(function (d0) {   // a pack's scenery cast: pictures that stand beside the track and are never touched
+      var t0 = el('div', 'dec cast'); t0.innerHTML = '<img alt="" src="' + MA.src(d0.art) + '">'; t0.setAttribute('data-rc', d0.at[0] + ',' + d0.at[1]); fitRing(t0.firstChild); decorF.appendChild(t0)
+    })
     $('objs').appendChild(objsF); $('decor').appendChild(decorF)
     $('mojo-ch').innerHTML = MA.chassis('top')
     cargoNode().innerHTML = ''
@@ -448,11 +451,11 @@
     function ch (r, c) { if (r < 0 || c < 0 || r >= R || c >= Cn) return null; return w.fill[r + ',' + c] ? '.' : lv.grid.map[r].charAt(c) }
     var onCell = {}; (lv.objects || []).forEach(function (o) { onCell[o.at[0] + ',' + o.at[1]] = 1 })   // a building never hides under an object's own art
     var grass = tileImg('grass'), road = tileImg(indoor ? 'indoor-floor' : 'road'), water = tileImg('water'), wall = tileImg('wall'), hole = tileImg('trap-hole')
+    if (PK && PK.paintGround) PK.paintGround(x, ch, R, Cn, s, grass)   // a pack lays its whole lawn first (tiles overlap, no cell rims)
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
       var k = ch(r, c), X = c * s, Y = r * s, filled = !!w.fill[r + ',' + c]
       if (k === ',' || k === 'T' || (k === '#' && !indoor)) {
-        if (PK && PK.groundFill) { x.fillStyle = PK.groundFill; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1) }   // a pack's lawn is one continuous colour under the tiles
-        if (grass) drawTile(x, grass, X, Y, s, 0.07); else { x.fillStyle = T.grass; x.fillRect(X, Y, s, s) }
+        if (PK && PK.paintGround) { /* laid by the pack */ } else if (grass) drawTile(x, grass, X, Y, s, 0.07); else { x.fillStyle = T.grass; x.fillRect(X, Y, s, s) }
         if (k === '#' && !onCell[r + ',' + c]) {
           var b = tileImg('b:' + BUILDINGS[(r * 3 + c * 5) % BUILDINGS.length])
           if (b) { var bw = b.naturalWidth, bh = b.naturalHeight, bp = (ringOf(b.src) || [0])[0], sc = Math.min(s * 0.9 / (bw - 2 * bp), s * 0.9 / (bh - 2 * bp)); x.drawImage(b, X + (s - bw * sc) / 2, Y + (s - bh * sc) / 2 + s * 0.02, bw * sc, bh * sc) }
@@ -519,6 +522,7 @@
     $('mojo-badge').textContent = m.lift > 0 ? m.lift : ''
   }
   function objImg (o) {
+    if (PK && PK.objArt) { var pa = PK.objArt(o, G && G.w); if (pa) return MA.src(pa) }
     switch (o.type) {
       case 'rock': return MA.src('obj/rock')
       case 'fire': return o.st === 'out' ? MA.src('obj/ash') : MA.src('obj/fire')

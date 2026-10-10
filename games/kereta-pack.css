@@ -178,3 +178,6 @@ html[data-pack="kereta"] .menu-lead,html[data-pack="kereta"] .form-gallery-head{
 .k-hub-card span{font-size:clamp(16px,1.9vw,22px);line-height:1.1}
 .k-hub-card small{font-weight:800;font-size:clamp(11px,1.2vw,14px);color:#7a5630}
 @media(hover:hover){.k-hub-card:hover{transform:translateY(-4px)}}
+
+/* the scenery cast (Henry, the child with the baby turtle, birds, deer): taller than a tree, never swaying like one */
+html[data-pack="kereta"] .dec.cast img{width:150%;height:150%;max-width:none;animation:none;transform:translateY(-14%);filter:drop-shadow(0 4px 3px rgba(0,0,0,.35))}
