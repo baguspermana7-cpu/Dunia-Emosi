@@ -126,6 +126,22 @@
     var mj = $('mojo').getBoundingClientRect(); puff(mj.left + mj.width * .3, mj.top + mj.height * .3, 100)
   }
 
+  /* ── riders in the cab and on the nose (sc30: Henry and Scarlet older in the cab, the baby turtle on Linus's front) ── */
+  function ride (lv) {
+    var m = $('mojo'); if (!m) return
+    var spec = lv.ride || {}, c2 = m.querySelector('.k-cab2'), fr = m.querySelector('.k-front')
+    if (spec.cab2) { if (!c2) { c2 = el('img', 'k-cab2'); c2.alt = ''; m.appendChild(c2) } c2.style.display = ''; c2.src = src(spec.cab2) } else if (c2) c2.style.display = 'none'
+    if (spec.front) { if (!fr) { fr = el('img', 'k-front'); fr.alt = ''; m.appendChild(fr) } fr.style.display = ''; fr.src = src(spec.front) } else if (fr) fr.style.display = 'none'
+  }
+  // sc3 micro: the red caboose hops one beat LATE when the rake moves
+  var lastPos = ''
+  function hopLate (lv, w) {
+    if (!lv.hopLate || RM) return
+    var m = w.m, p = m.r + ',' + m.c; if (p === lastPos) return; lastPos = p
+    var o = PG.find(w, lv.hopLate); if (!o || o.st !== 'coupled') return
+    var d = $('objs') && $('objs').querySelector('.ob[data-id="' + lv.hopLate + '"] img.main'); if (!d || !d.animate) return
+    d.animate([{ translate: '0 0' }, { translate: '0 -16%', offset: .4 }, { translate: '0 0' }], { duration: 380, delay: 320, easing: 'ease-out' })
+  }
   var lastKey = ''
   var hud0 = def.onHud
   def.onHud = function (c) {
@@ -139,7 +155,7 @@
         if (!R || R.lv !== lv || (broken0 && !open)) build(lv, w)
         if (open) snap()
       }
-      shot(lv, w)
+      shot(lv, w); ride(lv); hopLate(lv, w)
       // bl15: the one Goro (the patrol) is swallowed by the dark when it stands in the cave cell
       var cv = (c.beat && c.beat.cave) || lv.cave
       if (cv) { var g = D.querySelector('#objs .ob[data-id="goro"]'), go = PG.find(w, 'goro'); if (g && go) g.classList.toggle('k-incave', go.r === cv.at[0] && go.c === cv.at[1]) }

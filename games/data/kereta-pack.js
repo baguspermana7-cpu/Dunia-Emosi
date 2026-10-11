@@ -105,7 +105,7 @@
   function terrainOf (lv, bi) { var b = lv.beats[bi || 0]; return (b && b.terrain) || lv.terrain || 'meadow' }
   function moodOf (lv, bi) { var b = lv.beats[bi || 0]; return (b && b.mood) || lv.mood || 'sun' }
   function scene (lv, bi) {
-    var scr = D.getElementById('scr-play'); if (scr) { scr.setAttribute('data-tint', lv.tint || ''); scr.setAttribute('data-mood', moodOf(lv, bi)); scr.setAttribute('data-terrain', terrainOf(lv, bi)) } TERRAIN = terrainOf(lv, bi)
+    var scr = D.getElementById('scr-play'); if (scr) { scr.setAttribute('data-tint', lv.tint || ''); scr.setAttribute('data-lv', lv.id); scr.setAttribute('data-mood', moodOf(lv, bi)); scr.setAttribute('data-terrain', terrainOf(lv, bi)) } TERRAIN = terrainOf(lv, bi)
     cabSet(lv)
     var mj = D.getElementById('mojo'); if (mj) mj.classList.toggle('k-tired', !!((lv.tired && lv.tired[bi || 0]) || (lv.beats[bi || 0] && lv.beats[bi || 0].tired === true)))
     return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
@@ -234,6 +234,13 @@
     // a cave mouth on the board edge (sc 9, 10, 18): Goro's green eyes glow inside; with goro:true he rolls out and backs in again
     var cv = (b && b.cave) || lv.cave
     if (cv) out.push({ at: cv.at, cls: 'k-cave dir-' + (cv.dir || 'l'), html: '<i class="rock"></i><i class="mouth">' + (cv.goro ? '<img class="g" alt="" src="' + lib('train-char/goro-loco/front-34' + (cv.dir === 'r' ? 'r' : 'l')) + '">' : '') + '<i class="eye e1"></i><i class="eye e2"></i></i><span class="k-name down">Gua</span>' })
+    // sc26 the golden gate of the dream; sc29 big pillars under the new bridge, a monument, a plane across the sky
+    var gt = (b && b.gate) || lv.gate
+    if (gt) out.push({ at: gt.at, cls: 'k-gate', html: '<i class="glow"></i><i class="pil l"></i><i class="pil r"></i><i class="arch"></i><i class="door"></i><span class="k-name down">Gerbang Emas</span>' })
+    ;((b && b.pillars) || lv.pillars || []).forEach(function (pc) { out.push({ at: pc, cls: 'k-pillar', html: '<i></i>' }) })
+    var mo = (b && b.monument) || lv.monument
+    if (mo) out.push({ at: mo, cls: 'k-monument', html: '<i class="base"></i><img alt="" src="' + lib('kereta-prop/medal') + '"><span class="k-name down">Monumen</span>' })
+    if (((b && b.sky) || lv.sky || []).indexOf('plane') >= 0) out.push({ at: [0, 0], cls: 'k-fx k-fx-plane', html: '<img alt="" src="' + lib('vehicles/airplane') + '">' })
     // the board takes the scenario's mood: wet dark ground gets puddles, sheen, rain across the board and lightning; lamps glow warm
     var md = moodOf(lv, bi), dark = md === 'night' || md === 'rain' || md === 'storm', fxl = (b && b.fx) || lv.fx || []
     if (dark) {

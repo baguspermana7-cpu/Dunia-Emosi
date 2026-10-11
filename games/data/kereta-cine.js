@@ -73,6 +73,10 @@
   function run (c, spec) {
     if (!spec) return
     if (spec.letterbox) letterbox(spec.letterbox)
+    if (spec.slideIn) {   // a big engine ROLLS IN from the right edge (sc7: Samson arrives and Linus looks tiny)
+      var si = spec.slideIn, d = $('objs') && $('objs').querySelector('.ob[data-id="' + si.id + '"]'), cc = cell()
+      if (d && d.animate && !RM) d.animate([{ translate: (si.cells * cc) + 'px 0', opacity: 0 }, { translate: (si.cells * cc * .2) + 'px 0', opacity: 1, offset: .45 }, { translate: '0 0', opacity: 1 }], { duration: si.ms || 1500, easing: 'cubic-bezier(.2,.7,.2,1)' })
+    }
     if (spec.zoom) zoom(spec.zoom.at, spec.zoom.s, spec.zoom.ms)
     ;(spec.fx || []).forEach(function (f) { setTimeout(function () { var rc = whereOf(f.at), p = rc ? px(rc) : mojoPx(); for (var i = 0; i < (f.n || 1); i++) (function (i) { setTimeout(function () { vfx(f.id, p[0] + (i % 2 ? 1 : -1) * (f.spread || 0) * i, p[1] - (f.lift || 0), f.size || 120, { duration: 1000, filter: f.filter === 'dust' ? def.fx.DUST : f.filter }) }, i * 140) })(i) }, f.delay || 0) })
   }

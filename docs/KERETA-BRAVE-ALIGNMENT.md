@@ -71,3 +71,9 @@ The md's own "Urutan penyelamatan yang tidak boleh tertukar" (12 steps) must hol
 4. Chapter 6 (25–30).
 Keep saves working (ids stay; reorder via the chapter level lists). Gate: extend qa-kereta-pack with the rescue
 order (levels 15–24 in the md's order) and "no coaches with Linus between sc 9 and sc 19".
+
+## Status 2026-10-11 (item 6)
+- Alignment step 3 done: bl03 (STEEP GRADE sign "Tanjakan Curam", summit rock, climb over the top and down to the low line, caboose hops one beat late), bl07 (Samson ROLLS IN as a start cutscene),
+  bl15 (Samson's red-brown rake at the endpoint), bl16 (coaches tinted red-brown), bl19/bl20 (Samson stays in the scene). The SIDE camera idea is not used: the board stays flat (owner rule).
+- Chapter 6: sc25 = bl20 beats 3-4, sc26 bl21 (dream: golden gate, story cards, light), sc27 bl22 (child holding the baby turtle, Baron at the back), sc28 bl23 (two newspaper cards),
+  sc29 bl24 (new bridge with pillars, monument, plane), sc30 bl26 (the opening valley loop again; Henry and Scarlet in the cab, the baby turtle on Linus's nose).
