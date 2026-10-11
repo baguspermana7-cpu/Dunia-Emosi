@@ -54,3 +54,11 @@ Status: item 1 shipped. Item 4 wired via `games/data/kereta-cine.js` (data `cine
   (`def.fx.sparks`). Where this table above names `bk-spark-*`, `bk-trace-*`, `bk-smoke-puff` or `bk-smoke-wispy-*`, read the
   substitutes in this section. The gate `qa-kereta-pack` checks every named id (exists, licence, kid-safe, not electric, not a
   full-frame sheet) and, in a browser at 390x844 dpr 2 and 1280x800, that every screen-blend effect on the board really is `screen`.
+
+## Board life (kereta-life.js, kereta-weather.js; 2026-10-11)
+- No database effect was needed yet: clouds, rainbow, god rays, mist, fireflies, leaves, snow, V-birds, butterfly, lily pads, fish and ripples are
+  CSS shapes / inline SVG (transform + opacity only, fixed particle counts). Heart/note bursts on NPC taps are inline SVG too.
+- Candidates from `visual effect/sudah organized/curated/blippi-owner` (clouds, rainbow, leaves, ripples, rays) can replace the CSS shapes later
+  through tools/build-vfx-library.py; none was added to the game library in this pass.
+- Scene gating: rainbow only sun + meadow/depot/town; rays only bright; fireflies only night/dream; snow only mountain without rain; mist only
+  gorge/mountain; leaves only logging (not storm); butterflies only bright meadow. Reduced motion: neither file builds anything.
