@@ -20,9 +20,9 @@
     L({ id: 'hb01', terrain: 'meadow', mood: 'sun', n: 1, title: 'Peluit Tanda Mulai', place: 'Garis Start', icon: 'cmd/wait', bg: 'bg-hb-start', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 8, map: [',T,.,,T,', '........', ',,T.,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
-      decor: [{ at: [2, 1], art: 'animal/bird-blue/fly' }],
+      decor: [{ at: [2, 6], art: 'animal/bird-blue/fly' }],
       objects: [
-        { id: 'sinyal', type: 'patrol', at: [0, 3], name: 'Rombongan', art: 'animal/rabbit/run', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
+        { id: 'sinyal', type: 'patrol', at: [0, 3], name: 'Kelinci', art: 'animal/rabbit/run', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [{ title: 'Tunggu aba-aba', story: 'Hari ini ada Pesta Besar di kota. Lomba dimulai!',

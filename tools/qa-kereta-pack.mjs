@@ -98,7 +98,7 @@ for (const lv of ML.LEVELS) lv.beats.forEach((b, i) => {
 })
 // cast keys skipped on purpose (alignment doc, owner 2026-10-11): sc4 child holding the turtle = Scarlet-era sc27 only; Scarlet and Henry never at the
 // logging line / bridge-lookout (sc14, 15-16); the sc15-16 cast list in kereta-cast.js predates the alignment doc
-const EXCLUDED = new Set(['story-char/anak-kura/hold', 'story-char/scarlet/cemas-atas', 'story-char/henry/worried'])
+const EXCLUDED = new Set(['story-char/anak-kura/hold', 'story-char/scarlet/cemas-atas', 'story-char/henry/worried', 'animal/vulture/perch-2'])
 // owner kid-safe rule: no chains, whips or weapons ART in the database used by a level (the owner's 2026-10-11 exception is drawn by the pack: coupling chain, in-air whip, cartoon shot)
 const UNSAFE = [...dbKeys].filter(k => /(chain|whip|gun|pistol|rifle|weapon|senjata|rantai|cambuk|senapan|knife|sword)/i.test(k))
 check(UNSAFE.every(k => !used.has(k)), `no unsafe art used (${UNSAFE.length} unsafe keys exist in the database: ${UNSAFE.slice(0, 4).join(', ')})`)
@@ -145,6 +145,11 @@ for (const lv of ML.LEVELS) lv.beats.forEach((b, bi) => {
   const row0 = figs.filter(([a, at]) => at && at[0] === 0 && figOf(a))
   check(row0.length === 0, `${lv.id}.${bi}: no figure stands on the top row (headroom row) ${row0.map(f => f[0]).join(',')}`)
 })
+// ANIMALS never stand on the rail cells the hero runs on (a patrol like the turtle is placed by the story, not decor)
+for (const lv of ML.LEVELS) lv.beats.forEach((b, bi) => {
+  const vis = b.vis || []
+  ;(b.decor || lv.decor || []).forEach(d => { if (/^animal\//.test(d.art)) { const v = vis.find(x => x.at[0] === d.at[0] && x.at[1] === d.at[1]); const ch = v ? v.ch : lv.grid.map[d.at[0]][d.at[1]]; check(!'.='.includes(ch), `${lv.id}.${bi}: animal ${d.art} at ${d.at} is not on a rail cell`) } })
+})
 // kid-safe: no emoji anywhere in the pack's words
 const words = JSON.stringify(ML.LEVELS.map(l => [l.title, l.place, l.beats, l.objects.map(o => o.name)])) + JSON.stringify(ML.REGIONS)
 check(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(words), 'no emoji in the pack text')
@@ -181,6 +186,12 @@ if (!process.argv.includes('--headless')) {
       const topCam = ML.byId(id).view === 'top'
       const want = (topCam ? ['top-n', 'top-e', 'top-s', 'top-w'] : ['rear', 'front-34r', 'front', 'front-34l'])[st.h]
       check(st.id === id && !!HEROES[st.form] && st.src && st.src.indexOf(HEROES[st.form].sprite + '/' + want + '.') > 0, `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
+      await sleep(450)
+      const clash = await p.evaluate(() => { const t = [...document.querySelectorAll('#decor .k-name, #objs .k-name')].filter(e => e.getClientRects().length && getComputedStyle(e).opacity !== '0'), out = []
+        const R = t.map(e => e.getBoundingClientRect())
+        for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const a = R[i], c = R[j]; const ox = Math.min(a.right, c.right) - Math.max(a.left, c.left), oy = Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top); if (ox > 3 && oy > 3) out.push(t[i].textContent + '/' + t[j].textContent) }
+        return out })
+      check(clash.length === 0, `${w}x${h} ${id}: no two name tags overlap ${clash.slice(0, 3).join(', ')}`)
       // every name tag matches the art drawn under it (a figure takes its label from the art, never from a level's rider name)
       const tags = await p.evaluate(() => [...document.querySelectorAll('#decor .dec.cast, #objs .ob')].map(h => { const t = h.querySelector(':scope > .k-name'), i = h.querySelector('img.main, img'); const m = i && /assets\/db\/lib\/(.+?)\.webp/.exec(i.getAttribute('src') || ''); return t && m ? [t.textContent, m[1], h.className] : null }).filter(Boolean))
       const wrong = await p.evaluate(tags => tags.filter(([txt, key, cls]) => /^(story-char|malivlak-char|train-char)\//.test(key) && !/\bstop\b/.test(cls) && MojoPack.def.nameOf(key) && MojoPack.def.nameOf(key) !== txt), tags)

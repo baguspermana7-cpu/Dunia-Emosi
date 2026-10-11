@@ -468,18 +468,18 @@
     L({ id: 'bl22', terrain: 'depot', mood: 'dream', n: 27, ch: 'bl-pulang', title: 'Disambut di Bengkel', place: 'Bengkel', icon: 'cmd/pick', bg: 'bg-bl-bengkel', edu: { domain: 'matematika', skill: 'memasangkan' },
       grid: { rows: 3, cols: 7, map: [',,,,,,,', '.......', '.,.,.,,'], theme: 'town' },
       mojo: { at: [1, 3], h: 'W', form: HERO },
-      decor: [{ at: [2, 6], art: 'story-char/anak-cat/stand' }, { at: [2, 1], art: 'story-char/anak-kura/hold' }, { at: [2, 5], art: 'story-char/baron/stand' }],
+      decor: [{ at: [2, 1], art: 'story-char/anak-cat/stand' }, { at: [2, 5], art: 'story-char/scarlet/ramah' }, { at: [2, 6], art: 'animal/turtle/stand' }, { at: [0, 6], art: 'story-char/baron/stand' }],
       objects: [
-        { id: 'palu', type: 'parcel', at: [2, 0], kind: 'palu', name: 'Palu', art: 'obj/palu' },
-        { id: 'obeng', type: 'parcel', at: [2, 2], kind: 'obeng', name: 'Obeng', art: 'obj/obeng' },
-        { id: 'kunci', type: 'parcel', at: [2, 4], kind: 'kunci', name: 'Kunci pas', art: 'obj/kunci-inggris' },
-        { id: 'mekanik', type: 'stop', at: [0, 0], accepts: 'palu', art: 'story-char/mekanik/wave', name: 'Mekanik', pay: 'wave' },
-        { id: 'pelukis', type: 'stop', at: [0, 2], accepts: 'obeng', art: 'story-char/pelukis/stand', name: 'Pelukis', pay: 'wave' },
-        { id: 'henry', type: 'stop', at: [0, 4], accepts: 'kunci', art: 'char/henry-w', name: 'Henry', pay: 'wave' }
+        { id: 'palu', type: 'parcel', at: [2, 4], kind: 'palu', name: 'Palu', art: 'obj/palu' },
+        { id: 'obeng', type: 'parcel', at: [2, 0], kind: 'obeng', name: 'Obeng', art: 'obj/obeng' },
+        { id: 'kunci', type: 'parcel', at: [2, 2], kind: 'kunci', name: 'Kunci pas', art: 'obj/kunci-inggris' },
+        { id: 'mekanik', type: 'stop', at: [0, 5], accepts: 'palu', art: 'story-char/mekanik/wave', name: 'Mekanik', pay: 'wave' },
+        { id: 'pelukis', type: 'stop', at: [0, 1], accepts: 'obeng', art: 'story-char/pelukis/stand', name: 'Pelukis', pay: 'wave' },
+        { id: 'henry', type: 'stop', at: [0, 3], accepts: 'kunci', art: 'char/henry-w', name: 'Henry', pay: 'wave' }
       ],
       beats: [{ title: 'Alat untuk setiap teman', story: 'Teman-teman menyambut Linus di bengkel.',
         bo: 'Beri alat ke Mekanik, Pelukis, Henry.',
-        objectives: [{ 'do': 'deliver', id: 'mekanik' }, { 'do': 'deliver', id: 'pelukis' }, { 'do': 'deliver', id: 'henry' }], slots: 15, budget: 11, forms: [HERO], palette: ['east', 'west', 'pick', 'deliver'] }] }),
+        objectives: [{ 'do': 'deliver', id: 'mekanik' }, { 'do': 'deliver', id: 'pelukis' }, { 'do': 'deliver', id: 'henry' }], slots: 18, budget: 14, forms: [HERO], palette: ['east', 'west', 'pick', 'deliver'] }] }),
 
     // 28 the news: the child with the baby turtle carries the newspaper to the three friends in order
     L({ id: 'bl23', cards: [
@@ -528,7 +528,7 @@
           start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'wagons', n: 2 }, { 'do': 'reach', at: [4, 0] }], slots: 13, budget: 10, forms: [HERO], palette: ['west', 'down', 'couple'] },
         { title: 'Henry dan Scarlet naik', story: 'Henry dan Scarlet naik ke kabin.',
           bo: 'Naikkan Henry dan Scarlet, turunkan di kabin Linus.', hide: ['kereta', 'flag'],
-          decor: [{ at: [2, 2], art: 'story-char/anak-kura/shy' }, { at: [2, 5], art: 'animal/turtle/stand' }, { at: [2, 7], art: 'animal/vulture/perch-2' }],
+          decor: [{ at: [2, 2], art: 'story-char/anak-kura/shy' }, { at: [2, 5], art: 'animal/turtle/stand' }],
           objectives: [{ 'do': 'deliver', id: 'kabin' }], slots: 14, budget: 11, forms: [HERO], palette: ['east', 'west', 'down', 'pick', 'deliver'] }
       ] }),
 
@@ -538,7 +538,7 @@
       grid: { rows: 4, cols: 7, map: [',,,~,,T', ',T,~,,,', ',..==..', '..,~,,,'], theme: 'town' },
       mojo: { at: [3, 0], h: 'E', form: HERO },
       cab: 'story-char/henry/wave',
-      decor: [{ at: [0, 5], art: 'animal/bird-blue/fly' }, { at: [0, 1], art: 'animal/deer/graze' }, { at: [1, 6], art: 'story-char/anak-kura/shy' }, { at: [2, 5], art: 'animal/rabbit/run' }, { at: [0, 0], art: 'animal/vulture/perch-2' }, { at: [3, 4], art: 'train-char/caboose-red/front-34r' }],
+      decor: [{ at: [0, 4], art: 'animal/bird-blue/fly' }, { at: [0, 1], art: 'animal/deer/graze' }, { at: [1, 6], art: 'story-char/anak-kura/shy' }, { at: [1, 5], art: 'animal/rabbit/run' }, { at: [3, 4], art: 'train-char/caboose-red/front-34r' }],
       objects: [{ id: 'flag', type: 'flag', at: [2, 6] }],
       beats: [{ title: 'Lembah yang sama', story: 'Linus pulang lewat lembah yang sama.',
         bo: 'Antar Linus ke bendera di ujung lembah.', objectives: [{ 'do': 'reach', at: [2, 6] }], slots: 9, budget: 7, forms: [HERO], palette: ['up', 'east'] }] })

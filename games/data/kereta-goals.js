@@ -223,10 +223,31 @@
     ride(f, a, b, a.width, 560, function () { var M = W.VFX && VFX.Moment; if (M && M.puff) { try { M.puff({ x: b.left + b.width / 2, y: b.top + b.height * .75 }, { size: 80 }) } catch (x) {} } })
   }
 
+  /* ── name tags never sit on each other: after each layout, a tag that overlaps an earlier one slides up or down by its own height ── */
+  var nudgeT = 0
+  function nudge () {
+    var tags = [].slice.call(D.querySelectorAll('#decor .k-name, #objs .k-name'))
+    tags.forEach(function (t) { t.style.translate = '' })
+    var done = []
+    tags.sort(function (a, b) { var A = a.getBoundingClientRect(), B = b.getBoundingClientRect(); return A.top - B.top || A.left - B.left })
+    tags.forEach(function (t) {
+      if (!t.getClientRects().length) return
+      var tr = 0, dir = 1, tries = 0
+      for (;;) {
+        var r = t.getBoundingClientRect(), hit = null
+        for (var i = 0; i < done.length; i++) { var o = done[i], ox = Math.min(r.right, o.right) - Math.max(r.left, o.left), oy = Math.min(r.bottom, o.bottom) - Math.max(r.top, o.top); if (ox > 2 && oy > 2) { hit = o; break } }
+        if (!hit || tries > 8) { done.push(r); break }
+        tries++; tr += (t.classList.contains('up') ? -1 : 1) * (hit.height + 1); t.style.translate = '0 ' + tr + 'px'
+      }
+    })
+  }
+  def.nudgeTags = function () { clearTimeout(nudgeT); nudgeT = setTimeout(nudge, 140) }
+  W.addEventListener('resize', def.nudgeTags)
+  W.setInterval(function () { if (D.body.getAttribute('data-scr') === 'scr-play') nudge() }, 500)   // layout, patrols and pose swaps move the tags: settle them again
   def.onHud = function (c) {
     try {
       var lv = c.lv, w = c.w, key = lv.id + '/' + c.bi, groups = (c.beat.objectives || []).map(function (ob) { return groupOf(lv, w, ob) })
-      decorate(lv, c.bi, w); refresh(lv, w)
+      decorate(lv, c.bi, w); refresh(lv, w); def.nudgeTags()
       if (S.key !== key || !D.getElementById('k-check') || D.getElementById('k-check').children.length !== groups.length) { S.key = key; build(c, groups) } else tick(c, groups)
       // wide screens show the goals as chips in the title bar: they get the same counter + pop, and the board overlay steps aside
       var chips = D.querySelectorAll('#p-objs .ob-chip'), kc = D.getElementById('k-check'), bar = D.getElementById('p-objs') && W.getComputedStyle(D.getElementById('p-objs')).display !== 'none'

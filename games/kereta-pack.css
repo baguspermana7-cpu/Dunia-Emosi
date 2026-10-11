@@ -464,8 +464,8 @@ html[data-pack="kereta"] .ob.rider .k-bubble{top:-104%}
 .k-monument .base{position:absolute;left:12%;right:12%;bottom:4%;height:40%;background:linear-gradient(180deg,#cfc9bd,#8f897d);border-radius:4px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
 .k-monument img{position:absolute;left:24%;bottom:36%;width:52%;height:auto;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));animation:none}
 .k-fx-plane{overflow:visible}
-.k-fx-plane img{position:absolute;top:-70%;left:0;width:calc(var(--cell)*1.1);height:auto;animation:kPlane 24s linear infinite;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25))}
-@keyframes kPlane{from{translate:-30% 0}to{translate:calc(var(--cell)*10) -30%}}
+.k-fx-plane img{position:absolute;top:1%;left:-16%;width:calc(var(--cell)*1.1);height:auto;animation:kPlane 24s linear infinite;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));z-index:9}
+@keyframes kPlane{from{transform:translateX(0)}to{transform:translateX(1150%)}}
 /* sc30: Scarlet beside Henry in the cab, the baby turtle on Linus's front */
 .k-cab2{position:absolute;right:46%;top:-26%;height:72%;width:auto;z-index:6;pointer-events:none;filter:drop-shadow(0 3px 2px rgba(0,0,0,.4));transform-origin:50% 100%;animation:kBreath 4.1s ease-in-out infinite alternate}
 .k-front{position:absolute;right:6%;bottom:36%;height:30%;width:auto;z-index:8;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4));animation:kBreath 3.2s ease-in-out infinite alternate}
