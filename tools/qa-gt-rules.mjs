@@ -18,7 +18,9 @@ check(C.TRUCKS.every(t => t.sprite && t.hp >= 10 && t.hp <= 20 && t.attacks.leng
 check(!C.TRUCKS.concat(C.PARTS, C.ACTIONS).some(c => banned.test(c.name) || banned.test(c.id)), 'no trademarked truck names (owner decision)')
 for (const [k, s] of Object.entries(C.STARTERS)) {
   check(s.deck.length === 20 && s.deck.every(id => C.get(id)), `starter ${k}: 20 known cards`)
-  check(s.deck.filter(id => C.get(id).cat === 'truck').length === 17 && new Set(s.deck).size === 20, `starter ${k}: 17 different trucks + 3 support (owner: support 15%)`)
+  check(s.deck.filter(id => C.get(id).cat === 'truck').length === 6 && new Set(s.deck.filter(id => C.get(id).cat === 'truck')).size === 6, `starter ${k}: 6 different trucks`)
+  const sup = s.deck.filter(id => C.get(id).cat !== 'truck')
+  check(sup.length === 14 && sup.every(id => id.startsWith('sup-')) && new Set(sup).size === 8, `starter ${k}: 14 support cards covering all 8 support types (owner: "terlalu banyak kartu mobil")`)
   check(!s.deck.some(id => C.get(id).cat === 'fuel'), `starter ${k}: no fuel cards (bensin is automatic)`)
   check(s.trucks.every(id => s.deck.includes(id)), `starter ${k}: the 3 chosen trucks are in the deck`)
 }
@@ -89,7 +91,9 @@ const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }
   check(ok, 'both trucks start on the field and the first player has 1 bensin (300 seeds)')
 }
 { // bensin +1 automatically each turn; Ganti Truk once per turn, old truck to the deck bottom with its bensin moving over
-  let st = E.create({ seed: 21, p1: { starter: 'api' }, p2: { starter: 'baja' } })
+  let seed2 = 22
+  while (E.create({ seed: seed2, p1: { starter: 'api' }, p2: { starter: 'baja' } }).players[0].hand.filter(c => C.get(E.create({ seed: seed2, p1: { starter: 'api' }, p2: { starter: 'baja' } }).cards[c]).cat === 'truck').length < 2) seed2++
+  let st = E.create({ seed: seed2, p1: { starter: 'api' }, p2: { starter: 'baja' } })
   st = E.apply(st, { type: 'endTurn' }).state
   check(st.players[1].active.fuel === 1 && st.log.some(e => e.t === 'autoFuel' && e.p === 1), 'second player gets +1 bensin at its turn start')
   st = E.apply(st, { type: 'endTurn' }).state
@@ -172,7 +176,8 @@ const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }
   check(!E.apply(r.state, { type: 'endTurn' }).ok, 'nothing else can happen during a challenge')
   const wrong = E.apply(r.state, { type: 'answer', correct: false }).events.find(e => e.t === 'attack')
   const right = E.apply(r.state, { type: 'answer', correct: true }).events.find(e => e.t === 'attack')
-  check(wrong.dmg === pv.total && right.dmg === pv.total + E.RULES.CORRECT_BONUS, `wrong answer = normal damage (${wrong.dmg}), right = +${E.RULES.CORRECT_BONUS} (${right.dmg})`)
+  check(right.dmg === pv.total + E.RULES.CORRECT_BONUS, `right answer = full power + ${E.RULES.CORRECT_BONUS} bonus (${right.dmg})`)
+  check(wrong.dmg === Math.floor((pv.total - pv.nitro) * 0.25) && wrong.glancing === true && wrong.dmg < pv.total, `WRONG answer = 25% glancing hit (${wrong.dmg} of ${pv.total})`)
 }
 { // KO of the last truck anywhere ends the game for the other player
   let st = fresh(31)
@@ -182,7 +187,7 @@ const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }
   const isT = c => C.get(st.cards[c]).cat === 'truck'
   O.hand = O.hand.filter(c => !isT(c)); O.deck = O.deck.filter(c => !isT(c)); O.bench = []
   st.players[st.active].active.fuel = 4; O.active.hp = 1
-  let r = E.apply(st, { type: 'attack', attack: 0 }); r = E.apply(r.state, { type: 'answer', correct: false })
+  let r = E.apply(st, { type: 'attack', attack: 0 }); r = E.apply(r.state, { type: 'answer', correct: true })
   check(r.state.phase === 'over' && r.state.winner === st.active, 'knocking out a side with no trucks left wins at once')
 }
 { // zero damage stays zero, never negative; armor cannot heal
@@ -220,5 +225,121 @@ pass('edge cases checked')
   check(r.events.some(e => e.t === 'koReward' && e.p === 0) && r.state.players[0].hand.length === h0 + 1, 'a KO earns the attacker one card')
 }
 pass('mechanics pass checked')
+
+// ── REWORK 2026-10-11: glancing hit, lives, support cards, statuses ───────────
+const give = (st, p, id) => { const inst = 'g' + Object.keys(st.cards).length; st.cards[inst] = id; st.players[p].hand.push(inst); return inst }
+const battle = (seed = 8, p1 = 'api', p2 = 'baja') => { const st = E.create({ seed, p1: { starter: p1 }, p2: { starter: p2 }, arena: 'malam' }); st.players.forEach(P => { P.hand = P.hand.filter(c => C.get(st.cards[c]).cat === 'truck') }); st.players[0].active.fuel = 4; return st }
+const attackWith = (st, correct) => E.apply(E.apply(st, { type: 'attack', attack: 0 }).state, { type: 'answer', correct })
+{ // wrong = floor(25%), never below 0, never the whole hit; nitro kept on a glancing hit
+  const st = battle(); st.players[0].nitro = 3
+  const pv = E.preview(st, 0), hp0 = st.players[1].active.hp
+  const w = attackWith(st, false), ev = w.events.find(e => e.t === 'attack')
+  check(pv.nitro === 2 && pv.glance === Math.floor((pv.total - 2) * 0.25), 'preview exposes the glancing number (Nitro excluded)')
+  check(ev.glancing && ev.dmg === pv.glance && w.state.players[1].active.hp === hp0 - pv.glance, 'wrong answer: hp drops by the glancing amount only')
+  check(w.state.players[0].nitro === 3, 'a glancing hit does not spend the full Nitro bar')
+  const r = attackWith(st, true)
+  check(r.events.find(e => e.t === 'attack').dmg === pv.total + 2 && r.state.players[0].nitro === 0, 'right answer: full power + bonus + Nitro spent')
+  const low = battle(); low.players[0].active.fuel = 4; const tiny = E.preview(low, 0); check(tiny.glance <= Math.floor(tiny.total / 4), 'glance never exceeds 25% of the power')
+  // 3 → 0, 4 → 1, 7 → 1, 8 → 2 (rounded down)
+  let seen = new Set()
+  for (let s = 1; s <= 60; s++) { const q = battle(s, 'kilat', 'lumpur'); const p = E.preview(q, 0); const n = p.total - p.nitro; if (p.glance !== Math.floor(n * 0.25)) seen.add(s) }
+  check(seen.size === 0, 'glance == floor(25%) on 60 seeds')
+}
+{ // lives: 3 hearts, each KO costs exactly one, 0 = lose
+  let st = battle(14)
+  check(st.players.every(P => P.lives === 3) && E.RULES.LIVES === 3, 'both sides start with 3 lives')
+  for (let k = 1; k <= 3; k++) {
+    st.players[st.active].active.fuel = 4; st.players[1 - st.active].active.hp = 1
+    const pi = st.active
+    const mk = E.apply(E.apply(st, { type: 'attack', attack: 0 }).state, { type: 'answer', correct: true })
+    const ko = mk.events.find(e => e.t === 'ko')
+    check(ko && ko.lives === 3 - k && mk.state.players[1 - pi].lives === 3 - k, `KO #${k} costs the loser exactly 1 life (${3 - k} left)`)
+    if (k < 3) { st = mk.state; check(st.phase !== 'over', 'game goes on with lives left'); st = battleFix(st, pi) } else check(mk.state.phase === 'over' && mk.state.winner === pi && mk.events.some(e => e.t === 'gameOver' && e.why === 'ko'), '0 lives = game over, the attacker wins')
+  }
+  // the victim's next truck steps in (hand), the attacker keeps swinging at the same player
+  function battleFix (s0, pi) { // give the other side's active a fresh truck if none, and let pi attack again
+    const s1 = JSON.parse(JSON.stringify(s0)); const v = s1.players[1 - pi]
+    while (s1.active !== pi) { const c = E.ai(s1, 'rookie'); const r = E.apply(s1, c); if (!r.ok) break; Object.assign(s1, r.state) }
+    return s1
+  }
+}
+{ // support: Turbo, Perisai, Rem Darurat, Lumpur, Oli, Bengkel, Tukar Ban, Nitro Isi — each effect + the 2-per-turn cap
+  let st = battle(); const T = give(st, 0, 'sup-turbo'); const base = E.preview(st, 0).total
+  let r = E.apply(st, { type: 'playAction', card: T }); check(r.ok && E.preview(r.state, 0).total === base + 2, 'Turbo: +2 power this turn')
+  const aft = E.apply(r.state, { type: 'endTurn' }).state; check(aft.players[0].boost === 0, 'Turbo expires at end of turn')
+  check(!E.apply(r.state, { type: 'playAction', card: give(r.state, 0, 'sup-turbo') }).ok, 'cannot stack two Turbo')
+
+  st = battle(); const S = give(st, 1, 'sup-perisai'); st.active = 1; st.players[1].active.fuel = 4
+  r = E.apply(st, { type: 'playAction', card: S }); check(r.ok && r.state.players[1].active.status.shield === 2, 'Perisai: shield 2 on the truck')
+  let hp = r.state.players[1].active.hp
+  let q = JSON.parse(JSON.stringify(r.state)); q.active = 0; q.players[0].active.fuel = 4
+  const hit = attackWith(q, true), he = hit.events.find(e => e.t === 'attack')
+  check(he.absorbed === 2 && hit.state.players[1].active.hp === hp - (he.dmg), `Perisai absorbs the first 2 damage (${he.absorbed} soaked, ${he.dmg} through)`)
+  check(hit.state.players[1].active.status.shield === 0, 'Perisai is used up')
+  // shield expires with no attack: ticks at the end of its owner's NEXT turn
+  let sh = r.state; sh = E.apply(sh, { type: 'endTurn' }).state; sh = E.apply(sh, { type: 'endTurn' }).state
+  check(sh.players[1].active.status.shield === 2, 'Perisai still up after one opponent turn')
+  sh = E.apply(sh, { type: 'endTurn' }).state
+  check(sh.players[1].active.status.shield === 0 && sh.log.some(e => e.t === 'statusEnd' && e.status === 'shield'), 'Perisai expires at the end of its owner’s next turn')
+
+  st = battle(); const R = give(st, 0, 'sup-rem')
+  r = E.apply(st, { type: 'playAction', card: R }); check(r.ok && r.state.players[1].skip === 1, 'Rem Darurat: opponent marked to skip')
+  let e = E.apply(r.state, { type: 'endTurn' }); check(e.events.some(x => x.t === 'skipTurn' && x.p === 1) && e.state.active === 0, 'skipped player loses the turn, play returns to the caster')
+  const R2 = give(e.state, 0, 'sup-rem'); const e2 = E.apply(e.state, { type: 'playAction', card: R2 }); check(!e2.ok && e2.reason === 'justSkipped', 'cannot skip the same player twice in a row')
+  const e3 = E.apply(E.apply(E.apply(e.state, { type: 'endTurn' }).state, { type: 'endTurn' }).state, { type: 'playAction', card: R2 }); check(e3.ok, 'after one played turn the skip is available again')
+
+  st = battle(); const L = give(st, 0, 'sup-lumpur')
+  r = E.apply(st, { type: 'playAction', card: L }); check(r.ok && r.state.players[1].active.status.stun === 1, 'Lumpur: opponent truck stunned')
+  let sn = E.apply(r.state, { type: 'endTurn' }).state; sn.players[1].active.fuel = 4
+  check(!E.apply(sn, { type: 'attack', attack: 0 }).ok && E.apply(sn, { type: 'attack', attack: 0 }).reason === 'stunned' && !E.legal(sn).some(c => c.type === 'attack'), 'a stunned truck cannot attack (and legal() hides it)')
+  const sn2 = E.apply(sn, { type: 'endTurn' }).state; check(sn2.players[1].active.status.stun === 0 && sn2.players[1].active.status.resist === 1, 'stun expires after the stunned turn, then a 1-turn resist')
+  const L2 = give(sn2, 0, 'sup-lumpur'); const again = E.apply(sn2, { type: 'playAction', card: L2 }); check(!again.ok && again.reason === 'alreadyStunned', 'no stun-lock: resist blocks an immediate re-stun')
+  const sn3 = JSON.parse(JSON.stringify(sn2)); sn3.players[1].active.fuel = 4; const sn4 = E.apply(E.apply(sn3, { type: 'endTurn' }).state, { type: 'attack', attack: 0 }); check(sn4.ok, 'the stunned truck can attack again the turn after')
+
+  st = battle(); const O = give(st, 0, 'sup-oli')
+  r = E.apply(st, { type: 'playAction', card: O }); check(r.ok && r.state.players[1].active.status.down === 2, 'Tumpahan Oli: opponent next attack −2')
+  q = E.apply(r.state, { type: 'endTurn' }).state; q.players[1].active.fuel = 4
+  const clean = JSON.parse(JSON.stringify(q)); clean.players[1].active.status.down = 0
+  check(E.preview(clean, 0).total - E.preview(q, 0).total >= 1 && E.preview(q, 0).down === 2, 'Oli lowers the opponent’s preview by up to 2 (min damage 1)')
+  const oa = attackWith(q, true); check(oa.state.players[1].active.status.down === 0, 'Oli is used up by the attack it weakened')
+  let ol = E.apply(r.state, { type: 'endTurn' }).state; ol = E.apply(ol, { type: 'endTurn' }).state
+  check(ol.players[1].active.status.down === 0, 'Oli expires if the opponent never attacked')
+
+  st = battle(); st.players[0].active.hp = st.players[0].active.maxHp - 5
+  const B = give(st, 0, 'sup-bengkel'); const hb = st.players[0].active.hp
+  r = E.apply(st, { type: 'playAction', card: B }); check(r.ok && r.state.players[0].active.hp === hb + 3, 'Bengkel: heal 3')
+  const full = battle(); check(E.apply(full, { type: 'playAction', card: give(full, 0, 'sup-bengkel') }).reason === 'fullHP', 'Bengkel refused at full HP')
+
+  st = battle(); const N = give(st, 0, 'sup-nitro'); st.players[0].nitro = 0
+  r = E.apply(st, { type: 'playAction', card: N }); check(r.ok && r.state.players[0].nitro === 1, 'Nitro Isi: +1 Nitro')
+  st.players[0].nitro = 3; check(E.apply(st, { type: 'playAction', card: N }).reason === 'nitroFull', 'Nitro Isi refused when full')
+
+  st = battle(); const X = give(st, 0, 'sup-tukar'); const spare = give(st, 0, 'truck-009'); const oldA = st.players[0].active.inst
+  r = E.apply(st, { type: 'playAction', card: X, target: spare })
+  check(r.ok && r.state.players[0].active.inst === spare && r.state.players[0].hand.includes(oldA) && r.state.players[0].active.fuel === 4, 'Tukar Ban: chosen hand truck rolls in free, old truck back to hand, bensin kept')
+  const sw1 = E.apply(st, { type: 'playTruck', card: spare }).state
+  check(E.apply(sw1, { type: 'playAction', card: X, target: give(sw1, 0, 'truck-010') }).ok, 'Tukar Ban works even after the normal once-per-turn swap')
+  const nohand = battle(); nohand.players[0].hand = []; const X2 = give(nohand, 0, 'sup-tukar'); check(E.apply(nohand, { type: 'playAction', card: X2 }).reason === 'noTruckInHand', 'Tukar Ban refused with no truck in hand')
+
+  st = battle(); const a1 = give(st, 0, 'sup-turbo'), a2 = give(st, 0, 'sup-nitro'), a3 = give(st, 0, 'sup-perisai')
+  st = E.apply(E.apply(st, { type: 'playAction', card: a1 }).state, { type: 'playAction', card: a2 }).state
+  const cap = E.apply(st, { type: 'playAction', card: a3 }); check(!cap.ok && cap.reason === 'supportLimit', 'max 2 support cards per turn')
+  check(E.apply(E.apply(E.apply(st, { type: 'endTurn' }).state, { type: 'endTurn' }).state, { type: 'playAction', card: a3 }).ok, 'the cap resets every turn')
+}
+{ // every refusal carries a reason the UI can show; skip does not break the turn counter / game end
+  const st = battle(); const refused = ['sup-bengkel'].map(id => E.why(st, { type: 'playAction', card: give(st, 0, id), p: 0 }))
+  check(refused[0] === 'fullHP', 'E.why exposes the refusal reason for greyed-out cards')
+}
+{ // AI plays supports and still finishes; support actually used
+  let used = {}, n = 0
+  for (let s = 1; s <= 200; s++) { const r = play(s); if (r.err) { check(false, r.err); break }; for (const e of r.st.log) if (e.t === 'action') used[e.effect] = (used[e.effect] || 0) + 1; n++ }
+  const kinds = ['boost', 'shield', 'skip', 'stun', 'down', 'heal', 'swapIn', 'nitro']
+  check(kinds.every(k => used[k] > 0), 'AI plays every support type over 200 battles: ' + JSON.stringify(used))
+}
+{ // a full hand skips the draw at turn start (never above the limit through drawing, so no forced discard)
+  const st = battle(5); const Q = st.players[1]; while (Q.hand.length < E.RULES.HAND_LIMIT) give(st, 1, 'sup-nitro')
+  const r = E.apply(st, { type: 'endTurn' })
+  check(r.ok && Q.hand.length === r.state.players[1].hand.length && r.events.some(e => e.t === 'drawSkip' && e.full), 'full hand (7): the turn-start draw is skipped, hand stays 7')
+}
 console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL PASS')
 process.exit(fails.length ? 1 : 0)

@@ -47,7 +47,17 @@
     { id: 'kru-bengkel',   name: 'Kru Bengkel',     effect: 'draw', value: 1 },
     { id: 'jeriken-extra', name: 'Jeriken Ekstra',  effect: 'fuel', value: 1 },
     { id: 'tantangan-hitung', name: 'Tantangan Hitung', effect: 'boost', value: 2 },
-    { id: 'setel-sempurna', name: 'Setel Sempurna', effect: 'nitro', value: 2 }
+    { id: 'setel-sempurna', name: 'Setel Sempurna', effect: 'nitro', value: 2 },
+    // ── Kartu Support (rework 2026-10-11): the 14 non-truck cards of every deck. `icon` = glyph key for the
+    // card art, `text` = the one-line effect shown on the card. Effects are executed ONLY in gt-engine.js.
+    { id: 'sup-turbo',   name: 'Turbo',          effect: 'boost',  value: 2, icon: 'turbo',   text: 'Giliran ini serangan +2' },
+    { id: 'sup-perisai', name: 'Perisai',        effect: 'shield', value: 2, icon: 'perisai', text: 'Tahan 2 kerusakan berikutnya' },
+    { id: 'sup-rem',     name: 'Rem Darurat',    effect: 'skip',   value: 1, icon: 'rem',     text: 'Lawan lewat 1 giliran' },
+    { id: 'sup-lumpur',  name: 'Jebakan Lumpur', effect: 'stun',   value: 1, icon: 'lumpur',  text: 'Truk lawan tak bisa menyerang giliran depan' },
+    { id: 'sup-oli',     name: 'Tumpahan Oli',   effect: 'down',   value: 2, icon: 'oli',     text: 'Serangan lawan berikutnya -2' },
+    { id: 'sup-bengkel', name: 'Bengkel',        effect: 'heal',   value: 3, icon: 'bengkel', text: 'Pulihkan 3 HP truk' },
+    { id: 'sup-tukar',   name: 'Tukar Ban',      effect: 'swapIn', value: 1, icon: 'tukar',   text: 'Ganti truk dari tangan, gratis' },
+    { id: 'sup-nitro',   name: 'Nitro Isi',      effect: 'nitro',  value: 1, icon: 'nitro',   text: 'Nitro +1' }
   ]
 
   var FUEL = { id: 'bahan-bakar', name: 'Bensin' }
@@ -59,9 +69,10 @@
     { id: 'malam',    name: 'Stadion Malam',  rule: 'Jawaban benar mengisi Nitro 2.', mod: {}, nitroPerCorrect: 2 }
   ]
 
-  // decks: 20 cards = 17 TRUCKS + 3 support (owner 2026-09-27: "kartu support … hanya 15% dari total.
-  // Sisanya adalah karakter2 monster truck"). Bensin is automatic (+1 each turn), so no fuel cards.
-  // A team = 3 chosen "jagoan" + 14 trucks of the same Types, picked deterministically from the DB.
+  // decks: 20 cards = 6 TRUCKS + 14 SUPPORT (rework 2026-10-11, owner: "terlalu banyak kartu mobil … kartu support
+  // harusnya nambah kekuatan atau skill khusus"). Bensin is automatic (+1 each turn), so no fuel cards.
+  // A team = 3 chosen "jagoan" + 3 trucks of the same Types, picked deterministically from the DB.
+  var DECK_TRUCKS = 6
   var FILL_RAR = { biasa: 1, langka: 1 }
   function fillTrucks (ids) {
     var types = {}, out = ids.slice(0, 3), seen = {}
@@ -69,25 +80,32 @@
     var pool = TRUCKS.filter(function (t) { return types[t.type] && FILL_RAR[t.rarity] && !seen[t.id] })
     if (pool.length < 14) pool = pool.concat(TRUCKS.filter(function (t) { return !types[t.type] && t.rarity === 'biasa' && !seen[t.id] }))
     var off = out.reduce(function (n, id) { return n + (parseInt(id.slice(-3), 10) || 0) }, 0)
-    for (var k = 0; out.length < 17 && k < pool.length; k++) {
+    for (var k = 0; out.length < DECK_TRUCKS && k < pool.length; k++) {
       var t = pool[(off + k) % pool.length]
       if (!seen[t.id]) { seen[t.id] = 1; out.push(t.id) }
     }
     return out
   }
-  var SUPPORT = [['ban-raksasa', 'kit-perbaikan', 'tantangan-hitung'], ['bemper-baja', 'kit-perbaikan', 'jeriken-extra'],
-    ['mesin-v8', 'tantangan-hitung', 'kru-bengkel'], ['turbo', 'kit-perbaikan', 'setel-sempurna']]
+  // support mixes: counts per card, always 14 (api = pushy, baja = tough, kilat = tricky, lumpur = trapper)
+  var MIX = {
+    api:    { 'sup-turbo': 3, 'sup-perisai': 1, 'sup-rem': 1, 'sup-lumpur': 2, 'sup-oli': 2, 'sup-bengkel': 2, 'sup-tukar': 1, 'sup-nitro': 2 },
+    lumpur: { 'sup-turbo': 2, 'sup-perisai': 2, 'sup-rem': 1, 'sup-lumpur': 3, 'sup-oli': 2, 'sup-bengkel': 2, 'sup-tukar': 1, 'sup-nitro': 1 },
+    kilat:  { 'sup-turbo': 2, 'sup-perisai': 1, 'sup-rem': 2, 'sup-lumpur': 2, 'sup-oli': 2, 'sup-bengkel': 1, 'sup-tukar': 1, 'sup-nitro': 3 },
+    baja:   { 'sup-turbo': 1, 'sup-perisai': 3, 'sup-rem': 1, 'sup-lumpur': 2, 'sup-oli': 2, 'sup-bengkel': 3, 'sup-tukar': 1, 'sup-nitro': 1 }
+  }
+  var MIX_KEYS = ['api', 'lumpur', 'kilat', 'baja']
+  function expand (mix) { var out = []; Object.keys(mix).forEach(function (id) { for (var i = 0; i < mix[id]; i++) out.push(id) }); return out }
   function makeDeck (truckIds, support) {
     var off = truckIds.reduce(function (n, id) { return n + (parseInt(String(id).slice(-3), 10) || 0) }, 0)
-    return fillTrucks(truckIds).concat(support || SUPPORT[off % SUPPORT.length])
+    return fillTrucks(truckIds).concat(support || expand(MIX[MIX_KEYS[off % 4]]))
   }
   var STARTERS = {
-    api:    { name: 'Tim Api',    trucks: ['truck-003', 'truck-054', 'truck-062'], support: ['ban-duri', 'kit-perbaikan', 'tantangan-hitung'] },
-    lumpur: { name: 'Tim Lumpur', trucks: ['truck-053', 'truck-001', 'truck-057'], support: ['rangka-kuat', 'kit-perbaikan', 'jeriken-extra'] },
-    kilat:  { name: 'Tim Kilat',  trucks: ['truck-059', 'truck-037', 'truck-029'], support: ['roda-nitro', 'setel-sempurna', 'tantangan-hitung'] },
-    baja:   { name: 'Tim Baja',   trucks: ['truck-022', 'truck-002', 'truck-070'], support: ['bemper-baja', 'kit-perbaikan', 'kru-bengkel'] }
+    api:    { name: 'Tim Api',    trucks: ['truck-003', 'truck-054', 'truck-062'], mix: 'api' },
+    lumpur: { name: 'Tim Lumpur', trucks: ['truck-053', 'truck-001', 'truck-057'], mix: 'lumpur' },
+    kilat:  { name: 'Tim Kilat',  trucks: ['truck-059', 'truck-037', 'truck-029'], mix: 'kilat' },
+    baja:   { name: 'Tim Baja',   trucks: ['truck-022', 'truck-002', 'truck-070'], mix: 'baja' }
   }
-  Object.keys(STARTERS).forEach(function (k) { var s = STARTERS[k]; s.deck = makeDeck(s.trucks, s.support) })
+  Object.keys(STARTERS).forEach(function (k) { var s = STARTERS[k]; s.deck = makeDeck(s.trucks, expand(MIX[s.mix])) })
 
   var BY = {}
   TRUCKS.forEach(function (c) { c.cat = 'truck'; BY[c.id] = c })

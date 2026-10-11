@@ -83,6 +83,31 @@ const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--au
     await pr; return out
   })
   check(crit.stamp === 'SUPER!' && crit.chroma === 2, `crit/SUPER: stamp "${crit.stamp}" + chromatic punch (${crit.chroma}/2 copies)`)
+  // 2b. REWORK 2026-10-11: a wrong answer is a small "lemah" glancing hit; every support card has its own VFX + word, all cleaned up
+  await sleep(1500)
+  { const g = await p.evaluate(async () => {
+      window.__q.life = []
+      const st = __gt.engine(), q = i => document.querySelector('.field-card[data-inst="' + st.players[i].active.inst + '"] .gc')
+      const pr = GTFx.attack({ from: q(0), to: q(1), type: 'POWER', dmg: 1, correct: false, glance: true, hpBefore: 12, hpAfter: 11, stage: document.getElementById('bt-scene'), setHp: () => {} })
+      await new Promise(r => setTimeout(r, 1000))
+      const words = [...document.querySelectorAll('.fx-float')].map(x => x.textContent), stamp = !!document.querySelector('#gtx .gtx-stamp')
+      await pr; return { words, stamp } })
+    check(g.words.some(w => /Lemah/.test(w)) && !g.stamp, `glancing hit: "lemah" label, no SUPER stamp (${g.words.join(' | ')})`)
+    await sleep(1500)
+    const sup = await p.evaluate(async () => {
+      const st = __gt.engine(), out = {}
+      for (const k of Object.keys(GTFx.SUPPORT)) {
+        const el = document.querySelector('.field-card[data-inst="' + st.players[GTFx.SUPPORT[k].foe ? 1 : 0].active.inst + '"]')
+        const pr = GTFx.support(k, el, 1)
+        await new Promise(r => setTimeout(r, 300))
+        out[k] = [...document.querySelectorAll('.fx-float')].map(x => x.textContent).filter(Boolean).pop() || ''
+        await pr
+      }
+      return out })
+    check(Object.keys(sup).length === 6 && Object.values(sup).every(Boolean), 'support VFX: ' + Object.entries(sup).map(([k, v]) => k + '="' + v + '"').join(' '))
+    await sleep(1500)
+    const s2 = await p.evaluate(SNAP)
+    check(s2.gtx === 0 && s2.alive.length === 0 && s2.stray === 0, `support VFX: layer clean afterwards (${s2.gtx} left)`) }
   await sleep(1500)
   await p.evaluate(() => { window.__q.life = []; const st = __gt.engine(), q = i => document.querySelector('.field-card[data-inst="' + st.players[i].active.inst + '"]')
     return GTFx.ko(q(1), q(0).querySelector('.gc')) })

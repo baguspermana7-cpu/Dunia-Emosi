@@ -55,8 +55,17 @@
     handLimit: 'Tanganmu penuh — buang 1 kartu dulu.', notATruck: 'Itu bukan kartu truk.', benchFull: 'Arena sudah ada trukmu.', swapOnce: 'Ganti truk hanya 1 kali tiap giliran.',
     notFuel: 'Itu bukan bensin.', noTruck: 'Taruh truk di arena dulu.', fuelOncePerTurn: 'Bensin hanya boleh diisi 1 kali tiap giliran.',
     fuelFull: 'Tangki sudah penuh (maks 4).', notAPart: 'Itu bukan onderdil.', fullHP: 'HP truk masih penuh.', nothingToSwitch: 'Belum ada truk cadangan.',
-    deckEmpty: 'Tumpukan kartu sudah habis.', noTarget: 'Lawan belum punya truk.', needFuel: 'Bensinnya belum cukup.', notInHand: 'Kartu itu tidak ada di tanganmu.'
+    deckEmpty: 'Tumpukan kartu sudah habis.', noTarget: 'Lawan belum punya truk.', needFuel: 'Bensinnya belum cukup.', notInHand: 'Kartu itu tidak ada di tanganmu.',
+    stunned: 'Truk terjebak lumpur — tidak bisa menyerang giliran ini.', supportLimit: 'Maksimal 2 kartu support tiap giliran.',
+    alreadyBoosted: 'Turbo sudah menyala giliran ini.', alreadyShield: 'Trukmu sudah punya Perisai.', justSkipped: 'Lawan baru saja lewat giliran.',
+    alreadyStunned: 'Truk lawan masih terjebak / baru bebas.', alreadyOily: 'Jalan lawan sudah licin oleh oli.', nitroFull: 'Nitro sudah penuh.',
+    noTruckInHand: 'Tidak ada kartu truk di tanganmu.', badTarget: 'Pilih kartu truk dari tanganmu.'
   }
+  // short word printed on a greyed card
+  var SHORT = { supportLimit: 'Maks 2 / giliran', fullHP: 'HP penuh', swapOnce: '1× / giliran', justSkipped: 'Baru dilewati', alreadyStunned: 'Sudah terjebak',
+    alreadyOily: 'Sudah licin', alreadyShield: 'Sudah ada', alreadyBoosted: 'Sudah nyala', nitroFull: 'Nitro penuh', noTruckInHand: 'Tak ada truk', noTarget: 'Lawan kosong',
+    handLimit: 'Buang dulu', noTruck: 'Taruh truk dulu', fuelFull: 'Penuh', notYourTurn: '' }
+  var EXPLAIN_OK = true
 
   /* ── save ───────────────────────────────────────────────────────────── */
   var P
@@ -71,6 +80,7 @@
     var raw = null
     try { raw = window.avatarScopedGet ? avatarScopedGet(KEY, null) : localStorage.getItem(KEY) } catch (e) {}
     try { P = fill(raw ? JSON.parse(raw) : null) } catch (e) { P = fill(null) }
+    if (P.battle && (!P.battle.S || P.battle.S.v !== 2)) P.battle = null      // a match saved under the old rules cannot resume
   }
   function save () { try { var s = JSON.stringify(P); if (window.avatarScopedSet) avatarScopedSet(KEY, s); else localStorage.setItem(KEY, s) } catch (e) {} }
   load()
@@ -282,7 +292,7 @@
       var pc = tr.parts[s] ? C.get(S.cards[tr.parts[s]]) : null
       return '<span class="slot' + (pc ? ' full' : '') + '" title="' + (pc ? esc(pc.name) : 'slot ' + ({ tire: 'ban', body: 'bodi', engine: 'mesin' })[s] + ' kosong') + '"><img src="' + lib(SLOT_IC[s]) + '" alt=""></span>'
     }).join('')
-    return '<div class="field-card" data-inst="' + tr.inst + '">' + html + '<div class="kit">' + slots + '</div></div>'
+    return '<div class="field-card" data-inst="' + tr.inst + '">' + html + '<div class="kit">' + slots + '</div>' + badgesHtml(tr) + '</div>'
   }
   function fieldHtml (pi) {
     var Pl = S.players[pi], mine = own(pi)
@@ -297,8 +307,23 @@
     var title = M.mode === 'pvp' ? 'Pembalap' : (pi === 0 ? 'Pembalap Garasi' : (M.stage >= 0 ? 'Juara Arena ' + (M.stage + 1) : 'Rival Latihan'))
     return '<img class="av" src="' + lib(pi === 0 ? 'gt/avatar-player' : 'gt/avatar-opponent') + '" alt="">' +
       '<div class="ppanel-t"><div class="ppanel-n fk">' + esc(Pl.name) + '</div><div class="ppanel-s">' + title + '</div>' +
-      '<div class="ppanel-k"><img src="' + lib('gt/trophy') + '" alt="">KO ' + Pl.ko + '/' + E.RULES.KO_TO_WIN +
-      '<span class="nitro' + (Pl.nitro >= E.RULES.NITRO_FULL ? ' full' : '') + '" title="Nitro">' + nitro + '</span>' + (Pl.boost ? '<span class="boost">+' + Pl.boost + '</span>' : '') + '</div></div>'
+      '<div class="ppanel-k">' + hearts(pi) +
+      '<span class="nitro' + (Pl.nitro >= E.RULES.NITRO_FULL ? ' full' : '') + '" title="Nitro">' + nitro + '</span>' + (Pl.boost ? '<span class="boost">+' + Pl.boost + '</span>' : '') + (Pl.skip ? '<span class="stb stb-skip" title="Lewat giliran">Lewat!</span>' : '') + '</div></div>'
+  }
+  // LIFE POINTS: 3 hearts per player (a knocked-out truck costs one); the heart shape + full/empty is the meaning, not colour alone
+  var HEART = '<svg viewBox="0 0 24 22" aria-hidden="true"><path d="M12 21C5 15.2 1.5 11.6 1.5 7.4 1.5 4 4 1.6 7 1.6c2 0 3.8 1.1 5 3 1.2-1.9 3-3 5-3 3 0 5.5 2.4 5.5 5.8 0 4.2-3.500 7.800-10.500 13.600z"/></svg>'
+  function hearts (pi) {
+    var n = S.players[pi].lives, h = ''
+    for (var i = 0; i < E.RULES.LIVES; i++) h += '<i class="heart' + (i < n ? ' on' : '') + '">' + HEART + '</i>'
+    return '<span class="hearts" role="img" aria-label="Nyawa ' + n + ' dari ' + E.RULES.LIVES + '">' + h + '</span>'
+  }
+  // status badges that sit ON the truck: what is wrong with it, for how long
+  function badgesHtml (tr) {
+    var st = E.stat(tr), b = ''
+    if (st.stun > 0) b += '<span class="stb stb-stun"><img src="' + lib('gt/mud-puddle') + '" alt="">Terjebak</span>'
+    if (st.down > 0) b += '<span class="stb stb-down"><img src="' + lib('gt/oil-barrel') + '" alt="">Licin −' + st.down + '</span>'
+    if (st.shield > 0) b += '<span class="stb stb-shield"><img src="' + lib('gt/shield-boost') + '" alt="">Perisai ' + st.shield + '</span>'
+    return b ? '<div class="stbs">' + b + '</div>' : ''
   }
   function dots (n, on) { var h = ''; for (var i = 0; i < n; i++) h += '<i class="' + (i < on ? 'on' : '') + '"></i>'; return h }
   function arenaHtml () {
@@ -306,22 +331,15 @@
     return '<span class="ac-tag">ARENA</span><div class="ac-name fk">' + esc(st.name) + '</div>' +
       '<div class="ac-img" style="background-image:url(\'' + lib('gt-arena/' + M.bg + '-land') + '\')"></div><div class="ac-rule">' + esc(ar.rule) + '</div>'
   }
-  // the turn checklist (mockup "Draw / Garage / Action / End"): the guided workflow
-  var STEPS = [['draw', 'Ambil kartu'], ['fuel', 'Bensin +1'], ['swap', 'Ganti truk', 1], ['part', 'Bantuan', 1], ['attack', 'Serang!'], ['end', 'Selesai']]
+  // the turn strip: 3 steps, the next legal one glows (owner 2026-10-11: "mekanismenya membingungkan")
+  var STEPS = [['play', 'Pasang kartu'], ['atk', 'Serang', 'jawab soal'], ['end', 'Selesai']]
   function turnHtml (now) {
     var me = view(), mine = S.active === me && human(S.active), Pl = S.players[S.active]
-    var idx = { draw: 0, truck: 2, fuel: 1, swap: 2, part: 3, attack: 4, end: 5, discard: 0 }[now]
-    var hasFuel = Pl.hand.some(function (c) { return C.get(S.cards[c]).cat === 'fuel' })
+    var idx = { draw: -1, truck: 0, fuel: 0, swap: 0, part: 0, attack: 1, end: 2, discard: 0 }[now]
     var li = STEPS.map(function (s, i) {
-      var k = s[0], done = false, skip = false
-      if (mine) {
-        if (k === 'draw') done = true
-        else if (k === 'fuel') done = true                              // automatic
-        else if (k === 'swap') { done = Pl.swapped; skip = !done && i < idx }
-        else if (k === 'part' || k === 'attack') skip = i < idx
-      }
-      var cls = mine && i === idx ? 'now' : (done ? 'done' : (skip ? 'skip' : ''))
-      return '<li class="st-' + k + ' ' + cls + (s[2] ? ' opt' : '') + '"><i>' + (done ? '✓' : skip ? '–' : (i === idx && mine ? '›' : '')) + '</i>' + s[1] + '</li>'
+      var cls = mine ? (i === idx ? 'now' : (i < idx ? 'done' : '')) : ''
+      var note = i === 0 && mine ? '<em>' + Math.min(Pl.played, E.RULES.SUPPORT_PER_TURN) + '/' + E.RULES.SUPPORT_PER_TURN + ' support</em>' : (s[2] ? '<em>' + s[2] + '</em>' : '')
+      return '<li class="st-' + s[0] + ' ' + cls + '"><i>' + (cls === 'done' ? '✓' : (i + 1)) + '</i><span>' + s[1] + note + '</span></li>'
     }).join('')
     return '<div class="tp-turn fk">Giliran ' + S.turn + '</div><div class="tp-who fk' + (mine ? '' : ' op') + '">' + (mine ? (M.mode === 'pvp' ? esc(Pl.name) : 'Giliranmu') : 'Giliran Lawan') + '</div>' +
       '<ul class="tp-steps">' + li + '</ul>'
@@ -331,7 +349,9 @@
     return Pl.hand.map(function (inst, k) {
       var d = C.get(S.cards[inst])
       var strong = d.cat === 'truck' && O.active && d.strongVs === C.get(S.cards[O.active.inst]).type
-      return '<div class="hc' + (strong ? ' strong' : '') + '" data-inst="' + inst + '" style="--i:' + k + ';--n:' + Pl.hand.length + '">' + Card.any(d, { inst: inst, cls: 'in-hand' }) + '</div>'
+      var r = S.active === pi && S.phase === 'garage' && human(pi) ? why({ type: actionFor(inst).type, card: inst }) : null
+      var tag = r && SHORT[r] ? '<span class="hc-why">' + SHORT[r] + '</span>' : ''
+      return '<div class="hc' + (strong ? ' strong' : '') + (r ? ' off' : '') + '" data-inst="' + inst + '" style="--i:' + k + ';--n:' + Pl.hand.length + '">' + Card.any(d, { inst: inst, cls: 'in-hand' }) + tag + '</div>'
     }).join('')
   }
   // 2 players: both halves drawn every time, each bound to its own seat; only .on moves
@@ -379,7 +399,7 @@
     $('me-field').innerHTML = fieldHtml(me)
     var backs = ''; for (var i = 0; i < Math.min(O.hand.length, 5); i++) backs += '<img src="' + lib('gt/card-back') + '" alt="">'
     $('op-hand').innerHTML = backs
-    $('op-ko').innerHTML = dots(E.RULES.KO_TO_WIN, O.ko)
+    $('op-ko').innerHTML = ''
     $('op-cnt').innerHTML = '<img src="' + lib('gt/card-back') + '" alt="">' + O.hand.length + ' Kartu'
     $('me-count').innerHTML = '<span><img src="' + lib('gt/card-back') + '" alt=""> ' + Pl.hand.length + ' Kartu</span>'
     $('arena-card').innerHTML = arenaHtml()
@@ -399,8 +419,8 @@
     hand.style.fontSize = ''
     var W0 = hand.clientWidth || innerWidth, cw = cards[0] ? cards[0].offsetWidth : 90
     // every card keeps >= 48 px of itself uncovered for a child's finger: shrink the cards if needed
-    var MIN = 56, fit = n > 1 ? W0 - 6 - (n - 1) * MIN : W0
-    if (n > 1 && cw > fit && fit > 40) {
+    var MIN = n > 7 ? 46 : 56, fit = n > 1 ? W0 - 6 - (n - 1) * MIN : W0
+    if (n > 1 && cw > fit && fit > 20) {
       hand.style.fontSize = (parseFloat(getComputedStyle(hand).fontSize) * fit / cw).toFixed(2) + 'px'
       cw = cards[0].offsetWidth
     }
@@ -443,7 +463,8 @@
       // useful action cards, one at a time (audit: kids ended games holding 2.3 unplayed actions)
       var acts = has('playAction').filter(function (c) {
         var e = C.get(S.cards[c.card]).effect
-        return (e === 'heal' && hp <= max - 4) || ((e === 'boost' || e === 'nitro') && atk.length && O.active) || ((e === 'fuel' || e === 'draw') && fuelShort)
+        return (e === 'heal' && hp <= max - 3) || ((e === 'boost' || e === 'nitro') && atk.length && O.active) || ((e === 'fuel' || e === 'draw') && fuelShort) ||
+          ((e === 'shield' || e === 'skip' || e === 'stun' || e === 'down') && O.active)
       })
       var oType = O.active ? C.get(S.cards[O.active.inst]).type : null
       var strongNow = oType && C.get(S.cards[Pl.active.inst]).strongVs === oType
@@ -458,7 +479,8 @@
       } else if (parts.length) {
         step = 'part'; msg = 'Pasang <b>ONDERDIL</b> ini ke trukmu biar makin kuat!'; glowCards(parts.slice(0, 1))
       } else if (acts.length) {
-        step = 'part'; msg = 'Pakai kartu <b>BANTUAN</b> ini dulu' + (atk.length ? ', lalu serang!' : '.'); glowCards(acts.slice(0, 1))
+        var ad = C.get(S.cards[acts[0].card])
+        step = 'part'; msg = 'Pakai kartu <b>SUPPORT</b> ini: <b>' + esc(ad.name) + '</b> — ' + esc(ad.text || '') + '. ' + (atk.length ? 'Lalu serang!' : ''); glowCards(acts.slice(0, 1))
       } else if (atk.length) {
         step = 'attack'; msg = 'Ketuk <b>TRUKMU</b> di arena, lalu pilih <b>SERANGAN</b>!'
         var fc = U('field', me).querySelector('.field-card'); if (fc) fc.classList.add('can-atk', 'guide')
@@ -481,10 +503,10 @@
     if (d.cat === 'truck') return { type: 'playTruck', label: Pl.active ? 'Ganti ke Truk Ini' : 'Taruh di Arena' }
     if (d.cat === 'fuel') return { type: 'attachFuel', label: 'Isi ke Truk' }
     if (d.cat === 'part') return { type: 'attachPart', label: (Pl.active && Pl.active.parts[d.slot] ? 'Ganti ' : 'Pasang ') + ({ tire: 'Ban', body: 'Bodi', engine: 'Mesin' })[d.slot] }
-    return { type: 'playAction', label: 'Pakai' }
+    return { type: 'playAction', label: d.effect === 'swapIn' ? 'Tukar Truk' : 'Pakai' }
   }
   function why (cmd) {                               // the engine's own refusal, without changing state
-    var r = E.apply(S, { type: cmd.type, card: cmd.card, attack: cmd.attack })
+    var r = E.apply(S, { type: cmd.type, card: cmd.card, attack: cmd.attack, p: S.active })
     return r.ok ? null : r.reason
   }
   function select (inst) {
@@ -507,13 +529,18 @@
     if (d.cat === 'truck') return 'HP ' + d.hp + ' · ' + C.TYPES[d.type].id + ' · kuat melawan ' + d.strongVs + (S.players[S.active].active ? ' · trukmu sekarang kembali ke tumpukan' : '')
     if (d.cat === 'fuel') return 'Serangan butuh bensin. Isi 1 tiap giliran.'
     if (d.cat === 'part') return 'Onderdil tetap terpasang di truk.'
-    return 'Kartu aksi dipakai sekali lalu dibuang.'
+    return d.text || 'Kartu aksi dipakai sekali lalu dibuang.'
   }
   function doSelected () {
     if (!SEL || !myTurn()) return
-    var a = actionFor(SEL), inst = SEL
+    var a = actionFor(SEL), inst = SEL, cmd = { type: a.type, card: inst }, d = C.get(S.cards[inst])
+    if (d.effect === 'swapIn') {                                   // Tukar Ban: roll in the hand truck that is strong vs the rival, else the first
+      var Pl = S.players[S.active], O = S.players[1 - S.active], ot = O.active ? C.get(S.cards[O.active.inst]).type : null
+      var trucks = Pl.hand.filter(function (x) { return C.get(S.cards[x]).cat === 'truck' })
+      cmd.target = trucks.filter(function (x) { return C.get(S.cards[x]).strongVs === ot })[0] || trucks[0]
+    }
     select(null)
-    send({ type: a.type, card: inst })
+    send(cmd)
   }
   function atkBar (open) {
     var bar = U('atkbar')
@@ -526,7 +553,7 @@
         var cans = ''; for (var k = 0; k < pv.fuelNeed; k++) cans += '<img src="' + lib('gt/fuel-can') + '" alt="">'
         var tag = pv.type ? '<em class="atk-tag sup">SUPER!</em>' : (pv.weak ? '<em class="atk-tag weak">lemah</em>' : '')
         return '<button type="button" class="atk-b fk' + (r ? ' off' : ' guide') + '" data-atk="' + i + '"><span class="ac">' + (cans || '—') + '</span>' + tag +
-          '<span class="an">' + esc(a.name) + '<small>' + (r ? (REASON[r] || '') + (r === 'needFuel' ? ' (butuh ' + pv.fuelNeed + ', punya ' + pv.fuel + ')' : '') : 'Butuh ' + pv.fuelNeed + ' bensin · jawab benar +2') + '</small></span>' +
+          '<span class="an">' + esc(a.name) + '<small>' + (r ? (REASON[r] || '') + (r === 'needFuel' ? ' (butuh ' + pv.fuelNeed + ', punya ' + pv.fuel + ')' : '') : 'Butuh ' + pv.fuelNeed + ' bensin · benar +2, salah ' + pv.glance) + '</small></span>' +
           '<b class="ad">' + pv.total + '</b></button>'
       }).join('')
     bar.classList.add('show')
@@ -653,8 +680,12 @@
         toast(C.get(S.cards[e.card]).name + ' terpasang!', 'good')
       }
       if (e.t === 'heal') { var hel = document.querySelector('.field-card[data-inst="' + S.players[e.p].active.inst + '"]'); if (hel) { var hc = FX.center(hel); if (window.VFX) VFX.dom(hc.x, hc.y, { fx: 'regen', size: hc.w * 1.2, blend: 'screen' }); FX.floatText(hc.x, hc.y, '+' + e.amount + ' HP', 'heal') } }
-      if (e.t === 'action' && e.effect === 'boost') toast('Serangan berikutnya +2!', 'good')
-      if (e.t === 'action' && e.effect === 'nitro') toast('Nitro bertambah!', 'good')
+      if (e.t === 'action' && FX.SUPPORT[e.effect]) {
+        var tside = FX.SUPPORT[e.effect].foe ? 1 - e.p : e.p, tp = S.players[tside]
+        var tel = tp.active ? document.querySelector('.field-card[data-inst="' + tp.active.inst + '"]') : null
+        jobs.push(FX.support(e.effect, tel || U('panel', tside), e.value))
+      }
+      if (e.t === 'skipTurn') toast(own(e.p) && human(e.p) ? 'Rem Darurat! Kamu lewat 1 giliran.' : 'Rem Darurat! ' + S.players[e.p].name + ' lewat 1 giliran.', 'good')
       if (e.t === 'switch') toast('Truk ditukar dengan cadangan.', 'good')
       if (e.t === 'koReward' && human(e.p)) toast('Hadiah KO: +1 kartu!', 'good')
       if (e.t === 'promote') toast(C.get(S.cards[e.card]).name + ' maju ke arena!', '')
@@ -662,7 +693,7 @@
     })
     var drew = ev.filter(function (e) { return e.t === 'draw' && own(e.p) })
     return Promise.all(jobs).then(function () {
-      var ts = ev.filter(function (e) { return e.t === 'turnStart' })[0]
+      var tss = ev.filter(function (e) { return e.t === 'turnStart' }), ts = tss[tss.length - 1]   // after a skipped turn: the LAST one is the live seat
       if (!ts) return
       return banner(ts).then(function () {
         drew.forEach(function (e) { var el = U('hand', e.p).querySelector('.hc[data-inst="' + e.card + '"]'); FX.flyIn(el, U('deck', e.p).getBoundingClientRect(), { rot: 12, ms: 460 }) })
@@ -694,7 +725,7 @@
     if (att.correct) M.correct[att.p]++
     var d = C.get(before.cards[att.card])
     var hpEl = to.querySelector('.gc-hp b'), bar = to.querySelector('.gc-hpbar i'), max = before.players[1 - att.p].active.maxHp
-    return FX.attack({ from: from, to: to, type: d.type, dmg: att.dmg, correct: att.correct, sup: !!(att.breakdown && att.breakdown.type), weak: !!(att.breakdown && att.breakdown.weak), hpBefore: att.hpBefore, hpAfter: att.hpAfter, stage: $('bt-scene'),
+    return FX.attack({ from: from, to: to, type: d.type, dmg: att.dmg, correct: att.correct, glance: !!att.glancing, absorbed: att.absorbed, sup: !!(att.breakdown && att.breakdown.type), weak: !!(att.breakdown && att.breakdown.weak), hpBefore: att.hpBefore, hpAfter: att.hpAfter, stage: $('bt-scene'),
       setHp: function (v) {
         if (hpEl) hpEl.textContent = v
         if (!bar) { var w = to.querySelector('.gc-win'); if (w) { w.insertAdjacentHTML('beforeend', '<div class="gc-hpbar"><i></i></div>'); bar = w.querySelector('.gc-hpbar i') } }
@@ -714,6 +745,11 @@
   /* ── Boost challenge (one Easy question per attack) ─────────────────── */
   var QR = null, lastQ = null
   function qrng () { if (!QR) QR = Q.rng(M.qseed + S.turn * 131); return QR }
+  // the kind explanation of a wrong answer: count it out loud, no "SALAH"
+  function explainQ (q) {
+    return q.op === '+' ? q.a + ' ditambah ' + q.b + ' = ' + q.answer + '. Mulai dari ' + q.a + ', maju ' + q.b + ' langkah.'
+      : q.a + ' dikurangi ' + q.b + ' = ' + q.answer + '. Mulai dari ' + q.a + ', mundur ' + q.b + ' langkah.'
+  }
   function challenge (ch) {
     var pi = ch.p, Pl = S.players[pi], d = C.get(S.cards[Pl.active.inst]), atk = d.attacks[ch.attack], pv = ch.preview
     var q = lastQ = Q.make(qrng(), P.level, lastQ)
@@ -725,6 +761,7 @@
     if (pv.boost) parts.push('boost +' + pv.boost)
     if (pv.nitro) parts.push('NITRO +' + pv.nitro)
     if (pv.armor) parts.push('baja lawan −' + pv.armor)
+    if (pv.down) parts.push('oli −' + pv.down)
     var ov = U('chal', pi)                                // 2 players: in the attacker's own half, facing them
     ov.innerHTML = '<div class="chal-card">' +
       '<div class="chal-h"><img src="' + lib('gt/q-math') + '" alt=""><b class="fk">TANTANGAN MATEMATIKA!</b><span>' + (human(pi) ? 'Soal penambah serangan' : esc(Pl.name) + ' menjawab…') + '</span></div>' +
@@ -734,7 +771,7 @@
         '<div class="chal-ch">' + q.choices.map(function (v) { return '<button class="chal-b fk" type="button" data-v="' + v + '"' + (human(pi) ? '' : ' disabled') + '>' + v + '</button>' }).join('') + '</div>' +
         '<div class="chal-sum">' + (parts.length > 1 ? parts.join(' · ') + ' = ' + pv.total : 'Serangan ' + pv.total) + '</div></div>' +
       '<div class="chal-r"><div><span>Kalau benar:</span><b><i class="y">✓</i>' + (pv.total + 2) + ' kerusakan</b></div>' +
-        '<div><span>Kalau salah:</span><b><i class="n">✕</i>' + pv.total + ' kerusakan</b></div></div></div>' +
+        '<div><span>Kalau salah:</span><b><i class="n">✕</i>lemah, ' + pv.glance + ' kerusakan</b></div></div></div>' +
       '<div class="chal-fb"' + (PV() ? '' : ' id="chal-fb"') + '></div></div>'
     ov.className = 'chal show'
     return new Promise(function (res) {
@@ -743,14 +780,14 @@
         ov.querySelectorAll('.chal-b').forEach(function (b) { b.disabled = true; if (+b.getAttribute('data-v') === q.answer) b.classList.add('ok') })
         if (!ok && btn) btn.classList.add('no')
         var fb = ov.querySelector('.chal-fb')
-        fb.innerHTML = ok ? 'Benar! <b>+2 kerusakan</b> dan Nitro bertambah.' : 'Hampir! Jawabannya <b>' + q.answer + '</b>. Serangan tetap jalan.'
+        fb.innerHTML = ok ? 'Benar! <b>+2 kerusakan</b> dan Nitro bertambah.' : 'Hampir! Jawabannya <b>' + q.answer + '</b>. ' + explainQ(q) + ' Serangan jadi <b>lemah</b>: hanya ' + pv.glance + '.'
         fb.className = 'chal-fb ' + (ok ? 'ok' : 'no')
         FX.SND.cue(ok ? 'correct' : 'wrong')
         setTimeout(function () {
           ov.className = 'chal'
           BUSY = false
           send({ type: 'answer', correct: ok }).then(res, res)
-        }, ok ? 900 : 1500)
+        }, ok ? 900 : 2800)
       }
       if (human(pi)) {
         ov.querySelector('.chal-ch').addEventListener('click', function (e) { var b = e.target.closest('.chal-b'); if (b && !b.disabled) answer(+b.getAttribute('data-v'), b) })
@@ -782,6 +819,7 @@
     AI_RUN = true
     var turn = S.turn, steps = 0
     function step () {
+      if (S.active === 1 && S.phase === 'garage' && S.turn !== turn) { turn = S.turn; steps = 0 }   // the human's turn was skipped (Rem Darurat): same seat, fresh turn
       if (S.phase === 'over') { AI_RUN = false; return endMatch() }
       if (S.active !== 1 || S.turn !== turn || steps++ > 24) {
         AI_RUN = false
@@ -894,9 +932,9 @@
 
   /* ── tutorial (first battle, and from the pause menu) ──────────────────── */
   var TUT = [
-    ['gt/trophy', 'Tujuan', 'Buat <b>3 truk lawan KO</b> (HP jadi 0) untuk menang.'],
-    ['gt/fuel-can', 'Tiap giliran', '<b>Bensin terisi sendiri</b> +1 tiap giliran. Kartumu kebanyakan <b>truk</b>: ganti ke truk yang <b>KUAT</b> melawan lawan — seranganmu jadi <b>SUPER (+2)</b>! Tiap KO dapat hadiah 1 kartu.'],
-    ['gt/q-math', 'Serang!', 'Ketuk <b>trukmu</b>, lalu pilih serangan. Jawab soal matematika — <b>benar = +2 kerusakan</b>. Salah? Serangan tetap jalan.'],
+    ['gt/trophy', 'Tujuan', 'Kamu punya <b>3 nyawa ♥</b>. Tiap truk yang HP-nya habis = lawan kehilangan 1 nyawa. Nyawa lawan habis = <b>kamu menang</b>!'],
+    ['gt/lightning', '3 langkah tiap giliran', '<b>1 Pasang kartu</b> (maks 2 support: Turbo, Perisai, Rem Darurat, Lumpur, Oli, Bengkel…) → <b>2 Serang</b> (jawab soal) → <b>3 Selesai</b>. Yang bersinar = langkah berikutnya.'],
+    ['gt/q-math', 'Jawabanmu menentukan!', 'Jawab <b>benar</b> = serangan penuh <b>+2</b>. Jawab <b>salah</b> = serangan <b>lemah</b>, cuma seperempat kekuatan. Tak apa, nanti kita hitung bareng!'],
     ['gt/timer', 'Monster Rush', 'Di akhir pertandingan muncul monster! Jawab soal sebanyak-banyaknya dalam <b>15 detik</b> untuk bonus skor.']
   ]
   function tutorial (done) {
@@ -1043,7 +1081,8 @@
     TR.ALL.forEach(function (t) { add(lib(t.sprite)) })
     ;['type-power', 'type-speed', 'type-mud', 'type-stunt', 'type-armor', 'type-tech', 'fuel-can', 'card-back', 'part-tire', 'part-bumper', 'part-engine', 'part-nitro', 'repair-kit', 'deck', 'winch', 'q-math',
       'trophy', 'timer', 'direction-sign', 'lock', 'avatar-player', 'avatar-opponent', 'end-turn', 'garage', 'map', 'mission-list', 'star-collectible',
-      'attack', 'checkered-flag', 'lightning', 'play-confirm', 'q-knowledge', 'repair', 'start-flag', 'tool-kit'].forEach(function (k) { add(lib('gt/' + k)) })
+      'attack', 'checkered-flag', 'lightning', 'play-confirm', 'q-knowledge', 'repair', 'start-flag', 'tool-kit',
+      'turbo', 'shield-boost', 'road-barrier', 'mud-puddle', 'oil-barrel', 'upgrade-tire', 'nitrous-tank'].forEach(function (k) { add(lib('gt/' + k)) })
     ;['click', 'correct', 'wrong', 'levelup', 'star'].forEach(function (k) { add(lib.base + 'assets/sfx/' + k + '.mp3') })
     var fx = { boom: 10, pop: 7, smoke: 8 }
     Object.keys(fx).forEach(function (k) { for (var i = 1; i <= fx[k]; i++) add(lib.base + 'assets/vfx/explosion/' + k + '/f-' + i + '.webp') })
@@ -1072,6 +1111,7 @@
   window.__gt = {
     state: function () { return S ? { phase: S.phase, active: S.active, turn: S.turn, winner: S.winner, hand: S.players[view()].hand.length, busy: BUSY, screen: document.body.getAttribute('data-scr'), coach: (U('coach').getAttribute('data-step') || ''), ko: [S.players[0].ko, S.players[1].ko] } : { screen: document.body.getAttribute('data-scr') } },
     engine: function () { return S },
+    render: function () { render() },
     start: function (kind, stage, teams) { MODE = { kind: kind, stage: stage || 0 }; PICK.teams = teams || [C.STARTERS.api.trucks.slice(), C.STARTERS.baja.trucks.slice()]; startBattle(); return 'ok' },
     legal: function () { return S ? E.legal(S) : [] },
     send: function (c) { return send(c) },

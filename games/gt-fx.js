@@ -402,7 +402,8 @@
     var ca = center(a), cb = center(b)
     var dir = (cb.x >= ca.x ? 1 : -1) * fl
     var dy = (cb.y - ca.y) * fl, dx = (cb.x - ca.x) * fl
-    var big = !!(o.correct || o.sup), k = clamp((o.dmg || 0) / 9, 0, 1), dash = T.proj === 'dash'
+    var big = !!(o.correct || o.sup) && !o.glance, k = clamp((o.dmg || 0) / 9, 0, 1), dash = T.proj === 'dash'
+    if (o.glance) k = Math.min(k, 0.18)            // a wrong answer is a glancing, "lemah" hit: small flash, small shake
     var aura = { stop: function () {} }
     // 1 wind-up: squash (anticipation) then stretch, charge glow + aura, rev + riser
     SND.rev(); SND.riser(0.32)
@@ -447,7 +448,9 @@
         if (big) setTimeout(function () { vfx(T.big, cb.x, cb.y, cb.w * 1.9, 'impact', 'screen') }, 70)
         impact(cb, T.kind, k, big)
       }
-      floatText(cb.x, cb.y - cb.h * 0.15, '−' + o.dmg, 'dmg' + (big ? ' crit' : ''), null, true)
+      if (o.glance) floatText(cb.x, cb.y - cb.h * 0.42, 'Lemah… (jawaban salah)', 'weak')
+      if (o.glance && !o.dmg) floatText(cb.x, cb.y - cb.h * 0.15, 'meleset!', 'dmg')
+      else floatText(cb.x, cb.y - cb.h * 0.15, (o.absorbed ? 'Perisai ' : '−') + o.dmg, 'dmg' + (big ? ' crit' : ''), null, !o.glance)
       if (o.correct) floatText(cb.x, cb.y + cb.h * 0.12, 'Jawaban benar +2!', 'bonus')
       if (o.weak) floatText(cb.x, cb.y - cb.h * 0.42, 'kurang efektif…', 'weak')
       var sh = Math.round(2 + 6 * k + (big ? 3 : 0))      // screen shake scaled by damage
@@ -510,6 +513,25 @@
     el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls)
     setTimeout(function () { el.classList.remove(cls) }, 700)
   }
+  // SUPPORT cards: one VFX-library effect + a coloured glow + a word, on the truck it touches (foe: the rival's truck)
+  var SUPPORT = {
+    boost:  { fx: 'fire-sparks',   color: '#FF8A3D', text: 'Turbo! +2' },
+    shield: { fx: 'holy-light',    color: '#5B9BE6', text: 'Perisai!' },
+    skip:   { fx: 'smoke-puff',   blend: 'none', color: '#FF5A4E', text: 'Rem Darurat!', foe: true },
+    stun:   { fx: 'smoke-puff',   blend: 'none', color: '#8AA14A', text: 'Terjebak lumpur!', foe: true, cls: 'weak' },
+    down:   { fx: 'smoke-puff',   blend: 'none', color: '#8A7A9A', text: 'Licin! Serangan −2', foe: true, cls: 'weak' },
+    nitro:  { fx: 'electric-aura', color: '#1FC7C1', text: 'Nitro +1!' }
+  }
+  function support (effect, el, value) {
+    var d = SUPPORT[effect]
+    if (!d || !el) return Promise.resolve()
+    var c = center(el), rm = reduced()
+    SND.part()
+    glow(c, d.color, rm, 'impact')
+    if (!rm) vfx(d.fx, c.x, c.y, Math.max(100, c.w * 1.05), 'impact', d.blend === 'none' ? null : 'screen')
+    floatText(c.x, c.y - c.h * 0.18, d.text, d.cls || 'heal')
+    return wait(rm ? 250 : 650)
+  }
   // frames + sprites the attack choreography uses, for the offline warm-up
   function warmUrls (base) {
     var out = [], seen = {}, R = (W.VFX && VFX._registry) || {}
@@ -518,12 +540,13 @@
       for (var i = 1; i <= R[fx].frames; i++) out.push(base + 'assets/vfx/' + R[fx].dir + '/' + fx + '/f-' + i + '.webp')
     }
     Object.keys(TYPE_FX).forEach(function (t) { var x = TYPE_FX[t]; add(x.aura); add(x.proj); add(x.hit); add(x.big) })
+    Object.keys(SUPPORT).forEach(function (k) { add(SUPPORT[k].fx) })
     add('smoke-puff'); add('sparks'); add('boom'); add('smoke')
     ;['tire-smoke', 'dust-cloud', 'mud-splash'].forEach(function (k) { var u = sprite(k); if (u) out.push(u) })
     return out
   }
 
-  W.GTFx = { TYPE_FX: TYPE_FX, SND: SND, mountScene: mountScene, setArena: setArena, pan: pan, attack: attack, ko: ko, flyIn: flyIn, floatText: floatText,
+  W.GTFx = { SUPPORT: SUPPORT, support: support, TYPE_FX: TYPE_FX, SND: SND, mountScene: mountScene, setArena: setArena, pan: pan, attack: attack, ko: ko, flyIn: flyIn, floatText: floatText,
     shake: shake, pulse: pulse, anim: anim, wait: wait, reduced: reduced, center: center, warmUrls: warmUrls,
     MAX_FX: MAX_FX, MAX_VOICES: MAX_VOICES,
     stats: function () { return { voices: voices.length, vpeak: vstat.peak, vstarted: vstat.started, vstolen: vstat.stolen, fx: LAYER ? LAYER.childElementCount : 0, fxPeak: fstat.peak, fxSpawned: fstat.spawned, evicted: fstat.evicted } },

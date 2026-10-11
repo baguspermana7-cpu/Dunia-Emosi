@@ -92,6 +92,8 @@ async function open (w, h, o = {}) {
 // a tap on the part of the element that is really on top (a fanned hand card is half
 // covered by its neighbour): null when no point of it can receive the tap
 async function spot (p, sel, root) {
+  // a card that is still flying in from the deck is momentarily covered: measure once the hand has settled (<= 1.5 s)
+  for (let k = 0; k < 15; k++) { if (!(await p.evaluate(() => [...document.querySelectorAll('#hand .hc, .u-hand .hc')].some(h => h.getAnimations().length)))) break; await sleep(100) }
   // sample a 9x9 grid over the element; the tap goes to the on-top sample deepest inside
   // the exposed region (not an edge that a glow/bob animation can slide out from under)
   return p.evaluate((s, r) => {

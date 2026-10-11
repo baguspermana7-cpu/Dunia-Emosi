@@ -74,6 +74,9 @@
     if (d.fuelTax) s.push('Butuh bensin +' + d.fuelTax)
     return s.join(' · ')
   }
+  // SUPPORT cards (cards.js `icon` key): the picture says it, the ribbon names it, the line explains it
+  var SUP_ICON = { turbo: 'gt/turbo', perisai: 'gt/shield-boost', rem: 'gt/road-barrier', lumpur: 'gt/mud-puddle', oli: 'gt/oil-barrel', bengkel: 'gt/repair-kit', tukar: 'gt/upgrade-tire', nitro: 'gt/nitrous-tank' }
+  var SUP_RIB = { turbo: 'POWER-UP', perisai: 'BERTAHAN', rem: 'LAWAN LEWAT', lumpur: 'LAWAN DIAM', oli: 'LAWAN LEMAH', bengkel: 'PULIH', tukar: 'GANTI TRUK', nitro: 'POWER-UP' }
   var ACT_TEXT = { heal: function (v) { return 'Pulihkan ' + v + ' HP' }, draw: function (v) { return 'Ambil ' + v + ' kartu' }, fuel: function (v) { return 'Bensin +' + v },
     boost: function (v) { return 'Serangan berikut +' + v }, nitro: function (v) { return 'Nitro +' + v }, 'switch': function () { return 'Tukar truk dengan cadangan' } }
   var SLOT_NAME = { tire: 'Ban', body: 'Bodi', engine: 'Mesin' }
@@ -81,7 +84,10 @@
   W.GTCard = {
     truck: truck,
     part: function (d, o) { return small('part', d.name, partText(d), PART_ICON[d.slot], o, 'ONDERDIL · ' + SLOT_NAME[d.slot].toUpperCase()) },
-    action: function (d, o) { return small('action', d.name, ACT_TEXT[d.effect](d.value), ACT_ICON[d.effect], o, d.effect === 'boost' ? 'TANTANGAN' : 'AKSI') },
+    action: function (d, o) {
+      if (d.icon) { o = o || {}; o.cls = (o.cls || '') + ' gc-sup gc-sup-' + d.icon; return small('action', d.name, d.text, SUP_ICON[d.icon], o, SUP_RIB[d.icon] || 'SUPPORT') }
+      return small('action', d.name, ACT_TEXT[d.effect](d.value), ACT_ICON[d.effect], o, d.effect === 'boost' ? 'TANTANGAN' : 'AKSI')
+    },
     fuel: function (o) { return small('fuel', 'Bensin', 'Isi 1 per giliran. Serangan butuh bensin.', 'gt/fuel-can', o, 'ENERGI') },
     back: function (o) { return '<div class="gc gc-back' + (o && o.cls ? ' ' + o.cls : '') + '"><img src="' + lib('gt/card-back') + '" alt="" draggable="false"></div>' },
     any: function (def, o) {

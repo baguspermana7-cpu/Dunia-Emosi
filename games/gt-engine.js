@@ -23,7 +23,7 @@
 
   // BENCH_MAX 0 (owner 2026-09-27: "seperti pokemon hanya 1 kartu di arena"): one truck per side;
   // the other trucks wait in the hand/deck and step in when the active one is knocked out.
-  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, FUEL_AUTO: 1, TYPE_BONUS: 2, TYPE_WEAK: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2 }
+  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, LIVES: 3, WRONG_PCT: 0.25, SUPPORT_PER_TURN: 2, FUEL_AUTO: 1, TYPE_BONUS: 2, TYPE_WEAK: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2 }
 
   /* ── rng (mulberry32, state stored as an int) ─────────────────────────── */
   function rand (st) {
@@ -42,13 +42,13 @@
 
   /* ── setup ───────────────────────────────────────────────────────────── */
   function create (o) {
-    var st = { v: 1, seed: o.seed >>> 0, rng: o.seed | 0, turn: 1, active: 0, phase: 'setup', winner: null, draw: false,
+    var st = { v: 2, seed: o.seed >>> 0, rng: o.seed | 0, turn: 1, active: 0, phase: 'setup', winner: null, draw: false,
       arena: o.arena || 'lumpur', maxTurns: o.maxTurns || 40, cards: {}, players: [], seen: {}, log: [], pending: null, next: 1 }
     ;[o.p1, o.p2].forEach(function (p, pi) {
       var starter = p.trucks ? { deck: C.makeDeck(p.trucks) } : C.STARTERS[p.starter]
       if (!starter) throw new Error('unknown starter ' + p.starter)
       var deck = starter.deck.map(function (id) { var inst = 'c' + (st.next++); st.cards[inst] = id; return inst })
-      st.players.push({ name: p.name || ('Pemain ' + (pi + 1)), deck: deck, hand: [], discard: [], active: null, bench: [], ko: 0,
+      st.players.push({ name: p.name || ('Pemain ' + (pi + 1)), deck: deck, hand: [], discard: [], active: null, bench: [], ko: 0, lives: RULES.LIVES, skip: 0, skipImmune: false, played: 0,
         fuelPlayed: false, swapped: false, nitro: 0, boost: 0, reshuffled: false, lastAttack: null })
     })
     var ev = []
@@ -90,12 +90,26 @@
     var out = { base: atk.dmg, parts: sum(partsOf(st, tr), 'dmg'), type: tgt && d.strongVs === tgt.type ? RULES.TYPE_BONUS : 0,
       weak: tgt && tgt.strongVs === d.type ? RULES.TYPE_WEAK : 0,
       arena: (arena.mod && arena.mod[d.type]) || 0, boost: P.boost, nitro: P.nitro >= RULES.NITRO_FULL ? RULES.NITRO_BONUS : 0,
-      armor: O.active ? sum(partsOf(st, O.active), 'armor') : 0, fuelNeed: fuelNeed(st, tr, atk), fuel: tr.fuel, correctBonus: RULES.CORRECT_BONUS }
-    out.total = Math.max(1, out.base + out.parts + out.type + out.arena + out.boost + out.nitro - out.armor - out.weak)
+      armor: O.active ? sum(partsOf(st, O.active), 'armor') : 0, down: stat(tr).down, fuelNeed: fuelNeed(st, tr, atk), fuel: tr.fuel, correctBonus: RULES.CORRECT_BONUS }
+    out.total = Math.max(1, out.base + out.parts + out.type + out.arena + out.boost + out.nitro - out.armor - out.weak - out.down)
+    // a WRONG answer is a glancing hit: 25% of the power (Nitro is not spent), rounded down, min 0
+    out.glance = Math.max(0, Math.floor((out.total - out.nitro) * RULES.WRONG_PCT))
     return out
   }
   function arenaOf (st) { for (var i = 0; i < C.ARENAS.length; i++) if (C.ARENAS[i].id === st.arena) return C.ARENAS[i]; return C.ARENAS[0] }
-  function truckState (st, inst) { var d = def(st, inst); return { inst: inst, hp: d.hp, maxHp: d.hp, fuel: 0, parts: { tire: null, body: null, engine: null } } }
+  function truckState (st, inst) { var d = def(st, inst); return { inst: inst, hp: d.hp, maxHp: d.hp, fuel: 0, parts: { tire: null, body: null, engine: null },
+    status: { stun: 0, resist: 0, down: 0, downT: 0, shield: 0, shieldT: 0 } } }
+  // status badges (all expire at the end of the OWNER's own turn, see tickStatus): stun = cannot attack, resist = cannot be
+  // stunned again, down = next attack weaker by N, shield = absorbs N damage points
+  function stat (tr) { return (tr && tr.status) || { stun: 0, resist: 0, down: 0, downT: 0, shield: 0, shieldT: 0 } }
+  function tickStatus (tr, ev, pi) {
+    if (!tr || !tr.status) return
+    var S = tr.status
+    if (S.stun > 0) { S.stun--; if (!S.stun) { S.resist = 1; ev.push({ t: 'statusEnd', p: pi, card: tr.inst, status: 'stun' }) } }
+    else if (S.resist > 0) S.resist--
+    if (S.downT > 0) { S.downT--; if (!S.downT) { S.down = 0; ev.push({ t: 'statusEnd', p: pi, card: tr.inst, status: 'down' }) } }
+    if (S.shieldT > 0) { S.shieldT--; if (!S.shieldT) { S.shield = 0; ev.push({ t: 'statusEnd', p: pi, card: tr.inst, status: 'shield' }) } }
+  }
 
   /* ── legality ────────────────────────────────────────────────────────── */
   function check (st, cmd) {
@@ -121,11 +135,26 @@
       case 'attachPart':
         if (!inHand || cat(st, cmd.card) !== 'part') return 'notAPart'
         if (!P.active) return 'noTruck'
+        if (P.played >= RULES.SUPPORT_PER_TURN) return 'supportLimit'
         return null
       case 'playAction': {
         if (!inHand || cat(st, cmd.card) !== 'action') return 'notAnAction'
         var a = def(st, cmd.card)
         if (!P.active && a.effect !== 'draw') return 'noTruck'
+        if (P.played >= RULES.SUPPORT_PER_TURN) return 'supportLimit'
+        var O2 = st.players[1 - st.active], os = stat(O2.active), ms = stat(P.active)
+        if (a.effect === 'boost' && P.boost > 0) return 'alreadyBoosted'
+        if (a.effect === 'shield' && ms.shield > 0) return 'alreadyShield'
+        if (a.effect === 'skip' && (O2.skip > 0 || O2.skipImmune)) return 'justSkipped'
+        if ((a.effect === 'stun' || a.effect === 'down') && !O2.active) return 'noTarget'
+        if (a.effect === 'stun' && (os.stun > 0 || os.resist > 0)) return 'alreadyStunned'
+        if (a.effect === 'down' && os.down > 0) return 'alreadyOily'
+        if (a.effect === 'nitro' && P.nitro >= RULES.NITRO_FULL) return 'nitroFull'
+        if (a.effect === 'swapIn') {
+          var hasT = P.hand.some(function (x) { return cat(st, x) === 'truck' })
+          if (!hasT) return 'noTruckInHand'
+          if (cmd.target && (P.hand.indexOf(cmd.target) < 0 || cat(st, cmd.target) !== 'truck')) return 'badTarget'
+        }
         if (a.effect === 'heal' && P.active.hp >= P.active.maxHp) return 'fullHP'
         if (a.effect === 'fuel' && P.active.fuel >= RULES.FUEL_MAX) return 'fuelFull'
         if (a.effect === 'switch' && !P.bench.length) return 'nothingToSwitch'
@@ -138,6 +167,7 @@
         if (!O.active) return 'noTarget'
         var atk = def(st, P.active.inst).attacks[cmd.attack]
         if (!atk) return 'noSuchAttack'
+        if (stat(P.active).stun > 0) return 'stunned'
         if (P.active.fuel < fuelNeed(st, P.active, atk)) return 'needFuel'
         return null
       }
@@ -179,38 +209,51 @@
     st.active = 1 - st.active
     if (st.active === 0) st.turn++
     var P = st.players[st.active]
-    P.fuelPlayed = false; P.swapped = false
+    P.fuelPlayed = false; P.swapped = false; P.played = 0
     ev.push({ t: 'turnStart', p: st.active, turn: st.turn })
     if (st.turn > st.maxTurns) {
       var a = st.players[0], b = st.players[1]
-      if (a.ko !== b.ko) return finish(st, ev, a.ko > b.ko ? 0 : 1, 'turnLimit')
+      if (a.lives !== b.lives) return finish(st, ev, a.lives > b.lives ? 0 : 1, 'turnLimit')
       var ha = a.active ? a.active.hp : 0, hb = b.active ? b.active.hp : 0
       return finish(st, ev, ha === hb ? null : (ha > hb ? 0 : 1), 'turnLimit')
     }
     if (!P.active && !promote(st, st.active, ev)) return finish(st, ev, 1 - st.active, 'noTrucksLeft')
-    draw1(st, P, st.active, ev)
+    if (P.hand.length < RULES.HAND_LIMIT) draw1(st, P, st.active, ev)       // a full hand just skips the draw: no forced discard step
+    else ev.push({ t: 'drawSkip', p: st.active, full: true })
     if (P.active.fuel < RULES.FUEL_MAX) { P.active.fuel = Math.min(RULES.FUEL_MAX, P.active.fuel + RULES.FUEL_AUTO); ev.push({ t: 'autoFuel', p: st.active, fuel: P.active.fuel }) }
+    if (P.skip > 0) {                           // Rem Darurat: this turn is lost (a skipped side cannot be skipped twice in a row)
+      P.skip--; P.skipImmune = true
+      ev.push({ t: 'skipTurn', p: st.active })
+      return endTurn(st, ev)
+    }
+    P.skipImmune = false
   }
 
   function resolveAttack (st, correct, ev) {
     var pi = st.active, P = st.players[pi], O = st.players[1 - pi], pend = st.pending
     var pv = preview(st, pend.attack)
-    var dmg = pv.total + (correct ? RULES.CORRECT_BONUS : 0)
-    if (pv.total === 0 && !correct) dmg = 0
+    // the ANSWER decides the hit: right = full power + bonus (+ Nitro); wrong = 25% of the power ("lemah")
+    var dmg = correct ? pv.total + RULES.CORRECT_BONUS : pv.glance
     var arena = arenaOf(st)
     if (correct) P.nitro = Math.min(RULES.NITRO_FULL, P.nitro + (arena.nitroPerCorrect || 1) + (arena.nitroBonus || 0))
-    if (pv.nitro) P.nitro = 0                   // the full Nitro bar was spent on this attack
+    if (correct && pv.nitro) P.nitro = 0        // the full Nitro bar was spent on this attack (a glancing hit keeps it)
     P.boost = 0
+    var AS = P.active.status; if (AS) { AS.down = 0; AS.downT = 0 }   // Tumpahan Oli is used up by the attack it weakened
+    var DS = O.active.status, absorbed = 0
+    if (DS && DS.shield > 0 && dmg > 0) {       // Perisai soaks damage points first
+      absorbed = Math.min(DS.shield, dmg); DS.shield -= absorbed; dmg -= absorbed
+      if (!DS.shield) DS.shieldT = 0
+    }
     var before = O.active.hp
     O.active.hp = Math.max(0, O.active.hp - dmg)
     P.lastAttack = { attack: pend.attack, correct: correct, dmg: dmg }
-    ev.push({ t: 'attack', p: pi, card: P.active.inst, attack: pend.attack, correct: !!correct, breakdown: pv, dmg: dmg, hpBefore: before, hpAfter: O.active.hp, target: O.active.inst })
+    ev.push({ t: 'attack', p: pi, card: P.active.inst, attack: pend.attack, correct: !!correct, glancing: !correct, breakdown: pv, dmg: dmg, absorbed: absorbed, hpBefore: before, hpAfter: O.active.hp, target: O.active.inst })
     st.pending = null
     if (O.active.hp === 0) {
       var ko = O.active.inst
-      discardTruck(st, O, O.active); O.active = null; P.ko++
-      ev.push({ t: 'ko', p: 1 - pi, card: ko, byP: pi, koCount: P.ko })
-      if (P.ko >= RULES.KO_TO_WIN) return finish(st, ev, pi, 'ko')
+      discardTruck(st, O, O.active); O.active = null; P.ko++; O.lives = Math.max(0, O.lives - 1)
+      ev.push({ t: 'ko', p: 1 - pi, card: ko, byP: pi, koCount: P.ko, lives: O.lives })
+      if (O.lives <= 0) return finish(st, ev, pi, 'ko')
       // a KO earns a card — only while the hand has room (never forces a discard)
       if (P.hand.length < RULES.HAND_LIMIT - 1) { var bonus = draw1(st, P, pi, ev); if (bonus) ev.push({ t: 'koReward', p: pi, card: bonus }) }
     }
@@ -218,6 +261,9 @@
     endTurn(st, ev)                            // an attack ends the turn (TCG convention, keeps turns short)
   }
   function endTurn (st, ev) {
+    var Pe = st.players[st.active]
+    Pe.boost = 0                                // Turbo is "this turn" only
+    tickStatus(Pe.active, ev, st.active)
     ev.push({ t: 'turnEnd', p: st.active })
     startTurn(st, ev)
   }
@@ -255,13 +301,26 @@
       }
       case 'playAction': {
         var a = def(st, cmd.card)
-        P.hand.splice(P.hand.indexOf(cmd.card), 1); P.discard.push(cmd.card)
-        ev.push({ t: 'action', p: pi, card: cmd.card, effect: a.effect })
+        P.hand.splice(P.hand.indexOf(cmd.card), 1); P.discard.push(cmd.card); P.played++
+        var O = st.players[1 - pi]
+        ev.push({ t: 'action', p: pi, card: cmd.card, effect: a.effect, value: a.value })
         if (a.effect === 'heal') { var h0 = P.active.hp; P.active.hp = Math.min(P.active.maxHp, P.active.hp + a.value); ev.push({ t: 'heal', p: pi, amount: P.active.hp - h0 }) }
         if (a.effect === 'draw') draw1(st, P, pi, ev)
         if (a.effect === 'fuel') { P.active.fuel = Math.min(RULES.FUEL_MAX, P.active.fuel + a.value); ev.push({ t: 'fuel', p: pi, fuel: P.active.fuel }) }
         if (a.effect === 'boost') P.boost += a.value
         if (a.effect === 'nitro') P.nitro = Math.min(RULES.NITRO_FULL, P.nitro + a.value)
+        if (a.effect === 'shield') { P.active.status.shield = a.value; P.active.status.shieldT = 2; ev.push({ t: 'status', p: pi, card: P.active.inst, status: 'shield', value: a.value }) }
+        if (a.effect === 'skip') { O.skip = a.value; ev.push({ t: 'status', p: 1 - pi, status: 'skip' }) }
+        if (a.effect === 'stun') { O.active.status.stun = 1; ev.push({ t: 'status', p: 1 - pi, card: O.active.inst, status: 'stun' }) }
+        if (a.effect === 'down') { O.active.status.down = a.value; O.active.status.downT = 1; ev.push({ t: 'status', p: 1 - pi, card: O.active.inst, status: 'down', value: a.value }) }
+        if (a.effect === 'swapIn') {            // Tukar Ban: a truck from the hand rolls in free (no "once per turn"), the old one returns to the hand
+          var tc = cmd.target && P.hand.indexOf(cmd.target) >= 0 ? cmd.target : P.hand.filter(function (x) { return cat(st, x) === 'truck' })[0]
+          P.hand.splice(P.hand.indexOf(tc), 1)
+          var oldT = P.active, nt = truckState(st, tc)
+          ;['tire', 'body', 'engine'].forEach(function (sl) { if (oldT.parts[sl]) P.discard.push(oldT.parts[sl]) })
+          P.hand.push(oldT.inst); nt.fuel = oldT.fuel; P.active = nt
+          ev.push({ t: 'playTruck', p: pi, card: tc, to: 'active', swap: oldT.inst, free: true })
+        }
         if (a.effect === 'switch') { var b = P.bench.shift(); P.bench.push(P.active); P.active = b; ev.push({ t: 'switch', p: pi, card: b.inst }) }
         return
       }
@@ -303,32 +362,60 @@
   }
 
   /* ── AI (PRD v1 §17) ─────────────────────────────────────────────────── */
+  /* sensible support use: returns a legal support command worth playing now, or null */
+  function aiSupport (st, level, L) {
+    var P = st.players[st.active], O = st.players[1 - st.active], p = st.active
+    var racer = level === 'racer'
+    if (P.played >= RULES.SUPPORT_PER_TURN || !P.active) return null
+    var ms = stat(P.active), os = stat(O.active)
+    var canAtk = L.some(function (c) { return c.type === 'attack' })
+    var best = 0
+    if (O.active) def(st, O.active.inst).attacks.forEach(function (a) { best = Math.max(best, a.dmg) })
+    var frac = P.active.hp / P.active.maxHp
+    var cands = L.filter(function (c) { return c.type === 'playAction' })
+    var by = function (e) { return cands.filter(function (c) { return def(st, c.card).effect === e })[0] }
+    var roll = function () { return racer || rand(st) < 0.6 }
+    var c
+    if ((c = by('heal')) && frac <= (racer ? 0.55 : 0.4)) return c
+    if ((c = by('shield')) && O.active && best >= 3 && frac < 0.9 && roll()) return c
+    if ((c = by('skip')) && O.active && (frac < 0.5 || O.active.hp > P.active.hp) && roll()) return c
+    if ((c = by('stun')) && O.active && best >= 4 && roll()) return c
+    if ((c = by('down')) && O.active && best >= 3 && roll()) return c
+    if ((c = by('swapIn')) && O.active) {
+      var tt = P.hand.filter(function (x) { return cat(st, x) === 'truck' && def(st, x).strongVs === def(st, O.active.inst).type })[0]
+      var bad = def(st, P.active.inst).strongVs !== def(st, O.active.inst).type
+      if (tt && bad && racer) return { type: 'playAction', card: c.card, target: tt, p: p }
+      if (frac <= 0.3 && racer) return { type: 'playAction', card: c.card, p: p }
+    }
+    if ((c = by('boost')) && canAtk && roll()) return c
+    if ((c = by('nitro')) && P.nitro >= 1 && roll()) return c
+    if ((c = by('nitro')) && racer && P.nitro === 0 && rand(st) < 0.3) return c
+    if ((c = cands.filter(function (x) { var e = def(st, x.card).effect; return e === 'fuel' || e === 'draw' })[0]) && roll()) return c
+    return null
+  }
+
   function ai (st, level) {
     var P = st.players[st.active], O = st.players[1 - st.active], L = legal(st), p = st.active
     var pick = function (t, f) { return L.filter(function (c) { return c.type === t && (!f || f(c)) })[0] }
     if (st.phase === 'challenge') return { type: 'answer', correct: rand(st) < (level === 'racer' ? 0.75 : 0.45), p: p }
-    if (P.hand.length > RULES.HAND_LIMIT) {     // keep trucks and fuel, drop the least useful
+    if (P.hand.length > RULES.HAND_LIMIT) {     // keep trucks, drop the least useful
       var worst = P.hand.slice().sort(function (a, b) { var r = { action: 0, part: 1, fuel: 2, truck: 3 }; return r[cat(st, a)] - r[cat(st, b)] })[0]
       return { type: 'discard', card: worst, p: p }
     }
     if (!P.active) return pick('playTruck')
     var f = pick('attachFuel'); if (f) return f
-    if (level === 'racer' && P.active.hp <= P.active.maxHp / 2) { var h = pick('playAction', function (c) { return def(st, c.card).effect === 'heal' }); if (h) return h }
+    var sup = aiSupport(st, level, L); if (sup) return sup
     var part = pick('attachPart', function (c) { return !P.active.parts[def(st, c.card).slot] })
-    // rookie is the child's first opponent: it skips half its upgrades and swings its weaker
-    // attack (measured: a coached child answering 2/3 right won 2 of 26 against the old rookie)
     if (part && (level === 'racer' || rand(st) < 0.5)) return part
     if (level === 'racer' && O.active && def(st, P.active.inst).strongVs !== def(st, O.active.inst).type) {
       var sw = pick('playTruck', function (c) { return def(st, c.card).strongVs === def(st, O.active.inst).type })
       if (sw) return sw
     }
-    var boost = pick('playAction', function (c) { var e = def(st, c.card).effect; return e === 'boost' || e === 'nitro' || e === 'fuel' || e === 'draw' })
-    if (boost && (level === 'racer' || rand(st) < 0.5)) return boost
     var atks = L.filter(function (c) { return c.type === 'attack' })
     if (atks.length) {
       atks.sort(function (a, b) { return preview(st, b.attack).total - preview(st, a.attack).total })
       if (level !== 'racer') return atks[atks.length - 1]
-      if (level === 'racer' && O.active) {        // prefer an attack that KOs even without the bonus
+      if (O.active) {                             // prefer an attack that KOs even without the bonus
         var ko = atks.filter(function (c) { return preview(st, c.attack).total >= O.active.hp })[0]
         if (ko) return ko
       }
@@ -337,7 +424,7 @@
     return { type: 'endTurn', p: p }
   }
 
-  W.GTEngine = { RULES: RULES, create: create, apply: apply, legal: legal, ai: ai, preview: preview, def: def, arena: arenaOf,
+  W.GTEngine = { RULES: RULES, why: check, stat: stat, create: create, apply: apply, legal: legal, ai: ai, preview: preview, def: def, arena: arenaOf,
     hash: function (st) { var s = JSON.stringify([st.players, st.turn, st.active, st.phase, st.winner, st.rng]); var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) } return (h >>> 0).toString(16) } }
   if (typeof module !== 'undefined' && module.exports) module.exports = W.GTEngine
 })()
