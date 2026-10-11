@@ -527,7 +527,7 @@
   function faceMojo (h) {
     if (h === 1) faceEast = true; else if (h === 3) faceEast = false
     $('mojo').setAttribute('data-heading', h)
-    if (PK && PK.hero) { var f = (G && G.w && G.w.m.form) || 'normal', mm = $('mojo-mod'), key = f + h; if (mm.getAttribute('data-hk') !== key) { mm.innerHTML = MA.module(f, 'top', h); mm.setAttribute('data-hk', key) } mm.style.transform = ''; return }   // a pack's vehicle has one picture per heading
+    if (PK && PK.hero) { var f = (G && G.w && G.w.m.form) || 'normal', mm = $('mojo-mod'), key = f + h + (PK.cam ? PK.cam() : ''); if (mm.getAttribute('data-hk') !== key) { mm.innerHTML = MA.module(f, 'top', h); mm.setAttribute('data-hk', key) } mm.style.transform = ''; return }   // a pack's vehicle has one picture per heading
     $('mojo-mod').style.transform = faceEast ? 'scaleX(-1)' : ''
   }
   function placeMojo (m, snap) {
@@ -1134,7 +1134,7 @@
     var pushed = ev.some(function (e) { return e.e === 'push' })
     ev.forEach(function (e) {
       switch (e.e) {
-        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); if (!pushed) fxCall('move', e.from, e.to); if (PK && !pushed) { fxCall('steam', e.from[0], e.from[1], G.run && G.run.n === 0); if (visCh(G.lv, G.bi, e.to[0], e.to[1], G.lv.grid.map[e.to[0]].charAt(e.to[1])) === '=') later(function () { fxCall('splash', e.to[0], e.to[1]); SND.collect() }, T.move * 0.5) }; break
+        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); if (!pushed) fxCall('move', e.from, e.to); if (PK && !pushed) { fxCall('steam', e.from[0], e.from[1], (G.run && G.run.n === 0) || !!beat().steam); if (visCh(G.lv, G.bi, e.to[0], e.to[1], G.lv.grid.map[e.to[0]].charAt(e.to[1])) === '=') later(function () { fxCall('splash', e.to[0], e.to[1]); SND.collect() }, T.move * 0.5) }; break
         case 'turn': turnMojo(e.h, prev.m.h); SND.turn(); wait = Math.max(wait, T.turn); break
         case 'push': var pf = PG.find(prev, e.id); pushObj(e.id, e.to); SND.push(); wait = Math.max(wait, T.move); if (pf) fxCall('push', [pf.r, pf.c], e.to, T.move); break
         case 'fill': later(function () { paint(G.w); renderObj(PG.find(G.w, e.id)); fxCall('fill', e.at[0], e.at[1]); SND.push() }, T.move); wait = Math.max(wait, T.move + 260); break
@@ -1152,7 +1152,7 @@
         case 'takeoff': case 'land': placeMojo(m); tone(e.e === 'takeoff' ? 200 : 500, e.e === 'takeoff' ? 500 : 200, 0.4, 0.06); wait = Math.max(wait, 420); break
         /* ── the delivery family's payoffs (owner 2026-10-07: "immersive effects and visuals") ── */
         case 'deliver': wait = Math.max(wait, deliverAnim(e)); break
-        case 'couple': var cw = PG.find(G.w, e.id); renderObj(cw); if (cw) fxCall('couple', cw.r, cw.c); SND.clank(); wait = Math.max(wait, 420); break
+        case 'couple': var cw = PG.find(G.w, e.id); renderObj(cw); if (cw) { fxCall('couple', cw.r, cw.c); if (PK && /kayu/.test(cw.art || '')) fxCall('chips', cw.r, cw.c) } SND.clank(); wait = Math.max(wait, 420); break
         case 'train': wait = Math.max(wait, trainAnim(e)); break
         case 'unlock': var gw = PG.find(G.w, e.id); renderObj(gw); if (gw) fxCall('unlock', gw.r, gw.c); if (PK && gw) fxCall('sparks', gw.r, gw.c); SND.clank(); wait = Math.max(wait, 620); break
         case 'key': later(function () { pickupAt(e.id); SND.star() }, T.move * 0.8); wait = Math.max(wait, 360); break

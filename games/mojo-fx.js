@@ -305,6 +305,13 @@
       sprite(g, 'water-splash', p[0], p[1] + s * 0.12, s * 0.95, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 0.95, offset: 0.35 }, { transform: 'translateY(-' + s * 0.12 + 'px) scale(1.2)', opacity: 0 }], 650, { z: 8 })
       settle(g, 900)
     },
+    // wood chips and sawdust where a log wagon is hitched
+    chips: function (r, c) {
+      var g = group('chips'), s = cell(), p = cc(r, c)
+      for (var i = 0; i < 5; i++) { var dx = (i - 2) * s * 0.16
+        sprite(g, 'dust', p[0], p[1] + s * 0.05, s * 0.28, [{ transform: 'translate(0,0) scale(.5)', opacity: 0 }, { transform: 'translate(' + dx * 0.5 + 'px,-' + s * 0.25 + 'px) scale(1)', opacity: 1, offset: 0.3 }, { transform: 'translate(' + dx + 'px,-' + (s * 0.55 + i * 4) + 'px) scale(.8)', opacity: 0 }], 700 + i * 60, { z: 8, delay: i * 40, cls: 'chip' }) }
+      settle(g, 1000)
+    },
     // brake sparks under the wheels (a stop on a rail)
     sparks: function (r, c) {
       var g = group('sparks'), s = cell(), p = cc(r, c)

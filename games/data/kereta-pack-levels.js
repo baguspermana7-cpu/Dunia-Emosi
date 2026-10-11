@@ -12,14 +12,14 @@
   'use strict'
   var MOVE = ['up', 'down', 'west', 'east']
   var HERO = 'linus'
-  var CHAPTERS = [{ id: 'bl-lembah', title: 'Lembah dan Stasiun', sub: 'Bab 1' }, { id: 'bl-samson', title: 'Samson Datang', sub: 'Bab 2' }, { id: 'bl-hutan', title: 'Hutan Kayu', sub: 'Bab 3' }, { id: 'bl-jembatan', title: 'Jembatan Miring', sub: 'Bab 4' }]
+  var CHAPTERS = [{ id: 'bl-lembah', title: 'Lembah dan Stasiun', sub: 'Bab 1' }, { id: 'bl-samson', title: 'Samson Datang', sub: 'Bab 2' }, { id: 'bl-hutan', title: 'Hutan Kayu', sub: 'Bab 3' }, { id: 'bl-jembatan', title: 'Jembatan Miring', sub: 'Bab 4' }, { id: 'bl-selamat', title: 'Penyelamatan', sub: 'Bab 5' }, { id: 'bl-pulang', title: 'Pulih dan Pulang', sub: 'Bab 6' }]
   var REGIONS = [
     { id: 'bl-lembah', title: 'Lembah dan Stasiun', bg: 'bg-bl-lembah', card: 'card-bl-lembah-stasiun', open: true, levels: ['bl01', 'bl02', 'bl03', 'bl04', 'bl05'] },
     { id: 'bl-samson', title: 'Samson Datang', bg: 'bg-bl-depot', open: true, levels: ['bl06', 'bl07', 'bl08'] },
-    { id: 'bl-hutan', title: 'Hutan Kayu', bg: 'bg-bl-hutan-logging', card: 'card-bl-hutan-logging', open: true, levels: ['bl09', 'bl10', 'bl11', 'bl12'] },
+    { id: 'bl-hutan', title: 'Hutan Kayu', bg: 'bg-bl-hutan-logging', card: 'card-bl-hutan-logging', open: true, levels: ['bl09', 'bl10', 'bl25', 'bl11', 'bl12'] },
     { id: 'bl-jembatan', title: 'Jembatan Miring', bg: 'bg-bl-jembatan', card: 'card-bl-penyelamatan-jembatan', open: true, levels: ['bl13', 'bl14', 'bl15', 'bl16'] },
-    { id: 'bl-selamat', title: 'Penyelamatan', bg: 'bg-bl-malam', open: true, levels: [] },
-    { id: 'bl-pulang', title: 'Pulih dan Pulang', bg: 'bg-bl-rumah', card: 'card-bl-pulang-rumah', open: true, levels: [] }
+    { id: 'bl-selamat', title: 'Penyelamatan', bg: 'bg-bl-malam', card: 'card-bl-penyelamatan-jembatan', open: true, levels: ['bl17', 'bl18', 'bl19', 'bl20'] },
+    { id: 'bl-pulang', title: 'Pulih dan Pulang', bg: 'bg-bl-rumah', card: 'card-bl-pulang-rumah', open: true, levels: ['bl21', 'bl22', 'bl23', 'bl24'] }
   ]
   // the art keys the delivery objects ask for ('char/<who>' is a MojoArt LIB entry); all are database keys
   var LIB = {
@@ -33,6 +33,10 @@
     'obj/lentera': 'kereta-prop/lantern', 'obj/rumah-henry': 'kereta-prop/farmhouse', 'train/kayu': 'kereta-prop/log-stack', 'obj/gudang': 'kereta-prop/engine-house',
     'obj/tali': 'kereta-prop/wheel-bandage', 'char/henry-tunjuk': 'story-char/henry/point', 'obj/pasak': 'kereta-prop/barrel', 'obj/kait': 'kereta-prop/log-stack',
     'train/goro-b': 'train-char/goro-loco/front-34r', 'obj/daratan': 'kereta-prop/station-small', 'train/gerbong-samson': 'train-char/coach-green/side-l',
+    'char/anak-kura': 'story-char/anak-kura/hug', 'char/pelukis': 'story-char/pelukis/thumbs', 'obj/kotak-batu': 'kereta-prop/barrel', 'obj/log': 'kereta-prop/log-single',
+    'obj/palu': 'mojo-prop/hammer', 'obj/obeng': 'mojo-prop/screwdriver', 'obj/kunci-inggris': 'mojo-prop/wrench', 'obj/koran': 'school/notebook', 'obj/kabin': 'kereta-prop/engine-house',
+    'char/mekanik': 'story-char/mekanik/wave', 'char/mekanik-wanita': 'story-char/mekanik-wanita/hips', 'char/nyonya': 'story-char/nyonya-topi/cheer',
+    'char/henry-w': 'story-char/henry/wave', 'char/scarlet-t': 'story-char/scarlet/stand', 'obj/sorot': 'mojo-fx/highlight',
     'train/gerbong-hijau': 'train-char/coach-green/side-l', 'train/gerbong-merah': 'train-char/caboose-red/front-34l', 'obj/depo': 'kereta-prop/engine-house'
   }
   // L(): chapter 1. `n` is the scenario number in The_Brave_Locomotive_Linus_30_Skenario_Detail.md (its endpoint is the goal);
@@ -163,33 +167,68 @@
       ] }),
 
     // ── Bab 3 "Hutan Kayu" (scenarios 9-14) ───────────────────────────────────────────────────
-    // 09 the dark logging gate: take the lantern, open the gate, let Goro's searchlight engine cross the line
-    L({ id: 'bl09', n: 9, ch: 'bl-hutan', title: 'Gerbang Logging', place: 'Hutan Gelap', icon: 'cmd/unlock', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'syarat' },
-      grid: { rows: 3, cols: 8, map: [',,T,,.,,T', '........', ',,,,,,,,'].map(function (r) { return r.slice(0, 8) }), theme: 'town' },
+    // ── "Ke Gunung" PETUALANGAN BESAR (scenarios 9-10, owner alignment doc): Linus goes ALONE with his tender, in the rain, past the
+    // POINT OF NO RETURN sign, under the searchlight, through the wreck valley, into the logging yard. No coaches, no loading.
+    // CAMERA (when main ships lv.view): beat 1 diag, beat 2 top, beat 3 diag, beat 4 top.
+    L({ id: 'bl25', n: 9, ns: [9, 10], big: true, quiet: true, ch: 'bl-hutan', title: 'Ke Gunung', place: 'Petualangan Besar', icon: 'cmd/wait', bg: 'bg-bl-gunung',
+      bgs: ['bg-bl-gunung', 'bg-bl-hutan-logging', 'bg-bl-malam', 'bg-bl-hutan-logging'], edu: { domain: 'campuran', skill: 'urutan perjalanan' },
+      celebrate: [], tired: [false, false, true, true],
+      grid: { rows: 6, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,.', '........', '.,,.,,,,', '........'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [2, 2], art: 'story-char/carter/hands-hips' }, { at: [2, 6], art: 'story-char/james/arms-folded' }],
+      decor: [{ at: [0, 2], art: 'kereta-prop/pine' }],
       objects: [
-        { id: 'lentera', type: 'key', at: [1, 1], key: 'logging', art: 'obj/lentera', name: 'Lentera' },
-        { id: 'gerbang', type: 'gate', at: [1, 3], key: 'logging', name: 'Gerbang logging' },
-        { id: 'goro', type: 'patrol', at: [0, 5], name: 'Goro', art: 'train/goro', path: [[0, 5], [1, 5], [1, 5], [0, 5]], phase: 1 },
-        { id: 'flag', type: 'flag', at: [1, 7] }
+        { id: 'sorot', type: 'patrol', at: [4, 3], name: 'Sorot lampu', art: 'obj/sorot', path: [[4, 3], [3, 3], [3, 3], [4, 3]], phase: 0 },
+        { id: 'l1', type: 'mark', at: [5, 2], order: 1, seq: 'lampu', art: 'kereta-prop/lantern', name: 'Lampu tua 1' },
+        { id: 'l2', type: 'mark', at: [5, 4], order: 2, seq: 'lampu', art: 'kereta-prop/lantern', name: 'Lampu tua 2' },
+        { id: 'l3', type: 'mark', at: [5, 6], order: 3, seq: 'lampu', art: 'kereta-prop/lantern', name: 'Lampu tua 3' }
       ],
-      beats: [{ title: 'Lewati gerbang dan Goro', story: 'Hutan gelap. Linus membuka gerbang logging.',
-        bo: 'Sampai ke bendera: buka gerbang, tunggu Goro.',
-        objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 12, budget: 9, forms: [HERO], palette: ['east', 'unlock', 'wait'] }] }),
+      beats: [
+        { title: 'Jalur sempit di gunung', story: 'Hujan turun. Linus mendaki sendirian.',
+          bo: 'Bawa Linus ke bendera di gunung.', hide: ['sorot', 'l1', 'l2', 'l3'], fx: ['fog', 'rain', 'lightning'], steam: true, flagAt: [1, 7],
+          decor: [{ at: [0, 1], art: 'kereta-prop/pine' }, { at: [0, 5], art: 'kereta-prop/farmhouse' }, { at: [2, 2], art: 'kereta-prop/rock' }, { at: [0, 7], art: 'kereta-prop/pine' }],
+          objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: [HERO], palette: ['east'] },
+        { title: 'Batas tanpa kembali', story: 'Sorot lampu menyapu jalur. Linus menunggu.',
+          bo: 'Tunggu sorot lampu lewat, lalu ke bendera.', hide: ['l1', 'l2', 'l3'], fx: ['rain', 'lightning'],
+          decor: [{ at: [2, 1], art: 'mojo-prop/direction-sign' }, { at: [2, 2], art: 'animal/vulture/perch-1' }, { at: [2, 4], art: 'animal/vulture/perch-2' }, { at: [4, 5], art: 'train-char/goro-loco/front-34l' }, { at: [0, 6], art: 'kereta-prop/pine' }],
+          start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'reach', at: [3, 0] }], slots: 12, budget: 9, forms: [HERO], palette: ['west', 'wait'] },
+        { title: 'Lembah kereta tua', story: 'Kilat menerangi kereta-kereta tua.',
+          bo: 'Lampu tua 1, 2, lalu lampu tua 3.', hide: ['sorot'], fx: ['rain', 'lightning', 'fog'], lean: [4, 4], lamps: [[5, 2], [5, 4], [5, 6]],
+          decor: [{ at: [0, 0], art: 'train-char/rongsokan-a/v1' }, { at: [0, 2], art: 'train-char/rongsokan-b/v4' }, { at: [0, 4], art: 'train-char/rongsokan-a/v7' }, { at: [0, 6], art: 'train-char/rongsokan-b/v3' }, { at: [0, 7], art: 'train-char/rongsokan-a/v6' }, { at: [2, 0], art: 'train-char/rongsokan-b/v2' }, { at: [2, 2], art: 'train-char/rongsokan-a/v5' }, { at: [2, 4], art: 'train-char/rongsokan-b/v1' }, { at: [2, 6], art: 'train-char/rongsokan-a/v4' }, { at: [4, 1], art: 'train-char/rongsokan-b/v7' }, { at: [4, 5], art: 'train-char/rongsokan-a/v3' }, { at: [4, 7], art: 'train-char/rongsokan-b/v6' }, { at: [2, 7], art: 'train-char/rongsokan-a/v2' }],
+          objectives: [{ 'do': 'visit', id: 'l3' }], slots: 10, budget: 8, forms: [HERO], palette: ['east', 'down'] },
+        { title: 'Kawasan logging', story: 'James menunjuk dari lereng. Linus melaju terus.',
+          bo: 'Terus ke bendera di kawasan logging.', hide: ['sorot', 'l1', 'l2', 'l3'], fx: ['rain', 'lightning'], flagAt: [1, 7],
+          decor: [{ at: [2, 3], art: 'story-char/james/point-scroll' }, { at: [0, 6], art: 'kereta-prop/sawmill' }, { at: [0, 2], art: 'kereta-prop/log-stack' }, { at: [2, 6], art: 'kereta-prop/log-stack' }, { at: [0, 4], art: 'kereta-prop/lantern' }],
+          start: { at: [1, 0], h: 'E' }, objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: [HERO], palette: ['east'] }
+      ] }),
 
-    // 10 the broken rail beside the wrecks: fetch a plank and lay it over the gap
-    L({ id: 'bl10', n: 10, ch: 'bl-hutan', title: 'Rel Putus', place: 'Bangkai Kereta', icon: 'cmd/place', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'alat yang tepat' },
-      grid: { rows: 3, cols: 8, map: [',,,,,,,,', '....o...', ',.,,,,,,'], theme: 'town' },
+    // 09 the first night at the logging line: Linus waits under Goro's searchlight (the short TUNGGU lesson of Bab 3; alone, no coaches)
+    L({ id: 'bl09', n: 9, ch: 'bl-hutan', title: 'Sorot Lampu Goro', place: 'Hutan Gelap', icon: 'cmd/wait', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
+      grid: { rows: 3, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 2], art: 'train-char/rongsokan-a/v2' }, { at: [0, 6], art: 'train-char/rongsokan-b/v5' }, { at: [2, 4], art: 'train-char/goro-loco/front-34r' }, { at: [2, 6], art: 'story-char/james/scroll' }],
+      decor: [{ at: [2, 2], art: 'story-char/carter/hands-hips' }, { at: [2, 6], art: 'story-char/james/arms-folded' }, { at: [0, 6], art: 'train-char/goro-loco/front-34l' }],
+      fx: ['rain', 'lightning'],
       objects: [
-        { id: 'papan', type: 'part', at: [2, 1], art: 'obj/papan', name: 'Papan' },
+        { id: 'sorot', type: 'patrol', at: [0, 3], name: 'Sorot lampu', art: 'obj/sorot', path: [[0, 3], [1, 3], [1, 3], [0, 3]], phase: 0 },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
-      beats: [{ title: 'Pasang papan di rel putus', story: 'Rel putus dekat bangkai kereta.',
-        bo: 'Pasang papan di rel putus, lalu ke bendera.',
-        objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 12, budget: 9, forms: [HERO], palette: ['east', 'down', 'pick', 'place'] }] }),
+      beats: [{ title: 'Tunggu sorot lampu', story: 'Lampu Goro menyapu jalur. Linus menunggu.',
+        bo: 'Tunggu sorot lampu lewat, lalu ke bendera.', fx: ['rain', 'lightning'],
+        objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 12, budget: 8, forms: [HERO], palette: ['east', 'wait'] }] }),
+
+    // 10 the wrecks beside the line (scenery, nothing to repair): lantern key, the latch at the end, James watching with his scroll
+    L({ id: 'bl10', n: 10, ch: 'bl-hutan', title: 'Kereta-Kereta Tua', place: 'Bangkai Kereta', icon: 'cmd/unlock', bg: 'bg-bl-malam', edu: { domain: 'algoritma', skill: 'syarat' },
+      grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,'], theme: 'town' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 1], art: 'train-char/rongsokan-a/v2' }, { at: [0, 4], art: 'train-char/rongsokan-b/v5' }, { at: [2, 3], art: 'train-char/goro-loco/front-34r' }, { at: [2, 6], art: 'story-char/james/scroll' }],
+      fx: ['rain', 'lightning', 'fog'], lean: [0, 6],
+      objects: [
+        { id: 'lentera', type: 'key', at: [1, 2], key: 'bangkai', art: 'obj/lentera', name: 'Lentera' },
+        { id: 'palang', type: 'gate', at: [1, 5], key: 'bangkai', name: 'Palang jalur' },
+        { id: 'flag', type: 'flag', at: [1, 7] }
+      ],
+      beats: [{ title: 'Lewati kereta tua', story: 'Kilat menerangi bangkai kereta. Linus lewat pelan.',
+        bo: 'Ambil lentera, buka palang, ke bendera.', fx: ['rain', 'lightning', 'fog'], lean: [0, 6],
+        objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: [HERO], palette: ['east', 'unlock'] }] }),
 
     // 11 Henry at home in the rain: Linus brings Scarlet to him (the quiet comfort scene)
     L({ id: 'bl11', n: 11, ch: 'bl-hutan', title: 'Scarlet untuk Henry', place: 'Rumah Henry', icon: 'cmd/deliver', bg: 'bg-bl-rumah', edu: { domain: 'matematika', skill: 'membilang 1' },
@@ -311,7 +350,170 @@
           bo: 'Gandeng ke stasiun daratan, lalu bendera.',
           decor: [{ at: [4, 5], art: 'kereta-prop/station-small' }, { at: [4, 4], art: 'story-char/katrina/stand' }, { at: [4, 3], art: 'story-char/baron/stand' }, { at: [2, 3], art: 'story-char/scarlet/ramah' }],
           objectives: [{ 'do': 'train', id: 'daratan' }, { 'do': 'reach', at: [5, 0] }], slots: 10, budget: 8, forms: [HERO], palette: ['west', 'couple'] }
+      ] }),
+
+    // ── Bab 5 "Penyelamatan" (scenarios 21-25; everyone is carried to safety, Linus is only very tired) ───────────────
+    // 21 pick Henry, Baron and Katrina off the tilted cab and hand them over to Linus's cab, one by one
+    L({ id: 'bl17', n: 21, ch: 'bl-selamat', title: 'Jemput Henry, Baron, Katrina', place: 'Ujung Jembatan', icon: 'cmd/pick', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'membilang 1-3' },
+      grid: { rows: 3, cols: 8, map: [',.,.,.,,', '........', ',,,,,,,,'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 7], art: 'train-char/samson/34l-neutral' }, { at: [2, 6], art: 'story-char/henry/jongkok' }],
+      objects: [
+        { id: 'r1', type: 'rider', at: [0, 1], who: 'baron', name: 'Baron' },
+        { id: 'r2', type: 'rider', at: [0, 3], who: 'katrina', name: 'Katrina' },
+        { id: 'r3', type: 'rider', at: [0, 5], who: 'henry-w', name: 'Henry' },
+        { id: 'kabin', type: 'stop', at: [2, 3], accepts: 'rider', need: 3, art: 'obj/kabin', name: 'Kabin Linus', pay: 'wave' }
+      ],
+      beats: [{ title: 'Tiga orang naik', story: 'Henry, Baron, dan Katrina pindah ke kabin Linus.',
+        bo: 'Antar tiga orang ke kabin Linus.',
+        objectives: [{ 'do': 'deliver', id: 'kabin' }], slots: 18, budget: 15, forms: [HERO], palette: ['east', 'west', 'pick', 'deliver'] }] }),
+
+    // 22 Henry and Katrina shovel at the firebox: scoop coal twice, tip it in (a firebox that takes three scoops), then roll on
+    L({ id: 'bl18', n: 22, ch: 'bl-selamat', title: 'Batu Bara di Tungku', place: 'Kabin Linus', icon: 'cmd/load', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'menambah sampai cukup' },
+      grid: { rows: 3, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,,'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      res: { sand: 0 }, cap: { sand: 2 },
+      decor: [{ at: [2, 1], art: 'story-char/henry/shovel' }, { at: [2, 2], art: 'story-char/katrina/shovel' }, { at: [0, 6], art: 'story-char/baron/stand' }],
+      objects: [
+        { id: 'tumpukan', type: 'pile', at: [0, 3], res: 'sand', n: 1, art: 'kereta-prop/coal-pile', name: 'Batu bara' },
+        { id: 'tungku', type: 'hole', at: [1, 5], need: 3, res: 'sand', art: 'obj/kotak-batu', name: 'Tungku' },
+        { id: 'flag', type: 'flag', at: [1, 7] }
+      ],
+      beats: [{ title: 'Isi tungku, tiga sekop', story: 'Henry dan Katrina menyekop batu bara.',
+        bo: 'Isi tungku dengan batu bara, lalu ke bendera.',
+        objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 18, budget: 14, forms: [HERO], palette: ['east', 'west', 'load', 'dump'] }] }),
+
+    // 23 the bridge groans: two beams swing over the planks; cross when they are clear
+    L({ id: 'bl19', n: 23, ch: 'bl-selamat', title: 'Jembatan Berderit', place: 'Jembatan Patah', icon: 'cmd/wait', bg: 'bg-bl-jembatan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
+      grid: { rows: 3, cols: 8, map: [',,,.,.,,', '..====..', ',,~~~~,,'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [2, 0], art: 'story-char/baron/shocked' }, { at: [2, 7], art: 'story-char/katrina/khawatir' }],
+      objects: [
+        { id: 'balok1', type: 'patrol', at: [0, 3], name: 'Balok jatuh', art: 'obj/log', path: [[0, 3], [1, 3], [1, 3], [0, 3]], phase: 0 },
+        { id: 'balok2', type: 'patrol', at: [0, 5], name: 'Balok jatuh', art: 'obj/log', path: [[0, 5], [1, 5], [1, 5], [0, 5]], phase: 2 },
+        { id: 'flag', type: 'flag', at: [1, 7] }
+      ],
+      beats: [{ title: 'Seberangi jembatan', story: 'Balok jatuh di jembatan. Linus menunggu.',
+        bo: 'Seberangi jembatan ke bendera, tunggu balok.',
+        objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 14, budget: 10, forms: [HERO], palette: ['east', 'wait'] }] }),
+
+    // 24-25 PETUALANGAN BESAR: coal, the collapsing bridge (plank + falling beam), the hard landing, the survivors gather round tired Linus
+    L({ id: 'bl20', n: 24, ns: [24, 25], big: true, ch: 'bl-selamat', title: 'Dorongan Terakhir', place: 'Petualangan Besar', icon: 'cmd/place', bg: 'bg-bl-jembatan',
+      bgs: ['bg-bl-jembatan', 'bg-bl-jembatan', 'bg-bl-malam', 'bg-bl-lembah'], edu: { domain: 'campuran', skill: 'urutan penyelamatan' },
+      celebrate: ['story-char/henry/wave', 'story-char/scarlet/ramah', 'story-char/katrina/stand', 'story-char/baron/stand'],
+      tired: [false, false, true, true],
+      res: { sand: 0 }, cap: { sand: 2 },
+      grid: { rows: 6, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,.', '...o....', '.,,,,.,,', '........'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 6], art: 'story-char/baron/shocked' }],
+      objects: [
+        { id: 'tumpukan', type: 'pile', at: [0, 3], res: 'sand', n: 1, art: 'kereta-prop/coal-pile', name: 'Batu bara' },
+        { id: 'tungku', type: 'hole', at: [1, 5], need: 2, res: 'sand', art: 'obj/kotak-batu', name: 'Tungku' },
+        { id: 'papan', type: 'part', at: [4, 5], art: 'obj/papan', name: 'Papan' },
+        { id: 'flag', type: 'flag', at: [3, 4] }
+      ],
+      beats: [
+        { title: 'Isi tungku', story: 'Henry dan Katrina menyekop batu bara.',
+          bo: 'Isi tungku, lalu ke ujung rel.', hide: ['papan', 'flag'],
+          decor: [{ at: [2, 1], art: 'story-char/henry/shovel' }, { at: [2, 2], art: 'story-char/katrina/shovel' }, { at: [0, 6], art: 'story-char/baron/stand' }],
+          objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 16, budget: 12, forms: [HERO], palette: ['east', 'west', 'load', 'dump'] },
+        { title: 'Papan di rel patah', story: 'Rel patah. Linus memasang papan.',
+          bo: 'Pasang papan di rel patah, lalu ke bendera.', hide: ['tumpukan', 'tungku', 'flag'],
+          decor: [{ at: [2, 3], art: 'story-char/katrina/khawatir' }, { at: [2, 1], art: 'story-char/baron/shocked' }, { at: [4, 2], art: 'kereta-prop/rock' }],
+          objectives: [{ 'do': 'reach', at: [3, 0] }], slots: 16, budget: 12, forms: [HERO], palette: ['west', 'down', 'pick', 'place'] },
+        { title: 'Jembatan runtuh', story: 'Jembatan runtuh. Linus melaju terus.',
+          bo: 'Seberangi jembatan ke bendera.', hide: ['tumpukan', 'tungku', 'papan', 'flag'],
+          vis: [{ at: [5, 2], ch: '=' }, { at: [5, 3], ch: '=' }, { at: [5, 4], ch: '=' }, { at: [5, 5], ch: '=' }, { at: [4, 2], ch: '~' }, { at: [4, 4], ch: '~' }, { at: [4, 6], ch: '~' }],
+          decor: [{ at: [2, 4], art: 'story-char/henry/worried' }, { at: [2, 6], art: 'story-char/scarlet/worried' }],
+          objectives: [{ 'do': 'reach', at: [5, 7] }], slots: 12, budget: 9, forms: [HERO], palette: ['down', 'east'] },
+        { title: 'Berkumpul di sekitar Linus', story: 'Linus lelah sekali. Semua berkumpul.',
+          bo: 'Bawa Linus ke bendera, dekat Henry.', hide: ['papan', 'tumpukan', 'tungku'],
+          decor: [{ at: [2, 4], art: 'story-char/katrina/khawatir' }, { at: [2, 6], art: 'story-char/henry/worried' }, { at: [4, 6], art: 'story-char/scarlet/worried' }, { at: [2, 1], art: 'train-char/samson/34l-neutral' }],
+          start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'reach', at: [3, 4] }], slots: 6, budget: 3, forms: [HERO], palette: ['west'] }
+      ] }),
+
+    // ── Bab 6 "Pulih dan Pulang" (scenarios 26-30) ─────────────────────────────────────────────
+    // 26 a dream, kind and quiet: three stars of light along a golden track among the animals
+    L({ id: 'bl21', n: 26, ch: 'bl-pulang', title: 'Mimpi di Atas Awan', place: 'Gerbang Cahaya', icon: 'ui/plan', bg: 'bg-bl-mimpi', edu: { domain: 'matematika', skill: 'membilang 1-3' },
+      grid: { rows: 4, cols: 8, map: [',,,,,,,,', '.......,', ',,,,,,.,', '.......,'], theme: 'park' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 1], art: 'animal/deer/stand' }, { at: [0, 6], art: 'animal/bird-blue/fly' }, { at: [2, 2], art: 'animal/rabbit/sit' }, { at: [0, 4], art: 'animal/cardinal/fly' }],
+      objects: [
+        { id: 'b1', type: 'star', at: [1, 2] }, { id: 'b2', type: 'star', at: [3, 4] }, { id: 'b3', type: 'star', at: [3, 1] }
+      ],
+      beats: [{ title: 'Tiga bintang cahaya', story: 'Linus bermimpi. Bintang menuntunnya.',
+        bo: 'Kumpulkan tiga bintang cahaya.',
+        objectives: [{ 'do': 'star', id: 'b1' }, { 'do': 'star', id: 'b2' }, { 'do': 'star', id: 'b3' }], slots: 16, budget: 13, forms: [HERO], palette: ['east', 'down', 'west'] }] }),
+
+    // 27 welcomed back at the workshop: each friend is given the tool that fits
+    L({ id: 'bl22', n: 27, ch: 'bl-pulang', title: 'Disambut di Bengkel', place: 'Bengkel', icon: 'cmd/pick', bg: 'bg-bl-bengkel', edu: { domain: 'matematika', skill: 'memasangkan' },
+      grid: { rows: 3, cols: 7, map: [',,,,,,,', '.......', '.,.,.,,'], theme: 'town' },
+      mojo: { at: [1, 3], h: 'W', form: HERO },
+      decor: [{ at: [2, 6], art: 'story-char/anak-cat/stand' }],
+      objects: [
+        { id: 'palu', type: 'parcel', at: [2, 0], kind: 'palu', name: 'Palu', art: 'obj/palu' },
+        { id: 'obeng', type: 'parcel', at: [2, 2], kind: 'obeng', name: 'Obeng', art: 'obj/obeng' },
+        { id: 'kunci', type: 'parcel', at: [2, 4], kind: 'kunci', name: 'Kunci pas', art: 'obj/kunci-inggris' },
+        { id: 'mekanik', type: 'stop', at: [0, 0], accepts: 'palu', art: 'story-char/mekanik/wave', name: 'Mekanik', pay: 'wave' },
+        { id: 'pelukis', type: 'stop', at: [0, 2], accepts: 'obeng', art: 'story-char/pelukis/stand', name: 'Pelukis', pay: 'wave' },
+        { id: 'henry', type: 'stop', at: [0, 4], accepts: 'kunci', art: 'char/henry-w', name: 'Henry', pay: 'wave' }
+      ],
+      beats: [{ title: 'Alat untuk setiap teman', story: 'Teman-teman menyambut Linus di bengkel.',
+        bo: 'Beri alat ke Mekanik, Pelukis, Henry.',
+        objectives: [{ 'do': 'deliver', id: 'mekanik' }, { 'do': 'deliver', id: 'pelukis' }, { 'do': 'deliver', id: 'henry' }], slots: 15, budget: 11, forms: [HERO], palette: ['east', 'west', 'pick', 'deliver'] }] }),
+
+    // 28 the news: the child with the baby turtle carries the newspaper to the three friends in order
+    L({ id: 'bl23', n: 28, ch: 'bl-pulang', title: 'Berita untuk Teman', place: 'Kota Kecil', icon: 'cmd/deliver', bg: 'bg-bl-kota', edu: { domain: 'algoritma', skill: 'urutan' },
+      grid: { rows: 2, cols: 7, map: [',,,,,,,', '.......'], theme: 'town' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 6], art: 'story-char/anak-kura/hug' }, { at: [0, 0], art: 'story-char/anak-cat/kneel' }],
+      objects: [
+        { id: 'anak', type: 'rider', at: [1, 2], who: 'anak-kura', name: 'Anak dan kura-kura' },
+        { id: 's1', type: 'stop', at: [0, 1], accepts: 'anak', keep: true, order: 1, seq: 'berita', art: 'char/pelukis', name: 'Pelukis', pay: 'wave' },
+        { id: 's2', type: 'stop', at: [0, 3], accepts: 'anak', keep: true, order: 2, seq: 'berita', art: 'char/mekanik-wanita', name: 'Mekanik', pay: 'wave' },
+        { id: 's3', type: 'stop', at: [0, 5], accepts: 'anak', order: 3, seq: 'berita', art: 'char/nyonya', name: 'Nyonya Topi', pay: 'reunion' }
+      ],
+      beats: [{ title: 'Kabar untuk tiga teman', story: 'Berita tentang Linus tersebar.',
+        bo: 'Antar anak ke Pelukis, Mekanik, Nyonya Topi.',
+        objectives: [{ 'do': 'visit', id: 's1' }, { 'do': 'visit', id: 's2' }, { 'do': 'deliver', id: 's3' }], slots: 12, budget: 9, forms: [HERO], palette: ['east', 'pick', 'deliver'] }] }),
+
+    // 29-30 PETUALANGAN BESAR: the new bridge, the green and red coaches again, Henry and Scarlet aboard, a peaceful run home
+    L({ id: 'bl24', n: 29, ns: [29, 30], big: true, ch: 'bl-pulang', title: 'Pulang Bersama', place: 'Petualangan Besar', icon: 'cmd/couple', bg: 'bg-bl-kota',
+      bgs: ['bg-bl-jembatan', 'bg-bl-lembah', 'bg-bl-lembah', 'bg-bl-rumah'], edu: { domain: 'campuran', skill: 'urutan perjalanan' },
+      celebrate: ['story-char/henry/wave', 'story-char/scarlet/ramah', 'story-char/anak-kura/shy', 'story-char/mekanik/wave'],
+      grid: { rows: 6, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,.', '........', '.,,.,.,,', '........'], theme: 'park' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 6], art: 'train-char/coach-green/front-34l' }],
+      objects: [
+        { id: 'kereta', type: 'patrol', at: [0, 3], name: 'Kereta lain', art: 'train/gerbong-hijau', path: [[0, 3], [1, 3], [1, 3], [0, 3]], phase: 0 },
+        { id: 'g1', type: 'wagon', at: [3, 5], art: 'train/gerbong-hijau', name: 'Gerbong hijau' },
+        { id: 'g2', type: 'wagon', at: [3, 2], art: 'train/gerbong-merah', name: 'Gerbong merah' },
+        { id: 'h1', type: 'rider', at: [4, 3], who: 'henry-w', name: 'Henry' },
+        { id: 'h2', type: 'rider', at: [4, 5], who: 'scarlet-t', name: 'Scarlet' },
+        { id: 'kabin', type: 'stop', at: [4, 4], accepts: 'rider', need: 2, art: 'obj/kabin', name: 'Kabin Linus', pay: 'wave' },
+        { id: 'flag', type: 'flag', at: [5, 7] }
+      ],
+      beats: [
+        { title: 'Jembatan baru', story: 'Linus menyeberangi jembatan baru.',
+          bo: 'Seberangi jembatan ke bendera.', hide: ['g1', 'g2', 'h1', 'h2', 'kabin', 'flag'],
+          vis: [{ at: [1, 4], ch: '=' }, { at: [1, 5], ch: '=' }, { at: [1, 6], ch: '=' }],
+          decor: [{ at: [2, 4], art: 'story-char/tuan-merah/stand' }, { at: [0, 5], art: 'train-char/caboose-red/front-34l' }, { at: [2, 1], art: 'animal/bird-blue/fly' }],
+          objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 14, budget: 10, forms: [HERO], palette: ['east', 'wait'] },
+        { title: 'Gerbong hijau dan merah', story: 'Gerbong hijau dan merah menunggu lagi.',
+          bo: 'Gandeng gerbong hijau dan merah.', hide: ['kereta', 'h1', 'h2', 'kabin', 'flag'],
+          decor: [{ at: [2, 3], art: 'animal/rabbit/run' }, { at: [2, 6], art: 'animal/deer/graze' }],
+          start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'wagons', n: 2 }, { 'do': 'reach', at: [4, 0] }], slots: 13, budget: 10, forms: [HERO], palette: ['west', 'down', 'couple'] },
+        { title: 'Henry dan Scarlet naik', story: 'Henry dan Scarlet naik ke kabin.',
+          bo: 'Antar Henry dan Scarlet ke kabin Linus.', hide: ['kereta', 'flag'],
+          decor: [{ at: [2, 2], art: 'story-char/anak-kura/shy' }, { at: [2, 5], art: 'animal/turtle/stand' }, { at: [2, 7], art: 'animal/vulture/perch-2' }],
+          objectives: [{ 'do': 'deliver', id: 'kabin' }], slots: 14, budget: 11, forms: [HERO], palette: ['east', 'west', 'down', 'pick', 'deliver'] },
+        { title: 'Perjalanan damai', story: 'Linus pulang di lembah yang hijau.',
+          bo: 'Pulang ke bendera, perlahan.', hide: ['kereta'],
+          decor: [{ at: [4, 6], art: 'story-char/henry/wave' }, { at: [4, 4], art: 'story-char/scarlet/stand' }, { at: [2, 3], art: 'train-char/caboose-red/front-34r' }],
+          start: { at: [5, 0], h: 'E' }, objectives: [{ 'do': 'reach', at: [5, 7] }], slots: 9, budget: 7, forms: [HERO], palette: ['east'] }
       ] })
   ]
+  // bl25 (id kept for saves) sits after bl10 in play order
+  ;(function () { var k = -1, t = -1; LEVELS.forEach(function (l, i) { if (l.id === 'bl25') k = i; if (l.id === 'bl10') t = i }); if (k >= 0 && t >= 0 && k !== t + 1) { var x = LEVELS.splice(k, 1)[0]; LEVELS.splice(t + (k < t ? 0 : 1), 0, x) } })()
   W.KeretaPackLevels = { HERO: HERO, CHAPTERS: CHAPTERS, REGIONS: REGIONS, LEVELS: LEVELS, LIB: LIB }
 })(typeof window !== 'undefined' ? window : globalThis)

@@ -16,7 +16,7 @@
   if (!P || P.id !== 'kereta' || !ML || !K) return
 
   /* ── the hero: Linus (verbs = what the five missions use) ─────────────────────────────────────────── */
-  ML.FORMS.linus = { name: 'Linus', verbs: ['pick', 'drop', 'deliver', 'couple', 'unlock', 'place'], color: '#2F5FA8', ability: 'couple' }
+  ML.FORMS.linus = { name: 'Linus', verbs: ['pick', 'drop', 'deliver', 'couple', 'unlock', 'place', 'load', 'dump'], color: '#2F5FA8', ability: 'couple' }
   if (PG) PG.defineForm('linus', { verbs: ML.FORMS.linus.verbs })
 
   /* ── content: the Mojo level set becomes this storyline (arrays edited in place, other modules hold refs) ── */
@@ -68,7 +68,9 @@
 
   /* ── backgrounds ─────────────────────────────────────────────────────────────────────────────────── */
   function background (key, port) { return '../assets/kereta/bg/' + key + (port ? '-portrait' : '-landscape') + '.webp' }
-  function scene (lv, bi) { return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
+  function scene (lv, bi) {
+    var mj = D.getElementById('mojo'); if (mj) mj.classList.toggle('k-tired', !!((lv.tired && lv.tired[bi || 0]) || (lv.beats[bi || 0] && lv.beats[bi || 0].tired === true)))
+    return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
   function regionScene (r) { return r.bg }
 
   /* ── rails: ONE continuous track. Every road cell paints the same bed / sleepers / steel from its cell centre to
@@ -164,6 +166,16 @@
       var a = d.art || ''
       if (/engine-house|station-small|stasiun-kecil|depo/.test(a) || (K.LIB[a] && /engine-house|station-small/.test(K.LIB[a]))) out.push({ at: d.at, cls: 'k-chimney', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' })
     })
+    // whole-board atmosphere named by the beat: fog drifting, falling leaves, dust motes; flickering old lamps
+    ;((b && b.fx) || lv.fx || []).forEach(function (f) {
+      var n = f === 'fog' ? 2 : f === 'lightning' ? 1 : f === 'rain' ? 14 : 6, h = ''
+      for (var i = 0; i < n; i++) h += '<i class="f' + (i + 1) + '" style="--i:' + i + '"></i>'
+      out.push({ at: [0, 0], cls: 'k-fx k-fx-' + f, html: h })
+    })
+    var ln = (b && b.lean) || lv.lean   // one wreck creaks and tilts as Linus passes
+    if (ln) out.push({ at: ln, cls: 'k-lean', html: '<img alt="" src="' + lib('train-char/rongsokan-b/v3') + '">' })
+    ;((b && b.lamps) || []).forEach(function (l) { out.push({ at: l, cls: 'k-lamp', html: '<i></i>' }) })
+    ;((b && b.decor) || lv.decor || []).forEach(function (d) { if (/sawmill/.test(d.art || '')) out.push({ at: d.at, cls: 'k-chimney k-saw', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' }) })
     return out
   }
   function addSteam () {   // the locomotive's own chimney (steams while it stands, harder when it moves)
@@ -240,6 +252,15 @@
       D.getElementById('k-go').addEventListener('click', function () { info.start(id) })
       ;[].forEach.call(box.querySelectorAll('.lvl'), function (x) { x.classList.toggle('k-sel', x.getAttribute('data-level') === id) })
     }
+    var chips = D.getElementById('k-chips')
+    if (!chips) { chips = D.createElement('nav'); chips.id = 'k-chips'; chips.setAttribute('aria-label', 'Bab'); scr.insertBefore(chips, box) }
+    chips.innerHTML = ''
+    ML.CHAPTERS.forEach(function (ch, i) {
+      var b = D.createElement('button'); b.type = 'button'; b.className = 'k-chip'; b.textContent = (i + 1)
+      b.setAttribute('aria-label', 'Bab ' + (i + 1) + ': ' + ch.title)
+      b.addEventListener('click', function () { var h = [].filter.call(box.querySelectorAll('.chap'), function (c) { return c.querySelector('.ep') && c.querySelector('.ep').textContent === 'Episode ' + (i + 1) })[0]; if (h) box.scrollTo({ top: h.offsetTop - box.offsetTop - 6, behavior: 'smooth' }) })
+      chips.appendChild(b)
+    })
     ;[].forEach.call(box.querySelectorAll('.lvl'), function (x) { var l = ML.byId(x.getAttribute('data-level')); if (l && l.big) x.classList.add('k-big') })
     pick(info.nextId)
   }
@@ -281,9 +302,9 @@
     if (!lv.big) return
     var card = D.querySelector('#ov-card .result'); if (!card) return
     var row = D.createElement('div'); row.className = 'k-cheer'
-    row.innerHTML = '<b class="fk">Petualangan Besar selesai!</b>' + (lv.celebrate || []).map(function (k) { return '<img alt="" src="' + lib(k) + '">' }).join('')
+    row.innerHTML = '<b class="fk">' + (lv.quiet ? 'Linus tiba di kawasan baru' : 'Petualangan Besar selesai!') + '</b>' + (lv.celebrate || []).map(function (k) { return '<img alt="" src="' + lib(k) + '">' }).join('')
     card.insertBefore(row, card.querySelector('.res-line'))
-    if (W.MojoFX) { setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 700); setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 1500) }
+    if (W.MojoFX && !lv.quiet) { setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 700); setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 1500) }
   }
 
   var def = {
@@ -291,7 +312,7 @@
     narrator: { name: 'Henry', full: 'Henry McCloud' }, heroName: 'Linus',
     text: { play: ['MULAI MAIN', 'LANJUT MAIN', 'MAIN LAGI'], again: 'Coba Lagi', mapTitle: 'Pilih Misi', collectionTitle: 'Teman-Teman Linus',
       collectionLead: 'Kenali para sahabat di atas rel. Ketuk untuk melihat.', collectionHead: 'Para Sahabat' },
-    msg: { caught: 'Ada yang lewat di rel! TUNGGU sebentar sampai relnya kosong, lalu jalan lagi.' },
+    msg: { 'cap-full': function () { return 'Sekopnya sudah penuh! Tuang dulu ke tungku.' }, 'no-load': function () { return 'Sekopnya kosong! ISI batu bara dulu.' }, 'hole-full': function () { return 'Tungkunya sudah penuh.' }, caught: 'Ada yang lewat di rel! TUNGGU sebentar sampai relnya kosong, lalu jalan lagi.' },
     libmap: libmap, hero: hero, scene: scene, regionScene: regionScene, background: background,
     pins: { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
     mapArt: function (port) { return background('bg-bl-lembah', port) },

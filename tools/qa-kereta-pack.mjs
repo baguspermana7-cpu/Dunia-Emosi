@@ -63,7 +63,7 @@ for (const lv of ML.LEVELS) {
     check(!extra.length, `${lv.id} beat ${bi + 1}: palette holds only needed actions ${extra.join(',')}`)
     const first = (b.bo.match(/^.*?[.!?](?:\s|$)/) || [b.bo])[0].trim().toLowerCase()
     const nouns = (b.objectives || []).map(ob => { const o = (lv.objects || []).find(x => x.id === ob.id)
-      return ob.do === 'reach' ? 'bendera' : ob.do === 'wagons' ? 'gerbong' : NAMED.includes(ob.do) ? ((o && o.name) || ob.id).toLowerCase() : ob.id })
+      return ob.do === 'reach' ? 'bendera' : ob.do === 'star' ? 'bintang' : ob.do === 'wagons' ? 'gerbong' : NAMED.includes(ob.do) ? ((o && o.name) || ob.id).toLowerCase() : ob.id })
     check(first.length <= 64 && nouns.some(n => n && first.includes(n)), `${lv.id} beat ${bi + 1}: the line "${first}" names the objective (${nouns.join('/')}) and fits the bubble (${first.length}/64)`)
     const verbs = new Set(b.palette.map(c => PG.verbOf(c)))
     const named = Object.keys(ACT).filter(k => new RegExp('\\b' + k + '\\b').test(b.bo))
@@ -128,8 +128,10 @@ if (!process.argv.includes('--headless')) {
       await p.evaluate(id => __mojo.start(id), id); await sleep(150)
       const intro = await p.$('#in-go'); if (intro) { await intro.click(); await sleep(80) }
       const st = await p.evaluate(() => { const s = __mojo.state(), m = document.querySelector('#mojo-mod img'); return { id: s.id, h: s.position.h, src: m && m.getAttribute('src'), form: s.form, bo: document.getElementById('bo-img').getAttribute('src') } })
-      const want = ['top-n', 'top-e', 'top-s', 'top-w'][st.h]
-      check(st.id === id && st.form === 'linus' && st.src && st.src.indexOf('linus/' + want) > 0, `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
+      // owner 2026-10-11: the board stays flat and Linus STANDS on it, drawn from the side he shows (kereta-cam.js)
+      const topCam = ML.byId(id).view === 'top'
+      const want = (topCam ? ['top-n', 'top-e', 'top-s', 'top-w'] : ['rear', 'front-34r', 'front', 'front-34l'])[st.h]
+      check(st.id === id && st.form === 'linus' && st.src && st.src.indexOf('linus/' + want + '.') > 0, `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
       check(/henry/.test(st.bo), `${w}x${h} ${id}: the narrator chip is Henry`)
       if (await p.$('#ov-card.on #picker-later')) await (await p.$('#picker-later')).click()
     }
