@@ -601,7 +601,7 @@
   var STORIES = [
     { id: 'brave', title: 'Petualangan Linus', sub: 'The Brave Locomotive', pic: '../assets/kereta/cards/card-bl-lembah-stasiun.webp', built: true },
     { id: 'malivlak', title: 'Dragutin dan Malivlak', sub: 'Dari stasiun sampai museum', pic: '../assets/kereta/cards/card-mv-stasiun.webp', built: true },
-    { id: 'hellbent', title: 'Lomba ke Kota', sub: 'Kilat Perak dan Tuan Lemas', pic: '../assets/kereta/cards/card-hb-start.webp', built: true },
+    { id: 'hellbent', title: 'Lomba ke Kota', sub: 'Si Gigih dan Kilat Perak', pic: '../assets/kereta/cards/card-hb-start.webp', built: true },
     { id: 'classic', title: 'Lokomotif Pemberani', sub: 'Game aslinya', pic: '../assets/train/backdrop/level20-640.webp', built: true, href: 'lokomotif-pemberani.html' }
   ]
   function buildHub () {

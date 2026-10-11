@@ -74,6 +74,15 @@ for (const lv of ML.LEVELS) {
   // story fields the Mojo shell reads
   check(lv.title && lv.place && lv.icon && lv.bg && lv.beats.every(b => b.story && b.bo), `${lv.id}: title, place, icon, background, story and narrator line present`)
 }
+// Lomba ke Kota (owner 2026-10-11): the old steam train Si Gigih is the HERO (>= 55% of levels), Kilat Perak the rival; no "Tuan Lemas" / "hell" in any UI string
+if (STORY === 'hellbent') {
+  const gig = ML.LEVELS.filter(l => l.mojo && l.mojo.form === 'gigih').length, kil = ML.LEVELS.filter(l => l.mojo && l.mojo.form === 'kilat').length
+  check(ML.LEVELS.length >= 15 && gig / ML.LEVELS.length >= 0.55 && kil >= 5, `hellbent: Si Gigih drives ${gig}/${ML.LEVELS.length} levels (>= 55%), Kilat Perak ${kil}`)
+  check(ctx.KeretaPackLevels.HERO === 'gigih' && ctx.KeretaPackLevels.STORY.heroes.gigih.sprite === 'defeatist' && ctx.KeretaPackLevels.STORY.heroes.kilat.sprite === 'silver', 'hellbent: hero form is the steam train (defeatist sprite), rival the silver streamliner')
+  const UI = ['games/data/kereta-pack-levels-hellbent.js', 'games/data/kereta-goals.js', 'games/data/kereta-scene.js', 'games/data/kereta-life.js', 'games/data/kereta-pack.js', 'games/kereta-art.js', 'games/data/kereta-levels-hellbent.js']
+  const bad = UI.filter(f => /Tuan Lemas|\bhell(bent)?\b/i.test(fs.readFileSync(path.join(ROOT, f), 'utf8').replace(/id: 'hellbent'|STORIES\.hellbent|hellbent:|'hellbent'|saveKey: '[^']*'|hellbent/g, '')))
+  check(bad.length === 0, `hellbent: no "Tuan Lemas" or "hell" word in any UI string (${bad.join(', ')})`)
+}
 // the art table resolves specific-first / shared-fallback, and every key it names exists in the asset database
 const dbKeys = new Set(Object.keys(JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/db/index.json'), 'utf8')).assets))
 const art = ctx.MojoPack.def.art

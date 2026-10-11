@@ -26,7 +26,7 @@
     [/train-char\/samson/, 'Samson'], [/train-char\/goro/, 'Goro'], [/train-char\/linus/, 'Linus'],
     [/malivlak-char\/masinis/, 'Masinis'], [/malivlak-char\/orkes/, 'Pemusik'], [/malivlak-char\/penumpang/, 'Penumpang'], [/malivlak-char\/petugas-stasiun/, 'Petugas'],
     [/malivlak-char\/petugas-bagasi/, 'Kuli bagasi'], [/malivlak-char\/penyambut/, 'Penyambut'], [/malivlak-char\/pembaca/, 'Pembaca pidato'],
-    [/train-char\/dragutin/, 'Dragutin'], [/train-char\/malivlak/, 'Malivlak'], [/train-char\/silver/, 'Kilat Perak'], [/train-char\/defeatist/, 'Tuan Lemas'],
+    [/train-char\/dragutin/, 'Dragutin'], [/train-char\/malivlak/, 'Malivlak'], [/train-char\/silver/, 'Kilat Perak'], [/train-char\/defeatist/, 'Si Gigih'],
     [/kereta-prop\/mail/, 'Surat'], [/kereta-prop\/ticket/, 'Loket'],
     [/animal\/deer/, 'Rusa'], [/animal\/turtle/, 'Kura-kura'], [/animal\/(vulture|hering|raven|crow)/, 'Burung Hering'], [/animal\/bird/, 'Burung'], [/animal\/(rabbit|kelinci)/, 'Kelinci'], [/animal\/beruang/, 'Beruang'], [/animal\/ikan/, 'Ikan'],
     [/kereta-prop\/log/, 'Kayu'], [/kereta-prop\/barrel/, 'Tong'], [/kereta-prop\/lantern/, 'Lampu'], [/kereta-prop\/coal/, 'Batu bara'],
@@ -184,9 +184,11 @@
      tender behind Linus (never on his head) and comes off with TURUNKAN (or SERAHKAN for a paper or a tool). */
   var WORDS = { _: { pick: 'Muat', deliver: 'Turunkan', load: 'Muat', dump: 'Sekop' },
     bl05: { pick: 'Naikkan', deliver: 'Turunkan' }, bl17: { pick: 'Naikkan', deliver: 'Turunkan' }, bl23: { pick: 'Naikkan', deliver: 'Turunkan' },
-    bl08: { pick: 'Ambil', deliver: 'Serahkan' }, bl22: { pick: 'Ambil', deliver: 'Serahkan' }, bl14: { unlock: 'Lepas kait' }, mv02: { pick: 'Muat', deliver: 'Turunkan' }, hb02: { pick: 'Ambil', deliver: 'Berikan' }, hb03: { load: 'Muat', dump: 'Isi tungku' } }
+    bl08: { pick: 'Ambil', deliver: 'Serahkan' }, bl22: { pick: 'Ambil', deliver: 'Serahkan' }, bl14: { unlock: 'Lepas kait' }, mv02: { pick: 'Muat', deliver: 'Turunkan' }, hb02: { pick: 'Ambil', deliver: 'Antar' }, hb05: { pick: 'Ambil', deliver: 'Berikan' }, hb14: { pick: 'Ambil', deliver: 'Antar' }, hb03: { load: 'Muat', dump: 'Isi tungku' }, hb11: { load: 'Muat', dump: 'Isi tungku' } }
   var KIND = { batu: 'batu bara' }
   def.verbWords = function (lv) { var w = {}, d = WORDS._, o = WORDS[lv.id] || {}, k; for (k in d) w[k] = d[k]; for (k in o) w[k] = o[k]; return w }
+  // a train filling its own coal bin: "Isi", not "Tutup" (Lomba ke Kota only; other hole types keep the engine wording)
+  def.fillText = function (o, lv) { return lv && /^hb\d/.test(lv.id) ? 'Isi ' + String(o.name || 'bak').replace(/^([A-Z])([a-z])/, function (m, a, b) { return a.toLowerCase() + b }) : null }
   def.goalText = function (ob, stop, lv) {
     var lows = function (n) { return /^[A-Z][a-z]+$/.test(n) ? n : n.charAt(0).toLowerCase() + n.slice(1) }
     var items = (lv.objects || []).filter(function (o) { return PICK[o.type] && o.type !== 'wagon' && (stop.accepts === o.id || stop.accepts === o.type || stop.accepts === o.kind) })

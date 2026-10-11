@@ -119,6 +119,8 @@
     [/story-char\/james/, ['Hmm!', 'Hehe!'], function (c) { person(c, 200, false) }],
     [/story-char\/katrina|malivlak-char\/penyambut/, ['Oh!', 'Halo!'], function (c) { person(c, 470, true) }],
     [/story-char\/scarlet/, ['Halo!', 'Hai!'], function (c) { person(c, 520, true) }],
+    [/train-char\/defeatist/, ['Uff, uff!', 'Aku pasti bisa!', 'Tuut!'], function (c) { tone(c, 150, 120, .12, .05, 'sawtooth'); tone(c, 150, 120, .12, .05, 'sawtooth', .2); tone(c, 880, 940, .3, .035, 'sine', .42) }],
+    [/train-char\/silver/, ['Wuus!', 'Aku paling cepat!', 'Tiiit!'], function (c) { tone(c, 300, 1100, .35, .04, 'sine'); tone(c, 520, 520, .22, .04, 'square', .36) }],
     [/char\//, ['Halo!', 'Hai!', 'Hore!'], function (c) { person(c, 360, true) }]
   ]
   function voiceOf (L) { for (var i = 0; i < VOICES.length; i++) if (VOICES[i][0].test(L.key)) return VOICES[i]; return null }

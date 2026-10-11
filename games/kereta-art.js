@@ -122,8 +122,8 @@
     samson: { char: 'samson', name: 'Samson', body: '#4a3a3c', trim: '#7a2f2f', role: 'Lokomotif raksasa dengan banyak roda.' },
     malivlak: { char: 'malivlak', name: 'Malivlak', body: '#d4361a', trim: '#2a2a2a', role: 'Lokomotif kecil merah yang periang dan suka petualangan.' },
     dragutin: { char: 'dragutin', name: 'Dragutin', body: '#1f5a3d', trim: '#f2d9b0', role: 'Kereta hijau-krem yang panjang dan ramah.' },
-    kilat: { char: 'silver', name: 'Kilat Perak', body: '#8aa3c8', trim: '#3e5a86', role: 'Kereta perak yang sangat cepat.' },
-    lemas: { char: 'defeatist', name: 'Tuan Lemas', body: '#3a3a3e', trim: '#8a7a68', role: 'Lokomotif tua yang sering ingin menyerah, tapi hatinya baik.' }
+    kilat: { char: 'silver', name: 'Kilat Perak', body: '#8aa3c8', trim: '#3e5a86', role: 'Kereta perak yang sangat cepat, suka pamer, tapi baik hati.' },
+    lemas: { char: 'defeatist', name: 'Si Gigih', body: '#3a3a3e', trim: '#8a7a68', role: 'Lokomotif uap tua yang pelan tapi gigih dan tidak pernah menyerah.' }
   }
 
   /* the four storylines. 'classic' is the existing Lokomotif Pemberani game (G15), reachable unchanged. */
@@ -144,11 +144,11 @@
         { name: 'Ladang dan Kolam', from: 6, to: 9, plate: 6, desc: 'Keluar rel, menyelam ke kolam, dan bertemu burung.' },
         { card: 'card-mv-pegunungan', name: 'Gunung', from: 10, to: 13, plate: 34, desc: 'Mendaki, terowongan gelap, dan beruang yang ramah.' },
         { card: 'card-mv-penyambutan', name: 'Kota dan Museum', from: 14, to: 20, plate: 40, desc: 'Penyambutan meriah dan perjalanan ke museum.' }] },
-    hellbent: { id: 'hellbent', gid: 'g15h', title: 'Lomba ke Kota', sub: 'Kilat Perak dan Tuan Lemas', blurb: '10 misi: dua kereta, satu pesan: jangan menyerah.', cover: 33, subtitle: 'Lomba ke Kota', heroes: ['kilat', 'lemas'], plate: 33,
+    hellbent: { id: 'hellbent', gid: 'g15h', title: 'Lomba ke Kota', sub: 'Si Gigih dan Kilat Perak', blurb: '15 misi: lokomotif tua yang gigih berlomba dengan si cepat Kilat Perak. Jangan menyerah!', cover: 33, subtitle: 'Lomba ke Kota', heroes: ['lemas', 'kilat'], plate: 33,
       chapters: [
-        { card: 'card-hb-start', name: 'Mulai Lomba', from: 1, to: 3, plate: 16, desc: 'Kilat dan Tuan Lemas bersiap. Giliran bergantian!' },
-        { card: 'card-hb-padang', name: 'Saling Membantu', from: 4, to: 7, plate: 34, desc: 'Jalan bersamaan: tunggu, atur, dan bantu teman.' },
-        { card: 'card-hb-kota', name: 'Pesta di Kota', from: 8, to: 10, plate: 20, desc: 'Garis akhir dan pesta untuk semua.' }] },
+        { card: 'card-hb-start', name: 'Mulai Lomba', from: 1, to: 5, plate: 16, desc: 'Si Gigih dan Kilat Perak bersiap. Pelan tapi pasti!' },
+        { card: 'card-hb-padang', name: 'Saling Membantu', from: 6, to: 10, plate: 34, desc: 'Jalan bersamaan: tunggu, atur, dan bantu teman.' },
+        { card: 'card-hb-kota', name: 'Pesta di Kota', from: 11, to: 15, plate: 20, desc: 'Garis akhir dan pesta untuk semua.' }] },
     classic: { id: 'classic', gid: 'g15', title: 'Lokomotif Pemberani', sub: 'Game aslinya', blurb: 'Game Lokomotif Pemberani yang lama, tetap seperti biasa.', subtitle: 'Game Aslinya', cover: 20, heroes: [], plate: 20, chapters: [] }
   }
 

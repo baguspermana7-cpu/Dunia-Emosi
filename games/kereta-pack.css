@@ -111,6 +111,7 @@ html[data-pack="kereta"] .palette-scroll-note{color:var(--ink);background:rgba(2
 html[data-pack="kereta"] .b-run{border-radius:999px;font-size:clamp(20px,2.6vw,30px)}
 /* Henry: round portrait, white rounded speech bubble */
 html[data-pack="kereta"] #bo .bo-img{width:60px;height:60px;border-radius:50%;object-fit:cover;object-view-box:inset(0 0 66% 0);background:radial-gradient(circle at 50% 35%,#fff7df,#ffd98a);box-shadow:0 0 0 3px #fff,0 4px 8px rgba(0,0,0,.3);filter:none}
+html[data-story="hellbent"] #bo .bo-img{object-view-box:none;object-fit:contain;background:none;box-shadow:0 0 0 3px #fff,0 4px 8px rgba(0,0,0,.3)}
 html[data-pack="kereta"] #bo{height:66px}
 html[data-pack="kereta"] .bubble{background:#fff;border-radius:22px;box-shadow:0 5px 0 rgba(92,56,23,.25),0 0 0 3px #fff}
 html[data-pack="kereta"] #bo .bubble{height:62px}

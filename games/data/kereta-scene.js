@@ -148,19 +148,25 @@
     bl24: [{ start: { sfx: ['horn', 'chuff'] }, move: 'chuff', end: { sfx: ['clack'], fx: [STAR] } }, { start: { sfx: ['tweet'] }, move: 'chuff', end: { sfx: ['bell'], fx: [STAR] } }, { start: { sfx: ['tweet', 'chuff'] }, end: { sfx: ['tada', 'horn'], fx: [SMOKE, STAR] } }],
     bl26: { start: { sfx: ['tweet', 'horn'] }, move: 'chuff', end: { sfx: ['tada', 'cheer', 'horn'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 150, n: 4, spread: 30 }, { id: 'bk-light-02', at: 'goal', size: 280, delay: 250 }] } }
   })
-  /* ── Lomba ke Kota (Kilat Perak and Tuan Lemas race to the Pesta Besar and learn to wait, share and arrive together) ── */
+  /* ── Lomba ke Kota (Si Gigih, the old steam train, and the fast Kilat Perak race to the Pesta Besar and learn to wait, share and arrive together) ── */
   CUES.sigh = function () { T(420, 180, 0.7, 0.07, 'triangle', 0, 1) }
+  // Gigih = steam chuff + whistle + steam hiss; Kilat = whoosh + horn
   Object.assign(PLAN, {
-    hb01: { start: { sfx: ['drum', 'tweet'], fx: [{ id: 'bk-star-02', at: 'flag', size: 110 }] }, move: 'chuff', end: { sfx: ['whistle', 'whoosh', 'cheer'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 190 }, STAR] } },
-    hb02: { start: { sfx: ['sigh'] }, move: 'chuff', end: { sfx: ['pop', 'cheer', 'horn'], fx: [{ id: 'bk-star-02', at: 'lemas', size: 140, n: 3, spread: 26 }, { id: 'bk-star-04', at: 'lemas', size: 120, delay: 200 }] } },
-    hb03: { start: { sfx: ['sigh', 'tweet'] }, move: 'chuff', end: { sfx: ['thump', 'steam', 'horn'], fx: [{ id: 'bk-smoke-07', at: 'tungku', size: 190 }, STAR] } },
-    hb04: { start: { sfx: ['steam', 'chuff'] }, move: 'chuff', end: { sfx: ['clack', 'horn', 'cheer'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 120, n: 3, spread: 26 }] } },
-    hb05: { start: { sfx: ['bell', 'tweet'] }, move: 'chuff', end: { sfx: ['whoosh', 'horn'], fx: [SMOKE, STAR] } },
-    hb06: { start: { sfx: ['sigh', 'clack'] }, move: 'chuff', end: { sfx: ['door', 'bell', 'cheer'], fx: [{ id: 'bk-flare-01', at: 'sinyal', size: 130 }, STAR] } },
-    hb07: [{ start: { sfx: ['echo', 'wind'] }, move: 'chuff', end: { sfx: ['horn', 'echo'], fx: [FLARE] } }, { start: { sfx: ['echo', 'horn'] }, move: 'chuff', end: { sfx: ['whistle', 'cheer'], fx: [SMOKE, STAR] } }],
-    hb08: { start: { sfx: ['bell'] }, move: 'chuff', end: { sfx: ['horn', 'whoosh', 'cheer'], fx: [SMOKE, STAR] } },
-    hb09: { start: { sfx: ['drum', 'bell'] }, move: 'chuff', end: { sfx: ['clack', 'fanfare', 'cheer'], fx: [STAR, { id: 'bk-star-02', at: 'goal', size: 140, n: 3, spread: 28 }, SMOKE] } },
-    hb10: [{ start: { sfx: ['march', 'bell'] }, end: { sfx: ['pop', 'drum', 'cheer'], fx: [{ id: 'bk-star-02', at: 'panggung', size: 130, n: 3, spread: 26 }] } }, { start: { sfx: ['drum'] }, end: { sfx: ['pop', 'fanfare'], fx: [{ id: 'bk-star-04', at: 'piala', size: 130 }, FLARE] } }, { start: { sfx: ['tuba', 'drum'] }, move: 'chuff', end: { sfx: ['tada', 'applause', 'horn'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 160, n: 4, spread: 32 }, { id: 'bk-light-02', at: 'goal', size: 300, delay: 250 }] } }]
+    hb01: { start: { sfx: ['drum', 'tweet'], fx: [{ id: 'bk-star-02', at: 'flag', size: 110 }] }, move: 'chuff', end: { sfx: ['whistle', 'steam', 'cheer'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 190 }, STAR] } },
+    hb02: { start: { sfx: ['whoosh', 'tweet'] }, end: { sfx: ['pop', 'horn', 'cheer'], fx: [{ id: 'bk-star-02', at: 'panggung', size: 140, n: 3, spread: 26 }, { id: 'bk-star-04', at: 'panggung', size: 120, delay: 200 }] } },
+    hb03: { start: { sfx: ['sigh', 'tweet'] }, move: 'chuff', end: { sfx: ['thump', 'steam', 'whistle'], fx: [{ id: 'bk-smoke-07', at: 'tungku', size: 190 }, STAR] } },
+    hb04: { start: { sfx: ['whoosh', 'bell'] }, end: { sfx: ['horn', 'whoosh', 'cheer'], fx: [SMOKE, STAR] } },
+    hb05: { start: { sfx: ['steam', 'chuff'] }, move: 'chuff', end: { sfx: ['pop', 'cheer', 'whistle'], fx: [{ id: 'bk-star-02', at: 'kilat', size: 140, n: 3, spread: 26 }, { id: 'bk-star-04', at: 'kilat', size: 120, delay: 200 }] } },
+    hb06: { start: { sfx: ['steam', 'chuff'] }, move: 'chuff', end: { sfx: ['clack', 'whistle', 'cheer'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 120, n: 3, spread: 26 }] } },
+    hb07: { start: { sfx: ['bell', 'tweet'] }, end: { sfx: ['whoosh', 'horn'], fx: [SMOKE, STAR] } },
+    hb08: { start: { sfx: ['steam', 'clack'] }, move: 'chuff', end: { sfx: ['door', 'bell', 'whistle'], fx: [{ id: 'bk-flare-01', at: 'sinyal', size: 130 }, STAR] } },
+    hb09: [{ start: { sfx: ['echo', 'wind', 'chuff'] }, move: 'chuff', end: { sfx: ['whistle', 'echo'], fx: [FLARE] } }, { start: { sfx: ['echo', 'whoosh'] }, move: 'chuff', end: { sfx: ['whistle', 'steam', 'cheer'], fx: [SMOKE, STAR] } }],
+    hb10: { start: { sfx: ['bell'] }, end: { sfx: ['horn', 'whoosh', 'cheer'], fx: [SMOKE, STAR] } },
+    hb11: { start: { sfx: ['sigh', 'steam'] }, move: 'chuff', end: { sfx: ['thump', 'steam', 'whistle'], fx: [{ id: 'bk-smoke-07', at: 'tungku', size: 190 }, STAR] } },
+    hb12: { start: { sfx: ['bell', 'whoosh'] }, end: { sfx: ['door', 'horn', 'cheer'], fx: [{ id: 'bk-flare-01', at: 'sinyal', size: 130 }, STAR] } },
+    hb13: { start: { sfx: ['drum', 'bell'] }, move: 'chuff', end: { sfx: ['clack', 'fanfare', 'whistle'], fx: [STAR, { id: 'bk-star-02', at: 'goal', size: 140, n: 3, spread: 28 }, SMOKE] } },
+    hb14: { start: { sfx: ['whoosh', 'drum'] }, end: { sfx: ['pop', 'fanfare', 'horn'], fx: [{ id: 'bk-star-04', at: 'piala', size: 130 }, FLARE] } },
+    hb15: [{ start: { sfx: ['march', 'bell'] }, end: { sfx: ['pop', 'drum', 'cheer'], fx: [{ id: 'bk-star-02', at: 'panggung', size: 130, n: 3, spread: 26 }] } }, { start: { sfx: ['drum'] }, end: { sfx: ['pop', 'fanfare'], fx: [{ id: 'bk-star-04', at: 'piala', size: 130 }, FLARE] } }, { start: { sfx: ['tuba', 'drum'] }, move: 'chuff', end: { sfx: ['tada', 'applause', 'horn'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 160, n: 4, spread: 32 }, { id: 'bk-light-02', at: 'goal', size: 300, delay: 250 }] } }]
   })
   CUES.creak = function () { T(110, 90, 0.5, 0.05, 'sawtooth', 0, 1); T(160, 130, 0.4, 0.03, 'square', 0.15) }
   CUES.tuba = function () { var i; for (i = 0; i < 6; i++) { T(i % 2 ? 130 : 98, i % 2 ? 130 : 98, 0.2, 0.1, 'sawtooth', i * 0.28); if (i % 2) T(196, 196, 0.1, 0.05, 'square', i * 0.28) } }

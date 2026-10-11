@@ -628,7 +628,7 @@
       case 'deliver': return { img: objImg(o || {}), t: PK && PK.goalText && o && PK.goalText(ob, o, G.lv) || (o && o.type === 'stop' ? 'Antar ke ' : 'Antar ') + lowName(o) }
       case 'visit': return { img: objImg(o || {}), t: 'Lewati ' + lowName(o) }
       case 'train': return { img: objImg(o || {}), t: 'Gandeng ke ' + lowName(o) }
-      case 'fill': return { img: objImg(o || {}), t: 'Tutup ' + lowName(o) }
+      case 'fill': return { img: objImg(o || {}), t: PK && PK.fillText && o && PK.fillText(o, G.lv) || 'Tutup ' + lowName(o) }
       case 'open': return { img: objImg(o || {}), t: 'Buka ' + lowName(o) }
       case 'place': return { img: objImg(o || {}), t: 'Pasang ' + lowName(o) }
       case 'carry': return { img: objImg(o || {}), t: 'Bawa ' + lowName(o) }
