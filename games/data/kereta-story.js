@@ -20,7 +20,19 @@
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
   function cell () { return parseFloat(W.getComputedStyle(D.documentElement).getPropertyValue('--cell')) || 64 }
   function src (k) { return MA.src(k) }
-  function puff (x, y, size) { var M = W.VFX && VFX.Moment; if (M && M.puff) { try { M.puff({ x: x, y: y }, { size: size || 90 }) } catch (e) {} } }
+  /* ── the pack's effect helpers (def.fx): ONLY records that look right on a light board, always through VFX.play so each
+     record's own blend (screen for the black-background textures) and size are honoured. Never the hard-edged dark
+     sheet bk-smoke-puff, never the electric bolts (bk-spark-*, bk-trace-*) outside a storm. See docs/KERETA-VFX-PLAN.md. ── */
+  var DUST = 'sepia(1) saturate(2.4) hue-rotate(-14deg) brightness(.9)', WARM = 'sepia(1) saturate(5) hue-rotate(-18deg)'
+  function vfx (id, x, y, size, o) { if (!W.VFX || !VFX.play) return; try { VFX.play(id, Object.assign({ x: x, y: y, size: size, essential: true }, o || {})) } catch (e) {} }
+  // soft white-grey steam that billows up from a point: four overlapping puffs, growing and fading over ~1 s
+  function puff (x, y, size) {
+    var ids = ['bk-smoke-07', 'bk-smoke-01', 'bk-smoke-05', 'bk-smoke-07']
+    ids.forEach(function (id, i) { setTimeout(function () { vfx(id, x + (i % 2 ? 1 : -1) * size * .12 * i, y - i * size * .1, size * (.7 + i * .12), { duration: 1000 }) }, i * 110) })
+  }
+  function dust (x, y, size) { vfx('bk-smoke-07', x, y, size, { filter: DUST, duration: 1000 }); vfx('bk-dirt-02', x, y - size * .1, size * .8, { filter: DUST, delay: 80 }) }
+  function sparks (x, y, size) { vfx('bk-star-01', x, y, size, { filter: WARM, duration: 500 }); vfx('bk-flare-01', x, y, size * 1.2, { filter: WARM, duration: 450 }); vfx('bk-star-05', x + size * .3, y - size * .2, size * .7, { filter: WARM, duration: 450 }) }
+  def.fx = { play: vfx, puff: puff, dust: dust, sparks: sparks, DUST: DUST, WARM: WARM }
   function pos (n) { var m = new W.DOMMatrix(W.getComputedStyle(n).transform); return [m.m41, m.m42] }   // layer px of a board node
   function cellXY (rc) { var c = cell(); return [rc[1] * c, rc[0] * c] }
   function toast (layer, txt, x, y, cls) {
@@ -93,7 +105,7 @@
     var r = R.layer.getBoundingClientRect(), mm = $('mojo').getBoundingClientRect()
     puff(mm.left + mm.width * .2, mm.top + mm.height * .8, 90)
     toast(layer, 'KLANG!', x + c * .9, y - c * .2, 'snapc')
-    if (!RM && W.VFX && VFX.play) { try { VFX.play('bk-spark-06', { x: mm.left + mm.width * .25, y: mm.top + mm.height * .75, size: 110 }) } catch (e) {} }
+    sparks(mm.left + mm.width * .25, mm.top + mm.height * .8, 70)
   }
 
   /* ── James's cartoon shot (sc19) ─────────────────────────────────────────── */

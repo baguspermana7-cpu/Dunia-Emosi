@@ -69,7 +69,7 @@
         objectives: [{ 'do': 'deliver', id: 'henry' }], slots: 20, budget: 16, forms: [HERO], palette: MOVE.concat(['pick', 'deliver']) }] }),
 
     // 03 the mountain line: hitch the whole rake (two green coaches, then the red caboose) from the sidings, then climb to the summit
-    L({ id: 'bl03', terrain: 'mountain', mood: 'sun', n: 3, title: 'Rangkaian Mendaki', place: 'Jalur Pegunungan', icon: 'cmd/couple', bg: 'bg-bl-gunung', edu: { domain: 'matematika', skill: 'membilang 1-3' },
+    L({ id: 'bl03', cine: { heavy: true, end: { zoom: { at: [0, 7], s: 1.12, ms: 1100 }, fx: [{ id: 'bk-star-02', at: [0, 7], size: 160 }] } }, terrain: 'mountain', mood: 'sun', n: 3, title: 'Rangkaian Mendaki', place: 'Jalur Pegunungan', icon: 'cmd/couple', bg: 'bg-bl-gunung', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 4, cols: 8, map: [',,,T,,..', ',,,,,,.,', '.....=.,', '.,.,.~,,'], theme: 'hill' },
       mojo: { at: [2, 0], h: 'E', form: HERO },
       cab: 'story-char/henry/point',
@@ -84,7 +84,7 @@
         objectives: [{ 'do': 'wagons', n: 3 }, { 'do': 'reach', at: [0, 7] }], slots: 16, budget: 12, forms: [HERO], palette: ['up', 'east', 'couple'] }] }),
 
     // 04 the turtle on the rail: stop and let it pass (TUNGGU); it tucks into its shell as Linus nears
-    L({ id: 'bl04', terrain: 'meadow', mood: 'sun', n: 4, title: 'Berhenti untuk Kura-kura', place: 'Rel Tepi Sungai', icon: 'cmd/wait', bg: 'bg-bl-lembah', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
+    L({ id: 'bl04', cine: { speed: true, brake: { obj: 'kura' } }, terrain: 'meadow', mood: 'sun', n: 4, title: 'Berhenti untuk Kura-kura', place: 'Rel Tepi Sungai', icon: 'cmd/wait', bg: 'bg-bl-lembah', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 7, map: [',,,.,,,', '.......', ',,,.,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       uses: ['animal/turtle/shell'],   // swapped in by the pack while Linus is near (kereta-pack.js objArt)
@@ -99,7 +99,7 @@
         objectives: [{ 'do': 'reach', at: [1, 6] }], slots: 10, budget: 7, forms: [HERO], palette: ['east', 'wait'] }] }),
 
     // 05 serve the village station, then run home to the big depot: two beats (passengers, then the route home)
-    L({ id: 'bl05', terrain: 'meadow', mood: 'sunset', n: 5, title: 'Penumpang dan Depo', place: 'Stasiun Kecil', icon: 'cmd/deliver', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'membilang 1-2' },
+    L({ id: 'bl05', cine: { end: { fx: [{ id: 'bk-light-02', at: 'peron', size: 240 }, { id: 'bk-star-01', at: 'peron', size: 120, delay: 200 }] } }, terrain: 'meadow', mood: 'sunset', n: 5, title: 'Penumpang dan Depo', place: 'Stasiun Kecil', icon: 'cmd/deliver', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 4, cols: 8, map: ['.,.,,,,,', '.....,,,', ',,,,....', ',T,,,,,T'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       cab: 'story-char/henry/wave',
@@ -136,7 +136,7 @@
         objectives: [{ 'do': 'visit', id: 'jalur3' }, { 'do': 'reach', at: [3, 0] }], slots: 16, budget: 14, forms: [HERO], palette: ['east', 'down', 'west'] }] }),
 
     // 07 Samson arrives and takes over the main service: Linus hands his whole rake (2 green coaches + caboose) to the giant
-    L({ id: 'bl07', terrain: 'depot', mood: 'sunset', n: 7, ch: 'bl-samson', title: 'Samson Tiba', place: 'Jalur Depo', icon: 'cmd/couple', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'membilang 1-3' },
+    L({ id: 'bl07', cine: { start: { letterbox: 1900, zoom: { at: 'samson', s: 1.2, ms: 1700 }, fx: [{ id: 'bk-smoke-07', at: 'samson', size: 230, n: 2, spread: 30 }, { id: 'bk-dirt-02', at: 'samson', size: 150, lift: -20, delay: 200, filter: 'dust' }] } }, terrain: 'depot', mood: 'sunset', n: 7, ch: 'bl-samson', title: 'Samson Tiba', place: 'Jalur Depo', icon: 'cmd/couple', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 3, cols: 7, map: [',,,,,,,', '.......', '.,.,.,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       decor: [{ at: [0, 2], art: 'story-char/henry/worried' }, { at: [0, 4], art: 'story-char/baron/stand' }],
@@ -151,7 +151,7 @@
         objectives: [{ 'do': 'train', id: 'samson' }], slots: 14, budget: 10, forms: [HERO], palette: ['east', 'couple'] }] }),
 
     // 08 the contract: Linus brings the paper to Baron's office window, then drives out of the depot alone (two beats)
-    L({ id: 'bl08', terrain: 'depot', mood: 'sunset', n: 8, ch: 'bl-samson', title: 'Kontrak Henry', place: 'Kantor Depo', icon: 'cmd/deliver', bg: 'bg-bl-depot', edu: { domain: 'algoritma', skill: 'urutan' },
+    L({ id: 'bl08', cine: { end: { letterbox: 1500, fx: [{ id: 'bk-light-01', at: [1, 4], size: 520 }] } }, terrain: 'depot', mood: 'sunset', n: 8, ch: 'bl-samson', title: 'Kontrak Henry', place: 'Kantor Depo', icon: 'cmd/deliver', bg: 'bg-bl-depot', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',.,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       decor: [{ at: [0, 3], art: 'story-char/henry/worried' }, { at: [0, 6], art: 'story-char/katrina/stand' }],
@@ -395,7 +395,7 @@
         objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 18, budget: 14, forms: [HERO], palette: ['east', 'west', 'load', 'dump'] }] }),
 
     // 23 the bridge groans: two beams swing over the planks; cross when they are clear
-    L({ id: 'bl19', terrain: 'gorge', mood: 'sunset', n: 23, ch: 'bl-selamat', title: 'Jembatan Berderit', place: 'Jembatan Patah', icon: 'cmd/wait', bg: 'bg-bl-jembatan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
+    L({ id: 'bl19', cine: { start: { letterbox: 2000, zoom: { at: [1, 4], s: 1.18, ms: 1800 }, fx: [{ id: 'bk-dirt-03', at: [0, 4], size: 110, n: 4, spread: 40, filter: 'dust' }, { id: 'bk-smoke-07', at: [1, 4], size: 230, delay: 300, filter: 'dust' }] } }, terrain: 'gorge', mood: 'sunset', n: 23, ch: 'bl-selamat', title: 'Jembatan Berderit', place: 'Jembatan Patah', icon: 'cmd/wait', bg: 'bg-bl-jembatan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 8, map: [',,,.,.,,', '..====..', ',,~~~~,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       decor: [{ at: [2, 0], art: 'story-char/baron/shocked' }, { at: [2, 7], art: 'story-char/katrina/khawatir' }],
@@ -409,7 +409,7 @@
         objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 14, budget: 10, forms: [HERO], palette: ['east', 'wait'] }] }),
 
     // 24-25 PETUALANGAN BESAR: coal, the collapsing bridge (plank + falling beam), the hard landing, the survivors gather round tired Linus
-    L({ id: 'bl20', terrain: 'gorge', mood: 'sunset', n: 24, ns: [24, 25], big: true, ch: 'bl-selamat', title: 'Dorongan Terakhir', place: 'Petualangan Besar', icon: 'cmd/place', bg: 'bg-bl-jembatan',
+    L({ id: 'bl20', cine: { end: { letterbox: 2000, zoom: { at: [1, 5], s: 1.15, ms: 1800 }, fx: [{ id: 'bk-dirt-01', at: [1, 5], size: 260, filter: 'dust' }, { id: 'bk-smoke-07', at: [1, 5], size: 240, delay: 250, filter: 'dust' }] } }, terrain: 'gorge', mood: 'sunset', n: 24, ns: [24, 25], big: true, ch: 'bl-selamat', title: 'Dorongan Terakhir', place: 'Petualangan Besar', icon: 'cmd/place', bg: 'bg-bl-jembatan',
       bgs: ['bg-bl-jembatan', 'bg-bl-jembatan', 'bg-bl-malam', 'bg-bl-lembah'], edu: { domain: 'campuran', skill: 'urutan penyelamatan' },
       celebrate: ['story-char/henry/wave', 'story-char/scarlet/ramah', 'story-char/katrina/stand', 'story-char/baron/stand'],
       tired: [false, false, true, true],

@@ -114,6 +114,19 @@ const ART_OF = lv => { const o = []; const add = a => { if (a) { o.push(a); if (
   ;(lv.objects || []).forEach(x => { add(x.art); if (x.who) add('char/' + x.who) }); add(lv.cab); return o }
 const FOREIGN = { bl: /^(malivlak-char|tk-char|mojo-char|mojo-cross|train-char\/(malivlak|dragutin|silver|defeatist))/ , mv: /^(story-char|tk-char|mojo-char|train-char\/(linus|samson|goro|silver|defeatist|coach-green|caboose|rongsokan))/, hb: /^(story-char|malivlak-char|tk-char|mojo-char|train-char\/(linus|samson|goro|malivlak|dragutin|rongsokan))/ }
 for (const lv of ML.LEVELS) { const bad = ART_OF(lv).filter(k => FOREIGN[lv.id.slice(0, 2)] && FOREIGN[lv.id.slice(0, 2)].test(k)); check(bad.length === 0, `${lv.id}: only its own storyline's cast (foreign: ${bad.join(', ')})`) }
+// VFX hygiene (owner 2026-10-11, the brake smoke drew a black square with a lightning bolt): every effect id the pack names exists in the
+// shared bank, is licence-cleared and kid-safe, is not an electric bolt (bk-spark-*, bk-trace-*: storm only) and is not the hard-edged full-frame dark sheet
+const VFXDB = Object.fromEntries(JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/vfx/vfx-db.json'), 'utf8')).effects.map(e => [e.id, e]))
+const PACK_SRC = ['games/data/kereta-cine.js', 'games/data/kereta-story.js', 'games/data/kereta-goals.js', 'games/data/kereta-pack-levels.js', 'games/data/kereta-pack-levels-malivlak.js', 'games/data/kereta-pack-levels-hellbent.js'].map(f => fs.existsSync(path.join(ROOT, f)) ? fs.readFileSync(path.join(ROOT, f), 'utf8') : '').join('\n')
+const FXIDS = [...new Set([...PACK_SRC.matchAll(/'((?:bk|px)-[a-z0-9-]+)'/g)].map(m => m[1]))]
+for (const id of FXIDS) {
+  const e = VFXDB[id]
+  check(!!e, `vfx ${id} exists in the shared bank`)
+  if (!e) continue
+  check(e.kid_safe !== false && e.license && ['cc0', 'public-domain'].includes(e.license.status), `vfx ${id} is kid-safe and licence-cleared`)
+  check(!(e.tags || []).includes('electric'), `vfx ${id} is not an electric bolt (lightning only in storm levels)`)
+  check(!(e.kind === 'sheet' && e.blend === 'normal' && (e.fill || 1) >= 0.99), `vfx ${id} is not a hard-edged full-frame sheet (it draws as a square)`)
+}
 // kid-safe: no emoji anywhere in the pack's words
 const words = JSON.stringify(ML.LEVELS.map(l => [l.title, l.place, l.beats, l.objects.map(o => o.name)])) + JSON.stringify(ML.REGIONS)
 check(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(words), 'no emoji in the pack text')
@@ -154,6 +167,31 @@ if (!process.argv.includes('--headless')) {
       if (await p.$('#ov-card.on #picker-later')) await (await p.$('#picker-later')).click()
     }
     await p._ctx.close()
+  }
+  {
+    // every effect drawn on the board honours its record's blend (screen records MUST be mix-blend-mode:screen), at phone dpr 2 and desktop
+    for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
+      const c = await browser.createBrowserContext(), p = await c.newPage()
+      await p.setViewport({ width: w, height: h, isMobile: w < 900, hasTouch: w < 900, deviceScaleFactor: dpr })
+      await p.goto(URL, { waitUntil: 'load' }); await p.waitForFunction('window.__mojo && __mojo.ready')
+      const cineIds = ML.LEVELS.filter(l => l.cine && /^bl0[34]$/.test(l.id)).map(l => l.id)
+      const seen = {}
+      for (const id of cineIds) {
+        await p.evaluate(id => __mojo.start(id), id); await sleep(400); const g = await p.$('#in-go'); if (g) await g.click(); await sleep(300)
+        const sol = await p.evaluate(() => __mojo.solution()); for (const cmd of sol || []) { const b2 = await p.$(`[data-cmd="${cmd}"]`); if (b2) await b2.click() }
+        await (await p.$('#btn-run')).click()
+        for (let i = 0; i < 40; i++) {
+          const got = await p.evaluate(() => [...document.querySelectorAll('[data-vfx]')].map(e => [e.getAttribute('data-vfx'), getComputedStyle(e).mixBlendMode]))
+          got.forEach(([k, v]) => { seen[k] = v }); await sleep(150)
+          if (await p.$('#ov-card.on')) break
+        }
+      }
+      const bad = Object.entries(seen).filter(([k, v]) => VFXDB[k] && VFXDB[k].blend === 'screen' && v !== 'screen')
+      if (STORY === "brave") check(Object.keys(seen).length > 0, `${w}x${h}@${dpr}: the cinematics drew effects (${Object.keys(seen).join(',')})`)
+      check(bad.length === 0, `${w}x${h}@${dpr}: every screen-blend effect is drawn with mix-blend-mode:screen ${JSON.stringify(bad)}`)
+      check(Object.keys(seen).every(k => !(VFXDB[k].tags || []).includes('electric')), `${w}x${h}@${dpr}: no lightning bolt effect on a sunny board`)
+      await c.close()
+    }
   }
   {
     // the hint ladder and Tunjukkan Caranya on the Mojo engine, in the pack

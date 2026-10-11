@@ -1133,6 +1133,7 @@
       later(function () { play(prev, rest, cmd, done) }, 170)
       return
     }
+    if (PK && PK.onPlay) wait = Math.max(wait, PK.onPlay({ prev: prev, res: res, cmd: cmd, ev: ev, T: T, w: G.w, lv: G.lv, bi: G.bi, n: G.run ? G.run.n : 0, snd: SND }) || 0)   // a pack's cinematic beats (inert without ?pack=)
     ev.forEach(function (e) { if (e.e === 'swop') swop = e })
     if (swop) return swopAnim(swop, function () { renderHud(); done() })
     var pushed = ev.some(function (e) { return e.e === 'push' })

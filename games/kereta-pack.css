@@ -404,3 +404,12 @@ html[data-pack="kereta"] .ob[data-id="kayu"] .k-name{top:auto;bottom:-6%}
 html[data-story="malivlak"] #scr-home .logo .l2{font-size:calc(var(--k-l2)*.6)}
 html[data-story="hellbent"] #scr-home .logo .l2{font-size:calc(var(--k-l2)*.82)}
 html[data-story="hellbent"] #scr-home .logo,html[data-story="malivlak"] #scr-home .logo{max-width:92%}
+
+/* ── kereta-cine.js: letterbox, speed lines (transform / opacity only) ── */
+.k-lbox{position:fixed;inset:0;pointer-events:none;z-index:45}
+.k-lbox i{position:absolute;left:0;right:0;height:9vh;background:#000;transition:transform .45s cubic-bezier(.23,1,.32,1)}
+.k-lbox i:first-child{top:0;transform:translateY(-100%)}.k-lbox i:last-child{bottom:0;transform:translateY(100%)}
+.k-lbox.on i{transform:none}
+#board-wrap.k-speed::before{content:'';position:absolute;left:-50%;top:0;width:200%;height:100%;z-index:14;pointer-events:none;opacity:.55;background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,255,255,.75) 22px 24px,transparent 24px 58px,rgba(255,255,255,.5) 58px 59px,transparent 59px 97px);animation:kSpeed .22s linear infinite}
+@keyframes kSpeed{from{transform:translateX(0)}to{transform:translateX(-25%)}}
+@media(prefers-reduced-motion:reduce){#board-wrap.k-speed::before{animation:none;opacity:.25}.k-lbox{display:none}}

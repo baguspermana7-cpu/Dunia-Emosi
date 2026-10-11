@@ -43,4 +43,14 @@ opacity, reduced-motion = a single fade. Tints reuse VFX.Moment filters (GOLD, B
 | 29-30 | new bridge, finale | bk-star-02/05 + MojoFX confetti, bk-cloud-01 | 200, 1800 |
 
 Cast/animals idle VFX (item 5): bk-dirt-02 hoof dust (deer step), bk-star-01 blink-sparkle never used; leaves via the flying-leaves overlay.
-Status: items 1 (goal markers) shipped; every beat above is wired together with items 4 onward.
+Status: item 1 shipped. Item 4 wired via `games/data/kereta-cine.js` (data `cine` on a level/beat): bl03 heavy climb, bl04 speed + sudden brake, bl05 end light, bl07 Samson arrives, bl08 lightning end, bl19 truss collapse, bl20 dust cloud; sc14/17/19 live in kereta-story.js. Remaining rows (sc 9-11, 16, 20-22, 25-30) get a `cine` entry as their levels are reworked.
+
+## Effect hygiene (owner 2026-10-11, after the brake smoke drew a black square with a lightning bolt)
+- Everything goes through `VFX.play`, so each record's own blend is honoured (screen records = `mix-blend-mode:screen`).
+- NEVER used on a sunny board: `bk-smoke-puff` (a dark sheet whose art fills the whole frame, so it draws as a hard square),
+  `bk-spark-*` and `bk-trace-*` (electric bolts, storm only), `bk-smoke-wispy-*` and `bk-cloud-*` (dark grey).
+- Smoke and steam = `bk-smoke-01/05/07` (soft white-grey, screen), billowing from the wheels, four staggered puffs over ~1 s
+  (`def.fx.puff`); dust and debris = the same tinted sepia (`def.fx.dust`); wheel sparks = warm tinted `bk-star-01/05` + `bk-flare-01`
+  (`def.fx.sparks`). Where this table above names `bk-spark-*`, `bk-trace-*`, `bk-smoke-puff` or `bk-smoke-wispy-*`, read the
+  substitutes in this section. The gate `qa-kereta-pack` checks every named id (exists, licence, kid-safe, not electric, not a
+  full-frame sheet) and, in a browser at 390x844 dpr 2 and 1280x800, that every screen-blend effect on the board really is `screen`.
