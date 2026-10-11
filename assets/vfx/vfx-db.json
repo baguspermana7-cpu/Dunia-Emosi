@@ -41,7 +41,8 @@
    "sha256": "c14813534d65ec48b9815eca7a50215b960f65a5b82541139db7b97edf18317c",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.84
+   "fill": 0.84,
+   "blippi_safe": true
   },
   {
    "id": "bk-circle-03",
@@ -79,7 +80,8 @@
    "sha256": "448bae1569c618333d1982229216de8a5b2a02d382e87111faeeaf03a796f561",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.92
+   "fill": 0.92,
+   "blippi_safe": true
   },
   {
    "id": "bk-circle-05",
@@ -117,7 +119,8 @@
    "sha256": "7ec420e3b2c11e0e2820b5f1c3fcc8ecd97aafc1b922b5f1d98343915b290c4d",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.62
+   "fill": 0.62,
+   "blippi_safe": true
   },
   {
    "id": "bk-cloud-01",
@@ -158,7 +161,8 @@
    "sha256": "29081e19dc2d50ae69c019259f8dba3fb2795292a970b95ba49b03b79f125edd",
    "hue": 300,
    "sat": 0.0,
-   "fill": 0.93
+   "fill": 0.93,
+   "blippi_safe": true
   },
   {
    "id": "bk-cloud-02",
@@ -198,7 +202,8 @@
    "sha256": "3cd0c525232c0f2ad79681f8011f1e22f59edc41ed9dd2b8aa7f5f1407a6be80",
    "hue": 300,
    "sat": 0.0,
-   "fill": 0.93
+   "fill": 0.93,
+   "blippi_safe": true
   },
   {
    "id": "bk-dirt-01",
@@ -236,7 +241,8 @@
    "sha256": "3cf9f052e24c081e882923d7a165cfbe08ac804a519b37412a795a6dde6bed35",
    "hue": 259,
    "sat": 0.0,
-   "fill": 0.8
+   "fill": 0.8,
+   "blippi_safe": true
   },
   {
    "id": "bk-dirt-02",
@@ -274,7 +280,8 @@
    "sha256": "3aaae4f094cb7bebb3bed023b6cd48fe53af82c2bc7c4728f92b34f6bf5dc612",
    "hue": 253,
    "sat": 0.01,
-   "fill": 0.77
+   "fill": 0.77,
+   "blippi_safe": true
   },
   {
    "id": "bk-dirt-03",
@@ -312,7 +319,8 @@
    "sha256": "61fba84c3a6577a54b994bc8aa63373b67a3a4df66db7bf9f77b52872b881442",
    "hue": 234,
    "sat": 0.01,
-   "fill": 0.95
+   "fill": 0.95,
+   "blippi_safe": true
   },
   {
    "id": "bk-effect-01",
@@ -349,7 +357,8 @@
    "sha256": "32b97ff7b7a8cb000279b7f51c5fc20f1f2832e7b5634771f00ba334f23f1844",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.7
+   "fill": 0.7,
+   "blippi_safe": true
   },
   {
    "id": "bk-effect-02",
@@ -386,7 +395,8 @@
    "sha256": "804dfce52c64cff89de0621d69d1a1500a7edcaf626d72af792e16f1f9f0abed",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.72
+   "fill": 0.72,
+   "blippi_safe": true
   },
   {
    "id": "bk-effect-03",
@@ -423,7 +433,8 @@
    "sha256": "aa864d2e6ef9a7e43a2257c9927bddd12992f2fffb5dbe8c0ff4757ca0930ea7",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.67
+   "fill": 0.67,
+   "blippi_safe": true
   },
   {
    "id": "bk-fire-01",
@@ -460,7 +471,8 @@
    "sha256": "74eaf8aea246368edc30abd5fdc29db3e12b0275a0de7490020ea004d1b23d43",
    "hue": 31,
    "sat": 0.25,
-   "fill": 0.84
+   "fill": 0.84,
+   "blippi_safe": false
   },
   {
    "id": "bk-fire-02",
@@ -497,7 +509,8 @@
    "sha256": "d2d050f0e25b24bd4528faff7db9621513abb30709a2daf961f76b334925c466",
    "hue": 26,
    "sat": 0.5,
-   "fill": 0.88
+   "fill": 0.88,
+   "blippi_safe": false
   },
   {
    "id": "bk-fire-03",
@@ -534,7 +547,8 @@
    "sha256": "739ecda77b32f087f4cdc7bd4c5278de124158f9e469a53d707e724befee7727",
    "hue": 43,
    "sat": 0.44,
-   "fill": 0.88
+   "fill": 0.88,
+   "blippi_safe": false
   },
   {
    "id": "bk-fire-04",
@@ -571,7 +585,8 @@
    "sha256": "d63e11c25dae6be7825da7f117e79571516978ab2faf1abcb826ef1d79ad362a",
    "hue": 29,
    "sat": 0.39,
-   "fill": 0.81
+   "fill": 0.81,
+   "blippi_safe": false
   },
   {
    "id": "bk-flame-01",
@@ -607,7 +622,8 @@
    "sha256": "e4ff76756be8962d6e8d9198f49c1ee63f22a09ac1d29d5e2b2baba35871c019",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.72
+   "fill": 0.72,
+   "blippi_safe": false
   },
   {
    "id": "bk-flame-02",
@@ -643,7 +659,8 @@
    "sha256": "9eb17b03eae02abd8becb4ed24562dfc0c2ef6bf5f82a78fcfe7fd7c069e5b75",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.8
+   "fill": 0.8,
+   "blippi_safe": false
   },
   {
    "id": "bk-flame-tall",
@@ -680,7 +697,8 @@
    "sha256": "6ae2158bc06e0b035196db2695c19e7cb29a23f59b345d4c5c2764c6c10ce3a6",
    "hue": 32,
    "sat": 0.28,
-   "fill": 0.93
+   "fill": 0.93,
+   "blippi_safe": false
   },
   {
    "id": "bk-flare-01",
@@ -718,7 +736,8 @@
    "sha256": "c26077fc6d3a05e0322476aef5ea595ecef07bd5571404a7aae9df8d4a7ccd7c",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.45
+   "fill": 0.45,
+   "blippi_safe": true
   },
   {
    "id": "bk-light-01",
@@ -755,7 +774,8 @@
    "sha256": "c9b4a8c59a756e0c11d8eff670508295ddde8d12605367c1df08814114a34908",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.9
+   "fill": 0.9,
+   "blippi_safe": true
   },
   {
    "id": "bk-light-02",
@@ -792,7 +812,8 @@
    "sha256": "c4dcf9eb8ce82eee8499db44d04e4f48c300fe6e78ad919568cf54c04783a6ce",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.91
+   "fill": 0.91,
+   "blippi_safe": true
   },
   {
    "id": "bk-light-03",
@@ -829,7 +850,8 @@
    "sha256": "3ad78d67fa29491e045a58ae4e07f899ce27fd6ccba451a68037e25f934567d6",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.91
+   "fill": 0.91,
+   "blippi_safe": true
   },
   {
    "id": "bk-magic-01",
@@ -868,7 +890,8 @@
    "sha256": "63043a05e79c29242bc9377d81cdebd10d2126fb64856fb791a5d80b8a0ad5b9",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.83
+   "fill": 0.83,
+   "blippi_safe": true
   },
   {
    "id": "bk-magic-02",
@@ -907,7 +930,8 @@
    "sha256": "8d7044d85f733c7cbcd100aea8c117dad1cc1b51717970a96a7a677d85cf56e6",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.8
+   "fill": 0.8,
+   "blippi_safe": true
   },
   {
    "id": "bk-magic-03",
@@ -946,7 +970,8 @@
    "sha256": "55d239fbf40674e6ee08b89e5770c623c88df4802f81ba7a2ec08ba48df2fb6c",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.89
+   "fill": 0.89,
+   "blippi_safe": true
   },
   {
    "id": "bk-magic-04",
@@ -985,7 +1010,8 @@
    "sha256": "6aa45a574219311f9b2b358b20197c2200382e7eadbd52586daedab6bdfaca5d",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.89
+   "fill": 0.89,
+   "blippi_safe": true
   },
   {
    "id": "bk-magic-05",
@@ -1024,7 +1050,8 @@
    "sha256": "ad2416ff0b3eb96e15fc3373c32cf91fcb4790c4f3c0c0a5d36ac8fa4e30b3c3",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.83
+   "fill": 0.83,
+   "blippi_safe": true
   },
   {
    "id": "bk-smoke-01",
@@ -1061,7 +1088,8 @@
    "sha256": "9919fcedbc32dac9393dc7662b8dede3548a432f64776e4a83502d2f63470012",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.74
+   "fill": 0.74,
+   "blippi_safe": true
   },
   {
    "id": "bk-smoke-05",
@@ -1098,7 +1126,8 @@
    "sha256": "ab5daf4b7823d1cac6ea7b7763d02196a1e34295b070112417ece3687ce8f11b",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.77
+   "fill": 0.77,
+   "blippi_safe": true
   },
   {
    "id": "bk-smoke-07",
@@ -1135,7 +1164,8 @@
    "sha256": "7a2448e7c2fefc0888fd068c37ec991d44309ecdae8ca338cec5e63d7065b700",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.78
+   "fill": 0.78,
+   "blippi_safe": true
   },
   {
    "id": "bk-smoke-puff",
@@ -1174,7 +1204,8 @@
    "sha256": "d733cb17bd7764089fa3747627fd139f7313d6ccff7f360cd01fbaba422e96ee",
    "hue": 300,
    "sat": 0.0,
-   "fill": 1.0
+   "fill": 1.0,
+   "blippi_safe": true
   },
   {
    "id": "bk-smoke-wispy-01",
@@ -1213,7 +1244,8 @@
    "sha256": "8274f0e67635fc72071b1790960f3bfddec907e113929b7c29ab8962ab411788",
    "hue": 300,
    "sat": 0.0,
-   "fill": 0.85
+   "fill": 0.85,
+   "blippi_safe": true
   },
   {
    "id": "bk-smoke-wispy-02",
@@ -1252,7 +1284,8 @@
    "sha256": "05d8462b8b4b24265c1d924e6f23d5574dbdeef7cd5af6430c4205cbf821d49d",
    "hue": 300,
    "sat": 0.0,
-   "fill": 0.72
+   "fill": 0.72,
+   "blippi_safe": true
   },
   {
    "id": "bk-smoke-wispy-03",
@@ -1290,7 +1323,8 @@
    "sha256": "dcffe39ab9ee615e315891bd1a301287ef88f0c81379590b8f985b49a0fd8679",
    "hue": 300,
    "sat": 0.0,
-   "fill": 0.73
+   "fill": 0.73,
+   "blippi_safe": true
   },
   {
    "id": "bk-spark-01",
@@ -1328,7 +1362,8 @@
    "sha256": "5c5331468ef7f09110b077580db51dc0f8d4a52d3d5d109b5c0e542bf5fd7419",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.84
+   "fill": 0.84,
+   "blippi_safe": true
   },
   {
    "id": "bk-spark-02",
@@ -1366,7 +1401,8 @@
    "sha256": "27fc35766967f4c6d8ce95190d65afa7cd6805793c7630c68ce5b46b769920e8",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.87
+   "fill": 0.87,
+   "blippi_safe": true
   },
   {
    "id": "bk-spark-03",
@@ -1404,7 +1440,8 @@
    "sha256": "ef592e9ca11a5361762744d42a11aad4df006e97db5789bcf802d991cd237a08",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.7
+   "fill": 0.7,
+   "blippi_safe": true
   },
   {
    "id": "bk-spark-04",
@@ -1442,7 +1479,8 @@
    "sha256": "73f896e549a63d566be6dba5ab0858d7224b1754ee41f9dee481668b32c395c9",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.77
+   "fill": 0.77,
+   "blippi_safe": true
   },
   {
    "id": "bk-spark-05",
@@ -1480,7 +1518,8 @@
    "sha256": "1128178c070304e3504f515a0d45afd43a9b0c7cd08db27aaaf68154a8c9d968",
    "hue": 0,
    "sat": 0.0,
-   "fill": 1.0
+   "fill": 1.0,
+   "blippi_safe": true
   },
   {
    "id": "bk-spark-06",
@@ -1518,7 +1557,8 @@
    "sha256": "d568e145abc3dfb311fa1af22e8c25a91e2772106dde2df137ed06a29dd3143c",
    "hue": 0,
    "sat": 0.0,
-   "fill": 1.0
+   "fill": 1.0,
+   "blippi_safe": true
   },
   {
    "id": "bk-spark-07",
@@ -1556,7 +1596,8 @@
    "sha256": "b116814e8599f12e9a667930c6542597ec8d2d716aca2117a1c070399ea9fc0a",
    "hue": 0,
    "sat": 0.0,
-   "fill": 1.0
+   "fill": 1.0,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-01",
@@ -1595,7 +1636,8 @@
    "sha256": "7d67ee05871450ab4d988f3723820d7258ca448c7937063e0f9defe5d172990b",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.69
+   "fill": 0.69,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-02",
@@ -1634,7 +1676,8 @@
    "sha256": "816cb7ff77ab946483f7dcdd2642b85302f2e3409d5f912023ec7935524a8fc2",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.69
+   "fill": 0.69,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-03",
@@ -1673,7 +1716,8 @@
    "sha256": "1745446d3164f067fac16196ef2d40d8f2128dd495559b74bcf6728f1ae9b3ae",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.84
+   "fill": 0.84,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-04",
@@ -1712,7 +1756,8 @@
    "sha256": "0f6a766aefdaca9d4593cffb0d12851010acfaf7e57ad76ba1ee1ec1a9b2902c",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.61
+   "fill": 0.61,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-05",
@@ -1751,7 +1796,8 @@
    "sha256": "6dd235291867aefcd2e152dfc955b86d2560e4c002d3a994ada2a141bdfecee2",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.62
+   "fill": 0.62,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-06",
@@ -1790,7 +1836,8 @@
    "sha256": "78dedc7d56d4f87c26eb57e40e86080c032377beb52946050a6d4ff7b6e34963",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.8
+   "fill": 0.8,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-07",
@@ -1829,7 +1876,8 @@
    "sha256": "c4ed86256c23e4b610eb824ceaf764d97288d36562e1fd270b1bc06aa705f232",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.77
+   "fill": 0.77,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-08",
@@ -1868,7 +1916,8 @@
    "sha256": "ba62c673f32e32612ac75e8dd5607b8822e7d836313e88882bf0812ee10aea54",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.66
+   "fill": 0.66,
+   "blippi_safe": true
   },
   {
    "id": "bk-star-09",
@@ -1907,7 +1956,8 @@
    "sha256": "298eeacdcdcded84aed87bad3c2026962f111025532df789cde335d81d8796b3",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.86
+   "fill": 0.86,
+   "blippi_safe": true
   },
   {
    "id": "bk-trace-01",
@@ -1945,7 +1995,8 @@
    "sha256": "4cb2eb10e742aafa83b5a66dfd4bb109ba8b7651d396a4fa35f543f83a7338c3",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.75
+   "fill": 0.75,
+   "blippi_safe": true
   },
   {
    "id": "bk-trace-02",
@@ -1983,7 +2034,8 @@
    "sha256": "97c520f229981d661feafcf61efcc10b9afba6475e78d436edb0ffbe733033f4",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.75
+   "fill": 0.75,
+   "blippi_safe": true
   },
   {
    "id": "bk-trace-03",
@@ -2021,7 +2073,8 @@
    "sha256": "af54fdaff44fc6bf2c21893d6ae86d67f9851bb81d7d65717837f27687ad900a",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.77
+   "fill": 0.77,
+   "blippi_safe": true
   },
   {
    "id": "bk-trace-04",
@@ -2059,7 +2112,8 @@
    "sha256": "5a857c255398456b9a05f12309cdf30e7e4b775947da4a74508834b37a1e050d",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.87
+   "fill": 0.87,
+   "blippi_safe": true
   },
   {
    "id": "bk-trace-05",
@@ -2097,7 +2151,8 @@
    "sha256": "ec39a30f90927dce4202e78c348624b5a6a641f916212845d8ad6c62bc646f48",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.81
+   "fill": 0.81,
+   "blippi_safe": true
   },
   {
    "id": "bk-trace-06",
@@ -2135,7 +2190,8 @@
    "sha256": "d98340dc85521c3d6c7302bfc433376bead7bc9cf6332a5c7b3dae4779e31982",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.72
+   "fill": 0.72,
+   "blippi_safe": true
   },
   {
    "id": "bk-trace-07",
@@ -2173,7 +2229,8 @@
    "sha256": "7978697cdd84d611c44f0a12c5760aef05ce5b09f1032e8639646e12ff61e2bf",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.77
+   "fill": 0.77,
+   "blippi_safe": true
   },
   {
    "id": "bk-twirl-01",
@@ -2212,7 +2269,8 @@
    "sha256": "f4a2ce6277fc936ac62ae3b7563851c84d783a0e86747ff973a7c2151573fc4e",
    "hue": 180,
    "sat": 0.0,
-   "fill": 0.95
+   "fill": 0.95,
+   "blippi_safe": true
   },
   {
    "id": "bk-twirl-02",
@@ -2251,7 +2309,8 @@
    "sha256": "7d8149afd3ead18c5cbe45e242697990f9d370e1edd25f6e105130b7d7fc6915",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.87
+   "fill": 0.87,
+   "blippi_safe": true
   },
   {
    "id": "bk-twirl-03",
@@ -2290,7 +2349,8 @@
    "sha256": "ce666602931334a19a66360ea9a7574238fba4e8dc21354b422a042d318571c8",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.91
+   "fill": 0.91,
+   "blippi_safe": true
   },
   {
    "id": "bk-twirl-04",
@@ -2329,7 +2389,8 @@
    "sha256": "48162f4476918b01316aec36928e593c52aeef7d554fb8220174f762eee84991",
    "hue": 0,
    "sat": 0.0,
-   "fill": 0.66
+   "fill": 0.66,
+   "blippi_safe": true
   },
   {
    "id": "px-bluefire",
@@ -2368,7 +2429,8 @@
    "sha256": "f722f4ebb26a9bce5d11075a54b594ffe8eae722bea162afec692a6b94c9387d",
    "hue": 194,
    "sat": 0.22,
-   "fill": 0.52
+   "fill": 0.52,
+   "blippi_safe": false
   },
   {
    "id": "px-brightfire",
@@ -2405,7 +2467,8 @@
    "sha256": "65f8be13296290c6616a9756dfe4ffdecdfb00d8a8878797640c3d29fe271d22",
    "hue": 40,
    "sat": 0.35,
-   "fill": 0.32
+   "fill": 0.32,
+   "blippi_safe": false
   },
   {
    "id": "px-bubbles",
@@ -2444,7 +2507,8 @@
    "sha256": "cfce425237690e2a5f9e6403bf1ec1103a677dac760b268fef6a57b8084fdea3",
    "hue": 73,
    "sat": 0.17,
-   "fill": 0.49
+   "fill": 0.49,
+   "blippi_safe": true
   },
   {
    "id": "px-casting",
@@ -2482,7 +2546,8 @@
    "sha256": "e56211e95399256879e63bf1fc37279a49b45806c71a2750dde4e2bde1d1b693",
    "hue": 219,
    "sat": 0.09,
-   "fill": 0.37
+   "fill": 0.37,
+   "blippi_safe": true
   },
   {
    "id": "px-felspell",
@@ -2520,7 +2585,8 @@
    "sha256": "7f1485ff111a0f37a934979837bbaa85a8e0dca15c8f7a5253681d06ed0dab09",
    "hue": 82,
    "sat": 0.2,
-   "fill": 0.71
+   "fill": 0.71,
+   "blippi_safe": true
   },
   {
    "id": "px-fire",
@@ -2558,7 +2624,8 @@
    "sha256": "ac2e257e76e1080ab8daf49ba6dc825353df1d01b9fe63fdaf13c22a518f391d",
    "hue": 25,
    "sat": 0.38,
-   "fill": 0.5
+   "fill": 0.5,
+   "blippi_safe": false
   },
   {
    "id": "px-firespin",
@@ -2595,7 +2662,8 @@
    "sha256": "358b3e56958e7f1c465bf0ebea8b88ab46bbbdc2083f4e8b71f103ec1c7df8e7",
    "hue": 41,
    "sat": 0.2,
-   "fill": 0.38
+   "fill": 0.38,
+   "blippi_safe": false
   },
   {
    "id": "px-flamelash",
@@ -2632,7 +2700,8 @@
    "sha256": "927311ae9b6018144e6f4a179760dec244c140bef35c049fcb290f20099dfc4e",
    "hue": 33,
    "sat": 0.21,
-   "fill": 0.44
+   "fill": 0.44,
+   "blippi_safe": false
   },
   {
    "id": "px-freezing",
@@ -2669,7 +2738,8 @@
    "sha256": "40739158d386a34a9435852e85e1dda76a6e7b80de9cfc2006770bb3b2903b97",
    "hue": 185,
    "sat": 0.11,
-   "fill": 0.78
+   "fill": 0.78,
+   "blippi_safe": true
   },
   {
    "id": "px-magic8",
@@ -2707,7 +2777,8 @@
    "sha256": "4c5d6ce4c9df63b0d2d03008705eb52ec265474487b2a9eadf0c6d83424f48dd",
    "hue": 293,
    "sat": 0.38,
-   "fill": 0.59
+   "fill": 0.59,
+   "blippi_safe": true
   },
   {
    "id": "px-magickahit",
@@ -2746,7 +2817,8 @@
    "sha256": "fadc15e847c900e40b9526af2349ad00d2adfd87159c45b4c7e38cb556fb9c63",
    "hue": 206,
    "sat": 0.11,
-   "fill": 0.6
+   "fill": 0.6,
+   "blippi_safe": true
   },
   {
    "id": "px-magicspell",
@@ -2786,7 +2858,8 @@
    "sha256": "7091ca2c5f1204ec762e3d9c3faa043d2a607f7cb1b6dab869a4d6b37448e0b1",
    "hue": 235,
    "sat": 0.15,
-   "fill": 0.45
+   "fill": 0.45,
+   "blippi_safe": true
   },
   {
    "id": "px-midnight",
@@ -2823,7 +2896,8 @@
    "sha256": "7c9df75ac06deb7a8170ac8161fc2535e819898274d9fae5246389ac9fb2abe5",
    "hue": 247,
    "sat": 0.13,
-   "fill": 0.56
+   "fill": 0.56,
+   "blippi_safe": true
   },
   {
    "id": "px-nebula",
@@ -2862,7 +2936,8 @@
    "sha256": "03d76d29474c8ab282190e7a3814b4580a199e5eff19c330b111b61047e9c7e9",
    "hue": 227,
    "sat": 0.13,
-   "fill": 0.76
+   "fill": 0.76,
+   "blippi_safe": true
   },
   {
    "id": "px-phantom",
@@ -2901,7 +2976,8 @@
    "sha256": "bb2e67d2a36d7114e58aabff0df4888c8226090b996834914ffcfdaf6c17b42f",
    "hue": 200,
    "sat": 0.06,
-   "fill": 0.67
+   "fill": 0.67,
+   "blippi_safe": true
   },
   {
    "id": "px-protection",
@@ -2938,7 +3014,8 @@
    "sha256": "b0f72e3bcfe82ce7fd8ee0cd6557dcbad9730e439ef66c738e64a3892befc47b",
    "hue": 82,
    "sat": 0.12,
-   "fill": 0.34
+   "fill": 0.34,
+   "blippi_safe": true
   },
   {
    "id": "px-sunburn",
@@ -2977,7 +3054,8 @@
    "sha256": "92c83e82874879a63949efef92eeb41c373fe7705c009b80c4d1335bfe2b5c28",
    "hue": 38,
    "sat": 0.31,
-   "fill": 0.59
+   "fill": 0.59,
+   "blippi_safe": true
   },
   {
    "id": "px-vortex",
@@ -3015,7 +3093,8 @@
    "sha256": "dfa9e8ed8fc24d66a29e63d6a1541e1cf5b35138078f8fcca3246134ec4f10c1",
    "hue": 359,
    "sat": 0.28,
-   "fill": 0.76
+   "fill": 0.76,
+   "blippi_safe": true
   }
  ],
  "sets": {

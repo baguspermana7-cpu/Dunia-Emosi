@@ -472,6 +472,7 @@
       var e = DB.effects[i]
       if (kid && (!e.kid_safe || KID_BAD.test(e.tags.join(' ')))) continue
       if (q.kind && e.kind !== q.kind) continue
+      if (q.blippi && !e.blippi_safe) continue   // child-safe (Blippi) subset only
       if (q.exclude && q.exclude.indexOf(e.id) >= 0) continue
       var ok = true, sc = 0
       for (var a = 0; a < tags.length; a++) { if (e.tags.indexOf(tags[a]) < 0) { ok = false; break } sc += 2 }

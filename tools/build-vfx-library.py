@@ -131,6 +131,8 @@ def fill_stat(e):
     return round(max(0.15, best), 2)
 for e in db:
     e['hue'], e['sat'] = hue_stats(e); e['fill'] = fill_stat(e)
+BLIPPI_EXCL = {'blood', 'explosion', 'fire', 'muzzle', 'scorch', 'slash', 'weapon'}   # catalogue policy for the Blippi (child-safe) set
+for e in db: e['blippi_safe'] = bool(e['kid_safe'] and not (BLIPPI_EXCL & set(e['tags'])))
 BY = {e['id']: e for e in db}
 def tint(id, hue=None, sat=1.2, bri=1.0):
     """CSS filter that moves effect `id` to target hue (None = leave native)."""
