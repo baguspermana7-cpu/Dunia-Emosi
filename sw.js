@@ -195,7 +195,6 @@ const SHELL = [
   './games/data/kereta-cam.js?v=v63.72-20261011a',
   './games/data/kereta-goals.js?v=v63.72-20261011a',
   './games/data/kereta-story.js?v=v63.72-20261011a',
-  './games/data/kereta-cine.js?v=v63.72-20261011a',
   './games/data/kereta-pack-levels-malivlak.js?v=v63.72-20261011a',
   './games/data/kereta-pack-levels-hellbent.js?v=v63.72-20261011a',
   './games/mojo-swoptops.css?v=v63.72-20261011a',
