@@ -91,7 +91,7 @@
       cab: 'story-char/henry/jongkok',   // sc4: Henry leans out of the cab to look at the turtle (the child with the baby turtle is Scarlet-era sc27, not here)
       decor: [{ at: [2, 5], art: 'animal/bird-blue/fly' }],
       objects: [
-        { id: 'kura', type: 'patrol', at: [0, 3], name: 'Kura-kura', art: 'obj/kura', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
+        { id: 'kura', type: 'patrol', at: [1, 3], name: 'Kura-kura', art: 'obj/kura', path: [[1, 3], [1, 3], [1, 3], [0, 3], [0, 3], [1, 3]], phase: 0 },
         { id: 'flag', type: 'flag', at: [1, 6] }
       ],
       beats: [{ title: 'Beri jalan kura-kura', story: 'Ada kura-kura di rel. Linus berhenti dulu.',

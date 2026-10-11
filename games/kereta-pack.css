@@ -413,3 +413,35 @@ html[data-story="hellbent"] #scr-home .logo,html[data-story="malivlak"] #scr-hom
 #board-wrap.k-speed::before{content:'';position:absolute;left:-50%;top:0;width:200%;height:100%;z-index:14;pointer-events:none;opacity:.55;background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,255,255,.75) 22px 24px,transparent 24px 58px,rgba(255,255,255,.5) 58px 59px,transparent 59px 97px);animation:kSpeed .22s linear infinite}
 @keyframes kSpeed{from{transform:translateX(0)}to{transform:translateX(-25%)}}
 @media(prefers-reduced-motion:reduce){#board-wrap.k-speed::before{animation:none;opacity:.25}.k-lbox{display:none}}
+
+/* ── kereta-life.js: independent idles (separate properties: scale / rotate / translate), fringe, shadows, motes ── */
+html[data-pack="kereta"] .dec.cast.k-live img{animation:none;transform:translateY(-14%);transform-origin:50% 100%}
+html[data-pack="kereta"] .dec.cast.k-a-kBreath2 img{animation:kBreath2 var(--d,4.6s) ease-in-out var(--p,0s) infinite alternate,var(--bn,kNone) 1s}
+html[data-pack="kereta"] .dec.cast.k-a-kBlink img{animation:kBlink var(--d,4.6s) ease-in-out var(--p,0s) infinite}
+html[data-pack="kereta"] .dec.cast.k-a-kHop img{animation:kHop 3.2s ease-out var(--p,0s) infinite}
+html[data-pack="kereta"] .dec.cast.k-b-kSway img{rotate:0deg}
+html[data-pack="kereta"] .dec.cast.k-live.k-b-kSway img{animation-name:kBreath2,kSway;animation-duration:var(--d,4.6s),var(--e,6s);animation-delay:var(--p,0s),var(--q,0s);animation-iteration-count:infinite;animation-direction:alternate}
+html[data-pack="kereta"] .dec.cast.k-live.k-b-kTilt img{animation-name:kBreath2,kTilt;animation-duration:var(--d,4.6s),var(--e,6s);animation-delay:var(--p,0s),var(--q,0s);animation-iteration-count:infinite;animation-direction:alternate,normal}
+html[data-pack="kereta"] .dec.cast.k-live.k-a-kBlink.k-b-kSway img{animation-name:kBlink,kSway;animation-duration:var(--d,4.6s),var(--e,6s);animation-iteration-count:infinite;animation-direction:normal,alternate}
+html[data-pack="kereta"] .dec.cast.k-live.k-a-kBlink.k-b-kTilt img{animation-name:kBlink,kTilt;animation-duration:var(--d,4.6s),var(--e,6s);animation-iteration-count:infinite;animation-direction:normal,normal}
+html[data-pack="kereta"] .dec.cast.k-live.k-a-kHop img{animation-name:kHop,kSway;animation-duration:3.2s,var(--e,6s);animation-iteration-count:infinite;animation-direction:normal,alternate}
+@keyframes kBreath2{from{scale:1 1}to{scale:1.03 1.025}}
+@keyframes kBlink{0%,90%,100%{scale:1 1}94%{scale:1.04 .93}}
+@keyframes kSway{from{rotate:-1.8deg}to{rotate:1.8deg}}
+@keyframes kTilt{0%,55%,100%{rotate:0deg}68%,82%{rotate:3deg}}
+@keyframes kHop{0%,60%,100%{translate:0 0}70%{translate:0 -14%}80%{translate:0 0}88%{translate:0 -9%}}
+.k-fringe{position:absolute;left:-3%;right:-3%;bottom:-3px;height:calc(var(--cell)*.8);pointer-events:none;z-index:13;transition:transform .7s cubic-bezier(.23,1,.32,1);will-change:transform}
+.k-fringe i{position:absolute;bottom:0;width:calc(var(--cell)*.13);height:calc(var(--cell)*var(--h,.3));background:linear-gradient(180deg,var(--c,#5fae3b),#2f6a22);clip-path:polygon(50% 0,100% 100%,0 100%);transform-origin:50% 100%;animation:kBlade 3.4s ease-in-out var(--dl,0s) infinite alternate}
+.k-fringe .fl{position:absolute;bottom:2%;height:calc(var(--cell)*.3);width:auto;filter:drop-shadow(0 2px 1px rgba(0,0,0,.25));animation:kBlade 4.2s ease-in-out infinite alternate;transform-origin:50% 100%}
+.k-fringe .fl.a{left:17%}.k-fringe .fl.b{left:58%;height:calc(var(--cell)*.4)}.k-fringe .fl.c{left:84%}
+@keyframes kBlade{from{rotate:-4deg}to{rotate:4deg}}
+.k-shade{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:11;border-radius:inherit}
+.k-shade i{position:absolute;left:0;top:12%;width:55%;height:44%;border-radius:50%;background:radial-gradient(closest-side,rgba(10,40,20,.22),rgba(10,40,20,0));animation:kShade 46s linear infinite;translate:-70% 0}
+.k-shade i.s2{top:48%;width:42%;height:38%;animation-duration:61s;animation-delay:-23s}
+@keyframes kShade{from{translate:-70% 0}to{translate:230% 0}}
+.k-motes{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:12}
+.k-motes i{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,246,200,.85);box-shadow:0 0 5px 1px rgba(255,240,180,.7);opacity:0;animation:kMote2 9s ease-in-out infinite}
+.k-motes i:nth-child(1){left:12%;top:60%;animation-delay:-1s}.k-motes i:nth-child(2){left:30%;top:30%;animation-delay:-3.5s}.k-motes i:nth-child(3){left:48%;top:70%;animation-delay:-6s}
+.k-motes i:nth-child(4){left:66%;top:40%;animation-delay:-2.2s}.k-motes i:nth-child(5){left:80%;top:62%;animation-delay:-7s}.k-motes i:nth-child(6){left:92%;top:25%;animation-delay:-4.6s}
+@keyframes kMote2{0%{opacity:0;translate:0 0}25%{opacity:.9}70%{opacity:.7}100%{opacity:0;translate:26px -46px}}
+@media(prefers-reduced-motion:reduce){.k-fringe i,.k-fringe .fl,.k-shade i,.k-motes i,html[data-pack="kereta"] .dec.cast.k-live img{animation:none!important}.k-motes,.k-shade{display:none}}
