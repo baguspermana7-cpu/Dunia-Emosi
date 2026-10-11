@@ -12,7 +12,7 @@
  * ==========================================================================*/
 (function (W) {
   'use strict'
-  var SEG = 200, ROADW = 1600, CAM_H = 950, RING = 360, FOG_LEVELS = 24
+  var SEG = 200, ROADW = 1600, CAM_H = 950, RING = 360, FOG_LEVELS = 12, FOG_K = 2   // 12 colour steps (was 24): half the (layer, colour) buckets = half the fill() calls; s.fog stays on the 0-23 scale the sprites read
   var LANES = [-0.62, 0, 0.62]
   var FACTORS = { far: 0.05, mid: 0.20, roadside: 0.70, road: 1.00 }
 
@@ -254,7 +254,7 @@
     for (var k = 0; k < n; k++) {
       var s = track.seg(baseI + k); if (!s) break
       var fl = Math.min(FOG_LEVELS - 1, Math.floor(Math.pow(k / n, 0.9) * FOG_LEVELS))
-      s.fog = fl; s.vis = false
+      s.fog = fl * FOG_K; s.vis = false
       project(s.p1, -x, s.y1, (baseI + k) * SEG, cam, v)
       project(s.p2, -x - dx, s.y2, (baseI + k + 1) * SEG, cam, v)
       s.screenOffset = x
@@ -273,7 +273,7 @@
       }
       if (!s.bridge) { var sw1 = W1 * 1.32, sw2 = W2 * 1.32; quad(1, s.tunnel ? col.tunnelWall[fl] : col.shoulder[alt][fl], X1 - sw1, Y1, X1 + sw1, Y1, X2 + sw2, Y2, X2 - sw2, Y2) }
       else { var dk1 = W1 * 1.18, dk2 = W2 * 1.18; quad(1, '#7b8794', X1 - dk1, Y1, X1 + dk1, Y1, X2 + dk2, Y2, X2 - dk2, Y2) }
-      if (track.biome.speck && !s.tunnel && !s.bridge && (s.i * 7) % 3 === 0) {
+      if (Y1 - Y2 > 2.4 && track.biome.speck && !s.tunnel && !s.bridge && (s.i * 7) % 3 === 0) {
         var spk = track.biome.speck, sc = col.speck[fl]
         for (var si = 0; si < 3; si++) {
           var hsh = ((s.i * 131 + si * 977) % 1000) / 1000, side = si % 2 ? 1 : -1, off = 1.4 + hsh * (spk[2] === 'strip' ? 0.2 : 3.5), w0 = spk[2] === 'crack' ? 0.22 : spk[2] === 'strip' ? 0.05 : 0.07
@@ -287,10 +287,11 @@
       quad(2, kc, X1 + r1, Y1, X1 + W1, Y1, X2 + W2, Y2, X2 + r2, Y2)
       var rc = s.tunnel ? col.tunnelRoad[alt][fl] : surf === 'mud' ? col.mud[alt][fl] : surf === 'ice' ? col.ice[alt][fl] : col.road[alt][fl]
       quad(3, rc, X1 - W1, Y1, X1 + W1, Y1, X2 + W2, Y2, X2 - W2, Y2)
+      var detail = Y1 - Y2 > 2.4   // far segments are a hair thick: their edge / lane lines and specks are invisible, so they are not built (LOD)
       var e1 = W1 * 0.035, e2 = W2 * 0.035, ec = col.edge[fl]
-      quad(4, ec, X1 - W1 * 0.94, Y1, X1 - W1 * 0.94 + e1, Y1, X2 - W2 * 0.94 + e2, Y2, X2 - W2 * 0.94, Y2)
-      quad(4, ec, X1 + W1 * 0.94 - e1, Y1, X1 + W1 * 0.94, Y1, X2 + W2 * 0.94, Y2, X2 + W2 * 0.94 - e2, Y2)
-      if (((baseI + k) >> 1) % 2 === 0) {
+      if (detail) quad(4, ec, X1 - W1 * 0.94, Y1, X1 - W1 * 0.94 + e1, Y1, X2 - W2 * 0.94 + e2, Y2, X2 - W2 * 0.94, Y2)
+      if (detail) quad(4, ec, X1 + W1 * 0.94 - e1, Y1, X1 + W1 * 0.94, Y1, X2 + W2 * 0.94, Y2, X2 + W2 * 0.94 - e2, Y2)
+      if (detail && ((baseI + k) >> 1) % 2 === 0) {
         var lw1 = W1 * 0.03, lw2 = W2 * 0.03, lc = col.line[fl]
         for (var L = -1; L <= 1; L += 2) { var lx1 = X1 + L * W1 * 0.31, lx2 = X2 + L * W2 * 0.31; quad(5, lc, lx1 - lw1, Y1, lx1 + lw1, Y1, lx2 + lw2, Y2, lx2 - lw2, Y2) }
       }
@@ -324,10 +325,10 @@
     var p1 = s.p1, p2 = s.p2
     if (p2.y >= p1.y) return
     var th1 = p1.s * 2600 * v.vh, th2 = p2.s * 2600 * v.vh, w1 = p1.w * 1.45, w2 = p2.w * 1.45, fl = s.fog
-    var wc = col.tunnelWall[Math.min(FOG_LEVELS - 1, fl + 2)]
+    var wc = col.tunnelWall[Math.min(FOG_LEVELS - 1, (fl + 2) >> 1)]
     poly(c, p1.x - w1, p1.y, p2.x - w2, p2.y, p2.x - w2, p2.y - th2, p1.x - w1, p1.y - th1, wc)
     poly(c, p1.x + w1, p1.y, p2.x + w2, p2.y, p2.x + w2, p2.y - th2, p1.x + w1, p1.y - th1, wc)
-    poly(c, p1.x - w1, p1.y - th1, p2.x - w2, p2.y - th2, p2.x + w2, p2.y - th2, p1.x + w1, p1.y - th1, col.tunnelWall[Math.min(FOG_LEVELS - 1, fl + 5)])
+    poly(c, p1.x - w1, p1.y - th1, p2.x - w2, p2.y - th2, p2.x + w2, p2.y - th2, p1.x + w1, p1.y - th1, col.tunnelWall[Math.min(FOG_LEVELS - 1, (fl + 5) >> 1)])
     if (s.tunnelEntry || s.tunnelExit) {
       // the portal face: a stone frame with an arched opening (even-odd fill)
       var X = p1.x, Y = p1.y, ow = w1 * 1.9, oh = th1 * 1.35

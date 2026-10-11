@@ -5,7 +5,7 @@
 //           B headless rules (2,000+ spawns, sequencer, recycle ring, chevrons, education generator)
 //           C browser per viewport (real taps + swipes, lane change <= 400 ms, BROK + recovery <= 1.8 s,
 //             gadget pickup, lock-on + capture, result returned to the parent, adventure beat, no errors,
-//             no emoji, Indonesian text, parallax ratios, frame time) + D rubber band (a crashing autopilot finishes)
+//             no emoji, Indonesian text, parallax ratios, frame time) + D lives (game over, COBA LAGI, KEMBALI; a clean run finishes)
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -38,6 +38,29 @@ for (const st of CH.STAGES) for (let seed = 1; seed <= 50; seed++) {
   for (let i = 0; i < 120; i++) { const id = q.next(); run = id === last ? run + 1 : 1; last = id; if (id !== 'straight-a' && run > 2) repeatBad++ }
 }
 check(repeatBad === 0, `sequencer: no piece more than 2 in a row over 50 seeded runs per stage (${repeatBad})`)
+// authored moments (owner 2026-10-10 "kurang variatif"): every stage's scenery has its own flavour, patterns stay solvable
+{
+  const miss = CH.STAGES.filter(st => !R.FLAVOUR[st.biome]).map(st => st.id)
+  check(miss.length === 0, `patterns: every stage biome has an authored flavour (${miss.join(',') || 'ok'})`)
+  let broken = 0; const names = new Set(), first = new Set()
+  for (let sd = 1; sd <= 40; sd++) { const sp = R.simPatterns(200, sd); broken += sp.threeBlock + sp.unreachable; Object.keys(sp.seen).forEach(n => names.add(n)) }
+  check(broken === 0, `patterns: no row of three blockers and a lane always reachable over 40 x 200 patterns (${broken})`)
+  check(['slalom', 'gates', 'tunnel', 'ramp', 'trail'].every(n => names.has(n)), `patterns: slalom, gates, boost tunnel, ramp and star trail all occur (${[...names]})`)
+  for (const st of CH.STAGES) { const stt = { obs: ['crate'], reach: 7, flavour: st.biome, rot: 0 }; first.add(R.nextPattern(R.rng(3), stt)) }
+  check(first.size >= 3, `patterns: stages open with different moments (${[...first]})`)
+  const sprint = R.pattern('sprint', R.rng(1), { obs: ['crate'], reach: 7 }); check(sprint.length >= 4 && sprint.some(r => r.includes('pad')), 'patterns: the final sprint is a run of boost pads and stars')
+}
+// crash questions (owner 2026-10-10): fair spacing, always answerable, maths + the current kinds, kid-safe text
+{
+  for (const f of ['games/data/soal-engine.js', 'games/data/soal-gen-matematika.js', 'games/data/soal-pack-mojo.js', 'games/mojo-chase-quiz.js']) (0, eval)(fs.readFileSync(path.join(root, f), 'utf8'))
+  const Q = globalThis.MojoChaseQuiz; let bad = 0, asked = 0, seSrc = 0, localSrc = 0, noAns = 0, emo = 0
+  for (let sd = 1; sd <= 60; sd++) { const r = Q.crashSim(sd, 90); bad += r.bad.length; asked += r.asked.length }
+  check(bad === 0, `crash quiz: >= 20 s apart and never on two consecutive crashes over 60 seeded runs (${bad})`)
+  check(asked > 60, `crash quiz: questions are actually asked (${asked} in 60 runs)`)
+  for (let i = 0; i < 400; i++) { const q = Q.crashQuestion(); q.src === 'se' ? seSrc++ : localSrc++; if (!q.choices.some(c => String(c.v) === String(q.answer)) || !q.hint || q.choices.length < 2) noAns++; if (/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/u.test(q.text + q.hint + (q.eq || ''))) emo++ }
+  check(seSrc > 100 && localSrc > 40, `crash quiz: both the shared SoalEngine maths and the current kinds appear (${seSrc} / ${localSrc})`)
+  check(noAns === 0 && emo === 0, `crash quiz: every question has its answer among the choices, a hint, and no emoji (${noAns}/${emo})`)
+}
 for (const st of CH.STAGES) {
   const t = TR.create(st, 3, {}), ringLen = t.ring.length
   for (let z = 0; z < 3 * 60 * 6000; z += 6000 / 30) t.ensure(Math.floor(z / TR.SEG))   // 3 simulated minutes at base speed
@@ -133,6 +156,8 @@ try {
       await p.addStyleTag({ url: BASE + '/games/mojo-chase-ui.css' })
       await p.addScriptTag({ url: BASE + '/games/mojo-chase-picker.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-quiz.js' })
     }
+    await p.evaluate(() => { window.__mcNoGameOver = true; if (new URLSearchParams(location.search).has('qa')) {} })   // the long autoplay sections crash on purpose; section D (lives) turns game over back on
+    await p.evaluate(() => { window.__mcNoCrashQuiz = !new URLSearchParams(location.search).has('crashq') })   // the crash question has its own gate (qa-mojo-chase-ui); timing checks here must not pause on it
     // the atmosphere module (hooks v2) the same way: QA_ATMOS=0 runs the core alone
     if (process.env.QA_ATMOS !== '0' && !has.atmos) {
       await p.addScriptTag({ url: BASE + '/games/data/mojo-chase-atmos-data.js' }); await p.addScriptTag({ url: BASE + '/games/mojo-chase-atmos.js' })
@@ -369,13 +394,13 @@ try {
     await p.evaluate(() => document.querySelector('.mcp-go').click()); await sleep(600); await p.click('.mc-skip').catch(() => {})
     let s = await waitState(p, s => s.state === 'active', 30000)
     const line = await p.evaluate(() => MojoChases.form('jumper').line)
-    await p.evaluate(() => { window.__hk0 = MojoChase.hooks; MojoChase.hooks = Object.assign({}, MojoChase.hooks, { spawnFilter: () => 'pothole' }) })
-    await sleep(3500)   // rows spawned before the filter have passed
+    await p.evaluate(() => { window.__mcNoDrops = true; window.__mcNoPatterns = true; window.__hk0 = MojoChase.hooks; MojoChase.hooks = Object.assign({}, MojoChase.hooks, { spawnFilter: () => 'pothole' }) })
+    await sleep(5000)   // rows generated before the filter (170 segments of lookahead) have passed
     const s0 = await state(p), rec = []
-    for (let i = 0; i < 50; i++) { const k = await state(p); rec.push(k.recover); await sleep(120) }
+    for (let i = 0; i < 66; i++) { const k = await state(p); rec.push(k.recover); await sleep(120) }
     const s1 = await state(p)
     await p.evaluate(() => { MojoChase.hooks = window.__hk0 })
-    check(s.form === 'jumper' && s1.jumps - s0.jumps >= 2 && s1.hits === s0.hits && s1.brok === s0.brok && rec.every(r => !(r > 0)), `jumper: pothole rows back to back are hopped, no BROK, no slip, no slowdown (${s1.jumps - s0.jumps} hops, hits ${s0.hits}->${s1.hits}, recover max ${Math.max(...rec).toFixed(2)})`)
+    check(s.form === 'jumper' && s1.jumps - s0.jumps >= 2 && s1.hits === s0.hits && s1.brok === s0.brok && rec.every(r => !(r > 0)), `jumper: pothole rows back to back are hopped, no BROK, no slip, no slowdown (${s1.jumps - s0.jumps} hops, hits ${s0.hits}->${s1.hits}, recover max ${Math.max(...rec).toFixed(2)}, last ${s1.lastHitType}/${s1.brokWhy})`)
     check(/lubang/.test(line), `jumper: the perk line promises the holes it clears ("${line}")`)
     check(!errors.length, `jumper run: no page errors (${errors.slice(0, 2).join(' | ')})`)
     await p.click('.mc-pause').catch(() => {}); await sleep(200); await p.click('#mc-exit').catch(() => {}); await done
@@ -460,7 +485,7 @@ try {
       check(inPicker, `chase picker offers the default form ${form}`)
       await sleep(450); await go(p)
       await p.waitForFunction(() => window.__mojoChase && __mojoChase.active && __mojoChase.state().imgs > 10, { timeout: 60000 })
-      await p.evaluate(() => __mojoChase.force({ state: 'active', hearts: 3 }))
+      await p.evaluate(() => { window.__mcNoDrops = true; window.__mcNoPatterns = true; window.__mcNoCrashQuiz = true; window.__mcNoGameOver = true; __mojoChase.force({ state: 'active', hearts: 3 }) })   // this section measures single hits: no authored moments, no robber drops
       await sleep(400)
       // a hard hit FIRST, on a clean state: the burst is on screen within 300 ms, a heart is gone, and Bo
       // says BROK. (The per-type sweep below fires ten hits in a second, which is nothing like real play and
@@ -484,9 +509,12 @@ try {
       check(hit.brokDraw && (hit.brokDraw.seq ? r <= 0.62 : r <= 0.36), `${form}: the BROK draws at ${r.toFixed(2)} of the car (${hit.brokDraw && hit.brokDraw.seq ? 'padded sheet, <= 0.62' : 'sticker, <= 0.36'}; halved again 2026-10-10)`)
       if (form === 'racer') {
         // smoke-only crash: no BROK burst, Bo says "asap", the dizzy still plays; then the random mix and the birds
-        await p.evaluate(() => __mojoChase.force({ hearts: 3, recover: 0, hits: 0 })); await sleep(4200)
-        await p.evaluate(() => { __mojoChase.forceCrash('smoke'); __mojoChase.forceDizzy('birds'); __mojoChase.emitTest('brok') }); await sleep(120)
+        await p.evaluate(() => { window.__mcNoDrops = true; window.__mcNoPatterns = true; window.__mcNoCrashQuiz = true; window.__mcNoGameOver = true; document.querySelectorAll('.mcq-overlay,.mc-quiz,.mcq').forEach(e => e.remove()); window.__qaSpawn = MojoChase.hooks.spawnFilter; MojoChase.hooks.spawnFilter = () => 'none'; __mojoChase.auto({ mode: 'clean' }); __mojoChase.force({ hearts: 3, recover: 0, hits: 0 }) }); await sleep(4200)   // (a clean autopilot dodges the authored moments while the call cooldown runs)
+        // the probe sweep above leaves BROK bursts and Bo's last line on screen: wait until both are gone (max 6 s)
+        await p.waitForFunction(() => { const s = __mojoChase.state(); return s.burstOn === 0 && !s.call }, { timeout: 6000, polling: 100 }).catch(() => {})
+        await p.evaluate(() => { __mojoChase.auto(null); __mojoChase.force({ hearts: 3, recover: 0, spin: 0, slide: 0 }); __mojoChase.forceCrash('smoke'); __mojoChase.forceDizzy('birds'); __mojoChase.emitTest('brok') }); await sleep(120)
         const sm = await p.evaluate(() => __mojoChase.state())
+        await p.evaluate(() => { if (window.__qaSpawn) MojoChase.hooks.spawnFilter = window.__qaSpawn })
         check(sm.crashFx === 'smoke' && sm.burstOn === 0 && /asap/i.test(sm.call || ''), `racer: a smoke-only crash shows no BROK and Bo says "asap" (${sm.crashFx}, ${sm.burstOn}, ${sm.call})`)
         check(sm.dizzy === 'birds', `racer: the dizzy can be circling birds (${sm.dizzy})`)
         const kinds = { brok: 0, smoke: 0, stars: 0, birds: 0 }
@@ -512,17 +540,47 @@ try {
     }
   }
 
-  /* ── D. rubber band: a crashing autopilot still finishes ─────────────────────────────────────── */
-  if (!process.env.QA_FAST && !ONLY) {
+  /* ── D. lives (owner 2026-10-10): out of hearts = friendly GAME OVER; COBA LAGI restarts the same stage + form with full
+        hearts, KEMBALI returns to the list; a run that keeps its hearts still finishes (rubber band) ───────────────── */
+  if (!process.env.QA_FAST && (!ONLY || ONLY === 'lives')) {
+    for (const rm of [false, true]) {
+      const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 })
+      const errs = []; p.on('pageerror', e => errs.push(e.message))
+      if (rm) await p.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+      await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
+      await p.evaluate(() => { window.__mcNoCrashQuiz = true; window.__mcNoGameOver = false })
+      const tag = rm ? 'reduced motion: ' : ''
+      const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai', { seconds: 70 })))
+      await go(p); await waitState(p, s => s.state === 'active', 30000)
+      const form0 = (await state(p)).form
+      await p.evaluate(() => __mojoChase.auto({ mode: 'crash' }))
+      const s = await waitState(p, s => s.state === 'over', 200000)
+      check(s.state === 'over' && s.hearts === 0 && s.hits >= 3, `${tag}lives: real crashes down to 0 hearts end in GAME OVER (${s.state}, hearts ${s.hearts}, ${s.hits} hits)`)
+      const card = await p.evaluate(() => ({ on: document.querySelector('.mc-card.on') ? document.querySelector('.mc-card').textContent : '', rb: document.querySelector('#mc-retry') && document.querySelector('#mc-retry').offsetHeight, bb: document.querySelector('#mc-back') && document.querySelector('#mc-back').offsetHeight }))
+      check(/kehabisan nyawa/.test(card.on) && /COBA LAGI/.test(card.on) && /KEMBALI/.test(card.on) && card.rb >= 56 && card.bb >= 56 && !/gagal|mati|game over/i.test(card.on), `${tag}lives: the game-over card is friendly with big COBA LAGI + KEMBALI (${card.on.slice(0, 60)}, ${card.rb}/${card.bb} px)`)
+      await p.screenshot({ path: `${out}/1280-gameover${rm ? '-rm' : ''}.png` })
+      await p.evaluate(() => __mojoChase.auto(null)); await p.click('#mc-retry')
+      await waitState(p, s => s.state === 'countdown' || s.state === 'cut' || s.state === 'active', 20000)
+      const r = await waitState(p, s => s.state === 'active', 30000)
+      check(r.state === 'active' && r.hearts === 3 && r.stage === 'pantai' && r.form === form0 && r.elapsed < 10, `${tag}lives: COBA LAGI restarts the same stage and form with full hearts (${r.stage}, ${r.form}/${form0}, hearts ${r.hearts})`)
+      await p.evaluate(() => __mojoChase.auto({ mode: 'crash' }))
+      await waitState(p, s => s.state === 'over', 200000)
+      await p.evaluate(() => __mojoChase.auto(null)); await p.click('#mc-back'); await done.catch(() => {})
+      check(await p.waitForSelector('.race-card, #scr-race', { timeout: 5000 }).then(() => true).catch(() => false) || !(await p.$('#chase-host')), `${tag}lives: KEMBALI leaves the chase (${errs.length} page errors)`)
+      check(errs.length === 0, `${tag}lives: no page errors across game over, retry and back (${errs.slice(0, 2)})`)
+      report['lives' + (rm ? '-rm' : '')] = { hits: s.hits }
+      await p.close()
+    }
+    // a run that keeps its hearts still finishes: a few early mistakes, then clean driving
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 })
     await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
+    await p.evaluate(() => { window.__mcNoCrashQuiz = true; window.__mcNoGameOver = false })
     const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('pantai', { seconds: 70 })))
-    await go(p); await sleep(2000)
-    await p.evaluate(() => __mojoChase.auto({ mode: 'crash' }))
-    const s = await waitState(p, s => s.state === 'result', 200000)
-    check(s.state === 'result' && s.hits >= 3, `rubber band: a crashing autopilot (${s.hits} hits) still catches the robber in ${s.elapsed.toFixed(0)} s`)
-    check(s.recoveryMs.every(ms => ms <= 1800), `rubber band: every recovery <= 1.8 s (max ${Math.max(...s.recoveryMs)} of ${s.recoveryMs.length}: ${s.recoveryMs.filter(ms => ms > 1800)})`)
-    report.crash = { hits: s.hits, elapsed: s.elapsed }
+    await go(p); await waitState(p, s => s.state === 'active', 30000)
+    await p.evaluate(() => { __mojoChase.auto({ mode: 'clean' }) })
+    const f = await waitState(p, s => s.state === 'result' || s.state === 'over', 200000)
+    check(f.state === 'result', `lives: a run that keeps its hearts still catches the robber (${f.state}, hearts ${f.hearts}, ${f.elapsed.toFixed(0)} s)`)
+    check(f.recoveryMs.every(ms => ms <= 1800), `lives: every recovery <= 1.8 s (${f.recoveryMs.length} hits)`)
     await p.click('#mc-done'); await done
     await p.close()
   }

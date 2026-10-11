@@ -249,3 +249,12 @@
 .mc-host.land .mc-mission:not(.hide) ~ .mc-call{left:50%;top:calc(150px * var(--L) + env(safe-area-inset-top));transform:translateX(-50%) scale(.8);transform-origin:50% 50%}
 .mc-host.land .mc-mission:not(.hide) ~ .mc-call.on{transform:translateX(-50%) scale(1)}
 .mc-host.land .mc-edu{top:calc(150px * var(--L) + env(safe-area-inset-top))}
+
+/* lives: a lost heart shakes and shrinks (transform/opacity only); the game-over card keeps the hearts row grey */
+.mc-hearts img.lose{animation:mcLose .5s cubic-bezier(.23,1,.32,1)}
+@keyframes mcLose{0%{transform:scale(1.5) rotate(0)}25%{transform:scale(1.35) rotate(-14deg)}50%{transform:scale(1.2) rotate(12deg)}100%{transform:scale(.82) rotate(0)}}
+.mc-card .hearts-row{display:flex;justify-content:center;gap:8px;margin:2px 0 4px}
+.mc-card .hearts-row img{width:40px;height:40px;object-fit:contain;filter:grayscale(1);opacity:.5}
+.mc-card .row #mc-retry{min-height:64px;min-width:170px;font-size:26px}
+.mc-card .row #mc-back{min-height:64px;min-width:150px;font-size:22px}
+@media (prefers-reduced-motion:reduce){.mc-hearts img.lose{animation:none}}

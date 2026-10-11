@@ -37,7 +37,12 @@
   function run (cfg) {
     var host = el('div', ''); host.id = 'chase-host'; D.body.appendChild(host)
     cfg = Object.assign({ lastForm: load().form, onForm: function (f) { var sv = load(); sv.form = f; save(sv) }, sound: soundOn, say: function (t) { try { var sv = API.save(); if (sv && sv.set && sv.set.narr && API.say) API.say(t) } catch (e) {} } }, cfg)
-    return W.MojoChase.mount(host, cfg).then(function (res) { host.remove(); return res })
+    return W.MojoChase.mount(host, cfg).then(function (res) {
+      host.remove()
+      // COBA LAGI after a game over: the same stage with the same form, full hearts, no picker
+      if (res && res.retry) return run(Object.assign({}, cfg, { retry: true, mojo_form: res.mojo_form, picked: true }))
+      return res
+    })
   }
   function playStage (st) {
     var cfg = W.MojoChases.config(st.id)

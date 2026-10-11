@@ -90,5 +90,69 @@
     }
     return out
   }
-  W.MojoChaseRules = { TIERS: TIERS, isBlock: isBlock, validate: validate, genRow: genRow, progress: progress, sim: sim, rng: rng, SLIPS: SLIPS }
+  /* ── authored "moments" (owner 2026-10-10: "kurang variatif, make it more seru"). A pattern is a short list of rows
+     queued ahead of normal random rows. Every pattern keeps >= 1 open lane reachable with ONE lane change per row
+     (validated here and by the gate), uses at most 2 blockers per row, and never punishes: stars mark the way. ── */
+  var N = 'none'
+  function pickLane (r, reach) { var dil = reach | ((reach << 1) & 7) | (reach >> 1), c = []; for (var i = 0; i < 3; i++) if (dil & (1 << i)) c.push(i); return c[Math.floor(r() * c.length)] }
+  var PAT = {
+    // one blocker weaves across the lanes; a star sits in the lane to dodge into
+    slalom: function (r, st) {
+      var obs = st.obs[Math.floor(r() * st.obs.length)], seq = r() < 0.5 ? [0, 1, 2, 1, 0] : [2, 1, 0, 1, 2], rows = []
+      for (var i = 0; i < seq.length; i++) { var row = [N, N, N]; row[seq[i]] = obs; row[seq[i] === 1 ? (i % 2 ? 0 : 2) : 1] = 'star'; rows.push(row) }
+      return rows
+    },
+    // gates: two blockers, one gap that drifts at most one lane per row; stars mark the gap
+    gates: function (r, st) {
+      var obs = st.obs[Math.floor(r() * st.obs.length)], g = pickLane(r, st.reach == null ? 7 : st.reach), rows = []
+      for (var i = 0; i < 4; i++) { var row = [obs, obs, obs]; row[g] = i === 3 ? 'coin' : 'star'; rows.push(row); if (r() < 0.6) g = Math.max(0, Math.min(2, g + (r() < 0.5 ? -1 : 1))) }
+      return rows
+    },
+    // boost tunnel: three boost pads down the middle, stars along the sides
+    tunnel: function () { return [[N, 'pad', N], ['star', 'pad', 'star'], [N, 'pad', N], ['star', N, 'star']] },
+    // jump ramp: airtime (hazards pass underneath) and a star arc to follow
+    ramp: function (r, st) { var l = pickLane(r, st.reach == null ? 7 : st.reach), rows = [[N, N, N], [N, N, N]]; rows[0][l] = 'ramp'; for (var i = 0; i < 4; i++) { var row = [N, N, N]; row[l] = i === 3 ? 'heart' : 'star'; rows.push(row) } return rows },
+    // star trail: a long, safe, rewarding line to follow, drifting one lane
+    trail: function (r, st) { var l = pickLane(r, st.reach == null ? 7 : st.reach), rows = []; for (var i = 0; i < 7; i++) { if (i === 3) l = Math.max(0, Math.min(2, l + (r() < 0.5 ? -1 : 1))); var row = [N, N, N]; row[l] = i === 6 ? 'coin' : 'star'; rows.push(row) } return rows },
+    // final sprint when the robber is close: pads in a row, stars either side
+    sprint: function () { return [[N, 'pad', N], ['star', N, 'star'], [N, 'pad', N], ['star', 'star', 'star'], [N, 'pad', N]] }
+  }
+  // authored flavour per scenery (biome / base): the first name is the signature moment of that place
+  var FLAVOUR = {
+    coastal: ['ramp', 'trail', 'slalom'], town: ['slalom', 'gates', 'tunnel'], forest: ['slalom', 'ramp', 'trail'], desert: ['gates', 'tunnel', 'ramp'],
+    snow: ['trail', 'slalom', 'tunnel'], construction: ['gates', 'slalom', 'ramp'], farm: ['trail', 'ramp', 'gates'], city: ['gates', 'tunnel', 'slalom']
+  }
+  /** schedule: every 8-14 rows (earlier ones fewer on the easiest tier); never the same moment twice in a row */
+  function nextPattern (r, st) {
+    var f0 = FLAVOUR[st.flavour] || FLAVOUR.coastal, rot = st.rot || 0, f = [f0[rot % 3], f0[(rot + 1) % 3], f0[(rot + 2) % 3]], i = Math.floor(r() * 5)
+    var name = f[i < 2 ? 0 : i < 4 ? 1 : 2]
+    if (name === st.lastPat) name = f[(f.indexOf(name) + 1) % f.length]
+    st.lastPat = name
+    return name
+  }
+  /** rows of a named pattern for state st (st.reach = the lanes reachable now) */
+  function pattern (name, r, st) { return PAT[name] ? PAT[name](r, st) : [] }
+  /** the lanes reachable after a queued row (same rule as validate, without repairing) */
+  function reachAfter (row, reach) {
+    var dil = reach | ((reach << 1) & 7) | (reach >> 1), free = 0
+    for (var i = 0; i < 3; i++) if (!isBlock(row[i])) free |= 1 << i
+    return (free & dil) || 7
+  }
+  /** QA: every pattern row stays solvable and never has 3 blockers; returns the count of broken rows */
+  function simPatterns (n, seed) {
+    var r = rng(seed), out = { patterns: 0, rows: 0, threeBlock: 0, unreachable: 0, seen: {} }
+    for (var k = 0; k < n; k++) {
+      var st = { obs: ['crate', 'barrel', 'cone', 'barrier'], reach: 7, flavour: Object.keys(FLAVOUR)[k % 8] }, prev = 1 << Math.floor(r() * 3), name = nextPattern(r, st), rows = (st.reach = prev, pattern(name, r, st))
+      out.patterns++; out.seen[name] = (out.seen[name] || 0) + 1
+      for (var i = 0; i < rows.length; i++) {
+        var b = 0, free = 0; for (var j = 0; j < 3; j++) { if (isBlock(rows[i][j])) b++; else free |= 1 << j }
+        var dil = prev | ((prev << 1) & 7) | (prev >> 1); out.rows++
+        if (b === 3) out.threeBlock++
+        if (!(free & dil)) out.unreachable++
+        prev = free & dil || 7
+      }
+    }
+    return out
+  }
+  W.MojoChaseRules = { PATTERNS: PAT, reachAfter: reachAfter, FLAVOUR: FLAVOUR, pattern: pattern, nextPattern: nextPattern, simPatterns: simPatterns, TIERS: TIERS, isBlock: isBlock, validate: validate, genRow: genRow, progress: progress, sim: sim, rng: rng, SLIPS: SLIPS }
 })(typeof window !== 'undefined' ? window : globalThis)

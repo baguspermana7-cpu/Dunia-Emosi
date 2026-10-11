@@ -160,6 +160,30 @@ try {
     await p.close()
   }
 
+  /* ── crash question (owner 2026-10-10): pauses, wrong = hint + retry (never a fail), right = a heart + boost, gym-style card ── */
+  {
+    const p = await page(412, 915)
+    await p.evaluate(fk => { window.__api = (0, eval)('(' + fk + ')')(); MojoChaseQuiz.reset({ seed: 5 }); MojoChaseQuiz.onCrash({ elapsed: 30, prog: 0.3, state: 'active' }, __api) }, FAKE_API.toString())
+    await p.waitForSelector('.mcq.crash .mcq-btn', { timeout: 4000 })
+    check(await p.evaluate(() => __fk.paused === 1), 'crash quiz: the run pauses while the question is open')
+    const look = await p.evaluate(() => { const b = [...document.querySelectorAll('.mcq-btn')], eq = document.querySelector('.mcq-eq'), hs = getComputedStyle(document.querySelector('.mcq-head h2')).color
+      return { minH: Math.min(...b.map(x => x.getBoundingClientRect().height)), n: b.length, bg: b.map(x => getComputedStyle(x).backgroundColor).join('|'), eqSize: eq ? parseFloat(getComputedStyle(eq).fontSize) : 0, title: document.querySelector('.mcq-head h2').textContent } })
+    check(look.minH >= 56 && look.n >= 3, `crash quiz: answer buttons are >= 56 px (${look.minH}, ${look.n} buttons)`)
+    check(new Set(look.bg.split('|')).size >= 3, `crash quiz: pastel per-position pills like the gym card (${look.bg})`)
+    check(look.title === 'Soal Cepat!' && look.eqSize >= 30, `crash quiz: card title + big equation text (${look.title}, ${look.eqSize}px)`)
+    await p.screenshot({ path: `${out}/crash-quiz-412.png` })
+    for (let k = 0; k < 3; k++) { await p.evaluate(() => { const a = String(MojoChaseQuiz.state().answer); const b = [...document.querySelectorAll('.mcq-btn')].find(b => b.dataset.v !== a && !b.disabled); if (b) b.click() }); await sleep(120) }
+    const w = await p.evaluate(() => ({ s: MojoChaseQuiz.state(), say: document.querySelector('.mcq-say').textContent, guide: !!document.querySelector('.mcq-btn.show'), res: __fk.resumed || 0 }))
+    check(w.s.open && w.s.phase === 'ask' && w.res === 0 && !/salah|gagal|kalah/i.test(w.say), `crash quiz: wrong answers give a kind hint and stay open for a retry (${w.say})`)
+    await p.evaluate(() => document.querySelector('.mcq-btn[data-v="' + MojoChaseQuiz.state().answer + '"]').click()); await sleep(2900)
+    const f = await p.evaluate(() => ({ fk: __fk, open: MojoChaseQuiz.state().open }))
+    check(!f.open && f.fk.resumed === 1 && f.fk.reward && f.fk.reward.heart === 1, `crash quiz: right answer returns a heart and the run resumes (${JSON.stringify(f.fk)})`)
+    const again = await p.evaluate(() => MojoChaseQuiz.onCrash({ elapsed: 33, prog: 0.3, state: 'active' }, __api))
+    const later = await p.evaluate(() => { MojoChaseQuiz.onCrash({ elapsed: 36, prog: 0.3, state: 'active' }, __api); return MojoChaseQuiz.onCrash({ elapsed: 60, prog: 0.3, state: 'active' }, __api) })
+    check(again === false && later === true, `crash quiz: never two crashes in a row, but a later crash may ask (${again}/${later})`)
+    await p.close()
+  }
+
   /* ── U. progressive unlock ───────────────────────────────────────────────────────────────── */
   {
     const p = await page(412, 915, 0)
@@ -392,6 +416,18 @@ try {
     const w1 = await waitState(p, s => !s.paused, 6000)
     const h1 = await p.evaluate(() => document.querySelectorAll('.mc-hearts img.off').length)
     check(w1 && !w1.paused && w1.state === 'active' && h1 === h0 && !await p.$('.mcq'), `a wrong answer never fails: the chase continues, hearts unchanged (${w1 && w1.state}, ${h0}->${h1})`)
+    // a real BROK asks a crash question: the run pauses, a right answer gives a heart back and the run resumes
+    await p.evaluate(() => { MojoChaseQuiz.reset({ seed: 9 }); __mojoChase.force({ hearts: 2, recover: 0, state: 'active', prog: 0.3 }); __mojoChase.forceCrash('brok'); __mojoChase.probe('crate') })
+    const cq = await p.waitForSelector('.mcq.crash .mcq-btn', { timeout: 4000 }).then(() => true).catch(() => false)
+    check(cq, 'a real BROK opens the crash question (Soal Cepat)')
+    if (cq) {
+      await sleep(300); const c0 = await st(p); await sleep(1200); const c1 = await st(p)
+      check(c1.paused && c0.z === c1.z && c0.elapsed === c1.elapsed, `the run is paused while the crash question is open (z ${c0.z.toFixed(1)}=${c1.z.toFixed(1)})`)
+      const hp0 = await p.evaluate(() => __mojoChase.state().hearts)
+      await p.evaluate(() => { const a = String(MojoChaseQuiz.state().answer); document.querySelector('.mcq-btn[data-v="' + a + '"]').click() })
+      const cr = await waitState(p, s => !s.paused, 6000)
+      check(cr && !cr.paused && cr.hearts === hp0 + 1, `a right crash answer gives a heart back and the run resumes (${hp0} -> ${cr && cr.hearts})`)
+    }
     // per avatar: the other avatar has its own choice
     await p.evaluate(() => { __mojoChase.force({ prog: 0.99, best: 0.99, hasRocket: true, rocket: 1 }); document.querySelector('.mc-pause').click() }); await sleep(300)
     await p.evaluate(() => { const b = document.querySelector('#mc-exit'); if (b) b.click() }); await done.catch(() => {})

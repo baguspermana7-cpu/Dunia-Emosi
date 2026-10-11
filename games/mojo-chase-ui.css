@@ -172,3 +172,36 @@
    out 6 per row, short landscape phones 8 per row, so the card and its button stay inside the viewport */
 @media (min-width:700px){.mcp-new .box:has(.art.many){width:min(640px,100%)}.mcp-new .art.many figure{width:clamp(64px,15%,96px)}}
 @media (min-width:700px) and (max-height:520px){.mcp-new .box:has(.art.many){width:min(780px,100%);padding:8px 12px 10px;gap:2px}.mcp-new .art.many{gap:2px 8px;padding:2px 0}.mcp-new .art.many figure{width:clamp(56px,11.5%,78px)}.mcp-new .art.many figcaption{font-size:12px}}
+
+/* ── Kotak Soal / Soal Tabrakan, gym-pokemon look (owner 2026-10-10: "visual seperti game gym pokemon"):
+   a glassy night card, the equation floats BIG in gold glow, pastel 3D answer pills (lavender / rose / sage / gold),
+   tap-to-count badges on the pictures, a pulse on right and a shake on wrong ────────────────────────────────────── */
+.mcq-plank{background:linear-gradient(180deg,rgba(40,28,92,.96),rgba(22,16,58,.96));box-shadow:0 0 0 3px #fbbf24,0 0 26px rgba(251,191,36,.35),0 12px 30px rgba(0,0,0,.5)}
+.mcq-eq{margin:0;text-align:center;font-family:'Fredoka One',sans-serif;font-weight:400;font-size:clamp(34px,10vw,52px);line-height:1.05;color:#fbbf24;text-shadow:0 0 18px rgba(251,191,36,.6),0 3px 0 #3d1e0b;letter-spacing:1px}
+.mcq-eq:empty{display:none}
+.mcq-lab{margin:0;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;letter-spacing:1.8px;color:rgba(233,213,255,.8)}
+.mcq-pics{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 2px rgba(251,191,36,.45)}
+.mcq-pics .op,.mcq-pics .side{color:#fde68a}
+.mcq-pics .pics img{cursor:pointer;touch-action:manipulation}
+.mcq-pics .cnt{position:relative;display:inline-block;line-height:0}
+.mcq-pics .cnt b{position:absolute;right:-2px;top:-4px;min-width:20px;height:20px;border-radius:10px;background:#fbbf24;color:#3d1e0b;font:900 13px/20px 'Nunito',sans-serif;text-align:center;pointer-events:none;
+  box-shadow:0 2px 0 #92400e;animation:mcq-badge .22s cubic-bezier(.23,1,.32,1)}
+@keyframes mcq-badge{0%{transform:scale(.3)}100%{transform:scale(1)}}
+.mcq-pics.tiny img{width:clamp(22px,6vw,34px);height:clamp(22px,6vw,34px)}
+.mcq-pics.tiny .grp .pics{grid-template-columns:repeat(6,auto);gap:3px}
+.mcq-ans{gap:10px}
+.mcq-btn{max-width:150px;min-height:64px;border:3px solid;border-radius:16px;font-size:clamp(28px,8vw,36px);-webkit-text-stroke:0;paint-order:normal;transition:transform .1s,box-shadow .1s,opacity .2s}
+.mcq-btn:nth-child(1){background:#f0eaf6;color:#6d28d9;border-color:#c4a5e0;box-shadow:0 5px 0 #a48cc8}
+.mcq-btn:nth-child(2){background:#fce8e8;color:#8a4a4a;border-color:#f4a8a8;box-shadow:0 5px 0 #d68888}
+.mcq-btn:nth-child(3){background:#e8f5e8;color:#4a7c4a;border-color:#a8d8a8;box-shadow:0 5px 0 #84b884}
+.mcq-btn:nth-child(4){background:#fef9e7;color:#92400e;border-color:#fde68a;box-shadow:0 5px 0 #f59e0b}
+.mcq-btn:active{transform:translateY(3px) scale(.97);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.mcq-btn.right,.mcq-btn.show{background:#e8f5e8;color:#2f6b2f;border-color:#4ade80;-webkit-text-stroke:0;box-shadow:0 5px 0 #84b884,0 0 0 4px #fbbf24,0 0 22px rgba(74,222,128,.7)}
+.mcq-btn.right{animation:mcq-pop .4s cubic-bezier(.23,1,.32,1)}
+.mcq-btn.bad{animation:mcq-shake .4s ease}
+@keyframes mcq-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}50%{transform:translateX(8px)}80%{transform:translateX(-5px)}}
+.mcq.win .mcq-plank{animation:mcq-glow .6s ease-out}
+@keyframes mcq-glow{0%{box-shadow:0 0 0 3px #fbbf24,0 0 26px rgba(251,191,36,.35)}40%{box-shadow:0 0 0 5px #4ade80,0 0 60px rgba(74,222,128,.8)}100%{box-shadow:0 0 0 3px #fbbf24,0 0 26px rgba(251,191,36,.35)}}
+.mcq.crash .mcq-head h2{color:#7dd3fc}
+.mcq.rm .mcq-btn.bad,.mcq.rm .mcq-btn.right,.mcq.rm.win .mcq-plank,.mcq.rm .mcq-pics .cnt b{animation:none}
+@media (orientation:landscape) and (max-height:560px){ .mcq-eq{font-size:30px} .mcq-btn{min-height:64px;font-size:26px} }
