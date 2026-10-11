@@ -261,3 +261,27 @@ html[data-pack="kereta"] .ob[data-id="sorot"]::before{content:'';position:absolu
 html[data-pack="kereta"] .mj-mod .owner-stand{position:absolute;left:50%;bottom:30%;width:120%;height:auto;max-width:none;transform:translateX(-50%);transform-origin:50% 100%;filter:drop-shadow(0 3px 2px rgba(0,0,0,.35))}
 html[data-pack="kereta"] .mj-mod .owner-stand.st-n,html[data-pack="kereta"] .mj-mod .owner-stand.st-s{width:78%}
 html[data-pack="kereta"] .mj-mod:has(.owner-stand)::before{content:'';position:absolute;left:12%;right:12%;bottom:24%;height:14%;border-radius:50%;background:radial-gradient(closest-side,rgba(30,25,15,.38),rgba(30,25,15,0))}
+
+/* ── grounded cast: every standing figure has a contact shadow at its feet, sits on its cell, can face the other way ── */
+html[data-pack="kereta"] .dec.cast::before{content:'';position:absolute;left:14%;right:14%;bottom:2%;height:17%;border-radius:50%;background:radial-gradient(closest-side,rgba(20,30,10,.5),rgba(20,30,10,0));z-index:0}
+html[data-pack="kereta"] .dec.cast img{position:relative;z-index:1}
+html[data-pack="kereta"] .dec.cast[data-flip] img{scale:-1 1}
+/* Henry in Linus's cab */
+.k-cab{position:absolute;right:30%;top:-30%;height:78%;width:auto;z-index:7;pointer-events:none;filter:drop-shadow(0 3px 2px rgba(0,0,0,.4));transform-origin:50% 100%;animation:kBreath 3.6s ease-in-out infinite alternate}
+/* memory photo (scenario 11) */
+#scr-play[data-tint="sepia"] #board-bg,#scr-play[data-tint="sepia"] .dec:not(.amb),#scr-play[data-tint="sepia"] #objs{filter:sepia(.75) saturate(.8)}
+#scr-play[data-tint="sepia"] .board{box-shadow:0 0 0 8px #f6ead0,0 0 0 12px #7a5a34,0 14px 30px rgba(0,0,0,.4)}
+/* flags drawn for reach goals that have no flag object */
+.k-flag img{width:92%;height:92%;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(0,0,0,.3))}
+/* story cards on the intro */
+.k-cards{position:relative;width:min(100%,520px);aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 0 0 3px #fff,0 6px 14px rgba(0,0,0,.3);flex:none;cursor:pointer;margin:0 auto 8px}
+.k-card{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;transition:opacity .5s}
+.k-card.on{opacity:1}
+.k-card-art{position:absolute;bottom:14%;width:auto;filter:drop-shadow(0 6px 4px rgba(0,0,0,.45))}
+.k-card-cap{position:absolute;left:6px;right:6px;bottom:6px;margin:0;padding:5px 10px;border-radius:12px;background:rgba(255,250,234,.94);color:#4a2c12;font-weight:800;font-size:clamp(12px,1.5vw,16px);text-align:center}
+.k-paper{position:absolute;left:12%;right:12%;top:10%;padding:8px 10px;background:#f4ecd2;color:#2a2a2a;border:2px solid #333;text-align:center;font-family:Georgia,serif;transform:rotate(-2deg)}
+.k-paper b{display:block;font-size:clamp(14px,2.2vw,24px);line-height:1.1;text-transform:uppercase}.k-paper small{font-size:11px}
+.k-dots{position:absolute;right:8px;top:8px;display:flex;gap:4px}.k-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5)}.k-dots i.on{background:#ffd447}
+/* the log wagon of scenario 14 stands far taller than Linus, with Carter sitting on the logs (hands on hips) */
+html[data-pack="kereta"] .ob[data-id="kayu"] img.main{scale:1.7;transform-origin:50% 90%}
+html[data-pack="kereta"] .ob[data-id="kayu"]::after{content:'';position:absolute;left:18%;top:-92%;width:64%;height:70%;background:url('../assets/db/lib/story-char/carter/hands-hips.webp') center bottom/contain no-repeat;filter:drop-shadow(0 3px 2px rgba(0,0,0,.4));z-index:3;pointer-events:none}

@@ -86,8 +86,10 @@ const KC = ctx.KeretaCast, LIBK = ctx.KeretaPackLevels.LIB
 const sig = lv => lv.beats.map(b => (b.objectives.map(o => o.do).sort().join('+') + '|' + b.palette.filter(c => !['up', 'down', 'west', 'east'].includes(c)).sort().join(','))).join('/')
 for (let i = 1; i < ML.LEVELS.length; i++) check(sig(ML.LEVELS[i]) !== sig(ML.LEVELS[i - 1]), `${ML.LEVELS[i - 1].id} and ${ML.LEVELS[i].id} play differently (${sig(ML.LEVELS[i - 1])} vs ${sig(ML.LEVELS[i])})`)
 const used = new Set(), resolve = a => { if (!a) return; used.add(a); if (LIBK[a]) used.add(LIBK[a]) }
-for (const lv of ML.LEVELS) { (lv.decor || []).forEach(d => resolve(d.art)); lv.beats.forEach(b => (b.decor || []).forEach(d => resolve(d.art))); (lv.uses || []).forEach(resolve); (lv.objects || []).forEach(o => { resolve(o.art); if (o.who) resolve('char/' + o.who) }) }
-const EXCLUDED = new Set([])   // cast keys skipped on purpose
+for (const lv of ML.LEVELS) { (lv.decor || []).forEach(d => { resolve(d.art); if (d.react) resolve(d.react) }); lv.beats.forEach(b => (b.decor || []).forEach(d => { resolve(d.art); if (d.react) resolve(d.react) })); (lv.cards || []).forEach(c => (c.art || []).forEach(a => resolve(a.k))); if (lv.cab) resolve(lv.cab); (lv.uses || []).forEach(resolve); (lv.objects || []).forEach(o => { resolve(o.art); if (o.who) resolve('char/' + o.who) }) }
+// cast keys skipped on purpose (alignment doc, owner 2026-10-11): sc4 child holding the turtle = Scarlet-era sc27 only; Scarlet and Henry never at the
+// logging line / bridge-lookout (sc14, 15-16); the sc15-16 cast list in kereta-cast.js predates the alignment doc
+const EXCLUDED = new Set(['story-char/anak-kura/hold', 'story-char/scarlet/cemas-atas', 'story-char/henry/worried'])
 // owner kid-safe rule: no chains, whips or weapons anywhere. Any database key that names one must never be used by a level.
 const UNSAFE = [...dbKeys].filter(k => /(chain|whip|gun|pistol|rifle|weapon|senjata|rantai|cambuk|senapan|knife|sword)/i.test(k))
 check(UNSAFE.every(k => !used.has(k)), `no unsafe art used (${UNSAFE.length} unsafe keys exist in the database: ${UNSAFE.slice(0, 4).join(', ')})`)

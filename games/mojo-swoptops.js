@@ -319,7 +319,7 @@
     ;[].slice.call(box.querySelectorAll('.cast,.amb')).forEach(function (n) { n.remove() })
     var f = D.createDocumentFragment()
     ;(b.decor || lv.decor || []).forEach(function (d0) {
-      var t0 = el('div', 'dec cast'); t0.innerHTML = '<img alt="" src="' + MA.src(d0.art) + '">'; t0.setAttribute('data-rc', d0.at[0] + ',' + d0.at[1]); fitRing(t0.firstChild); f.appendChild(t0)
+      var t0 = el('div', 'dec cast'); t0.innerHTML = '<img alt="" src="' + MA.src(d0.art) + '">'; t0.setAttribute('data-rc', d0.at[0] + ',' + d0.at[1]); if (d0.flip) t0.setAttribute('data-flip', '1'); if (d0.react) t0.setAttribute('data-react', MA.src(d0.react)); t0.setAttribute('data-src', MA.src(d0.art)); fitRing(t0.firstChild); f.appendChild(t0)
     })
     if (PK && PK.ambient) PK.ambient(lv, G.bi, b).forEach(function (a0) {
       var t1 = el('div', 'dec amb ' + (a0.cls || '')); t1.innerHTML = a0.html || ''; t1.setAttribute('data-rc', a0.at[0] + ',' + a0.at[1]); f.appendChild(t1)
@@ -1853,6 +1853,7 @@
       (RULE_LEVELS[lv.id] && G.bi === 0 ? ruleHtml() : '') +
       '<div class="goals">' + goals + '</div>' + (forms ? '<div class="forms-row">' + forms + '</div>' : '') + '</div></div></div>' +
       '<div class="row"><button class="btn b-soft fk" id="in-say" type="button"><i class="ico">' + MA.icon('speak') + '</i><span>Dengar</span></button><button class="btn b-go big fk" id="in-go" type="button"><i class="ico">' + MA.icon('plan') + '</i><span>Ayo Rencanakan!</span></button></div></div>')
+    if (PK && PK.onIntro) PK.onIntro(lv, G.bi)   // a pack may add story cards to the intro
     tap('in-go', function () { SND.place(); closeOv('ov-card'); W.MojoMenu.picker(b,G.cp.m.form,function (f) { if (f) addCmd('swop:' + f) }) })
     tap('in-say', function () { say(b.story + ' ' + (math ? math.prompt : ''), 'id', true) })
     say(b.story)

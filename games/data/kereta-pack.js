@@ -69,6 +69,8 @@
   /* ── backgrounds ─────────────────────────────────────────────────────────────────────────────────── */
   function background (key, port) { return '../assets/kereta/bg/' + key + (port ? '-portrait' : '-landscape') + '.webp' }
   function scene (lv, bi) {
+    var scr = D.getElementById('scr-play'); if (scr) scr.setAttribute('data-tint', lv.tint || '')
+    cabSet(lv)
     var mj = D.getElementById('mojo'); if (mj) mj.classList.toggle('k-tired', !!((lv.tired && lv.tired[bi || 0]) || (lv.beats[bi || 0] && lv.beats[bi || 0].tired === true)))
     return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
   function regionScene (r) { return r.bg }
@@ -172,11 +174,60 @@
       for (var i = 0; i < n; i++) h += '<i class="f' + (i + 1) + '" style="--i:' + i + '"></i>'
       out.push({ at: [0, 0], cls: 'k-fx k-fx-' + f, html: h })
     })
+    ;((b && b.objectives) || []).forEach(function (ob) {
+      if (ob['do'] !== 'reach') return
+      var has = (lv.objects || []).some(function (o) { return o.type === 'flag' && o.at[0] === ob.at[0] && o.at[1] === ob.at[1] })
+      if (!has) out.push({ at: ob.at, cls: 'k-flag', html: '<img alt="" src="' + lib('mojo-prop/flag-board') + '">' })
+    })
     var ln = (b && b.lean) || lv.lean   // one wreck creaks and tilts as Linus passes
     if (ln) out.push({ at: ln, cls: 'k-lean', html: '<img alt="" src="' + lib('train-char/rongsokan-b/v3') + '">' })
     ;((b && b.lamps) || []).forEach(function (l) { out.push({ at: l, cls: 'k-lamp', html: '<i></i>' }) })
     ;((b && b.decor) || lv.decor || []).forEach(function (d) { if (/sawmill/.test(d.art || '')) out.push({ at: d.at, cls: 'k-chimney k-saw', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' }) })
     return out
+  }
+  // Henry rides in Linus's cab (scenarios 1-8): a small leaning figure that travels with the engine
+  function cabSet (lv) {
+    var m = D.getElementById('mojo'); if (!m) return
+    var c = m.querySelector('.k-cab')
+    if (!lv.cab) { if (c) c.style.display = 'none'; return }
+    if (!c) { c = D.createElement('img'); c.className = 'k-cab'; c.alt = ''; m.appendChild(c) }
+    c.style.display = ''; c.src = lib(lv.cab)
+  }
+  // cast react when Linus comes next to them (pose swap), checked a few times a second while a level is on screen
+  function startReact () {
+    if (startReact.on) return; startReact.on = true
+    setInterval(function () {
+      if (D.body.getAttribute('data-scr') !== 'scr-play' || !W.__mojo) return
+      var st = W.__mojo.state(); if (!st) return
+      var r = st.position.r, c = st.position.c
+      ;[].forEach.call(D.querySelectorAll('#decor .cast[data-react]'), function (d) {
+        var p = d.getAttribute('data-rc').split(','), near = Math.abs(+p[0] - r) + Math.abs(+p[1] - c) <= 2, im = d.firstChild, want = near ? d.getAttribute('data-react') : d.getAttribute('data-src')
+        if (im.getAttribute('src') !== want) { im.src = want; if (near && im.animate) im.animate([{ translate: '0 0' }, { translate: '0 -10px' }, { translate: '0 0' }], { duration: 320, easing: 'ease-out' }) }
+      })
+    }, 180)
+  }
+  // story cards on a level's intro (cutscene beats between playable moments)
+  function onIntro (lv, bi) {
+    if (!lv.cards || bi !== 0) return
+    var box = D.querySelector('#ov-card .intro-card .intro'); if (!box || box.querySelector('.k-cards')) return
+    var wrap = D.createElement('div'); wrap.className = 'k-cards'; var i = 0, timer = 0
+    var slides = lv.cards.map(function (cd, n) {
+      var sl = D.createElement('div'); sl.className = 'k-card' + (n ? '' : ' on')
+      sl.style.backgroundImage = 'url(' + background(cd.bg || lv.bg, false) + ')'
+      ;(cd.art || []).forEach(function (a) {
+        var im = D.createElement('img'); im.alt = ''; im.src = lib(a.k); im.className = 'k-card-art'
+        im.style.cssText = 'left:' + a.x + '%;height:' + (a.s || 60) + '%;' + (a.rot ? 'rotate:' + a.rot + 'deg;' : '') + (a.flip ? 'scale:-1 1;' : '')
+        sl.appendChild(im)
+      })
+      var cap = D.createElement('p'); cap.className = 'k-card-cap'; cap.textContent = cd.text; sl.appendChild(cap)
+      if (cd.headline) { var hl = D.createElement('div'); hl.className = 'k-paper'; hl.innerHTML = '<b></b><small>' + (cd.sub || '') + '</small>'; hl.firstChild.textContent = cd.headline; sl.appendChild(hl) }
+      wrap.appendChild(sl); return sl
+    })
+    var dots = D.createElement('div'); dots.className = 'k-dots'; slides.forEach(function () { dots.appendChild(D.createElement('i')) }); wrap.appendChild(dots)
+    function show (n) { i = n % slides.length; slides.forEach(function (s, k) { s.classList.toggle('on', k === i) }); [].forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === i) }) }
+    function auto () { clearTimeout(timer); if (i < slides.length - 1) timer = setTimeout(function () { show(i + 1); auto() }, 3200) }
+    wrap.addEventListener('click', function () { show(i + 1); auto() })
+    show(0); auto(); box.insertBefore(wrap, box.firstChild)
   }
   function addSteam () {   // the locomotive's own chimney (steams while it stands, harder when it moves)
     var m = D.getElementById('mojo'); if (!m || m.querySelector('.k-steam')) return
@@ -316,7 +367,7 @@
     libmap: libmap, hero: hero, scene: scene, regionScene: regionScene, background: background,
     pins: { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
     mapArt: function (port) { return background('bg-bl-lembah', port) },
-    onResult: onResult, allChapters: true, paintGround: paintGround, objArt: objArt, ambient: ambient, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
+    onResult: onResult, onIntro: onIntro, allChapters: true, paintGround: paintGround, objArt: objArt, ambient: ambient, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
   }
   P.def = def
   if (MA) {
@@ -335,7 +386,7 @@
     swap(MA.showcase, CAST.map(function (c) { return { id: c.id, name: c.name, ability: c.ability, src: lib(c.key), film: true, note: c.ability } }))
   }
   if (D && D.addEventListener) {
-    var ready = function () { reskinStatic(); buildHub(); rewireExit(); addSteam() }
+    var ready = function () { reskinStatic(); buildHub(); rewireExit(); addSteam(); startReact() }
     if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', ready); else ready()
   }
 })(typeof window !== 'undefined' ? window : globalThis)
