@@ -37,6 +37,32 @@
     var d = heading(h)
     return '<img class="owner-mojo owner-linus owner-stand st-' + d + '" src="' + lib('train-char/linus/' + STAND[d]) + '" alt="">'
   }
+  // Mojo's own UI strings ("Pesan Bo ›", "Misi selesai bersama Bo", "Ide untuk Mojo", alt and aria labels) are
+  // written straight into the page, past the engine's nm(). Rename them wherever they appear, as the DOM changes.
+  var NAR = (def.narrator && def.narrator.name) || 'Henry', HERO = def.heroName || 'Linus'
+  var RX = /\bBo\b|\bMojo\b/
+  function fix (t) { return t.replace(/\bBo\b/g, NAR).replace(/\bMojo\b/g, HERO) }
+  function sweep (root) {
+    if (!root || root.nodeType === 3) { if (root && RX.test(root.nodeValue)) root.nodeValue = fix(root.nodeValue); return }
+    if (root.nodeType !== 1 || root.tagName === 'SCRIPT' || root.tagName === 'STYLE') return
+    ;['alt', 'aria-label', 'title', 'placeholder'].forEach(function (a) { var v = root.getAttribute(a); if (v && RX.test(v)) root.setAttribute(a, fix(v)) })
+    var w = W.document.createTreeWalker(root, 5, null), n
+    while ((n = w.nextNode())) {
+      if (n.nodeType === 3) { if (RX.test(n.nodeValue)) n.nodeValue = fix(n.nodeValue) }
+      else ['alt', 'aria-label', 'title', 'placeholder'].forEach(function (a) { var v = n.getAttribute(a); if (v && RX.test(v)) n.setAttribute(a, fix(v)) })
+    }
+  }
+  function watch () {
+    sweep(W.document.body)
+    new W.MutationObserver(function (list) {
+      list.forEach(function (m) {
+        if (m.type === 'characterData') sweep(m.target)
+        else if (m.type === 'attributes') sweep(m.target)
+        else Array.prototype.forEach.call(m.addedNodes, sweep)
+      })
+    }).observe(W.document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['alt', 'aria-label', 'title', 'placeholder'] })
+  }
+  if (W.document.body) watch(); else W.document.addEventListener('DOMContentLoaded', watch)
   def.cam = function () { return cam }
   def.camOf = camOf
 })(window)
