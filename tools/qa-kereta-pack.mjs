@@ -57,7 +57,7 @@ for (const lv of ML.LEVELS) {
     const r = v.beats[bi] || { shortest: null }; report.push(`${lv.id}.${bi + 1} shortest ${r.shortest} budget ${b.budget} slots ${b.slots}`)
     check(r.shortest != null && r.shortest <= b.budget, `${lv.id} beat ${bi + 1}: the three-star budget ${b.budget} is reachable (shortest ${r.shortest})`)
     check(r.shortest != null && b.slots >= r.shortest + 2 && b.slots <= r.shortest + 6, `${lv.id} beat ${bi + 1}: slots ${b.slots} = shortest ${r.shortest} + 2..6`)
-    const sol = PG.solve(st[bi], b) || []
+    const sol = (st[bi] && PG.solve(st[bi], b)) || []
     check(sol.every(c => b.palette.includes(c)), `${lv.id} beat ${bi + 1}: the solution uses only palette commands`)
     const extra = b.palette.filter(c => !['up', 'down', 'west', 'east'].includes(c) && !sol.includes(c))
     check(!extra.length, `${lv.id} beat ${bi + 1}: palette holds only needed actions ${extra.join(',')}`)
@@ -86,7 +86,7 @@ const KC = ctx.KeretaCast, LIBK = ctx.KeretaPackLevels.LIB
 const sig = lv => lv.beats.map(b => (b.objectives.map(o => o.do).sort().join('+') + '|' + b.palette.filter(c => !['up', 'down', 'west', 'east'].includes(c)).sort().join(','))).join('/')
 for (let i = 1; i < ML.LEVELS.length; i++) check(sig(ML.LEVELS[i]) !== sig(ML.LEVELS[i - 1]), `${ML.LEVELS[i - 1].id} and ${ML.LEVELS[i].id} play differently (${sig(ML.LEVELS[i - 1])} vs ${sig(ML.LEVELS[i])})`)
 const used = new Set(), resolve = a => { if (!a) return; used.add(a); if (LIBK[a]) used.add(LIBK[a]) }
-for (const lv of ML.LEVELS) { (lv.decor || []).forEach(d => resolve(d.art)); (lv.uses || []).forEach(resolve); (lv.objects || []).forEach(o => { resolve(o.art); if (o.who) resolve('char/' + o.who) }) }
+for (const lv of ML.LEVELS) { (lv.decor || []).forEach(d => resolve(d.art)); lv.beats.forEach(b => (b.decor || []).forEach(d => resolve(d.art))); (lv.uses || []).forEach(resolve); (lv.objects || []).forEach(o => { resolve(o.art); if (o.who) resolve('char/' + o.who) }) }
 const EXCLUDED = new Set([])   // cast keys skipped on purpose
 // owner kid-safe rule: no chains, whips or weapons anywhere. Any database key that names one must never be used by a level.
 const UNSAFE = [...dbKeys].filter(k => /(chain|whip|gun|pistol|rifle|weapon|senjata|rantai|cambuk|senapan|knife|sword)/i.test(k))
@@ -105,7 +105,7 @@ if (process.env.QA_VERBOSE || process.argv.includes('--report')) console.log(rep
 /* ── B browser ─────────────────────────────────────────────────── */
 if (!process.argv.includes('--headless')) {
   const { default: puppeteer } = await import('puppeteer')
-  const BASE = process.env.KBASE || 'http://localhost:8083', URL = BASE + '/games/mojo-swoptops.html?pack=kereta'
+  const BASE = process.env.KBASE || 'http://localhost:8081', URL = BASE + '/games/mojo-swoptops.html?pack=kereta'
   const sleep = ms => new Promise(r => setTimeout(r, ms))
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
   const errors = []

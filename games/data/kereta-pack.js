@@ -157,10 +157,10 @@
   }
 
   // cheap life on the board (transform / opacity only): glints on every water and bridge cell, chimney smoke over stations and the depot
-  function ambient (lv) {
-    var out = []
-    lv.grid.map.forEach(function (row, r) { for (var c = 0; c < row.length; c++) { var k = row.charAt(c); if (k === '~' || k === '=') out.push({ at: [r, c], cls: 'k-water', html: '<i class="k-glint"></i><i class="k-glint g2"></i><i class="k-glint g3"></i>' }) } })
-    ;(lv.decor || []).concat(lv.objects || []).forEach(function (d) {
+  function ambient (lv, bi, b) {
+    var out = [], vis = (b && b.vis) || []
+    lv.grid.map.forEach(function (row, r) { for (var c = 0; c < row.length; c++) { var k = row.charAt(c); vis.forEach(function (v) { if (v.at[0] === r && v.at[1] === c) k = v.ch }); if (k === '~' || k === '=') out.push({ at: [r, c], cls: 'k-water', html: '<i class="k-glint"></i><i class="k-glint g2"></i><i class="k-glint g3"></i>' }) } })
+    ;((b && b.decor) || lv.decor || []).concat(lv.objects || []).forEach(function (d) {
       var a = d.art || ''
       if (/engine-house|station-small|stasiun-kecil|depo/.test(a) || (K.LIB[a] && /engine-house|station-small/.test(K.LIB[a]))) out.push({ at: d.at, cls: 'k-chimney', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' })
     })

@@ -12,12 +12,12 @@
   'use strict'
   var MOVE = ['up', 'down', 'west', 'east']
   var HERO = 'linus'
-  var CHAPTERS = [{ id: 'bl-lembah', title: 'Lembah dan Stasiun', sub: 'Bab 1' }, { id: 'bl-samson', title: 'Samson Datang', sub: 'Bab 2' }, { id: 'bl-hutan', title: 'Hutan Kayu', sub: 'Bab 3' }]
+  var CHAPTERS = [{ id: 'bl-lembah', title: 'Lembah dan Stasiun', sub: 'Bab 1' }, { id: 'bl-samson', title: 'Samson Datang', sub: 'Bab 2' }, { id: 'bl-hutan', title: 'Hutan Kayu', sub: 'Bab 3' }, { id: 'bl-jembatan', title: 'Jembatan Miring', sub: 'Bab 4' }]
   var REGIONS = [
     { id: 'bl-lembah', title: 'Lembah dan Stasiun', bg: 'bg-bl-lembah', card: 'card-bl-lembah-stasiun', open: true, levels: ['bl01', 'bl02', 'bl03', 'bl04', 'bl05'] },
     { id: 'bl-samson', title: 'Samson Datang', bg: 'bg-bl-depot', open: true, levels: ['bl06', 'bl07', 'bl08'] },
     { id: 'bl-hutan', title: 'Hutan Kayu', bg: 'bg-bl-hutan-logging', card: 'card-bl-hutan-logging', open: true, levels: ['bl09', 'bl10', 'bl11', 'bl12'] },
-    { id: 'bl-jembatan', title: 'Jembatan Miring', bg: 'bg-bl-jembatan', card: 'card-bl-penyelamatan-jembatan', open: true, levels: [] },
+    { id: 'bl-jembatan', title: 'Jembatan Miring', bg: 'bg-bl-jembatan', card: 'card-bl-penyelamatan-jembatan', open: true, levels: ['bl13', 'bl14', 'bl15', 'bl16'] },
     { id: 'bl-selamat', title: 'Penyelamatan', bg: 'bg-bl-malam', open: true, levels: [] },
     { id: 'bl-pulang', title: 'Pulih dan Pulang', bg: 'bg-bl-rumah', card: 'card-bl-pulang-rumah', open: true, levels: [] }
   ]
@@ -31,6 +31,8 @@
     'char/katrina': 'story-char/katrina/stand', 'train/samson': 'train-char/samson/34l-neutral', 'obj/kontrak': 'school/notebook',
     'char/scarlet': 'story-char/scarlet/stand', 'train/goro': 'train-char/goro-loco/front-34l', 'obj/papan': 'mojo-prop/bridge-wood',
     'obj/lentera': 'kereta-prop/lantern', 'obj/rumah-henry': 'kereta-prop/farmhouse', 'train/kayu': 'kereta-prop/log-stack', 'obj/gudang': 'kereta-prop/engine-house',
+    'obj/tali': 'kereta-prop/wheel-bandage', 'char/henry-tunjuk': 'story-char/henry/point', 'obj/pasak': 'kereta-prop/barrel', 'obj/kait': 'kereta-prop/log-stack',
+    'train/goro-b': 'train-char/goro-loco/front-34r', 'obj/daratan': 'kereta-prop/station-small', 'train/gerbong-samson': 'train-char/coach-green/side-l',
     'train/gerbong-hijau': 'train-char/coach-green/side-l', 'train/gerbong-merah': 'train-char/caboose-red/front-34l', 'obj/depo': 'kereta-prop/engine-house'
   }
   // L(): chapter 1. `n` is the scenario number in The_Brave_Locomotive_Linus_30_Skenario_Detail.md (its endpoint is the goal);
@@ -208,8 +210,7 @@
       celebrate: ['story-char/henry/wave', 'story-char/scarlet/ramah', 'story-char/baron/stand', 'story-char/katrina/stand'],
       grid: { rows: 6, cols: 8, map: [',,,T.,,,', '........', ',,,,,,,.', '........', '.,,,,,,,', '........'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 1], art: 'story-char/baron/stand' }, { at: [0, 6], art: 'story-char/baron/angkuh' }, { at: [2, 2], art: 'story-char/carter/arms-crossed' },
-        { at: [2, 5], art: 'story-char/james/walk-scroll' }, { at: [4, 2], art: 'story-char/henry/worried' }, { at: [4, 6], art: 'story-char/katrina/stand' }],
+      decor: [{ at: [0, 1], art: 'animal/deer/graze' }, { at: [0, 6], art: 'animal/bird-blue/fly' }, { at: [2, 3], art: 'story-char/henry/worried' }],
       objects: [
         { id: 'kura', type: 'patrol', at: [0, 4], name: 'Kura-kura', art: 'obj/kura', path: [[0, 4], [1, 4], [1, 4], [0, 4]], phase: 1 },
         { id: 'kayu1', type: 'wagon', at: [3, 5], art: 'train/kayu', name: 'Gerbong kayu pertama' },
@@ -220,17 +221,96 @@
       ],
       beats: [
         { title: 'Lembah berkabut', story: 'Kura-kura menyeberang rel. Linus menunggu.',
-          bo: 'Sampai ke bendera, beri jalan kura-kura.',
+          bo: 'Sampai ke bendera, beri jalan kura-kura.', hide: ['kayu1', 'kayu2', 'lampu', 'palang', 'gudang'],
           objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 13, budget: 10, forms: [HERO], palette: ['east', 'wait'] },
         { title: 'Muatan kayu', story: 'Dua gerbong kayu menunggu di rel.',
-          bo: 'Gandeng dua gerbong kayu.',
+          bo: 'Gandeng dua gerbong kayu.', hide: ['kura', 'lampu', 'palang', 'gudang'],
+          decor: [{ at: [2, 1], art: 'story-char/carter/arms-crossed' }, { at: [2, 6], art: 'story-char/james/walk-scroll' }, { at: [2, 3], art: 'kereta-prop/log-stack' }, { at: [4, 4], art: 'kereta-prop/log-stack' }, { at: [4, 6], art: 'kereta-prop/sawmill' }, { at: [0, 6], art: 'kereta-prop/pine' }],
           objectives: [{ 'do': 'wagons', n: 2 }, { 'do': 'reach', at: [3, 0] }], start: { at: [3, 7], h: 'W' }, slots: 12, budget: 9, forms: [HERO], palette: ['west', 'couple'] },
         { title: 'Palang sinyal', story: 'Palang sinyal menutup jembatan.',
-          bo: 'Buka palang sinyal dengan lampu.',
+          bo: 'Buka palang sinyal dengan lampu.', hide: ['kura', 'gudang'],
+          vis: [{ at: [5, 4], ch: '=' }, { at: [5, 5], ch: '=' }, { at: [5, 6], ch: '=' }, { at: [4, 3], ch: '~' }, { at: [4, 4], ch: '~' }, { at: [4, 5], ch: '~' }, { at: [4, 6], ch: '~' }],
+          decor: [{ at: [4, 1], art: 'story-char/henry/worried' }, { at: [4, 2], art: 'kereta-prop/signal-box' }, { at: [0, 5], art: 'animal/bird-blue/fly' }],
           objectives: [{ 'do': 'open', id: 'palang' }], slots: 8, budget: 5, forms: [HERO], palette: ['down', 'east', 'unlock'] },
         { title: 'Antar ke kota', story: 'Kayu tiba di gudang kota.',
-          bo: 'Gandeng gerbong ke Gudang Kota.',
+          bo: 'Gandeng gerbong ke Gudang Kota.', hide: ['kura', 'lampu', 'palang'],
+          decor: [{ at: [4, 5], art: 'kereta-prop/station-small' }, { at: [4, 6], art: 'story-char/katrina/stand' }, { at: [4, 4], art: 'kereta-prop/ticket-booth' }, { at: [2, 3], art: 'story-char/baron/stand' }, { at: [2, 6], art: 'kereta-prop/lantern' }],
           objectives: [{ 'do': 'train', id: 'gudang' }], slots: 9, budget: 6, forms: [HERO], palette: ['east', 'couple'] }
+      ] }),
+
+    // ── Bab 4 "Jembatan Miring" (scenarios 15-20; the rescue is safe: nobody falls, nobody is hurt) ──────────────
+    // 15-16 Samson tilts on the bridge: Linus carries the rescue rope across the bridge to Henry in the cab
+    L({ id: 'bl13', n: 15, ns: [15, 16], ch: 'bl-jembatan', title: 'Tali untuk Henry', place: 'Jembatan Tinggi', icon: 'cmd/deliver', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'membilang' },
+      grid: { rows: 3, cols: 8, map: [',,~~~~,,', '..====..', '.,~~~~,,'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 3], art: 'train-char/samson/34l-neutral' }, { at: [0, 1], art: 'story-char/baron/shocked' }, { at: [2, 6], art: 'story-char/scarlet/cemas-atas' }],
+      objects: [
+        { id: 'tali', type: 'parcel', at: [2, 0], kind: 'tali', name: 'Tali penyelamat', art: 'obj/tali' },
+        { id: 'henry', type: 'stop', at: [0, 7], accepts: 'tali', art: 'char/henry-cemas', name: 'Henry', pay: 'wave' }
+      ],
+      beats: [{ title: 'Tali penyelamat', story: 'Samson miring di jembatan. Henry menunggu bantuan.',
+        bo: 'Antar tali ke Henry di seberang.',
+        objectives: [{ 'do': 'deliver', id: 'henry' }], slots: 12, budget: 9, forms: [HERO], palette: ['east', 'down', 'pick', 'deliver'] }] }),
+
+    // 17 Linus works loose from the timber load: find the pin, open the coupling latch (sparks!), then roll free
+    L({ id: 'bl14', n: 17, ch: 'bl-jembatan', title: 'Lepas dari Muatan', place: 'Jalur Tebing', icon: 'cmd/unlock', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'syarat' },
+      grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,T,,,,,', ',,,,,,,,'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 1], art: 'story-char/carter/point' }, { at: [2, 5], art: 'kereta-prop/log-stack' }, { at: [0, 6], art: 'animal/vulture/perch-1' }],
+      objects: [
+        { id: 'pasak', type: 'key', at: [1, 2], key: 'kait', art: 'obj/pasak', name: 'Pasak' },
+        { id: 'kait', type: 'gate', at: [1, 4], key: 'kait', name: 'Kait muatan' },
+        { id: 'flag', type: 'flag', at: [1, 7] }
+      ],
+      beats: [{ title: 'Buka kait muatan', story: 'Linus melepas diri dari muatan kayu.',
+        bo: 'Ambil pasak, buka kait, lalu ke bendera.',
+        objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: [HERO], palette: ['east', 'unlock'] }] }),
+
+    // 18-19 down the cliff line: Goro backs into his dark shed; the lamps 1 and 2 show Linus the way to the bridge
+    L({ id: 'bl15', n: 18, ns: [18, 19], ch: 'bl-jembatan', title: 'Lampu di Jalur Gelap', place: 'Turunan Tebing', icon: 'ui/plan', bg: 'bg-bl-malam', edu: { domain: 'matematika', skill: 'urutan bilangan' },
+      grid: { rows: 4, cols: 8, map: [',,,,,.,,', '.......,', ',,,,,,.,', '.......,'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 7], art: 'story-char/carter/surprised' }, { at: [0, 2], art: 'train-char/goro-loco/front-34l' }, { at: [2, 1], art: 'story-char/james/point-scroll' }, { at: [2, 4], art: 'story-char/carter/defeated' }],
+      objects: [
+        { id: 'lampu1', type: 'mark', at: [1, 3], order: 1, seq: 'lampu', art: 'obj/angka-1', name: 'Lampu 1' },
+        { id: 'goro', type: 'patrol', at: [0, 5], name: 'Goro', art: 'train/goro-b', path: [[0, 5], [1, 5], [1, 5], [0, 5]], phase: 0 },
+        { id: 'lampu2', type: 'mark', at: [3, 4], order: 2, seq: 'lampu', art: 'obj/angka-2', name: 'Lampu 2' },
+        { id: 'flag', type: 'flag', at: [3, 0] }
+      ],
+      beats: [{ title: 'Ikuti lampu 1 dan 2', story: 'Goro mundur ke gudang gelap. Linus turun.',
+        bo: 'Lewati lampu 1 dan 2, lalu ke bendera.',
+        objectives: [{ 'do': 'visit', id: 'lampu2' }, { 'do': 'reach', at: [3, 0] }], slots: 21, budget: 17, forms: [HERO], palette: ['east', 'down', 'west', 'wait'] }] }),
+
+    // 20 PETUALANGAN BESAR: the whole rescue, four beats (dash down to the bridge, hitch the coaches, cross over the water, hand them over and turn back)
+    L({ id: 'bl16', n: 20, big: true, ch: 'bl-jembatan', title: 'Penyelamatan di Jembatan', place: 'Petualangan Besar', icon: 'cmd/couple', bg: 'bg-bl-jembatan',
+      bgs: ['bg-bl-hutan-logging', 'bg-bl-jembatan', 'bg-bl-jembatan', 'bg-bl-lembah'], edu: { domain: 'campuran', skill: 'urutan penyelamatan' },
+      celebrate: ['story-char/henry/wave', 'story-char/katrina/stand', 'story-char/baron/stand', 'story-char/scarlet/ramah'],
+      grid: { rows: 6, cols: 8, map: [',,,T,,,,', '........', ',,,,,,,.', '........', '.,,,,,,,', '........'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: HERO },
+      decor: [{ at: [0, 1], art: 'story-char/james/arms-folded' }, { at: [0, 5], art: 'animal/bird-blue/fly' }],
+      objects: [
+        { id: 'g1', type: 'wagon', at: [3, 5], art: 'train/gerbong-samson', name: 'Gerbong penumpang pertama' },
+        { id: 'g2', type: 'wagon', at: [3, 2], art: 'train/gerbong-samson', name: 'Gerbong penumpang kedua' },
+        { id: 'daratan', type: 'loco', at: [4, 7], needs: 2, art: 'obj/daratan', name: 'Stasiun daratan', pay: 'horn' }
+      ],
+      beats: [
+        { title: 'Meluncur ke jembatan', story: 'Linus turun dengan uap putih ke jembatan.',
+          bo: 'Sampai ke jembatan, ke bendera.', hide: ['g1', 'g2', 'daratan'],
+          decor: [{ at: [0, 1], art: 'story-char/james/point-scroll' }, { at: [2, 3], art: 'story-char/carter/defeated' }, { at: [2, 5], art: 'train-char/goro-loco/front-34r' }],
+          objectives: [{ 'do': 'reach', at: [3, 7] }], slots: 12, budget: 9, forms: [HERO], palette: ['east', 'down'] },
+        { title: 'Gandeng gerbong penumpang', story: 'Dua gerbong penumpang masih di jembatan.',
+          bo: 'Gandeng dua gerbong penumpang.', hide: ['daratan'],
+          decor: [{ at: [0, 3], art: 'train-char/samson/34l-neutral' }, { at: [0, 6], art: 'story-char/baron/shocked' }, { at: [2, 2], art: 'story-char/henry/point' }, { at: [2, 5], art: 'story-char/katrina/khawatir' }],
+          start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'wagons', n: 2 }, { 'do': 'reach', at: [4, 0] }], slots: 13, budget: 10, forms: [HERO], palette: ['west', 'down', 'couple'] },
+        { title: 'Seberangi jembatan', story: 'Linus menarik gerbong lewat jembatan.',
+          bo: 'Seberangi jembatan sampai ke bendera.', hide: ['daratan'],
+          vis: [{ at: [5, 2], ch: '=' }, { at: [5, 3], ch: '=' }, { at: [5, 4], ch: '=' }, { at: [5, 5], ch: '=' }, { at: [4, 2], ch: '~' }, { at: [4, 3], ch: '~' }, { at: [4, 4], ch: '~' }, { at: [4, 5], ch: '~' }, { at: [4, 6], ch: '~' }],
+          decor: [{ at: [2, 4], art: 'train-char/samson/34l-neutral' }, { at: [2, 1], art: 'story-char/henry/point' }],
+          objectives: [{ 'do': 'reach', at: [5, 7] }], slots: 11, budget: 8, forms: [HERO], palette: ['down', 'east'] },
+        { title: 'Antar ke daratan', story: 'Penumpang selamat. Linus berbalik ke jembatan.',
+          bo: 'Gandeng ke stasiun daratan, lalu bendera.',
+          decor: [{ at: [4, 5], art: 'kereta-prop/station-small' }, { at: [4, 4], art: 'story-char/katrina/stand' }, { at: [4, 3], art: 'story-char/baron/stand' }, { at: [2, 3], art: 'story-char/scarlet/ramah' }],
+          objectives: [{ 'do': 'train', id: 'daratan' }, { 'do': 'reach', at: [5, 0] }], slots: 10, budget: 8, forms: [HERO], palette: ['west', 'couple'] }
       ] })
   ]
   W.KeretaPackLevels = { HERO: HERO, CHAPTERS: CHAPTERS, REGIONS: REGIONS, LEVELS: LEVELS, LIB: LIB }

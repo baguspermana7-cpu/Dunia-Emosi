@@ -299,6 +299,18 @@
       for (var i = 0; i < n; i++) sprite(g, 'smoke', p[0] + (i - 1) * s * 0.12, p[1] - s * 0.3, s * (0.5 + i * 0.12), [{ transform: 'translateY(0) scale(.4)', opacity: 0 }, { transform: 'translateY(-' + s * 0.22 + 'px) scale(.85)', opacity: 0.9, offset: 0.3 }, { transform: 'translateY(-' + s * (0.7 + i * 0.12) + 'px) scale(1.4)', opacity: 0 }], 900 + i * 120, { z: 8, delay: i * 110, cls: 'steam' })
       settle(g, 1300)
     },
+    // a splash where the train rolls over a bridge cell (water spray at the wheels)
+    splash: function (r, c) {
+      var g = group('splash'), s = cell(), p = cc(r, c)
+      sprite(g, 'water-splash', p[0], p[1] + s * 0.12, s * 0.95, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 0.95, offset: 0.35 }, { transform: 'translateY(-' + s * 0.12 + 'px) scale(1.2)', opacity: 0 }], 650, { z: 8 })
+      settle(g, 900)
+    },
+    // brake sparks under the wheels (a stop on a rail)
+    sparks: function (r, c) {
+      var g = group('sparks'), s = cell(), p = cc(r, c)
+      sprite(g, 'sparks', p[0] - s * 0.1, p[1] + s * 0.24, s * 0.8, [{ transform: 'scale(.5)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: 0.3 }, { transform: 'scale(1.15)', opacity: 0 }], 520, { z: 8, blend: 'screen' })
+      settle(g, 800)
+    },
     /* blocked: skid marks, tyre smoke — and the crash the owner expects (2026-10-08): a comic BROK! burst at the
        impact point, chunky debris with gravity, dizzy stars orbiting Mojo, an 80 ms hit-stop and a firmer shake.
        The caller's clank stays; nothing here makes a sound. */

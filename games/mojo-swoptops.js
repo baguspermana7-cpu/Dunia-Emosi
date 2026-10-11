@@ -308,13 +308,33 @@
     setupBoard()
     beginBeat(resume)
   }
+  // a pack's per-beat scenery: the cast beside the track + cheap ambient life, rebuilt at every beat (a beat may carry its own `decor` and visual-only `vis` cells)
+  function visCh (lv, bi, r, c, k) {
+    var v = (lv.beats[bi || 0] || {}).vis
+    if (v) for (var i = 0; i < v.length; i++) if (v[i].at[0] === r && v[i].at[1] === c) return v[i].ch
+    return k
+  }
+  function renderCast () {
+    var lv = G.lv, box = $('decor'), b = lv.beats[G.bi] || {}
+    ;[].slice.call(box.querySelectorAll('.cast,.amb')).forEach(function (n) { n.remove() })
+    var f = D.createDocumentFragment()
+    ;(b.decor || lv.decor || []).forEach(function (d0) {
+      var t0 = el('div', 'dec cast'); t0.innerHTML = '<img alt="" src="' + MA.src(d0.art) + '">'; t0.setAttribute('data-rc', d0.at[0] + ',' + d0.at[1]); fitRing(t0.firstChild); f.appendChild(t0)
+    })
+    if (PK && PK.ambient) PK.ambient(lv, G.bi, b).forEach(function (a0) {
+      var t1 = el('div', 'dec amb ' + (a0.cls || '')); t1.innerHTML = a0.html || ''; t1.setAttribute('data-rc', a0.at[0] + ',' + a0.at[1]); f.appendChild(t1)
+    })
+    box.appendChild(f)
+    var hide = b.hide || []
+    for (var id in OBJ) OBJ[id].style.visibility = hide.indexOf(id) >= 0 ? 'hidden' : ''   // a beat may hide objects that belong to another place on the journey
+  }
   function beginBeat (resumed) {
     var b = beat()
     $('scr-play').style.backgroundImage = 'url(' + W.MojoMenu.background(MA.scene(G.lv, G.bi, ML.region(G.lv.id))) + ')'
     $('btn-run').disabled = false
     G.prog = (b.prefill || []).slice(); G.hist = []; G.sel = -1; G.hint = 0; G.fails = 0; G.fail = null; G.dirty = false; G.w = G.cp; G.trans = false
     clearMarks(); hideGhost(); $('hint-lv').textContent = ''
-    renderPalette(); W.requestAnimationFrame(function () { $('palette').scrollTop = 0 }); renderStrip(); renderHud(); renderWorld(G.w, true); beatDots()
+    renderCast(); renderPalette(); W.requestAnimationFrame(function () { $('palette').scrollTop = 0 }); renderStrip(); renderHud(); renderWorld(G.w, true); beatDots()
     boSay(b.bo, true)   // the beat's own line: it opens with THIS beat's objective (gate: qa-prog-grid L)
     helpUi()
     introCard(resumed)
@@ -340,13 +360,8 @@
         var t = el('div', 'dec'); t.innerHTML = '<img alt="" src="' + MA.src('obj/tree') + '">'; t.setAttribute('data-rc', r + ',' + c); fitRing(t.firstChild); decorF.appendChild(t)
       }
     })
-    ;(lv.decor || []).forEach(function (d0) {   // a pack's scenery cast: pictures that stand beside the track and are never touched
-      var t0 = el('div', 'dec cast'); t0.innerHTML = '<img alt="" src="' + MA.src(d0.art) + '">'; t0.setAttribute('data-rc', d0.at[0] + ',' + d0.at[1]); fitRing(t0.firstChild); decorF.appendChild(t0)
-    })
-    if (PK && PK.ambient) PK.ambient(lv).forEach(function (a0) {   // a pack's cheap life: water glints, chimney smoke (transform / opacity only)
-      var t1 = el('div', 'dec amb ' + (a0.cls || '')); t1.innerHTML = a0.html || ''; t1.setAttribute('data-rc', a0.at[0] + ',' + a0.at[1]); decorF.appendChild(t1)
-    })
     $('objs').appendChild(objsF); $('decor').appendChild(decorF)
+    renderCast()
     $('mojo-ch').innerHTML = MA.chassis('top')
     cargoNode().innerHTML = ''
     if (ro) ro.disconnect()
@@ -451,7 +466,7 @@
     cv.width = Math.round(Cn * CELL * dpr); cv.height = Math.round(R * CELL * dpr)
     var x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.imageSmoothingQuality = 'high'
     var T = THEME[lv.grid.theme] || THEME.town, s = CELL, indoor = lv.grid.theme === 'school'
-    function ch (r, c) { if (r < 0 || c < 0 || r >= R || c >= Cn) return null; return w.fill[r + ',' + c] ? '.' : lv.grid.map[r].charAt(c) }
+    function ch (r, c) { if (r < 0 || c < 0 || r >= R || c >= Cn) return null; return w.fill[r + ',' + c] ? '.' : visCh(lv, G.bi, r, c, lv.grid.map[r].charAt(c)) }
     var onCell = {}; (lv.objects || []).forEach(function (o) { onCell[o.at[0] + ',' + o.at[1]] = 1 })   // a building never hides under an object's own art
     var grass = tileImg('grass'), road = tileImg(indoor ? 'indoor-floor' : 'road'), water = tileImg('water'), wall = tileImg('wall'), hole = tileImg('trap-hole')
     if (PK && PK.paintGround) PK.paintGround(x, ch, R, Cn, s, grass)   // a pack lays its whole lawn first (tiles overlap, no cell rims)
@@ -1119,7 +1134,7 @@
     var pushed = ev.some(function (e) { return e.e === 'push' })
     ev.forEach(function (e) {
       switch (e.e) {
-        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); if (!pushed) fxCall('move', e.from, e.to); if (PK && !pushed) fxCall('steam', e.from[0], e.from[1], G.run && G.run.n === 0); break
+        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); if (!pushed) fxCall('move', e.from, e.to); if (PK && !pushed) { fxCall('steam', e.from[0], e.from[1], G.run && G.run.n === 0); if (visCh(G.lv, G.bi, e.to[0], e.to[1], G.lv.grid.map[e.to[0]].charAt(e.to[1])) === '=') later(function () { fxCall('splash', e.to[0], e.to[1]); SND.collect() }, T.move * 0.5) }; break
         case 'turn': turnMojo(e.h, prev.m.h); SND.turn(); wait = Math.max(wait, T.turn); break
         case 'push': var pf = PG.find(prev, e.id); pushObj(e.id, e.to); SND.push(); wait = Math.max(wait, T.move); if (pf) fxCall('push', [pf.r, pf.c], e.to, T.move); break
         case 'fill': later(function () { paint(G.w); renderObj(PG.find(G.w, e.id)); fxCall('fill', e.at[0], e.at[1]); SND.push() }, T.move); wait = Math.max(wait, T.move + 260); break
@@ -1139,7 +1154,7 @@
         case 'deliver': wait = Math.max(wait, deliverAnim(e)); break
         case 'couple': var cw = PG.find(G.w, e.id); renderObj(cw); if (cw) fxCall('couple', cw.r, cw.c); SND.clank(); wait = Math.max(wait, 420); break
         case 'train': wait = Math.max(wait, trainAnim(e)); break
-        case 'unlock': var gw = PG.find(G.w, e.id); renderObj(gw); if (gw) fxCall('unlock', gw.r, gw.c); SND.clank(); wait = Math.max(wait, 620); break
+        case 'unlock': var gw = PG.find(G.w, e.id); renderObj(gw); if (gw) fxCall('unlock', gw.r, gw.c); if (PK && gw) fxCall('sparks', gw.r, gw.c); SND.clank(); wait = Math.max(wait, 620); break
         case 'key': later(function () { pickupAt(e.id); SND.star() }, T.move * 0.8); wait = Math.max(wait, 360); break
         case 'mark': later(function () { pickupAt(e.id) }, T.move * 0.7); break
         case 'trail': trailAnim(e); wait = Math.max(wait, T.move); break
@@ -1147,7 +1162,7 @@
         case 'dump': wait = Math.max(wait, dumpAnim(e)); break
         case 'place': wait = Math.max(wait, placeAnim(e)); break
         case 'patrol': renderObj(PG.find(G.w, e.id)); if (OBJ[e.id]) OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); wait = Math.max(wait, T.move); break
-        case 'wait': if (PK) fxCall('steam', m.r, m.c, true); wait = Math.max(wait, 320); break
+        case 'wait': if (PK) { fxCall('steam', m.r, m.c, true); fxCall('sparks', m.r, m.c) }; wait = Math.max(wait, 320); break
       }
     })
     later(function () { G.w.objs.forEach(renderObj); done() }, wait + 40)
