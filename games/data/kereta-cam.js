@@ -33,9 +33,10 @@
   var hero0 = def.hero
   def.hero = function (form, view, h) {
     // only the board's hero changes; menus and cards keep the pack's own picture
-    if (form !== 'linus' || view !== 'top' || cam === 'top') return hero0.apply(this, arguments)
+    var hs = def.story && def.story.heroes && def.story.heroes[form]
+    if (!hs || view !== 'top' || cam === 'top') return hero0.apply(this, arguments)
     var d = heading(h)
-    return '<img class="owner-mojo owner-linus owner-stand st-' + d + '" src="' + lib('train-char/linus/' + STAND[d]) + '" alt="">'
+    return '<img class="owner-mojo owner-linus owner-stand st-' + d + '" src="' + lib('train-char/' + hs.sprite + '/' + STAND[d]) + '" alt="">'
   }
   // Mojo's own UI strings ("Pesan Bo ›", "Misi selesai bersama Bo", "Ide untuk Mojo", alt and aria labels) are
   // written straight into the page, past the engine's nm(). Rename them wherever they appear, as the DOM changes.

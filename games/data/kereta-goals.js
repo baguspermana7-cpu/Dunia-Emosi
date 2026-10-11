@@ -24,6 +24,10 @@
     [/story-char\/katrina/, 'Katrina'], [/story-char\/scarlet/, 'Scarlet'], [/story-char\/tuan-merah/, 'Tuan Merah'],
     [/story-char\/pelukis/, 'Pelukis'], [/story-char\/mekanik/, 'Mekanik'], [/story-char\/nyonya/, 'Nyonya'], [/story-char\/anak/, 'Anak'],
     [/train-char\/samson/, 'Samson'], [/train-char\/goro/, 'Goro'], [/train-char\/linus/, 'Linus'],
+    [/malivlak-char\/masinis/, 'Masinis'], [/malivlak-char\/orkes/, 'Pemusik'], [/malivlak-char\/penumpang/, 'Penumpang'], [/malivlak-char\/petugas-stasiun/, 'Petugas'],
+    [/malivlak-char\/petugas-bagasi/, 'Kuli bagasi'], [/malivlak-char\/penyambut/, 'Penyambut'], [/malivlak-char\/pembaca/, 'Pembaca pidato'],
+    [/train-char\/dragutin/, 'Dragutin'], [/train-char\/malivlak/, 'Malivlak'], [/train-char\/silver/, 'Kilat Perak'], [/train-char\/defeatist/, 'Tuan Lemas'],
+    [/kereta-prop\/mail/, 'Surat'], [/kereta-prop\/ticket/, 'Loket'],
     [/animal\/deer/, 'Rusa'], [/animal\/turtle/, 'Kura-kura'], [/animal\/(vulture|hering|raven|crow)/, 'Burung Hering'], [/animal\/bird/, 'Burung'], [/animal\/rabbit/, 'Kelinci'],
     [/kereta-prop\/log/, 'Kayu'], [/kereta-prop\/barrel/, 'Tong'], [/kereta-prop\/lantern/, 'Lampu'], [/kereta-prop\/coal/, 'Batu bara'],
     [/kereta-prop\/sawmill/, 'Penggergajian'], [/kereta-prop\/engine-house/, 'Depo'], [/kereta-prop\/station/, 'Stasiun'], [/kereta-prop\/farmhouse/, 'Rumah']
@@ -175,7 +179,7 @@
      tender behind Linus (never on his head) and comes off with TURUNKAN (or SERAHKAN for a paper or a tool). */
   var WORDS = { _: { pick: 'Muat', deliver: 'Turunkan', load: 'Muat', dump: 'Sekop' },
     bl05: { pick: 'Naikkan', deliver: 'Turunkan' }, bl17: { pick: 'Naikkan', deliver: 'Turunkan' }, bl23: { pick: 'Naikkan', deliver: 'Turunkan' },
-    bl08: { pick: 'Ambil', deliver: 'Serahkan' }, bl22: { pick: 'Ambil', deliver: 'Serahkan' }, bl14: { unlock: 'Lepas kait' } }
+    bl08: { pick: 'Ambil', deliver: 'Serahkan' }, bl22: { pick: 'Ambil', deliver: 'Serahkan' }, bl14: { unlock: 'Lepas kait' }, mv02: { pick: 'Muat', deliver: 'Turunkan' }, hb02: { pick: 'Ambil', deliver: 'Berikan' }, hb03: { load: 'Muat', dump: 'Isi tungku' } }
   var KIND = { batu: 'batu bara' }
   def.verbWords = function (lv) { var w = {}, d = WORDS._, o = WORDS[lv.id] || {}, k; for (k in d) w[k] = d[k]; for (k in o) w[k] = o[k]; return w }
   def.goalText = function (ob, stop, lv) {
@@ -219,6 +223,14 @@
       var lv = c.lv, w = c.w, key = lv.id + '/' + c.bi, groups = (c.beat.objectives || []).map(function (ob) { return groupOf(lv, w, ob) })
       decorate(lv, c.bi, w); refresh(lv, w)
       if (S.key !== key || !D.getElementById('k-check') || D.getElementById('k-check').children.length !== groups.length) { S.key = key; build(c, groups) } else tick(c, groups)
+      // wide screens show the goals as chips in the title bar: they get the same counter + pop, and the board overlay steps aside
+      var chips = D.querySelectorAll('#p-objs .ob-chip'), kc = D.getElementById('k-check'), bar = D.getElementById('p-objs') && W.getComputedStyle(D.getElementById('p-objs')).display !== 'none'
+      if (kc) kc.style.display = bar ? 'none' : ''
+      ;[].forEach.call(chips, function (ch, i) {
+        var g = groups[i]; if (!g) return
+        ch.setAttribute('data-n', g.have + '/' + g.need)
+        if (g.have > (S.have[i] || 0)) { ch.classList.remove('k-pop'); void ch.offsetWidth; ch.classList.add('k-pop') }
+      })
       S.have = groups.map(function (g) { return g.have })
       finalGlow(lv, w, groups)
     } catch (e) { if (W.console) console.warn('[kereta-goals]', e) }

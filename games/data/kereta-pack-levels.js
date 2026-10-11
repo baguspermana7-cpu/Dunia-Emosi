@@ -192,7 +192,8 @@
           objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: [HERO], palette: ['east'] },
         { title: 'Batas tanpa kembali', terrain: 'mountain', mood: 'storm', story: 'Sorot lampu menyapu jalur. Linus menunggu.',
           bo: 'Tunggu sorot lampu lewat, lalu ke bendera.', hide: ['l1', 'l2', 'l3'], fx: ['rain', 'lightning'],
-          decor: [{ at: [2, 1], art: 'mojo-prop/direction-sign' }, { at: [2, 2], art: 'animal/vulture/perch-1' }, { at: [2, 4], art: 'animal/vulture/perch-2' }, { at: [4, 5], art: 'train-char/goro-loco/front-34l' }, { at: [0, 6], art: 'kereta-prop/pine' }],
+          decor: [{ at: [2, 1], art: 'mojo-prop/direction-sign' }, { at: [2, 2], art: 'animal/vulture/perch-1' }, { at: [2, 4], art: 'animal/vulture/perch-2' }, { at: [0, 6], art: 'kereta-prop/pine' }],
+          cave: { at: [4, 5], goro: true, dir: 'l' },
           start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'reach', at: [3, 0] }], slots: 12, budget: 9, forms: [HERO], palette: ['west', 'wait'] },
         { title: 'Lembah kereta tua', terrain: 'logging', mood: 'storm', story: 'Kilat menerangi kereta-kereta tua.',
           bo: 'Lampu tua 1, 2, lalu lampu tua 3.', hide: ['sorot'], fx: ['rain', 'lightning', 'fog'], lean: [4, 4], lamps: [[5, 2], [5, 4], [5, 6]],
@@ -208,7 +209,8 @@
     L({ id: 'bl09', terrain: 'logging', mood: 'storm', n: 9, ch: 'bl-hutan', title: 'Sorot Lampu Goro', place: 'Hutan Gelap', icon: 'cmd/wait', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [2, 2], art: 'story-char/carter/hands-hips' }, { at: [2, 6], art: 'story-char/james/arms-folded' }, { at: [0, 6], art: 'train-char/goro-loco/front-34l' }],
+      decor: [{ at: [2, 2], art: 'story-char/carter/hands-hips' }, { at: [2, 6], art: 'story-char/james/arms-folded' }],
+      cave: { at: [0, 6], goro: true, dir: 'l' },
       fx: ['rain', 'lightning'],
       objects: [
         { id: 'sorot', type: 'patrol', at: [0, 3], name: 'Sorot lampu', art: 'obj/sorot', path: [[0, 3], [1, 3], [1, 3], [0, 3]], phase: 0 },
@@ -222,7 +224,8 @@
     L({ id: 'bl10', terrain: 'logging', mood: 'storm', n: 10, ch: 'bl-hutan', title: 'Kereta-Kereta Tua', place: 'Bangkai Kereta', icon: 'cmd/unlock', bg: 'bg-bl-malam', edu: { domain: 'algoritma', skill: 'syarat' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 1], art: 'train-char/rongsokan-a/v2' }, { at: [0, 4], art: 'train-char/rongsokan-b/v5' }, { at: [2, 3], art: 'train-char/goro-loco/front-34r' }, { at: [2, 6], art: 'story-char/james/scroll' }],
+      decor: [{ at: [0, 1], art: 'train-char/rongsokan-a/v2' }, { at: [0, 4], art: 'train-char/rongsokan-b/v5' }, { at: [2, 6], art: 'story-char/james/scroll' }],
+      cave: { at: [2, 3], goro: true, dir: 'r' },
       fx: ['rain', 'lightning', 'fog'], lean: [0, 6],
       objects: [
         { id: 'lentera', type: 'key', at: [1, 2], key: 'bangkai', art: 'obj/lentera', name: 'Lentera' },
@@ -247,7 +250,7 @@
 
     // 12-14 PETUALANGAN BESAR (sc 14 only; sc 12-13 are the story cards on its intro): Linus hauls a log wagon far taller than himself on the
     // cliff line with Carter sitting on the logs, the big truss bridge in the distance. Tired, not triumphant. No turtle, no city, no Henry.
-    L({ id: 'bl12', terrain: 'logging', mood: 'rain', n: 12, ns: [12, 13, 14], big: true, quiet: true, ch: 'bl-hutan', title: 'Muatan Kayu Berat', place: 'Petualangan Besar', icon: 'cmd/couple', bg: 'bg-bl-jembatan',
+    L({ id: 'bl12', tow: { id: 'kayu' }, terrain: 'logging', mood: 'rain', n: 12, ns: [12, 13, 14], big: true, quiet: true, ch: 'bl-hutan', title: 'Muatan Kayu Berat', place: 'Petualangan Besar', icon: 'cmd/couple', bg: 'bg-bl-jembatan',
       bgs: ['bg-bl-hutan-logging', 'bg-bl-jembatan', 'bg-bl-jembatan'], edu: { domain: 'campuran', skill: 'urutan perjalanan' },
       tired: [false, true, true], celebrate: [], fx: ['rain'],
       cards: [
@@ -264,22 +267,22 @@
       beats: [
         { title: 'Gandeng muatan kayu', story: 'Gerbong kayu menjulang di atas Linus.',
           bo: 'Gandeng gerbong kayu, lalu ke ujung rel.', fx: ['rain'], steam: true,
-          decor: [{ at: [2, 2], art: 'story-char/carter/hands-hips' }, { at: [2, 6], art: 'story-char/james/walk-scroll', flip: true }, { at: [0, 3], art: 'kereta-prop/sawmill' }, { at: [0, 6], art: 'kereta-prop/log-stack' }],
+          decor: [{ at: [2, 6], art: 'story-char/james/walk-scroll', flip: true }, { at: [0, 3], art: 'kereta-prop/sawmill' }, { at: [0, 6], art: 'kereta-prop/log-stack' }],
           objectives: [{ 'do': 'wagons', n: 1 }, { 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: [HERO], palette: ['east', 'couple'] },
         { title: 'Menanjak pelan', terrain: 'mountain', story: 'Beban berat. Setiap langkah terasa.',
           bo: 'Tarik muatan pelan ke bendera.', fx: ['rain'], steam: true,
-          decor: [{ at: [2, 2], art: 'story-char/carter/arms-crossed' }, { at: [4, 4], art: 'kereta-prop/pine' }, { at: [2, 5], art: 'kereta-prop/rock' }],
+          decor: [{ at: [4, 4], art: 'kereta-prop/pine' }, { at: [2, 5], art: 'kereta-prop/rock' }],
           objectives: [{ 'do': 'reach', at: [3, 0] }], slots: 12, budget: 9, forms: [HERO], palette: ['down', 'west'] },
         { title: 'Pos pandang', terrain: 'mountain', story: 'Dari tebing, jembatan besar tampak jauh.',
           bo: 'Bawa muatan ke bendera pos pandang.', fx: ['rain'], steam: true,
-          decor: [{ at: [4, 3], art: 'story-char/carter/point' }, { at: [4, 5], art: 'kereta-prop/lantern' }],
+          decor: [{ at: [4, 5], art: 'kereta-prop/lantern' }],
           objectives: [{ 'do': 'reach', at: [5, 7] }], slots: 11, budget: 9, forms: [HERO], palette: ['down', 'east'] }
       ] }),
 
     // ── Bab 4 "Jembatan Miring" (scenarios 15-20; the rescue is safe: nobody falls, nobody is hurt) ──────────────
     // 15 (story cards: the bridge sags, Samson tilts, Henry and Baron at the cab window) + 16 (level): Linus is still hooked to the logs on the
     // cliff; he drives up to the lookout steps 1, 2, 3 and SEES the emergency; his face turns from wide-eyed to determined.
-    L({ id: 'bl13', terrain: 'gorge', mood: 'sunset', n: 15, ns: [15, 16], ch: 'bl-jembatan', title: 'Linus Melihat Bahaya', place: 'Pos Pandang', icon: 'ui/plan', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'urutan bilangan' },
+    L({ id: 'bl13', tow: { virtual: true }, terrain: 'gorge', mood: 'sunset', n: 15, ns: [15, 16], ch: 'bl-jembatan', title: 'Linus Melihat Bahaya', place: 'Pos Pandang', icon: 'ui/plan', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'urutan bilangan' },
       cards: [
         { bg: 'bg-bl-jembatan', art: [{ k: 'train-char/samson/34l-neutral', x: 30, s: 58, rot: -10 }], text: 'Jembatan melendut. Samson miring!' },
         { bg: 'bg-bl-jembatan', art: [{ k: 'story-char/henry/worried', x: 30, s: 52 }, { k: 'story-char/baron/shocked', x: 54, s: 52 }], text: 'Henry dan Baron melihat ke bawah dari jendela kabin.' }
@@ -287,7 +290,7 @@
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,.,', '........'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       fx: ['rain'],
-      decor: [{ at: [0, 1], art: 'story-char/carter/hands-open' }, { at: [0, 2], art: 'kereta-prop/log-stack' }, { at: [2, 3], art: 'kereta-prop/pine' }],
+      decor: [{ at: [2, 3], art: 'kereta-prop/pine' }],
       objects: [
         { id: 'p1', type: 'mark', at: [1, 2], order: 1, seq: 'pandang', art: 'obj/angka-1', name: 'Pos 1' },
         { id: 'p2', type: 'mark', at: [1, 5], order: 2, seq: 'pandang', art: 'obj/angka-2', name: 'Pos 2' },
@@ -298,10 +301,10 @@
         objectives: [{ 'do': 'visit', id: 'p3' }], slots: 14, budget: 11, forms: [HERO], palette: ['east', 'down', 'west'] }] }),
 
     // 17 Linus works loose from the timber load: find the pin, open the coupling latch (sparks!), then roll free
-    L({ id: 'bl14', terrain: 'mountain', mood: 'sunset', n: 17, ch: 'bl-jembatan', title: 'Lepas dari Muatan', place: 'Jalur Tebing', icon: 'cmd/unlock', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'syarat' },
+    L({ id: 'bl14', tow: { virtual: true, snap: 'kait' }, terrain: 'mountain', mood: 'sunset', n: 17, ch: 'bl-jembatan', title: 'Lepas dari Muatan', place: 'Jalur Tebing', icon: 'cmd/unlock', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'syarat' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,T,,,,,', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 1], art: 'story-char/carter/point' }, { at: [2, 5], art: 'kereta-prop/log-stack' }, { at: [0, 6], art: 'animal/vulture/perch-1' }],
+      decor: [{ at: [0, 6], art: 'animal/vulture/perch-1' }],
       objects: [
         { id: 'pasak', type: 'key', at: [1, 2], key: 'kait', art: 'obj/pasak', name: 'Pasak' },
         { id: 'kait', type: 'gate', at: [1, 4], key: 'kait', name: 'Kait muatan' },
@@ -315,7 +318,9 @@
     L({ id: 'bl15', terrain: 'mountain', mood: 'night', n: 18, ns: [18, 19], ch: 'bl-jembatan', title: 'Lampu di Jalur Gelap', place: 'Turunan Tebing', icon: 'ui/plan', bg: 'bg-bl-malam', edu: { domain: 'matematika', skill: 'urutan bilangan' },
       grid: { rows: 4, cols: 8, map: [',,,,,.,,', '.......,', ',,,,,,.,', '.......,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 7], art: 'story-char/carter/surprised' }, { at: [0, 2], art: 'train-char/goro-loco/front-34l' }, { at: [2, 1], art: 'story-char/james/point-scroll' }, { at: [2, 4], art: 'story-char/carter/defeated' }],
+      decor: [{ at: [2, 1], art: 'story-char/james/point-scroll' }, { at: [2, 4], art: 'story-char/carter/defeated' }],
+      cave: { at: [0, 5], dir: 'l' },   // sc18: the ONE Goro (the patrol below) rolls out of this cave mouth and backs into it
+      shot: { by: 'james', at: [2, 1] },   // sc19: James fires a cartoon shot as Linus passes; it misses
       objects: [
         { id: 'lampu1', type: 'mark', at: [1, 3], order: 1, seq: 'lampu', art: 'obj/angka-1', name: 'Lampu 1' },
         { id: 'goro', type: 'patrol', at: [0, 5], name: 'Goro', art: 'train/goro-b', path: [[0, 5], [1, 5], [1, 5], [0, 5]], phase: 0 },
@@ -341,7 +346,7 @@
       beats: [
         { title: 'Meluncur ke jembatan', terrain: 'mountain', story: 'Linus turun dengan uap putih ke jembatan.',
           bo: 'Sampai ke jembatan, ke bendera.', hide: ['g1', 'g2', 'daratan'],
-          decor: [{ at: [0, 1], art: 'story-char/james/point-scroll' }, { at: [2, 3], art: 'story-char/carter/defeated' }, { at: [2, 5], art: 'train-char/goro-loco/front-34r' }],
+          decor: [{ at: [0, 1], art: 'story-char/james/point-scroll' }, { at: [2, 3], art: 'story-char/carter/defeated' }],
           objectives: [{ 'do': 'reach', at: [3, 7] }], slots: 12, budget: 9, forms: [HERO], palette: ['east', 'down'] },
         { title: 'Gandeng gerbong penumpang', terrain: 'gorge', story: 'Dua gerbong penumpang masih di jembatan.',
           bo: 'Gandeng dua gerbong penumpang.', hide: ['daratan'],

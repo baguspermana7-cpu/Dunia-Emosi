@@ -21,16 +21,17 @@ function load (pack) {
   if (pack) ctx.MojoPack = { id: 'kereta', def: null }
   vm.createContext(ctx)
   const files = ['games/prog-grid.js', 'games/data/mojo-levels.js']
-  if (pack) files.push('games/data/kereta-cast.js', 'games/data/kereta-pack-levels.js', 'games/data/kereta-pack.js')
+  if (pack) files.push('games/data/kereta-cast.js', (STORY === 'brave' ? 'games/data/kereta-pack-levels.js' : `games/data/kereta-pack-levels-${STORY}.js`), 'games/data/kereta-pack.js')
   for (const f of files) vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f })
   return ctx
 }
+const STORY = process.env.QA_STORY || 'brave', PFX = { brave: 'bl', malivlak: 'mv', hellbent: 'hb' }[STORY]
 const plain = load(false), ctx = load(true)
 const PG = ctx.ProgGrid, ML = ctx.MojoLevels
 console.log('--- H headless')
 check(plain.MojoLevels.LEVELS.length >= 50 && plain.MojoLevels.LEVELS[0].id === 't1', 'without a pack the Mojo level set is untouched')
 check(!plain.MojoLevels.FORMS.linus, 'without a pack there is no Linus form')
-check(ML.LEVELS.length >= 5 && ML.LEVELS.every(l => /^bl\d\d$/.test(l.id)), `the pack level set replaces Mojo's (${ML.LEVELS.length} levels)`)
+check(ML.LEVELS.length >= 4 && ML.LEVELS.every(l => new RegExp('^' + PFX + '\\d\\d$').test(l.id)), `the pack level set replaces Mojo's (${ML.LEVELS.length} levels)`)
 check(ML.LEVELS.every(l => ML.REGIONS.filter(r => r.levels.includes(l.id)).length === 1), 'every pack level sits in exactly one region')
 check(ML.REGIONS.every(r => r.levels.every(id => ML.byId(id))), 'every region level exists')
 check(new Set(ML.LEVELS.map(l => l.id)).size === ML.LEVELS.length, 'level ids unique')
@@ -87,14 +88,22 @@ const sig = lv => lv.beats.map(b => (b.objectives.map(o => o.do).sort().join('+'
 for (let i = 1; i < ML.LEVELS.length; i++) check(sig(ML.LEVELS[i]) !== sig(ML.LEVELS[i - 1]), `${ML.LEVELS[i - 1].id} and ${ML.LEVELS[i].id} play differently (${sig(ML.LEVELS[i - 1])} vs ${sig(ML.LEVELS[i])})`)
 const used = new Set(), resolve = a => { if (!a) return; used.add(a); if (LIBK[a]) used.add(LIBK[a]) }
 for (const lv of ML.LEVELS) { (lv.decor || []).forEach(d => { resolve(d.art); if (d.react) resolve(d.react) }); lv.beats.forEach(b => (b.decor || []).forEach(d => { resolve(d.art); if (d.react) resolve(d.react) })); (lv.cards || []).forEach(c => (c.art || []).forEach(a => resolve(a.k))); if (lv.cab) resolve(lv.cab); (lv.uses || []).forEach(resolve); (lv.objects || []).forEach(o => { resolve(o.art); if (o.who) resolve('char/' + o.who) }) }
+// story rigs (kereta-story.js): a cave mouth carries Goro; a tow carries Carter (every pose of him rides the logs)
+for (const lv of ML.LEVELS) { if (lv.cave || lv.beats.some(b => b.cave)) ['front-34l', 'front-34r'].forEach(k => used.add('train-char/goro-loco/' + k)); if (lv.tow) [...dbKeys].filter(k => /^story-char\/carter\//.test(k)).forEach(k => used.add(k)) }
+// owner 2026-10-11: exactly ONE Goro per board (a cave, or the patrol, never a standing copy beside it); Carter rides the logs, not the grass
+for (const lv of ML.LEVELS) lv.beats.forEach((b, i) => {
+  const dec = (b.decor || lv.decor || []).concat(lv.objects || []), goros = dec.filter(d => /goro/.test(d.art || '')).length + ((b.cave || lv.cave) && (b.cave || lv.cave).goro ? 1 : 0)
+  check(goros <= 1, `${lv.id}.${i}: at most one Goro on the board (${goros})`)
+  if (lv.tow) check(!dec.some(d => /story-char\/carter/.test(d.art || '')), `${lv.id}.${i}: Carter rides the logs, no second Carter on the grass`)
+})
 // cast keys skipped on purpose (alignment doc, owner 2026-10-11): sc4 child holding the turtle = Scarlet-era sc27 only; Scarlet and Henry never at the
 // logging line / bridge-lookout (sc14, 15-16); the sc15-16 cast list in kereta-cast.js predates the alignment doc
 const EXCLUDED = new Set(['story-char/anak-kura/hold', 'story-char/scarlet/cemas-atas', 'story-char/henry/worried'])
-// owner kid-safe rule: no chains, whips or weapons anywhere. Any database key that names one must never be used by a level.
+// owner kid-safe rule: no chains, whips or weapons ART in the database used by a level (the owner's 2026-10-11 exception is drawn by the pack: coupling chain, in-air whip, cartoon shot)
 const UNSAFE = [...dbKeys].filter(k => /(chain|whip|gun|pistol|rifle|weapon|senjata|rantai|cambuk|senapan|knife|sword)/i.test(k))
 check(UNSAFE.every(k => !used.has(k)), `no unsafe art used (${UNSAFE.length} unsafe keys exist in the database: ${UNSAFE.slice(0, 4).join(', ')})`)
 for (const lv of ML.LEVELS) check(Number.isInteger(lv.n), `${lv.id}: names its scenario number`)
-for (const lv of ML.LEVELS) for (const n of (lv.ns || [lv.n])) for (const k of (KC.brave[String(n)] || [])) if (!EXCLUDED.has(k)) check(used.has(k), `${lv.id} (scenario ${n}): cast ${k} is used`)
+for (const lv of ML.LEVELS) for (const n of (lv.ns || [lv.n])) for (const k of (STORY === 'hellbent' ? [] : (KC[STORY][String(n)] || []))) if (!EXCLUDED.has(k)) check(used.has(k), `${lv.id} (scenario ${n}): cast ${k} is used`)
 for (const lv of ML.LEVELS) {
   check(lv.title.length <= 28, `${lv.id}: title short (${lv.title.length})`)
   lv.beats.forEach((b, bi) => { check(b.bo.split(/\s+/).length <= 8, `${lv.id}.${bi + 1}: the narrator line has <= 8 words ("${b.bo}")`); check(b.story.length <= 60, `${lv.id}.${bi + 1}: the story line is one short line (${b.story.length} chars)`) })
@@ -113,8 +122,9 @@ if (process.env.QA_VERBOSE || process.argv.includes('--report')) console.log(rep
 /* ── B browser ─────────────────────────────────────────────────── */
 if (!process.argv.includes('--headless')) {
   const { default: puppeteer } = await import('puppeteer')
-  const BASE = process.env.KBASE || 'http://localhost:8081', URL = BASE + '/games/mojo-swoptops.html?pack=kereta'
+  const BASE = process.env.KBASE || 'http://localhost:8081', URL = BASE + '/games/mojo-swoptops.html?pack=kereta' + (STORY === 'brave' ? '' : '&story=' + STORY)
   const sleep = ms => new Promise(r => setTimeout(r, ms))
+  const DEF = ctx.MojoPack.def, HEROES = DEF.story.heroes, NARR_KEY = DEF.narrator.art.wave.split('/')[1] === 'face-happy' ? 'silver' : DEF.narrator.art.wave.split('/')[1]
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
   const errors = []
   async function page (w, h, url) {
@@ -129,7 +139,7 @@ if (!process.argv.includes('--headless')) {
     check(await p.evaluate(() => document.documentElement.getAttribute('data-pack') === 'kereta'), `${w}x${h}: html data-pack`)
     check(JSON.stringify(await p.evaluate(() => __mojo.levels())) === JSON.stringify(ML.LEVELS.map(l => l.id)), `${w}x${h}: the page runs the pack levels`)
     const home = await p.evaluate(() => ({ play: document.getElementById('play-t').textContent, logo: document.querySelector('.logo').textContent, hid: ['btn-workshop', 'btn-learn', 'btn-race', 'btn-profile'].map(i => getComputedStyle(document.getElementById(i)).display), vis: ['btn-play', 'btn-levels', 'btn-collection'].map(i => { const r = document.getElementById(i).getBoundingClientRect(); return r.width > 40 && r.height > 30 && r.bottom <= innerHeight + 1 && r.right <= innerWidth + 1 }) }))
-    check(/MULAI MAIN/.test(home.play) && /Linus/.test(home.logo), `${w}x${h}: landing says MULAI MAIN / Petualangan Linus`)
+    check(/MULAI MAIN/.test(home.play) && new RegExp(DEF.story.logo[1]).test(home.logo), `${w}x${h}: landing says MULAI MAIN / ${DEF.story.logo.join(' ')}`)
     check(home.hid.every(d => d === 'none') && home.vis.every(Boolean), `${w}x${h}: landing shows MULAI MAIN / PILIH MISI / Teman, all inside the viewport ${JSON.stringify(home.vis)}`)
     // every level starts and the hero faces its heading
     for (const id of ML.LEVELS.map(l => l.id)) {
@@ -139,8 +149,8 @@ if (!process.argv.includes('--headless')) {
       // owner 2026-10-11: the board stays flat and Linus STANDS on it, drawn from the side he shows (kereta-cam.js)
       const topCam = ML.byId(id).view === 'top'
       const want = (topCam ? ['top-n', 'top-e', 'top-s', 'top-w'] : ['rear', 'front-34r', 'front', 'front-34l'])[st.h]
-      check(st.id === id && st.form === 'linus' && st.src && st.src.indexOf('linus/' + want + '.') > 0, `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
-      check(/henry/.test(st.bo), `${w}x${h} ${id}: the narrator chip is Henry`)
+      check(st.id === id && !!HEROES[st.form] && st.src && st.src.indexOf(HEROES[st.form].sprite + '/' + want + '.') > 0, `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
+      check(new RegExp(NARR_KEY).test(st.bo), `${w}x${h} ${id}: the narrator chip is ${DEF.narrator.name}`)
       if (await p.$('#ov-card.on #picker-later')) await (await p.$('#picker-later')).click()
     }
     await p._ctx.close()
@@ -148,13 +158,13 @@ if (!process.argv.includes('--headless')) {
   {
     // the hint ladder and Tunjukkan Caranya on the Mojo engine, in the pack
     const p = await page(1280, 800)
-    await p.evaluate(() => __mojo.start('bl01')); await sleep(150); const g = await p.$('#in-go'); if (g) await g.click()
+    await p.evaluate(id => __mojo.start(id), ML.LEVELS[0].id); await sleep(150); const g = await p.$('#in-go'); if (g) await g.click()
     await (await p.$('#btn-hint')).click(); await sleep(100)
     const h1 = await p.evaluate(() => __mojo.state().hint); check(h1 >= 1, 'the hint ladder climbs one rung per tap')
-    const sol = await p.evaluate(() => __mojo.solution()); check(Array.isArray(sol) && sol.length === 7, `Tunjukkan Caranya has a plan (${sol && sol.length})`)
+    const sol = await p.evaluate(() => __mojo.solution()); check(Array.isArray(sol) && sol.length >= 3, `Tunjukkan Caranya has a plan (${sol && sol.length})`)
     for (const c of sol) { const b = await p.$(`[data-cmd="${c}"]`); await b.click(); await sleep(30) }
     await (await p.$('#btn-run')).click(); await p.waitForFunction(() => document.querySelector('#ov-card.on .result, #ov-card.on .card'), { timeout: 15000 }).catch(() => {})
-    check(await p.evaluate(() => !!document.querySelector('#ov-card.on')), 'solving bl01 with real taps ends in the result card')
+    check(await p.evaluate(() => !!document.querySelector('#ov-card.on')), 'solving the first level with real taps ends in the result card')
     await p._ctx.close()
   }
   {

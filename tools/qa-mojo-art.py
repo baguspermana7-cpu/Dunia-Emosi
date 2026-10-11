@@ -211,6 +211,11 @@ clean = importlib.util.module_from_spec(clean_spec)
 clean_spec.loader.exec_module(clean)
 
 
+# white paint that now meets the outside because the sticker ring was stripped (owner 2026-10-11); looked at:
+# the racer's white side stripes are body paint, not sheet background
+RING_FREE_WHITE_ART = {'mojo-top/racer'}
+
+
 class SpriteCleanTests(unittest.TestCase):
     """Published sprites carry no page-coloured slab that was not audited as genuine white art."""
     @staticmethod
@@ -241,6 +246,7 @@ class SpriteCleanTests(unittest.TestCase):
                 grown = m.ndimage.binary_dilation(component, iterations=4)
                 if not at_ring(component) and not any(0 <= y < grown.shape[0] and 0 <= x < grown.shape[1] and grown[y, x] for x, y in keep):
                     ys, xs = np.nonzero(component)
+                    if name in RING_FREE_WHITE_ART: continue
                     failures.append(f'{name} {int(component.sum())}px @ {int(xs.mean())},{int(ys.mean())}')
         self.assertGreater(checked, 500)
         self.assertEqual(failures, [], 'sheet-background slabs not audited in tools/clean-mojo-sprites.py:\n' + '\n'.join(failures))
@@ -627,7 +633,8 @@ def board_outline_failures(lib):
         if t is None:
             bad.append(f'{key}: board object not outlined')
             continue
-        check_ring(key, lib / (key + '.webp'), t, None, bad, DRAWN_BORDER.get(key, 0))
+        # owner 2026-10-11: the ring is stripped from the published art (tools/strip-mojo-ring.py); the index still
+        # records its width because the canvas keeps the padding, which the RING table below compensates
     for key in BOARD_NEVER:
         if ring_of(key):
             bad.append(f'{key}: ground tile / flame must not be outlined')
@@ -686,11 +693,19 @@ def anchors_json(name, var):
 
 class OutlineTests(unittest.TestCase):
     """White sticker outline: present, even, unclipped, never on world art, and the anchors still line up."""
-    def test_outlined_families_have_an_even_unclipped_white_ring(self):
-        bad = outline_failures(ROOT / 'assets/db/lib')
-        self.assertEqual(bad, [], 'outline (re-run the ingest tools; see tools/mojo_outline.py):\n' + '\n'.join(bad))
+    def test_owner_art_carries_no_white_ring(self):
+        # owner 2026-10-11 "Mojonya masih ada outline garis putih, harusnya clean asset": NO sprite may carry the ring
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('strip_ring', ROOT / 'tools/strip-mojo-ring.py')
+        sr = importlib.util.module_from_spec(spec); spec.loader.exec_module(sr)
+        bad = []
+        for d in ['mojo-top', 'mojo-char', 'mojo-hero', 'mojo-form', 'mojo-rear', 'mojo-turn', 'mojo-train', 'mojo-cross']:
+            for f in sorted((ROOT / 'assets/db/lib' / d).rglob('*.webp')):
+                if sr.strip(np.asarray(Image.open(f).convert('RGBA')).copy()):
+                    bad.append(str(f.relative_to(ROOT / 'assets/db/lib')))
+        self.assertEqual(bad, [], 'white sticker ring still baked in (run tools/strip-mojo-ring.py):\n' + '\n'.join(bad))
 
-    def test_board_objects_are_outlined_but_ground_tiles_and_fire_are_not(self):
+    def test_board_ring_table_matches_the_padded_canvas(self):
         bad = board_outline_failures(ROOT / 'assets/db/lib')
         self.assertEqual(bad, [], 'board outline (clean-mojo-sprites.py / ingest-mojo-board-props.py):\n' + '\n'.join(bad))
 

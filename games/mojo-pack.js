@@ -10,7 +10,7 @@
  * ==========================================================================*/
 (function (W, D) {
   'use strict'
-  var PACKS = { kereta: { css: 'kereta-pack.css', data: ['data/kereta-pack-levels.js', 'data/kereta-pack.js', 'data/kereta-cam.js', 'data/kereta-goals.js'] } }
+  var PACKS = { kereta: { css: 'kereta-pack.css', data: ['data/kereta-pack-levels.js', 'data/kereta-pack.js', 'data/kereta-cam.js', 'data/kereta-goals.js', 'data/kereta-story.js'] } }
   var me = D.currentScript && D.currentScript.src, V = me && me.indexOf('?') > 0 ? me.slice(me.indexOf('?')) : ''   // the page's own cache token
   var id = (/[?&]pack=([a-z0-9-]+)/.exec(W.location.search) || [])[1]
   if (!id || !PACKS[id]) return
@@ -20,6 +20,8 @@
     D.write('<link rel="stylesheet" href="' + PACKS[id].css + V + '">')
   } else if (!W.MojoPack.loaded) {
     W.MojoPack.loaded = true
-    PACKS[id].data.forEach(function (f) { D.write('<script src="' + f + V + '"><\/script>') })
+    var story = (/[?&]story=([a-z0-9-]+)/.exec(W.location.search) || [])[1], files = PACKS[id].data.slice()
+    if (id === 'kereta' && (story === 'malivlak' || story === 'hellbent')) files[0] = 'data/kereta-pack-levels-' + story + '.js'   // a storyline brings its own level set + cast (Brave when absent)
+    files.forEach(function (f) { D.write('<script src="' + f + V + '"><\/script>') })
   }
 })(window, document)

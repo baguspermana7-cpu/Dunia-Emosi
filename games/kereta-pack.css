@@ -284,7 +284,6 @@ html[data-pack="kereta"] .dec.cast[data-flip] img{scale:-1 1}
 .k-dots{position:absolute;right:8px;top:8px;display:flex;gap:4px}.k-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5)}.k-dots i.on{background:#ffd447}
 /* the log wagon of scenario 14 stands far taller than Linus, with Carter sitting on the logs (hands on hips) */
 html[data-pack="kereta"] .ob[data-id="kayu"] img.main{scale:1.7;transform-origin:50% 90%}
-html[data-pack="kereta"] .ob[data-id="kayu"]::after{content:'';position:absolute;left:18%;top:-92%;width:64%;height:70%;background:url('../assets/db/lib/story-char/carter/hands-hips.webp') center bottom/contain no-repeat;filter:drop-shadow(0 3px 2px rgba(0,0,0,.4));z-index:3;pointer-events:none}
 
 /* ── BOARD MOOD (data-mood on the play screen): the ground, the cast and the props take the scenario's light; Linus keeps his colour ── */
 #scr-play[data-mood="sunset"] #board-bg{filter:sepia(.28) saturate(1.2) brightness(.96) hue-rotate(-8deg)}
@@ -361,3 +360,43 @@ html[data-pack="kereta"] #mojo[data-heading="0"] .mj-cargo{transform:translate(-
 html[data-pack="kereta"] #mojo[data-heading="2"] .mj-cargo{transform:translate(-50%,-52%)}
 html[data-pack="kereta"] .mj-cargo.rider::before{height:30%}
 @keyframes kTenderIn{from{opacity:0;scale:.6}to{opacity:1;scale:1}}
+
+/* ── kereta-story.js: cave mouth, Carter on the logs with chain + whip, James's cartoon shot ── */
+html[data-pack="kereta"] .dec.amb.k-cave{z-index:1}
+html[data-pack="kereta"] .k-cave .rock{position:absolute;left:-12%;right:-12%;bottom:-6%;height:128%;border-radius:50% 50% 14% 14%;background:radial-gradient(ellipse at 40% 25%,#9a9488,#5d574d 70%);box-shadow:inset 0 -6px 0 rgba(0,0,0,.25),0 4px 0 rgba(0,0,0,.3)}
+html[data-pack="kereta"] .k-cave .mouth{position:absolute;left:14%;right:14%;bottom:-2%;height:92%;border-radius:50% 50% 8% 8%;background:radial-gradient(ellipse at 50% 80%,#10131a,#020305);overflow:hidden;box-shadow:inset 0 6px 14px #000}
+html[data-pack="kereta"] .k-cave .mouth .g{position:absolute;left:4%;bottom:0;width:92%;height:92%;object-fit:contain;animation:kGoro 7s ease-in-out infinite}
+html[data-pack="kereta"] .k-cave.dir-r .mouth .g{animation-name:kGoro}
+html[data-pack="kereta"] .k-cave .eye{position:absolute;top:44%;width:13%;height:9%;border-radius:50%;background:#7CFF8A;box-shadow:0 0 8px 3px rgba(124,255,138,.8);animation:kEye 3.4s ease-in-out infinite}
+html[data-pack="kereta"] .k-cave .eye.e1{left:30%}html[data-pack="kereta"] .k-cave .eye.e2{right:30%}
+html[data-pack="kereta"] .k-cave .mouth .g ~ .eye{animation:kEye 7s ease-in-out infinite}
+html[data-pack="kereta"] .k-cave .k-name{z-index:8}
+html[data-pack="kereta"] .ob[data-id="goro"]{transition:opacity .45s ease-out}
+html[data-pack="kereta"] .ob[data-id="goro"].k-incave{opacity:0}
+@keyframes kGoro{0%,18%{transform:translateY(40%) scale(.8);opacity:0}38%,62%{transform:translateY(4%) scale(1);opacity:1}82%,100%{transform:translateY(40%) scale(.8);opacity:0}}
+@keyframes kEye{0%,100%{opacity:.35}50%{opacity:1}}
+.k-tow{position:absolute;left:0;top:0;width:var(--cell);height:var(--cell);z-index:2;will-change:transform;pointer-events:none}
+.k-tow .logs{position:absolute;left:-30%;bottom:-4%;width:160%;height:90%;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(0,0,0,.35))}
+.k-tow .carter,.ob .carter{position:absolute;left:12%;bottom:48%;width:78%;height:105%;object-fit:contain;transform-origin:50% 100%;animation:kBreath 3.6s ease-in-out infinite alternate;filter:drop-shadow(0 3px 2px rgba(0,0,0,.4))}
+.k-tow.snapped{transition:transform .8s var(--ease-out,ease-out)}
+.k-tow.snapped .carter{animation:kTumble .9s var(--ease-out,ease-out) forwards}
+@keyframes kTumble{0%{transform:rotate(0)}40%{transform:translate(-30%,-30%) rotate(-40deg)}100%{transform:translate(-90%,48%) rotate(-82deg)}}
+.k-tow .whip,.ob .whip{position:absolute;left:62%;bottom:128%;width:60%;height:34%;border-top:3px solid #5a3515;border-right:3px solid #5a3515;border-radius:0 100% 0 0;transform-origin:0 100%;opacity:0;pointer-events:none}
+.k-tow.crack .whip,.ob.crack .whip{animation:kWhip .5s ease-out}
+@keyframes kWhip{0%{opacity:1;transform:rotate(-60deg) scale(.6)}40%{opacity:1;transform:rotate(10deg) scale(1.15)}100%{opacity:0;transform:rotate(18deg) scale(1.2)}}
+.k-chain{position:absolute;left:0;top:0;width:100px;height:9px;transform-origin:0 50%;background:repeating-linear-gradient(90deg,#9aa0a8 0 8px,transparent 8px 12px);border-radius:3px;box-shadow:0 2px 0 rgba(0,0,0,.45),0 0 0 1px #4a4f57;z-index:12;pointer-events:none;opacity:0;will-change:transform}
+.k-sawdust{position:absolute;left:0;top:0;width:calc(var(--cell)*1.2);height:calc(var(--cell)*.5);border-radius:50% 50% 30% 30%;background:radial-gradient(ellipse at 50% 30%,#e8c98a,#c19a5a);box-shadow:0 3px 0 rgba(0,0,0,.2);z-index:1;animation:kPop .5s var(--ease-out,ease-out)}
+.k-sfx{position:absolute;transform:translate(-50%,0);font:900 20px/1 'Nunito',sans-serif;color:#fff;text-shadow:0 2px 0 #7a2d0a,0 0 6px rgba(0,0,0,.4);z-index:20;pointer-events:none;animation:kSfx .85s ease-out forwards;white-space:nowrap}
+.k-sfx.dor{font-size:30px;color:#ffe14d;-webkit-text-stroke:2px #b3260a}
+.k-sfx.snapc{font-size:26px;color:#ffd0a0}
+.k-sfx.missc{font-size:15px}
+@keyframes kSfx{0%{opacity:0;transform:translate(-50%,6px) scale(.5)}20%{opacity:1;transform:translate(-50%,-4px) scale(1.25)}100%{opacity:0;transform:translate(-50%,-26px) scale(1)}}
+.k-muzzle{position:absolute;left:0;top:0;width:calc(var(--cell)*.7);height:calc(var(--cell)*.7);margin:-35% 0 0 -20%;background:radial-gradient(closest-side,#fff,#ffe14d 45%,rgba(255,150,40,0) 72%);border-radius:50%;z-index:15;pointer-events:none;animation:kFlash .4s ease-out forwards}
+@keyframes kFlash{0%{opacity:1;scale:.4}30%{opacity:1;scale:1.3}100%{opacity:0;scale:1.6}}
+.k-miss{position:absolute;left:0;top:0;width:calc(var(--cell)*.5);height:calc(var(--cell)*.5);margin:-25% 0 0 -25%;background:radial-gradient(closest-side,#fff,#ffe14d 50%,rgba(255,200,60,0) 75%);border-radius:50%;z-index:15;pointer-events:none;animation:kFlash .6s ease-out forwards}
+@media(prefers-reduced-motion:reduce){.k-cave .mouth .g,.k-cave .eye,.k-tow .carter,.ob .carter,.k-tow.crack .whip,.ob.crack .whip,.k-sfx,.k-muzzle,.k-miss{animation:none!important}.k-cave .mouth .g{transform:translateY(8%);opacity:1}}
+html[data-pack="kereta"] #p-objs .ob-chip::after{content:attr(data-n);font:900 13px/1 'Nunito',sans-serif;margin-left:6px;color:#4a2d12}
+html[data-pack="kereta"] #p-objs .ob-chip.k-pop{animation:kPop .5s var(--ease-out,ease-out)}
+html[data-pack="kereta"] .ob[data-id="kayu"] .carter{bottom:70%;left:30%;width:60%;z-index:4}
+html[data-pack="kereta"] .ob[data-id="kayu"] .whip{bottom:150%;left:70%;z-index:4}
+html[data-pack="kereta"] .ob[data-id="kayu"] .k-name{top:auto;bottom:-6%}

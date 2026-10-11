@@ -16,14 +16,18 @@
   if (!P || P.id !== 'kereta' || !ML || !K) return
 
   /* ── the hero: Linus (verbs = what the five missions use) ─────────────────────────────────────────── */
-  ML.FORMS.linus = { name: 'Linus', verbs: ['pick', 'drop', 'deliver', 'couple', 'unlock', 'place', 'load', 'dump'], color: '#2F5FA8', ability: 'couple' }
-  if (PG) PG.defineForm('linus', { verbs: ML.FORMS.linus.verbs })
+  // the storyline the level file declares (K.STORY); Brave Locomotive when it says nothing. Heroes: form id -> { name, sprite (train-char/<sprite>), color }
+  var S = K.STORY || { id: 'brave', hero: 'linus', heroName: 'Linus', heroes: { linus: { name: 'Linus', sprite: 'linus', color: '#2F5FA8' } }, narrator: { name: 'Henry', full: 'Henry McCloud', art: { wave: 'story-char/henry/wave', think: 'story-char/henry/worried', celebrate: 'story-char/henry/wave', tools: 'story-char/henry/shovel' } },
+    logo: ['Petualangan', 'Linus'], docTitle: 'Petualangan Linus: The Brave Locomotive', saveKey: 'dunia-g15k-kereta', collection: 'Teman-Teman Linus' }
+  if (D && D.documentElement) D.documentElement.setAttribute('data-story', S.id)
+  var VERBS = ['pick', 'drop', 'deliver', 'couple', 'unlock', 'place', 'load', 'dump']
+  Object.keys(S.heroes).forEach(function (f) { var h = S.heroes[f]; ML.FORMS[f] = { name: h.name, verbs: VERBS, color: h.color || '#2F5FA8', ability: 'couple' }; if (PG) PG.defineForm(f, { verbs: VERBS }) })
 
   /* ── content: the Mojo level set becomes this storyline (arrays edited in place, other modules hold refs) ── */
   function swap (arr, next) { arr.length = 0; next.forEach(function (x) { arr.push(x) }) }
   swap(ML.CHAPTERS, K.CHAPTERS); swap(ML.REGIONS, K.REGIONS); swap(ML.LEVELS, K.LEVELS)
 
-  var CAST = [
+  var CAST = S.cast || [
     { id: 'linus', name: 'Linus', ability: 'Lokomotif kecil berwarna biru yang ceria dan berani.', key: 'train-char/linus/34l-happy' },
     { id: 'henry', name: 'Henry McCloud', ability: 'Masinis yang baik hati. Ia menemani Linus di setiap misi.', key: 'story-char/henry/wave' },
     { id: 'samson', name: 'Samson', ability: 'Lokomotif raksasa yang kuat. Ia akan datang di Bab 2.', key: 'train-char/samson/34l-neutral' },
@@ -46,8 +50,8 @@
 
   var libmap = {
     // the narrator chip: Henry in Bo's three poses
-    'mojo-char/bo': 'story-char/henry/wave', 'mojo-char/bo-think': 'story-char/henry/worried', 'mojo-char/bo-celebrate': 'story-char/henry/wave',
-    'mojo-char/bo-tools': 'story-char/henry/shovel', 'tk-char/mechanic-boy': 'story-char/henry/wave', 'tk-char/mechanic-boy-wrench': 'story-char/henry/shovel',
+    'mojo-char/bo': S.narrator.art.wave, 'mojo-char/bo-think': S.narrator.art.think, 'mojo-char/bo-celebrate': S.narrator.art.celebrate,
+    'mojo-char/bo-tools': S.narrator.art.tools, 'tk-char/mechanic-boy': S.narrator.art.wave, 'tk-char/mechanic-boy-wrench': S.narrator.art.tools,
     // ground the Mojo board paints on its own: grass and water come from the owner's rail tile sheet
     'mojo-tile/grass': 'kereta-tile/grass', 'mojo-tile/water': 'kereta-tile/water'
   }
@@ -55,14 +59,14 @@
   function lib (k) { return (W.AssetIndex && W.AssetIndex.path && W.AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') }
   var HD = ['n', 'e', 's', 'w']
   function heading (h) { return typeof h === 'number' ? HD[((h % 4) + 4) % 4] : (typeof h === 'string' && HD.indexOf(h) >= 0 ? h : 'e') }
-  function heroKey (view, h) {
-    var TS = W.TrainSprites
-    if (view === 'top') return (TS && TS.pick('linus', { view: 'top', facing: heading(h) })) || ('train-char/linus/top-' + heading(h))
-    return (TS && TS.pick('linus', { view: 'front', facing: 225, expression: 'happy' })) || 'train-char/linus/34l-happy'
+  function heroKey (form, view, h) {
+    var TS = W.TrainSprites, sp = S.heroes[form].sprite
+    if (view === 'top') return (TS && TS.pick(sp, { view: 'top', facing: heading(h) })) || ('train-char/' + sp + '/top-' + heading(h))
+    return (TS && TS.pick(sp, { view: 'front', facing: 225, expression: 'happy' })) || 'train-char/' + sp + '/34l-happy'
   }
   function hero (form, view, h) {
-    if (form !== 'linus') return null
-    var top = view === 'top', k = heroKey(view, h)
+    if (!S.heroes[form]) return null
+    var top = view === 'top', k = heroKey(form, view, h)
     return '<img class="owner-mojo owner-linus owner-' + (top ? 'top h-' + heading(h) : view) + '" src="' + lib(k) + '" alt="">'
   }
 
@@ -198,6 +202,9 @@
       var a = d.art || ''
       if (/engine-house|station-small|stasiun-kecil|depo/.test(a) || (K.LIB[a] && /engine-house|station-small/.test(K.LIB[a]))) out.push({ at: d.at, cls: 'k-chimney', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' })
     })
+    // a cave mouth on the board edge (sc 9, 10, 18): Goro's green eyes glow inside; with goro:true he rolls out and backs in again
+    var cv = (b && b.cave) || lv.cave
+    if (cv) out.push({ at: cv.at, cls: 'k-cave dir-' + (cv.dir || 'l'), html: '<i class="rock"></i><i class="mouth">' + (cv.goro ? '<img class="g" alt="" src="' + lib('train-char/goro-loco/front-34' + (cv.dir === 'r' ? 'r' : 'l')) + '">' : '') + '<i class="eye e1"></i><i class="eye e2"></i></i><span class="k-name down">Gua</span>' })
     // the board takes the scenario's mood: wet dark ground gets puddles, sheen, rain across the board and lightning; lamps glow warm
     var md = moodOf(lv, bi), dark = md === 'night' || md === 'rain' || md === 'storm', fxl = (b && b.fx) || lv.fx || []
     if (dark) {
@@ -275,6 +282,7 @@
   }
   // the turtle tucks into its shell when Linus is close and walks when it is safe
   function objArt (o, w) {
+    if (o.art2 && (o.st === 'done' || o.st === 'delivered' || o.st === 'ready' || o.st === 'filled')) return o.art2   // a friend cheered up: its second picture
     if (o.id !== 'kura' || !w || !w.m) return null
     return Math.abs(o.r - w.m.r) + Math.abs(o.c - w.m.c) <= 2 ? 'animal/turtle/shell' : 'animal/turtle/walk'
   }
@@ -283,20 +291,20 @@
      round Cara Main / Teman, Linus and Henry at the station, a rabbit and a turtle ── */
   function setText (sel, t) { var e = D.querySelector(sel); if (e) e.textContent = t }
   function reskinStatic () {
-    D.title = 'Petualangan Linus: The Brave Locomotive'
-    setText('.logo .l1', 'Petualangan'); setText('.logo .l2', 'Linus')
+    D.title = S.docTitle
+    setText('.logo .l1', S.logo[0]); setText('.logo .l2', S.logo[1])
     setText('.home-brand .tag', 'Ayo susun langkah dan bantu teman!')
     setText('#btn-levels span', 'PILIH MISI'); setText('#btn-collection span', 'Teman')
-    D.querySelectorAll('[aria-label*="Bo"]').forEach(function (e) { e.setAttribute('aria-label', e.getAttribute('aria-label').replace(/\bBo\b/g, 'Henry')) })
-    D.querySelectorAll('.bo-copy small').forEach(function (e) { e.textContent = 'Pesan Henry ›' })
-    D.querySelectorAll('img[alt="Bo"]').forEach(function (e) { e.alt = 'Henry' })
+    D.querySelectorAll('[aria-label*="Bo"]').forEach(function (e) { e.setAttribute('aria-label', e.getAttribute('aria-label').replace(/\bBo\b/g, S.narrator.name)) })
+    D.querySelectorAll('.bo-copy small').forEach(function (e) { e.textContent = 'Pesan ' + S.narrator.name + ' ›' })
+    D.querySelectorAll('img[alt="Bo"]').forEach(function (e) { e.alt = S.narrator.name })
     var pt = D.getElementById('p-title'); if (pt && pt.parentNode) pt.parentNode.setAttribute('data-sub', 'Susun kartu, lalu tekan Jalan!')
   }
   function howTo () {
     var o = D.getElementById('ov-card'); if (!o) return
     o.innerHTML = '<div class="card k-howto"><h2 class="fk">Cara Main</h2><ol>' +
       '<li><b>1</b><span>Pilih kartu perintah, lalu susun urutannya di bawah.</span></li>' +
-      '<li><b>2</b><span>Tekan <em>Jalan!</em> dan lihat Linus menjalankan kartumu.</span></li>' +
+      '<li><b>2</b><span>Tekan <em>Jalan!</em> dan lihat ' + S.heroName + ' menjalankan kartumu.</span></li>' +
       '<li><b>3</b><span>Kalau belum pas, tidak apa-apa. Ubah kartunya, lalu coba lagi.</span></li></ol>' +
       '<div class="row"><button class="btn b-go fk" id="k-howto-ok" type="button">Ayo Main!</button></div></div>'
     o.classList.add('on'); D.getElementById('k-howto-ok').addEventListener('click', function () { o.classList.remove('on') })
@@ -304,8 +312,8 @@
   var decor = false
   function onHome (st) {
     var home = D.getElementById('scr-home'); if (!home) return
-    var hm = D.getElementById('home-mojo'); if (hm) hm.innerHTML = hero('linus', 'side')
-    var hb = D.getElementById('home-bo'); if (hb) hb.src = lib('story-char/henry/wave')
+    var hm = D.getElementById('home-mojo'); if (hm) hm.innerHTML = hero(S.hero, 'side')
+    var hb = D.getElementById('home-bo'); if (hb) hb.src = lib(S.narrator.art.wave)
     if (decor) return
     decor = true
     var d = D.createElement('div'); d.className = 'k-decor'; d.setAttribute('aria-hidden', 'true')
@@ -362,8 +370,8 @@
      unchanged. A storyline that is not built yet has no card at all (children never see "segera hadir"). ── */
   var STORIES = [
     { id: 'brave', title: 'Petualangan Linus', sub: 'The Brave Locomotive', pic: '../assets/kereta/cards/card-bl-lembah-stasiun.webp', built: true },
-    { id: 'malivlak', title: 'Dragutin dan Malivlak', sub: 'Dari stasiun sampai museum', pic: '../assets/kereta/cards/card-mv-stasiun.webp', built: false },
-    { id: 'hellbent', title: 'Lomba ke Kota', sub: 'Kilat Perak dan Tuan Lemas', pic: '../assets/kereta/cards/card-hb-start.webp', built: false },
+    { id: 'malivlak', title: 'Dragutin dan Malivlak', sub: 'Dari stasiun sampai museum', pic: '../assets/kereta/cards/card-mv-stasiun.webp', built: true },
+    { id: 'hellbent', title: 'Lomba ke Kota', sub: 'Kilat Perak dan Tuan Lemas', pic: '../assets/kereta/cards/card-hb-start.webp', built: true },
     { id: 'classic', title: 'Lokomotif Pemberani', sub: 'Game aslinya', pic: '../assets/train/backdrop/level20-640.webp', built: true, href: 'lokomotif-pemberani.html' }
   ]
   function buildHub () {
@@ -393,19 +401,19 @@
     if (!lv.big) return
     var card = D.querySelector('#ov-card .result'); if (!card) return
     var row = D.createElement('div'); row.className = 'k-cheer'
-    row.innerHTML = '<b class="fk">' + (lv.quiet ? 'Linus tiba di kawasan baru' : 'Petualangan Besar selesai!') + '</b>' + (lv.celebrate || []).map(function (k) { return '<img alt="" src="' + lib(k) + '">' }).join('')
+    row.innerHTML = '<b class="fk">' + (lv.quiet ? S.heroName + ' tiba di kawasan baru' : 'Petualangan Besar selesai!') + '</b>' + (lv.celebrate || []).map(function (k) { return '<img alt="" src="' + lib(k) + '">' }).join('')
     card.insertBefore(row, card.querySelector('.res-line'))
     if (W.MojoFX && !lv.quiet) { setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 700); setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 1500) }
   }
 
   var def = {
-    id: 'kereta', gameId: 'g15k', saveKey: 'dunia-g15k-kereta',
-    narrator: { name: 'Henry', full: 'Henry McCloud' }, heroName: 'Linus',
-    text: { play: ['MULAI MAIN', 'LANJUT MAIN', 'MAIN LAGI'], again: 'Coba Lagi', mapTitle: 'Pilih Misi', collectionTitle: 'Teman-Teman Linus',
+    id: 'kereta', gameId: 'g15k', saveKey: S.saveKey,
+    narrator: S.narrator, heroName: S.heroName, hero0: S.hero, story: S,
+    text: { play: ['MULAI MAIN', 'LANJUT MAIN', 'MAIN LAGI'], again: 'Coba Lagi', mapTitle: 'Pilih Misi', collectionTitle: S.collection,
       collectionLead: 'Kenali para sahabat di atas rel. Ketuk untuk melihat.', collectionHead: 'Para Sahabat' },
     msg: { 'cap-full': function () { return 'Sekopnya sudah penuh! Sekop dulu ke tungku.' }, 'no-load': function () { return 'Sekopnya kosong! MUAT batu bara dulu.' }, 'hole-full': function () { return 'Tungkunya sudah penuh.' }, caught: 'Ada yang lewat di rel! TUNGGU sebentar sampai relnya kosong, lalu jalan lagi.' },
     libmap: libmap, hero: hero, scene: scene, regionScene: regionScene, background: background,
-    pins: { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
+    pins: S.pins || { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
     mapArt: function (port) { return background('bg-bl-lembah', port) },
     onResult: onResult, onIntro: onIntro, allChapters: true, paintGround: paintGround, objArt: objArt, ambient: ambient, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
   }
@@ -420,7 +428,7 @@
       else useLib[k] = SPECIFIC[k]
     })
     MA.extendLib(useLib)
-    MA.OVERRIDE['char/bo'] = 'assets/db/lib/story-char/henry/wave.webp'   // the narrator chip's own picture
+    MA.OVERRIDE['char/bo'] = 'assets/db/lib/' + S.narrator.art.wave + '.webp'   // the narrator chip's own picture
     // the collection: the cast, not the Mojo forms
     swap(MA.heroCatalog, []); swap(MA.catalog, [])
     swap(MA.showcase, CAST.map(function (c) { return { id: c.id, name: c.name, ability: c.ability, src: lib(c.key), film: true, note: c.ability } }))
