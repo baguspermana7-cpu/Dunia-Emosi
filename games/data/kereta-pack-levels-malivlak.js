@@ -33,18 +33,18 @@
       beats: [{ title: 'Berhenti di peron', story: 'Dragutin masuk stasiun dan berhenti di peron.',
         bo: 'Bawa Dragutin ke bendera di peron.', objectives: [{ 'do': 'reach', at: [3, 7] }], slots: 13, budget: 10, forms: ['dragutin'], palette: ['down', 'east'] }] }),
 
-    // 02 passengers, luggage and the letters are loaded; the doors close (Malivlak the shunter brings them to Dragutin: adaptation)
-    L({ id: 'mv02', terrain: 'depot', mood: 'sun', n: 2, title: 'Penumpang, Koper, Surat', place: 'Peron Stasiun', icon: 'cmd/pick', edu: { domain: 'matematika', skill: 'membilang 1-2' },
+    // 02 film 1:00-1:21: the PORTER (kuli bagasi, in the film's overalls) carries the suitcases, the mail sacks and the letters into Dragutin; Malivlak is not in this scene
+    L({ id: 'mv02', walk: true, uses: ['malivlak-char/petugas-bagasi/angkat', 'malivlak-char/petugas-bagasi/koper-besar'], terrain: 'depot', mood: 'sun', n: 2, title: 'Penumpang, Koper, Surat', place: 'Peron Stasiun', icon: 'cmd/pick', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,.,.,,', ',,,,,,,,'], theme: 'town' },
-      mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
-      decor: [{ at: [3, 1], art: 'char/mv-bagasi', react: 'char/mv-koper-besar' }, { at: [0, 5], art: 'char/mv-petugas' }, { at: [3, 3], art: 'char/mv-ungu-koper' }],
+      mojo: { at: [1, 0], h: 'E', form: 'kuli' },
+      decor: [{ at: [0, 5], art: 'char/mv-petugas' }, { at: [3, 3], art: 'char/mv-ungu-koper' }, { at: [3, 5], art: 'char/mv-jas' }],
       objects: [
         { id: 'koper', type: 'parcel', at: [2, 1], kind: 'barang', name: 'Koper', art: 'obj/mv-koper' },
         { id: 'surat', type: 'parcel', at: [2, 5], kind: 'barang', name: 'Surat', art: 'obj/mv-surat' },
         { id: 'pintu', type: 'stop', at: [0, 7], accepts: 'barang', need: 2, art: 'train/dragutin', name: 'Dragutin', pay: 'horn' }
       ],
-      beats: [{ title: 'Muat koper dan surat', story: 'Koper dan surat naik ke Dragutin.',
-        bo: 'Turunkan koper dan surat di Dragutin.', objectives: [{ 'do': 'deliver', id: 'pintu' }], slots: 19, budget: 15, forms: ['malivlak'], palette: MOVE.concat(['pick', 'deliver']) }] }),
+      beats: [{ title: 'Muat koper dan surat', story: 'Kuli bagasi memasukkan koper dan surat.',
+        bo: 'Kuli: antar koper dan surat ke Dragutin.', objectives: [{ 'do': 'deliver', id: 'pintu' }], slots: 19, budget: 15, forms: ['kuli'], palette: MOVE.concat(['pick', 'deliver']) }] }),
 
     // 03 Dragutin leaves the station: wait for the porter to cross, the whistle, then roll out
     L({ id: 'mv03', terrain: 'depot', mood: 'sun', n: 3, title: 'Berangkat ke Pedesaan', place: 'Ujung Peron', icon: 'cmd/wait', bg: 'bg-mv-pedesaan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
@@ -111,7 +111,7 @@
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,.,.,.', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
       // film 3:00-3:12: the pond lies across the line; the train wades in and sinks until only its chimney and cab roof show above the water, then rises on the far bank
-      pond: [[0, 3], [0, 4], [0, 5], [1, 3], [1, 4], [1, 5]],
+      pond: [[0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 5]],
       objects: [
         { id: 'g1', type: 'wagon', at: [2, 1], art: 'train/mv-tender', name: 'Tender batu bara' },
         { id: 'g2', type: 'wagon', at: [2, 3], art: 'train/mv-gerbong', name: 'Gerbong hijau' },
@@ -378,7 +378,7 @@
   ]
   var NARR = { name: 'Masinis', full: 'Masinis Malivlak', art: { wave: 'malivlak-char/masinis/jalan', think: 'malivlak-char/masinis/terkejut', celebrate: 'malivlak-char/masinis/medali', tools: 'malivlak-char/masinis/palu' } }
   var STORY = { id: 'malivlak', hero: 'malivlak', heroName: 'Malivlak', narrator: NARR, saveKey: 'dunia-g15k-kereta-malivlak', logo: ['Dragutin dan', 'Malivlak'], docTitle: 'Dragutin dan Malivlak', collection: 'Teman-Teman Malivlak',
-    heroes: { dragutin: { name: 'Dragutin', sprite: 'dragutin', color: '#2E8B57' }, malivlak: { name: 'Malivlak', sprite: 'malivlak', color: '#B5432B' } },
+    heroes: { kuli: { name: 'Kuli bagasi', sprite: 'dragutin', art: 'malivlak-char/petugas-bagasi/angkat', color: '#2f5e9e' }, dragutin: { name: 'Dragutin', sprite: 'dragutin', color: '#2E8B57' }, malivlak: { name: 'Malivlak', sprite: 'malivlak', color: '#B5432B' } },
     pins: { 'mv-ch1': [30, 50], 'mv-ch2': [52, 38], 'mv-ch3': [72, 56], 'mv-ch4': [90, 40] },
     cast: [
       { id: 'malivlak', name: 'Malivlak', ability: 'Lokomotif uap kecil yang periang, membawa tiga gerbong.', key: 'train-char/malivlak/34l-happy' },

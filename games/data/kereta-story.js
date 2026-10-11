@@ -170,6 +170,34 @@
       setTimeout(function () { if (ne) ne.remove(); if (bd) bd.remove() }, 1500)
     }
   }
+  /* ── SUBMERGED (mv07, film 3:00-3:12): while the hero (and every coupled wagon) stands on a cell of the pond, the sprite is CLIPPED at the water surface so only
+     the top ~18% (chimney + cab roof; wagons their roof) shows, a ring of ripples spreads round the chimney, and a bubble trail rises. Out of the pond the clip opens
+     again (transition). level/beat key `pond` = cells (already shifted for the headroom row). ── */
+  var sinkWas = false
+  function clipTo (e, frac, inPond) {
+    if (!e) return
+    var img = e.querySelector('img.main') || e.querySelector('img.owner-mojo') || e.querySelector('img'); if (!img) return
+    var er = e.getBoundingClientRect(), ir = img.getBoundingClientRect(); if (ir.height < 8) return
+    var bottom = inPond ? Math.round(er.height - ((ir.top - er.top) + frac * ir.height)) : -400
+    e.style.transition = RM ? 'none' : 'clip-path .55s cubic-bezier(.23,1,.32,1)'
+    e.style.clipPath = 'inset(-400px -400px ' + bottom + 'px -400px)'
+  }
+  function sink (c) {
+    var lv = c.lv, spec = (c.beat && c.beat.pond) || lv.pond, objs = $('objs'), m = $('mojo'); if (!spec || !objs || !m) { var o0 = D.querySelector('.k-sinkrp'); if (o0) o0.remove(); return }
+    var set = {}; spec.forEach(function (p) { set[p[0] + ',' + p[1]] = 1 })
+    var inP = !!set[c.w.m.r + ',' + c.w.m.c]
+    clipTo(m, 0.2, inP)
+    ;[].forEach.call(objs.querySelectorAll('.ob[data-id]'), function (e) {
+      var o = PG.find(c.w, e.getAttribute('data-id')); if (!o || o.type !== 'wagon') return
+      clipTo(e, 0.3, !!set[o.r + ',' + o.c])
+    })
+    var rp = objs.querySelector('.k-sinkrp')
+    if (!inP) { if (rp) rp.style.opacity = '0'; sinkWas = false; return }
+    var img = m.querySelector('img.owner-mojo'), or = objs.getBoundingClientRect(), ir = img && img.getBoundingClientRect(); if (!ir || ir.height < 8) return
+    if (!rp) { rp = el('div', 'k-sinkrp', '<i></i><i class="r2"></i><i class="r3"></i><b class="bb"></b><b class="bb b2"></b><b class="bb b3"></b>'); objs.appendChild(rp) }
+    rp.style.opacity = '1'; rp.style.left = (ir.left - or.left + ir.width * 0.45) + 'px'; rp.style.top = (ir.top - or.top + ir.height * 0.2) + 'px'
+    if (!sinkWas) { sinkWas = true; var r = rp.getBoundingClientRect(); vfx('bk-circle-01', r.left, r.top, 150, { duration: 900 }); vfx('px-bubbles', r.left, r.top - 10, 150, { duration: 900 }) }
+  }
   // sc3 micro: the red caboose hops one beat LATE when the rake moves
   var lastPos = ''
   function hopLate (lv, w) {
@@ -192,7 +220,7 @@
         if (!R || R.lv !== lv || (broken0 && !open)) build(lv, w)
         if (open) snap()
       }
-      shot(lv, w); ride(lv); nest(c); hopLate(lv, w)
+      shot(lv, w); ride(lv); nest(c); sink(c); hopLate(lv, w)
       // bl15: the one Goro (the patrol) is swallowed by the dark when it stands in the cave cell
       var cv = (c.beat && c.beat.cave) || lv.cave
       if (cv) { var g = D.querySelector('#objs .ob[data-id="goro"]'), go = PG.find(w, 'goro'); if (g && go) g.classList.toggle('k-incave', go.r === cv.at[0] && go.c === cv.at[1]) }

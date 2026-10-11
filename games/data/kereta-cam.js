@@ -34,7 +34,7 @@
   def.hero = function (form, view, h) {
     // only the board's hero changes; menus and cards keep the pack's own picture
     var hs = def.story && def.story.heroes && def.story.heroes[form]
-    if (!hs || view !== 'top' || cam === 'top') return hero0.apply(this, arguments)
+    if (!hs || hs.art || view !== 'top' || cam === 'top') return hero0.apply(this, arguments)
     var d = heading(h)
     return '<img class="owner-mojo owner-linus owner-stand st-' + d + '" src="' + lib('train-char/' + hs.sprite + '/' + STAND[d]) + '" alt="">'
   }

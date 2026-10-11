@@ -99,6 +99,7 @@
   }
   function hero (form, view, h) {
     if (!S.heroes[form]) return null
+    if (S.heroes[form].art) return '<img class="owner-mojo owner-person h-' + heading(h) + '" src="' + lib(S.heroes[form].art) + '" alt="">'   // a PERSON hero (the porter): his own art, mirrored when he walks west
     var top = view === 'top', k = heroKey(form, view, h)
     return '<img class="owner-mojo owner-linus owner-' + (top ? 'top h-' + heading(h) : view) + '" src="' + lib(k) + '" alt="">'
   }
@@ -170,11 +171,22 @@
     var keys = Object.keys(set); if (!keys.length) return
     var cells = keys.map(function (k) { return k.split(',').map(Number) }), i
     var y0 = Math.min.apply(null, cells.map(function (p) { return p[0] })) * s, y1 = (Math.max.apply(null, cells.map(function (p) { return p[0] })) + 1) * s
+    var bulge = function (infl) {   // lobes that push the outline out past the cell grid, so the pond is no rectangle
+      cells.forEach(function (p) {
+        var r = p[0], c = p[1]
+        ;[[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(function (d, k) {
+          if (set[(r + d[0]) + ',' + (c + d[1])] || rnd(r, c, 200 + k) < 0.3) return
+          var cx = (c + 0.5 + d[1] * (0.46 + rnd(r, c, 210 + k) * 0.16)) * s, cy = (r + 0.5 + d[0] * (0.46 + rnd(r, c, 220 + k) * 0.16)) * s
+          var rx = s * (d[1] ? 0.2 + rnd(r, c, 230 + k) * 0.1 : 0.34 + rnd(r, c, 230 + k) * 0.1), ry = s * (d[1] ? 0.34 + rnd(r, c, 240 + k) * 0.1 : 0.2 + rnd(r, c, 240 + k) * 0.1)
+          x.beginPath(); x.ellipse(cx, cy, Math.max(1, rx + infl), Math.max(1, ry + infl), 0, 0, 7); x.fill()
+        })
+      })
+    }
     x.save()
-    x.fillStyle = '#a8955f'; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, s * 0.1) })       // wet sand / mud shore
-    x.fillStyle = '#7fa6a0'; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, s * 0.04) })       // shallow rim
+    x.fillStyle = '#a8955f'; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, s * 0.1) }); bulge(s * 0.1)       // wet sand / mud shore
+    x.fillStyle = '#7fa6a0'; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, s * 0.04) }); bulge(s * 0.04)       // shallow rim
     var g = x.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, '#2f7fa3'); g.addColorStop(0.55, '#1f628a'); g.addColorStop(1, '#2b7497')
-    x.fillStyle = g; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, -s * 0.05) })
+    x.fillStyle = g; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, -s * 0.05) }); bulge(-s * 0.05)
     x.globalCompositeOperation = 'source-atop'
     cells.forEach(function (p) {
       var r = p[0], c = p[1], X = c * s, Y = r * s
@@ -262,6 +274,14 @@
       dirs.forEach(function (d) { var a2 = arm(X, Y, s, d); paths.push({ pts: line(a2[0], a2[1], 8), ts: [0.25, 0.75] }) })
     }
     var all = []; paths.forEach(function (p) { all = all.concat(p.pts) })
+    if (CUR && CUR.walk && !bridge) {   // a platform path for a walking hero: paving slabs, no rails
+      x.save(); x.lineCap = 'butt'; x.lineJoin = 'round'
+      x.lineWidth = s * 0.66; x.strokeStyle = 'rgba(70,56,36,.35)'; paths.forEach(function (p) { strokePts(x, p.pts) })
+      x.lineWidth = s * 0.6; x.strokeStyle = '#d8c9a4'; paths.forEach(function (p) { strokePts(x, p.pts) })
+      x.lineWidth = s * 0.5; x.strokeStyle = '#e6dab8'; paths.forEach(function (p) { strokePts(x, p.pts) })
+      x.strokeStyle = 'rgba(120,98,62,.45)'; x.lineWidth = Math.max(1, s * 0.016); x.setLineDash([s * 0.2, s * 0.8]); paths.forEach(function (p) { strokePts(x, offset(p.pts, s * 0.0)) }); x.setLineDash([])
+      x.restore(); return
+    }
     x.save(); x.lineJoin = 'round'
     if (TERRAIN === 'mountain' || TERRAIN === 'gorge') { x.lineCap = 'butt'; x.strokeStyle = 'rgba(25,20,15,.5)'; x.lineWidth = s * 0.74; paths.forEach(function (p) { strokePts(x, p.pts) }); if (bridge) { x.strokeStyle = '#3a2a1a'; x.lineWidth = s * 0.66; paths.forEach(function (p) { strokePts(x, p.pts) }); x.strokeStyle = '#5c3d1f'; for (var q = 0; q < 4; q++) { x.beginPath(); x.moveTo(X + s * (0.15 + q * 0.23), Y + s * 0.78); x.lineTo(X + s * (0.15 + q * 0.23), Y + s); x.stroke() } } }
     // soft shadow, then the gravel (or plank) bed, drawn 1px long at both ends so cells overlap exactly

@@ -119,8 +119,8 @@ for (const lv of ML.LEVELS) { const bad = ART_OF(lv).filter(k => FOREIGN[lv.id.s
 // VFX hygiene (owner 2026-10-11, the brake smoke drew a black square with a lightning bolt): every effect id the pack names exists in the
 // shared bank, is licence-cleared and kid-safe, is not an electric bolt (bk-spark-*, bk-trace-*: storm only) and is not the hard-edged full-frame dark sheet
 const VFXDB = Object.fromEntries(JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/vfx/vfx-db.json'), 'utf8')).effects.map(e => [e.id, e]))
-const PACK_SRC = ['games/data/kereta-cine.js', 'games/data/kereta-story.js', 'games/data/kereta-goals.js', 'games/data/kereta-pack-levels.js', 'games/data/kereta-pack-levels-malivlak.js', 'games/data/kereta-pack-levels-hellbent.js'].map(f => fs.existsSync(path.join(ROOT, f)) ? fs.readFileSync(path.join(ROOT, f), 'utf8') : '').join('\n')
-const FXIDS = [...new Set([...PACK_SRC.matchAll(/'((?:bk|px)-[a-z0-9-]+)'/g)].map(m => m[1]))]
+const PACK_SRC = ['games/data/kereta-cine.js', 'games/data/kereta-story.js', 'games/data/kereta-goals.js', 'games/data/kereta-scene.js', 'games/data/kereta-pack-levels.js', 'games/data/kereta-pack-levels-malivlak.js', 'games/data/kereta-pack-levels-hellbent.js'].map(f => fs.existsSync(path.join(ROOT, f)) ? fs.readFileSync(path.join(ROOT, f), 'utf8') : '').join('\n')
+const FXIDS = [...new Set([...PACK_SRC.matchAll(/'((?:bk|px|ow)-[a-z0-9-]+)'/g)].map(m => m[1]))]
 for (const id of FXIDS) {
   const e = VFXDB[id]
   check(!!e, `vfx ${id} exists in the shared bank`)
@@ -188,7 +188,7 @@ if (!process.argv.includes('--headless')) {
       // owner 2026-10-11: the board stays flat and Linus STANDS on it, drawn from the side he shows (kereta-cam.js)
       const topCam = ML.byId(id).view === 'top'
       const want = (topCam ? ['top-n', 'top-e', 'top-s', 'top-w'] : ['rear', 'front-34r', 'front', 'front-34l'])[st.h]
-      check(st.id === id && !!HEROES[st.form] && st.src && st.src.indexOf(HEROES[st.form].sprite + '/' + want + '.') > 0, `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
+      check(st.id === id && !!HEROES[st.form] && st.src && (HEROES[st.form].art ? st.src.indexOf(HEROES[st.form].art) > 0 : st.src.indexOf(HEROES[st.form].sprite + '/' + want + '.') > 0), `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
       await sleep(450)
       const clash = await p.evaluate(() => { const t = [...document.querySelectorAll('#decor .k-name, #objs .k-name')].filter(e => e.getClientRects().length && getComputedStyle(e).opacity !== '0'), out = []
         const R = t.map(e => e.getBoundingClientRect())

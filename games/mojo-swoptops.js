@@ -81,6 +81,7 @@
     twinkle: function () { [2093, 1760, 1568, 1318, 1175].forEach(function (f, i) { tone(f, f * 1.02, 0.12, 0.05, 'sine', i * 0.07) }) },
     tweet: function () { [0, 0.16, 0.42, 0.58].forEach(function (t, i) { tone(2600 + (i % 2) * 400, 3400 + (i % 2) * 300, 0.07, 0.045, 'sine', t) }) }
   }
+  SND.on = soundOn   // a pack may ask whether sound is on before it plays its own cues (inert without ?pack=)
   var VOICE = null
   function pickVoice (lang) {
     try { var vs = W.speechSynthesis.getVoices() || [], re = lang === 'en' ? /^en([-_]|$)/i : /^id([-_]|$)/i; return vs.filter(function (v) { return re.test(v.lang) })[0] || null } catch (e) { return null }
