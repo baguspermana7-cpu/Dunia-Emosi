@@ -348,3 +348,16 @@ html[data-pack="kereta"] .k-check.k-ready .k-grp.done{animation:kPop .6s var(--e
 @keyframes kPop{0%{transform:scale(.6)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
 @keyframes kNameIn{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){html[data-pack="kereta"] .k-bubble,html[data-pack="kereta"] .k-glow,html[data-pack="kereta"] .k-ghost,html[data-pack="kereta"] .k-name,.k-slot.pop,.k-next::before,.k-final::before{animation:none!important}}
+
+/* ── the tender: a carried load rides IN an open wooden car behind Linus, never on his head ── */
+html[data-pack="kereta"] .mj-cargo{left:50%;bottom:4%;width:60%;height:50%;transform:translateX(-50%);z-index:3}
+html[data-pack="kereta"] .mj-cargo.on{animation:kTenderIn .35s var(--ease-out,ease-out)}
+html[data-pack="kereta"] .mj-cargo img{position:absolute;left:14%;bottom:30%;width:72%;height:84%;animation:none}
+html[data-pack="kereta"] .mj-cargo::before{content:'';position:absolute;left:0;right:0;bottom:6%;height:42%;border-radius:5px 5px 9px 9px;background:linear-gradient(180deg,#b9824a,#8a5528);box-shadow:inset 0 3px 0 rgba(255,255,255,.28),0 0 0 2px #5a3515,0 4px 0 rgba(0,0,0,.28);z-index:2}
+html[data-pack="kereta"] .mj-cargo::after{content:'';position:absolute;left:10%;right:10%;bottom:-2%;height:16%;background:radial-gradient(circle at 12% 50%,#2b2b2b 0 38%,transparent 42%),radial-gradient(circle at 88% 50%,#2b2b2b 0 38%,transparent 42%);z-index:3}
+html[data-pack="kereta"] #mojo[data-heading="1"] .mj-cargo{transform:translate(-128%,0)}
+html[data-pack="kereta"] #mojo[data-heading="3"] .mj-cargo{transform:translate(28%,0)}
+html[data-pack="kereta"] #mojo[data-heading="0"] .mj-cargo{transform:translate(-50%,62%)}
+html[data-pack="kereta"] #mojo[data-heading="2"] .mj-cargo{transform:translate(-50%,-52%)}
+html[data-pack="kereta"] .mj-cargo.rider::before{height:30%}
+@keyframes kTenderIn{from{opacity:0;scale:.6}to{opacity:1;scale:1}}

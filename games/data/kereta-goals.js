@@ -169,6 +169,51 @@
     var b = D.getElementById('k-check'); if (b) b.classList.toggle('k-ready', ready)
   }
 
+
+  /* ── carry realism (owner 2026-10-11: "masak batubara di atas kepala", "bukan gandeng tapi turunkan kayu") ──
+     A command is worded after what the board SHOWS: GANDENG only joins wagons; a load goes MUAT / NAIKKAN into the
+     tender behind Linus (never on his head) and comes off with TURUNKAN (or SERAHKAN for a paper or a tool). */
+  var WORDS = { _: { pick: 'Muat', deliver: 'Turunkan', load: 'Muat', dump: 'Sekop' },
+    bl05: { pick: 'Naikkan', deliver: 'Turunkan' }, bl17: { pick: 'Naikkan', deliver: 'Turunkan' }, bl23: { pick: 'Naikkan', deliver: 'Turunkan' },
+    bl08: { pick: 'Ambil', deliver: 'Serahkan' }, bl22: { pick: 'Ambil', deliver: 'Serahkan' }, bl14: { unlock: 'Lepas kait' } }
+  var KIND = { batu: 'batu bara' }
+  def.verbWords = function (lv) { var w = {}, d = WORDS._, o = WORDS[lv.id] || {}, k; for (k in d) w[k] = d[k]; for (k in o) w[k] = o[k]; return w }
+  def.goalText = function (ob, stop, lv) {
+    var lows = function (n) { return /^[A-Z][a-z]+$/.test(n) ? n : n.charAt(0).toLowerCase() + n.slice(1) }
+    var items = (lv.objects || []).filter(function (o) { return PICK[o.type] && o.type !== 'wagon' && (stop.accepts === o.id || stop.accepts === o.type || stop.accepts === o.kind) })
+    var what = !items.length ? '' : items.length > 1 ? (items[0].type === 'rider' ? 'penumpang' : KIND[items[0].kind] || lows(items[0].name || 'muatan')) : lows(items[0].name || 'muatan')
+    if (items.length === 1 && items[0].kind && KIND[items[0].kind]) what = KIND[items[0].kind]
+    var verb = def.verbWords(lv).deliver
+    return verb + (what ? ' ' + what : '') + ' di ' + lows(stop.name || 'tujuan')
+  }
+  function rectOf (n) { var r = n && n.getBoundingClientRect(); return r && r.width ? r : null }
+  function ride (img, a, b, w, ms, done) {
+    if (RM || !img.animate) { img.remove(); return done && done() }
+    var sz = Math.max(36, Math.min(w, 64)), x0 = a.left + a.width / 2 - sz / 2, y0 = a.top + a.height / 2 - sz / 2, x1 = b.left + b.width / 2 - sz / 2, y1 = b.top + b.height / 2 - sz / 2
+    img.style.width = img.style.height = sz + 'px'
+    var an = img.animate([{ transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1)', opacity: 1 },
+      { transform: 'translate(' + (x0 + x1) / 2 + 'px,' + (Math.min(y0, y1) - 34) + 'px) scale(1.12) rotate(-6deg)', opacity: 1, offset: .45 },
+      { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.92) rotate(0)', opacity: 1 }], { duration: ms, easing: 'cubic-bezier(.3,.7,.2,1)' })
+    an.onfinish = function () { img.remove(); if (done) done() }
+  }
+  // MUAT: the item hops from its cell into the tender
+  def.onLoad = function (e, d) {
+    var im = d && d.querySelector('img.main'), a = rectOf(im); if (!a) return
+    var f = D.createElement('img'); f.className = 'k-fly'; f.alt = ''; f.src = im.src; D.body.appendChild(f)
+    f.style.visibility = 'hidden'
+    W.requestAnimationFrame(function () { W.requestAnimationFrame(function () {
+      var c = rectOf(D.getElementById('mojo-cargo')) || rectOf(D.getElementById('mojo'))
+      if (!c) return f.remove()
+      f.style.visibility = ''; ride(f, a, c, a.width, 520)
+    }) })
+  }
+  // TURUNKAN: the load slides off the tender onto the destination, and a soft dust puff marks the landing
+  def.onUnload = function (e, dest, cargo) {
+    var im = cargo && cargo.querySelector('img'), a = rectOf(im), b = rectOf(dest && dest.querySelector('img.main')); if (!a || !b) return
+    var f = D.createElement('img'); f.className = 'k-fly'; f.alt = ''; f.src = im.src; D.body.appendChild(f)
+    ride(f, a, b, a.width, 560, function () { var M = W.VFX && VFX.Moment; if (M && M.puff) { try { M.puff({ x: b.left + b.width / 2, y: b.top + b.height * .75 }, { size: 80 }) } catch (x) {} } })
+  }
+
   def.onHud = function (c) {
     try {
       var lv = c.lv, w = c.w, key = lv.id + '/' + c.bi, groups = (c.beat.objectives || []).map(function (ob) { return groupOf(lv, w, ob) })

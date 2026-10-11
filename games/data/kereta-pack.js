@@ -403,7 +403,7 @@
     narrator: { name: 'Henry', full: 'Henry McCloud' }, heroName: 'Linus',
     text: { play: ['MULAI MAIN', 'LANJUT MAIN', 'MAIN LAGI'], again: 'Coba Lagi', mapTitle: 'Pilih Misi', collectionTitle: 'Teman-Teman Linus',
       collectionLead: 'Kenali para sahabat di atas rel. Ketuk untuk melihat.', collectionHead: 'Para Sahabat' },
-    msg: { 'cap-full': function () { return 'Sekopnya sudah penuh! Tuang dulu ke tungku.' }, 'no-load': function () { return 'Sekopnya kosong! ISI batu bara dulu.' }, 'hole-full': function () { return 'Tungkunya sudah penuh.' }, caught: 'Ada yang lewat di rel! TUNGGU sebentar sampai relnya kosong, lalu jalan lagi.' },
+    msg: { 'cap-full': function () { return 'Sekopnya sudah penuh! Sekop dulu ke tungku.' }, 'no-load': function () { return 'Sekopnya kosong! MUAT batu bara dulu.' }, 'hole-full': function () { return 'Tungkunya sudah penuh.' }, caught: 'Ada yang lewat di rel! TUNGGU sebentar sampai relnya kosong, lalu jalan lagi.' },
     libmap: libmap, hero: hero, scene: scene, regionScene: regionScene, background: background,
     pins: { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
     mapArt: function (port) { return background('bg-bl-lembah', port) },

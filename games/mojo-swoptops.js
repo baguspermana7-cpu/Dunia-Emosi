@@ -120,6 +120,8 @@
     deliver: 'mengantar barang', couple: 'menggandeng gerbong', unlock: 'membuka gerbang', load: 'mengisi muatan', dump: 'menuang muatan', place: 'memasang papan', wait: 'menunggu' }
   var SHORT = { normal: 'Mojo', dozer: 'Dozer', fire: 'Pemadam', cherry: 'Keranjang', jumper: 'Lompat', crane: 'Derek', chopper: 'Heli', dumper: 'Bak Pasir' }
   function formName (f) { return (ML.FORMS[f] && ML.FORMS[f].name) || 'Mojo' }
+  var LABEL0 = Object.assign({}, LABEL)
+  function applyWords (lv) { Object.keys(LABEL0).forEach(function (k) { LABEL[k] = LABEL0[k] }); if (PK && PK.verbWords) { var w = PK.verbWords(lv) || {}; Object.keys(w).forEach(function (k) { LABEL[k] = w[k] }) } }   // a pack words its verbs to match what the board shows
   function cmdLabel (c) { return c.indexOf('swop:') === 0 ? 'Jadi ' + SHORT[c.slice(5)] : (LABEL[c] || c) }
   function cmdColor (c) { return c.indexOf('swop:') === 0 ? (ML.FORMS[c.slice(5)] || {}).color || '#7B1FA2' : MA.CAT[c] || '#546E7A' }
   function cmdIco (c, cls) { return '<i class="' + (cls || 'ci') + '">' + MA.icon(c) + '</i>' }
@@ -334,6 +336,7 @@
     $('btn-run').disabled = false
     G.prog = (b.prefill || []).slice(); G.hist = []; G.sel = -1; G.hint = 0; G.fails = 0; G.fail = null; G.dirty = false; G.w = G.cp; G.trans = false
     clearMarks(); hideGhost(); $('hint-lv').textContent = ''
+    applyWords(G.lv)
     renderCast(); renderPalette(); W.requestAnimationFrame(function () { $('palette').scrollTop = 0 }); renderStrip(); renderHud(); renderWorld(G.w, true); beatDots()
     boSay(b.bo, true)   // the beat's own line: it opens with THIS beat's objective (gate: qa-prog-grid L)
     helpUi()
@@ -621,7 +624,7 @@
       case 'repair': return { img: objImg(Object.assign({}, o, { st: 'broken' })), t: 'Perbaiki ' + ({ gate: 'gerbang', swing: 'ayunan', lamp: 'lampu' }[o && o.what] || '') }
     case 'reach': return { img: MA.src('obj/flag'), t: 'Sampai ke bendera' }
       // the delivery family: the chip shows the destination's own picture and its own name
-      case 'deliver': return { img: objImg(o || {}), t: (o && o.type === 'stop' ? 'Antar ke ' : 'Antar ') + lowName(o) }
+      case 'deliver': return { img: objImg(o || {}), t: PK && PK.goalText && o && PK.goalText(ob, o, G.lv) || (o && o.type === 'stop' ? 'Antar ke ' : 'Antar ') + lowName(o) }
       case 'visit': return { img: objImg(o || {}), t: 'Lewati ' + lowName(o) }
       case 'train': return { img: objImg(o || {}), t: 'Gandeng ke ' + lowName(o) }
       case 'fill': return { img: objImg(o || {}), t: 'Tutup ' + lowName(o) }
@@ -1149,7 +1152,7 @@
         case 'rescue': wait = Math.max(wait, rescueAnim(e) || 900); break
         case 'tool': toolAnim(e); wait = Math.max(wait, 760); break
         case 'repair': wait = Math.max(wait, repairAnim(e)); break
-        case 'pick': case 'drop': renderObj(PG.find(G.w, e.id)); renderCargo(G.w); if (e.e === 'drop') OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); if (e.e === 'pick') { fxCall('pickup', m.r, m.c); SND.place() } wait = Math.max(wait, 360); break
+        case 'pick': case 'drop': if (e.e === 'pick' && PK && PK.onLoad) PK.onLoad(e, OBJ[e.id]); renderObj(PG.find(G.w, e.id)); renderCargo(G.w); if (e.e === 'drop') OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); if (e.e === 'pick') { fxCall('pickup', m.r, m.c); SND.place() } wait = Math.max(wait, 360); break
         case 'takeoff': case 'land': placeMojo(m); tone(e.e === 'takeoff' ? 200 : 500, e.e === 'takeoff' ? 500 : 200, 0.4, 0.06); wait = Math.max(wait, 420); break
         /* ── the delivery family's payoffs (owner 2026-10-07: "immersive effects and visuals") ── */
         case 'deliver': wait = Math.max(wait, deliverAnim(e)); break
@@ -1283,6 +1286,7 @@
   var PAY_COLOUR = { wave: '#FFD166', reunion: '#FF8FB1', chirp: '#8BE8C8', ship: '#7EC8F2', horn: '#F4B400', bark: '#FFC48A', light: '#FFE14D', drop: '#C9B79C', fix: '#A5D6A7' }
   function deliverAnim (e) {
     var o = PG.find(G.w, e.id), m = G.w.m, pay = e.pay || 'wave'
+    if (PK && PK.onUnload) PK.onUnload(e, OBJ[e.id], $('mojo-cargo'))   // the load slides off the tender (before the cargo node is cleared)
     renderCargo(G.w)
     ;(e.keep ? [] : [e.cargo]).forEach(function (id) { renderObj(PG.find(G.w, id)) })
     renderObj(o)

@@ -41,7 +41,7 @@
   }
   // L(): chapter 1. `n` is the scenario number in The_Brave_Locomotive_Linus_30_Skenario_Detail.md (its endpoint is the goal);
   // `decor` is the scenery cast of that scenario (database keys, drawn beside the track, never touched).
-  function L (o) { o.ch = o.ch || 'bl-lembah'; o.rev = 3; return o }
+  function L (o) { o.ch = o.ch || 'bl-lembah'; o.rev = 3; o.autoAim = true; return o }
   var LEVELS = [
     // 01 Linus and his short rake cross the valley: the first lesson is only to drive (move cards), over a little bridge
     L({ id: 'bl01', terrain: 'meadow', mood: 'sun', n: 1, title: 'Linus di Lembah', place: 'Lembah Hijau', icon: 'cmd/east', bg: 'bg-bl-lembah', edu: { domain: 'algoritma', skill: 'urutan' },
@@ -65,7 +65,7 @@
         { id: 'henry', type: 'stop', at: [0, 3], accepts: 'batu', need: 3, art: 'char/henry-sekop', name: 'Henry', pay: 'wave' }
       ],
       beats: [{ title: 'Tiga bongkah untuk tungku', story: 'Henry menyekop batu bara sebelum tanjakan.',
-        bo: 'Antar tiga batu bara ke Henry.',
+        bo: 'Muat tiga batu bara, turunkan di Henry.',
         objectives: [{ 'do': 'deliver', id: 'henry' }], slots: 20, budget: 16, forms: [HERO], palette: MOVE.concat(['pick', 'deliver']) }] }),
 
     // 03 the mountain line: hitch the whole rake (two green coaches, then the red caboose) from the sidings, then climb to the summit
@@ -112,7 +112,7 @@
       ],
       beats: [
         { title: 'Naikkan penumpang', story: 'Dua penumpang menunggu di stasiun kecil.',
-          bo: 'Antar dua penumpang ke peron.',
+          bo: 'Naikkan dua penumpang, turunkan di peron.',
           objectives: [{ 'do': 'deliver', id: 'peron' }], slots: 16, budget: 12, forms: [HERO], palette: MOVE.concat(['pick', 'deliver']) },
         { title: 'Pulang ke depo', story: 'Sekarang Linus pulang ke depo besar.',
           bo: 'Bawa Linus pulang ke bendera di depo.',
@@ -161,8 +161,8 @@
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [
-        { title: 'Antar kontrak', story: 'Henry menandatangani kontrak. Linus menunggu.',
-          bo: 'Antar kontrak ke Baron.',
+        { title: 'Serahkan kontrak', story: 'Henry menandatangani kontrak. Linus menunggu.',
+          bo: 'Ambil kontrak, serahkan ke Baron.',
           objectives: [{ 'do': 'deliver', id: 'baron' }], slots: 10, budget: 7, forms: [HERO], palette: ['east', 'down', 'pick', 'deliver'] },
         { title: 'Linus keluar depo', mood: 'rain', story: 'Linus berangkat sendirian, tanpa Henry.',
           bo: 'Bawa Linus keluar depo ke bendera.',
@@ -308,7 +308,7 @@
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [{ title: 'Buka kait muatan', story: 'Linus melepas diri dari muatan kayu.',
-        bo: 'Ambil pasak, buka kait, lalu ke bendera.',
+        bo: 'Ambil pasak, lepas kait, lalu ke bendera.',
         objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: [HERO], palette: ['east', 'unlock'] }] }),
 
     // 18-19 down the cliff line: Goro backs into his dark shed; the lamps 1 and 2 show Linus the way to the bridge
@@ -352,7 +352,7 @@
           vis: [{ at: [5, 2], ch: '=' }, { at: [5, 3], ch: '=' }, { at: [5, 4], ch: '=' }, { at: [5, 5], ch: '=' }, { at: [4, 2], ch: '~' }, { at: [4, 3], ch: '~' }, { at: [4, 4], ch: '~' }, { at: [4, 5], ch: '~' }, { at: [4, 6], ch: '~' }],
           decor: [{ at: [2, 4], art: 'train-char/samson/34l-neutral' }, { at: [2, 1], art: 'story-char/henry/point' }],
           objectives: [{ 'do': 'reach', at: [5, 7] }], slots: 11, budget: 8, forms: [HERO], palette: ['down', 'east'] },
-        { title: 'Antar ke daratan', terrain: 'meadow', story: 'Penumpang selamat. Linus berbalik ke jembatan.',
+        { title: 'Tarik ke daratan', terrain: 'meadow', story: 'Penumpang selamat. Linus berbalik ke jembatan.',
           bo: 'Gandeng ke stasiun daratan, lalu bendera.',
           decor: [{ at: [4, 5], art: 'kereta-prop/station-small' }, { at: [4, 4], art: 'story-char/katrina/stand' }, { at: [4, 3], art: 'story-char/baron/stand' }, { at: [2, 3], art: 'story-char/scarlet/ramah' }],
           objectives: [{ 'do': 'train', id: 'daratan' }, { 'do': 'reach', at: [5, 0] }], slots: 10, budget: 8, forms: [HERO], palette: ['west', 'couple'] }
@@ -371,7 +371,7 @@
         { id: 'kabin', type: 'stop', at: [2, 3], accepts: 'rider', need: 3, art: 'obj/kabin', name: 'Kabin Linus', pay: 'wave' }
       ],
       beats: [{ title: 'Tiga orang naik', story: 'Henry, Baron, dan Katrina pindah ke kabin Linus.',
-        bo: 'Antar tiga orang ke kabin Linus.',
+        bo: 'Naikkan tiga orang, turunkan di kabin Linus.',
         objectives: [{ 'do': 'deliver', id: 'kabin' }], slots: 18, budget: 15, forms: [HERO], palette: ['east', 'west', 'pick', 'deliver'] }] }),
 
     // 22 Henry and Katrina shovel at the firebox: scoop coal twice, tip it in (a firebox that takes three scoops), then roll on
@@ -386,7 +386,7 @@
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [{ title: 'Isi tungku, tiga sekop', story: 'Henry dan Katrina menyekop batu bara.',
-        bo: 'Isi tungku dengan batu bara, lalu ke bendera.',
+        bo: 'Muat batu bara, sekop ke tungku.',
         objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 18, budget: 14, forms: [HERO], palette: ['east', 'west', 'load', 'dump'] }] }),
 
     // 23 the bridge groans: two beams swing over the planks; cross when they are clear
@@ -420,7 +420,7 @@
       ],
       beats: [
         { title: 'Isi tungku', story: 'Henry dan Katrina menyekop batu bara.',
-          bo: 'Isi tungku, lalu ke ujung rel.', hide: ['papan', 'flag'],
+          bo: 'Muat batu bara, sekop ke tungku.', hide: ['papan', 'flag'],
           decor: [{ at: [2, 1], art: 'story-char/henry/shovel' }, { at: [2, 2], art: 'story-char/katrina/shovel' }, { at: [0, 6], art: 'story-char/baron/stand' }],
           objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 16, budget: 12, forms: [HERO], palette: ['east', 'west', 'load', 'dump'] },
         { title: 'Papan di rel patah', story: 'Rel patah. Linus memasang papan.',
@@ -480,7 +480,7 @@
         { id: 's3', type: 'stop', at: [0, 5], accepts: 'anak', order: 3, seq: 'berita', art: 'char/nyonya', name: 'Nyonya Topi', pay: 'reunion' }
       ],
       beats: [{ title: 'Kabar untuk tiga teman', story: 'Berita tentang Linus tersebar.',
-        bo: 'Antar anak ke Pelukis, Mekanik, Nyonya Topi.',
+        bo: 'Turunkan anak di Pelukis, Mekanik, Nyonya Topi.',
         objectives: [{ 'do': 'visit', id: 's1' }, { 'do': 'visit', id: 's2' }, { 'do': 'deliver', id: 's3' }], slots: 12, budget: 9, forms: [HERO], palette: ['east', 'pick', 'deliver'] }] }),
 
     // 29-30 PETUALANGAN BESAR: the new bridge, the green and red coaches again, Henry and Scarlet aboard, a peaceful run home
@@ -510,7 +510,7 @@
           decor: [{ at: [2, 3], art: 'animal/rabbit/run' }, { at: [2, 6], art: 'animal/deer/graze' }],
           start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'wagons', n: 2 }, { 'do': 'reach', at: [4, 0] }], slots: 13, budget: 10, forms: [HERO], palette: ['west', 'down', 'couple'] },
         { title: 'Henry dan Scarlet naik', story: 'Henry dan Scarlet naik ke kabin.',
-          bo: 'Antar Henry dan Scarlet ke kabin Linus.', hide: ['kereta', 'flag'],
+          bo: 'Naikkan Henry dan Scarlet, turunkan di kabin Linus.', hide: ['kereta', 'flag'],
           decor: [{ at: [2, 2], art: 'story-char/anak-kura/shy' }, { at: [2, 5], art: 'animal/turtle/stand' }, { at: [2, 7], art: 'animal/vulture/perch-2' }],
           objectives: [{ 'do': 'deliver', id: 'kabin' }], slots: 14, budget: 11, forms: [HERO], palette: ['east', 'west', 'down', 'pick', 'deliver'] },
         { title: 'Perjalanan damai', story: 'Linus pulang di lembah yang hijau.',

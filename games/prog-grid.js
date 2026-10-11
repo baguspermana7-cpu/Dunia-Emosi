@@ -135,7 +135,7 @@
   function world (lv, beatIndex) {
     var gr = lv.grid, m = lv.mojo || {}
     var w = {
-      rows: gr.rows, cols: gr.cols, map: gr.map, fill: {}, mode: lv.mode === 'rel' ? 'rel' : 'abs',
+      rows: gr.rows, cols: gr.cols, map: gr.map, fill: {}, mode: lv.mode === 'rel' ? 'rel' : 'abs', autoAim: !!lv.autoAim,
       m: { r: m.at[0], c: m.at[1], h: hd(m.h), form: m.form || 'normal', lift: 0, air: false, carry: null, train: [], tail: [] },
       res: copy(lv.res || {}), cap: lv.cap || {}, tools: {}, got: {}, keys: {}, forms: null, tick: 0, patrols: 0,
       objs: (lv.objects || []).map(function (o) {
@@ -162,7 +162,7 @@
     m.tail = (w.m.tail || []).map(function (p) { return [p[0], p[1]] })
     return { rows: w.rows, cols: w.cols, map: w.map, fill: copy(w.fill), m: m, res: copy(w.res), cap: w.cap,
       tools: copy(w.tools), got: copy(w.got), keys: copy(w.keys || {}), tick: w.tick || 0, patrols: w.patrols || 0,
-      forms: w.forms, beat: w.beat, mode: w.mode, objs: w.objs.map(copy) }
+      forms: w.forms, beat: w.beat, mode: w.mode, autoAim: w.autoAim, objs: w.objs.map(copy) }
   }
   // the world placed at beat i: Mojo moves to the beat's start (a scene cut), the rest carries over
   function startBeat (w, lv, i) {
@@ -370,7 +370,8 @@
     var dirs = aim(w0, verb), d = w0.m.h
     if (dirs.length === 1) d = dirs[0]
     else if (dirs.length > 1) {
-      if (dirs.indexOf(w0.m.h) < 0) return res(w0, 'blocked', 'ambiguous', { verb: verb, dirs: dirs })
+      if (dirs.indexOf(w0.m.h) < 0 && w0.autoAim) d = dirs[0]   // a pack's any-order rule: two things beside Linus, he takes the first (the child may pick the rear one first)
+      else if (dirs.indexOf(w0.m.h) < 0) return res(w0, 'blocked', 'ambiguous', { verb: verb, dirs: dirs })
     }
     if (d === w0.m.h) return core(w0, cmd, opts)
     var w1 = clone(w0); w1.m.h = d
