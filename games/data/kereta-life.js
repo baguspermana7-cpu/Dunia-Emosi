@@ -47,7 +47,7 @@
       img.style.setProperty('--d', rnd(3.6, 6.4).toFixed(2) + 's'); img.style.setProperty('--e', rnd(4.5, 8).toFixed(2) + 's')
       img.style.setProperty('--p', (-rnd(0, 6)).toFixed(2) + 's'); img.style.setProperty('--q', (-rnd(0, 8)).toFixed(2) + 's')
       n.classList.add('k-live', 'k-a-' + a, 'k-b-' + b)
-      LIVE.push({ n: n, img: img, kind: kind, grp: grp, key: key, home: key, next: Date.now() + rnd(2500, 7000), react: !!n.getAttribute('data-react'), gone: 0, rc: n.getAttribute('data-rc').split(',').map(Number) })
+      LIVE.push({ n: n, img: img, kind: kind, grp: grp, key: key, home: key, next: Date.now() + rnd(2500, 7000), react: !!n.getAttribute('data-react'), alive: /animal\/|char\//.test(key), gone: 0, rc: n.getAttribute('data-rc').split(',').map(Number) })
     })
   }
   function swap (L, key, ms) {
@@ -80,6 +80,117 @@
       }
     })
   }
+
+  /* ── group 1 (owner 2026-10-11): look-around flips, voices + bubbles, tap reactions ────────────────────────── */
+  var CSS1 = 'html[data-pack="kereta"] .dec.cast.k-live img{transform:translateY(-14%) scaleX(var(--fx,1));transition:transform .3s cubic-bezier(.23,1,.32,1)}' +
+    '.k-say{position:absolute;left:50%;bottom:118%;translate:-50% 0;z-index:30;pointer-events:none;white-space:nowrap;background:#fff;color:#5a3a17;font:800 max(11px,calc(var(--cell)*.2))/1.1 system-ui,sans-serif;padding:3px 9px 4px;border-radius:12px;box-shadow:0 0 0 2px #e0a63a,0 3px 0 rgba(92,56,23,.3);animation:kSayIn .26s cubic-bezier(.23,1,.32,1) both}' +
+    '.k-say::after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:#e0a63a;border-bottom:0}' +
+    '.dec.cast .k-name.up~.k-say,.dec.cast:has(.k-name.up) .k-say{bottom:150%}' +
+    '.k-pop{position:absolute;left:50%;top:30%;width:max(14px,calc(var(--cell)*.26));height:max(14px,calc(var(--cell)*.26));margin:-7px 0 0 -7px;pointer-events:none;z-index:29}' +
+    '@keyframes kSayIn{from{opacity:0;scale:.6;translate:-50% 30%}to{opacity:1;scale:1;translate:-50% 0}}' +
+    '@media(prefers-reduced-motion:reduce){.k-say,.k-pop{display:none}}'
+  var st1 = D.createElement('style'); st1.textContent = CSS1; D.head.appendChild(st1)
+
+  // sound: own tiny voices (the engine's SND is private); only when the sound toggle is on, never before a user gesture
+  var AC = null
+  function soundOn () {
+    try { if (W.localStorage.getItem('dunia-emosi-sound') === 'off') return false } catch (e) {}
+    return ['btn-sound', 'btn-sound2'].every(function (id) { var b = $(id); return !b || b.getAttribute('aria-pressed') !== 'false' })
+  }
+  function ac (gesture) {
+    if (!soundOn()) return null
+    try { if (!AC) { if (!gesture) return null; AC = new (W.AudioContext || W.webkitAudioContext)() } if (AC.state === 'suspended') { if (!gesture) return null; AC.resume() } } catch (e) { AC = null }
+    return AC && AC.state !== 'closed' ? AC : null
+  }
+  function tone (c, f0, f1, d, v, type, delay) {
+    try { var t = c.currentTime + (delay || 0), g = c.createGain(), o = c.createOscillator(); o.type = type || 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + d)
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + 0.05) } catch (e) {}
+  }
+  function person (c, f, up) { tone(c, f, f * (up ? 1.3 : 1.15), .12, .05, 'triangle'); tone(c, f * 1.3, f * (up ? 1.0 : 1.05), .17, .05, 'triangle', .13) }
+  var VOICES = [   // [art key, words, voice]
+    [/animal\/bird/, ['Cuit!', 'Cit cit!'], function (c) { [0, .16, .4].forEach(function (t, i) { tone(c, 2600 + (i % 2) * 450, 3300 + (i % 2) * 300, .07, .035, 'sine', t) }) }],
+    [/animal\/(vulture|hering|raven|crow)/, ['Kaak!', 'Kraak!'], function (c) { tone(c, 420, 200, .3, .035, 'sawtooth'); tone(c, 380, 150, .3, .03, 'sawtooth', .34) }],
+    [/animal\/deer/, ['Mmh~', 'Nguik!'], function (c) { tone(c, 520, 430, .25, .05, 'sine'); tone(c, 640, 500, .2, .045, 'sine', .27) }],
+    [/animal\/turtle/, ['Pelan...', 'Hmm~'], function (c) { tone(c, 170, 120, .32, .06, 'triangle') }],
+    [/animal\/rabbit/, ['Hop!', 'Hop hop!'], function (c) { tone(c, 800, 1300, .08, .05, 'sine'); tone(c, 900, 1400, .08, .05, 'sine', .14) }],
+    [/story-char\/henry/, ['Ayo!', 'Ayo, Linus!'], function (c) { person(c, 330, true) }],
+    [/story-char\/baron/, ['Hmph!', 'Hmph!'], function (c) { tone(c, 140, 85, .28, .06, 'sawtooth') }],
+    [/story-char\/carter/, ['Hei!', 'Hei, hati-hati!'], function (c) { person(c, 240, true) }],
+    [/story-char\/james/, ['Hmm!', 'Hehe!'], function (c) { person(c, 200, false) }],
+    [/story-char\/katrina|malivlak-char\/penyambut/, ['Oh!', 'Halo!'], function (c) { person(c, 470, true) }],
+    [/story-char\/scarlet/, ['Halo!', 'Hai!'], function (c) { person(c, 520, true) }],
+    [/char\//, ['Halo!', 'Hai!', 'Hore!'], function (c) { person(c, 360, true) }]
+  ]
+  function voiceOf (L) { for (var i = 0; i < VOICES.length; i++) if (VOICES[i][0].test(L.key)) return VOICES[i]; return null }
+  var BUB = null, lastSay = 0
+  function say (L, gesture) {
+    var v = voiceOf(L); if (!v || RM) return
+    if (BUB) { BUB.n.style.zIndex = BUB.z; BUB.el.remove(); clearTimeout(BUB.t); BUB = null }   // never more than one at a time
+    var b = el('b', 'k-say', v[1][Math.floor(Math.random() * v[1].length)]), z = L.n.style.zIndex
+    L.n.appendChild(b); L.n.style.zIndex = 60
+    BUB = { n: L.n, el: b, z: z, t: setTimeout(function () { if (BUB && BUB.el === b) { L.n.style.zIndex = z; b.remove(); BUB = null } }, 1700) }
+    lastSay = Date.now()
+    var c = ac(gesture); if (c) v[2](c)
+  }
+  // facing: scaleX(var(--fx)) on the sprite, a quick squash while it turns
+  function look (L, left) { flipTo(L, (!!left === L.n.hasAttribute('data-flip')) ? 1 : -1) }   // sprites face right unless the pack flipped them
+  function flipTo (L, fx) {
+    if (L.fx === fx) return; L.fx = fx
+    L.img.style.setProperty('--fx', fx)
+    try { L.img.animate([{ scale: '1 1' }, { scale: '1.12 .86', offset: .4 }, { scale: '1 1' }], { duration: 320, easing: 'ease-out' }) } catch (e) {}
+  }
+  function pop (L) {
+    var c = cell(), notes = L.kind === 'bird', cols = notes ? ['#6cb4ff', '#ffd23f', '#7be0a0'] : ['#ff6f91', '#ff9ec0', '#ffc2d6']
+    for (var i = 0; i < 5; i++) {
+      var p = el('i', 'k-pop'), col = cols[i % cols.length]
+      p.innerHTML = notes ? '<svg viewBox="0 0 20 20"><circle cx="6" cy="15" r="4" fill="' + col + '"/><path d="M9.5 15V3l7 2.5V8L12 6.5" fill="none" stroke="' + col + '" stroke-width="2.2" stroke-linecap="round"/></svg>'
+        : '<svg viewBox="0 0 20 20"><path d="M10 17S2 12 2 7a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 5-8 10-8 10z" fill="' + col + '"/></svg>'
+      L.n.appendChild(p)
+      var dx = (i - 2) * c * .2 + rnd(-6, 6), dy = -c * rnd(.7, 1.2)
+      try { var a = p.animate([{ translate: '0 0', opacity: 0, scale: .4 }, { opacity: 1, scale: 1, offset: .2 }, { translate: dx + 'px ' + dy + 'px', opacity: 0, scale: .9 }], { duration: rnd(900, 1300), delay: i * 70, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'both' }); a.onfinish = function () { this.effect.target.remove() } } catch (e) { p.remove() }
+    }
+  }
+  var TAPS = ['hop', 'twirl', 'wave']
+  function react (L, gesture) {
+    if (RM || L.gone || L.busy) return false
+    L.busy = true; setTimeout(function () { L.busy = false }, 900)
+    var pick = TAPS[L.tapN = ((L.tapN || 0) + 1) % TAPS.length], c = cell()
+    if (pick === 'twirl' && L.kind !== 'deer') pick = 'hop'
+    try {
+      if (pick === 'hop') L.n.animate([{ translate: '0 0' }, { translate: '0 ' + (-c * .38) + 'px', offset: .35 }, { translate: '0 0', offset: .6 }, { translate: '0 ' + (-c * .16) + 'px', offset: .78 }, { translate: '0 0' }], { duration: 680, easing: 'ease-out' })
+      else L.n.animate([{ rotate: 'y 0deg' }, { rotate: 'y 360deg' }], { duration: 700, easing: 'cubic-bezier(.4,0,.2,1)' })
+    } catch (e) {}
+    var pool = POSES[L.grp]; if (pool && pool.length > 1 && L.kind !== 'bird') { var alt = pool.filter(function (q) { return q !== L.key.split('/').pop() }); swap(L, L.grp + '/' + alt[Math.floor(Math.random() * alt.length)], 1400) }
+    pop(L); say(L, gesture); return true
+  }
+  function tapAt (x, y) {
+    var best = null, bd = 1e9
+    LIVE.forEach(function (L) {
+      if (!L.n.isConnected || L.gone || !L.alive) return
+      var r = L.img.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * .58, hw = r.width * .3, hh = r.height * .36
+      if (Math.abs(x - cx) < hw && Math.abs(y - cy) < hh) { var d = Math.abs(x - cx) + Math.abs(y - cy); if (d < bd) { bd = d; best = L } }
+    })
+    return best ? react(best, true) : false
+  }
+  if (!RM) D.addEventListener('pointerdown', function (e) {
+    if (D.body.getAttribute('data-scr') !== 'scr-play') return
+    var b = $('board'); if (!b || !b.contains(e.target)) return   // palette, plan and buttons are outside the board: never touched
+    tapAt(e.clientX, e.clientY)
+  }, true)
+  // every few seconds: look around (or at Linus when he is near), and now and then say something unprompted
+  function life () {
+    if (RM || D.body.getAttribute('data-scr') !== 'scr-play') return
+    var s = W.__mojo && W.__mojo.state && W.__mojo.state(), now = Date.now(), cand = []
+    LIVE.forEach(function (L) {
+      if (!L.n.isConnected || L.gone || !L.alive) return
+      var dx = s ? s.position.c - L.rc[1] : 0, nearL = s && Math.abs(L.rc[0] - s.position.r) + Math.abs(dx) <= 3
+      if (nearL && dx !== 0) { look(L, dx < 0); return }
+      if (!L.nl || now > L.nl) { L.nl = now + rnd(3800, 9000); if (Math.random() < .8) flipTo(L, -(L.fx || 1)) }
+      if (voiceOf(L)) cand.push(L)
+    })
+    if (cand.length && now - lastSay > 11000 && Math.random() < .35 && ac(false)) say(cand[Math.floor(Math.random() * cand.length)], false)
+  }
+  W.KeretaLife = { live: function () { return LIVE }, tap: function (i) { var L = LIVE.filter(function (q) { return !q.gone && q.alive })[i || 0]; return L ? react(L, true) : false }, tapAt: tapAt }
 
   /* ── parallax fringe, cloud shadows, motes ───────────────────────────── */
   var FR = null, lastKey = ''
@@ -119,5 +230,5 @@
     var key = c.lv.id + '/' + c.bi
     if (key !== lastKey || !D.querySelector('#board .k-fringe,#board .k-shade')) { lastKey = key; try { build(c.lv) } catch (e) {} }
   }
-  if (!RM) { W.setInterval(tick, 350); W.setInterval(drift, 160) }
+  if (!RM) { W.setInterval(tick, 350); W.setInterval(drift, 160); W.setInterval(life, 1200) }
 })(typeof window !== 'undefined' ? window : globalThis)
