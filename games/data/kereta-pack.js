@@ -114,7 +114,7 @@
   // the cells a beat (or else the level) names under `key` ([[row, col], ...]) as a lookup for the ground painter
   function cellsOf (lv, bi, key) { var b = lv && lv.beats && lv.beats[bi || 0], l = (b && b[key]) || (lv && lv[key]) || [], o = {}; l.forEach(function (p) { o[p[0] + ',' + p[1]] = 1 }); return o }
   function scene (lv, bi) {
-    var scr = D.getElementById('scr-play'); if (scr) { scr.setAttribute('data-tint', lv.tint || ''); scr.setAttribute('data-lv', lv.id); scr.setAttribute('data-mood', moodOf(lv, bi)); scr.setAttribute('data-terrain', terrainOf(lv, bi)) } TERRAIN = terrainOf(lv, bi); CUR = lv; CURBI = bi || 0
+    var scr = D.getElementById('scr-play'); if (scr) { scr.setAttribute('data-tint', lv.tint || ''); scr.setAttribute('data-lv', lv.id); scr.setAttribute('data-mood', moodOf(lv, bi)); scr.setAttribute('data-terrain', terrainOf(lv, bi)); scr.setAttribute('data-trestle', lv.trestle ? '1' : '') } TERRAIN = terrainOf(lv, bi); CUR = lv; CURBI = bi || 0
     cabSet(lv)
     var mj = D.getElementById('mojo'); if (mj) mj.classList.toggle('k-tired', !!((lv.tired && lv.tired[bi || 0]) || (lv.beats[bi || 0] && lv.beats[bi || 0].tired === true)))
     return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
@@ -130,7 +130,7 @@
   /* ── terrain: the ground looks like the PLACE (meadow, mountain, logging, depot, town, gorge), seeded per cell so it never shimmers ── */
   function rnd (r, c, k) { var h = (r * 73856093) ^ (c * 19349663) ^ ((k || 0) * 83492791); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295 }
   function blot (x, cx, cy, rx, ry, col, a) { x.save(); x.globalAlpha = a; x.fillStyle = col; x.beginPath(); x.ellipse(cx, cy, rx, ry, 0, 0, 7); x.fill(); x.restore() }
-  var BASE = { meadow: '#86bf55', mountain: '#7a756b', logging: '#6a4f34', depot: '#8b8478', town: '#9a8f7e', gorge: '#716c63' }
+  var BASE = { cloud: '#cfe2f5', meadow: '#86bf55', mountain: '#7a756b', logging: '#6a4f34', depot: '#8b8478', town: '#9a8f7e', gorge: '#716c63' }
   function groundCell (x, kind, r, c, s, water) {
     var X = c * s, Y = r * s, i
     x.fillStyle = BASE[kind] || BASE.meadow; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
@@ -139,6 +139,8 @@
       for (i = 0; i < 9; i++) blot(x, X + rnd(r, c, i + 20) * s, Y + rnd(r, c, i + 30) * s, s * 0.025, s * 0.02, '#4c4840', 0.7)
       if (rnd(r, c, 77) > 0.72) blot(x, X + s * 0.5, Y + s * 0.5, s * 0.3, s * 0.16, '#f4f8fb', 0.92)
       if (r === 0) { var g = x.createLinearGradient(0, Y, 0, Y + s * 0.5); g.addColorStop(0, 'rgba(30,25,20,.55)'); g.addColorStop(1, 'rgba(30,25,20,0)'); x.fillStyle = g; x.fillRect(X, Y, s, s * 0.5) }
+    } else if (kind === 'cloud') {   // the dream (film 5:36-5:45): a soft white-blue sky floor of drifting wisps
+      for (i = 0; i < 6; i++) blot(x, X + rnd(r, c, i) * s, Y + rnd(r, c, i + 9) * s, s * (0.2 + rnd(r, c, i + 3) * 0.3), s * (0.08 + rnd(r, c, i + 5) * 0.1), i % 3 ? '#ffffff' : '#b7d3ee', 0.55)
     } else if (kind === 'logging') {
       for (i = 0; i < 7; i++) blot(x, X + rnd(r, c, i) * s, Y + rnd(r, c, i + 9) * s, s * (0.1 + rnd(r, c, i + 3) * 0.16), s * 0.07, i % 2 ? '#52391f' : '#82643f', 0.55)
       for (i = 0; i < 10; i++) blot(x, X + rnd(r, c, i + 40) * s, Y + rnd(r, c, i + 50) * s, s * 0.035, s * 0.018, '#e2c78e', 0.8)   // sawdust
@@ -232,6 +234,25 @@
     for (var i = 0; i < 3; i++) blot(x, X + rnd(r, c, i + 5) * s, Y + rnd(r, c, i + 15) * s, s * (0.2 + rnd(r, c, i) * 0.2), s * 0.035, 'rgba(255,214,150,.22)', 1)
     if (ledge) { blot(x, X + s * 0.5, Y + s * 0.9, s * 0.46, s * 0.13, '#5a3220', 1); blot(x, X + s * 0.5, Y + s * 0.84, s * 0.4, s * 0.07, '#8a5a38', 1) }   // a rock ledge for whoever stands here
   }
+  // the whole canyon behind the bridge in one pass: sunset glow fading to a dark red-indigo depth, far cliff walls, mist in the bottom, the river far below
+  function paintCanyon (x, R, Cn, s) {
+    var W = Cn * s, H = R * s, i, g = x.createLinearGradient(0, 0, 0, H)
+    g.addColorStop(0, '#e8923f'); g.addColorStop(0.07, '#b24627'); g.addColorStop(0.2, '#5a2430'); g.addColorStop(0.4, '#25111f'); g.addColorStop(1, '#070308'); x.fillStyle = g; x.fillRect(0, 0, W, H)
+    var layer = function (base, amp, col, seed) {   // jagged far cliff silhouettes rising from the depth
+      x.fillStyle = col; x.beginPath(); x.moveTo(0, H)
+      for (i = 0; i <= 24; i++) { var u = i / 24; x.lineTo(u * W, H * base - Math.abs(Math.sin(u * 5 + seed)) * H * amp - rnd(i, seed, 3) * H * amp * 0.45) }
+      x.lineTo(W, H); x.closePath(); x.fill()
+    }
+    layer(0.78, 0.2, 'rgba(110,52,60,.55)', 1); layer(0.9, 0.18, 'rgba(58,26,46,.8)', 4)
+    ;[0, 1].forEach(function (side) {   // the near canyon walls on both flanks
+      var wg = x.createLinearGradient(side ? W : 0, 0, side ? W - s * 1.1 : s * 1.1, 0); wg.addColorStop(0, 'rgba(26,10,16,.92)'); wg.addColorStop(1, 'rgba(26,10,16,0)'); x.fillStyle = wg; x.fillRect(side ? W - s * 1.1 : 0, 0, s * 1.1, H)
+    })
+    var mg = x.createLinearGradient(0, H * 0.62, 0, H); mg.addColorStop(0, 'rgba(225,200,205,0)'); mg.addColorStop(0.7, 'rgba(225,200,205,.34)'); mg.addColorStop(1, 'rgba(225,200,205,.14)'); x.fillStyle = mg; x.fillRect(0, H * 0.62, W, H * 0.38)
+    x.fillStyle = 'rgba(120,150,165,.8)'; x.beginPath(); x.moveTo(0, H)
+    for (i = 0; i <= 40; i++) x.lineTo(i / 40 * W, H - s * 0.1 - Math.sin(i * 0.7) * s * 0.025)
+    x.lineTo(W, H); x.closePath(); x.fill()
+    x.strokeStyle = 'rgba(235,245,250,.5)'; x.lineWidth = Math.max(1, s * 0.012); x.beginPath(); for (i = 0; i <= 40; i++) x.lineTo(i / 40 * W, H - s * 0.1 - Math.sin(i * 0.7) * s * 0.025); x.stroke()
+  }
   function paintTrestle (x, ch, R, Cn, s) {
     var r, c, k, d
     for (r = 0; r < R; r++) for (c = 0; c < Cn; c++) {
@@ -250,6 +271,7 @@
   }
   function paintGround (x, ch, R, Cn, s, grass) {
     var kind = TERRAIN, FS = fxSets()
+    if (CUR && CUR.trestle) paintCanyon(x, R, Cn, s)
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
       var k = ch(r, c)
       if (kind === 'meadow' || kind === 'forest') {
@@ -257,7 +279,7 @@
         if (k === '~') continue
         if (grass) { var iw = grass.naturalWidth, ih = grass.naturalHeight, ix = iw * 0.1, iy = ih * 0.1; x.drawImage(grass, ix, iy, iw - 2 * ix, ih - 2 * iy, c * s - s * 0.07, r * s - s * 0.07, s * 1.14, s * 1.14) }
         if (FS.wheat[r + ',' + c]) wheatCell(x, r, c, s)
-      } else if (CUR && CUR.trestle && !isRoad(k)) chasmCell(x, r, c, s, R, !!FS.occ[r + ',' + c])
+      } else if (CUR && CUR.trestle && !isRoad(k)) { if (FS.occ[r + ',' + c]) { blot(x, c * s + s * 0.5, r * s + s * 0.9, s * 0.46, s * 0.13, '#3a1c18', 1); blot(x, c * s + s * 0.5, r * s + s * 0.84, s * 0.4, s * 0.07, '#7a4a30', 1) } }
       else groundCell(x, kind, r, c, s, kind === 'gorge' && k === '~')
     }
     if (CUR && CUR.trestle) paintTrestle(x, ch, R, Cn, s)

@@ -164,3 +164,9 @@ New pack features, all level keys: `windmill:{at}` (turning blades), `hall:{at,n
 | bl11 | 3:06 | the photo seen through the lit window frame with its cross bars |
 | bl25 (beat 2) | 2:33 | POINT OF NO RETURN wooden sign with the two black birds either side |
 | bl13, bl16-bl20 | 4:06-4:45 | the trestle: canyon, plank deck, truss lattice (bl19 water cells replaced by canyon) |
+
+### Brave rework part 2 (2026-10-12; sheets report7-brave-film-board-0..2.png, film | 1280x800 | 390x844 for 24 levels)
+- Trestle canyon is now ONE painted gorge: sunset glow fading to near-black, far cliff walls on both flanks, mist in the lower third, the river far below; no lawn tufts or grass fringe over it.
+- bl02: the stray rake pieces are gone (the grade-foot scene is the cab and the coal, not the rake). The virtual rake's heading bug is fixed (0 north, 1 east, 2 south, 3 west).
+- bl03 bright green mountain (film 0:57), bl08 depot hall, bl09 dark storm mountain on the night backdrop, bl10 dark mountain, bl15 sunset (the film's orange sky at 4:36-4:45, was night),
+  bl21 the dream floor is a white-blue cloud terrain (film 5:39). bl05, bl07, bl12, bl14, bl22, bl23, bl24 were checked frame by frame and left as they were.

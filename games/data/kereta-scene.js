@@ -226,7 +226,7 @@
   function rake (c) {
     var spec = (c.beat && c.beat.rake) || c.lv.rake, objs = D.getElementById('objs'), MA = W.MojoArt
     if (!spec || !objs || !MA) { if (RK.els.length) rakeClear(); return }
-    var m = c.w.m, key = c.lv.id + '/' + c.bi, cur = m.r + ',' + m.c, D4 = [[0, 1], [-1, 0], [0, -1], [1, 0]], hd = D4[m.h % 4] || [0, 1]
+    var m = c.w.m, key = c.lv.id + '/' + c.bi, cur = m.r + ',' + m.c, D4 = [[-1, 0], [0, 1], [1, 0], [0, -1]], hd = D4[((m.h % 4) + 4) % 4] || [0, 1]   // headings: 0 north, 1 east, 2 south, 3 west
     if (RK.key !== key) {
       rakeClear(); RK.key = key
       for (var i = 0; i < spec.length; i++) { var e = D.createElement('div'); e.className = 'k-rake'; e.innerHTML = '<img alt="">'; objs.insertBefore(e, objs.firstChild); RK.els.push(e) }

@@ -59,7 +59,6 @@
     // 02 Henry shovels coal before the steep grade: carry three lumps to Henry (carry and count)
     L({ id: 'bl02', terrain: 'meadow', mood: 'sun', n: 2, title: 'Tenaga untuk Tanjakan', place: 'Kaki Tanjakan', icon: 'cmd/pick', bg: 'bg-bl-lembah', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 3, cols: 6, map: [',,,,,,', '......', '.,.,.,'], theme: 'town' },
-      rake: ['coach-green', 'coach-green-2', 'caboose-red'],
       mojo: { at: [1, 3], h: 'W', form: HERO },
       sign: { at: [0, 0], text: 'TANJAKAN CURAM', w: 3 },
       objects: [
@@ -73,7 +72,7 @@
         objectives: [{ 'do': 'deliver', id: 'henry' }], slots: 20, budget: 16, forms: [HERO], palette: MOVE.concat(['pick', 'deliver']) }] }),
 
     // 03 the mountain line: hitch the whole rake (two green coaches, then the red caboose) from the sidings, then climb to the summit
-    L({ id: 'bl03', cine: { heavy: true, end: { zoom: { at: [3, 6], s: 1.12, ms: 1100 }, fx: [{ id: 'bk-star-02', at: [3, 6], size: 160 }] } }, hopLate: 'gerbong3', terrain: 'mountain', mood: 'sun', n: 3, title: 'Rangkaian Mendaki', place: 'Jalur Pegunungan', icon: 'cmd/couple', bg: 'bg-bl-gunung', edu: { domain: 'matematika', skill: 'membilang 1-3' },
+    L({ id: 'bl03', cine: { heavy: true, end: { zoom: { at: [3, 6], s: 1.12, ms: 1100 }, fx: [{ id: 'bk-star-02', at: [3, 6], size: 160 }] } }, hopLate: 'gerbong3', terrain: 'meadow', mood: 'sun', n: 3, title: 'Rangkaian Mendaki', place: 'Jalur Pegunungan', icon: 'cmd/couple', bg: 'bg-bl-gunung', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 4, cols: 8, map: [',,,T,...', ',,,,,.,.', '......,.', '.,.,.,..'], theme: 'hill' },
       mojo: { at: [2, 0], h: 'E', form: HERO },
       cab: 'story-char/henry/point',
@@ -164,6 +163,7 @@
     L({ id: 'bl08', cine: { end: { letterbox: 1500, fx: [{ id: 'bk-light-01', at: [1, 4], size: 520 }] } }, terrain: 'depot', mood: 'sunset', n: 8, ch: 'bl-samson', title: 'Kontrak Henry', place: 'Kantor Depo', icon: 'cmd/deliver', bg: 'bg-bl-depot', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',.,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      hall: { at: [0, 0], n: 8 },
       decor: [{ at: [0, 3], art: 'story-char/henry/worried' }, { at: [0, 6], art: 'story-char/katrina/stand' }],
       objects: [
         { id: 'kontrak', type: 'parcel', at: [2, 1], kind: 'kontrak', name: 'Kontrak', art: 'obj/kontrak' },
@@ -217,7 +217,7 @@
       ] }),
 
     // 09 the first night at the logging line: Linus waits under Goro's searchlight (the short TUNGGU lesson of Bab 3; alone, no coaches)
-    L({ id: 'bl09', terrain: 'logging', mood: 'storm', n: 9, ch: 'bl-hutan', title: 'Sorot Lampu Goro', place: 'Hutan Gelap', icon: 'cmd/wait', bg: 'bg-bl-hutan-logging', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
+    L({ id: 'bl09', terrain: 'mountain', mood: 'storm', n: 9, ch: 'bl-hutan', title: 'Sorot Lampu Goro', place: 'Hutan Gelap', icon: 'cmd/wait', bg: 'bg-bl-malam', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       decor: [{ at: [2, 2], art: 'story-char/carter/hands-hips' }, { at: [2, 6], art: 'story-char/james/arms-folded' }],
@@ -232,7 +232,7 @@
         objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 12, budget: 8, forms: [HERO], palette: ['east', 'wait'] }] }),
 
     // 10 the wrecks beside the line (scenery, nothing to repair): lantern key, the latch at the end, James watching with his scroll
-    L({ id: 'bl10', terrain: 'logging', mood: 'storm', n: 10, ch: 'bl-hutan', title: 'Kereta-Kereta Tua', place: 'Bangkai Kereta', icon: 'cmd/unlock', bg: 'bg-bl-malam', edu: { domain: 'algoritma', skill: 'syarat' },
+    L({ id: 'bl10', terrain: 'mountain', mood: 'storm', n: 10, ch: 'bl-hutan', title: 'Kereta-Kereta Tua', place: 'Bangkai Kereta', icon: 'cmd/unlock', bg: 'bg-bl-malam', edu: { domain: 'algoritma', skill: 'syarat' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       decor: [{ at: [0, 1], art: 'train-char/rongsokan-a/v2' }, { at: [0, 4], art: 'train-char/rongsokan-b/v5' }, { at: [2, 6], art: 'story-char/james/scroll' }],
@@ -328,7 +328,7 @@
         objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: [HERO], palette: ['east', 'unlock'] }] }),
 
     // 18-19 down the cliff line: Goro backs into his dark shed; the lamps 1 and 2 show Linus the way to the bridge
-    L({ id: 'bl15', terrain: 'mountain', mood: 'night', n: 18, ns: [18, 19], ch: 'bl-jembatan', title: 'Lampu di Jalur Gelap', place: 'Turunan Tebing', icon: 'ui/plan', bg: 'bg-bl-malam', edu: { domain: 'matematika', skill: 'urutan bilangan' },
+    L({ id: 'bl15', terrain: 'mountain', mood: 'sunset', n: 18, ns: [18, 19], ch: 'bl-jembatan', title: 'Lampu di Jalur Gelap', place: 'Turunan Tebing', icon: 'ui/plan', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'urutan bilangan' },
       grid: { rows: 4, cols: 8, map: [',,,,,.,,', '.......,', ',,,,,,.,', '.......,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       decor: [{ at: [2, 1], art: 'story-char/james/point-scroll' }, { at: [2, 4], art: 'story-char/carter/defeated' }, { at: [2, 0], art: 'train/gerbong-samson', label: 'Gerbong Samson' }],
@@ -469,7 +469,7 @@
         { bg: 'bg-bl-mimpi', art: [{ k: 'train-char/linus/34l-happy', x: 34, s: 56 }, { k: 'animal/bird-blue/fly', x: 62, s: 24 }], text: 'Ia melayang di antara awan lembut, menuju gerbang emas.' },
         { bg: 'bg-bl-bengkel', art: [{ k: 'train-char/linus/34l-happy', x: 34, s: 56 }, { k: 'story-char/henry/wave', x: 62, s: 56 }], text: 'Cahaya memenuhi layar. Linus terbangun di bengkel.' }
       ],
-      terrain: 'meadow', mood: 'dream', n: 26, ch: 'bl-pulang', title: 'Mimpi di Atas Awan', place: 'Gerbang Cahaya', icon: 'ui/plan', bg: 'bg-bl-mimpi', edu: { domain: 'matematika', skill: 'membilang 1-3' },
+      terrain: 'cloud', mood: 'dream', n: 26, ch: 'bl-pulang', title: 'Mimpi di Atas Awan', place: 'Gerbang Cahaya', icon: 'ui/plan', bg: 'bg-bl-mimpi', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '.......,', ',,,,,,.,', '.......,'], theme: 'park' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
       decor: [{ at: [0, 1], art: 'animal/deer/stand' }, { at: [0, 6], art: 'animal/bird-blue/fly' }, { at: [2, 2], art: 'animal/rabbit/sit' }, { at: [0, 4], art: 'animal/cardinal/fly' }],

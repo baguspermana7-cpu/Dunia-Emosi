@@ -569,3 +569,7 @@ html[data-pack="kereta"] .dec.amb.k-hall{z-index:1!important;pointer-events:none
 @media(prefers-reduced-motion:reduce){.k-windmill .bl{animation:none!important}}
 /* bl04: the turtle is small and stands ON the rail in front of Linus (film 1:03: it fills the track, not the board) */
 html[data-pack="kereta"] .board .ob[data-id="kura"]>img.main{width:calc(var(--cell)*.5)!important;height:calc(var(--cell)*.4)!important;left:calc(50% - var(--cell)*.25)!important;bottom:calc(var(--cell)*.3)!important}
+
+/* the canyon has no lawn: no grass tufts, scatter or fringe over it */
+#scr-play[data-trestle="1"] .msl-tuft,#scr-play[data-trestle="1"] .mbl-scatter,#scr-play[data-trestle="1"] .k-fringe,#scr-play[data-trestle="1"] .msl-cs,#scr-play[data-trestle="1"] .msl-sweep{display:none!important}
+#scr-play[data-trestle="1"] #board-bg{filter:brightness(.9) saturate(1.05)}
