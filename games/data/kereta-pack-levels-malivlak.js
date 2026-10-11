@@ -266,6 +266,7 @@
     L({ id: 'mv15', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 15, title: 'Stasiun Bersiap', place: 'Stasiun Kota', icon: 'cmd/east', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      band: { at: [3, 2], n: 5 },
       objects: [
         { id: 'tuas', type: 'mark', at: [1, 3], order: 1, seq: 'siap', art: 'kereta-tile/switch-left', name: 'Tuas wesel' },
         { id: 'sinyal', type: 'mark', at: [1, 5], order: 2, seq: 'siap', art: 'kereta-tile/signal-green', name: 'Sinyal' },
@@ -273,13 +274,13 @@
       ],
       beats: [
         { title: 'Petugas ke tuas', story: 'Petugas mengatur tuas wesel. Musik bersiap.', hide: ['sinyal', 'flag'],
-          decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/berdiri' }, { at: [2, 5], art: 'malivlak-char/orkes/pemimpin', react: 'malivlak-char/orkes/drum' }, { at: [0, 6], art: 'kereta-prop/signal-box' }],
+          decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/berdiri' }, { at: [0, 6], art: 'kereta-prop/signal-box' }],
           bo: 'Bawa Malivlak ke tuas wesel.', objectives: [{ 'do': 'visit', id: 'tuas' }], slots: 5, budget: 3, forms: ['malivlak'], palette: ['east'] },
         { title: 'Atur sinyal', story: 'Sinyal diatur. Para pemusik membawa alat tiup.', hide: ['tuas', 'flag'], start: { at: [1, 3], h: 'E' },
-          decor: [{ at: [2, 5], art: 'malivlak-char/orkes/tuba', react: 'malivlak-char/orkes/terompet' }, { at: [0, 1], art: 'kereta-prop/signal-box' }],
+          decor: [{ at: [0, 1], art: 'kereta-prop/signal-box' }],
           bo: 'Bawa Malivlak ke sinyal.', objectives: [{ 'do': 'visit', id: 'sinyal' }], slots: 4, budget: 2, forms: ['malivlak'], palette: ['east'] },
-        { title: 'Menunggu kereta', story: 'Seluruh kelompok musik siap menunggu kereta.', hide: ['tuas', 'sinyal'], start: { at: [1, 4], h: 'E' },
-          decor: [{ at: [2, 0], art: 'malivlak-char/orkes/pemimpin' }, { at: [3, 1], art: 'malivlak-char/orkes/drum' }, { at: [2, 2], art: 'malivlak-char/orkes/tuba' }, { at: [3, 3], art: 'malivlak-char/orkes/terompet' }, { at: [2, 4], art: 'malivlak-char/orkes/kontrabas' }, { at: [3, 6], art: 'malivlak-char/petugas-stasiun/berdiri' }],
+        { title: 'Menunggu kereta', story: 'Kelompok musik siap di peron menunggu kereta.', hide: ['tuas', 'sinyal'], start: { at: [1, 4], h: 'E' },
+          decor: [{ at: [3, 6], art: 'malivlak-char/petugas-stasiun/berdiri' }],
           bo: 'Bawa Malivlak ke bendera di stasiun.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 6, budget: 3, forms: ['malivlak'], palette: ['east'] }
       ] }),
 
@@ -287,7 +288,8 @@
     L({ id: 'mv16', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 16, title: 'Melewati Penyambut', place: 'Peron Penyambutan', icon: 'cmd/down', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'berbelok' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '....,,,,', ',,,.,,,,', ',,,.....'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
-      decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/bendera' }, { at: [3, 1], art: 'malivlak-char/penyambut/jangkung', react: 'malivlak-char/penyambut/jangkung-bungkuk' }, { at: [2, 5], art: 'malivlak-char/orkes/pemimpin-tongkat' }, { at: [3, 2], art: 'malivlak-char/orkes/drum' }, { at: [2, 6], art: 'kereta-tile/signal-green' }],
+      band: { at: [2, 4], n: 4 },
+      decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/bendera' }, { at: [3, 1], art: 'malivlak-char/penyambut/jangkung', react: 'malivlak-char/penyambut/jangkung-bungkuk' }],
       objects: [{ id: 'flag', type: 'flag', at: [3, 7] }],
       beats: [{ title: 'Lewat dan berhenti', story: 'Malivlak melewati para penyambut dan berhenti.',
         bo: 'Lewati penyambut, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [3, 7] }], slots: 12, budget: 9, forms: ['malivlak'], palette: ['east', 'down'] }] }),

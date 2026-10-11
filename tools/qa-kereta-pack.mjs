@@ -88,6 +88,8 @@ const sig = lv => lv.beats.map(b => (b.objectives.map(o => o.do).sort().join('+'
 for (let i = 1; i < ML.LEVELS.length; i++) check(sig(ML.LEVELS[i]) !== sig(ML.LEVELS[i - 1]), `${ML.LEVELS[i - 1].id} and ${ML.LEVELS[i].id} play differently (${sig(ML.LEVELS[i - 1])} vs ${sig(ML.LEVELS[i])})`)
 const used = new Set(), resolve = a => { if (!a) return; used.add(a); if (LIBK[a]) used.add(LIBK[a]) }
 for (const lv of ML.LEVELS) { (lv.decor || []).forEach(d => { resolve(d.art); if (d.react) resolve(d.react) }); lv.beats.forEach(b => (b.decor || []).forEach(d => { resolve(d.art); if (d.react) resolve(d.react) })); (lv.cards || []).forEach(c => (c.art || []).forEach(a => resolve(a.k))); if (lv.cab) resolve(lv.cab); (lv.uses || []).forEach(resolve); (lv.objects || []).forEach(o => { resolve(o.art); if (o.who) resolve('char/' + o.who) }) }
+// the marching band (lv.band) is drawn by the pack from these five sprites
+for (const lv of ML.LEVELS) if (lv.band) ['pemimpin-tongkat', 'drum', 'tuba', 'terompet', 'kontrabas'].slice(0, lv.band.n || 5).forEach(k => used.add('malivlak-char/orkes/' + k))
 // story rigs (kereta-story.js): a cave mouth carries Goro; a tow carries Carter (every pose of him rides the logs)
 for (const lv of ML.LEVELS) { if (lv.cave || lv.beats.some(b => b.cave)) ['front-34l', 'front-34r'].forEach(k => used.add('train-char/goro-loco/' + k)); if (lv.tow) [...dbKeys].filter(k => /^story-char\/carter\//.test(k)).forEach(k => used.add(k)) }
 // owner 2026-10-11: exactly ONE Goro per board (a cave, or the patrol, never a standing copy beside it); Carter rides the logs, not the grass

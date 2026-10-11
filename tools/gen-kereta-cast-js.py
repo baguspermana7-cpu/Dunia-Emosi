@@ -19,7 +19,7 @@ MALIVLAK = {
  11: ['animal/beruang/jalan', 'animal/beruang/depan', M+'masinis/terkejut'],
  12: ['animal/beruang/duduk', M+'penumpang-ungu/duduk'], 13: ['animal/beruang/belakang', M+'masinis/jalan'],
  14: [M+'masinis/palu', M+'masinis/periksa'],
- 15: [M+'petugas-stasiun/berdiri', M+'orkes/pemimpin', M+'orkes/drum', M+'orkes/tuba', M+'orkes/terompet', M+'orkes/kontrabas'],
+ 15: [M+'petugas-stasiun/berdiri', M+'orkes/pemimpin-tongkat', M+'orkes/drum', M+'orkes/tuba', M+'orkes/terompet', M+'orkes/kontrabas'],
  16: [M+'petugas-stasiun/bendera', M+'penyambut/jangkung-bungkuk', M+'orkes/pemimpin-tongkat', M+'penyambut/jangkung'],
  17: [M+'petugas-stasiun/bendera-bawah', M+'penyambut/pendek'],
  18: [M+'pembaca-pidato/terkejut', M+'pembaca-pidato/kertas', M+'pembaca-pidato/gestur'],

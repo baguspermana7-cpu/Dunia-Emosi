@@ -45,6 +45,7 @@
     ;(lv.decor || []).forEach(mv); (lv.objects || []).forEach(mv)
     ;['cave', 'shot'].forEach(function (k) { if (lv[k]) lv[k].at = sh(lv[k].at) })
     if (lv.lean) lv.lean = sh(lv.lean)
+    if (lv.band) lv.band = Object.assign({}, lv.band, { at: sh(lv.band.at) })
     ;['pond', 'wheat'].forEach(function (k) { if (lv[k]) lv[k] = lv[k].map(sh) })
     if (lv.tunnel) lv.tunnel = { at: sh(lv.tunnel.at), sign: sh(lv.tunnel.sign), dir: lv.tunnel.dir }
     var cn = function (c) { ;['start', 'end'].forEach(function (k) { var e = c && c[k]; if (!e) return; if (e.zoom && Array.isArray(e.zoom.at)) e.zoom.at = sh(e.zoom.at); (e.fx || []).forEach(function (f) { if (Array.isArray(f.at)) f.at = sh(f.at) }) }) }
@@ -158,22 +159,48 @@
     if (FXS.key !== key) FXS = { key: key, pond: cellsOf(CUR, CURBI, 'pond'), wheat: cellsOf(CUR, CURBI, 'wheat') }
     return FXS
   }
-  function pondCell (x, r, c, s, set) {
-    var X = c * s, Y = r * s, i, side = function (dr, dc) { return set[(r + dr) + ',' + (c + dc)] }
-    var g = x.createLinearGradient(X, Y, X, Y + s); g.addColorStop(0, '#2c6f94'); g.addColorStop(1, '#4796b3'); x.fillStyle = g; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
-    for (i = 0; i < 3; i++) blot(x, X + (0.2 + rnd(r, c, i + 3) * 0.6) * s, Y + (0.2 + rnd(r, c, i + 6) * 0.6) * s, s * (0.14 + rnd(r, c, i) * 0.1), s * 0.05, '#bfe6f3', 0.3)
-    ;[[-1, 0, 0], [1, 0, 1], [0, -1, 2], [0, 1, 3]].forEach(function (d) {   // a muddy bank where the pond ends: reeds and cattails stand on it
-      if (side(d[0], d[1])) return
-      var n = 7
-      for (i = 0; i < n; i++) {
-        var t = (i + rnd(r, c, 40 + i + d[2] * 9)) / n, bx = d[0] ? X + t * s : (d[1] < 0 ? X + s * 0.06 : X + s * 0.94), by = d[1] ? Y + t * s : (d[0] < 0 ? Y + s * 0.06 : Y + s * 0.94)
-        blot(x, bx, by, s * 0.1, s * 0.07, i % 2 ? '#8a7a3e' : '#a99a58', 0.9)
-        if (i % 2 === 0) { x.strokeStyle = '#6b8a2e'; x.lineWidth = Math.max(1.5, s * 0.02); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + (rnd(r, c, 60 + i) - 0.5) * s * 0.1, by - s * (0.16 + rnd(r, c, 70 + i) * 0.1)); x.stroke() }
-        if (i % 4 === 1) { x.strokeStyle = '#6a4520'; x.lineWidth = Math.max(2, s * 0.025); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx, by - s * 0.2); x.stroke(); blot(x, bx, by - s * 0.22, s * 0.025, s * 0.05, '#5a3a16', 1) }
-      }
+  // the whole pond at once: a mud shore, a rounded outline (exterior corners only), deep water with a lighter shallow rim, sheen, ripples, lily pads, reeds on the bank
+  function pondRect (x, c, r, s, set, inflate) {
+    var has = function (dr, dc) { return !!set[(r + dr) + ',' + (c + dc)] }, R = s * 0.46
+    var tl = !has(-1, 0) && !has(0, -1) ? R : 0, tr = !has(-1, 0) && !has(0, 1) ? R : 0, br = !has(1, 0) && !has(0, 1) ? R : 0, bl = !has(1, 0) && !has(0, -1) ? R : 0
+    var X = c * s - inflate, Y = r * s - inflate, w = s + 2 * inflate + 0.6, h = s + 2 * inflate + 0.6
+    x.beginPath(); if (x.roundRect) x.roundRect(X, Y, w, h, [tl, tr, br, bl].map(function (q) { return q ? Math.max(0, q + inflate) : 0 })); else x.rect(X, Y, w, h); x.fill()
+  }
+  function paintPond (x, s, set) {
+    var keys = Object.keys(set); if (!keys.length) return
+    var cells = keys.map(function (k) { return k.split(',').map(Number) }), i
+    var y0 = Math.min.apply(null, cells.map(function (p) { return p[0] })) * s, y1 = (Math.max.apply(null, cells.map(function (p) { return p[0] })) + 1) * s
+    x.save()
+    x.fillStyle = '#a8955f'; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, s * 0.1) })       // wet sand / mud shore
+    x.fillStyle = '#7fa6a0'; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, s * 0.04) })       // shallow rim
+    var g = x.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, '#2f7fa3'); g.addColorStop(0.55, '#1f628a'); g.addColorStop(1, '#2b7497')
+    x.fillStyle = g; cells.forEach(function (p) { pondRect(x, p[1], p[0], s, set, -s * 0.05) })
+    x.globalCompositeOperation = 'source-atop'
+    cells.forEach(function (p) {
+      var r = p[0], c = p[1], X = c * s, Y = r * s
+      for (i = 0; i < 4; i++) blot(x, X + (0.15 + rnd(r, c, i + 3) * 0.7) * s, Y + (0.15 + rnd(r, c, i + 8) * 0.7) * s, s * (0.16 + rnd(r, c, i) * 0.14), s * 0.045, '#d3f0fa', 0.34)
     })
-    x.strokeStyle = 'rgba(255,255,255,.3)'; x.lineWidth = Math.max(1, s * 0.012)
-    for (i = 0; i < 2; i++) { x.beginPath(); x.ellipse(X + s * (0.3 + i * 0.4), Y + s * (0.35 + i * 0.3), s * 0.16, s * 0.045, 0, 0, 7); x.stroke() }
+    x.globalCompositeOperation = 'source-over'
+    cells.forEach(function (p) {
+      var r = p[0], c = p[1], X = c * s, Y = r * s, has = function (dr, dc) { return !!set[(r + dr) + ',' + (c + dc)] }
+      x.strokeStyle = 'rgba(235,248,255,.34)'; x.lineWidth = Math.max(1, s * 0.012)
+      for (i = 0; i < 2; i++) { x.beginPath(); x.ellipse(X + s * (0.3 + i * 0.4), Y + s * (0.35 + i * 0.3), s * 0.17, s * 0.05, 0, 0, 7); x.stroke() }
+      if (rnd(r, c, 90) > 0.45) {   // a lily pad with a pink flower
+        var px = X + s * (0.25 + rnd(r, c, 91) * 0.5), py = Y + s * (0.3 + rnd(r, c, 92) * 0.4)
+        x.fillStyle = '#4f9a3a'; x.beginPath(); x.ellipse(px, py, s * 0.11, s * 0.065, 0, 0.35, 6.2); x.lineTo(px, py); x.fill()
+        if (rnd(r, c, 93) > 0.5) blot(x, px + s * 0.02, py - s * 0.02, s * 0.03, s * 0.025, '#f4a6c4', 1)
+      }
+      ;[[-1, 0, 0], [1, 0, 1], [0, -1, 2], [0, 1, 3]].forEach(function (d) {   // reeds and cattails on every open bank
+        if (has(d[0], d[1])) return
+        for (var j = 0; j < 7; j++) {
+          var t = (j + rnd(r, c, 40 + j + d[2] * 9)) / 7, bx = d[0] ? X + t * s : (d[1] < 0 ? X + s * 0.03 : X + s * 0.97), by = d[1] ? Y + t * s : (d[0] < 0 ? Y + s * 0.03 : Y + s * 0.97)
+          if ((d[0] && (t < 0.1 || t > 0.9)) || (d[1] && (t < 0.1 || t > 0.9))) continue
+          x.strokeStyle = j % 2 ? '#5f8a2c' : '#78a038'; x.lineWidth = Math.max(1.5, s * 0.022); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + (rnd(r, c, 60 + j) - 0.5) * s * 0.1, by - s * (0.16 + rnd(r, c, 70 + j) * 0.12)); x.stroke()
+          if (j % 4 === 1) { x.strokeStyle = '#6a4520'; x.lineWidth = Math.max(2, s * 0.026); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx, by - s * 0.22); x.stroke(); blot(x, bx, by - s * 0.24, s * 0.026, s * 0.055, '#5a3a16', 1) }
+        }
+      })
+    })
+    x.restore()
   }
   function wheatCell (x, r, c, s) {
     var X = c * s, Y = r * s, i
@@ -189,9 +216,9 @@
         if (k === '~') continue
         if (grass) { var iw = grass.naturalWidth, ih = grass.naturalHeight, ix = iw * 0.1, iy = ih * 0.1; x.drawImage(grass, ix, iy, iw - 2 * ix, ih - 2 * iy, c * s - s * 0.07, r * s - s * 0.07, s * 1.14, s * 1.14) }
         if (FS.wheat[r + ',' + c]) wheatCell(x, r, c, s)
-        if (FS.pond[r + ',' + c]) pondCell(x, r, c, s, FS.pond)
       } else groundCell(x, kind, r, c, s, kind === 'gorge' && k === '~')
     }
+    if (kind === 'meadow' || kind === 'forest') paintPond(x, s, FS.pond)
   }
   function isRoad (k) { return k === '.' || k === '=' || k === 'o' }
   var PAT = null
@@ -330,7 +357,16 @@
     // the film's places: swaying wheat (behind AND in front of the train), the pond that swallows the train, the skull-signed tunnel
     var wh = cellsOf(lv, bi, 'wheat'), pd = cellsOf(lv, bi, 'pond')
     Object.keys(wh).forEach(function (k) { var p = k.split(',').map(Number), d = ((p[0] * 5 + p[1] * 3) % 7) * 0.45; out.push({ at: p, cls: 'k-wheat k-wheat-b', html: '<i style="--d:-' + d.toFixed(2) + 's"></i>' }); out.push({ at: p, cls: 'k-wheat k-wheat-f', html: '<i style="--d:-' + (d + 0.9).toFixed(2) + 's"></i>' }) })
-    Object.keys(pd).forEach(function (k) { var p = k.split(',').map(Number), d = ((p[0] * 3 + p[1] * 5) % 6) * 0.5; out.push({ at: p, cls: 'k-pond' + (pd[(p[0] - 1) + ',' + p[1]] ? '' : ' top') + (pd[p[0] + ',' + (p[1] - 1)] ? '' : ' e-l') + (pd[p[0] + ',' + (p[1] + 1)] ? '' : ' e-r') + (pd[(p[0] + 1) + ',' + p[1]] ? '' : ' e-b'), html: '<i class="body"></i><i class="crest" style="--d:-' + d.toFixed(2) + 's"></i><i class="rp r1" style="--d:-' + d.toFixed(2) + 's"></i><i class="rp r2" style="--d:-' + (d + 1.3).toFixed(2) + 's"></i>' }) })
+    Object.keys(pd).forEach(function (k) { var p = k.split(',').map(Number), d = ((p[0] * 3 + p[1] * 5) % 6) * 0.5; out.push({ at: p, cls: 'k-pond' + (pd[(p[0] - 1) + ',' + p[1]] ? '' : ' top') + (pd[p[0] + ',' + (p[1] - 1)] ? '' : ' e-l') + (pd[p[0] + ',' + (p[1] + 1)] ? '' : ' e-r') + (pd[(p[0] + 1) + ',' + p[1]] ? '' : ' e-b') + ((!pd[(p[0] + 1) + ',' + p[1]] && !pd[p[0] + ',' + (p[1] - 1)]) ? ' c-bl' : '') + ((!pd[(p[0] + 1) + ',' + p[1]] && !pd[p[0] + ',' + (p[1] + 1)]) ? ' c-br' : '') + ((!pd[(p[0] - 1) + ',' + p[1]] && !pd[p[0] + ',' + (p[1] - 1)]) ? ' c-tl' : '') + ((!pd[(p[0] - 1) + ',' + p[1]] && !pd[p[0] + ',' + (p[1] + 1)]) ? ' c-tr' : ''), html: '<i class="body"></i><i class="crest" style="--d:-' + d.toFixed(2) + 's"></i><i class="rp r1" style="--d:-' + d.toFixed(2) + 's"></i><i class="rp r2" style="--d:-' + (d + 1.3).toFixed(2) + 's"></i>' }) })
+    // the welcoming MARCHING BAND on the platform (film 7:00-7:48, docs/ref-malivlak/band-*.jpg): brick station wall behind, the five players in the film's order
+    // (blue-cap conductor, bass drum, tuba, trumpet, double bass) on the row beside the rail, each bobbing in its own time. band: { at: [row, col], n: 5 }
+    var bn = (b && b.band) || lv.band
+    if (bn) {
+      var BAND = ['malivlak-char/orkes/pemimpin-tongkat', 'malivlak-char/orkes/drum', 'malivlak-char/orkes/tuba', 'malivlak-char/orkes/terompet', 'malivlak-char/orkes/kontrabas'], nb = Math.min(bn.n || 5, 5)
+      out.push({ at: [bn.at[0], bn.at[1]], cls: 'k-platform', html: '<i style="width:calc(var(--cell) * ' + nb + ')"></i>' })
+      out.push({ at: [bn.at[0] - 1, bn.at[1]], cls: 'k-brick', html: '<i style="width:calc(var(--cell) * ' + nb + ')"><b class="win"></b><b class="win w2"></b><span>RUANG TUNGGU</span></i>' })
+      BAND.slice(0, nb).forEach(function (a2, i) { out.push({ at: [bn.at[0], bn.at[1] + i], cls: 'k-band k-band' + i, html: '<img alt="" src="' + lib(a2) + '" style="--d:-' + (i * 0.37).toFixed(2) + 's">' }) })
+    }
     var tn = (b && b.tunnel) || lv.tunnel
     if (tn) { out.push({ at: tn.at, cls: 'k-tunnel dir-' + (tn.dir || 'r'), html: archSvg() }); out.push({ at: tn.sign, cls: 'k-skull', html: SKULL_SVG }) }
     return out
