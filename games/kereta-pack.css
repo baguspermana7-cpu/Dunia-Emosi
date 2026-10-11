@@ -400,3 +400,7 @@ html[data-pack="kereta"] #p-objs .ob-chip.k-pop{animation:kPop .5s var(--ease-ou
 html[data-pack="kereta"] .ob[data-id="kayu"] .carter{bottom:70%;left:30%;width:60%;z-index:4}
 html[data-pack="kereta"] .ob[data-id="kayu"] .whip{bottom:150%;left:70%;z-index:4}
 html[data-pack="kereta"] .ob[data-id="kayu"] .k-name{top:auto;bottom:-6%}
+/* storyline titles are longer than "LINUS": fit the sign */
+html[data-story="malivlak"] #scr-home .logo .l2{font-size:calc(var(--k-l2)*.6)}
+html[data-story="hellbent"] #scr-home .logo .l2{font-size:calc(var(--k-l2)*.82)}
+html[data-story="hellbent"] #scr-home .logo,html[data-story="malivlak"] #scr-home .logo{max-width:92%}
