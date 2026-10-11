@@ -133,6 +133,43 @@
     if (spec.cab2) { if (!c2) { c2 = el('img', 'k-cab2'); c2.alt = ''; m.appendChild(c2) } c2.style.display = ''; c2.src = src(spec.cab2) } else if (c2) c2.style.display = 'none'
     if (spec.front) { if (!fr) { fr = el('img', 'k-front'); fr.alt = ''; m.appendChild(fr) } fr.style.display = ''; fr.src = src(spec.front) } else if (fr) fr.style.display = 'none'
   }
+  /* ── the bird's nest ON Malivlak's chimney (mv09, film 4:03; owner stills): nest + bird ride the hero's chimney; after `blow` moves a puff
+     of steam hurls them off (nest tumbles, bird flaps away). beat.nest = { blow: 3 }. Placed from the hero art's own box (front view). ── */
+  var nestKey = '', nestMoves = 0, nestLast = '', nestGone = false
+  function nest (c) {
+    var m = $('mojo'); if (!m) return
+    var spec = c.beat && c.beat.nest, key = c.lv.id + '/' + c.bi, ne = m.querySelector('.k-nest:not(.bird)'), bd = m.querySelector('.k-nest.bird')
+    if (key !== nestKey) { nestKey = key; nestMoves = 0; nestLast = ''; nestGone = false; if (ne) ne.remove(); if (bd) bd.remove(); ne = bd = null }
+    if (!spec || nestGone) return
+    var img = m.querySelector('img.owner-mojo'); if (!img) return
+    if (!ne) {
+      ne = el('img', 'k-nest'); ne.alt = ''; ne.src = src('kereta-prop/bird-nest'); bd = el('img', 'k-nest bird'); bd.alt = ''; bd.src = src('animal/bird-blue/fly')
+      m.appendChild(ne); m.appendChild(bd)
+    }
+    var place = function () {
+      if (nestGone || !ne.isConnected) return
+      var im2 = m.querySelector('img.owner-mojo') || img, mr = m.getBoundingClientRect(), ir = im2.getBoundingClientRect(), sc = (mr.width / (m.offsetWidth || mr.width)) || 1
+      if (ir.height > 10) {
+        var cx = (ir.left - mr.left + ir.width * 0.69) / sc, cy = (ir.top - mr.top + ir.height * 0.07) / sc
+        ne.style.left = (cx - ne.offsetWidth / 2) + 'px'; ne.style.top = (cy - ne.offsetHeight * 0.8) + 'px'
+        bd.style.left = (cx - bd.offsetWidth / 2) + 'px'; bd.style.top = (cy - ne.offsetHeight * 0.8 - bd.offsetHeight * 0.78) + 'px'
+      }
+      W.requestAnimationFrame(place)
+    }
+    if (!ne._placing) { ne._placing = 1; place() }
+    var p = c.w.m.r + ',' + c.w.m.c
+    if (nestLast && p !== nestLast) nestMoves++
+    nestLast = p
+    if (nestMoves >= ((spec.blow) || 3)) {
+      nestGone = true
+      var r = ne.getBoundingClientRect(); puff(r.left + r.width / 2, r.top, 110)
+      if (!RM && ne.animate) {
+        ne.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate(70px,-90px) rotate(200deg)', opacity: 1, offset: .45 }, { transform: 'translate(140px,40px) rotate(420deg)', opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.23,1,.32,1)', fill: 'forwards' })
+        bd.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate(-30px,-150px) scale(1.25)', opacity: 1, offset: .6 }, { transform: 'translate(-90px,-260px) scale(.8)', opacity: 0 }], { duration: 1300, easing: 'ease-out', fill: 'forwards' })
+      }
+      setTimeout(function () { if (ne) ne.remove(); if (bd) bd.remove() }, 1500)
+    }
+  }
   // sc3 micro: the red caboose hops one beat LATE when the rake moves
   var lastPos = ''
   function hopLate (lv, w) {
@@ -155,7 +192,7 @@
         if (!R || R.lv !== lv || (broken0 && !open)) build(lv, w)
         if (open) snap()
       }
-      shot(lv, w); ride(lv); hopLate(lv, w)
+      shot(lv, w); ride(lv); nest(c); hopLate(lv, w)
       // bl15: the one Goro (the patrol) is swallowed by the dark when it stands in the cave cell
       var cv = (c.beat && c.beat.cave) || lv.cave
       if (cv) { var g = D.querySelector('#objs .ob[data-id="goro"]'), go = PG.find(w, 'goro'); if (g && go) g.classList.toggle('k-incave', go.r === cv.at[0] && go.c === cv.at[1]) }

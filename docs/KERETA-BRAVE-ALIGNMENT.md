@@ -19,6 +19,8 @@ The md's own "Urutan penyelamatan yang tidak boleh tertukar" (12 steps) must hol
   that clearly MISSES (puff in the sky / spark on a rock); Linus flinches, squashes, goes faster with extra steam. No blood, no hit,
   no injury. Exactly ONE Goro per level, emerging from and backing into a cave mouth (sc 9, 18).
 - Black birds on the sign (sc9): vulture art is OK perched, not menacing.
+- OWNER OVERRIDE 2026-10-12 (Malivlak mv11 only): the film's SKULL warning board on a post beside the track, at the stone tunnel arch, is allowed (cartoon, the film's own prop, drawn as inline SVG
+  `.k-skull`). It overrides the "no skull" rule for this one sign; no skull anywhere else, no skull on characters or on the board's cells.
 - sc24–26: Linus is hurt = "sangat lelah, penyok, uapnya habis" (sad sprite, soot, dented); no fire. sc26 = a DREAM:
   Linus floats up among soft clouds to a golden gate, light fills the screen, he wakes in the workshop (sc27).
   Never say he died.
@@ -77,3 +79,16 @@ order (levels 15–24 in the md's order) and "no coaches with Linus between sc 9
   bl15 (Samson's red-brown rake at the endpoint), bl16 (coaches tinted red-brown), bl19/bl20 (Samson stays in the scene). The SIDE camera idea is not used: the board stays flat (owner rule).
 - Chapter 6: sc25 = bl20 beats 3-4, sc26 bl21 (dream: golden gate, story cards, light), sc27 bl22 (child holding the baby turtle, Baron at the back), sc28 bl23 (two newspaper cards),
   sc29 bl24 (new bridge with pillars, monument, plane), sc30 bl26 (the opening valley loop again; Henry and Scarlet in the cab, the baby turtle on Linus's nose).
+
+
+## Malivlak (film "Mali vlak", Dragutin Vunak 1959) - film mm:ss -> level beat (owner 2026-10-12: "interpretasinya ke game scenario bener2 tepat")
+Frames: `docs/ref-malivlak/mv/` (every 3 s, sheets 01-05) and the owner's stills `docs/ref-malivlak/*-image.jpg`. New board features (all inert without the level keys):
+`wheat: [[r,c]..]` (golden ground, rails not drawn, swaying stalks behind AND in front of the train), `pond: [[r,c]..]` (water, rails stop at the bank, the front water hides the train
+down to its chimney; use TWO rows so the hero's row sits under the surface), `tunnel: {at, sign}` (stone arch in a red cliff + the skull board), beat `nest: {blow: n}` (bird's nest ON the hero's chimney).
+| Level | Film | What the board shows |
+|---|---|---|
+| mv04 | 2:24-2:36 | Malivlak and his rake in film order: red coal TENDER, green coach, orange coach (blue is the rear coach, mv12/mv14). Art = the owner's wagon sheet (`train-char/mv-*`) |
+| mv06 | 2:51-3:00 | leaves the rails, rabbit ducks, then TALL WHEAT (3 road cells without rails) hides the train to its chimney; the man in purple lies in the field with his case (`penumpang-ungu/rebah`) and climbs aboard |
+| mv07 | 3:00-3:12 | the pond lies across the line (2 rows, reeds and ripples); the train wades in and only the chimney tip shows; it rises on the far bank, shakes the water off, the driver lifts the fish |
+| mv09 | 4:03-4:12 | the bird's NEST sits on the red chimney; steam puffs hurl it and the bird off; the driver lifts the pan of eggs |
+| mv11 | 4:36-4:50 | stone tunnel arch in a red cliff, SKULL board on a post beside the track, driver leans out, train reverses, bear appears |

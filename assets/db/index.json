@@ -10494,6 +10494,37 @@
    "tint": 31.2,
    "name_id": "Penumpang Ungu (berlari membawa koper)"
   },
+  "malivlak-char/penumpang-ungu/rebah": {
+   "file": "assets/db/lib/malivlak-char/penumpang-ungu/rebah.webp",
+   "cat": "malivlak-char",
+   "tags": [
+    "penumpang",
+    "malivlak",
+    "cartoon",
+    "penumpang ungu (duduk memegang koper di pangkuan)",
+    "cartoon"
+   ],
+   "source": "derived from penumpang-ungu/duduk (rotated 60 deg)",
+   "w": 245,
+   "h": 161,
+   "outline": 4,
+   "baseline": 157,
+   "anchor": [
+    122,
+    157
+   ],
+   "char": "penumpang-ungu",
+   "view": "side",
+   "facing": 90,
+   "pose": "rebah",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 291,
+    "soft_after": 291
+   },
+   "tint": 28.3,
+   "name_id": "Penumpang Ungu (duduk memegang koper di pangkuan)"
+  },
   "malivlak-char/penyambut/jangkung": {
    "file": "assets/db/lib/malivlak-char/penyambut/jangkung.webp",
    "cat": "malivlak-char",
@@ -46421,63 +46452,53 @@
    "file": "assets/db/lib/train-char/caboose-red/front-34l.webp",
    "cat": "train-char",
    "tags": [
-    "caboose",
+    "coach",
     "wagon",
     "gerbong",
     "train",
-    "cartoon"
+    "cartoon",
+    "linus"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 263,
-   "h": 265,
-   "outline": 7,
-   "baseline": 264,
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 277,
+   "h": 250,
+   "baseline": 244,
    "anchor": [
-    131,
-    264
+    138,
+    244
    ],
    "char": "caboose-red",
    "view": "front34",
    "facing": 225,
    "pose": "front-34l",
    "expression": "neutral",
-   "fringe": {
-    "soft_before": 818,
-    "soft_after": 794
-   },
-   "tint": 41.5,
-   "name_id": "Gerbong Caboose Merah"
+   "name_id": "Gerbong Merah"
   },
   "train-char/caboose-red/front-34r": {
    "file": "assets/db/lib/train-char/caboose-red/front-34r.webp",
    "cat": "train-char",
    "tags": [
-    "caboose",
+    "coach",
     "wagon",
     "gerbong",
     "train",
-    "cartoon"
+    "cartoon",
+    "linus"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 258,
-   "h": 246,
-   "outline": 6,
-   "baseline": 245,
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 285,
+   "h": 238,
+   "baseline": 231,
    "anchor": [
-    129,
-    245
+    142,
+    231
    ],
    "char": "caboose-red",
    "view": "front34",
    "facing": 135,
    "pose": "front-34r",
    "expression": "neutral",
-   "fringe": {
-    "soft_before": 698,
-    "soft_after": 682
-   },
-   "tint": 31.9,
-   "name_id": "Gerbong Caboose Merah"
+   "name_id": "Gerbong Merah"
   },
   "train-char/coach-green/front-34l": {
    "file": "assets/db/lib/train-char/coach-green/front-34l.webp",
@@ -46487,27 +46508,22 @@
     "wagon",
     "gerbong",
     "train",
-    "cartoon"
+    "cartoon",
+    "linus"
    ],
-   "source": "owner supporting-cast atlas (Downloads): brave-final",
-   "w": 292,
-   "h": 226,
-   "outline": 6,
-   "baseline": 225,
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 330,
+   "h": 261,
+   "baseline": 255,
    "anchor": [
-    146,
-    225
+    165,
+    255
    ],
    "char": "coach-green",
    "view": "front34",
    "facing": 225,
    "pose": "front-34l",
    "expression": "neutral",
-   "fringe": {
-    "soft_before": 489,
-    "soft_after": 469
-   },
-   "tint": 1.7,
    "name_id": "Gerbong Penumpang Hijau"
   },
   "train-char/coach-green/side-l": {
@@ -46518,27 +46534,22 @@
     "wagon",
     "gerbong",
     "train",
-    "cartoon"
+    "cartoon",
+    "linus"
    ],
-   "source": "owner supporting-cast atlas (Downloads): film-atlas",
-   "w": 300,
-   "h": 231,
-   "outline": 6,
-   "baseline": 230,
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 335,
+   "h": 209,
+   "baseline": 202,
    "anchor": [
-    150,
-    230
+    167,
+    202
    ],
    "char": "coach-green",
    "view": "side",
    "facing": 270,
    "pose": "side-l",
    "expression": "neutral",
-   "fringe": {
-    "soft_before": 387,
-    "soft_after": 387
-   },
-   "tint": 1.5,
    "name_id": "Gerbong Penumpang Hijau"
   },
   "train-char/defeatist/34l-neutral": {
@@ -51144,6 +51155,606 @@
     "top-se"
    ]
   },
+  "train-char/mv-coach-blue/34": {
+   "file": "assets/db/lib/train-char/mv-coach-blue/34.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "blue",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 227,
+   "h": 214,
+   "baseline": 212,
+   "anchor": [
+    113,
+    212
+   ],
+   "char": "mv-coach-blue",
+   "view": "34",
+   "facing": 45,
+   "pose": "34",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 990,
+    "soft_after": 990
+   },
+   "name_id": "Gerbong biru"
+  },
+  "train-char/mv-coach-blue/front": {
+   "file": "assets/db/lib/train-char/mv-coach-blue/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "blue",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 146,
+   "h": 180,
+   "baseline": 178,
+   "anchor": [
+    73,
+    178
+   ],
+   "char": "mv-coach-blue",
+   "view": "front",
+   "facing": 180,
+   "pose": "front",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 775,
+    "soft_after": 775
+   },
+   "name_id": "Gerbong biru"
+  },
+  "train-char/mv-coach-blue/rear": {
+   "file": "assets/db/lib/train-char/mv-coach-blue/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "blue",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 150,
+   "h": 188,
+   "baseline": 186,
+   "anchor": [
+    75,
+    186
+   ],
+   "char": "mv-coach-blue",
+   "view": "rear",
+   "facing": 0,
+   "pose": "rear",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 772,
+    "soft_after": 772
+   },
+   "name_id": "Gerbong biru"
+  },
+  "train-char/mv-coach-blue/side": {
+   "file": "assets/db/lib/train-char/mv-coach-blue/side.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "blue",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 225,
+   "h": 181,
+   "baseline": 179,
+   "anchor": [
+    112,
+    179
+   ],
+   "char": "mv-coach-blue",
+   "view": "side",
+   "facing": 90,
+   "pose": "side",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1013,
+    "soft_after": 1013
+   },
+   "name_id": "Gerbong biru"
+  },
+  "train-char/mv-coach-blue/top": {
+   "file": "assets/db/lib/train-char/mv-coach-blue/top.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "blue",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 143,
+   "h": 249,
+   "baseline": 248,
+   "anchor": [
+    71,
+    248
+   ],
+   "char": "mv-coach-blue",
+   "view": "top",
+   "facing": 0,
+   "pose": "top",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 925,
+    "soft_after": 925
+   },
+   "name_id": "Gerbong biru"
+  },
+  "train-char/mv-coach-green/34": {
+   "file": "assets/db/lib/train-char/mv-coach-green/34.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "green",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 241,
+   "h": 212,
+   "baseline": 211,
+   "anchor": [
+    120,
+    211
+   ],
+   "char": "mv-coach-green",
+   "view": "34",
+   "facing": 45,
+   "pose": "34",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1011,
+    "soft_after": 1010
+   },
+   "name_id": "Gerbong hijau"
+  },
+  "train-char/mv-coach-green/front": {
+   "file": "assets/db/lib/train-char/mv-coach-green/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "green",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 146,
+   "h": 179,
+   "baseline": 177,
+   "anchor": [
+    73,
+    177
+   ],
+   "char": "mv-coach-green",
+   "view": "front",
+   "facing": 180,
+   "pose": "front",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 779,
+    "soft_after": 779
+   },
+   "name_id": "Gerbong hijau"
+  },
+  "train-char/mv-coach-green/rear": {
+   "file": "assets/db/lib/train-char/mv-coach-green/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "green",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 151,
+   "h": 186,
+   "baseline": 184,
+   "anchor": [
+    75,
+    184
+   ],
+   "char": "mv-coach-green",
+   "view": "rear",
+   "facing": 0,
+   "pose": "rear",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 786,
+    "soft_after": 786
+   },
+   "name_id": "Gerbong hijau"
+  },
+  "train-char/mv-coach-green/side": {
+   "file": "assets/db/lib/train-char/mv-coach-green/side.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "green",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 238,
+   "h": 187,
+   "baseline": 185,
+   "anchor": [
+    119,
+    185
+   ],
+   "char": "mv-coach-green",
+   "view": "side",
+   "facing": 90,
+   "pose": "side",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1042,
+    "soft_after": 1042
+   },
+   "name_id": "Gerbong hijau"
+  },
+  "train-char/mv-coach-green/top": {
+   "file": "assets/db/lib/train-char/mv-coach-green/top.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "green",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 138,
+   "h": 274,
+   "baseline": 272,
+   "anchor": [
+    69,
+    272
+   ],
+   "char": "mv-coach-green",
+   "view": "top",
+   "facing": 0,
+   "pose": "top",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1064,
+    "soft_after": 1064
+   },
+   "name_id": "Gerbong hijau"
+  },
+  "train-char/mv-coach-orange/34": {
+   "file": "assets/db/lib/train-char/mv-coach-orange/34.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "orange",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 243,
+   "h": 226,
+   "baseline": 224,
+   "anchor": [
+    121,
+    224
+   ],
+   "char": "mv-coach-orange",
+   "view": "34",
+   "facing": 45,
+   "pose": "34",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1069,
+    "soft_after": 1023
+   },
+   "name_id": "Gerbong oranye"
+  },
+  "train-char/mv-coach-orange/front": {
+   "file": "assets/db/lib/train-char/mv-coach-orange/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "orange",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 156,
+   "h": 191,
+   "baseline": 189,
+   "anchor": [
+    78,
+    189
+   ],
+   "char": "mv-coach-orange",
+   "view": "front",
+   "facing": 180,
+   "pose": "front",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 788,
+    "soft_after": 788
+   },
+   "name_id": "Gerbong oranye"
+  },
+  "train-char/mv-coach-orange/rear": {
+   "file": "assets/db/lib/train-char/mv-coach-orange/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "orange",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 156,
+   "h": 194,
+   "baseline": 192,
+   "anchor": [
+    78,
+    192
+   ],
+   "char": "mv-coach-orange",
+   "view": "rear",
+   "facing": 0,
+   "pose": "rear",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 850,
+    "soft_after": 850
+   },
+   "name_id": "Gerbong oranye"
+  },
+  "train-char/mv-coach-orange/side": {
+   "file": "assets/db/lib/train-char/mv-coach-orange/side.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "orange",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 237,
+   "h": 215,
+   "baseline": 213,
+   "anchor": [
+    118,
+    213
+   ],
+   "char": "mv-coach-orange",
+   "view": "side",
+   "facing": 90,
+   "pose": "side",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1154,
+    "soft_after": 1154
+   },
+   "name_id": "Gerbong oranye"
+  },
+  "train-char/mv-coach-orange/top": {
+   "file": "assets/db/lib/train-char/mv-coach-orange/top.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "orange",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 165,
+   "h": 300,
+   "baseline": 299,
+   "anchor": [
+    82,
+    299
+   ],
+   "char": "mv-coach-orange",
+   "view": "top",
+   "facing": 0,
+   "pose": "top",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 1030,
+    "soft_after": 1030
+   },
+   "name_id": "Gerbong oranye"
+  },
+  "train-char/mv-tender/34": {
+   "file": "assets/db/lib/train-char/mv-tender/34.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "red",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 197,
+   "h": 161,
+   "baseline": 159,
+   "anchor": [
+    98,
+    159
+   ],
+   "char": "mv-tender",
+   "view": "34",
+   "facing": 45,
+   "pose": "34",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 807,
+    "soft_after": 806
+   },
+   "name_id": "Tender batu bara merah"
+  },
+  "train-char/mv-tender/front": {
+   "file": "assets/db/lib/train-char/mv-tender/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "red",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 129,
+   "h": 133,
+   "baseline": 131,
+   "anchor": [
+    64,
+    131
+   ],
+   "char": "mv-tender",
+   "view": "front",
+   "facing": 180,
+   "pose": "front",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 559,
+    "soft_after": 558
+   },
+   "name_id": "Tender batu bara merah"
+  },
+  "train-char/mv-tender/rear": {
+   "file": "assets/db/lib/train-char/mv-tender/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "red",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 132,
+   "h": 129,
+   "baseline": 127,
+   "anchor": [
+    66,
+    127
+   ],
+   "char": "mv-tender",
+   "view": "rear",
+   "facing": 0,
+   "pose": "rear",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 626,
+    "soft_after": 626
+   },
+   "name_id": "Tender batu bara merah"
+  },
+  "train-char/mv-tender/side": {
+   "file": "assets/db/lib/train-char/mv-tender/side.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "red",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 206,
+   "h": 134,
+   "baseline": 133,
+   "anchor": [
+    103,
+    133
+   ],
+   "char": "mv-tender",
+   "view": "side",
+   "facing": 90,
+   "pose": "side",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 844,
+    "soft_after": 844
+   },
+   "name_id": "Tender batu bara merah"
+  },
+  "train-char/mv-tender/top": {
+   "file": "assets/db/lib/train-char/mv-tender/top.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "malivlak",
+    "red",
+    "cartoon"
+   ],
+   "source": "owner malivlak-wagons-sheet.png",
+   "w": 130,
+   "h": 201,
+   "baseline": 199,
+   "anchor": [
+    65,
+    199
+   ],
+   "char": "mv-tender",
+   "view": "top",
+   "facing": 0,
+   "pose": "top",
+   "expression": "neutral",
+   "fringe": {
+    "soft_before": 832,
+    "soft_after": 831
+   },
+   "name_id": "Tender batu bara merah"
+  },
   "train-char/rongsokan-a/v1": {
    "file": "assets/db/lib/train-char/rongsokan-a/v1.webp",
    "cat": "train-char",
@@ -51589,7 +52200,7 @@
     "angry",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 165,
    "h": 151,
    "outline": 4,
@@ -51623,7 +52234,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 167,
    "h": 146,
    "outline": 4,
@@ -51657,7 +52268,7 @@
     "angry",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 141,
    "h": 146,
    "outline": 4,
@@ -51691,7 +52302,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 146,
    "h": 146,
    "outline": 4,
@@ -51725,7 +52336,7 @@
     "angry",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 124,
    "h": 158,
    "outline": 3,
@@ -51759,7 +52370,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 119,
    "h": 154,
    "outline": 3,
@@ -51793,7 +52404,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 122,
    "h": 161,
    "outline": 3,
@@ -51827,7 +52438,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 168,
    "h": 143,
    "outline": 4,
@@ -51861,7 +52472,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 149,
    "h": 148,
    "outline": 4,
@@ -51895,7 +52506,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 135,
    "h": 144,
    "outline": 3,
@@ -51929,7 +52540,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 97,
    "h": 139,
    "outline": 3,
@@ -51963,7 +52574,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 167,
    "h": 127,
    "outline": 3,
@@ -51997,7 +52608,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 155,
    "h": 113,
    "outline": 3,
@@ -52031,7 +52642,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 134,
    "h": 153,
    "outline": 3,
@@ -52065,7 +52676,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 241,
    "h": 102,
    "outline": 3,
@@ -52099,7 +52710,7 @@
     "angry",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 207,
    "h": 122,
    "outline": 3,
@@ -52133,7 +52744,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 207,
    "h": 123,
    "outline": 3,
@@ -52167,7 +52778,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 234,
    "h": 91,
    "outline": 3,
@@ -52201,7 +52812,7 @@
     "angry",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 193,
    "h": 127,
    "outline": 3,
@@ -52235,7 +52846,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 190,
    "h": 120,
    "outline": 3,
@@ -52269,7 +52880,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 248,
    "h": 63,
    "outline": 3,
@@ -52303,7 +52914,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 72,
    "h": 197,
    "outline": 3,
@@ -52337,7 +52948,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 136,
    "h": 183,
    "outline": 3,
@@ -52371,7 +52982,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 136,
    "h": 183,
    "outline": 3,
@@ -52405,7 +53016,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 49,
    "h": 193,
    "outline": 3,
@@ -52439,7 +53050,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 72,
    "h": 197,
    "outline": 3,
@@ -52473,7 +53084,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 63,
    "h": 196,
    "outline": 3,
@@ -52507,7 +53118,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 136,
    "h": 183,
    "outline": 3,
@@ -52541,7 +53152,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 136,
    "h": 183,
    "outline": 3,
@@ -52575,7 +53186,7 @@
     "neutral",
     "cartoon"
    ],
-   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson\u2019s 25-view steam locomotive sprite sheet.png",
+   "source": "owner train sprite sheet (Downloads): Brave locomotive _name_Samson’s 25-view steam locomotive sprite sheet.png",
    "w": 248,
    "h": 63,
    "outline": 3,
@@ -53617,6 +54228,448 @@
    "w": 263,
    "h": 224,
    "psnr": 44.5
+  },
+  "train-char/coach-green/front-34r": {
+   "file": "assets/db/lib/train-char/coach-green/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 325,
+   "h": 242,
+   "baseline": 235,
+   "anchor": [
+    162,
+    235
+   ],
+   "char": "coach-green",
+   "view": "front34",
+   "facing": 135,
+   "pose": "front-34r",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau"
+  },
+  "train-char/coach-green/side-r": {
+   "file": "assets/db/lib/train-char/coach-green/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 337,
+   "h": 211,
+   "baseline": 204,
+   "anchor": [
+    168,
+    204
+   ],
+   "char": "coach-green",
+   "view": "side",
+   "facing": 90,
+   "pose": "side-r",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau"
+  },
+  "train-char/coach-green/front": {
+   "file": "assets/db/lib/train-char/coach-green/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 278,
+   "h": 247,
+   "baseline": 240,
+   "anchor": [
+    139,
+    240
+   ],
+   "char": "coach-green",
+   "view": "front",
+   "facing": 180,
+   "pose": "front",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau"
+  },
+  "train-char/coach-green/rear": {
+   "file": "assets/db/lib/train-char/coach-green/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 270,
+   "h": 238,
+   "baseline": 232,
+   "anchor": [
+    135,
+    232
+   ],
+   "char": "coach-green",
+   "view": "rear",
+   "facing": 0,
+   "pose": "rear",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau"
+  },
+  "train-char/coach-green/top-n": {
+   "file": "assets/db/lib/train-char/coach-green/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 349,
+   "h": 142,
+   "baseline": 135,
+   "anchor": [
+    174,
+    135
+   ],
+   "char": "coach-green",
+   "view": "top",
+   "facing": 0,
+   "pose": "top-n",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau"
+  },
+  "train-char/coach-green-2/front-34l": {
+   "file": "assets/db/lib/train-char/coach-green-2/front-34l.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 320,
+   "h": 256,
+   "baseline": 249,
+   "anchor": [
+    160,
+    249
+   ],
+   "char": "coach-green-2",
+   "view": "front34",
+   "facing": 225,
+   "pose": "front-34l",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau 2"
+  },
+  "train-char/coach-green-2/front-34r": {
+   "file": "assets/db/lib/train-char/coach-green-2/front-34r.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 322,
+   "h": 237,
+   "baseline": 230,
+   "anchor": [
+    161,
+    230
+   ],
+   "char": "coach-green-2",
+   "view": "front34",
+   "facing": 135,
+   "pose": "front-34r",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau 2"
+  },
+  "train-char/coach-green-2/side-l": {
+   "file": "assets/db/lib/train-char/coach-green-2/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 339,
+   "h": 208,
+   "baseline": 201,
+   "anchor": [
+    169,
+    201
+   ],
+   "char": "coach-green-2",
+   "view": "side",
+   "facing": 270,
+   "pose": "side-l",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau 2"
+  },
+  "train-char/coach-green-2/side-r": {
+   "file": "assets/db/lib/train-char/coach-green-2/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 343,
+   "h": 211,
+   "baseline": 204,
+   "anchor": [
+    171,
+    204
+   ],
+   "char": "coach-green-2",
+   "view": "side",
+   "facing": 90,
+   "pose": "side-r",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau 2"
+  },
+  "train-char/coach-green-2/front": {
+   "file": "assets/db/lib/train-char/coach-green-2/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 272,
+   "h": 246,
+   "baseline": 239,
+   "anchor": [
+    136,
+    239
+   ],
+   "char": "coach-green-2",
+   "view": "front",
+   "facing": 180,
+   "pose": "front",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau 2"
+  },
+  "train-char/coach-green-2/rear": {
+   "file": "assets/db/lib/train-char/coach-green-2/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 271,
+   "h": 238,
+   "baseline": 232,
+   "anchor": [
+    135,
+    232
+   ],
+   "char": "coach-green-2",
+   "view": "rear",
+   "facing": 0,
+   "pose": "rear",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau 2"
+  },
+  "train-char/coach-green-2/top-n": {
+   "file": "assets/db/lib/train-char/coach-green-2/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 344,
+   "h": 142,
+   "baseline": 135,
+   "anchor": [
+    172,
+    135
+   ],
+   "char": "coach-green-2",
+   "view": "top",
+   "facing": 0,
+   "pose": "top-n",
+   "expression": "neutral",
+   "name_id": "Gerbong Penumpang Hijau 2"
+  },
+  "train-char/caboose-red/side-l": {
+   "file": "assets/db/lib/train-char/caboose-red/side-l.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 281,
+   "h": 198,
+   "baseline": 192,
+   "anchor": [
+    140,
+    192
+   ],
+   "char": "caboose-red",
+   "view": "side",
+   "facing": 270,
+   "pose": "side-l",
+   "expression": "neutral",
+   "name_id": "Gerbong Merah"
+  },
+  "train-char/caboose-red/side-r": {
+   "file": "assets/db/lib/train-char/caboose-red/side-r.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 273,
+   "h": 204,
+   "baseline": 197,
+   "anchor": [
+    136,
+    197
+   ],
+   "char": "caboose-red",
+   "view": "side",
+   "facing": 90,
+   "pose": "side-r",
+   "expression": "neutral",
+   "name_id": "Gerbong Merah"
+  },
+  "train-char/caboose-red/front": {
+   "file": "assets/db/lib/train-char/caboose-red/front.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 209,
+   "h": 244,
+   "baseline": 237,
+   "anchor": [
+    104,
+    237
+   ],
+   "char": "caboose-red",
+   "view": "front",
+   "facing": 180,
+   "pose": "front",
+   "expression": "neutral",
+   "name_id": "Gerbong Merah"
+  },
+  "train-char/caboose-red/rear": {
+   "file": "assets/db/lib/train-char/caboose-red/rear.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 219,
+   "h": 232,
+   "baseline": 225,
+   "anchor": [
+    109,
+    225
+   ],
+   "char": "caboose-red",
+   "view": "rear",
+   "facing": 0,
+   "pose": "rear",
+   "expression": "neutral",
+   "name_id": "Gerbong Merah"
+  },
+  "train-char/caboose-red/top-n": {
+   "file": "assets/db/lib/train-char/caboose-red/top-n.webp",
+   "cat": "train-char",
+   "tags": [
+    "coach",
+    "wagon",
+    "gerbong",
+    "train",
+    "cartoon",
+    "linus"
+   ],
+   "source": "owner Linus wagon sheet 2026-10-12 (game asset/train/linus-wagons), alpha cut, no ring",
+   "w": 302,
+   "h": 139,
+   "baseline": 133,
+   "anchor": [
+    151,
+    133
+   ],
+   "char": "caboose-red",
+   "view": "top",
+   "facing": 0,
+   "pose": "top-n",
+   "expression": "neutral",
+   "name_id": "Gerbong Merah"
   }
  }
 }

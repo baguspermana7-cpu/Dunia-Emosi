@@ -18,7 +18,7 @@
     'char/mv-petugas': 'malivlak-char/petugas-stasiun/berdiri', 'char/mv-peluit': 'malivlak-char/petugas-stasiun/peluit', 'char/mv-bendera': 'malivlak-char/petugas-stasiun/bendera-bawah',
     'char/mv-bagasi': 'malivlak-char/petugas-bagasi/angkat', 'char/mv-koper-besar': 'malivlak-char/petugas-bagasi/koper-besar', 'char/mv-masinis': 'malivlak-char/masinis/pipa-2', 'char/mv-masinis-jalan': 'malivlak-char/masinis/jalan',
     'obj/mv-koper': 'kereta-prop/luggage-pile', 'obj/mv-surat': 'kereta-prop/mail-sacks', 'train/dragutin': 'train-char/dragutin/34l-neutral', 'train/dragutin-b': 'train-char/dragutin/34r-neutral',
-    'train/mv-gerbong': 'mojo-train/coach-annie', 'obj/peron': 'kereta-prop/station-small', 'obj/loket': 'kereta-prop/ticket-booth', 'obj/mv-lampu': 'kereta-prop/lantern',
+    'train/mv-gerbong': 'train-char/mv-coach-green/side', 'train/mv-tender': 'train-char/mv-tender/side', 'train/mv-oranye': 'train-char/mv-coach-orange/side', 'train/mv-biru': 'train-char/mv-coach-blue/side', 'char/mv-ungu-rebah': 'malivlak-char/penumpang-ungu/rebah', 'obj/peron': 'kereta-prop/station-small', 'obj/loket': 'kereta-prop/ticket-booth', 'obj/mv-lampu': 'kereta-prop/lantern',
     'char/mv-lari': 'malivlak-char/penumpang-ungu/lari', 'char/mv-masinis-ikan': 'malivlak-char/masinis/ikan', 'char/mv-masinis-wajan': 'malivlak-char/masinis/wajan', 'char/mv-masinis-kaget': 'malivlak-char/masinis/terkejut',
     'char/mv-beruang': 'animal/beruang/duduk', 'char/mv-ungu-duduk': 'malivlak-char/penumpang-ungu/duduk', 'obj/mv-perban': 'kereta-prop/wheel-bandage', 'char/mv-masinis-pipa': 'malivlak-char/masinis/pipa-2', 'obj/mv-ikan': 'animal/ikan/samping', 'obj/mv-wajan': 'kereta-prop/frying-pan-egg', 'train/dragutin-c': 'train-char/dragutin/34l-happy'
   }
@@ -64,9 +64,9 @@
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
       decor: [{ at: [0, 5], art: 'char/mv-masinis-jalan' }, { at: [3, 2], art: 'animal/bird-blue/fly' }],
       objects: [
-        { id: 'g1', type: 'wagon', at: [2, 1], art: 'train/mv-gerbong', name: 'Gerbong pertama' },
-        { id: 'g2', type: 'wagon', at: [2, 3], art: 'train/mv-gerbong', name: 'Gerbong kedua' },
-        { id: 'g3', type: 'wagon', at: [2, 5], art: 'train/mv-gerbong', name: 'Gerbong ketiga' },
+        { id: 'g1', type: 'wagon', at: [2, 1], art: 'train/mv-tender', name: 'Tender batu bara' },
+        { id: 'g2', type: 'wagon', at: [2, 3], art: 'train/mv-gerbong', name: 'Gerbong hijau' },
+        { id: 'g3', type: 'wagon', at: [2, 5], art: 'train/mv-oranye', name: 'Gerbong oranye' },
         { id: 'flag', type: 'flag', at: [0, 7] }
       ],
       beats: [{ title: 'Gandeng tiga gerbong', story: 'Malivlak menyambung tiga gerbongnya.',
@@ -89,37 +89,41 @@
     L({ id: 'mv06', ch: 'mv-ch2', cine: { heavy: true }, terrain: 'meadow', mood: 'sun', n: 6, title: 'Menerobos Ladang', place: 'Ladang Terbuka', icon: 'cmd/wait', bg: 'bg-mv-ladang', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 4, cols: 8, map: [',,,.,,.,', '........', ',,,.,,,,', ',,T,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      // film 2:51-3:00: the train leaves the rails and ploughs into TALL WHEAT (only the chimney and cab roof show); the man in purple lies in the field with his case
+      wheat: [[0, 4], [0, 5], [1, 4], [1, 5], [1, 6], [2, 4], [2, 5]],
       objects: [
         { id: 'kelinci', type: 'patrol', at: [0, 3], name: 'Kelinci', art: 'animal/kelinci/lompat', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
-        { id: 'pria', type: 'rider', at: [0, 6], who: 'mv-lari', name: 'Penumpang' },
-        { id: 'gerbong', type: 'stop', at: [2, 5], accepts: 'rider', art: 'train/mv-gerbong', name: 'Gerbong', pay: 'wave' },
+        { id: 'pria', type: 'rider', at: [0, 6], who: 'mv-ungu-rebah', name: 'Penumpang' },
+        { id: 'gerbong', type: 'stop', at: [2, 6], accepts: 'rider', art: 'train/mv-gerbong', name: 'Gerbong', pay: 'wave' },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [
-        { title: 'Keluar dari rel', story: 'Malivlak keluar rel. Seekor kelinci muncul.', hide: ['pria', 'gerbong'], fx: ['leaves'],
-          decor: [{ at: [2, 6], art: 'malivlak-char/penumpang-ungu/lari-2' }, { at: [3, 4], art: 'animal/kelinci/berdiri' }, { at: [3, 7], art: 'kereta-prop/haystack' }],
+        { title: 'Keluar dari rel', story: 'Malivlak menerobos ladang gandum. Ada kelinci.', hide: ['pria', 'gerbong'], fx: ['leaves'],
+          decor: [{ at: [0, 6], art: 'malivlak-char/penumpang-ungu/berdiri' }, { at: [3, 4], art: 'animal/kelinci/berdiri' }, { at: [3, 7], art: 'kereta-prop/haystack' }],
           bo: 'Tunggu kelinci lewat, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: ['malivlak'], palette: ['east', 'wait'] },
-        { title: 'Pria berkoper naik', story: 'Pria berkoper kaget, lalu naik ke gerbong.', hide: ['kelinci'], start: { at: [1, 4], h: 'E' }, fx: ['leaves'],
+        { title: 'Pria berkoper naik', story: 'Pria berkoper terjatuh, lalu naik. Kolam di depan!', hide: ['kelinci'], start: { at: [1, 4], h: 'E' }, fx: ['leaves'],
           decor: [{ at: [3, 3], art: 'animal/kelinci/berdiri' }, { at: [3, 7], art: 'kereta-prop/haystack' }],
           bo: 'Naikkan pria, turunkan di gerbong.', objectives: [{ 'do': 'deliver', id: 'gerbong' }], slots: 8, budget: 5, forms: ['malivlak'], palette: MOVE.concat(['pick', 'deliver']) }
       ] }),
 
     // 07 the whole train dives into the pond and comes out on the far bank; the driver lifts a fish from the dome
-    L({ id: 'mv07', ch: 'mv-ch2', cine: { end: { letterbox: 1800, fx: [{ id: 'px-bubbles', at: [0, 4], size: 170 }, { id: 'bk-circle-01', at: [0, 4], size: 200, delay: 200 }, { id: 'bk-circle-01', at: [0, 3], size: 150, delay: 500 }] } }, terrain: 'meadow', mood: 'sun', n: 7, title: 'Menyelam ke Kolam', place: 'Tepi Kolam', icon: 'cmd/couple', bg: 'bg-mv-kolam', edu: { domain: 'matematika', skill: 'membilang 1-3' },
-      grid: { rows: 4, cols: 8, map: [',~~~~~,,', '........', ',.,.,.,.', ',,,,,,,,'], theme: 'hill' },
+    L({ id: 'mv07', ch: 'mv-ch2', cine: { end: { letterbox: 1800, fx: [{ id: 'px-bubbles', at: [1, 4], size: 170 }, { id: 'bk-circle-01', at: [1, 4], size: 200, delay: 200 }, { id: 'bk-circle-01', at: [1, 3], size: 150, delay: 500 }] } }, terrain: 'meadow', mood: 'sun', n: 7, title: 'Menyelam ke Kolam', place: 'Tepi Kolam', icon: 'cmd/couple', bg: 'bg-mv-kolam', edu: { domain: 'matematika', skill: 'membilang 1-3' },
+      grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,.,.,.', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      // film 3:00-3:12: the pond lies across the line; the train wades in and sinks until only its chimney and cab roof show above the water, then rises on the far bank
+      pond: [[0, 3], [0, 4], [0, 5], [1, 3], [1, 4], [1, 5]],
       objects: [
-        { id: 'g1', type: 'wagon', at: [2, 1], art: 'train/mv-gerbong', name: 'Gerbong pertama' },
-        { id: 'g2', type: 'wagon', at: [2, 3], art: 'train/mv-gerbong', name: 'Gerbong kedua' },
-        { id: 'g3', type: 'wagon', at: [2, 5], art: 'train/mv-gerbong', name: 'Gerbong ketiga' },
+        { id: 'g1', type: 'wagon', at: [2, 1], art: 'train/mv-tender', name: 'Tender batu bara' },
+        { id: 'g2', type: 'wagon', at: [2, 3], art: 'train/mv-gerbong', name: 'Gerbong hijau' },
+        { id: 'g3', type: 'wagon', at: [2, 5], art: 'train/mv-oranye', name: 'Gerbong oranye' },
         { id: 'ikan', type: 'parcel', at: [2, 7], kind: 'ikan', name: 'Ikan', art: 'obj/mv-ikan' },
         { id: 'masinis', type: 'stop', at: [0, 6], accepts: 'ikan', art: 'char/mv-masinis-ikan', name: 'Masinis', pay: 'wave' },
-        { id: 'flag', type: 'flag', at: [1, 5] }
+        { id: 'flag', type: 'flag', at: [1, 6] }
       ],
       beats: [
-        { title: 'Masuk kolam', story: 'Malivlak dan tiga gerbong menyelam ke kolam.', hide: ['ikan', 'masinis'],
-          decor: [{ at: [0, 1], art: 'animal/ikan/kanan' }, { at: [3, 6], art: 'kereta-prop/bush' }],
-          bo: 'Gandeng tiga gerbong, lalu ke bendera.', objectives: [{ 'do': 'wagons', n: 3 }, { 'do': 'reach', at: [1, 5] }], slots: 11, budget: 8, forms: ['malivlak'], palette: ['east', 'down', 'up', 'couple'] },
+        { title: 'Masuk kolam', story: 'Rangkaian menyelam. Hanya cerobong yang tampak.', hide: ['ikan', 'masinis'],
+          decor: [{ at: [3, 6], art: 'kereta-prop/bush' }],
+          bo: 'Gandeng tiga gerbong, seberangi kolam ke bendera.', objectives: [{ 'do': 'wagons', n: 3 }, { 'do': 'reach', at: [1, 6] }], slots: 11, budget: 9, forms: ['malivlak'], palette: ['east', 'down', 'up', 'couple'] },
         { title: 'Muncul di seberang', story: 'Semua muncul lagi. Masinis mengangkat ikan.', hide: ['g1', 'g2', 'g3', 'flag'], start: { at: [1, 6], h: 'E' }, fx: ['fog'],
           decor: [{ at: [3, 4], art: 'kereta-prop/bush' }],
           bo: 'Ambil ikan, turunkan di masinis.', objectives: [{ 'do': 'deliver', id: 'masinis' }], slots: 7, budget: 4, forms: ['malivlak'], palette: ['east', 'west', 'down', 'pick', 'deliver'] }
@@ -130,9 +134,9 @@
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', '.,,T,,,.', '........'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
       objects: [
-        { id: 'k1', type: 'mark', at: [2, 0], order: 1, seq: 'kumpul', art: 'train/mv-gerbong', name: 'Gerbong 1' },
+        { id: 'k1', type: 'mark', at: [2, 0], order: 1, seq: 'kumpul', art: 'train/mv-tender', name: 'Tender' },
         { id: 'k2', type: 'mark', at: [3, 2], order: 2, seq: 'kumpul', art: 'train/mv-gerbong', name: 'Gerbong 2' },
-        { id: 'k3', type: 'mark', at: [3, 4], order: 3, seq: 'kumpul', art: 'train/mv-gerbong', name: 'Gerbong 3' },
+        { id: 'k3', type: 'mark', at: [3, 4], order: 3, seq: 'kumpul', art: 'train/mv-oranye', name: 'Gerbong 3' },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [
@@ -154,11 +158,11 @@
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [
-        { title: 'Sarang di cerobong', story: 'Ada sarang di cerobong. Uap menyembur!', hide: ['wajan', 'masinis'],
-          decor: [{ at: [2, 5], art: 'malivlak-char/masinis/terkejut' }, { at: [0, 4], art: 'animal/bird-blue/fly' }],
+        { title: 'Sarang di cerobong', story: 'Burung bersarang di cerobong. Uap menyembur!', hide: ['wajan', 'masinis'],
+          nest: { blow: 3 }, decor: [{ at: [2, 5], art: 'malivlak-char/masinis/terkejut' }],
           bo: 'Naik bukit sampai ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['malivlak'], palette: ['east'] },
         { title: 'Telur matang', story: 'Sarang terpental. Masinis membawa wajan.', hide: ['flag'], start: { at: [1, 0], h: 'E' },
-          decor: [{ at: [3, 6], art: 'kereta-prop/bird-nest' }],
+          decor: [{ at: [3, 6], art: 'kereta-prop/bird-nest' }, { at: [2, 6], art: 'animal/bird-blue/fly' }],
           bo: 'Ambil wajan, turunkan di masinis.', objectives: [{ 'do': 'deliver', id: 'masinis' }], slots: 11, budget: 8, forms: ['malivlak'], palette: ['east', 'west', 'down', 'up', 'pick', 'deliver'] }
       ] }),
 
@@ -189,16 +193,18 @@
     L({ id: 'mv11', ch: 'mv-ch3', terrain: 'mountain', mood: 'sunset', n: 11, title: 'Terowongan Bertanda', place: 'Mulut Terowongan', icon: 'cmd/west', bg: 'bg-mv-gunung-terowongan', edu: { domain: 'algoritma', skill: 'maju dan mundur' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,', ',T,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      // film 4:36-4:50: a stone arch in a red cliff; beside the track a SKULL warning board on a post (owner override of the no-skull rule, this sign only)
+      tunnel: { at: [1, 7], sign: [2, 6], dir: 'r' },
       objects: [
         { id: 'f1', type: 'flag', at: [1, 7] },
         { id: 'f2', type: 'flag', at: [1, 0] }
       ],
       beats: [
-        { title: 'Papan peringatan', story: 'Ada papan di mulut terowongan. Masinis cemas.', hide: ['f2'],
-          decor: [{ at: [2, 6], art: 'mojo-prop/direction-sign' }, { at: [2, 2], art: 'malivlak-char/masinis/terkejut' }, { at: [0, 7], art: 'kereta-tile/tunnel-portal' }],
+        { title: 'Papan peringatan', story: 'Papan tengkorak di mulut terowongan. Masinis cemas.', hide: ['f2'],
+          decor: [{ at: [2, 2], art: 'malivlak-char/masinis/terkejut' }],
           bo: 'Bawa Malivlak ke bendera di terowongan.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 10, budget: 7, forms: ['malivlak'], palette: ['east'] },
         { title: 'Mundur keluar', story: 'Rangkaian mundur. Beruang yang ramah mendekat.', hide: ['f1'], start: { at: [1, 7], h: 'W' }, fx: ['fog'],
-          decor: [{ at: [2, 6], art: 'mojo-prop/direction-sign' }, { at: [2, 2], art: 'animal/beruang/jalan', react: 'animal/beruang/depan' }, { at: [0, 7], art: 'kereta-tile/tunnel-portal' }],
+          decor: [{ at: [2, 2], art: 'animal/beruang/jalan', react: 'animal/beruang/depan' }],
           bo: 'Mundur ke bendera di luar terowongan.', objectives: [{ 'do': 'reach', at: [1, 0] }], slots: 10, budget: 7, forms: ['malivlak'], palette: ['west'] }
       ] }),
 
@@ -209,8 +215,8 @@
       objects: [
         { id: 'beruang', type: 'rider', at: [0, 6], who: 'mv-beruang', name: 'Beruang' },
         { id: 'pria', type: 'rider', at: [0, 3], who: 'mv-ungu-duduk', name: 'Penumpang' },
-        { id: 'tengah', type: 'stop', at: [2, 3], accepts: 'beruang', art: 'train/mv-gerbong', name: 'Gerbong tengah', pay: 'wave' },
-        { id: 'belakang', type: 'stop', at: [2, 6], accepts: 'pria', art: 'train/mv-gerbong', name: 'Gerbong belakang', pay: 'wave' }
+        { id: 'tengah', type: 'stop', at: [2, 3], accepts: 'beruang', art: 'train/mv-oranye', name: 'Gerbong tengah', pay: 'wave' },
+        { id: 'belakang', type: 'stop', at: [2, 6], accepts: 'pria', art: 'train/mv-biru', name: 'Gerbong belakang', pay: 'wave' }
       ],
       beats: [
         { title: 'Beruang naik', story: 'Beruang yang ramah masuk ke gerbong tengah.', hide: ['pria', 'belakang'],
@@ -237,11 +243,11 @@
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,.,.,.', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
       objects: [
-        { id: 'k1', type: 'mark', at: [1, 2], order: 1, seq: 'periksa', art: 'train/mv-gerbong', name: 'Gerbong 1' },
+        { id: 'k1', type: 'mark', at: [1, 2], order: 1, seq: 'periksa', art: 'train/mv-tender', name: 'Tender' },
         { id: 'k2', type: 'mark', at: [1, 4], order: 2, seq: 'periksa', art: 'train/mv-gerbong', name: 'Gerbong 2' },
-        { id: 'k3', type: 'mark', at: [1, 6], order: 3, seq: 'periksa', art: 'train/mv-gerbong', name: 'Gerbong 3' },
+        { id: 'k3', type: 'mark', at: [1, 6], order: 3, seq: 'periksa', art: 'train/mv-oranye', name: 'Gerbong 3' },
         { id: 'perban', type: 'parcel', at: [2, 7], kind: 'perban', name: 'Perban', art: 'obj/mv-perban' },
-        { id: 'roda', type: 'stop', at: [2, 5], accepts: 'perban', art: 'train/mv-gerbong', name: 'Gerbong biru', pay: 'wave' },
+        { id: 'roda', type: 'stop', at: [2, 5], accepts: 'perban', art: 'train/mv-biru', name: 'Gerbong biru', pay: 'wave' },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [

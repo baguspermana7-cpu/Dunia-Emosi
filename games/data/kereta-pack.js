@@ -45,11 +45,14 @@
     ;(lv.decor || []).forEach(mv); (lv.objects || []).forEach(mv)
     ;['cave', 'shot'].forEach(function (k) { if (lv[k]) lv[k].at = sh(lv[k].at) })
     if (lv.lean) lv.lean = sh(lv.lean)
+    ;['pond', 'wheat'].forEach(function (k) { if (lv[k]) lv[k] = lv[k].map(sh) })
+    if (lv.tunnel) lv.tunnel = { at: sh(lv.tunnel.at), sign: sh(lv.tunnel.sign), dir: lv.tunnel.dir }
     var cn = function (c) { ;['start', 'end'].forEach(function (k) { var e = c && c[k]; if (!e) return; if (e.zoom && Array.isArray(e.zoom.at)) e.zoom.at = sh(e.zoom.at); (e.fx || []).forEach(function (f) { if (Array.isArray(f.at)) f.at = sh(f.at) }) }) }
     cn(lv.cine)
     ;(lv.beats || []).forEach(function (b) {
       ;(b.decor || []).forEach(mv); if (b.start && b.start.at) b.start.at = sh(b.start.at); if (b.flagAt) b.flagAt = sh(b.flagAt)
       ;(b.vis || []).forEach(function (v) { v.at = sh(v.at) }); if (b.lamps) b.lamps = b.lamps.map(sh); if (b.lean) b.lean = sh(b.lean); if (b.cave) b.cave.at = sh(b.cave.at)
+      ;['pond', 'wheat'].forEach(function (k) { if (b[k]) b[k] = b[k].map(sh) }); if (b.tunnel) b.tunnel = { at: sh(b.tunnel.at), sign: sh(b.tunnel.sign), dir: b.tunnel.dir }
       ;(b.objectives || []).forEach(function (o) { if (o.at) o.at = sh(o.at) }); cn(b.cine)
     })
   }
@@ -104,8 +107,11 @@
   var TERRAIN = 'meadow'
   function terrainOf (lv, bi) { var b = lv.beats[bi || 0]; return (b && b.terrain) || lv.terrain || 'meadow' }
   function moodOf (lv, bi) { var b = lv.beats[bi || 0]; return (b && b.mood) || lv.mood || 'sun' }
+  var CUR = null, CURBI = 0
+  // the cells a beat (or else the level) names under `key` ([[row, col], ...]) as a lookup for the ground painter
+  function cellsOf (lv, bi, key) { var b = lv && lv.beats && lv.beats[bi || 0], l = (b && b[key]) || (lv && lv[key]) || [], o = {}; l.forEach(function (p) { o[p[0] + ',' + p[1]] = 1 }); return o }
   function scene (lv, bi) {
-    var scr = D.getElementById('scr-play'); if (scr) { scr.setAttribute('data-tint', lv.tint || ''); scr.setAttribute('data-lv', lv.id); scr.setAttribute('data-mood', moodOf(lv, bi)); scr.setAttribute('data-terrain', terrainOf(lv, bi)) } TERRAIN = terrainOf(lv, bi)
+    var scr = D.getElementById('scr-play'); if (scr) { scr.setAttribute('data-tint', lv.tint || ''); scr.setAttribute('data-lv', lv.id); scr.setAttribute('data-mood', moodOf(lv, bi)); scr.setAttribute('data-terrain', terrainOf(lv, bi)) } TERRAIN = terrainOf(lv, bi); CUR = lv; CURBI = bi || 0
     cabSet(lv)
     var mj = D.getElementById('mojo'); if (mj) mj.classList.toggle('k-tired', !!((lv.tired && lv.tired[bi || 0]) || (lv.beats[bi || 0] && lv.beats[bi || 0].tired === true)))
     return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
@@ -143,14 +149,47 @@
     }
     if (water) { var wg = x.createLinearGradient(X, Y, X, Y + s); wg.addColorStop(0, '#1d3b55'); wg.addColorStop(1, '#2f6a8c'); x.fillStyle = wg; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1); blot(x, X + s * 0.5, Y + s * 0.6, s * 0.3, s * 0.05, '#9ed3ee', 0.45) }
   }
+  /* ── film places drawn into the ground (Malivlak, owner 2026-10-12): `pond` = cells of open water (the rails stop at the bank, the train
+     wades through), `wheat` = cells of ripe wheat (golden ground; the rails are not drawn through it). Per level or per beat, row/col
+     WITHOUT the headroom row (the pack shifts them). The tall swaying stalks and the water in FRONT of the train are ambient layers. ── */
+  var FXS = { key: '', pond: {}, wheat: {} }
+  function fxSets () {
+    var key = (CUR ? CUR.id : '') + '/' + CURBI + '/' + (CUR && CUR._hr ? 1 : 0)
+    if (FXS.key !== key) FXS = { key: key, pond: cellsOf(CUR, CURBI, 'pond'), wheat: cellsOf(CUR, CURBI, 'wheat') }
+    return FXS
+  }
+  function pondCell (x, r, c, s, set) {
+    var X = c * s, Y = r * s, i, side = function (dr, dc) { return set[(r + dr) + ',' + (c + dc)] }
+    var g = x.createLinearGradient(X, Y, X, Y + s); g.addColorStop(0, '#2c6f94'); g.addColorStop(1, '#4796b3'); x.fillStyle = g; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
+    for (i = 0; i < 3; i++) blot(x, X + (0.2 + rnd(r, c, i + 3) * 0.6) * s, Y + (0.2 + rnd(r, c, i + 6) * 0.6) * s, s * (0.14 + rnd(r, c, i) * 0.1), s * 0.05, '#bfe6f3', 0.3)
+    ;[[-1, 0, 0], [1, 0, 1], [0, -1, 2], [0, 1, 3]].forEach(function (d) {   // a muddy bank where the pond ends: reeds and cattails stand on it
+      if (side(d[0], d[1])) return
+      var n = 7
+      for (i = 0; i < n; i++) {
+        var t = (i + rnd(r, c, 40 + i + d[2] * 9)) / n, bx = d[0] ? X + t * s : (d[1] < 0 ? X + s * 0.06 : X + s * 0.94), by = d[1] ? Y + t * s : (d[0] < 0 ? Y + s * 0.06 : Y + s * 0.94)
+        blot(x, bx, by, s * 0.1, s * 0.07, i % 2 ? '#8a7a3e' : '#a99a58', 0.9)
+        if (i % 2 === 0) { x.strokeStyle = '#6b8a2e'; x.lineWidth = Math.max(1.5, s * 0.02); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + (rnd(r, c, 60 + i) - 0.5) * s * 0.1, by - s * (0.16 + rnd(r, c, 70 + i) * 0.1)); x.stroke() }
+        if (i % 4 === 1) { x.strokeStyle = '#6a4520'; x.lineWidth = Math.max(2, s * 0.025); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx, by - s * 0.2); x.stroke(); blot(x, bx, by - s * 0.22, s * 0.025, s * 0.05, '#5a3a16', 1) }
+      }
+    })
+    x.strokeStyle = 'rgba(255,255,255,.3)'; x.lineWidth = Math.max(1, s * 0.012)
+    for (i = 0; i < 2; i++) { x.beginPath(); x.ellipse(X + s * (0.3 + i * 0.4), Y + s * (0.35 + i * 0.3), s * 0.16, s * 0.045, 0, 0, 7); x.stroke() }
+  }
+  function wheatCell (x, r, c, s) {
+    var X = c * s, Y = r * s, i
+    var g = x.createLinearGradient(X, Y, X, Y + s); g.addColorStop(0, '#c9a237'); g.addColorStop(1, '#b4872a'); x.fillStyle = g; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
+    for (i = 0; i < 26; i++) { var bx = X + rnd(r, c, i + 100) * s, by = Y + rnd(r, c, i + 130) * s; x.strokeStyle = i % 3 ? '#8f6a1f' : '#e2c25a'; x.lineWidth = Math.max(1, s * 0.016); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + s * 0.02, by - s * 0.11); x.stroke() }
+  }
   function paintGround (x, ch, R, Cn, s, grass) {
-    var kind = TERRAIN
+    var kind = TERRAIN, FS = fxSets()
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
       var k = ch(r, c)
       if (kind === 'meadow' || kind === 'forest') {
         if (c === 0 && r === 0) { x.fillStyle = GROUND; x.fillRect(0, 0, Cn * s, R * s) }
         if (k === '~') continue
         if (grass) { var iw = grass.naturalWidth, ih = grass.naturalHeight, ix = iw * 0.1, iy = ih * 0.1; x.drawImage(grass, ix, iy, iw - 2 * ix, ih - 2 * iy, c * s - s * 0.07, r * s - s * 0.07, s * 1.14, s * 1.14) }
+        if (FS.wheat[r + ',' + c]) wheatCell(x, r, c, s)
+        if (FS.pond[r + ',' + c]) pondCell(x, r, c, s, FS.pond)
       } else groundCell(x, kind, r, c, s, kind === 'gorge' && k === '~')
     }
   }
@@ -180,6 +219,7 @@
     })
   }
   function paintRoad (x, ch, r, c, X, Y, s, grass, drawTile) {
+    var FS = fxSets(); if (FS.pond[r + ',' + c] || FS.wheat[r + ',' + c]) return   // no rails under the pond or through the wheat: the train leaves the line
     var D4 = { n: isRoad(ch(r - 1, c)), e: isRoad(ch(r, c + 1)), s: isRoad(ch(r + 1, c)), w: isRoad(ch(r, c - 1)) }
     if (ch(r, c) === '=' && TILE.water && TILE.water.complete && TILE.water.naturalWidth) { var wi = TILE.water; x.drawImage(wi, wi.naturalWidth * 0.1, wi.naturalHeight * 0.1, wi.naturalWidth * 0.8, wi.naturalHeight * 0.8, X - s * 0.04, Y - s * 0.04, s * 1.08, s * 1.08) }   // a bridge crosses water
     var dirs = ['n', 'e', 's', 'w'].filter(function (d) { return D4[d] }), bridge = ch(r, c) === '='
@@ -223,6 +263,27 @@
     x.restore()
   }
 
+  /* ── the tunnel of the film (mv11): a stone arch in a red cliff + the SKULL warning board on a post beside the track. OWNER OVERRIDE of the no-skull
+     rule for this one sign only (it is the film's own cartoon prop; see KERETA-BRAVE-ALIGNMENT.md kid-safe table). Inline SVG, no raster art. ── */
+  function archSvg () {
+    var cx = 130, cy = 104, ro = 86, ri = 60, N = 11, h = '', i, a0, a1, P = function (r, a) { return (cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1) }
+    for (i = 0; i < N; i++) {
+      a0 = Math.PI + i * Math.PI / N + 0.012; a1 = Math.PI + (i + 1) * Math.PI / N - 0.012
+      h += '<polygon points="' + P(ri, a0) + ' ' + P(ro + (i === 5 ? 8 : 0), a0) + ' ' + P(ro + (i === 5 ? 8 : 0), a1) + ' ' + P(ri, a1) + '" fill="' + (i % 2 ? '#d4ad74' : '#e2c08a') + '" stroke="#7b5a2c" stroke-width="2"/>'
+    }
+    for (i = 0; i < 5; i++) {
+      var y = cy + i * 24 + 2, dx = i % 2 ? 6 : 0
+      h += '<rect x="' + (cx - ro + dx) + '" y="' + y + '" width="' + (ro - ri - dx) + '" height="22" fill="' + (i % 2 ? '#d4ad74' : '#e2c08a') + '" stroke="#7b5a2c" stroke-width="2"/>'
+      h += '<rect x="' + (cx + ri) + '" y="' + (y + (i % 2 ? 0 : 0)) + '" width="' + (ro - ri - dx) + '" height="22" fill="' + (i % 2 ? '#e2c08a' : '#d4ad74') + '" stroke="#7b5a2c" stroke-width="2"/>'
+    }
+    return '<svg viewBox="0 0 260 228" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="kcf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6e2417"/><stop offset="1" stop-color="#8d3a22"/></linearGradient>' +
+      '<linearGradient id="kcm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c0504"/><stop offset="1" stop-color="#2a1208"/></linearGradient></defs>' +
+      '<path d="M0 228 V96 Q4 30 64 14 Q130 -6 196 14 Q256 30 260 96 V228 Z" fill="url(#kcf)"/><path d="M0 228 V150 Q40 120 70 150 M190 150 Q222 118 260 150" stroke="#4a160e" stroke-width="3" fill="none" opacity=".5"/><path d="M' + (cx - ri) + ' ' + (cy + 120) + ' V' + cy + ' A' + ri + ' ' + ri + ' 0 0 1 ' + (cx + ri) + ' ' + cy + ' V' + (cy + 120) + ' Z" fill="url(#kcm)"/>' + h + '</svg>'
+  }
+  var SKULL_SVG = '<svg viewBox="0 0 60 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="27" y="48" width="6" height="82" rx="2" fill="#9b8a72" stroke="#4d4132" stroke-width="1.5"/>' +
+    '<rect x="4" y="3" width="52" height="52" rx="3" fill="#15110f" stroke="#e8e2cf" stroke-width="2"/><path d="M30 12c-9 0-15 6-15 14 0 5 2 8 5 10v6h20v-6c3-2 5-5 5-10 0-8-6-14-15-14z" fill="#e6efc4"/>' +
+    '<ellipse cx="24" cy="26" rx="4" ry="4.6" fill="#15110f"/><ellipse cx="36" cy="26" rx="4" ry="4.6" fill="#15110f"/><path d="M30 31l-2.4 5h4.8z" fill="#15110f"/>' +
+    '<path d="M22 42h16M26 38v6M30 38v6M34 38v6" stroke="#15110f" stroke-width="1.6"/></svg>'
   // cheap life on the board (transform / opacity only): glints on every water and bridge cell, chimney smoke over stations and the depot
   function ambient (lv, bi, b) {
     var out = [], vis = (b && b.vis) || []
@@ -266,6 +327,12 @@
     if (ln) out.push({ at: ln, cls: 'k-lean', html: '<img alt="" src="' + lib('train-char/rongsokan-b/v3') + '">' })
     ;((b && b.lamps) || []).forEach(function (l) { out.push({ at: l, cls: 'k-lamp', html: '<i></i>' }) })
     ;((b && b.decor) || lv.decor || []).forEach(function (d) { if (/sawmill/.test(d.art || '')) out.push({ at: d.at, cls: 'k-chimney k-saw', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' }) })
+    // the film's places: swaying wheat (behind AND in front of the train), the pond that swallows the train, the skull-signed tunnel
+    var wh = cellsOf(lv, bi, 'wheat'), pd = cellsOf(lv, bi, 'pond')
+    Object.keys(wh).forEach(function (k) { var p = k.split(',').map(Number), d = ((p[0] * 5 + p[1] * 3) % 7) * 0.45; out.push({ at: p, cls: 'k-wheat k-wheat-b', html: '<i style="--d:-' + d.toFixed(2) + 's"></i>' }); out.push({ at: p, cls: 'k-wheat k-wheat-f', html: '<i style="--d:-' + (d + 0.9).toFixed(2) + 's"></i>' }) })
+    Object.keys(pd).forEach(function (k) { var p = k.split(',').map(Number), d = ((p[0] * 3 + p[1] * 5) % 6) * 0.5; out.push({ at: p, cls: 'k-pond' + (pd[(p[0] - 1) + ',' + p[1]] ? '' : ' top') + (pd[p[0] + ',' + (p[1] - 1)] ? '' : ' e-l') + (pd[p[0] + ',' + (p[1] + 1)] ? '' : ' e-r') + (pd[(p[0] + 1) + ',' + p[1]] ? '' : ' e-b'), html: '<i class="body"></i><i class="crest" style="--d:-' + d.toFixed(2) + 's"></i><i class="rp r1" style="--d:-' + d.toFixed(2) + 's"></i><i class="rp r2" style="--d:-' + (d + 1.3).toFixed(2) + 's"></i>' }) })
+    var tn = (b && b.tunnel) || lv.tunnel
+    if (tn) { out.push({ at: tn.at, cls: 'k-tunnel dir-' + (tn.dir || 'r'), html: archSvg() }); out.push({ at: tn.sign, cls: 'k-skull', html: SKULL_SVG }) }
     return out
   }
   // Henry rides in Linus's cab (scenarios 1-8): a small leaning figure that travels with the engine
