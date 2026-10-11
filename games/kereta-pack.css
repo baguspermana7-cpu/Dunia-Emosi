@@ -553,3 +553,19 @@ html[data-pack="kereta"] .dec.amb.k-bunting{z-index:15!important;pointer-events:
 .k-bunting i{position:absolute;left:0;top:2%;height:34%;background:linear-gradient(180deg,transparent 0 6%,rgba(60,40,20,.55) 6% 8%,transparent 8%),linear-gradient(135deg,#e5473c 0 25%,transparent 25%) 0 0/38px 100% repeat-x,linear-gradient(225deg,#f0c43a 0 25%,transparent 25%) 19px 0/38px 100% repeat-x;-webkit-mask:linear-gradient(180deg,#000 0 60%,transparent 60%);mask:linear-gradient(180deg,#000 0 60%,transparent 60%);transform-origin:50% 0;animation:kBunt 2.8s ease-in-out infinite alternate;will-change:transform}
 @keyframes kBunt{from{transform:skewX(-1.2deg)}to{transform:skewX(1.2deg)}}
 @media(prefers-reduced-motion:reduce){.k-bunting i{animation:none!important}}
+
+/* Brave film props: windmill, depot hall, window frame, wooden sign, trestle ambience */
+html[data-pack="kereta"] .dec.amb.k-windmill{z-index:3!important;pointer-events:none}
+.k-windmill svg{position:absolute;left:-10%;bottom:4%;width:120%;height:auto;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.k-windmill .bl{transform-box:fill-box;transform-origin:50% 50%;animation:kBlades 9s linear infinite;will-change:transform}
+@keyframes kBlades{to{transform:rotate(360deg)}}
+html[data-pack="kereta"] .dec.amb.k-hall{z-index:1!important;pointer-events:none}
+.k-hall i{position:absolute;left:0;top:0;height:100%;background-repeat:repeat-x;background-size:auto 100%;box-shadow:0 5px 0 rgba(60,36,20,.55);filter:drop-shadow(0 0 12px rgba(255,190,90,.45))}
+.dec.amb.k-window{width:calc(var(--cols) * var(--cell));height:calc(var(--rows) * var(--cell));z-index:16!important;pointer-events:none}
+.k-window .gl{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(255,200,110,.0) 40%,rgba(40,20,8,.55) 100%)}
+.k-window .mu{position:absolute;background:linear-gradient(90deg,#4a2c17,#7b4a28,#4a2c17);box-shadow:0 0 6px rgba(0,0,0,.5)}
+.k-window .mu.v{left:calc(50% - 5px);top:0;bottom:0;width:10px}.k-window .mu.h{top:calc(50% - 5px);left:0;right:0;height:10px}
+.k-plate.wood i{background:linear-gradient(180deg,#5b4430,#3c2c1d);border-color:#24180e}.k-plate.wood span{color:#e9dcc2;letter-spacing:.08em}
+@media(prefers-reduced-motion:reduce){.k-windmill .bl{animation:none!important}}
+/* bl04: the turtle is small and stands ON the rail in front of Linus (film 1:03: it fills the track, not the board) */
+html[data-pack="kereta"] .board .ob[data-id="kura"]>img.main{width:calc(var(--cell)*.5)!important;height:calc(var(--cell)*.4)!important;left:calc(50% - var(--cell)*.25)!important;bottom:calc(var(--cell)*.3)!important}

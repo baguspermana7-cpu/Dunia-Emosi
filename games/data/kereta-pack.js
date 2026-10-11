@@ -46,7 +46,7 @@
     ;['cave', 'shot'].forEach(function (k) { if (lv[k]) lv[k].at = sh(lv[k].at) })
     if (lv.lean) lv.lean = sh(lv.lean)
     if (lv.band) lv.band = Object.assign({}, lv.band, { at: sh(lv.band.at) })
-    ;['crowd', 'sign', 'bunting'].forEach(function (k) { if (lv[k]) lv[k] = Object.assign({}, lv[k], { at: sh(lv[k].at) }) })
+    ;['crowd', 'sign', 'bunting', 'windmill', 'hall'].forEach(function (k) { if (lv[k]) lv[k] = Object.assign({}, lv[k], { at: sh(lv[k].at) }) })
     ;['pond', 'wheat'].forEach(function (k) { if (lv[k]) lv[k] = lv[k].map(sh) })
     if (lv.tunnel) lv.tunnel = { at: sh(lv.tunnel.at), sign: sh(lv.tunnel.sign), dir: lv.tunnel.dir }
     var cn = function (c) { ;['start', 'end'].forEach(function (k) { var e = c && c[k]; if (!e) return; if (e.zoom && Array.isArray(e.zoom.at)) e.zoom.at = sh(e.zoom.at); (e.fx || []).forEach(function (f) { if (Array.isArray(f.at)) f.at = sh(f.at) }) }) }
@@ -158,7 +158,11 @@
   var FXS = { key: '', pond: {}, wheat: {} }
   function fxSets () {
     var key = (CUR ? CUR.id : '') + '/' + CURBI + '/' + (CUR && CUR._hr ? 1 : 0)
-    if (FXS.key !== key) FXS = { key: key, pond: cellsOf(CUR, CURBI, 'pond'), wheat: cellsOf(CUR, CURBI, 'wheat') }
+    if (FXS.key !== key) {
+      var occ = {}, b0 = CUR && CUR.beats && CUR.beats[CURBI]
+      ;[].concat((CUR && CUR.decor) || [], (b0 && b0.decor) || [], ((CUR && CUR.objects) || []).filter(function (o) { return o.type !== 'wagon' && o.type !== 'flag' && o.type !== 'patrol' })).forEach(function (d) { if (d.at) occ[d.at[0] + ',' + d.at[1]] = 1 })
+      FXS = { key: key, pond: cellsOf(CUR, CURBI, 'pond'), wheat: cellsOf(CUR, CURBI, 'wheat'), occ: occ }
+    }
     return FXS
   }
   // the whole pond at once: a mud shore, a rounded outline (exterior corners only), deep water with a lighter shallow rim, sheen, ripples, lily pads, reeds on the bank
@@ -220,6 +224,30 @@
     var g = x.createLinearGradient(X, Y, X, Y + s); g.addColorStop(0, '#c9a237'); g.addColorStop(1, '#b4872a'); x.fillStyle = g; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
     for (i = 0; i < 26; i++) { var bx = X + rnd(r, c, i + 100) * s, by = Y + rnd(r, c, i + 130) * s; x.strokeStyle = i % 3 ? '#8f6a1f' : '#e2c25a'; x.lineWidth = Math.max(1, s * 0.016); x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + s * 0.02, by - s * 0.11); x.stroke() }
   }
+  /* ── the trestle of the film (4:00-5:10, the high wooden truss bridge over the canyon): level flag `trestle: true`. Every cell that is not track becomes the canyon (sunset glow
+     fading into a dark red depth), the track runs on a plank deck and a wooden lattice (posts + X braces) hangs under it. ── */
+  function chasmCell (x, r, c, s, R, ledge) {
+    var X = c * s, Y = r * s, t0 = r / R, t1 = (r + 1) / R, g = x.createLinearGradient(X, Y, X, Y + s), mix = function (t) { return 'rgb(' + Math.round(232 - t * 150) + ',' + Math.round(150 - t * 112) + ',' + Math.round(70 - t * 44) + ')' }
+    g.addColorStop(0, mix(t0)); g.addColorStop(1, mix(t1)); x.fillStyle = g; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
+    for (var i = 0; i < 3; i++) blot(x, X + rnd(r, c, i + 5) * s, Y + rnd(r, c, i + 15) * s, s * (0.2 + rnd(r, c, i) * 0.2), s * 0.035, 'rgba(255,214,150,.22)', 1)
+    if (ledge) { blot(x, X + s * 0.5, Y + s * 0.9, s * 0.46, s * 0.13, '#5a3220', 1); blot(x, X + s * 0.5, Y + s * 0.84, s * 0.4, s * 0.07, '#8a5a38', 1) }   // a rock ledge for whoever stands here
+  }
+  function paintTrestle (x, ch, R, Cn, s) {
+    var r, c, k, d
+    for (r = 0; r < R; r++) for (c = 0; c < Cn; c++) {
+      if (!isRoad(ch(r, c))) continue
+      for (d = 1; d <= 2; d++) {
+        if (isRoad(ch(r + d, c)) || ch(r + d, c) == null) break
+        var X = c * s, Y = (r + d) * s - 1, H = s + 1
+        x.save(); x.globalAlpha = d === 1 ? 1 : 0.7
+        x.strokeStyle = '#3a1a0e'; x.lineWidth = s * 0.09
+        x.beginPath(); x.moveTo(X + s * 0.1, Y); x.lineTo(X + s * 0.1, Y + H); x.moveTo(X + s * 0.9, Y); x.lineTo(X + s * 0.9, Y + H); x.stroke()
+        x.lineWidth = s * 0.06; x.beginPath(); x.moveTo(X + s * 0.1, Y); x.lineTo(X + s * 0.9, Y + H); x.moveTo(X + s * 0.9, Y); x.lineTo(X + s * 0.1, Y + H); x.stroke()
+        x.strokeStyle = '#a5632f'; x.lineWidth = s * 0.02; x.beginPath(); x.moveTo(X + s * 0.1, Y); x.lineTo(X + s * 0.9, Y + H); x.moveTo(X + s * 0.9, Y); x.lineTo(X + s * 0.1, Y + H); x.stroke()
+        x.restore()
+      }
+    }
+  }
   function paintGround (x, ch, R, Cn, s, grass) {
     var kind = TERRAIN, FS = fxSets()
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
@@ -229,8 +257,10 @@
         if (k === '~') continue
         if (grass) { var iw = grass.naturalWidth, ih = grass.naturalHeight, ix = iw * 0.1, iy = ih * 0.1; x.drawImage(grass, ix, iy, iw - 2 * ix, ih - 2 * iy, c * s - s * 0.07, r * s - s * 0.07, s * 1.14, s * 1.14) }
         if (FS.wheat[r + ',' + c]) wheatCell(x, r, c, s)
-      } else groundCell(x, kind, r, c, s, kind === 'gorge' && k === '~')
+      } else if (CUR && CUR.trestle && !isRoad(k)) chasmCell(x, r, c, s, R, !!FS.occ[r + ',' + c])
+      else groundCell(x, kind, r, c, s, kind === 'gorge' && k === '~')
     }
+    if (CUR && CUR.trestle) paintTrestle(x, ch, R, Cn, s)
     if (kind === 'meadow' || kind === 'forest') paintPond(x, s, FS.pond)
   }
   function isRoad (k) { return k === '.' || k === '=' || k === 'o' }
@@ -262,7 +292,7 @@
     var FS = fxSets(); if (FS.pond[r + ',' + c] || FS.wheat[r + ',' + c]) return   // no rails under the pond or through the wheat: the train leaves the line
     var D4 = { n: isRoad(ch(r - 1, c)), e: isRoad(ch(r, c + 1)), s: isRoad(ch(r + 1, c)), w: isRoad(ch(r, c - 1)) }
     if (ch(r, c) === '=' && TILE.water && TILE.water.complete && TILE.water.naturalWidth) { var wi = TILE.water; x.drawImage(wi, wi.naturalWidth * 0.1, wi.naturalHeight * 0.1, wi.naturalWidth * 0.8, wi.naturalHeight * 0.8, X - s * 0.04, Y - s * 0.04, s * 1.08, s * 1.08) }   // a bridge crosses water
-    var dirs = ['n', 'e', 's', 'w'].filter(function (d) { return D4[d] }), bridge = ch(r, c) === '='
+    var dirs = ['n', 'e', 's', 'w'].filter(function (d) { return D4[d] }), bridge = ch(r, c) === '=' || !!(CUR && CUR.trestle)
     if (!dirs.length) dirs = ['e', 'w']
     var paths = [], isCorner = dirs.length === 2 && !(D4.n && D4.s) && !(D4.e && D4.w)
     if (isCorner) {
@@ -335,7 +365,7 @@
   // cheap life on the board (transform / opacity only): glints on every water and bridge cell, chimney smoke over stations and the depot
   function ambient (lv, bi, b) {
     var out = [], vis = (b && b.vis) || []
-    lv.grid.map.forEach(function (row, r) { for (var c = 0; c < row.length; c++) { var k = row.charAt(c); vis.forEach(function (v) { if (v.at[0] === r && v.at[1] === c) k = v.ch }); if (k === '~' || k === '=') out.push({ at: [r, c], cls: 'k-water', html: '<i class="k-glint"></i><i class="k-glint g2"></i><i class="k-glint g3"></i>' }) } })
+    lv.grid.map.forEach(function (row, r) { for (var c = 0; c < row.length; c++) { var k = row.charAt(c); vis.forEach(function (v) { if (v.at[0] === r && v.at[1] === c) k = v.ch }); if ((k === '~' || k === '=') && !lv.trestle) out.push({ at: [r, c], cls: 'k-water', html: '<i class="k-glint"></i><i class="k-glint g2"></i><i class="k-glint g3"></i>' }) } })
     ;((b && b.decor) || lv.decor || []).concat(lv.objects || []).forEach(function (d) {
       var a = d.art || ''
       if (/engine-house|station-small|stasiun-kecil|depo/.test(a) || (K.LIB[a] && /engine-house|station-small/.test(K.LIB[a]))) out.push({ at: d.at, cls: 'k-chimney', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' })
@@ -394,10 +424,18 @@
       var CS = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60" width="90" height="60">' + [[10, '#6a5648'], [30, '#3e4b5f'], [50, '#8b6a56'], [70, '#59694a']].map(function (q, i) { return '<g><circle cx="' + q[0] + '" cy="' + (22 + (i % 2) * 3) + '" r="7" fill="#e9bf9a"/><path d="M' + (q[0] - 10) + ' 60 Q' + q[0] + ' ' + (28 + (i % 2) * 3) + ' ' + (q[0] + 10) + ' 60Z" fill="' + q[1] + '"/><rect x="' + (q[0] - 8) + '" y="' + (14 + (i % 2) * 3) + '" width="16" height="5" rx="2" fill="' + (i % 2 ? '#2d2a27' : '#6b4a2a') + '"/></g>' }).join('') + '</svg>'
       out.push({ at: cr.at, cls: 'k-crowd', html: '<i style="width:calc(var(--cell) * ' + (cr.n || 8) + ');background-image:url(&quot;data:image/svg+xml,' + encodeURIComponent(CS) + '&quot;)"></i>' })
     }
+    var wm = (b && b.windmill) || lv.windmill   // the windmill on the valley rim (film 0:12-0:24)
+    if (wm) out.push({ at: wm.at, cls: 'k-windmill', html: '<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M38 138 L44 52 H56 L62 138Z" fill="#7a4a2a" stroke="#4a2c18" stroke-width="2"/><rect x="40" y="132" width="20" height="6" fill="#3a2514"/><g class="bl"><g transform="translate(50 50)"><rect x="-3" y="-46" width="6" height="46" fill="#e9d8b0" stroke="#4a2c18" stroke-width="1.4"/><rect x="-3" y="0" width="6" height="46" fill="#e9d8b0" stroke="#4a2c18" stroke-width="1.4"/><rect x="-46" y="-3" width="46" height="6" fill="#e9d8b0" stroke="#4a2c18" stroke-width="1.4"/><rect x="0" y="-3" width="46" height="6" fill="#e9d8b0" stroke="#4a2c18" stroke-width="1.4"/><circle r="6" fill="#4a2c18"/></g></g></svg>' })
+    var hl = (b && b.hall) || lv.hall   // the grand depot hall: a wall of tall arched windows full of golden light (film 1:36-2:09)
+    if (hl) {
+      var AR = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" width="80" height="100"><defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a0"/><stop offset="1" stop-color="#f09040"/></linearGradient></defs><rect width="80" height="100" fill="#6e4430"/><path d="M12 100 V40 Q12 12 40 12 Q68 12 68 40 V100Z" fill="url(#hg)" stroke="#3d2415" stroke-width="3"/><path d="M40 12 V100 M12 50 H68 M12 76 H68" stroke="#3d2415" stroke-width="2.2" fill="none"/></svg>'
+      out.push({ at: hl.at, cls: 'k-hall', html: '<i style="width:calc(var(--cell) * ' + (hl.n || 8) + ');background-image:url(&quot;data:image/svg+xml,' + encodeURIComponent(AR) + '&quot;)"></i>' })
+    }
+    if ((b && b.window !== undefined ? b.window : lv.window)) out.push({ at: [0, 0], cls: 'k-fx k-window', html: '<i class="mu v"></i><i class="mu h"></i><i class="gl"></i>' })   // a lit window frame round the board (the photo memory, film 3:03)
     var bu = (b && b.bunting) || lv.bunting   // a string of festival flags across a row (Lomba ke Kota)
     if (bu) out.push({ at: bu.at, cls: 'k-bunting', html: '<i style="width:calc(var(--cell) * ' + (bu.n || 8) + ')"></i>' })
     var sg = (b && b.sign) || lv.sign
-    if (sg) out.push({ at: sg.at, cls: 'k-plate', html: '<i style="width:calc(var(--cell) * ' + (sg.w || 2) + ')"><span>' + sg.text + '</span></i>' })
+    if (sg) out.push({ at: sg.at, cls: 'k-plate' + (sg.wood ? ' wood' : ''), html: '<i style="width:calc(var(--cell) * ' + (sg.w || 2) + ')"><span>' + sg.text + '</span></i>' })
     var tn = (b && b.tunnel) || lv.tunnel
     if (tn) { out.push({ at: tn.at, cls: 'k-tunnel dir-' + (tn.dir || 'r'), html: archSvg() }); out.push({ at: tn.sign, cls: 'k-skull', html: SKULL_SVG }) }
     return out

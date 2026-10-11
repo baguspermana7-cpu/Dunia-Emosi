@@ -151,3 +151,16 @@ Cast (own cast only: silver + defeatist + shared animals/scenery): Kilat Perak (
 | hb09 Tiba Bersama | 3 | nobody is left behind: Lemas is coupled and they cross together | GARIS AKHIR plate, crowd, bunting, fanfare |
 | hb10 Pesta di Kota | 3 | flag and star to their stages, the two friends cross the line; the cup goes to both | crowd, bunting, march + tuba, applause, tada |
 Sound and effects per beat: kereta-scene.js PLAN hb01-hb10.
+
+### Brave board rework 2026-10-12 (film frame | board; paired sheets docs/ref-malivlak/report6-brave-film-vs-board-*.png)
+New pack features, all level keys: `windmill:{at}` (turning blades), `hall:{at,n}` (grand depot hall: tall arched windows full of golden light), `window:true` (lit wooden window frame round the board),
+`sign:{..., wood:true}` (weathered wooden sign), `trestle:true` (the high wooden truss bridge: every non-track cell is the sunset canyon, rock ledges for whoever stands there, X-braced lattice under the deck).
+| Level | Film | Change |
+|---|---|---|
+| bl01, bl26 | 0:21 | valley rim windmill, red cardinals (the film's red birds), the rake behind Linus |
+| bl02 | 0:39 | TANJAKAN CURAM plate at the foot of the grade |
+| bl04 | 1:03 | the turtle is turtle-sized and stands ON the rail in front of Linus |
+| bl06, bl07 | 1:42 | the golden arched depot hall behind the numbered tracks |
+| bl11 | 3:06 | the photo seen through the lit window frame with its cross bars |
+| bl25 (beat 2) | 2:33 | POINT OF NO RETURN wooden sign with the two black birds either side |
+| bl13, bl16-bl20 | 4:06-4:45 | the trestle: canyon, plank deck, truss lattice (bl19 water cells replaced by canyon) |

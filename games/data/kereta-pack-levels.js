@@ -48,8 +48,9 @@
       grid: { rows: 4, cols: 7, map: [',,,~,,T', ',T,~,,,', ',..==..', '..,~,,,'], theme: 'town' },
       rake: ['coach-green', 'coach-green-2', 'caboose-red'],
       mojo: { at: [3, 0], h: 'E', form: HERO },
+      windmill: { at: [1, 5] },
       cab: 'story-char/henry/wave',
-      decor: [{ at: [0, 5], art: 'animal/bird-blue/fly' }, { at: [0, 1], art: 'animal/deer/graze' }],
+      decor: [{ at: [0, 5], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }, { at: [0, 3], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }, { at: [0, 1], art: 'animal/deer/graze' }],
       objects: [{ id: 'flag', type: 'flag', at: [2, 6] }],
       beats: [{ title: 'Keliling lembah', story: 'Linus dan rangkaiannya jalan-jalan di lembah.',
         bo: 'Antar Linus ke bendera di ujung lembah.',
@@ -60,6 +61,7 @@
       grid: { rows: 3, cols: 6, map: [',,,,,,', '......', '.,.,.,'], theme: 'town' },
       rake: ['coach-green', 'coach-green-2', 'caboose-red'],
       mojo: { at: [1, 3], h: 'W', form: HERO },
+      sign: { at: [0, 0], text: 'TANJAKAN CURAM', w: 3 },
       objects: [
         { id: 'batu1', type: 'parcel', at: [2, 0], kind: 'batu', name: 'Batu bara pertama', art: 'obj/batu-bara' },
         { id: 'batu2', type: 'parcel', at: [2, 2], kind: 'batu', name: 'Batu bara kedua', art: 'obj/batu-bara' },
@@ -130,6 +132,7 @@
     L({ id: 'bl06', terrain: 'depot', mood: 'sunset', n: 6, ch: 'bl-samson', title: 'Jalur Bernomor di Depo', place: 'Depo Besar', icon: 'ui/plan', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'urutan bilangan' },
       grid: { rows: 4, cols: 8, map: [',,,T,,,,', '.......,', ',,,,,,.,', '.......,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      hall: { at: [0, 0], n: 8 },
       decor: [{ at: [0, 5], art: 'story-char/baron/stand', react: 'story-char/baron/angkuh' }],
       objects: [
         { id: 'jalur1', type: 'mark', at: [1, 2], order: 1, seq: 'jalur', art: 'obj/angka-1', name: 'Jalur 1' },
@@ -145,6 +148,7 @@
     L({ id: 'bl07', cine: { start: { letterbox: 1900, slideIn: { id: 'samson', cells: 5, ms: 1500 }, zoom: { at: 'samson', s: 1.2, ms: 1700 }, fx: [{ id: 'bk-smoke-07', at: 'samson', size: 230, n: 2, spread: 30 }, { id: 'bk-dirt-02', at: 'samson', size: 150, lift: -20, delay: 200, filter: 'dust' }] } }, terrain: 'depot', mood: 'sunset', n: 7, ch: 'bl-samson', title: 'Samson Tiba', place: 'Jalur Depo', icon: 'cmd/couple', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 3, cols: 7, map: [',,,,,,,', '.......', '.,.,.,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      hall: { at: [0, 0], n: 7 },
       decor: [{ at: [0, 2], art: 'story-char/henry/worried' }, { at: [0, 4], art: 'story-char/baron/stand' }],
       objects: [
         { id: 'gerbong1', type: 'wagon', at: [2, 0], art: 'train/gerbong-hijau', name: 'Gerbong hijau pertama' },
@@ -198,7 +202,8 @@
           objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: [HERO], palette: ['east'] },
         { title: 'Batas tanpa kembali', terrain: 'mountain', mood: 'storm', story: 'Sorot lampu menyapu jalur. Linus menunggu.',
           bo: 'Tunggu sorot lampu lewat, lalu ke bendera.', hide: ['l1', 'l2', 'l3'], fx: ['rain', 'lightning'],
-          decor: [{ at: [2, 1], art: 'mojo-prop/direction-sign' }, { at: [2, 2], art: 'animal/vulture/perch-1' }, { at: [2, 4], art: 'animal/vulture/perch-2' }, { at: [0, 6], art: 'kereta-prop/pine' }],
+          sign: { at: [2, 1], text: 'POINT OF NO RETURN', w: 3, wood: true },
+          decor: [{ at: [2, 0], art: 'animal/vulture/perch-1' }, { at: [2, 4], art: 'animal/vulture/perch-2' }, { at: [0, 6], art: 'kereta-prop/pine' }],
           cave: { at: [4, 5], goro: true, dir: 'l' },
           start: { at: [3, 7], h: 'W' }, objectives: [{ 'do': 'reach', at: [3, 0] }], slots: 12, budget: 9, forms: [HERO], palette: ['west', 'wait'] },
         { title: 'Lembah kereta tua', terrain: 'logging', mood: 'storm', story: 'Kilat menerangi kereta-kereta tua.',
@@ -247,6 +252,7 @@
     L({ id: 'bl11', terrain: 'depot', mood: 'night', n: 11, ch: 'bl-hutan', title: 'Foto Kenangan', place: 'Rumah Henry', icon: 'ui/plan', bg: 'bg-bl-rumah', tint: 'sepia', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '.......,', ',,,,,,.,', '.......,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      window: true,
       fx: ['rain'],
       decor: [{ at: [0, 2], art: 'story-char/henry/worried' }, { at: [0, 5], art: 'story-char/scarlet/stand', react: 'story-char/scarlet/ramah', flip: true }],
       objects: [{ id: 'b1', type: 'star', at: [1, 2] }, { id: 'b2', type: 'star', at: [3, 4] }, { id: 'b3', type: 'star', at: [3, 1] }],
@@ -295,6 +301,7 @@
       ],
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,.,', '........'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      trestle: true,
       fx: ['rain'],
       decor: [{ at: [2, 3], art: 'kereta-prop/pine' }],
       objects: [
@@ -343,6 +350,7 @@
       celebrate: ['story-char/henry/wave', 'story-char/katrina/stand', 'story-char/baron/stand', 'story-char/scarlet/ramah'],
       grid: { rows: 6, cols: 8, map: [',,,T,,,,', '........', ',,,,,,,.', '........', '.,,,,,,,', '........'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      trestle: true,
       decor: [{ at: [0, 1], art: 'story-char/james/arms-folded' }, { at: [0, 5], art: 'animal/bird-blue/fly' }],
       objects: [
         { id: 'g1', type: 'wagon', at: [3, 5], art: 'train/gerbong-samson', name: 'Gerbong penumpang pertama' },
@@ -374,6 +382,7 @@
     L({ id: 'bl17', terrain: 'gorge', mood: 'sunset', n: 21, ch: 'bl-selamat', title: 'Jemput Henry, Baron, Katrina', place: 'Ujung Jembatan', icon: 'cmd/pick', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 3, cols: 8, map: [',.,.,.,,', '........', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      trestle: true,
       decor: [{ at: [0, 7], art: 'train-char/samson/34l-neutral' }],
       objects: [
         { id: 'r1', type: 'rider', at: [0, 1], who: 'baron', name: 'Baron' },
@@ -389,6 +398,7 @@
     L({ id: 'bl18', terrain: 'gorge', mood: 'sunset', n: 22, ch: 'bl-selamat', title: 'Batu Bara di Tungku', place: 'Kabin Linus', icon: 'cmd/load', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'menambah sampai cukup' },
       grid: { rows: 3, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      trestle: true,
       res: { sand: 0 }, cap: { sand: 2 },
       decor: [{ at: [2, 1], art: 'story-char/henry/shovel' }, { at: [2, 2], art: 'story-char/katrina/shovel' }, { at: [0, 6], art: 'story-char/baron/stand' }],
       objects: [
@@ -402,8 +412,9 @@
 
     // 23 the bridge groans: two beams swing over the planks; cross when they are clear
     L({ id: 'bl19', cine: { start: { letterbox: 2000, zoom: { at: [1, 4], s: 1.18, ms: 1800 }, fx: [{ id: 'bk-dirt-03', at: [0, 4], size: 110, n: 4, spread: 40, filter: 'dust' }, { id: 'bk-smoke-07', at: [1, 4], size: 230, delay: 300, filter: 'dust' }] } }, terrain: 'gorge', mood: 'sunset', n: 23, ch: 'bl-selamat', title: 'Jembatan Berderit', place: 'Jembatan Patah', icon: 'cmd/wait', bg: 'bg-bl-jembatan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
-      grid: { rows: 3, cols: 8, map: [',,,.,.,,', '..====..', ',,~~~~,,'], theme: 'hill' },
+      grid: { rows: 3, cols: 8, map: [',,,.,.,,', '..====..', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      trestle: true,
       decor: [{ at: [2, 0], art: 'story-char/baron/shocked' }, { at: [2, 7], art: 'story-char/katrina/khawatir' }, { at: [0, 1], art: 'train-char/samson/34l-neutral' }],
       objects: [
         { id: 'balok1', type: 'patrol', at: [0, 3], name: 'Balok jatuh', art: 'obj/log', path: [[0, 3], [1, 3], [1, 3], [0, 3]], phase: 0 },
@@ -422,6 +433,7 @@
       res: { sand: 0 }, cap: { sand: 2 },
       grid: { rows: 6, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,.', '...o....', '.,,,,.,,', '........'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
+      trestle: true,
       decor: [{ at: [0, 6], art: 'story-char/baron/shocked' }, { at: [2, 7], art: 'train-char/samson/34l-neutral' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [0, 3], res: 'sand', n: 1, art: 'kereta-prop/coal-pile', name: 'Batu bara' },
@@ -541,6 +553,7 @@
       celebrate: ['story-char/henry/wave', 'story-char/scarlet/ramah', 'story-char/anak-kura/shy', 'story-char/mekanik/wave'],
       grid: { rows: 4, cols: 7, map: [',,,~,,T', ',T,~,,,', ',..==..', '..,~,,,'], theme: 'town' },
       mojo: { at: [3, 0], h: 'E', form: HERO },
+      windmill: { at: [1, 5] },
       cab: 'story-char/henry/wave',
       decor: [{ at: [0, 4], art: 'animal/bird-blue/fly' }, { at: [0, 1], art: 'animal/deer/graze' }, { at: [1, 6], art: 'story-char/anak-kura/shy' }, { at: [1, 5], art: 'animal/rabbit/run' }, { at: [3, 4], art: 'train-char/caboose-red/front-34r' }],
       objects: [{ id: 'flag', type: 'flag', at: [2, 6] }],
