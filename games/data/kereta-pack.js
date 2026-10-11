@@ -68,8 +68,11 @@
 
   /* ── backgrounds ─────────────────────────────────────────────────────────────────────────────────── */
   function background (key, port) { return '../assets/kereta/bg/' + key + (port ? '-portrait' : '-landscape') + '.webp' }
+  var TERRAIN = 'meadow'
+  function terrainOf (lv, bi) { var b = lv.beats[bi || 0]; return (b && b.terrain) || lv.terrain || 'meadow' }
+  function moodOf (lv, bi) { var b = lv.beats[bi || 0]; return (b && b.mood) || lv.mood || 'sun' }
   function scene (lv, bi) {
-    var scr = D.getElementById('scr-play'); if (scr) scr.setAttribute('data-tint', lv.tint || '')
+    var scr = D.getElementById('scr-play'); if (scr) { scr.setAttribute('data-tint', lv.tint || ''); scr.setAttribute('data-mood', moodOf(lv, bi)); scr.setAttribute('data-terrain', terrainOf(lv, bi)) } TERRAIN = terrainOf(lv, bi)
     cabSet(lv)
     var mj = D.getElementById('mojo'); if (mj) mj.classList.toggle('k-tired', !!((lv.tired && lv.tired[bi || 0]) || (lv.beats[bi || 0] && lv.beats[bi || 0].tired === true)))
     return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
@@ -82,14 +85,40 @@
   var TILE = {}
   ;['gravel', 'water'].forEach(function (n) { if (!W.Image) return; var im = new W.Image(); im.src = lib('kereta-tile/' + n); TILE[n] = im })
   var GROUND = '#86bf55'
-  // the whole lawn first: every non-water cell gets the grass tile drawn 12% oversize, so tiles overlap and no cell rim shows
+  /* ── terrain: the ground looks like the PLACE (meadow, mountain, logging, depot, town, gorge), seeded per cell so it never shimmers ── */
+  function rnd (r, c, k) { var h = (r * 73856093) ^ (c * 19349663) ^ ((k || 0) * 83492791); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295 }
+  function blot (x, cx, cy, rx, ry, col, a) { x.save(); x.globalAlpha = a; x.fillStyle = col; x.beginPath(); x.ellipse(cx, cy, rx, ry, 0, 0, 7); x.fill(); x.restore() }
+  var BASE = { meadow: '#86bf55', mountain: '#7a756b', logging: '#6a4f34', depot: '#8b8478', town: '#9a8f7e', gorge: '#716c63' }
+  function groundCell (x, kind, r, c, s, water) {
+    var X = c * s, Y = r * s, i
+    x.fillStyle = BASE[kind] || BASE.meadow; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1)
+    if (kind === 'mountain' || kind === 'gorge') {
+      for (i = 0; i < 6; i++) blot(x, X + rnd(r, c, i) * s, Y + rnd(r, c, i + 9) * s, s * (0.12 + rnd(r, c, i + 3) * 0.2), s * (0.08 + rnd(r, c, i + 5) * 0.12), i % 2 ? '#5d5950' : '#9a948a', 0.5)
+      for (i = 0; i < 9; i++) blot(x, X + rnd(r, c, i + 20) * s, Y + rnd(r, c, i + 30) * s, s * 0.025, s * 0.02, '#4c4840', 0.7)
+      if (rnd(r, c, 77) > 0.72) blot(x, X + s * 0.5, Y + s * 0.5, s * 0.3, s * 0.16, '#f4f8fb', 0.92)
+      if (r === 0) { var g = x.createLinearGradient(0, Y, 0, Y + s * 0.5); g.addColorStop(0, 'rgba(30,25,20,.55)'); g.addColorStop(1, 'rgba(30,25,20,0)'); x.fillStyle = g; x.fillRect(X, Y, s, s * 0.5) }
+    } else if (kind === 'logging') {
+      for (i = 0; i < 7; i++) blot(x, X + rnd(r, c, i) * s, Y + rnd(r, c, i + 9) * s, s * (0.1 + rnd(r, c, i + 3) * 0.16), s * 0.07, i % 2 ? '#52391f' : '#82643f', 0.55)
+      for (i = 0; i < 10; i++) blot(x, X + rnd(r, c, i + 40) * s, Y + rnd(r, c, i + 50) * s, s * 0.035, s * 0.018, '#e2c78e', 0.8)   // sawdust
+      if (rnd(r, c, 61) > 0.86) { blot(x, X + s * 0.5, Y + s * 0.62, s * 0.16, s * 0.1, '#5a3d20', 1); blot(x, X + s * 0.5, Y + s * 0.58, s * 0.13, s * 0.07, '#c89a5e', 1) }   // a stump
+    } else if (kind === 'depot' || kind === 'town') {
+      x.strokeStyle = 'rgba(60,52,42,.45)'; x.lineWidth = Math.max(1, s * 0.025)
+      var n = kind === 'town' ? 3 : 4
+      for (i = 0; i <= n; i++) { x.beginPath(); x.moveTo(X, Y + i * s / n); x.lineTo(X + s, Y + i * s / n); x.stroke() }
+      for (var rr = 0; rr < n; rr++) { var off = (rr % 2) * s / (n * 1.4); for (i = 0; i < n; i++) { x.beginPath(); x.moveTo(X + off + i * s / n * 1.0, Y + rr * s / n); x.lineTo(X + off + i * s / n * 1.0, Y + (rr + 1) * s / n); x.stroke() } }
+      for (i = 0; i < 4; i++) blot(x, X + rnd(r, c, i) * s, Y + rnd(r, c, i + 4) * s, s * 0.14, s * 0.08, '#6d665a', 0.3)
+    }
+    if (water) { var wg = x.createLinearGradient(X, Y, X, Y + s); wg.addColorStop(0, '#1d3b55'); wg.addColorStop(1, '#2f6a8c'); x.fillStyle = wg; x.fillRect(X - 0.5, Y - 0.5, s + 1, s + 1); blot(x, X + s * 0.5, Y + s * 0.6, s * 0.3, s * 0.05, '#9ed3ee', 0.45) }
+  }
   function paintGround (x, ch, R, Cn, s, grass) {
-    x.fillStyle = GROUND; x.fillRect(0, 0, Cn * s, R * s)
-    if (!grass) return
-    var iw = grass.naturalWidth, ih = grass.naturalHeight, ix = iw * 0.1, iy = ih * 0.1
+    var kind = TERRAIN
     for (var r = 0; r < R; r++) for (var c = 0; c < Cn; c++) {
-      if (ch(r, c) === '~') continue
-      x.drawImage(grass, ix, iy, iw - 2 * ix, ih - 2 * iy, c * s - s * 0.07, r * s - s * 0.07, s * 1.14, s * 1.14)
+      var k = ch(r, c)
+      if (kind === 'meadow' || kind === 'forest') {
+        if (c === 0 && r === 0) { x.fillStyle = GROUND; x.fillRect(0, 0, Cn * s, R * s) }
+        if (k === '~') continue
+        if (grass) { var iw = grass.naturalWidth, ih = grass.naturalHeight, ix = iw * 0.1, iy = ih * 0.1; x.drawImage(grass, ix, iy, iw - 2 * ix, ih - 2 * iy, c * s - s * 0.07, r * s - s * 0.07, s * 1.14, s * 1.14) }
+      } else groundCell(x, kind, r, c, s, kind === 'gorge' && k === '~')
     }
   }
   function isRoad (k) { return k === '.' || k === '=' || k === 'o' }
@@ -134,6 +163,7 @@
     }
     var all = []; paths.forEach(function (p) { all = all.concat(p.pts) })
     x.save(); x.lineJoin = 'round'
+    if (TERRAIN === 'mountain' || TERRAIN === 'gorge') { x.lineCap = 'butt'; x.strokeStyle = 'rgba(25,20,15,.5)'; x.lineWidth = s * 0.74; paths.forEach(function (p) { strokePts(x, p.pts) }); if (bridge) { x.strokeStyle = '#3a2a1a'; x.lineWidth = s * 0.66; paths.forEach(function (p) { strokePts(x, p.pts) }); x.strokeStyle = '#5c3d1f'; for (var q = 0; q < 4; q++) { x.beginPath(); x.moveTo(X + s * (0.15 + q * 0.23), Y + s * 0.78); x.lineTo(X + s * (0.15 + q * 0.23), Y + s); x.stroke() } } }
     // soft shadow, then the gravel (or plank) bed, drawn 1px long at both ends so cells overlap exactly
     x.lineCap = 'butt'
     x.lineWidth = s * 0.62; x.strokeStyle = bridge ? '#5c3a18' : 'rgba(70,52,30,.55)'
@@ -168,6 +198,16 @@
       var a = d.art || ''
       if (/engine-house|station-small|stasiun-kecil|depo/.test(a) || (K.LIB[a] && /engine-house|station-small/.test(K.LIB[a]))) out.push({ at: d.at, cls: 'k-chimney', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' })
     })
+    // the board takes the scenario's mood: wet dark ground gets puddles, sheen, rain across the board and lightning; lamps glow warm
+    var md = moodOf(lv, bi), dark = md === 'night' || md === 'rain' || md === 'storm', fxl = (b && b.fx) || lv.fx || []
+    if (dark) {
+      if ((md === 'rain' || md === 'storm') && fxl.indexOf('rain') < 0) out.push({ at: [0, 0], cls: 'k-fx k-fx-rain', html: (function () { var h = ''; for (var i = 0; i < 16; i++) h += '<i class="f' + (i + 1) + '" style="--i:' + i + '"></i>'; return h })() })
+      if (md === 'storm' && fxl.indexOf('lightning') < 0) out.push({ at: [0, 0], cls: 'k-fx k-fx-lightning', html: '<i></i>' })
+      out.push({ at: [0, 0], cls: 'k-fx k-fx-sheen', html: '<i></i>' })
+      lv.grid.map.forEach(function (row, r) { for (var c = 0; c < row.length; c++) if (',T'.indexOf(row.charAt(c)) >= 0 && ((r * 7 + c * 13) % 6 === 0)) out.push({ at: [r, c], cls: 'k-puddle', html: '<i></i>' }) })
+      ;((b && b.decor) || lv.decor || []).concat(lv.objects || []).forEach(function (d) { if (/lantern|lentera/.test((d.art || '') + (d.id || '')) || d.id === 'sorot') out.push({ at: d.at, cls: 'k-lamp', html: '<i></i>' }) })
+    } else if (md === 'sunset') out.push({ at: [0, 0], cls: 'k-fx k-fx-glow', html: '<i></i>' })
+    else if (md === 'dream') out.push({ at: [0, 0], cls: 'k-fx k-fx-haze', html: '<i></i><i class="f2"></i>' })
     // whole-board atmosphere named by the beat: fog drifting, falling leaves, dust motes; flickering old lamps
     ;((b && b.fx) || lv.fx || []).forEach(function (f) {
       var n = f === 'fog' ? 2 : f === 'lightning' ? 1 : f === 'rain' ? 14 : 6, h = ''

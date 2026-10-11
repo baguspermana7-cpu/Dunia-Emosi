@@ -285,3 +285,27 @@ html[data-pack="kereta"] .dec.cast[data-flip] img{scale:-1 1}
 /* the log wagon of scenario 14 stands far taller than Linus, with Carter sitting on the logs (hands on hips) */
 html[data-pack="kereta"] .ob[data-id="kayu"] img.main{scale:1.7;transform-origin:50% 90%}
 html[data-pack="kereta"] .ob[data-id="kayu"]::after{content:'';position:absolute;left:18%;top:-92%;width:64%;height:70%;background:url('../assets/db/lib/story-char/carter/hands-hips.webp') center bottom/contain no-repeat;filter:drop-shadow(0 3px 2px rgba(0,0,0,.4));z-index:3;pointer-events:none}
+
+/* ── BOARD MOOD (data-mood on the play screen): the ground, the cast and the props take the scenario's light; Linus keeps his colour ── */
+#scr-play[data-mood="sunset"] #board-bg{filter:sepia(.28) saturate(1.2) brightness(.96) hue-rotate(-8deg)}
+#scr-play[data-mood="sunset"] .dec:not(.amb):not(.cast),#scr-play[data-mood="sunset"] #objs{filter:sepia(.18) saturate(1.1)}
+#scr-play[data-mood="night"] #board-bg{filter:brightness(.5) saturate(.55) hue-rotate(12deg)}
+#scr-play[data-mood="rain"] #board-bg{filter:brightness(.66) saturate(.6) hue-rotate(6deg)}
+#scr-play[data-mood="storm"] #board-bg{filter:brightness(.52) saturate(.5) hue-rotate(10deg) contrast(1.05)}
+#scr-play[data-mood="night"] .dec:not(.amb),#scr-play[data-mood="night"] #objs,#scr-play[data-mood="rain"] .dec:not(.amb),#scr-play[data-mood="rain"] #objs,#scr-play[data-mood="storm"] .dec:not(.amb),#scr-play[data-mood="storm"] #objs{filter:brightness(.8) saturate(.75)}
+#scr-play[data-mood="dream"] #board-bg{filter:brightness(1.08) saturate(.85) sepia(.18)}
+.k-fx-sheen i{inset:0;width:100%;height:100%;background:linear-gradient(115deg,rgba(255,255,255,0) 30%,rgba(190,210,235,.16) 48%,rgba(255,255,255,0) 66%);animation:kSheen 9s ease-in-out infinite}
+@keyframes kSheen{0%,100%{transform:translateX(-30%)}50%{transform:translateX(30%)}}
+.k-puddle{z-index:1}.k-puddle i{position:absolute;left:18%;top:54%;width:64%;height:30%;border-radius:50%;background:radial-gradient(closest-side,rgba(160,190,225,.5),rgba(160,190,225,.15) 70%,rgba(160,190,225,0));animation:kPuddle 3.4s ease-in-out infinite}
+@keyframes kPuddle{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.k-fx-glow i{inset:0;width:100%;height:100%;background:radial-gradient(120% 90% at 80% 0%,rgba(255,170,70,.22),rgba(255,170,70,0) 60%);animation:none}
+.k-fx-haze i{inset:-10%;width:120%;height:120%;background:radial-gradient(closest-side,rgba(255,236,170,.4),rgba(255,236,170,0));animation:kFog 24s linear infinite}.k-fx-haze i.f2{animation-delay:-12s;top:20%}
+.k-fx-rain i{opacity:.85;width:2px;background:linear-gradient(rgba(230,242,255,0),rgba(230,242,255,.9))}
+.k-lamp i{width:150%;background:radial-gradient(closest-side,rgba(255,200,90,.85),rgba(255,200,90,0));mix-blend-mode:screen}
+html[data-pack="kereta"] .ob[data-id="sorot"]::before{inset:-70%;mix-blend-mode:screen;animation:kBeam 3s ease-in-out infinite}
+@keyframes kBeam{0%,100%{transform:scale(.9)}50%{transform:scale(1.15)}}
+@media(prefers-reduced-motion:reduce){.k-fx-sheen i,.k-puddle i,.k-fx-haze i{animation:none!important}}
+/* the painted backdrop takes the mood too (multiply with a cold dark tint) */
+#scr-play[data-mood="rain"]{background-color:#6f7c92!important;background-blend-mode:multiply}
+#scr-play[data-mood="storm"]{background-color:#505c78!important;background-blend-mode:multiply}
+#scr-play[data-mood="night"]{background-color:#5a6590!important;background-blend-mode:multiply}

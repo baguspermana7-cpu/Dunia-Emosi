@@ -99,6 +99,12 @@ for (const lv of ML.LEVELS) {
   check(lv.title.length <= 28, `${lv.id}: title short (${lv.title.length})`)
   lv.beats.forEach((b, bi) => { check(b.bo.split(/\s+/).length <= 8, `${lv.id}.${bi + 1}: the narrator line has <= 8 words ("${b.bo}")`); check(b.story.length <= 60, `${lv.id}.${bi + 1}: the story line is one short line (${b.story.length} chars)`) })
 }
+// owner 2026-10-11: each storyline uses ONLY its own cast. Brave levels (bl*) never show malivlak-char / tk-char / other trains' sprites.
+const ART_OF = lv => { const o = []; const add = a => { if (a) { o.push(a); if (LIBK[a]) o.push(LIBK[a]) } }
+  ;(lv.decor || []).forEach(d => { add(d.art); add(d.react) }); lv.beats.forEach(b => (b.decor || []).forEach(d => { add(d.art); add(d.react) })); (lv.cards || []).forEach(c => (c.art || []).forEach(a => add(a.k)))
+  ;(lv.objects || []).forEach(x => { add(x.art); if (x.who) add('char/' + x.who) }); add(lv.cab); return o }
+const FOREIGN = { bl: /^(malivlak-char|tk-char|mojo-char|mojo-cross|train-char\/(malivlak|dragutin|silver|defeatist))/ , mv: /^(story-char|tk-char|mojo-char|train-char\/(linus|samson|goro|silver|defeatist|coach-green|caboose|rongsokan))/, hb: /^(story-char|malivlak-char|tk-char|mojo-char|train-char\/(linus|samson|goro|malivlak|dragutin|rongsokan))/ }
+for (const lv of ML.LEVELS) { const bad = ART_OF(lv).filter(k => FOREIGN[lv.id.slice(0, 2)] && FOREIGN[lv.id.slice(0, 2)].test(k)); check(bad.length === 0, `${lv.id}: only its own storyline's cast (foreign: ${bad.join(', ')})`) }
 // kid-safe: no emoji anywhere in the pack's words
 const words = JSON.stringify(ML.LEVELS.map(l => [l.title, l.place, l.beats, l.objects.map(o => o.name)])) + JSON.stringify(ML.REGIONS)
 check(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(words), 'no emoji in the pack text')
