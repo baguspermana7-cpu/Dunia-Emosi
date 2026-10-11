@@ -20,13 +20,16 @@
   var LEVELS = [
     // 01 the starting whistle: Kilat waits for the signal to turn, then races to the line
     L({ id: 'hb01', cards: [
-        { bg: 'bg-hb-start', art: [{ k: 'train-char/silver/front-34l', x: 36, s: 58 }], text: 'Pesta Besar di kota hari ini! Kilat Perak siap berlomba.' }
+        { bg: 'bg-hb-start', art: [{ k: 'train-char/silver/front-34l', x: 36, s: 58 }], text: 'Pesta Besar di kota hari ini! Kilat Perak siap berlomba.' },
+        { bg: 'bg-hb-start', art: [{ k: 'animal/rabbit/run', x: 14, s: 40 }, { k: 'train-char/silver/front-34l', x: 52, s: 58 }], text: 'Kelinci Wasit mengibarkan bendera. Tunggu aba-aba, Kilat!' }
       ], terrain: 'meadow', mood: 'sun', n: 1, title: 'Peluit Tanda Mulai', place: 'Garis Start', icon: 'cmd/wait', bg: 'bg-hb-start', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 8, map: [',T,.,,T,', '........', ',,T.,,,,'], theme: 'town' },
+      bunting: { at: [0, 0], n: 8 },
+      sign: { at: [2, 0], text: 'START', w: 2 },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
-      decor: [{ at: [2, 6], art: 'animal/bird-blue/fly' }],
+      decor: [{ at: [2, 6], art: 'animal/bird-blue/fly', label: 'Burung Pengumum' }, { at: [2, 4], art: 'animal/deer/stand', label: 'Pak Rusa (juri)' }],
       objects: [
-        { id: 'sinyal', type: 'patrol', at: [0, 3], name: 'Kelinci', art: 'animal/rabbit/run', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
+        { id: 'sinyal', type: 'patrol', at: [0, 3], name: 'Kelinci Wasit', art: 'animal/rabbit/run', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [{ title: 'Tunggu aba-aba', story: 'Hari ini ada Pesta Besar di kota. Lomba dimulai!',
@@ -34,11 +37,12 @@
 
     // 02 Tuan Lemas stops at the red signal and wants to give up: bring him a "semangat" star
     L({ id: 'hb02', cards: [
-        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Tuan Lemas berhenti di sinyal merah. Ia mau menyerah.' }
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Tuan Lemas berhenti di sinyal merah. Ia mau menyerah.' },
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/silver/front-34l', x: 36, s: 58 }], text: 'Kilat tahu cara menolong: sebuah bintang semangat.' }
       ], terrain: 'meadow', mood: 'sun', n: 2, title: 'Tuan Lemas Mau Menyerah', place: 'Sinyal Merah', icon: 'cmd/pick', bg: 'bg-hb-padang', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',.,.,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
-      decor: [{ at: [0, 2], art: 'kereta-prop/pine' }],
+      decor: [{ at: [2, 5], art: 'animal/rabbit/sit', label: 'Kelinci Penonton', react: 'animal/rabbit/run' }, { at: [0, 2], art: 'kereta-prop/pine' }],
       objects: [
         { id: 'b1', type: 'parcel', at: [2, 1], kind: 'semangat', name: 'Bintang semangat', art: 'obj/semangat' },
         { id: 'b2', type: 'parcel', at: [2, 3], kind: 'semangat', name: 'Bintang semangat', art: 'obj/semangat' },
@@ -49,12 +53,13 @@
 
     // 03 Tuan Lemas runs out of coal: fill his furnace so he can go on
     L({ id: 'hb03', cards: [
-        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tuan Lemas kehabisan batu bara. Kilat mau membantu.' }
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tuan Lemas kehabisan batu bara. Kilat mau membantu.' },
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Tuan Lemas tersenyum. Ia mulai bersemangat lagi.' }
       ], terrain: 'meadow', mood: 'sun', n: 5, title: 'Batu Bara untuk Tuan Lemas', place: 'Padang Hijau', icon: 'cmd/load', bg: 'bg-hb-padang', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 3], h: 'E', form: 'kilat' },
       res: { sand: 0 }, cap: { sand: 2 },
-      decor: [{ at: [2, 6], art: 'animal/deer/graze' }],
+      decor: [{ at: [0, 5], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }, { at: [2, 6], art: 'animal/deer/graze' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [0, 1], res: 'sand', n: 1, art: 'obj/hb-batu', name: 'Batu bara' },
         { id: 'tungku', type: 'hole', at: [1, 6], need: 2, res: 'sand', art: 'train/lemas', name: 'Tungku Tuan Lemas' },
@@ -65,9 +70,11 @@
 
     // 04 the climb is heavy for Tuan Lemas: Kilat takes his two wagons up the hill and into the festival town
     L({ id: 'hb04', cards: [
-        { bg: 'bg-hb-kota', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tanjakan terasa berat. Mereka mendaki bersama.' }
+        { bg: 'bg-hb-kota', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tanjakan terasa berat. Mereka mendaki bersama.' },
+        { bg: 'bg-hb-kota', art: [{ k: 'animal/bird-blue/fly', x: 14, s: 40 }, { k: 'train-char/silver/front-34l', x: 52, s: 58 }], text: 'Burung Pengumum: Kota sudah dekat. Ayo, semangat!' }
       ], terrain: 'meadow', mood: 'sunset', n: 6, title: 'Tanjakan yang Berat', place: 'Kaki Bukit', icon: 'cmd/couple', bg: 'bg-hb-kota', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,.', '........', ',.,.,,,,', ',,,,,,,,'], theme: 'hill' },
+      sign: { at: [3, 1], text: 'TANJAKAN', w: 2 },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 5], art: 'train/lemas-b' }],
       objects: [
@@ -81,9 +88,11 @@
     // 05 the bridge holds one train: Kilat waits for Tuan Lemas to cross, then crosses (be patient)
     L({ id: 'hb05', cards: [
         { bg: 'bg-hb-padang', art: [{ k: 'train-char/silver/front-34l', x: 10, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 54, s: 58 }], text: 'Jembatan kecil hanya muat satu kereta.' },
-        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Mereka bergiliran. Sabar itu baik.' }
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Mereka bergiliran. Sabar itu baik.' },
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/silver/front-34l', x: 10, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 54, s: 58 }], text: 'Kilat melambai: silakan lewat dulu, Tuan Lemas!' }
       ], ch: 'hb-ch2', terrain: 'meadow', mood: 'sun', n: 4, title: 'Jembatan Satu Kereta', place: 'Jembatan Kecil', icon: 'cmd/wait', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'bergiliran' },
       grid: { rows: 4, cols: 8, map: [',,,.,,,,', '...=....', ',,,.,,,,', ',T,,,,,,'], theme: 'town' },
+      sign: { at: [2, 5], text: 'SATU KERETA', w: 3 },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 5], art: 'animal/deer/graze' }],
       objects: [
@@ -95,11 +104,12 @@
 
     // 06 Tuan Lemas is stuck at his signal box: Kilat opens it for him, then they go on (help each other)
     L({ id: 'hb06', cards: [
-        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Kotak sinyal Tuan Lemas macet. Kilat mau membukanya.' }
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Kotak sinyal Tuan Lemas macet. Kilat mau membukanya.' },
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/silver/front-34l', x: 36, s: 58 }], text: 'Klik! Sinyal terbuka. Tuan Lemas berseru terima kasih.' }
       ], ch: 'hb-ch2', terrain: 'meadow', mood: 'sun', n: 3, title: 'Kilat Membuka Sinyal', place: 'Kotak Sinyal', icon: 'cmd/east', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,T,,,,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
-      decor: [{ at: [2, 5], art: 'train/lemas', react: 'train/lemas-b' }, { at: [0, 6], art: 'animal/bird-blue/fly' }],
+      decor: [{ at: [3, 1], art: 'animal/deer/stand', label: 'Pak Rusa (juri)' }, { at: [2, 5], art: 'train/lemas', react: 'train/lemas-b' }, { at: [0, 6], art: 'animal/bird-blue/fly' }],
       objects: [
         { id: 'sinyal', type: 'mark', at: [1, 4], order: 1, seq: 'sinyal', art: 'obj/hb-sinyal', name: 'Sinyal' },
         { id: 'flag', type: 'flag', at: [1, 7] }
@@ -109,7 +119,8 @@
 
     // 07 BIG: the tunnel. Kilat takes the upper line, waits while Tuan Lemas comes the other way, passes with a wave, then returns
     L({ id: 'hb07', cards: [
-        { bg: 'bg-hb-start', art: [{ k: 'train-char/silver/front-34l', x: 8, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 56, s: 58 }], text: 'Dua kereta datang dari arah berlawanan, menuju terowongan.' }
+        { bg: 'bg-hb-start', art: [{ k: 'train-char/silver/front-34l', x: 8, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 56, s: 58 }], text: 'Dua kereta datang dari arah berlawanan, menuju terowongan.' },
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Tuan Lemas tidak lagi takut gelap. Ia melambai dan berkata, kamu duluan!' }
       ], ch: 'hb-ch2', big: true, quiet: true, terrain: 'mountain', mood: 'sunset', n: 7, title: 'Berpapasan di Terowongan', place: 'Petualangan Besar', icon: 'cmd/wait', bg: 'bg-hb-start',
       bgs: ['bg-hb-start', 'bg-hb-padang'], edu: { domain: 'campuran', skill: 'bergiliran' },
       celebrate: [],
@@ -132,9 +143,11 @@
     // ── Bab 3 "Pesta di Kota" (old hb08/09/10): give way, arrive together, the party ─────────────
     // 08 Kilat gives way: he steps onto the side track, lets Tuan Lemas cross, then goes on
     L({ id: 'hb08', cards: [
-        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tuan Lemas jalan pelan. Kilat memberi jalan.' }
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tuan Lemas jalan pelan. Kilat memberi jalan.' },
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/silver/front-34l', x: 36, s: 58 }], text: 'Memberi jalan bukan kalah. Itu tanda sahabat sejati.' }
       ], ch: 'hb-ch3', terrain: 'meadow', mood: 'sun', n: 8, title: 'Kilat Memberi Jalan', place: 'Jalur Samping', icon: 'cmd/down', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'memberi jalan' },
       grid: { rows: 4, cols: 8, map: [',,,,,.,,', '........', ',,,.,.,,', ',,,.,,,,'], theme: 'town' },
+      sign: { at: [3, 4], text: 'MINGGIR', w: 2 },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 6], art: 'kereta-prop/pine' }],
       objects: [
@@ -147,9 +160,13 @@
 
     // 09 arrive together: Kilat hitches Tuan Lemas behind him and brings him over the line (nobody is left behind)
     L({ id: 'hb09', cards: [
-        { bg: 'bg-hb-kota', art: [{ k: 'train-char/silver/front-34l', x: 10, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 54, s: 58 }], text: 'Garis akhir sudah terlihat. Tidak ada yang tertinggal.' }
+        { bg: 'bg-hb-kota', art: [{ k: 'train-char/silver/front-34l', x: 10, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 54, s: 58 }], text: 'Garis akhir sudah terlihat. Tidak ada yang tertinggal.' },
+        { bg: 'bg-hb-kota', art: [{ k: 'animal/cardinal/fly', x: 14, s: 40 }, { k: 'train-char/defeatist/front-34l', x: 52, s: 58 }], text: 'Tuan Lemas berbisik: terima kasih sudah menunggu.' }
       ], ch: 'hb-ch3', cine: { end: { fx: [{ id: 'bk-star-02', at: [1, 7], size: 180, n: 2, spread: 40 }, { id: 'bk-light-02', at: [1, 7], size: 260, delay: 250 }] } }, terrain: 'town', mood: 'sunset', n: 9, title: 'Tiba Bersama', place: 'Garis Akhir', icon: 'cmd/couple', bg: 'bg-hb-kota', edu: { domain: 'matematika', skill: 'membilang 1' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,,,,,,', ',,,,,,,,'], theme: 'town' },
+      bunting: { at: [0, 3], n: 5 },
+      crowd: { at: [0, 0], n: 4 },
+      sign: { at: [2, 5], text: 'GARIS AKHIR', w: 3 },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 5], art: 'animal/deer/graze' }, { at: [0, 6], art: 'kereta-prop/pine' }],
       objects: [
@@ -167,8 +184,10 @@
       bgs: ['bg-hb-kota', 'bg-hb-kota', 'bg-hb-kota'], edu: { domain: 'campuran', skill: 'urutan perjalanan' },
       celebrate: [],
       grid: { rows: 4, cols: 8, map: [',,,.,.,,', '........', ',,.,,,.,', ',,,,,,,,'], theme: 'town' },
+      bunting: { at: [0, 0], n: 8 },
+      crowd: { at: [3, 0], n: 8 },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
-      decor: [{ at: [3, 4], art: 'animal/deer/graze' }, { at: [3, 1], art: 'animal/bird-blue/fly' }],
+      decor: [{ at: [3, 4], art: 'animal/deer/graze', label: 'Pak Rusa (juri)' }, { at: [3, 1], art: 'animal/bird-blue/fly' }],
       objects: [
         { id: 'bendera', type: 'parcel', at: [0, 3], kind: 'bendera', name: 'Bendera pesta', art: 'game/flag-red' },
         { id: 'bintang', type: 'parcel', at: [0, 5], kind: 'bintang', name: 'Bintang', art: 'obj/semangat' },
@@ -192,7 +211,11 @@
     pins: { 'hb-ch1': [20, 55], 'hb-ch2': [50, 38], 'hb-ch3': [80, 52] },
     cast: [
       { id: 'kilat', name: 'Kilat Perak', ability: 'Kereta perak yang cepat dan mau membantu.', key: 'train-char/silver/34l-happy' },
-      { id: 'lemas', name: 'Tuan Lemas', ability: 'Lokomotif tua yang gampang menyerah. Semangati dia!', key: 'train-char/defeatist/34l-neutral' }
+      { id: 'lemas', name: 'Tuan Lemas', ability: 'Lokomotif tua yang gampang menyerah. Semangati dia!', key: 'train-char/defeatist/34l-neutral' },
+      { id: 'wasit', name: 'Kelinci Wasit', ability: 'Mengibarkan bendera tanda mulai. Jangan berangkat sebelum ia lewat!', key: 'animal/rabbit/run' },
+      { id: 'rusa', name: 'Pak Rusa', ability: 'Juri lomba. Ia menilai siapa yang paling baik hati.', key: 'animal/deer/stand' },
+      { id: 'pengumum', name: 'Burung Pengumum', ability: 'Mengumumkan kabar lomba dari atas kereta.', key: 'animal/bird-blue/fly' },
+      { id: 'kardinal', name: 'Burung Kardinal', ability: 'Penonton setia yang bernyanyi di sepanjang jalur.', key: 'animal/cardinal/fly' }
     ] }
   W.KeretaPackLevels = { HERO: 'kilat', STORY: STORY, CHAPTERS: CHAPTERS, REGIONS: REGIONS, LEVELS: LEVELS, LIB: LIB }
 })(typeof window !== 'undefined' ? window : globalThis)

@@ -92,3 +92,62 @@ down to its chimney; use TWO rows so the hero's row sits under the surface), `tu
 | mv07 | 3:00-3:12 | the pond lies across the line (2 rows, reeds and ripples); the train wades in and only the chimney tip shows; it rises on the far bank, shakes the water off, the driver lifts the fish |
 | mv09 | 4:03-4:12 | the bird's NEST sits on the red chimney; steam puffs hurl it and the bird off; the driver lifts the pan of eggs |
 | mv11 | 4:36-4:50 | stone tunnel arch in a red cliff, SKULL board on a post beside the track, driver leans out, train reverses, bear appears |
+
+### Malivlak sweep 2026-10-12 (all 20 levels against the film; frames docs/ref-malivlak/mv/sheet01-05.jpg)
+| Level | Film mm:ss | Board now |
+|---|---|---|
+| mv01 | 0:36-1:06 | Dragutin (green, modern) arrives at the small station: STASIUN plate, ticket booth, station officer in red cap, the man in purple; horn + steam, brake smoke at the platform |
+| mv02 | 1:00-1:21 | the PORTER (kuli bagasi) is the hero and carries suitcases + mail sacks into Dragutin; the red van that brought the mail stands at the kerb |
+| mv03 | 1:21-1:42 | officer whistles, the porter crosses (wait), Dragutin rolls out onto the countryside line |
+| mv04 | 1:42-2:12 | Malivlak and his rake in film order: red tender, green, orange (blue is the rear coach), owner's wagon sheet art |
+| mv05 | 2:12-2:21 | Dragutin overtakes on the modern line, Malivlak gives way |
+| mv06 | 2:51-3:00 | off the rails into tall swaying wheat; the man in purple lies in the field with his case |
+| mv07 | 3:00-3:24 | the train wades into the pond and is submerged to the chimney; far bank; the driver lifts the fish |
+| mv08 | 3:24-3:48 | the whole rake gathers round Malivlak under the big tree, then back to the rails |
+| mv09 | 4:00-4:15 | the bird's NEST on the red chimney, steam throws it off; the driver lifts the pan of eggs |
+| mv10 | 4:24-4:36 | climb, the crossing with Dragutin's line (wait), towards the mountain |
+| mv11 | 4:36-5:03 | stone arch tunnel in a red cliff + SKULL board on a post, the train reverses out, the bear appears |
+| mv12 | 5:09-5:21 | the bear steps into the middle coach, the man in purple boards the rear coach |
+| mv13 | 5:36-6:00 | down the mountain, the bear stays on top |
+| mv14 | 6:12-6:36 | the driver hammers and bandages the blue coach's wheel |
+| mv15 | 6:36-7:12 | brick station wall with the clock and RUANG TUNGGU, the officer, the MARCHING BAND (conductor, drum, tuba, trumpet, double bass) |
+| mv16 | 7:12-7:48 | Malivlak rolls past the band and the welcomers; a crowd of watchers behind; stops near the signal |
+| mv17 | 7:48-8:42 | the chimney pushes the signal arm to red; crowd behind |
+| mv18 | 8:42-9:12 | the speaker reads, steam covers him; crowd behind |
+| mv19 | 8:36-9:36 | wreath, medal for the driver, departure; crowd behind |
+| mv20 | 9:36-10:27 | the road to the MUSEUM (plate over the door), Malivlak among the old locomotives |
+Sound and effects per beat: games/data/kereta-scene.js (PLAN).
+
+### Brave sweep 2026-10-12 (film frames docs/ref-malivlak/bl/sheet01-04.jpg, film mm:ss -> level)
+Linus's rake now uses the owner's wagon sheet cuts: green (`coach-green`), green (`coach-green-2`), red caboose (`caboose-red`), parked as side views and turning to the view of their heading while coupled
+(east side-right, west side-left, up rear, down front; kereta-scene.js `wagonViews`). Sound + effects per beat: kereta-scene.js PLAN bl01-bl26.
+| film | level | note |
+|---|---|---|
+| 0:12-0:24 | bl01 | the canyon valley, windmill, river bridge, birds, Linus with green coach and red caboose behind |
+| 0:48-1:00 | bl03 | steep spiral climb over the summit, the caboose bounces |
+| 1:03-1:12 | bl04 | the turtle on the rail (ducks into the shell), Henry leans out |
+| 1:21-1:33 | bl05 | passengers in the green coach, the small station at sunset |
+| 1:36-2:09 | bl06-bl07 | the grand arched depot, Samson arriving, Baron |
+| 2:12-2:21 | bl08 | CONTRACT card, the table scene |
+| 2:24-3:12 | bl25, bl09-bl11 | night mountain, POINT OF NO RETURN + black birds, searchlight, wrecks, the lit cabin window (Henry and Scarlet), the photo |
+| 3:15-3:57 | story cards | Samson's montage, TITAN TRAIN TAMES TERRAIN! |
+| 3:51-4:30 | bl12-bl14 | the log wagon, Carter and the chain, the chain snaps |
+| 4:00-4:45 | bl15-bl20 | the trestle bridge, the rescue |
+
+## Lomba ke Kota (hellbent) - story, cast, scripts (owner 2026-10-12; no film source, written for this game)
+Premise: the Pesta Besar is today in the town. Kilat Perak (silver streamliner: fast, friendly) and Tuan Lemas (old Defeatist Limited: tired, quick to give up) both want to arrive. The prize is the Piala Persahabatan, and Pak Rusa the judge
+gives it to whoever shows the best heart, not the best time. Theme: wait your turn, cheer a friend up, share, give way, arrive together.
+Cast (own cast only: silver + defeatist + shared animals/scenery): Kilat Perak (hero), Tuan Lemas, Kelinci Wasit (starts the race with a flag; the patrol in hb01), Pak Rusa (judge), Burung Pengumum (blue bird, announcer), Burung Kardinal (cheering spectator), Kelinci Penonton.
+| Level | Chapter | Beat of the story | Props / VFX / SFX |
+|---|---|---|---|
+| hb01 Peluit Tanda Mulai | 1 | Kelinci Wasit waves the flag; Kilat waits for the signal | START plate, bunting, drum + tweet, whistle + cheer at the line |
+| hb02 Tuan Lemas Mau Menyerah | 1 | Lemas stops at the red signal ("aku menyerah"); Kilat brings two star-hearts | sigh, stars burst round Lemas, horn |
+| hb03 Batu Bara untuk Tuan Lemas | 1 | Lemas is out of coal; Kilat fills his furnace | thump, steam puff |
+| hb04 Tanjakan yang Berat | 1 | the climb is heavy; Kilat couples Lemas's wagons | TANJAKAN plate, steam, cheer |
+| hb05 Jembatan Satu Kereta | 2 | the little bridge holds one train: take turns | SATU KERETA plate, bell |
+| hb06 Kilat Membuka Sinyal | 2 | Lemas's signal box is stuck; Kilat opens it | clack, door, flare |
+| hb07 Berpapasan di Terowongan | 2 | two trains from opposite ends: wait, wave, pass | echo, horns |
+| hb08 Kilat Memberi Jalan | 3 | giving way is what a friend does (side track) | MINGGIR plate |
+| hb09 Tiba Bersama | 3 | nobody is left behind: Lemas is coupled and they cross together | GARIS AKHIR plate, crowd, bunting, fanfare |
+| hb10 Pesta di Kota | 3 | flag and star to their stages, the two friends cross the line; the cup goes to both | crowd, bunting, march + tuba, applause, tada |
+Sound and effects per beat: kereta-scene.js PLAN hb01-hb10.

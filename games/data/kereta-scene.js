@@ -118,6 +118,51 @@
     mv19: [{ start: { sfx: ['drum', 'tuba'] }, end: { sfx: ['pop', 'fanfare'], fx: [{ id: 'bk-star-02', at: 'goal', size: 130, n: 3, spread: 26 }] } }, { start: { sfx: ['tuba'] }, end: { sfx: ['applause', 'tada'], fx: [FLARE, STAR] } }, { start: { sfx: ['march'] }, move: 'chuff', end: { sfx: ['horn', 'cheer'], fx: [SMOKE, STAR] } }],
     mv20: [{ start: { sfx: ['march', 'chuff'] }, move: 'chuff', end: { sfx: ['bell', 'echo'], fx: [STAR] } }, { start: { sfx: ['echo'] }, move: 'chuff', end: { sfx: ['horn', 'echo'], fx: [FLARE] } }, { start: { sfx: ['echo'] }, end: { sfx: ['tada', 'applause'], fx: [STAR, { id: 'bk-star-02', at: 'goal', size: 150, n: 4, spread: 30 }, { id: 'bk-light-02', at: 'goal', size: 280, delay: 250 }] } }]
   }
+  /* ── Brave Locomotive (film "The Brave Locomotive", frames docs/ref-malivlak/bl/): sound + effects per beat, same schema ── */
+  var CHUFF = { sfx: ['chuff'] }
+  Object.assign(PLAN, {
+    bl01: { start: { sfx: ['horn', 'tweet', 'steam'], fx: [SMOKE, { id: 'bk-smoke-01', at: 'hero', size: 120, delay: 250, lift: 20 }] }, move: 'chuff', end: { sfx: ['tada'], fx: [STAR] } },
+    bl02: { start: { sfx: ['bell', 'chuff'] }, move: 'chuff', end: { sfx: ['clack', 'whistle'], fx: [STAR, SMOKE] } },
+    bl03: { start: { sfx: ['steam', 'chuff'], fx: [SMOKE] }, move: 'chuff', end: { sfx: ['horn', 'fanfare'], fx: [STAR, { id: 'bk-star-02', at: 'goal', size: 120, n: 3, spread: 26 }] } },
+    bl04: { start: { sfx: ['tweet', 'chuff'] }, end: { sfx: ['brake', 'pop', 'tada'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 190 }, STAR] } },
+    bl05: [{ start: { sfx: ['bell', 'chuff'] }, end: { sfx: ['door', 'bell'], fx: [STAR] } }, { start: { sfx: ['echo', 'bell'] }, end: { sfx: ['horn', 'tada'], fx: [FLARE, STAR] } }],
+    bl06: { start: { sfx: ['echo', 'bell'] }, end: { sfx: ['clack', 'bell'], fx: [FLARE, STAR] } },
+    bl07: { start: { sfx: ['whoosh', 'steam', 'growl'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 220 }] }, end: { sfx: ['horn', 'clack'], fx: [SMOKE, STAR] } },
+    bl08: [{ start: { sfx: ['bell'] }, end: { sfx: ['clack', 'bell'], fx: [FLARE] } }, { start: { sfx: ['rain', 'wind'] }, move: 'chuff', end: { sfx: ['thunder'], fx: [FLARE] } }],
+    bl25: [{ start: { sfx: ['rain', 'thunder'], fx: [FLARE] }, move: 'chuff', end: { sfx: ['bell'], fx: [{ id: 'bk-smoke-01', at: 'goal', size: 140 }] } }, { start: { sfx: ['wind', 'owl'] }, end: { sfx: ['echo', 'growl'], fx: [{ id: 'bk-flare-01', at: 'goal', size: 140 }] } }, { start: { sfx: ['rain', 'creak'] }, move: 'chuff', end: { sfx: ['thunder'], fx: [FLARE] } }, { start: { sfx: ['wind'] }, end: { sfx: ['echo', 'bell'], fx: [STAR] } }],
+    bl09: { start: { sfx: ['rain', 'growl'] }, end: { sfx: ['echo', 'whoosh'], fx: [FLARE] } },
+    bl10: { start: { sfx: ['thunder', 'rain'], fx: [FLARE] }, move: 'chuff', end: { sfx: ['creak', 'owl'], fx: [{ id: 'bk-smoke-01', at: 'goal', size: 150 }] } },
+    bl11: { start: { sfx: ['rain', 'bell'] }, move: 'tick', end: { sfx: ['bell', 'tada'], fx: [{ id: 'bk-light-02', at: 'goal', size: 240 }, STAR] } },
+    bl12: [{ start: { sfx: ['saw', 'rain'] }, end: { sfx: ['clack', 'thump'], fx: [{ id: 'bk-dirt-02', at: 'hero', size: 120 }] } }, { start: { sfx: ['steam', 'chuff'] }, move: 'chuff', end: { sfx: ['steam', 'whistle'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 200 }] } }, { start: { sfx: ['wind'] }, end: { sfx: ['bell', 'echo'], fx: [STAR] } }],
+    bl13: { start: { sfx: ['wind', 'creak'] }, end: { sfx: ['bell', 'echo'], fx: [FLARE] } },
+    bl14: { start: { sfx: ['clack', 'steam'] }, move: 'chuff', end: { sfx: ['crash', 'clack', 'whoosh'], fx: [{ id: 'bk-star-02', at: 'hero', size: 150, n: 3, spread: 30 }, { id: 'bk-dirt-02', at: 'hero', size: 140 }] } },
+    bl15: { start: { sfx: ['owl', 'growl'] }, move: 'chuff', end: { sfx: ['whoosh', 'horn'], fx: [SMOKE, STAR] } },
+    bl16: [{ start: { sfx: ['whoosh', 'horn'] }, move: 'chuff', end: { sfx: ['clack'], fx: [STAR] } }, { start: { sfx: ['chuff'] }, end: { sfx: ['clack', 'door'], fx: [STAR] } }, { start: { sfx: ['creak', 'wind'] }, move: 'chuff', end: { sfx: ['whoosh', 'bell'], fx: [SMOKE] } }, { start: { sfx: ['bell'] }, end: { sfx: ['horn', 'cheer'], fx: [SMOKE, STAR] } }],
+    bl17: { start: { sfx: ['creak', 'wind'] }, end: { sfx: ['door', 'bell', 'cheer'], fx: [STAR, { id: 'bk-star-02', at: 'goal', size: 120, n: 3, spread: 26 }] } },
+    bl18: { start: { sfx: ['steam', 'chuff'] }, move: 'chuff', end: { sfx: ['steam', 'whistle', 'horn'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 220 }, FLARE] } },
+    bl19: { start: { sfx: ['creak', 'crash'] }, move: 'chuff', end: { sfx: ['crash', 'steam'], fx: [{ id: 'bk-dirt-02', at: 'hero', size: 160 }, { id: 'bk-smoke-07', at: 'hero', size: 200 }] } },
+    bl20: [{ start: { sfx: ['creak', 'steam'] }, move: 'chuff', end: { sfx: ['crash', 'whoosh'], fx: [{ id: 'bk-dirt-02', at: 'hero', size: 170 }] } }, { start: { sfx: ['steam'] }, move: 'chuff', end: { sfx: ['brake', 'thump'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 230 }] } }, { start: { sfx: ['wind'] }, end: { sfx: ['steam'], fx: [SMOKE] } }, { start: { sfx: ['wind', 'bell'] }, end: { sfx: ['bell', 'echo'], fx: [{ id: 'bk-light-02', at: 'hero', size: 260 }] } }],
+    bl21: { start: { sfx: ['bell', 'echo'] }, end: { sfx: ['tada', 'bell'], fx: [{ id: 'bk-light-02', at: 'goal', size: 300 }, STAR] } },
+    bl22: { start: { sfx: ['bell', 'tweet'] }, end: { sfx: ['cheer', 'clack'], fx: [STAR, { id: 'bk-star-02', at: 'goal', size: 130, n: 3, spread: 28 }] } },
+    bl23: { start: { sfx: ['bell', 'drum'] }, end: { sfx: ['fanfare', 'applause'], fx: [STAR] } },
+    bl24: [{ start: { sfx: ['horn', 'chuff'] }, move: 'chuff', end: { sfx: ['clack'], fx: [STAR] } }, { start: { sfx: ['tweet'] }, move: 'chuff', end: { sfx: ['bell'], fx: [STAR] } }, { start: { sfx: ['tweet', 'chuff'] }, end: { sfx: ['tada', 'horn'], fx: [SMOKE, STAR] } }],
+    bl26: { start: { sfx: ['tweet', 'horn'] }, move: 'chuff', end: { sfx: ['tada', 'cheer', 'horn'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 150, n: 4, spread: 30 }, { id: 'bk-light-02', at: 'goal', size: 280, delay: 250 }] } }
+  })
+  /* ── Lomba ke Kota (Kilat Perak and Tuan Lemas race to the Pesta Besar and learn to wait, share and arrive together) ── */
+  CUES.sigh = function () { T(420, 180, 0.7, 0.07, 'triangle', 0, 1) }
+  Object.assign(PLAN, {
+    hb01: { start: { sfx: ['drum', 'tweet'], fx: [{ id: 'bk-star-02', at: 'flag', size: 110 }] }, move: 'chuff', end: { sfx: ['whistle', 'whoosh', 'cheer'], fx: [{ id: 'bk-smoke-07', at: 'hero', size: 190 }, STAR] } },
+    hb02: { start: { sfx: ['sigh'] }, move: 'chuff', end: { sfx: ['pop', 'cheer', 'horn'], fx: [{ id: 'bk-star-02', at: 'lemas', size: 140, n: 3, spread: 26 }, { id: 'bk-star-04', at: 'lemas', size: 120, delay: 200 }] } },
+    hb03: { start: { sfx: ['sigh', 'tweet'] }, move: 'chuff', end: { sfx: ['thump', 'steam', 'horn'], fx: [{ id: 'bk-smoke-07', at: 'tungku', size: 190 }, STAR] } },
+    hb04: { start: { sfx: ['steam', 'chuff'] }, move: 'chuff', end: { sfx: ['clack', 'horn', 'cheer'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 120, n: 3, spread: 26 }] } },
+    hb05: { start: { sfx: ['bell', 'tweet'] }, move: 'chuff', end: { sfx: ['whoosh', 'horn'], fx: [SMOKE, STAR] } },
+    hb06: { start: { sfx: ['sigh', 'clack'] }, move: 'chuff', end: { sfx: ['door', 'bell', 'cheer'], fx: [{ id: 'bk-flare-01', at: 'sinyal', size: 130 }, STAR] } },
+    hb07: [{ start: { sfx: ['echo', 'wind'] }, move: 'chuff', end: { sfx: ['horn', 'echo'], fx: [FLARE] } }, { start: { sfx: ['echo', 'horn'] }, move: 'chuff', end: { sfx: ['whistle', 'cheer'], fx: [SMOKE, STAR] } }],
+    hb08: { start: { sfx: ['bell'] }, move: 'chuff', end: { sfx: ['horn', 'whoosh', 'cheer'], fx: [SMOKE, STAR] } },
+    hb09: { start: { sfx: ['drum', 'bell'] }, move: 'chuff', end: { sfx: ['clack', 'fanfare', 'cheer'], fx: [STAR, { id: 'bk-star-02', at: 'goal', size: 140, n: 3, spread: 28 }, SMOKE] } },
+    hb10: [{ start: { sfx: ['march', 'bell'] }, end: { sfx: ['pop', 'drum', 'cheer'], fx: [{ id: 'bk-star-02', at: 'panggung', size: 130, n: 3, spread: 26 }] } }, { start: { sfx: ['drum'] }, end: { sfx: ['pop', 'fanfare'], fx: [{ id: 'bk-star-04', at: 'piala', size: 130 }, FLARE] } }, { start: { sfx: ['tuba', 'drum'] }, move: 'chuff', end: { sfx: ['tada', 'applause', 'horn'], fx: [SMOKE, STAR, { id: 'bk-star-02', at: 'goal', size: 160, n: 4, spread: 32 }, { id: 'bk-light-02', at: 'goal', size: 300, delay: 250 }] } }]
+  })
+  CUES.creak = function () { T(110, 90, 0.5, 0.05, 'sawtooth', 0, 1); T(160, 130, 0.4, 0.03, 'square', 0.15) }
   CUES.tuba = function () { var i; for (i = 0; i < 6; i++) { T(i % 2 ? 130 : 98, i % 2 ? 130 : 98, 0.2, 0.1, 'sawtooth', i * 0.28); if (i % 2) T(196, 196, 0.1, 0.05, 'square', i * 0.28) } }
   CUES.hammer = function () { if (SND && SND.hammer) SND.hammer() }
   W.KeretaScenePlan = PLAN   // other storylines add their own (Brave, Lomba ke Kota)
@@ -154,13 +199,61 @@
   }
 
   /* ── 2 the plan at beat start and end ──────────────────────────────────── */
+  /* ── a rake looks the way it travels (owner sheets: Linus's green coaches + red caboose, Malivlak's tender + coaches): every COUPLED wagon turns to the view of its own
+     heading: east = side (right), west = side (left), up = rear, down = front. Parked wagons keep their level art. ── */
+  var WV = { 'coach-green': { e: 'side-r', w: 'side-l', n: 'rear', s: 'front' }, 'coach-green-2': { e: 'side-r', w: 'side-l', n: 'rear', s: 'front' }, 'caboose-red': { e: 'side-r', w: 'side-l', n: 'rear', s: 'front' } }
+  ;['mv-tender', 'mv-coach-green', 'mv-coach-orange', 'mv-coach-blue'].forEach(function (k) { WV[k] = { e: 'side', w: 'side', n: 'rear', s: 'front', flipW: 1 } })
+  var wpos = {}
+  function wagonViews (c) {
+    var objs = D.getElementById('objs'), MA = W.MojoArt; if (!objs || !MA) return
+    ;[].forEach.call(objs.querySelectorAll('.ob[data-id]'), function (e) {
+      var id = e.getAttribute('data-id'), o = PG.find(c.w, id); if (!o || o.type !== 'wagon') return
+      var img = e.querySelector('img.main'); if (!img) return
+      var m = /train-char\/([a-z0-9-]+)\//.exec(decodeURIComponent(img.getAttribute('data-wv') || img.src)); if (!m || !WV[m[1]]) return
+      img.setAttribute('data-wv', 'train-char/' + m[1] + '/x')
+      var k = c.lv.id + '/' + id, was = wpos[k]; wpos[k] = o.r + ',' + o.c
+      var face = e.getAttribute('data-face') || 'e'
+      if (was && was !== wpos[k] && o.st === 'coupled') { var q = was.split(',').map(Number), dr = o.r - q[0], dc = o.c - q[1]; face = Math.abs(dc) >= Math.abs(dr) ? (dc > 0 ? 'e' : 'w') : (dr < 0 ? 'n' : 's') }
+      if (o.st !== 'coupled' || face === e.getAttribute('data-face')) return
+      e.setAttribute('data-face', face)
+      var spec = WV[m[1]], v = spec[face]; img.src = MA.src('train-char/' + m[1] + '/' + v); img.style.scale = spec.flipW && face === 'w' ? '-1 1' : ''
+    })
+  }
+  /* ── Linus's rake rides BEHIND him from the first move (film 0:12-1:21: green coach, green coach, red caboose; Malivlak never uses this). level/beat key
+     rake: ['coach-green', 'coach-green-2', 'caboose-red'] adds virtual wagons that follow the hero's own track, each in the view of its heading ── */
+  var RK = { key: '', hist: [], els: [], last: '' }
+  function rakeClear () { RK.els.forEach(function (e) { e.remove() }); RK = { key: '', hist: [], els: [], last: '' } }
+  function rake (c) {
+    var spec = (c.beat && c.beat.rake) || c.lv.rake, objs = D.getElementById('objs'), MA = W.MojoArt
+    if (!spec || !objs || !MA) { if (RK.els.length) rakeClear(); return }
+    var m = c.w.m, key = c.lv.id + '/' + c.bi, cur = m.r + ',' + m.c, D4 = [[0, 1], [-1, 0], [0, -1], [1, 0]], hd = D4[m.h % 4] || [0, 1]
+    if (RK.key !== key) {
+      rakeClear(); RK.key = key
+      for (var i = 0; i < spec.length; i++) { var e = D.createElement('div'); e.className = 'k-rake'; e.innerHTML = '<img alt="">'; objs.insertBefore(e, objs.firstChild); RK.els.push(e) }
+      RK.hist = []; for (var k = spec.length; k >= 1; k--) RK.hist.push([m.r - hd[0] * k, m.c - hd[1] * k]); RK.hist.push([m.r, m.c]); RK.last = cur
+    } else if (cur !== RK.last) {
+      var l = RK.hist[RK.hist.length - 1], adj = Math.abs(l[0] - m.r) + Math.abs(l[1] - m.c) === 1
+      if (adj) RK.hist.push([m.r, m.c]); else { RK.hist = []; for (var k2 = spec.length; k2 >= 1; k2--) RK.hist.push([m.r - hd[0] * k2, m.c - hd[1] * k2]); RK.hist.push([m.r, m.c]) }
+      RK.last = cur
+    }
+    var cell = parseFloat(W.getComputedStyle(D.documentElement).getPropertyValue('--cell')) || 64, n = RK.hist.length, rows = c.lv.grid.rows, cols = c.lv.grid.cols
+    spec.forEach(function (ch, i) {
+      var pos = RK.hist[n - 2 - i], ahead = RK.hist[n - 1 - i]; if (!pos || !ahead) return
+      var dr = ahead[0] - pos[0], dc = ahead[1] - pos[1], face = Math.abs(dc) >= Math.abs(dr) ? (dc >= 0 ? 'e' : 'w') : (dr < 0 ? 'n' : 's')
+      var v = WV[ch] ? WV[ch][face] : 'side-r', e = RK.els[i], im = e.firstChild, want = MA.src('train-char/' + ch + '/' + v)
+      if (im.getAttribute('data-k') !== want) { im.setAttribute('data-k', want); im.src = want }
+      e.style.transform = 'translate(' + (pos[1] * cell) + 'px,' + (pos[0] * cell) + 'px)'
+      e.style.opacity = pos[0] < 0 || pos[1] < 0 || pos[0] >= rows || pos[1] >= cols ? '0' : '1'
+    })
+  }
   var lastKey = '', endDone = {}
   var hud0 = def.onHud
   def.onHud = function (c) {
     if (hud0) hud0(c)
     CUR = c; SND = c.snd
     var key = c.lv.id + '/' + c.bi
-    if (key !== lastKey) { lastKey = key }
+    if (key !== lastKey) { lastKey = key; wpos = {} }
+    try { wagonViews(c); rake(c) } catch (err) { if (W.console) console.warn('[kereta-scene]', err) }
     try {
       var bp = beatPlan(c.lv, c.bi), obs = (c.beat && c.beat.objectives) || [], done = obs.length && obs.every(function (o) { return PG.met(c.w, o) })
       if (done && bp && bp.end && !endDone[key]) { endDone[key] = 1; play(bp.end.sfx); burst(bp.end.fx, c) }

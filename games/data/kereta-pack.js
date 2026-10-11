@@ -46,6 +46,7 @@
     ;['cave', 'shot'].forEach(function (k) { if (lv[k]) lv[k].at = sh(lv[k].at) })
     if (lv.lean) lv.lean = sh(lv.lean)
     if (lv.band) lv.band = Object.assign({}, lv.band, { at: sh(lv.band.at) })
+    ;['crowd', 'sign', 'bunting'].forEach(function (k) { if (lv[k]) lv[k] = Object.assign({}, lv[k], { at: sh(lv[k].at) }) })
     ;['pond', 'wheat'].forEach(function (k) { if (lv[k]) lv[k] = lv[k].map(sh) })
     if (lv.tunnel) lv.tunnel = { at: sh(lv.tunnel.at), sign: sh(lv.tunnel.sign), dir: lv.tunnel.dir }
     var cn = function (c) { ;['start', 'end'].forEach(function (k) { var e = c && c[k]; if (!e) return; if (e.zoom && Array.isArray(e.zoom.at)) e.zoom.at = sh(e.zoom.at); (e.fx || []).forEach(function (f) { if (Array.isArray(f.at)) f.at = sh(f.at) }) }) }
@@ -384,9 +385,19 @@
     if (bn) {
       var BAND = ['malivlak-char/orkes/pemimpin-tongkat', 'malivlak-char/orkes/drum', 'malivlak-char/orkes/tuba', 'malivlak-char/orkes/terompet', 'malivlak-char/orkes/kontrabas'], nb = Math.min(bn.n || 5, 5)
       out.push({ at: [bn.at[0], bn.at[1]], cls: 'k-platform', html: '<i style="width:calc(var(--cell) * ' + nb + ')"></i>' })
-      out.push({ at: [bn.at[0] - 1, bn.at[1]], cls: 'k-brick', html: '<i style="width:calc(var(--cell) * ' + nb + ')"><b class="win"></b><b class="win w2"></b><span>RUANG TUNGGU</span></i>' })
+      out.push({ at: [bn.at[0] - 1, bn.at[1]], cls: 'k-brick', html: '<i style="width:calc(var(--cell) * ' + nb + ')"><b class="win"></b><b class="win w2"></b><b class="clk"><u></u><u class="m"></u></b><span>RUANG TUNGGU</span></i>' })
       BAND.slice(0, nb).forEach(function (a2, i) { out.push({ at: [bn.at[0], bn.at[1] + i], cls: 'k-band k-band' + i, html: '<img alt="" src="' + lib(a2) + '" style="--d:-' + (i * 0.37).toFixed(2) + 's">' }) })
     }
+    // film props of the station and the museum: a crowd of watchers (7:27, 8:36), a stone/enamel sign plate ("STASIUN", "MUSEUM"), the station clock on the brick wall (6:42)
+    var cr = (b && b.crowd) || lv.crowd
+    if (cr) {
+      var CS = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60" width="90" height="60">' + [[10, '#6a5648'], [30, '#3e4b5f'], [50, '#8b6a56'], [70, '#59694a']].map(function (q, i) { return '<g><circle cx="' + q[0] + '" cy="' + (22 + (i % 2) * 3) + '" r="7" fill="#e9bf9a"/><path d="M' + (q[0] - 10) + ' 60 Q' + q[0] + ' ' + (28 + (i % 2) * 3) + ' ' + (q[0] + 10) + ' 60Z" fill="' + q[1] + '"/><rect x="' + (q[0] - 8) + '" y="' + (14 + (i % 2) * 3) + '" width="16" height="5" rx="2" fill="' + (i % 2 ? '#2d2a27' : '#6b4a2a') + '"/></g>' }).join('') + '</svg>'
+      out.push({ at: cr.at, cls: 'k-crowd', html: '<i style="width:calc(var(--cell) * ' + (cr.n || 8) + ');background-image:url(&quot;data:image/svg+xml,' + encodeURIComponent(CS) + '&quot;)"></i>' })
+    }
+    var bu = (b && b.bunting) || lv.bunting   // a string of festival flags across a row (Lomba ke Kota)
+    if (bu) out.push({ at: bu.at, cls: 'k-bunting', html: '<i style="width:calc(var(--cell) * ' + (bu.n || 8) + ')"></i>' })
+    var sg = (b && b.sign) || lv.sign
+    if (sg) out.push({ at: sg.at, cls: 'k-plate', html: '<i style="width:calc(var(--cell) * ' + (sg.w || 2) + ')"><span>' + sg.text + '</span></i>' })
     var tn = (b && b.tunnel) || lv.tunnel
     if (tn) { out.push({ at: tn.at, cls: 'k-tunnel dir-' + (tn.dir || 'r'), html: archSvg() }); out.push({ at: tn.sign, cls: 'k-skull', html: SKULL_SVG }) }
     return out

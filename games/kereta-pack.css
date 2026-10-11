@@ -530,3 +530,26 @@ html[data-pack="kereta"] .dec.amb.k-band{z-index:14!important;pointer-events:non
 /* a person as the hero (mv02: the porter loads Dragutin) */
 html[data-pack="kereta"] .mj-mod .owner-person{filter:drop-shadow(0 4px 3px rgba(0,0,0,.4));transform-origin:50% 100%}
 html[data-pack="kereta"] .mj-mod .owner-person.h-w{transform:scaleX(-1)}
+
+/* crowd, sign plate, station clock (film props) */
+html[data-pack="kereta"] .dec.amb.k-crowd{z-index:2!important;pointer-events:none}
+.k-crowd i{position:absolute;left:0;bottom:6%;height:70%;background-repeat:repeat-x;background-size:auto 100%;background-position:0 100%;opacity:.92;animation:kCrowd 1.3s ease-in-out infinite alternate;will-change:transform}
+@keyframes kCrowd{from{transform:translateY(0)}to{transform:translateY(-3%)}}
+html[data-pack="kereta"] .dec.amb.k-plate{z-index:3!important;pointer-events:none}
+.k-plate i{position:absolute;left:0;top:18%;height:46%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#d9c9a6,#bba983);border:3px solid #8d7a52;border-radius:4px;box-shadow:0 3px 0 rgba(70,50,20,.4)}
+.k-plate span{font:800 clamp(10px,calc(var(--cell)*.2),20px)/1 'Nunito',sans-serif;letter-spacing:.14em;color:#4e3f24}
+.k-brick .clk{position:absolute;left:44%;top:-4%;width:24%;aspect-ratio:1;border-radius:50%;background:#f3ead0;border:3px solid #6b5a3a;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.k-brick .clk u{position:absolute;left:50%;top:50%;width:2px;height:34%;background:#2d241a;transform-origin:50% 100%;translate:-50% -100%;rotate:200deg}
+.k-brick .clk u.m{height:42%;rotate:0deg;animation:kClk 12s linear infinite}
+@keyframes kClk{to{rotate:360deg}}
+@media(prefers-reduced-motion:reduce){.k-crowd i,.k-brick .clk u.m{animation:none!important}}
+
+/* Linus's rake following him (kereta-scene.js rake) */
+.k-rake{position:absolute;left:0;top:0;width:var(--cell);height:var(--cell);pointer-events:none;z-index:2;transition:transform .3s cubic-bezier(.23,1,.32,1),opacity .2s;will-change:transform}
+.k-rake img{position:absolute;left:3%;bottom:6%;width:94%;height:auto;max-height:92%;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(0,0,0,.35))}
+
+/* festival bunting (Lomba ke Kota) */
+html[data-pack="kereta"] .dec.amb.k-bunting{z-index:15!important;pointer-events:none}
+.k-bunting i{position:absolute;left:0;top:2%;height:34%;background:linear-gradient(180deg,transparent 0 6%,rgba(60,40,20,.55) 6% 8%,transparent 8%),linear-gradient(135deg,#e5473c 0 25%,transparent 25%) 0 0/38px 100% repeat-x,linear-gradient(225deg,#f0c43a 0 25%,transparent 25%) 19px 0/38px 100% repeat-x;-webkit-mask:linear-gradient(180deg,#000 0 60%,transparent 60%);mask:linear-gradient(180deg,#000 0 60%,transparent 60%);transform-origin:50% 0;animation:kBunt 2.8s ease-in-out infinite alternate;will-change:transform}
+@keyframes kBunt{from{transform:skewX(-1.2deg)}to{transform:skewX(1.2deg)}}
+@media(prefers-reduced-motion:reduce){.k-bunting i{animation:none!important}}

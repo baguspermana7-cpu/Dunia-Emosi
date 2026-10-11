@@ -18,7 +18,7 @@
     'char/mv-petugas': 'malivlak-char/petugas-stasiun/berdiri', 'char/mv-peluit': 'malivlak-char/petugas-stasiun/peluit', 'char/mv-bendera': 'malivlak-char/petugas-stasiun/bendera-bawah',
     'char/mv-bagasi': 'malivlak-char/petugas-bagasi/angkat', 'char/mv-koper-besar': 'malivlak-char/petugas-bagasi/koper-besar', 'char/mv-masinis': 'malivlak-char/masinis/pipa-2', 'char/mv-masinis-jalan': 'malivlak-char/masinis/jalan',
     'obj/mv-koper': 'kereta-prop/luggage-pile', 'obj/mv-surat': 'kereta-prop/mail-sacks', 'train/dragutin': 'train-char/dragutin/34l-neutral', 'train/dragutin-b': 'train-char/dragutin/34r-neutral',
-    'train/mv-gerbong': 'train-char/mv-coach-green/side', 'train/mv-tender': 'train-char/mv-tender/side', 'train/mv-oranye': 'train-char/mv-coach-orange/side', 'train/mv-biru': 'train-char/mv-coach-blue/side', 'char/mv-ungu-rebah': 'malivlak-char/penumpang-ungu/rebah', 'obj/peron': 'kereta-prop/station-small', 'obj/loket': 'kereta-prop/ticket-booth', 'obj/mv-lampu': 'kereta-prop/lantern',
+    'train/mv-gerbong': 'train-char/mv-coach-green/side', 'train/mv-tender': 'train-char/mv-tender/side', 'train/mv-oranye': 'train-char/mv-coach-orange/side', 'train/mv-biru': 'train-char/mv-coach-blue/side', 'char/mv-ungu-rebah': 'malivlak-char/penumpang-ungu/rebah', 'obj/peron': 'kereta-prop/station-small', 'obj/loket': 'kereta-prop/ticket-booth', 'obj/mv-van': 'vehicles/car-red', 'obj/mv-lampu': 'kereta-prop/lantern',
     'char/mv-lari': 'malivlak-char/penumpang-ungu/lari', 'char/mv-masinis-ikan': 'malivlak-char/masinis/ikan', 'char/mv-masinis-wajan': 'malivlak-char/masinis/wajan', 'char/mv-masinis-kaget': 'malivlak-char/masinis/terkejut',
     'char/mv-beruang': 'animal/beruang/duduk', 'char/mv-ungu-duduk': 'malivlak-char/penumpang-ungu/duduk', 'obj/mv-perban': 'kereta-prop/wheel-bandage', 'char/mv-masinis-pipa': 'malivlak-char/masinis/pipa-2', 'obj/mv-ikan': 'animal/ikan/samping', 'obj/mv-wajan': 'kereta-prop/frying-pan-egg', 'train/dragutin-c': 'train-char/dragutin/34l-happy'
   }
@@ -28,6 +28,7 @@
     L({ id: 'mv01', terrain: 'depot', mood: 'sun', n: 1, title: 'Dragutin Tiba di Stasiun', place: 'Stasiun Kecil', icon: 'cmd/east', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 4, cols: 8, map: ['........', ',,,.,,,,', ',,,.,,,,', '........'], theme: 'town' },
       mojo: { at: [0, 0], h: 'E', form: 'dragutin' },
+      sign: { at: [1, 4], text: 'STASIUN', w: 2 },
       decor: [{ at: [2, 5], art: 'char/mv-petugas' }, { at: [1, 6], art: 'char/mv-jas' }, { at: [1, 1], art: 'char/mv-ungu' }, { at: [2, 1], art: 'obj/loket' }],
       objects: [{ id: 'flag', type: 'flag', at: [3, 7] }],
       beats: [{ title: 'Berhenti di peron', story: 'Dragutin masuk stasiun dan berhenti di peron.',
@@ -37,7 +38,7 @@
     L({ id: 'mv02', walk: true, uses: ['malivlak-char/petugas-bagasi/angkat', 'malivlak-char/petugas-bagasi/koper-besar'], terrain: 'depot', mood: 'sun', n: 2, title: 'Penumpang, Koper, Surat', place: 'Peron Stasiun', icon: 'cmd/pick', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,.,.,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kuli' },
-      decor: [{ at: [0, 5], art: 'char/mv-petugas' }, { at: [3, 3], art: 'char/mv-ungu-koper' }, { at: [3, 5], art: 'char/mv-jas' }],
+      decor: [{ at: [0, 5], art: 'char/mv-petugas' }, { at: [3, 3], art: 'char/mv-ungu-koper' }, { at: [3, 5], art: 'char/mv-jas' }, { at: [3, 7], art: 'obj/mv-van' }],
       objects: [
         { id: 'koper', type: 'parcel', at: [2, 1], kind: 'barang', name: 'Koper', art: 'obj/mv-koper' },
         { id: 'surat', type: 'parcel', at: [2, 5], kind: 'barang', name: 'Surat', art: 'obj/mv-surat' },
@@ -289,6 +290,7 @@
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '....,,,,', ',,,.,,,,', ',,,.....'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
       band: { at: [2, 4], n: 4 },
+      crowd: { at: [0, 0], n: 8 },
       decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/bendera' }, { at: [3, 1], art: 'malivlak-char/penyambut/jangkung', react: 'malivlak-char/penyambut/jangkung-bungkuk' }],
       objects: [{ id: 'flag', type: 'flag', at: [3, 7] }],
       beats: [{ title: 'Lewat dan berhenti', story: 'Malivlak melewati para penyambut dan berhenti.',
@@ -298,6 +300,7 @@
     L({ id: 'mv17', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 17, title: 'Sinyal Jadi Merah', place: 'Dekat Sinyal', icon: 'cmd/west', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'sebab dan akibat' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      crowd: { at: [0, 0], n: 6 },
       objects: [
         { id: 'sg', type: 'mark', at: [1, 4], order: 1, seq: 'sinyal', art: 'kereta-tile/signal-green', name: 'Sinyal hijau' },
         { id: 'peron', type: 'flag', at: [1, 0] }
@@ -316,6 +319,7 @@
     L({ id: 'mv18', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 18, title: 'Pidato Terganggu Uap', place: 'Depan Stasiun', icon: 'cmd/wait', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 4, cols: 8, map: [',,,.,,,,', '........', ',,,.,,,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      crowd: { at: [0, 0], n: 8 },
       objects: [
         { id: 'drag', type: 'patrol', at: [0, 3], name: 'Dragutin', art: 'train/dragutin', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
         { id: 'flag', type: 'flag', at: [1, 7] }
@@ -334,6 +338,7 @@
     L({ id: 'mv19', ch: 'mv-ch4', terrain: 'town', mood: 'sunset', n: 19, title: 'Karangan dan Medali', place: 'Peron Seremoni', icon: 'cmd/pick', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 4, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      crowd: { at: [0, 0], n: 8 },
       objects: [
         { id: 'karangan', type: 'parcel', at: [0, 3], kind: 'karangan', name: 'Karangan daun', art: 'kereta-prop/wreath' },
         { id: 'medali', type: 'mark', at: [1, 5], order: 1, seq: 'medali', art: 'kereta-prop/medal', name: 'Medali' },
@@ -366,10 +371,10 @@
         { title: 'Jalan ke museum', story: 'Rel menuju bangunan besar di bukit.', hide: ['f2', 'f3'], cine: { end: { letterbox: 1800 } },
           decor: [{ at: [2, 3], art: 'malivlak-char/penumpang-jas-kotak/jalan' }, { at: [0, 2], art: 'kereta-prop/pine' }, { at: [0, 6], art: 'kereta-prop/tree-round' }],
           bo: 'Ikuti rel sampai ke bendera di museum.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['malivlak'], palette: ['east'] },
-        { title: 'Masuk pintu lebar', story: 'Malivlak masuk lebih dulu, gerbong menyusul.', hide: ['f1', 'f3'], terrain: 'depot', start: { at: [1, 0], h: 'E' },
+        { sign: { at: [0, 2], text: 'MUSEUM', w: 3 }, title: 'Masuk pintu lebar', story: 'Malivlak masuk lebih dulu, gerbong menyusul.', hide: ['f1', 'f3'], terrain: 'depot', start: { at: [1, 0], h: 'E' },
           decor: [{ at: [2, 4], art: 'malivlak-char/orkes/kontrabas-2', react: 'malivlak-char/orkes/terompet-atas' }, { at: [2, 1], art: 'mojo-train/diesel' }, { at: [2, 6], art: 'mojo-train/tanker' }],
           bo: 'Masuk ke museum, ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['malivlak'], palette: ['east'] },
-        { title: 'Di antara koleksi', story: 'Malivlak berhenti di antara kendaraan lama.', hide: ['f1', 'f2'], terrain: 'depot', start: { at: [1, 0], h: 'E' },
+        { sign: { at: [0, 2], text: 'MUSEUM', w: 3 }, title: 'Di antara koleksi', story: 'Malivlak berhenti di antara kendaraan lama.', hide: ['f1', 'f2'], terrain: 'depot', start: { at: [1, 0], h: 'E' },
           cine: { end: { letterbox: 2400, fx: [{ id: 'bk-star-02', at: [1, 7], size: 200, n: 3, spread: 40 }, { id: 'bk-light-02', at: [1, 7], size: 300, delay: 300 }] } },
           decor: [{ at: [2, 2], art: 'malivlak-char/masinis/pipa' }, { at: [2, 5], art: 'mojo-train/cargo-nate' }, { at: [2, 7], art: 'mojo-train/coach-slip' }],
           bo: 'Berhenti di bendera, di antara koleksi.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['malivlak'], palette: ['east'] }

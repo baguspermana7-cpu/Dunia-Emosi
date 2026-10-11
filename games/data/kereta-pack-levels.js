@@ -37,7 +37,7 @@
     'obj/palu': 'mojo-prop/hammer', 'obj/obeng': 'mojo-prop/screwdriver', 'obj/kunci-inggris': 'mojo-prop/wrench', 'obj/koran': 'school/notebook', 'obj/kabin': 'kereta-prop/engine-house',
     'char/mekanik': 'story-char/mekanik/wave', 'char/mekanik-wanita': 'story-char/mekanik-wanita/hips', 'char/nyonya': 'story-char/nyonya-topi/cheer',
     'char/henry-w': 'story-char/henry/wave', 'char/scarlet-t': 'story-char/scarlet/stand', 'obj/sorot': 'mojo-fx/highlight',
-    'train/gerbong-hijau': 'train-char/coach-green/side-l', 'train/gerbong-merah': 'train-char/caboose-red/front-34l', 'obj/depo': 'kereta-prop/engine-house'
+    'train/gerbong-hijau': 'train-char/coach-green/side-r', 'train/gerbong-merah': 'train-char/caboose-red/side-r', 'train/gerbong-hijau-2': 'train-char/coach-green-2/side-r', 'obj/depo': 'kereta-prop/engine-house'
   }
   // L(): chapter 1. `n` is the scenario number in The_Brave_Locomotive_Linus_30_Skenario_Detail.md (its endpoint is the goal);
   // `decor` is the scenery cast of that scenario (database keys, drawn beside the track, never touched).
@@ -46,6 +46,7 @@
     // 01 Linus and his short rake cross the valley: the first lesson is only to drive (move cards), over a little bridge
     L({ id: 'bl01', terrain: 'meadow', mood: 'sun', n: 1, title: 'Linus di Lembah', place: 'Lembah Hijau', icon: 'cmd/east', bg: 'bg-bl-lembah', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 4, cols: 7, map: [',,,~,,T', ',T,~,,,', ',..==..', '..,~,,,'], theme: 'town' },
+      rake: ['coach-green', 'coach-green-2', 'caboose-red'],
       mojo: { at: [3, 0], h: 'E', form: HERO },
       cab: 'story-char/henry/wave',
       decor: [{ at: [0, 5], art: 'animal/bird-blue/fly' }, { at: [0, 1], art: 'animal/deer/graze' }],
@@ -57,6 +58,7 @@
     // 02 Henry shovels coal before the steep grade: carry three lumps to Henry (carry and count)
     L({ id: 'bl02', terrain: 'meadow', mood: 'sun', n: 2, title: 'Tenaga untuk Tanjakan', place: 'Kaki Tanjakan', icon: 'cmd/pick', bg: 'bg-bl-lembah', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 3, cols: 6, map: [',,,,,,', '......', '.,.,.,'], theme: 'town' },
+      rake: ['coach-green', 'coach-green-2', 'caboose-red'],
       mojo: { at: [1, 3], h: 'W', form: HERO },
       objects: [
         { id: 'batu1', type: 'parcel', at: [2, 0], kind: 'batu', name: 'Batu bara pertama', art: 'obj/batu-bara' },
@@ -77,7 +79,7 @@
       decor: [{ at: [1, 3], art: 'mojo-prop/direction-sign', label: 'Tanjakan Curam' }, { at: [0, 4], art: 'kereta-prop/rock', label: 'Puncak' }],
       objects: [
         { id: 'gerbong1', type: 'wagon', at: [3, 0], art: 'train/gerbong-hijau', name: 'Gerbong hijau pertama' },
-        { id: 'gerbong2', type: 'wagon', at: [3, 2], art: 'train/gerbong-hijau', name: 'Gerbong hijau kedua' },
+        { id: 'gerbong2', type: 'wagon', at: [3, 2], art: 'train/gerbong-hijau-2', name: 'Gerbong hijau kedua' },
         { id: 'gerbong3', type: 'wagon', at: [3, 4], art: 'train/gerbong-merah', name: 'Gerbong merah' },
         { id: 'flag', type: 'flag', at: [3, 6] }
       ],
@@ -88,6 +90,7 @@
     // 04 the turtle on the rail: stop and let it pass (TUNGGU); it tucks into its shell as Linus nears
     L({ id: 'bl04', cine: { speed: true, brake: { obj: 'kura' } }, terrain: 'meadow', mood: 'sun', n: 4, title: 'Berhenti untuk Kura-kura', place: 'Rel Tepi Sungai', icon: 'cmd/wait', bg: 'bg-bl-lembah', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 7, map: [',,,.,,,', '.......', ',,,.,,,'], theme: 'town' },
+      rake: ['coach-green', 'coach-green-2', 'caboose-red'],
       mojo: { at: [1, 0], h: 'E', form: HERO },
       uses: ['animal/turtle/shell'],   // swapped in by the pack while Linus is near (kereta-pack.js objArt)
       cab: 'story-char/henry/jongkok',   // sc4: Henry leans out of the cab to look at the turtle (the child with the baby turtle is Scarlet-era sc27, not here)
@@ -103,6 +106,7 @@
     // 05 serve the village station, then run home to the big depot: two beats (passengers, then the route home)
     L({ id: 'bl05', cine: { end: { fx: [{ id: 'bk-light-02', at: 'peron', size: 240 }, { id: 'bk-star-01', at: 'peron', size: 120, delay: 200 }] } }, terrain: 'meadow', mood: 'sunset', n: 5, title: 'Penumpang dan Depo', place: 'Stasiun Kecil', icon: 'cmd/deliver', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 4, cols: 8, map: ['.,.,,,,,', '.....,,,', ',,,,....', ',T,,,,,T'], theme: 'town' },
+      rake: ['coach-green', 'coach-green-2', 'caboose-red'],
       mojo: { at: [1, 0], h: 'E', form: HERO },
       cab: 'story-char/henry/wave',
       decor: [{ at: [0, 6], art: 'animal/bird-blue/fly' }, { at: [0, 5], art: 'char/tamu-jam' }, { at: [1, 7], art: 'obj/depo' }],
@@ -144,7 +148,7 @@
       decor: [{ at: [0, 2], art: 'story-char/henry/worried' }, { at: [0, 4], art: 'story-char/baron/stand' }],
       objects: [
         { id: 'gerbong1', type: 'wagon', at: [2, 0], art: 'train/gerbong-hijau', name: 'Gerbong hijau pertama' },
-        { id: 'gerbong2', type: 'wagon', at: [2, 2], art: 'train/gerbong-hijau', name: 'Gerbong hijau kedua' },
+        { id: 'gerbong2', type: 'wagon', at: [2, 2], art: 'train/gerbong-hijau-2', name: 'Gerbong hijau kedua' },
         { id: 'gerbong3', type: 'wagon', at: [2, 4], art: 'train/gerbong-merah', name: 'Gerbong merah' },
         { id: 'samson', type: 'loco', at: [0, 5], needs: 3, art: 'train/samson', name: 'Samson', pay: 'horn' }
       ],
