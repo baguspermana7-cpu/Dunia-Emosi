@@ -22,7 +22,7 @@
   var NAMES = [
     [/story-char\/henry/, 'Henry'], [/story-char\/carter/, 'Carter'], [/story-char\/james/, 'James'], [/story-char\/baron/, 'Baron'],
     [/story-char\/katrina/, 'Katrina'], [/story-char\/scarlet/, 'Scarlet'], [/story-char\/tuan-merah/, 'Tuan Merah'],
-    [/story-char\/pelukis/, 'Pelukis'], [/story-char\/mekanik/, 'Mekanik'], [/story-char\/nyonya/, 'Nyonya'], [/story-char\/anak/, 'Anak'],
+    [/story-char\/pelukis/, 'Pelukis'], [/story-char\/mekanik/, 'Mekanik'], [/story-char\/nyonya/, 'Nyonya'], [/story-char\/anak/, 'Anak'], [/story-char\/lelaki/, 'Pak Rompi'],
     [/train-char\/samson/, 'Samson'], [/train-char\/goro/, 'Goro'], [/train-char\/linus/, 'Linus'],
     [/malivlak-char\/masinis/, 'Masinis'], [/malivlak-char\/orkes/, 'Pemusik'], [/malivlak-char\/penumpang/, 'Penumpang'], [/malivlak-char\/petugas-stasiun/, 'Petugas'],
     [/malivlak-char\/petugas-bagasi/, 'Kuli bagasi'], [/malivlak-char\/penyambut/, 'Penyambut'], [/malivlak-char\/pembaca/, 'Pembaca pidato'],
@@ -33,13 +33,18 @@
     [/kereta-prop\/sawmill/, 'Penggergajian'], [/kereta-prop\/engine-house/, 'Depo'], [/kereta-prop\/station/, 'Stasiun'], [/kereta-prop\/farmhouse/, 'Rumah']
   ]
   function resolve (key) { var a = def.art && def.art[key]; return (a && a.key) || key }
+  var CHAR = /^(story-char|malivlak-char|train-char)\//
+  function nameOf (key) { var k = resolve(key || ''); for (var i = 0; i < NAMES.length; i++) if (NAMES[i][0].test(k)) return NAMES[i][1]; return '' }
+  // the label comes from the ART that is drawn (a rider called "Kak Aisyah" drawn as a painter said "Kak Aisyah" under a man): a figure takes its
+  // name from the table; only destinations, wagons and props keep the level's own word
   function labelFor (key, o) {
     if (o && o.label) return o.label
+    var k = resolve(key || ''), n = nameOf(key)
+    if (CHAR.test(k) && n && !(o && o.type === 'stop')) return n
     if (o && o.name && o.type !== 'parcel' && o.type !== 'wagon') return o.name
-    var k = resolve(key || '')
-    for (var i = 0; i < NAMES.length; i++) if (NAMES[i][0].test(k)) return NAMES[i][1]
-    return o && o.name || ''
+    return n || (o && o.name) || ''
   }
+  def.nameOf = nameOf
   function src (k) { return MA.src(k) }
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
   function railAt (lv, r, c) { var row = lv.grid.map[r]; return !!row && /[.=]/.test(row.charAt(c)) }

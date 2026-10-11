@@ -25,6 +25,35 @@
 
   /* ── content: the Mojo level set becomes this storyline (arrays edited in place, other modules hold refs) ── */
   function swap (arr, next) { arr.length = 0; next.forEach(function (x) { arr.push(x) }) }
+  /* HEADROOM (owner 2026-10-11: riders' heads were cut by the board's top edge and hidden under the pick-up bubble): a board with a figure
+     standing on row 0 gets one grass row on top and every coordinate moves down one, so the figure and its bubble sit fully inside the board. */
+  var FIG = /^(story-char|malivlak-char)\//
+  function figArt (a) { return FIG.test(K.LIB[a] || a || '') }
+  function needsHead (lv) {
+    var rc = function (d) { return d && d.at && d.at[0] === 0 }
+    if ((lv.objects || []).some(function (o) { return rc(o) && (o.type === 'rider' || ((o.type === 'stop' || o.type === 'patrol') && figArt(o.art))) })) return true
+    var dec = (lv.decor || []).concat([].concat.apply([], (lv.beats || []).map(function (b) { return b.decor || [] })))
+    return dec.some(function (d) { return rc(d) && figArt(d.art) })
+  }
+  function sh (p) { return p ? [p[0] + 1, p[1]] : p }
+  function headroom (lv) {
+    if (lv._hr || !needsHead(lv)) return
+    lv._hr = 1
+    lv.grid = Object.assign({}, lv.grid, { rows: lv.grid.rows + 1, map: [new Array(lv.grid.cols + 1).join(',')].concat(lv.grid.map) })
+    if (lv.mojo) lv.mojo.at = sh(lv.mojo.at)
+    var mv = function (d) { if (d.at) d.at = sh(d.at); if (d.path) d.path = d.path.map(sh) }
+    ;(lv.decor || []).forEach(mv); (lv.objects || []).forEach(mv)
+    ;['cave', 'shot'].forEach(function (k) { if (lv[k]) lv[k].at = sh(lv[k].at) })
+    if (lv.lean) lv.lean = sh(lv.lean)
+    var cn = function (c) { ;['start', 'end'].forEach(function (k) { var e = c && c[k]; if (!e) return; if (e.zoom && Array.isArray(e.zoom.at)) e.zoom.at = sh(e.zoom.at); (e.fx || []).forEach(function (f) { if (Array.isArray(f.at)) f.at = sh(f.at) }) }) }
+    cn(lv.cine)
+    ;(lv.beats || []).forEach(function (b) {
+      ;(b.decor || []).forEach(mv); if (b.start && b.start.at) b.start.at = sh(b.start.at); if (b.flagAt) b.flagAt = sh(b.flagAt)
+      ;(b.vis || []).forEach(function (v) { v.at = sh(v.at) }); if (b.lamps) b.lamps = b.lamps.map(sh); if (b.lean) b.lean = sh(b.lean); if (b.cave) b.cave.at = sh(b.cave.at)
+      ;(b.objectives || []).forEach(function (o) { if (o.at) o.at = sh(o.at) }); cn(b.cine)
+    })
+  }
+  K.LEVELS.forEach(headroom)
   swap(ML.CHAPTERS, K.CHAPTERS); swap(ML.REGIONS, K.REGIONS); swap(ML.LEVELS, K.LEVELS)
 
   var CAST = S.cast || [

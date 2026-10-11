@@ -23,8 +23,8 @@
   ]
   // the art keys the delivery objects ask for ('char/<who>' is a MojoArt LIB entry); all are database keys
   var LIB = {
-    'char/tamu-ungu': 'story-char/tuan-merah/stand', 'char/tamu-jam': 'story-char/tuan-merah/point',
-    'char/tamu-hijab': 'story-char/pelukis/stand', 'char/henry': 'story-char/henry/wave', 'char/henry-sekop': 'story-char/henry/shovel',
+    'char/tamu-ungu': 'story-char/pelukis/stand', 'char/tamu-jam': 'story-char/tuan-merah/point',
+    'char/tamu-hijab': 'story-char/anak-cat/stand', 'char/henry-j': 'story-char/henry/jongkok', 'char/henry': 'story-char/henry/wave', 'char/henry-sekop': 'story-char/henry/shovel',
     'obj/batu-bara': 'kereta-prop/coal-pile', 'obj/stasiun-kecil': 'kereta-prop/station-small', 'obj/kura': 'animal/turtle/walk',
     'obj/angka-1': 'mojo-prop/number-1', 'obj/angka-2': 'mojo-prop/number-2', 'obj/angka-3': 'mojo-prop/number-3',
     'char/baron': 'story-char/baron/stand', 'char/baron-angkuh': 'story-char/baron/angkuh', 'char/henry-cemas': 'story-char/henry/worried',
@@ -105,8 +105,8 @@
       cab: 'story-char/henry/wave',
       decor: [{ at: [0, 6], art: 'animal/bird-blue/fly' }, { at: [0, 5], art: 'char/tamu-jam' }, { at: [1, 7], art: 'obj/depo' }],
       objects: [
-        { id: 'tamu1', type: 'rider', at: [0, 0], who: 'tamu-ungu', name: 'Tuan Ungu' },
-        { id: 'tamu2', type: 'rider', at: [0, 2], who: 'tamu-hijab', name: 'Kak Aisyah' },
+        { id: 'tamu1', type: 'rider', at: [0, 0], who: 'tamu-ungu', name: 'Pelukis' },
+        { id: 'tamu2', type: 'rider', at: [0, 2], who: 'tamu-hijab', name: 'Anak' },
         { id: 'peron', type: 'stop', at: [0, 4], accepts: 'rider', need: 2, art: 'obj/stasiun-kecil', name: 'Peron', pay: 'wave' },
         { id: 'flag', type: 'flag', at: [2, 7] }
       ],
@@ -124,7 +124,7 @@
     L({ id: 'bl06', terrain: 'depot', mood: 'sunset', n: 6, ch: 'bl-samson', title: 'Jalur Bernomor di Depo', place: 'Depo Besar', icon: 'ui/plan', bg: 'bg-bl-depot', edu: { domain: 'matematika', skill: 'urutan bilangan' },
       grid: { rows: 4, cols: 8, map: [',,,T,,,,', '.......,', ',,,,,,.,', '.......,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 5], art: 'story-char/baron/stand' }, { at: [0, 1], art: 'story-char/baron/angkuh' }],
+      decor: [{ at: [0, 5], art: 'story-char/baron/stand', react: 'story-char/baron/angkuh' }],
       objects: [
         { id: 'jalur1', type: 'mark', at: [1, 2], order: 1, seq: 'jalur', art: 'obj/angka-1', name: 'Jalur 1' },
         { id: 'jalur2', type: 'mark', at: [1, 5], order: 2, seq: 'jalur', art: 'obj/angka-2', name: 'Jalur 2' },
@@ -368,11 +368,11 @@
     L({ id: 'bl17', terrain: 'gorge', mood: 'sunset', n: 21, ch: 'bl-selamat', title: 'Jemput Henry, Baron, Katrina', place: 'Ujung Jembatan', icon: 'cmd/pick', bg: 'bg-bl-jembatan', edu: { domain: 'matematika', skill: 'membilang 1-3' },
       grid: { rows: 3, cols: 8, map: [',.,.,.,,', '........', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 7], art: 'train-char/samson/34l-neutral' }, { at: [2, 6], art: 'story-char/henry/jongkok' }],
+      decor: [{ at: [0, 7], art: 'train-char/samson/34l-neutral' }],
       objects: [
         { id: 'r1', type: 'rider', at: [0, 1], who: 'baron', name: 'Baron' },
         { id: 'r2', type: 'rider', at: [0, 3], who: 'katrina', name: 'Katrina' },
-        { id: 'r3', type: 'rider', at: [0, 5], who: 'henry-w', name: 'Henry' },
+        { id: 'r3', type: 'rider', at: [0, 5], who: 'henry-j', name: 'Henry' },
         { id: 'kabin', type: 'stop', at: [2, 3], accepts: 'rider', need: 3, art: 'obj/kabin', name: 'Kabin Linus', pay: 'wave' }
       ],
       beats: [{ title: 'Tiga orang naik', story: 'Henry, Baron, dan Katrina pindah ke kabin Linus.',
@@ -477,7 +477,7 @@
     L({ id: 'bl23', terrain: 'town', mood: 'sun', n: 28, ch: 'bl-pulang', title: 'Berita untuk Teman', place: 'Kota Kecil', icon: 'cmd/deliver', bg: 'bg-bl-kota', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 2, cols: 7, map: [',,,,,,,', '.......'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: HERO },
-      decor: [{ at: [0, 6], art: 'story-char/anak-kura/hug' }, { at: [0, 0], art: 'story-char/anak-cat/kneel' }],
+      decor: [{ at: [0, 0], art: 'story-char/anak-cat/kneel' }],
       objects: [
         { id: 'anak', type: 'rider', at: [1, 2], who: 'anak-kura', name: 'Anak dan kura-kura' },
         { id: 's1', type: 'stop', at: [0, 1], accepts: 'anak', keep: true, order: 1, seq: 'berita', art: 'char/pelukis', name: 'Pelukis', pay: 'wave' },

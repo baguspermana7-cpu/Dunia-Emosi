@@ -127,6 +127,24 @@ for (const id of FXIDS) {
   check(!(e.tags || []).includes('electric'), `vfx ${id} is not an electric bolt (lightning only in storm levels)`)
   check(!(e.kind === 'sheet' && e.blend === 'normal' && (e.fill || 1) >= 0.99), `vfx ${id} is not a hard-edged full-frame sheet (it draws as a square)`)
 }
+// FIGURES (owner 2026-10-11, bl05: "Kak Aisyah" drawn as a man, one man three times, heads cut by the board's top edge): on one beat no two figures share a
+// character (story-char/<who>, malivlak-char/<who>); a figure never stands on row 0 (the pack adds a headroom row); and every figure's art has a name-table entry
+const FIGK = /^((?:story-char|malivlak-char)\/[^/]+)\//
+const figOf = a => { const k = LIBK[a] || a; const m = FIGK.exec(k || ''); return m ? m[1] : null }
+for (const lv of ML.LEVELS) lv.beats.forEach((b, bi) => {
+  const hide = b.hide || [], uses = (b.objectives || []).some(o => ['deliver', 'visit'].includes(o.do))
+  const figs = []
+  ;(b.decor || lv.decor || []).forEach(d => { figs.push([d.art, d.at]); if (d.react) figs.push([d.react, null]) })
+  ;(lv.objects || []).filter(o => !hide.includes(o.id)).forEach(o => { if (o.type === 'rider' && uses) figs.push(['char/' + o.who, o.at]); else if (o.art && figOf(o.art)) figs.push([o.art, o.at]) })
+  if (lv.cab) figs.push([lv.cab, null])
+  const by = {}; figs.forEach(([a, at]) => { const k = figOf(a); if (k) (by[k] = by[k] || new Set()).add(a) })
+  // a decor figure and its own react pose are the same person (one board figure); two DIFFERENT figure entries of one character are not
+  const people = {}; figs.forEach(([a, at], i) => { const k = figOf(a); if (k && at) people[k] = (people[k] || 0) + 1 })
+  const dup = Object.entries(people).filter(([k, n]) => n > 1).map(([k]) => k)
+  check(dup.length === 0, `${lv.id}.${bi}: no two figures share a character on one board (${dup.join(',')})`)
+  const row0 = figs.filter(([a, at]) => at && at[0] === 0 && figOf(a))
+  check(row0.length === 0, `${lv.id}.${bi}: no figure stands on the top row (headroom row) ${row0.map(f => f[0]).join(',')}`)
+})
 // kid-safe: no emoji anywhere in the pack's words
 const words = JSON.stringify(ML.LEVELS.map(l => [l.title, l.place, l.beats, l.objects.map(o => o.name)])) + JSON.stringify(ML.REGIONS)
 check(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(words), 'no emoji in the pack text')
@@ -163,6 +181,10 @@ if (!process.argv.includes('--headless')) {
       const topCam = ML.byId(id).view === 'top'
       const want = (topCam ? ['top-n', 'top-e', 'top-s', 'top-w'] : ['rear', 'front-34r', 'front', 'front-34l'])[st.h]
       check(st.id === id && !!HEROES[st.form] && st.src && st.src.indexOf(HEROES[st.form].sprite + '/' + want + '.') > 0, `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
+      // every name tag matches the art drawn under it (a figure takes its label from the art, never from a level's rider name)
+      const tags = await p.evaluate(() => [...document.querySelectorAll('#decor .dec.cast, #objs .ob')].map(h => { const t = h.querySelector(':scope > .k-name'), i = h.querySelector('img.main, img'); const m = i && /assets\/db\/lib\/(.+?)\.webp/.exec(i.getAttribute('src') || ''); return t && m ? [t.textContent, m[1], h.className] : null }).filter(Boolean))
+      const wrong = await p.evaluate(tags => tags.filter(([txt, key, cls]) => /^(story-char|malivlak-char|train-char)\//.test(key) && !/\bstop\b/.test(cls) && MojoPack.def.nameOf(key) && MojoPack.def.nameOf(key) !== txt), tags)
+      check(wrong.length === 0, `${w}x${h} ${id}: every figure's name tag matches its drawn art ${JSON.stringify(wrong.slice(0, 3))}`)
       check(new RegExp(NARR_KEY).test(st.bo), `${w}x${h} ${id}: the narrator chip is ${DEF.narrator.name}`)
       if (await p.$('#ov-card.on #picker-later')) await (await p.$('#picker-later')).click()
     }

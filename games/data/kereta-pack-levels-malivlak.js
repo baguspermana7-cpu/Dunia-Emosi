@@ -14,7 +14,7 @@
     'char/mv-ungu': 'malivlak-char/penumpang-ungu/berdiri', 'char/mv-ungu-koper': 'malivlak-char/penumpang-ungu/koper', 'char/mv-jas': 'malivlak-char/penumpang-jas-kotak/jam-saku',
     'char/mv-petugas': 'malivlak-char/petugas-stasiun/berdiri', 'char/mv-peluit': 'malivlak-char/petugas-stasiun/peluit', 'char/mv-bendera': 'malivlak-char/petugas-stasiun/bendera-bawah',
     'char/mv-bagasi': 'malivlak-char/petugas-bagasi/angkat', 'char/mv-koper-besar': 'malivlak-char/petugas-bagasi/koper-besar', 'char/mv-masinis': 'malivlak-char/masinis/pipa-2', 'char/mv-masinis-jalan': 'malivlak-char/masinis/jalan',
-    'obj/mv-koper': 'malivlak-char/petugas-bagasi/koper-besar', 'obj/mv-surat': 'kereta-prop/mail-sacks', 'train/dragutin': 'train-char/dragutin/34l-neutral', 'train/dragutin-b': 'train-char/dragutin/34r-neutral',
+    'obj/mv-koper': 'kereta-prop/luggage-pile', 'obj/mv-surat': 'kereta-prop/mail-sacks', 'train/dragutin': 'train-char/dragutin/34l-neutral', 'train/dragutin-b': 'train-char/dragutin/34r-neutral',
     'train/mv-gerbong': 'mojo-train/coach-annie', 'obj/peron': 'kereta-prop/station-small', 'obj/loket': 'kereta-prop/ticket-booth', 'obj/mv-lampu': 'kereta-prop/lantern'
   }
   function L (o) { o.ch = 'mv-ch1'; o.rev = 1; o.autoAim = true; o.bg = o.bg || 'bg-mv-stasiun'; return o }
@@ -32,7 +32,7 @@
     L({ id: 'mv02', terrain: 'depot', mood: 'sun', n: 2, title: 'Penumpang, Koper, Surat', place: 'Peron Stasiun', icon: 'cmd/pick', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,.,.,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
-      decor: [{ at: [3, 1], art: 'char/mv-bagasi' }, { at: [0, 5], art: 'char/mv-petugas' }, { at: [3, 3], art: 'char/mv-ungu-koper' }],
+      decor: [{ at: [3, 1], art: 'char/mv-bagasi', react: 'char/mv-koper-besar' }, { at: [0, 5], art: 'char/mv-petugas' }, { at: [3, 3], art: 'char/mv-ungu-koper' }],
       objects: [
         { id: 'koper', type: 'parcel', at: [2, 1], kind: 'barang', name: 'Koper', art: 'obj/mv-koper' },
         { id: 'surat', type: 'parcel', at: [2, 5], kind: 'barang', name: 'Surat', art: 'obj/mv-surat' },
@@ -45,7 +45,7 @@
     L({ id: 'mv03', terrain: 'depot', mood: 'sun', n: 3, title: 'Berangkat ke Pedesaan', place: 'Ujung Peron', icon: 'cmd/wait', bg: 'bg-mv-pedesaan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 8, map: [',,,.,,,,', '........', ',,,.,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'dragutin' },
-      decor: [{ at: [2, 5], art: 'char/mv-peluit' }, { at: [0, 6], art: 'char/mv-bendera' }],
+      decor: [{ at: [2, 5], art: 'char/mv-peluit', react: 'char/mv-bendera' }],
       objects: [
         { id: 'kuli', type: 'patrol', at: [0, 3], name: 'Kuli bagasi', art: 'char/mv-bagasi', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
         { id: 'flag', type: 'flag', at: [1, 7] }
