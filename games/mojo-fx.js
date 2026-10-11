@@ -293,6 +293,12 @@
       sprite(g, 'dust', x, y, s * 0.6, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(.9)', opacity: 0.85, offset: 0.25 }, { transform: 'translate(' + (-dc * s * 0.25) + 'px,' + (-dr * s * 0.25 - s * 0.08) + 'px) scale(1.25)', opacity: 0 }], 560)
       settle(g, 700)
     },
+    // a steam-engine puff rising from the chimney as it moves off / whistles (packs with a locomotive call it; Mojo itself never does)
+    steam: function (r, c, loud) {
+      var g = group('steam'), s = cell(), p = cc(r, c), n = loud ? 3 : 2
+      for (var i = 0; i < n; i++) sprite(g, 'smoke', p[0] + (i - 1) * s * 0.12, p[1] - s * 0.3, s * (0.5 + i * 0.12), [{ transform: 'translateY(0) scale(.4)', opacity: 0 }, { transform: 'translateY(-' + s * 0.22 + 'px) scale(.85)', opacity: 0.9, offset: 0.3 }, { transform: 'translateY(-' + s * (0.7 + i * 0.12) + 'px) scale(1.4)', opacity: 0 }], 900 + i * 120, { z: 8, delay: i * 110, cls: 'steam' })
+      settle(g, 1300)
+    },
     /* blocked: skid marks, tyre smoke — and the crash the owner expects (2026-10-08): a comic BROK! burst at the
        impact point, chunky debris with gravity, dizzy stars orbiting Mojo, an 80 ms hit-stop and a firmer shake.
        The caller's clank stays; nothing here makes a sound. */

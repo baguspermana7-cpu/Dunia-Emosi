@@ -19,7 +19,7 @@
   // a pack (games/mojo-pack.js) keeps its own save and its own words; none = Mojo Swoptops exactly as before
   var PK = (W.MojoPack && W.MojoPack.def) || null
   var GAME_ID = PK && PK.gameId || 'g31', KEY = PK && PK.saveKey || 'dunia-g31-mojo'
-  function nm (t) { return PK && PK.narrator && t ? String(t).replace(/\bBo\b/g, PK.narrator.name) : t }   // the narrator's name in every line
+  function nm (t) { if (!PK || !t) return t; t = String(t); if (PK.narrator) t = t.replace(/\bBo\b/g, PK.narrator.name); return PK.heroName ? t.replace(/\bMojo\b/g, PK.heroName) : t }   // the narrator's and hero's names in every line
   function $ (id) { return D.getElementById(id) }
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
@@ -252,7 +252,7 @@
     ML.CHAPTERS.forEach(function (ch) {
       var c = el('section', 'chap'), row = el('div', 'lvls')
       ML.LEVELS.forEach(function (lv, i) {
-        if (lv.ch !== ch.id || ML.region(lv.id).id !== regionId) return
+        if (lv.ch !== ch.id || (!(PK && PK.allChapters) && ML.region(lv.id).id !== regionId)) return
         var ok = unlocked(i), rec = S.lv[lv.id], isNext = ok && lv.id === nextId && !rec
         var b = el('button', 'lvl' + (rec ? ' done' : '') + (ok ? '' : ' lock') + (isNext ? ' next' : ''))
         b.type = 'button'; b.setAttribute('data-level', lv.id)
@@ -342,6 +342,9 @@
     })
     ;(lv.decor || []).forEach(function (d0) {   // a pack's scenery cast: pictures that stand beside the track and are never touched
       var t0 = el('div', 'dec cast'); t0.innerHTML = '<img alt="" src="' + MA.src(d0.art) + '">'; t0.setAttribute('data-rc', d0.at[0] + ',' + d0.at[1]); fitRing(t0.firstChild); decorF.appendChild(t0)
+    })
+    if (PK && PK.ambient) PK.ambient(lv).forEach(function (a0) {   // a pack's cheap life: water glints, chimney smoke (transform / opacity only)
+      var t1 = el('div', 'dec amb ' + (a0.cls || '')); t1.innerHTML = a0.html || ''; t1.setAttribute('data-rc', a0.at[0] + ',' + a0.at[1]); decorF.appendChild(t1)
     })
     $('objs').appendChild(objsF); $('decor').appendChild(decorF)
     $('mojo-ch').innerHTML = MA.chassis('top')
@@ -1116,7 +1119,7 @@
     var pushed = ev.some(function (e) { return e.e === 'push' })
     ev.forEach(function (e) {
       switch (e.e) {
-        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); if (!pushed) fxCall('move', e.from, e.to); break
+        case 'move': moveMojo(e.from, e.to, T.move); SND.move(); wait = Math.max(wait, T.move); if (!pushed) fxCall('move', e.from, e.to); if (PK && !pushed) fxCall('steam', e.from[0], e.from[1], G.run && G.run.n === 0); break
         case 'turn': turnMojo(e.h, prev.m.h); SND.turn(); wait = Math.max(wait, T.turn); break
         case 'push': var pf = PG.find(prev, e.id); pushObj(e.id, e.to); SND.push(); wait = Math.max(wait, T.move); if (pf) fxCall('push', [pf.r, pf.c], e.to, T.move); break
         case 'fill': later(function () { paint(G.w); renderObj(PG.find(G.w, e.id)); fxCall('fill', e.at[0], e.at[1]); SND.push() }, T.move); wait = Math.max(wait, T.move + 260); break
@@ -1144,7 +1147,7 @@
         case 'dump': wait = Math.max(wait, dumpAnim(e)); break
         case 'place': wait = Math.max(wait, placeAnim(e)); break
         case 'patrol': renderObj(PG.find(G.w, e.id)); if (OBJ[e.id]) OBJ[e.id].style.transform = tf(e.at[0], e.at[1]); wait = Math.max(wait, T.move); break
-        case 'wait': wait = Math.max(wait, 320); break
+        case 'wait': if (PK) fxCall('steam', m.r, m.c, true); wait = Math.max(wait, 320); break
       }
     })
     later(function () { G.w.objs.forEach(renderObj); done() }, wait + 40)
@@ -1781,6 +1784,7 @@
       '<button class="btn b-map fk" id="res-map" type="button"><i class="ico">' + MA.icon('map') + '</i><span>Peta</span></button>' +
       (next ? '<button class="btn b-go fk" id="res-next" type="button"><span>Lanjut</span><i class="ico">' + MA.icon('run') + '</i></button>' : '') + '</div></div>')
     confetti()
+    if (PK && PK.onResult) PK.onResult(lv, stars)   // a pack's big-level payoff (cast celebration)
     say('Misi berhasil! Kamu dapat ' + stars + ' bintang.')
     tap('res-again', function () { closeOv('ov-card'); start(lv.id) })
     tap('res-map', function () { closeOv('ov-card'); W.MojoMenu.map() })

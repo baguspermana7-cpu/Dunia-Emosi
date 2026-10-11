@@ -16,7 +16,7 @@
   if (!P || P.id !== 'kereta' || !ML || !K) return
 
   /* ── the hero: Linus (verbs = what the five missions use) ─────────────────────────────────────────── */
-  ML.FORMS.linus = { name: 'Linus', verbs: ['pick', 'drop', 'deliver', 'couple', 'unlock'], color: '#2F5FA8', ability: 'couple' }
+  ML.FORMS.linus = { name: 'Linus', verbs: ['pick', 'drop', 'deliver', 'couple', 'unlock', 'place'], color: '#2F5FA8', ability: 'couple' }
   if (PG) PG.defineForm('linus', { verbs: ML.FORMS.linus.verbs })
 
   /* ── content: the Mojo level set becomes this storyline (arrays edited in place, other modules hold refs) ── */
@@ -68,7 +68,7 @@
 
   /* ── backgrounds ─────────────────────────────────────────────────────────────────────────────────── */
   function background (key, port) { return '../assets/kereta/bg/' + key + (port ? '-portrait' : '-landscape') + '.webp' }
-  function scene (lv) { return lv.bg || 'bg-bl-lembah' }
+  function scene (lv, bi) { return (lv.bgs && lv.bgs[Math.min(bi || 0, lv.bgs.length - 1)]) || lv.bg || 'bg-bl-lembah' }
   function regionScene (r) { return r.bg }
 
   /* ── rails: ONE continuous track. Every road cell paints the same bed / sleepers / steel from its cell centre to
@@ -76,7 +76,7 @@
      edges exactly and no per-cell border or grass gap appears. Colours and the gravel bed come from the owner's
      kereta-tile art (gravel texture; bridge cells use planks). ── */
   var TILE = {}
-  ;['gravel'].forEach(function (n) { if (!W.Image) return; var im = new W.Image(); im.src = lib('kereta-tile/' + n); TILE[n] = im })
+  ;['gravel', 'water'].forEach(function (n) { if (!W.Image) return; var im = new W.Image(); im.src = lib('kereta-tile/' + n); TILE[n] = im })
   var GROUND = '#86bf55'
   // the whole lawn first: every non-water cell gets the grass tile drawn 12% oversize, so tiles overlap and no cell rim shows
   function paintGround (x, ch, R, Cn, s, grass) {
@@ -115,6 +115,7 @@
   }
   function paintRoad (x, ch, r, c, X, Y, s, grass, drawTile) {
     var D4 = { n: isRoad(ch(r - 1, c)), e: isRoad(ch(r, c + 1)), s: isRoad(ch(r + 1, c)), w: isRoad(ch(r, c - 1)) }
+    if (ch(r, c) === '=' && TILE.water && TILE.water.complete && TILE.water.naturalWidth) { var wi = TILE.water; x.drawImage(wi, wi.naturalWidth * 0.1, wi.naturalHeight * 0.1, wi.naturalWidth * 0.8, wi.naturalHeight * 0.8, X - s * 0.04, Y - s * 0.04, s * 1.08, s * 1.08) }   // a bridge crosses water
     var dirs = ['n', 'e', 's', 'w'].filter(function (d) { return D4[d] }), bridge = ch(r, c) === '='
     if (!dirs.length) dirs = ['e', 'w']
     var paths = [], isCorner = dirs.length === 2 && !(D4.n && D4.s) && !(D4.e && D4.w)
@@ -155,6 +156,20 @@
     x.restore()
   }
 
+  // cheap life on the board (transform / opacity only): glints on every water and bridge cell, chimney smoke over stations and the depot
+  function ambient (lv) {
+    var out = []
+    lv.grid.map.forEach(function (row, r) { for (var c = 0; c < row.length; c++) { var k = row.charAt(c); if (k === '~' || k === '=') out.push({ at: [r, c], cls: 'k-water', html: '<i class="k-glint"></i><i class="k-glint g2"></i><i class="k-glint g3"></i>' }) } })
+    ;(lv.decor || []).concat(lv.objects || []).forEach(function (d) {
+      var a = d.art || ''
+      if (/engine-house|station-small|stasiun-kecil|depo/.test(a) || (K.LIB[a] && /engine-house|station-small/.test(K.LIB[a]))) out.push({ at: d.at, cls: 'k-chimney', html: '<i class="k-puff"></i><i class="k-puff p2"></i>' })
+    })
+    return out
+  }
+  function addSteam () {   // the locomotive's own chimney (steams while it stands, harder when it moves)
+    var m = D.getElementById('mojo'); if (!m || m.querySelector('.k-steam')) return
+    var e = D.createElement('div'); e.className = 'k-steam'; e.setAttribute('aria-hidden', 'true'); e.innerHTML = '<i></i><i></i>'; m.appendChild(e)
+  }
   // the turtle tucks into its shell when Linus is close and walks when it is safe
   function objArt (o, w) {
     if (o.id !== 'kura' || !w || !w.m) return null
@@ -214,17 +229,18 @@
         e.stopPropagation(); e.preventDefault(); pick(b.getAttribute('data-level'))
       }, true)
     }
-    var done = 0, total = info.region.levels.length
-    info.region.levels.forEach(function (id) { if (info.save.lv[id]) done++ })
+    var done = 0, total = ML.LEVELS.length
+    ML.LEVELS.forEach(function (l) { if (info.save.lv[l.id]) done++ })
     var pill = D.getElementById('map-stars'); if (pill) pill.innerHTML = '<i class="ico"><img src="' + MA.src('obj/star') + '" alt="" style="width:100%;height:100%"></i><b>' + done + ' dari ' + total + ' selesai</b>'
     var title = D.getElementById('map-title'); if (title) title.textContent = 'Pilih Misi'
     function pick (id) {
       var lv = ML.byId(id); if (!lv) return
-      var pic = '../assets/kereta/cards/' + (info.region.card || 'card-bl-lembah-stasiun') + '.webp'
+      var pic = '../assets/kereta/cards/' + (ML.region(id).card || 'card-bl-lembah-stasiun') + '.webp'
       card.innerHTML = '<img alt="" src="' + pic + '"><span class="k-d-t"><b class="fk">Misi ' + (ML.index(id) + 1) + ': ' + lv.title + '</b><small>' + lv.beats[0].story + '</small></span><button type="button" class="btn b-go fk" id="k-go"><i class="ico">' + MA.icon('run') + '</i><span>AYO MULAI</span></button>'
       D.getElementById('k-go').addEventListener('click', function () { info.start(id) })
       ;[].forEach.call(box.querySelectorAll('.lvl'), function (x) { x.classList.toggle('k-sel', x.getAttribute('data-level') === id) })
     }
+    ;[].forEach.call(box.querySelectorAll('.lvl'), function (x) { var l = ML.byId(x.getAttribute('data-level')); if (l && l.big) x.classList.add('k-big') })
     pick(info.nextId)
   }
 
@@ -260,16 +276,26 @@
     b.addEventListener('click', function (e) { e.stopImmediatePropagation(); W.location.href = 'mojo-swoptops.html?pack=kereta&hub=1' }, true)
   }
 
+  // the big adventure's payoff: the scenario's cast cheers on the result card, with a second round of confetti and fireworks
+  function onResult (lv, stars) {
+    if (!lv.big) return
+    var card = D.querySelector('#ov-card .result'); if (!card) return
+    var row = D.createElement('div'); row.className = 'k-cheer'
+    row.innerHTML = '<b class="fk">Petualangan Besar selesai!</b>' + (lv.celebrate || []).map(function (k) { return '<img alt="" src="' + lib(k) + '">' }).join('')
+    card.insertBefore(row, card.querySelector('.res-line'))
+    if (W.MojoFX) { setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 700); setTimeout(function () { try { W.MojoFX.confetti() } catch (e) {} }, 1500) }
+  }
+
   var def = {
     id: 'kereta', gameId: 'g15k', saveKey: 'dunia-g15k-kereta',
-    narrator: { name: 'Henry', full: 'Henry McCloud' },
+    narrator: { name: 'Henry', full: 'Henry McCloud' }, heroName: 'Linus',
     text: { play: ['MULAI MAIN', 'LANJUT MAIN', 'MAIN LAGI'], again: 'Coba Lagi', mapTitle: 'Pilih Misi', collectionTitle: 'Teman-Teman Linus',
       collectionLead: 'Kenali para sahabat di atas rel. Ketuk untuk melihat.', collectionHead: 'Para Sahabat' },
-    msg: { caught: 'Kura-kura sedang menyeberang rel! TUNGGU sebentar sampai relnya kosong, lalu jalan lagi.' },
+    msg: { caught: 'Ada yang lewat di rel! TUNGGU sebentar sampai relnya kosong, lalu jalan lagi.' },
     libmap: libmap, hero: hero, scene: scene, regionScene: regionScene, background: background,
     pins: { 'bl-lembah': [14, 62], 'bl-samson': [30, 42], 'bl-hutan': [47, 66], 'bl-jembatan': [64, 40], 'bl-selamat': [80, 58], 'bl-pulang': [90, 34] },
     mapArt: function (port) { return background('bg-bl-lembah', port) },
-    paintGround: paintGround, objArt: objArt, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
+    onResult: onResult, allChapters: true, paintGround: paintGround, objArt: objArt, ambient: ambient, art: ART, stories: STORIES, paintRoad: paintRoad, noKerbs: true, onHome: onHome, onMap: onMap, cast: CAST
   }
   P.def = def
   if (MA) {
@@ -288,7 +314,7 @@
     swap(MA.showcase, CAST.map(function (c) { return { id: c.id, name: c.name, ability: c.ability, src: lib(c.key), film: true, note: c.ability } }))
   }
   if (D && D.addEventListener) {
-    var ready = function () { reskinStatic(); buildHub(); rewireExit() }
+    var ready = function () { reskinStatic(); buildHub(); rewireExit(); addSteam() }
     if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', ready); else ready()
   }
 })(typeof window !== 'undefined' ? window : globalThis)

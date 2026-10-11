@@ -87,9 +87,12 @@ const sig = lv => lv.beats.map(b => (b.objectives.map(o => o.do).sort().join('+'
 for (let i = 1; i < ML.LEVELS.length; i++) check(sig(ML.LEVELS[i]) !== sig(ML.LEVELS[i - 1]), `${ML.LEVELS[i - 1].id} and ${ML.LEVELS[i].id} play differently (${sig(ML.LEVELS[i - 1])} vs ${sig(ML.LEVELS[i])})`)
 const used = new Set(), resolve = a => { if (!a) return; used.add(a); if (LIBK[a]) used.add(LIBK[a]) }
 for (const lv of ML.LEVELS) { (lv.decor || []).forEach(d => resolve(d.art)); (lv.uses || []).forEach(resolve); (lv.objects || []).forEach(o => { resolve(o.art); if (o.who) resolve('char/' + o.who) }) }
-const EXCLUDED = new Set([])   // unsafe cast, excluded on purpose (none so far)
+const EXCLUDED = new Set([])   // cast keys skipped on purpose
+// owner kid-safe rule: no chains, whips or weapons anywhere. Any database key that names one must never be used by a level.
+const UNSAFE = [...dbKeys].filter(k => /(chain|whip|gun|pistol|rifle|weapon|senjata|rantai|cambuk|senapan|knife|sword)/i.test(k))
+check(UNSAFE.every(k => !used.has(k)), `no unsafe art used (${UNSAFE.length} unsafe keys exist in the database: ${UNSAFE.slice(0, 4).join(', ')})`)
 for (const lv of ML.LEVELS) check(Number.isInteger(lv.n), `${lv.id}: names its scenario number`)
-for (const lv of ML.LEVELS) for (const k of (KC.brave[String(lv.n)] || [])) if (!EXCLUDED.has(k)) check(used.has(k), `${lv.id} (scenario ${lv.n}): cast ${k} is used`)
+for (const lv of ML.LEVELS) for (const n of (lv.ns || [lv.n])) for (const k of (KC.brave[String(n)] || [])) if (!EXCLUDED.has(k)) check(used.has(k), `${lv.id} (scenario ${n}): cast ${k} is used`)
 for (const lv of ML.LEVELS) {
   check(lv.title.length <= 28, `${lv.id}: title short (${lv.title.length})`)
   lv.beats.forEach((b, bi) => { check(b.bo.split(/\s+/).length <= 8, `${lv.id}.${bi + 1}: the narrator line has <= 8 words ("${b.bo}")`); check(b.story.length <= 60, `${lv.id}.${bi + 1}: the story line is one short line (${b.story.length} chars)`) })
@@ -102,7 +105,7 @@ if (process.env.QA_VERBOSE || process.argv.includes('--report')) console.log(rep
 /* ── B browser ─────────────────────────────────────────────────── */
 if (!process.argv.includes('--headless')) {
   const { default: puppeteer } = await import('puppeteer')
-  const URL = 'http://localhost:8081/games/mojo-swoptops.html?pack=kereta'
+  const BASE = process.env.KBASE || 'http://localhost:8083', URL = BASE + '/games/mojo-swoptops.html?pack=kereta'
   const sleep = ms => new Promise(r => setTimeout(r, ms))
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
   const errors = []
@@ -157,7 +160,7 @@ if (!process.argv.includes('--headless')) {
     }
   }
   {
-    const p = await page(1280, 800, 'http://localhost:8081/games/mojo-swoptops.html')
+    const p = await page(1280, 800, BASE + '/games/mojo-swoptops.html')
     check(await p.evaluate(() => !document.documentElement.getAttribute('data-pack') && __mojo.levels()[0] === 't1' && /Swoptops/.test(document.querySelector('.logo').textContent)), 'the plain Mojo page is not skinned')
     await p._ctx.close()
   }
