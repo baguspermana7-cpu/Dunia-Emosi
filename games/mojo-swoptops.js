@@ -653,6 +653,7 @@
     ;(lv.objects || []).forEach(function (o) { if (o.type === 'toolbox') h += '<span class="gauge tool' + (w.tools[o.tool] ? ' have' : '') + '" id="g-tool"><img alt="' + o.tool + '" src="' + MA.src('tool/' + o.tool) + '"></span>' })
     if ((lv.optional || []).length) { var got = (lv.optional || []).every(function (o) { return w.got[o.id] || G.gotStars[o.id] }); h += '<span class="gauge star' + (got ? ' have' : '') + '" id="g-star"><img alt="bintang" src="' + MA.src('obj/star') + '"></span>' }
     if (inv.innerHTML !== h) inv.innerHTML = h
+    if (PK && PK.onHud) PK.onHud({ w: w, lv: lv, beat: b, bi: G.bi, snd: SND, burst: burst })   // a pack's picture checklist, bubbles and ghosts (inert without ?pack=)
   }
   function beatDots () {
     var n = G.lv.beats.length, h = ''

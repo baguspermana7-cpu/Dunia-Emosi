@@ -13,6 +13,11 @@ The md's own "Urutan penyelamatan yang tidak boleh tertukar" (12 steps) must hol
 - Carter: never chain or whip. Sitting on the log load with hands on hips / pointing (carter/hands-hips, point);
   the "chain" = a big COUPLING HOOK + latch between Linus and the log wagon. sc17 = the hook strains, sparks at the
   wheels, the latch pops, Carter tumbles comically off the logs onto a soft sawdust pile (surprised → defeated pose).
+- OWNER DECISION 2026-10-11 (overrides the two rules above, only for these moments): Carter rides ON the log wagon in sc 14/16/17
+  holding the coupling CHAIN and a WHIP he cracks only IN THE AIR (crack puff + "ctar", never touching Linus); sc 17 the chain
+  snaps and he tumbles onto sawdust. sc 19 James fires a cartoon shot ("DOR!", muzzle flash + white smoke from his raised hand)
+  that clearly MISSES (puff in the sky / spark on a rock); Linus flinches, squashes, goes faster with extra steam. No blood, no hit,
+  no injury. Exactly ONE Goro per level, emerging from and backing into a cave mouth (sc 9, 18).
 - Black birds on the sign (sc9): vulture art is OK perched, not menacing.
 - sc24–26: Linus is hurt = "sangat lelah, penyok, uapnya habis" (sad sprite, soot, dented); no fire. sc26 = a DREAM:
   Linus floats up among soft clouds to a golden gate, light fills the screen, he wakes in the workshop (sc27).

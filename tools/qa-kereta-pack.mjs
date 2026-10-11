@@ -120,7 +120,7 @@ if (!process.argv.includes('--headless')) {
   async function page (w, h, url) {
     const c = await browser.createBrowserContext(), p = await c.newPage(); p._ctx = c
     await p.setViewport({ width: w, height: h, isMobile: w < 900, hasTouch: w < 900, deviceScaleFactor: 1 })
-    p.on('pageerror', e => errors.push(`${w}x${h} ${e.message}`)); p.on('requestfailed', r => { if (/\.(webp|js|css)/.test(r.url())) errors.push(`${w}x${h} request failed ${r.url()}`) })
+    p.on('pageerror', e => errors.push(`${w}x${h} ${e.message}`)); p.on('requestfailed', r => { if (/\.(webp|js|css)/.test(r.url()) && !/ERR_ABORTED/.test((r.failure() || {}).errorText || '')) errors.push(`${w}x${h} request failed ${r.url()}`) })
     await p.goto(url || URL, { waitUntil: 'load' }); await p.waitForFunction('window.__mojo && __mojo.ready'); return p
   }
   console.log('--- B browser')

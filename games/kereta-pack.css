@@ -309,3 +309,42 @@ html[data-pack="kereta"] .ob[data-id="sorot"]::before{inset:-70%;mix-blend-mode:
 #scr-play[data-mood="rain"]{background-color:#6f7c92!important;background-blend-mode:multiply}
 #scr-play[data-mood="storm"]{background-color:#505c78!important;background-blend-mode:multiply}
 #scr-play[data-mood="night"]{background-color:#5a6590!important;background-blend-mode:multiply}
+
+/* ── kereta-goals.js: sub-goals readable on the board, name tags (owner 2026-10-11) ── */
+html[data-pack="kereta"] .ob .k-bubble{position:absolute;left:50%;top:-46%;width:max(34px,calc(var(--cell)*.56));height:max(34px,calc(var(--cell)*.56));margin-left:calc(max(34px,calc(var(--cell)*.56))/-2);border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#fff0c4);box-shadow:0 0 0 3px #e0a63a,0 4px 0 rgba(92,56,23,.35);display:flex;align-items:center;justify-content:center;z-index:6;animation:kBob 1.8s ease-in-out infinite alternate;pointer-events:none}
+html[data-pack="kereta"] .ob .k-bubble::after{content:'';position:absolute;left:50%;bottom:-7px;margin-left:-6px;border:6px solid transparent;border-top-color:#e0a63a;border-bottom:0}
+html[data-pack="kereta"] .ob .k-bubble img{width:78%;height:78%;filter:none;animation:none;position:static}
+html[data-pack="kereta"] .ob .k-glow{position:absolute;left:8%;right:8%;bottom:4%;height:26%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,224,110,.85),rgba(255,224,110,0));box-shadow:0 0 0 3px rgba(255,214,90,.8);animation:kPulse 1.4s ease-in-out infinite;pointer-events:none;z-index:0}
+html[data-pack="kereta"] .ob.gone .k-bubble,html[data-pack="kereta"] .ob.gone .k-glow,html[data-pack="kereta"] .ob.coupled .k-bubble,html[data-pack="kereta"] .ob.coupled .k-glow,html[data-pack="kereta"] .ob.gone .k-name,html[data-pack="kereta"] .ob.gone .k-ghost{display:none}
+html[data-pack="kereta"] .ob .k-ghost{position:absolute;right:-14%;bottom:-8%;width:56%;height:56%;display:flex;align-items:center;justify-content:center;border-radius:50%;border:3px dashed rgba(255,255,255,.9);background:rgba(255,255,255,.28);z-index:4;pointer-events:none;animation:kGhost 1.6s ease-in-out infinite alternate}
+html[data-pack="kereta"] .ob .k-ghost img{width:78%;height:78%;opacity:.6;filter:grayscale(.2) drop-shadow(0 1px 1px rgba(0,0,0,.3));animation:none}
+html[data-pack="kereta"] .ob .k-ghost b{position:absolute;right:-8px;top:-8px;min-width:20px;height:20px;border-radius:10px;background:#e0a63a;color:#fff;font:900 12px/20px 'Nunito',sans-serif;text-align:center;padding:0 4px}
+html[data-pack="kereta"] .ob .k-ghost b:empty{display:none}
+html[data-pack="kereta"] .ob.k-filled .k-ghost{display:none}
+html[data-pack="kereta"] .ob.k-post .tag{min-width:max(34px,calc(var(--cell)*.5));height:max(34px,calc(var(--cell)*.5));border-radius:50%;font-size:max(20px,calc(var(--cell)*.32));background:linear-gradient(180deg,#fff7df,#f1d9a0);box-shadow:0 0 0 3px #8a5528,0 4px 0 rgba(0,0,0,.3);top:-14%;right:-6%}
+html[data-pack="kereta"] .ob.k-next::before{content:'';position:absolute;inset:-6%;border-radius:50%;box-shadow:0 0 0 4px rgba(255,214,90,.95),0 0 18px 6px rgba(255,214,90,.7);animation:kPulse 1.1s ease-in-out infinite;pointer-events:none}
+html[data-pack="kereta"] .ob.flag.k-final::before{content:'';position:absolute;inset:-14%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,236,140,.95),rgba(255,214,90,0));animation:kPulse 1.2s ease-in-out infinite;pointer-events:none;z-index:0}
+html[data-pack="kereta"] .k-name{position:absolute;left:50%;transform:translateX(-50%);padding:1px 8px;border-radius:999px;background:rgba(255,247,223,.94);color:#4a2d12;font:800 11px/16px 'Nunito',sans-serif;white-space:nowrap;box-shadow:0 0 0 1.5px #8a5528,0 2px 0 rgba(0,0,0,.25);z-index:7;pointer-events:none;animation:kNameIn .5s .35s both var(--ease-out,ease-out)}
+html[data-pack="kereta"] .k-name.down{top:96%}
+html[data-pack="kereta"] .k-name.up{bottom:104%}
+html[data-pack="kereta"] .dec.cast .k-name.down{top:100%}
+html[data-pack="kereta"] .dec.cast .k-name.up{bottom:128%}
+html[data-pack="kereta"] .k-check{position:absolute;left:50%;top:3px;transform:translateX(-50%);display:flex;gap:6px;z-index:12;pointer-events:none;max-width:98%;flex-wrap:wrap;justify-content:center}
+html[data-pack="kereta"] .k-grp{display:flex;align-items:center;gap:3px;padding:3px 9px 3px 4px;border-radius:999px;background:linear-gradient(180deg,#fff,#fff0c4);box-shadow:0 3px 0 rgba(92,56,23,.3),0 0 0 2px #e0a63a;transition:background-color .25s}
+html[data-pack="kereta"] .k-grp.done{background:linear-gradient(180deg,#d9f7cf,#aee69c);box-shadow:0 3px 0 rgba(40,90,30,.35),0 0 0 2px #5cb85c}
+html[data-pack="kereta"] .k-gi{width:26px;height:26px;object-fit:contain;margin-right:2px}
+html[data-pack="kereta"] .k-slot{width:24px;height:24px;border-radius:50%;background:rgba(92,56,23,.14);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 2px rgba(92,56,23,.25)}
+html[data-pack="kereta"] .k-slot img{width:20px;height:20px;object-fit:contain;opacity:.28;filter:grayscale(1)}
+html[data-pack="kereta"] .k-slot.on{background:#fff7c9;box-shadow:inset 0 0 0 2px #5cb85c}
+html[data-pack="kereta"] .k-slot.on img{opacity:1;filter:none}
+html[data-pack="kereta"] .k-slot.pop{animation:kPop .45s var(--ease-out,ease-out)}
+html[data-pack="kereta"] .k-grp b{font:900 14px/1 'Nunito',sans-serif;color:#4a2d12;margin-left:3px}
+html[data-pack="kereta"] .k-check.k-ready .k-grp.done{animation:kPop .6s var(--ease-out,ease-out)}
+.k-fly{position:fixed;left:0;top:0;width:40px;height:40px;object-fit:contain;z-index:60;pointer-events:none;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.k-spark{position:fixed;width:9px;height:9px;margin:-4px 0 0 -4px;border-radius:50%;background:#ffd54a;box-shadow:0 0 6px 2px rgba(255,214,90,.8);z-index:61;pointer-events:none}
+@keyframes kBob{to{transform:translateY(-5px)}}
+@keyframes kPulse{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes kGhost{to{transform:scale(1.07)}}
+@keyframes kPop{0%{transform:scale(.6)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes kNameIn{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){html[data-pack="kereta"] .k-bubble,html[data-pack="kereta"] .k-glow,html[data-pack="kereta"] .k-ghost,html[data-pack="kereta"] .k-name,.k-slot.pop,.k-next::before,.k-final::before{animation:none!important}}
