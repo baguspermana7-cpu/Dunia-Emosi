@@ -309,7 +309,7 @@
     for (var pi = 0; pi < 140; pi++) POOL.push({ on: false, type: '', lane: 0, seg: 0, taken: false, t: 0 })
     function addObj (type, lane, segI) {
       var s = track.seg(segI); if (!s) return null
-      for (var i = 0; i < POOL.length; i++) if (!POOL[i].on) { var o = POOL[i]; o.on = true; o.type = type; o.lane = lane; o.seg = segI; o.taken = false; o.t = 0; s.objs.push(o); return o }
+      for (var i = 0; i < POOL.length; i++) if (!POOL[i].on) { var o = POOL[i]; o.on = true; o.type = type; o.lane = lane; o.seg = segI; o.taken = false; o.pass = false; o.t = 0; s.objs.push(o); return o }
       return null   // pool exhausted: the row is simply thinner (PRD §23)
     }
     for (var ci = 0; ci < 12; ci++) { S.comets.push({ on: false, x: 0, y: 0, x0: 0, y0: 0, t: 0 }); S.rings.push({ on: false, x: 0, y: 0, r: 0, t: 0, col: 0 }) }
@@ -465,14 +465,16 @@
       var info = OBJ[o.type], cp = carPx()
       // which branch handled this hit: read by the gate (tools/qa-mojo-chase.mjs) to prove no form is immune
       S.lastHitType = o.type; S.lastHitPerk = perk
-      if (S.recover > 0) { S.brokWhy = 'recover'; return }        // repeated hits never stack (PRD §9)
+      // owner 2026-10-10 "dari jauh ada object tapi saat mendekat jadi hilang": an obstacle the car is immune to (recover
+      // window, flying over, hopping over) is no longer removed - it stays drawn and visibly passes under/behind the car
+      if (S.recover > 0) { S.brokWhy = 'recover'; o.pass = true; return }        // repeated hits never stack (PRD §9)
       if (S.shield) { S.brokWhy = 'shield'; S.shield = 0; ring(sx, sy, 1); burst(sx, sy, 14, TEX.glowC, 600 * v.u, 0.5, cp * 0.14, true); call('Perisai menahan!', 1100, 'shieldhit'); return }
       // perks: a flyer passes over anything slippery; a jumper hops every hole, slippery patch and low obstacle
       // (JUMPABLE). Owner 2026-10-04 "Pelompat bisa lompat batu tapi tidak bisa lompat lubang": a hazard met while
       // ALREADY airborne used to fall through to BROK (two holes in a row) - an airborne jumper now clears it too
-      if (perk === 'fly' && info.kind === 'slip') { S.brokWhy = 'fly'; return }
+      if (perk === 'fly' && info.kind === 'slip') { S.brokWhy = 'fly'; o.pass = true; return }
       if (perk === 'jump' && JUMPABLE[o.type]) {
-        S.brokWhy = 'jump'
+        S.brokWhy = 'jump'; o.pass = true
         if (!(S.hop > 0)) { S.hop = S.hopMax = 0.5; S.jumps++; AU.whoosh(0); hopDust(); call('Hup! Lompat!', 900, 'hop') }
         return
       }
@@ -488,7 +490,7 @@
       }
       var immune = false
       if (info.kind === 'slip') {
-        S.brokWhy = 'slip'
+        S.brokWhy = 'slip'; o.pass = true   // the puddle / oil stays on the road after the car crosses it
         if (perk === 'grip' || (perk === 'snow' && look0 === 'snow') || (perk === 'splash' && (o.type === 'oil' || stage.wet))) { S.spin = 0; S.slide = 0; immune = true }
         else if (info.fx === 'spin') { S.spin = 0.8; call('Wiii, licin!', 1000, 'spin') }
         else if (info.fx === 'slide') { S.slide = 0.8; call('Hati-hati, licin!', 1000, 'slide') }
@@ -1077,7 +1079,7 @@
     }
     var HUES = null
     function drawObj (o, s, alpha, j) {
-      if (!o.on || o.taken) return
+      if (!o.on || (o.taken && !o.pass)) return
       var info = OBJ[o.type], p1 = s.p1, scale = p1.s, x = p1.x + scale * laneX(o.lane) * v.hw, wpx = scale * info.w * v.hw
       if (wpx < 1.5) return
       var im = img['o:' + o.type], an = propA(info.k)
@@ -1499,7 +1501,8 @@
     W.__mojoChase = { host: host, active: true, view: API.view, robber: API.robber,   // QA seams (canvas px; multiply by view().css)
       state: function () {
         var med = function (a) { if (!a.length) return 0; var b = a.slice().sort(function (x, y) { return x - y }); return b[Math.floor(b.length / 2)] }
-        return { jumps: S.jumps, state: S.state, paused: S.paused, prog: S.prog, lane: S.lane, lanePos: S.lanePos, lastLaneMs: S.lastLaneMs, hits: S.hits, brok: S.brok, recover: S.recover,
+        var passing = 0; for (var pi = 0; pi < POOL.length; pi++) if (POOL[pi].on && POOL[pi].taken && POOL[pi].pass) passing++
+        return { passing: passing, jumps: S.jumps, state: S.state, paused: S.paused, prog: S.prog, lane: S.lane, lanePos: S.lanePos, lastLaneMs: S.lastLaneMs, hits: S.hits, brok: S.brok, recover: S.recover,
           recoveryMs: S.recoveryMs.slice(), stars: S.stars, boxes: S.boxes, rocket: S.rocket, hasRocket: S.hasRocket, elapsed: S.elapsed, quality: quality,
           frameMedian: med(ringArr(FR, frN)), frameTimes: ringArr(FR, frN), workMedian: { 0: med(ringArr(TF[0].a, TF[0].n)), 1: med(ringArr(TF[1].a, TF[1].n)), 2: med(ringArr(TF[2].a, TF[2].n)) }, frames: frN,
           par: scene ? { far: scene.par.far, mid: scene.par.mid, roadside: scene.par.roadside, road: scene.par.road } : null,

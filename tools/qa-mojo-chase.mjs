@@ -397,10 +397,12 @@ try {
     await p.evaluate(() => { window.__mcNoDrops = true; window.__mcNoPatterns = true; window.__hk0 = MojoChase.hooks; MojoChase.hooks = Object.assign({}, MojoChase.hooks, { spawnFilter: () => 'pothole' }) })
     await sleep(5000)   // rows generated before the filter (170 segments of lookahead) have passed
     const s0 = await state(p), rec = []
-    for (let i = 0; i < 66; i++) { const k = await state(p); rec.push(k.recover); await sleep(120) }
+    let passing = 0
+    for (let i = 0; i < 66; i++) { const k = await state(p); rec.push(k.recover); passing = Math.max(passing, k.passing || 0); await sleep(120) }
     const s1 = await state(p)
     await p.evaluate(() => { MojoChase.hooks = window.__hk0 })
     check(s.form === 'jumper' && s1.jumps - s0.jumps >= 2 && s1.hits === s0.hits && s1.brok === s0.brok && rec.every(r => !(r > 0)), `jumper: pothole rows back to back are hopped, no BROK, no slip, no slowdown (${s1.jumps - s0.jumps} hops, hits ${s0.hits}->${s1.hits}, recover max ${Math.max(...rec).toFixed(2)}, last ${s1.lastHitType}/${s1.brokWhy})`)
+    check(passing > 0, `jumper: a hopped-over hole stays on the road and passes under the car, it does not vanish (owner: "dari jauh ada object tapi saat mendekat jadi hilang") - passing max ${passing}`)
     check(/lubang/.test(line), `jumper: the perk line promises the holes it clears ("${line}")`)
     check(!errors.length, `jumper run: no page errors (${errors.slice(0, 2).join(' | ')})`)
     await p.click('.mc-pause').catch(() => {}); await sleep(200); await p.click('#mc-exit').catch(() => {}); await done
