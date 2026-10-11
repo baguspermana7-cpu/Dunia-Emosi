@@ -19,7 +19,9 @@
   function L (o) { o.ch = o.ch || 'hb-ch1'; o.rev = 1; o.autoAim = true; return o }
   var LEVELS = [
     // 01 the starting whistle: Kilat waits for the signal to turn, then races to the line
-    L({ id: 'hb01', terrain: 'meadow', mood: 'sun', n: 1, title: 'Peluit Tanda Mulai', place: 'Garis Start', icon: 'cmd/wait', bg: 'bg-hb-start', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
+    L({ id: 'hb01', cards: [
+        { bg: 'bg-hb-start', art: [{ k: 'train-char/silver/front-34l', x: 36, s: 58 }], text: 'Pesta Besar di kota hari ini! Kilat Perak siap berlomba.' }
+      ], terrain: 'meadow', mood: 'sun', n: 1, title: 'Peluit Tanda Mulai', place: 'Garis Start', icon: 'cmd/wait', bg: 'bg-hb-start', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
       grid: { rows: 3, cols: 8, map: [',T,.,,T,', '........', ',,T.,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [2, 6], art: 'animal/bird-blue/fly' }],
@@ -31,7 +33,9 @@
         bo: 'Tunggu kelinci lewat, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: ['kilat'], palette: ['east', 'wait'] }] }),
 
     // 02 Tuan Lemas stops at the red signal and wants to give up: bring him a "semangat" star
-    L({ id: 'hb02', terrain: 'meadow', mood: 'sun', n: 2, title: 'Tuan Lemas Mau Menyerah', place: 'Sinyal Merah', icon: 'cmd/pick', bg: 'bg-hb-padang', edu: { domain: 'matematika', skill: 'membilang 1-2' },
+    L({ id: 'hb02', cards: [
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Tuan Lemas berhenti di sinyal merah. Ia mau menyerah.' }
+      ], terrain: 'meadow', mood: 'sun', n: 2, title: 'Tuan Lemas Mau Menyerah', place: 'Sinyal Merah', icon: 'cmd/pick', bg: 'bg-hb-padang', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',.,.,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [0, 2], art: 'kereta-prop/pine' }],
@@ -44,7 +48,9 @@
         bo: 'Turunkan dua bintang di Tuan Lemas.', objectives: [{ 'do': 'deliver', id: 'lemas' }], slots: 20, budget: 16, forms: ['kilat'], palette: MOVE.concat(['pick', 'deliver']) }] }),
 
     // 03 Tuan Lemas runs out of coal: fill his furnace so he can go on
-    L({ id: 'hb03', terrain: 'meadow', mood: 'sun', n: 5, title: 'Batu Bara untuk Tuan Lemas', place: 'Padang Hijau', icon: 'cmd/load', bg: 'bg-hb-padang', edu: { domain: 'matematika', skill: 'membilang 1-2' },
+    L({ id: 'hb03', cards: [
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tuan Lemas kehabisan batu bara. Kilat mau membantu.' }
+      ], terrain: 'meadow', mood: 'sun', n: 5, title: 'Batu Bara untuk Tuan Lemas', place: 'Padang Hijau', icon: 'cmd/load', bg: 'bg-hb-padang', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 3, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 3], h: 'E', form: 'kilat' },
       res: { sand: 0 }, cap: { sand: 2 },
@@ -58,7 +64,9 @@
         bo: 'Isi tungku Tuan Lemas, lalu ke bendera.', objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 16, budget: 12, forms: ['kilat'], palette: ['east', 'west', 'up', 'load', 'dump'] }] }),
 
     // 04 the climb is heavy for Tuan Lemas: Kilat takes his two wagons up the hill and into the festival town
-    L({ id: 'hb04', terrain: 'meadow', mood: 'sunset', n: 6, title: 'Tanjakan yang Berat', place: 'Kaki Bukit', icon: 'cmd/couple', bg: 'bg-hb-kota', edu: { domain: 'matematika', skill: 'membilang 1-2' },
+    L({ id: 'hb04', cards: [
+        { bg: 'bg-hb-kota', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tanjakan terasa berat. Mereka mendaki bersama.' }
+      ], terrain: 'meadow', mood: 'sunset', n: 6, title: 'Tanjakan yang Berat', place: 'Kaki Bukit', icon: 'cmd/couple', bg: 'bg-hb-kota', edu: { domain: 'matematika', skill: 'membilang 1-2' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,.', '........', ',.,.,,,,', ',,,,,,,,'], theme: 'hill' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 5], art: 'train/lemas-b' }],
@@ -71,7 +79,10 @@
         bo: 'Gandeng dua gerbong, lalu ke bendera.', objectives: [{ 'do': 'wagons', n: 2 }, { 'do': 'reach', at: [0, 7] }], slots: 14, budget: 10, forms: ['kilat'], palette: ['up', 'east', 'down', 'couple'] }] }),
     // ── Bab 2 "Jalan Bersama" (old hb03/04/07): help each other on the shared line ──────────────
     // 05 the bridge holds one train: Kilat waits for Tuan Lemas to cross, then crosses (be patient)
-    L({ id: 'hb05', ch: 'hb-ch2', terrain: 'meadow', mood: 'sun', n: 4, title: 'Jembatan Satu Kereta', place: 'Jembatan Kecil', icon: 'cmd/wait', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'bergiliran' },
+    L({ id: 'hb05', cards: [
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/silver/front-34l', x: 10, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 54, s: 58 }], text: 'Jembatan kecil hanya muat satu kereta.' },
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Mereka bergiliran. Sabar itu baik.' }
+      ], ch: 'hb-ch2', terrain: 'meadow', mood: 'sun', n: 4, title: 'Jembatan Satu Kereta', place: 'Jembatan Kecil', icon: 'cmd/wait', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'bergiliran' },
       grid: { rows: 4, cols: 8, map: [',,,.,,,,', '...=....', ',,,.,,,,', ',T,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 5], art: 'animal/deer/graze' }],
@@ -83,7 +94,9 @@
         bo: 'Tunggu Tuan Lemas lewat, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: ['kilat'], palette: ['east', 'wait'] }] }),
 
     // 06 Tuan Lemas is stuck at his signal box: Kilat opens it for him, then they go on (help each other)
-    L({ id: 'hb06', ch: 'hb-ch2', terrain: 'meadow', mood: 'sun', n: 3, title: 'Kilat Membuka Sinyal', place: 'Kotak Sinyal', icon: 'cmd/east', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'urutan' },
+    L({ id: 'hb06', cards: [
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 36, s: 58 }], text: 'Kotak sinyal Tuan Lemas macet. Kilat mau membukanya.' }
+      ], ch: 'hb-ch2', terrain: 'meadow', mood: 'sun', n: 3, title: 'Kilat Membuka Sinyal', place: 'Kotak Sinyal', icon: 'cmd/east', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'urutan' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,T,,,,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [2, 5], art: 'train/lemas', react: 'train/lemas-b' }, { at: [0, 6], art: 'animal/bird-blue/fly' }],
@@ -95,7 +108,9 @@
         bo: 'Buka sinyal, lalu ke bendera.', objectives: [{ 'do': 'visit', id: 'sinyal' }, { 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['kilat'], palette: ['east'] }] }),
 
     // 07 BIG: the tunnel. Kilat takes the upper line, waits while Tuan Lemas comes the other way, passes with a wave, then returns
-    L({ id: 'hb07', ch: 'hb-ch2', big: true, quiet: true, terrain: 'mountain', mood: 'sunset', n: 7, title: 'Berpapasan di Terowongan', place: 'Petualangan Besar', icon: 'cmd/wait', bg: 'bg-hb-start',
+    L({ id: 'hb07', cards: [
+        { bg: 'bg-hb-start', art: [{ k: 'train-char/silver/front-34l', x: 8, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 56, s: 58 }], text: 'Dua kereta datang dari arah berlawanan, menuju terowongan.' }
+      ], ch: 'hb-ch2', big: true, quiet: true, terrain: 'mountain', mood: 'sunset', n: 7, title: 'Berpapasan di Terowongan', place: 'Petualangan Besar', icon: 'cmd/wait', bg: 'bg-hb-start',
       bgs: ['bg-hb-start', 'bg-hb-padang'], edu: { domain: 'campuran', skill: 'bergiliran' },
       celebrate: [],
       grid: { rows: 4, cols: 8, map: [',,,,.,,,', '........', ',,,,.,,,', ',,T,,,,,'], theme: 'hill' },
@@ -116,7 +131,9 @@
 
     // ── Bab 3 "Pesta di Kota" (old hb08/09/10): give way, arrive together, the party ─────────────
     // 08 Kilat gives way: he steps onto the side track, lets Tuan Lemas cross, then goes on
-    L({ id: 'hb08', ch: 'hb-ch3', terrain: 'meadow', mood: 'sun', n: 8, title: 'Kilat Memberi Jalan', place: 'Jalur Samping', icon: 'cmd/down', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'memberi jalan' },
+    L({ id: 'hb08', cards: [
+        { bg: 'bg-hb-padang', art: [{ k: 'train-char/defeatist/front-34l', x: 10, s: 58 }, { k: 'train-char/silver/front-34l', x: 54, s: 58 }], text: 'Tuan Lemas jalan pelan. Kilat memberi jalan.' }
+      ], ch: 'hb-ch3', terrain: 'meadow', mood: 'sun', n: 8, title: 'Kilat Memberi Jalan', place: 'Jalur Samping', icon: 'cmd/down', bg: 'bg-hb-padang', edu: { domain: 'algoritma', skill: 'memberi jalan' },
       grid: { rows: 4, cols: 8, map: [',,,,,.,,', '........', ',,,.,.,,', ',,,.,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 6], art: 'kereta-prop/pine' }],
@@ -129,7 +146,9 @@
         bo: 'Ke jalur samping, lalu ke bendera.', objectives: [{ 'do': 'visit', id: 'samping' }, { 'do': 'reach', at: [1, 7] }], slots: 16, budget: 12, forms: ['kilat'], palette: ['east', 'west', 'down', 'up', 'wait'] }] }),
 
     // 09 arrive together: Kilat hitches Tuan Lemas behind him and brings him over the line (nobody is left behind)
-    L({ id: 'hb09', ch: 'hb-ch3', cine: { end: { fx: [{ id: 'bk-star-02', at: [1, 7], size: 180, n: 2, spread: 40 }, { id: 'bk-light-02', at: [1, 7], size: 260, delay: 250 }] } }, terrain: 'town', mood: 'sunset', n: 9, title: 'Tiba Bersama', place: 'Garis Akhir', icon: 'cmd/couple', bg: 'bg-hb-kota', edu: { domain: 'matematika', skill: 'membilang 1' },
+    L({ id: 'hb09', cards: [
+        { bg: 'bg-hb-kota', art: [{ k: 'train-char/silver/front-34l', x: 10, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 54, s: 58 }], text: 'Garis akhir sudah terlihat. Tidak ada yang tertinggal.' }
+      ], ch: 'hb-ch3', cine: { end: { fx: [{ id: 'bk-star-02', at: [1, 7], size: 180, n: 2, spread: 40 }, { id: 'bk-light-02', at: [1, 7], size: 260, delay: 250 }] } }, terrain: 'town', mood: 'sunset', n: 9, title: 'Tiba Bersama', place: 'Garis Akhir', icon: 'cmd/couple', bg: 'bg-hb-kota', edu: { domain: 'matematika', skill: 'membilang 1' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',.,,,,,,', ',,,,,,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'kilat' },
       decor: [{ at: [3, 5], art: 'animal/deer/graze' }, { at: [0, 6], art: 'kereta-prop/pine' }],
@@ -141,7 +160,10 @@
         bo: 'Gandeng Tuan Lemas, lalu ke garis akhir bendera.', objectives: [{ 'do': 'wagons', n: 1 }, { 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: ['kilat'], palette: ['east', 'down', 'up', 'couple'] }] }),
 
     // 10 BIG: the party in town. Flag and star go to their stages, then the two friends cross the finish line together
-    L({ id: 'hb10', ch: 'hb-ch3', big: true, cine: { end: { letterbox: 2400, fx: [{ id: 'bk-star-02', at: [1, 7], size: 220, n: 3, spread: 50 }, { id: 'bk-light-02', at: [1, 7], size: 320, delay: 300 }] } }, terrain: 'town', mood: 'sunset', n: 10, title: 'Pesta di Kota', place: 'Petualangan Besar', icon: 'cmd/deliver', bg: 'bg-hb-kota',
+    L({ id: 'hb10', cards: [
+        { bg: 'bg-hb-kota', art: [{ k: 'train-char/silver/front-34l', x: 36, s: 58 }], text: 'Pesta Besar dimulai di kota!' },
+        { bg: 'bg-hb-kota', art: [{ k: 'train-char/silver/front-34l', x: 10, s: 58 }, { k: 'train-char/defeatist/front-34l', x: 54, s: 58 }], text: 'Dua sahabat tidak pernah menyerah. Mereka tiba bersama.' }
+      ], ch: 'hb-ch3', big: true, cine: { end: { letterbox: 2400, fx: [{ id: 'bk-star-02', at: [1, 7], size: 220, n: 3, spread: 50 }, { id: 'bk-light-02', at: [1, 7], size: 320, delay: 300 }] } }, terrain: 'town', mood: 'sunset', n: 10, title: 'Pesta di Kota', place: 'Petualangan Besar', icon: 'cmd/deliver', bg: 'bg-hb-kota',
       bgs: ['bg-hb-kota', 'bg-hb-kota', 'bg-hb-kota'], edu: { domain: 'campuran', skill: 'urutan perjalanan' },
       celebrate: [],
       grid: { rows: 4, cols: 8, map: [',,,.,.,,', '........', ',,.,,,.,', ',,,,,,,,'], theme: 'town' },

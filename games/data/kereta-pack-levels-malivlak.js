@@ -272,8 +272,8 @@
         { title: 'Atur sinyal', story: 'Sinyal diatur. Para pemusik membawa alat tiup.', hide: ['tuas', 'flag'], start: { at: [1, 3], h: 'E' },
           decor: [{ at: [2, 5], art: 'malivlak-char/orkes/tuba', react: 'malivlak-char/orkes/terompet' }, { at: [0, 1], art: 'kereta-prop/signal-box' }],
           bo: 'Bawa Malivlak ke sinyal.', objectives: [{ 'do': 'visit', id: 'sinyal' }], slots: 4, budget: 2, forms: ['malivlak'], palette: ['east'] },
-        { title: 'Menunggu kereta', story: 'Petugas berdiri di rel dengan bendera. Semua siap.', hide: ['tuas', 'sinyal'], start: { at: [1, 4], h: 'E' },
-          decor: [{ at: [2, 1], art: 'malivlak-char/orkes/kontrabas' }, { at: [2, 5], art: 'malivlak-char/petugas-stasiun/berdiri' }],
+        { title: 'Menunggu kereta', story: 'Seluruh kelompok musik siap menunggu kereta.', hide: ['tuas', 'sinyal'], start: { at: [1, 4], h: 'E' },
+          decor: [{ at: [2, 0], art: 'malivlak-char/orkes/pemimpin' }, { at: [3, 1], art: 'malivlak-char/orkes/drum' }, { at: [2, 2], art: 'malivlak-char/orkes/tuba' }, { at: [3, 3], art: 'malivlak-char/orkes/terompet' }, { at: [2, 4], art: 'malivlak-char/orkes/kontrabas' }, { at: [3, 6], art: 'malivlak-char/petugas-stasiun/berdiri' }],
           bo: 'Bawa Malivlak ke bendera di stasiun.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 6, budget: 3, forms: ['malivlak'], palette: ['east'] }
       ] }),
 
@@ -281,7 +281,7 @@
     L({ id: 'mv16', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 16, title: 'Melewati Penyambut', place: 'Peron Penyambutan', icon: 'cmd/down', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'berbelok' },
       grid: { rows: 4, cols: 8, map: [',,,,,,,,', '....,,,,', ',,,.,,,,', ',,,.....'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
-      decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/bendera' }, { at: [3, 1], art: 'malivlak-char/penyambut/jangkung', react: 'malivlak-char/penyambut/jangkung-bungkuk' }, { at: [2, 5], art: 'malivlak-char/orkes/pemimpin-tongkat' }, { at: [2, 6], art: 'kereta-tile/signal-green' }],
+      decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/bendera' }, { at: [3, 1], art: 'malivlak-char/penyambut/jangkung', react: 'malivlak-char/penyambut/jangkung-bungkuk' }, { at: [2, 5], art: 'malivlak-char/orkes/pemimpin-tongkat' }, { at: [3, 2], art: 'malivlak-char/orkes/drum' }, { at: [2, 6], art: 'kereta-tile/signal-green' }],
       objects: [{ id: 'flag', type: 'flag', at: [3, 7] }],
       beats: [{ title: 'Lewat dan berhenti', story: 'Malivlak melewati para penyambut dan berhenti.',
         bo: 'Lewati penyambut, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [3, 7] }], slots: 12, budget: 9, forms: ['malivlak'], palette: ['east', 'down'] }] }),

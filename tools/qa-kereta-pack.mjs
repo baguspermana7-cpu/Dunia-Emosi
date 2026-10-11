@@ -130,7 +130,8 @@ for (const id of FXIDS) {
 // FIGURES (owner 2026-10-11, bl05: "Kak Aisyah" drawn as a man, one man three times, heads cut by the board's top edge): on one beat no two figures share a
 // character (story-char/<who>, malivlak-char/<who>); a figure never stands on row 0 (the pack adds a headroom row); and every figure's art has a name-table entry
 const FIGK = /^((?:story-char|malivlak-char)\/[^/]+)\//
-const figOf = a => { const k = LIBK[a] || a; const m = FIGK.exec(k || ''); return m ? m[1] : null }
+// the band (orkes) is five different musicians drawn on one sheet: each member is its own character
+const figOf = a => { const k = LIBK[a] || a; const m = FIGK.exec(k || ''); if (!m) return null; const o = /^malivlak-char\/orkes\/(pemimpin|drum|tuba|terompet|kontrabas)/.exec(k); return o ? m[1] + '/' + o[1] : m[1] }
 for (const lv of ML.LEVELS) lv.beats.forEach((b, bi) => {
   const hide = b.hide || [], uses = (b.objectives || []).some(o => ['deliver', 'visit'].includes(o.do))
   const figs = []
