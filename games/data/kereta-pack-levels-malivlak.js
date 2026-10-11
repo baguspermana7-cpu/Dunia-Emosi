@@ -8,10 +8,11 @@
 (function (W) {
   'use strict'
   var MOVE = ['up', 'down', 'west', 'east']
-  var CHAPTERS = [{ id: 'mv-ch1', title: 'Stasiun dan Pedesaan', sub: 'Bab 1' }, { id: 'mv-ch2', title: 'Ladang dan Kolam', sub: 'Bab 2' }, { id: 'mv-ch3', title: 'Gunung dan Terowongan', sub: 'Bab 3' }]
+  var CHAPTERS = [{ id: 'mv-ch1', title: 'Stasiun dan Pedesaan', sub: 'Bab 1' }, { id: 'mv-ch2', title: 'Ladang dan Kolam', sub: 'Bab 2' }, { id: 'mv-ch3', title: 'Gunung dan Terowongan', sub: 'Bab 3' }, { id: 'mv-ch4', title: 'Penyambutan dan Museum', sub: 'Bab 4' }]
   var REGIONS = [{ id: 'mv-ch1', title: 'Stasiun dan Pedesaan', bg: 'bg-mv-stasiun', card: 'card-mv-stasiun', open: true, levels: ['mv01', 'mv02', 'mv03', 'mv04', 'mv05'] },
     { id: 'mv-ch2', title: 'Ladang dan Kolam', bg: 'bg-mv-ladang', card: 'card-mv-pedesaan', open: true, levels: ['mv06', 'mv07', 'mv08', 'mv09', 'mv10'] },
-    { id: 'mv-ch3', title: 'Gunung dan Terowongan', bg: 'bg-mv-gunung-terowongan', card: 'card-mv-pegunungan', open: true, levels: ['mv11', 'mv12', 'mv13', 'mv14'] }]
+    { id: 'mv-ch3', title: 'Gunung dan Terowongan', bg: 'bg-mv-gunung-terowongan', card: 'card-mv-pegunungan', open: true, levels: ['mv11', 'mv12', 'mv13', 'mv14'] },
+    { id: 'mv-ch4', title: 'Penyambutan dan Museum', bg: 'bg-mv-penyambutan', card: 'card-mv-penyambutan', open: true, levels: ['mv15', 'mv16', 'mv17', 'mv18', 'mv19', 'mv20'] }]
   var LIB = {
     'char/mv-ungu': 'malivlak-char/penumpang-ungu/berdiri', 'char/mv-ungu-koper': 'malivlak-char/penumpang-ungu/koper', 'char/mv-jas': 'malivlak-char/penumpang-jas-kotak/jam-saku',
     'char/mv-petugas': 'malivlak-char/petugas-stasiun/berdiri', 'char/mv-peluit': 'malivlak-char/petugas-stasiun/peluit', 'char/mv-bendera': 'malivlak-char/petugas-stasiun/bendera-bawah',
@@ -19,7 +20,7 @@
     'obj/mv-koper': 'kereta-prop/luggage-pile', 'obj/mv-surat': 'kereta-prop/mail-sacks', 'train/dragutin': 'train-char/dragutin/34l-neutral', 'train/dragutin-b': 'train-char/dragutin/34r-neutral',
     'train/mv-gerbong': 'mojo-train/coach-annie', 'obj/peron': 'kereta-prop/station-small', 'obj/loket': 'kereta-prop/ticket-booth', 'obj/mv-lampu': 'kereta-prop/lantern',
     'char/mv-lari': 'malivlak-char/penumpang-ungu/lari', 'char/mv-masinis-ikan': 'malivlak-char/masinis/ikan', 'char/mv-masinis-wajan': 'malivlak-char/masinis/wajan', 'char/mv-masinis-kaget': 'malivlak-char/masinis/terkejut',
-    'char/mv-beruang': 'animal/beruang/duduk', 'char/mv-ungu-duduk': 'malivlak-char/penumpang-ungu/duduk', 'obj/mv-perban': 'kereta-prop/wheel-bandage', 'obj/mv-ikan': 'animal/ikan/samping', 'obj/mv-wajan': 'kereta-prop/frying-pan-egg', 'train/dragutin-c': 'train-char/dragutin/34l-happy'
+    'char/mv-beruang': 'animal/beruang/duduk', 'char/mv-ungu-duduk': 'malivlak-char/penumpang-ungu/duduk', 'obj/mv-perban': 'kereta-prop/wheel-bandage', 'char/mv-masinis-pipa': 'malivlak-char/masinis/pipa-2', 'obj/mv-ikan': 'animal/ikan/samping', 'obj/mv-wajan': 'kereta-prop/frying-pan-egg', 'train/dragutin-c': 'train-char/dragutin/34l-happy'
   }
   function L (o) { o.ch = o.ch || 'mv-ch1'; o.rev = 1; o.autoAim = true; o.bg = o.bg || 'bg-mv-stasiun'; return o }
   var LEVELS = [
@@ -253,13 +254,124 @@
         { title: 'Jalan lagi', story: 'Roda sudah dibalut. Perjalanan berlanjut.', hide: ['k1', 'k2', 'k3', 'perban', 'roda'], start: { at: [1, 4], h: 'E' },
           decor: [{ at: [3, 6], art: 'animal/bird-blue/fly' }],
           bo: 'Bawa Malivlak ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 8, budget: 3, forms: ['malivlak'], palette: ['east'] }
+      ] }),
+    // ── Bab 4 "Penyambutan dan Museum" (scenarios 15-20) ─────────────────────────────────────
+    // 15 the station prepares: the officer throws the switch lever, the signal is set, the band takes its places and waits
+    L({ id: 'mv15', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 15, title: 'Stasiun Bersiap', place: 'Stasiun Kota', icon: 'cmd/east', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'urutan' },
+      grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,', ',,,,,,,,'], theme: 'town' },
+      mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      objects: [
+        { id: 'tuas', type: 'mark', at: [1, 3], order: 1, seq: 'siap', art: 'kereta-tile/switch-left', name: 'Tuas wesel' },
+        { id: 'sinyal', type: 'mark', at: [1, 5], order: 2, seq: 'siap', art: 'kereta-tile/signal-green', name: 'Sinyal' },
+        { id: 'flag', type: 'flag', at: [1, 7] }
+      ],
+      beats: [
+        { title: 'Petugas ke tuas', story: 'Petugas mengatur tuas wesel. Musik bersiap.', hide: ['sinyal', 'flag'],
+          decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/berdiri' }, { at: [2, 5], art: 'malivlak-char/orkes/pemimpin', react: 'malivlak-char/orkes/drum' }, { at: [0, 6], art: 'kereta-prop/signal-box' }],
+          bo: 'Bawa Malivlak ke tuas wesel.', objectives: [{ 'do': 'visit', id: 'tuas' }], slots: 5, budget: 3, forms: ['malivlak'], palette: ['east'] },
+        { title: 'Atur sinyal', story: 'Sinyal diatur. Para pemusik membawa alat tiup.', hide: ['tuas', 'flag'], start: { at: [1, 3], h: 'E' },
+          decor: [{ at: [2, 5], art: 'malivlak-char/orkes/tuba', react: 'malivlak-char/orkes/terompet' }, { at: [0, 1], art: 'kereta-prop/signal-box' }],
+          bo: 'Bawa Malivlak ke sinyal.', objectives: [{ 'do': 'visit', id: 'sinyal' }], slots: 4, budget: 2, forms: ['malivlak'], palette: ['east'] },
+        { title: 'Menunggu kereta', story: 'Petugas berdiri di rel dengan bendera. Semua siap.', hide: ['tuas', 'sinyal'], start: { at: [1, 4], h: 'E' },
+          decor: [{ at: [2, 1], art: 'malivlak-char/orkes/kontrabas' }, { at: [2, 5], art: 'malivlak-char/petugas-stasiun/berdiri' }],
+          bo: 'Bawa Malivlak ke bendera di stasiun.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 6, budget: 3, forms: ['malivlak'], palette: ['east'] }
+      ] }),
+
+    // 16 Malivlak rolls in along the curve and runs PAST the welcomers (they turn their heads), stopping near the signal
+    L({ id: 'mv16', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 16, title: 'Melewati Penyambut', place: 'Peron Penyambutan', icon: 'cmd/down', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'berbelok' },
+      grid: { rows: 4, cols: 8, map: [',,,,,,,,', '....,,,,', ',,,.,,,,', ',,,.....'], theme: 'town' },
+      mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/bendera' }, { at: [3, 1], art: 'malivlak-char/penyambut/jangkung', react: 'malivlak-char/penyambut/jangkung-bungkuk' }, { at: [2, 5], art: 'malivlak-char/orkes/pemimpin-tongkat' }, { at: [2, 6], art: 'kereta-tile/signal-green' }],
+      objects: [{ id: 'flag', type: 'flag', at: [3, 7] }],
+      beats: [{ title: 'Lewat dan berhenti', story: 'Malivlak melewati para penyambut dan berhenti.',
+        bo: 'Lewati penyambut, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [3, 7] }], slots: 12, budget: 9, forms: ['malivlak'], palette: ['east', 'down'] }] }),
+
+    // 17 at the signal: Malivlak's chimney bends over and pushes the arm (green to red), then the whole train walks back to the platform
+    L({ id: 'mv17', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 17, title: 'Sinyal Jadi Merah', place: 'Dekat Sinyal', icon: 'cmd/west', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'sebab dan akibat' },
+      grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,', ',,,,,,,,'], theme: 'town' },
+      mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      objects: [
+        { id: 'sg', type: 'mark', at: [1, 4], order: 1, seq: 'sinyal', art: 'kereta-tile/signal-green', name: 'Sinyal hijau' },
+        { id: 'peron', type: 'flag', at: [1, 0] }
+      ],
+      beats: [
+        { title: 'Dorong lengan sinyal', story: 'Cerobong Malivlak menyentuh lengan sinyal.', hide: ['peron'],
+          cine: { end: { fx: [{ id: 'bk-flare-01', at: [1, 4], size: 130 }, { id: 'bk-star-05', at: [1, 4], size: 90, delay: 200 }] } },
+          decor: [{ at: [2, 6], art: 'malivlak-char/petugas-stasiun/bendera-bawah' }, { at: [2, 1], art: 'malivlak-char/penyambut/pendek' }, { at: [0, 6], art: 'kereta-tile/water-tower' }],
+          bo: 'Bawa Malivlak ke sinyal hijau.', objectives: [{ 'do': 'visit', id: 'sg' }], slots: 7, budget: 4, forms: ['malivlak'], palette: ['east'] },
+        { title: 'Kembali ke peron', story: 'Sinyal merah. Rangkaian berjalan kembali.', hide: ['sg'], start: { at: [1, 5], h: 'W' },
+          decor: [{ at: [2, 6], art: 'malivlak-char/petugas-stasiun/bendera-bawah' }, { at: [2, 1], art: 'malivlak-char/penyambut/pendek' }, { at: [2, 4], art: 'kereta-tile/signal-red' }, { at: [0, 6], art: 'kereta-tile/water-tower' }],
+          bo: 'Bawa Malivlak ke bendera di peron.', objectives: [{ 'do': 'reach', at: [1, 0] }], slots: 8, budget: 5, forms: ['malivlak'], palette: ['west'] }
+      ] }),
+
+    // 18 the speech: wait while the speaker reads, then a big puff of steam fills the platform and cuts him off
+    L({ id: 'mv18', ch: 'mv-ch4', terrain: 'town', mood: 'sun', n: 18, title: 'Pidato Terganggu Uap', place: 'Depan Stasiun', icon: 'cmd/wait', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'menunggu giliran' },
+      grid: { rows: 4, cols: 8, map: [',,,.,,,,', '........', ',,,.,,,,', ',,,,,,,,'], theme: 'town' },
+      mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      objects: [
+        { id: 'drag', type: 'patrol', at: [0, 3], name: 'Dragutin', art: 'train/dragutin', path: [[0, 3], [1, 3], [2, 3], [2, 3], [1, 3], [0, 3]], phase: 2 },
+        { id: 'flag', type: 'flag', at: [1, 7] }
+      ],
+      beats: [
+        { title: 'Pidato dimulai', story: 'Pria di tengah membaca pidato. Dragutin lewat.',
+          decor: [{ at: [2, 6], art: 'malivlak-char/pembaca-pidato/gestur', react: 'malivlak-char/pembaca-pidato/kertas' }],
+          bo: 'Tunggu Dragutin lewat, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 8, forms: ['malivlak'], palette: ['east', 'wait'] },
+        { title: 'Uap memenuhi peron', story: 'Uap putih menutup pidato. Pembaca terkejut.', start: { at: [1, 4], h: 'E' },
+          cine: { end: { fx: [{ id: 'bk-smoke-07', at: [2, 6], size: 220 }, { id: 'bk-smoke-01', at: [2, 6], size: 170, delay: 220 }, { id: 'bk-smoke-05', at: [2, 5], size: 150, delay: 400 }] } },
+          decor: [{ at: [2, 6], art: 'malivlak-char/pembaca-pidato/terkejut' }],
+          bo: 'Bawa Malivlak ke bendera di depan.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 6, budget: 3, forms: ['malivlak'], palette: ['east'] }
+      ] }),
+
+    // 19 the wreath is carried on Malivlak's nose, the medal goes to the driver (salute), and the train leaves the station
+    L({ id: 'mv19', ch: 'mv-ch4', terrain: 'town', mood: 'sunset', n: 19, title: 'Karangan dan Medali', place: 'Peron Seremoni', icon: 'cmd/pick', bg: 'bg-mv-penyambutan', edu: { domain: 'algoritma', skill: 'urutan' },
+      grid: { rows: 4, cols: 8, map: [',,,.,,,,', '........', ',,,,,,,,', ',,,,,,,,'], theme: 'town' },
+      mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      objects: [
+        { id: 'karangan', type: 'parcel', at: [0, 3], kind: 'karangan', name: 'Karangan daun', art: 'kereta-prop/wreath' },
+        { id: 'medali', type: 'mark', at: [1, 5], order: 1, seq: 'medali', art: 'kereta-prop/medal', name: 'Medali' },
+        { id: 'flag', type: 'flag', at: [1, 7] }
+      ],
+      beats: [
+        { title: 'Pasang karangan', story: 'Karangan daun dipasang di depan Malivlak.', hide: ['medali', 'flag'],
+          decor: [{ at: [2, 4], art: 'malivlak-char/orkes/pemimpin-kiri' }, { at: [2, 1], art: 'malivlak-char/penyambut/pendek' }],
+          bo: 'Ambil karangan daun di peron.', objectives: [{ 'do': 'carry', id: 'karangan' }], slots: 7, budget: 4, forms: ['malivlak'], palette: ['east', 'pick'] },
+        { title: 'Medali untuk masinis', story: 'Medali berpita merah untuk masinis.', hide: ['karangan', 'flag'], start: { at: [1, 3], h: 'E' },
+          decor: [{ at: [2, 2], art: 'malivlak-char/penyambut/pendek-medali' }, { at: [2, 4], art: 'malivlak-char/orkes/drum-angkat' }],
+          bo: 'Bawa Malivlak ke medali.', objectives: [{ 'do': 'visit', id: 'medali' }], slots: 4, budget: 2, forms: ['malivlak'], palette: ['east'] },
+        { title: 'Berangkat', story: 'Masinis memberi hormat. Malivlak berangkat.', hide: ['karangan', 'medali'], start: { at: [1, 4], h: 'E' },
+          decor: [{ at: [2, 2], art: 'malivlak-char/orkes/tuba-tekuk' }, { at: [2, 5], art: 'malivlak-char/masinis/medali' }],
+          bo: 'Bawa Malivlak ke bendera, keluar stasiun.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 6, budget: 3, forms: ['malivlak'], palette: ['east'] }
+      ] }),
+
+    // 20 BIG ADVENTURE: the line to the big building on the hill, through the wide doors, and Malivlak settles among the old vehicles with his wreath
+    L({ id: 'mv20', ch: 'mv-ch4', big: true, quiet: true, terrain: 'meadow', mood: 'sunset', n: 20, title: 'Masuk Museum', place: 'Petualangan Besar', icon: 'cmd/east', bg: 'bg-mv-pedesaan',
+      bgs: ['bg-mv-pedesaan', 'bg-mv-museum', 'bg-mv-museum'], edu: { domain: 'campuran', skill: 'urutan perjalanan' },
+      celebrate: ['malivlak-char/masinis/medali', 'malivlak-char/penyambut/pendek-medali'],
+      grid: { rows: 4, cols: 8, map: [',,,,,,,,', '........', ',,,,,,,,', ',,,,,,,,'], theme: 'hill' },
+      mojo: { at: [1, 0], h: 'E', form: 'malivlak' },
+      objects: [
+        { id: 'f1', type: 'flag', at: [1, 7] },
+        { id: 'f2', type: 'flag', at: [1, 7] },
+        { id: 'f3', type: 'flag', at: [1, 7] }
+      ],
+      beats: [
+        { title: 'Jalan ke museum', story: 'Rel menuju bangunan besar di bukit.', hide: ['f2', 'f3'], cine: { end: { letterbox: 1800 } },
+          decor: [{ at: [2, 3], art: 'malivlak-char/penumpang-jas-kotak/jalan' }, { at: [0, 2], art: 'kereta-prop/pine' }, { at: [0, 6], art: 'kereta-prop/tree-round' }],
+          bo: 'Ikuti rel sampai ke bendera di museum.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['malivlak'], palette: ['east'] },
+        { title: 'Masuk pintu lebar', story: 'Malivlak masuk lebih dulu, gerbong menyusul.', hide: ['f1', 'f3'], terrain: 'depot', start: { at: [1, 0], h: 'E' },
+          decor: [{ at: [2, 4], art: 'malivlak-char/orkes/kontrabas-2', react: 'malivlak-char/orkes/terompet-atas' }, { at: [2, 1], art: 'mojo-train/diesel' }, { at: [2, 6], art: 'mojo-train/tanker' }],
+          bo: 'Masuk ke museum, ke bendera.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['malivlak'], palette: ['east'] },
+        { title: 'Di antara koleksi', story: 'Malivlak berhenti di antara kendaraan lama.', hide: ['f1', 'f2'], terrain: 'depot', start: { at: [1, 0], h: 'E' },
+          cine: { end: { letterbox: 2400, fx: [{ id: 'bk-star-02', at: [1, 7], size: 200, n: 3, spread: 40 }, { id: 'bk-light-02', at: [1, 7], size: 300, delay: 300 }] } },
+          decor: [{ at: [2, 2], art: 'malivlak-char/masinis/pipa' }, { at: [2, 5], art: 'mojo-train/cargo-nate' }, { at: [2, 7], art: 'mojo-train/coach-slip' }],
+          bo: 'Berhenti di bendera, di antara koleksi.', objectives: [{ 'do': 'reach', at: [1, 7] }], slots: 11, budget: 7, forms: ['malivlak'], palette: ['east'] }
       ] })
 
   ]
   var NARR = { name: 'Masinis', full: 'Masinis Malivlak', art: { wave: 'malivlak-char/masinis/jalan', think: 'malivlak-char/masinis/terkejut', celebrate: 'malivlak-char/masinis/medali', tools: 'malivlak-char/masinis/palu' } }
   var STORY = { id: 'malivlak', hero: 'malivlak', heroName: 'Malivlak', narrator: NARR, saveKey: 'dunia-g15k-kereta-malivlak', logo: ['Dragutin dan', 'Malivlak'], docTitle: 'Dragutin dan Malivlak', collection: 'Teman-Teman Malivlak',
     heroes: { dragutin: { name: 'Dragutin', sprite: 'dragutin', color: '#2E8B57' }, malivlak: { name: 'Malivlak', sprite: 'malivlak', color: '#B5432B' } },
-    pins: { 'mv-ch1': [30, 50], 'mv-ch2': [52, 38], 'mv-ch3': [72, 56] },
+    pins: { 'mv-ch1': [30, 50], 'mv-ch2': [52, 38], 'mv-ch3': [72, 56], 'mv-ch4': [90, 40] },
     cast: [
       { id: 'malivlak', name: 'Malivlak', ability: 'Lokomotif uap kecil yang periang, membawa tiga gerbong.', key: 'train-char/malivlak/34l-happy' },
       { id: 'dragutin', name: 'Dragutin', ability: 'Kereta modern hijau yang panjang dan cepat.', key: 'train-char/dragutin/34l-happy' },

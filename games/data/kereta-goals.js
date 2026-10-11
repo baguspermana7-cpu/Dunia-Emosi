@@ -28,7 +28,7 @@
     [/malivlak-char\/petugas-bagasi/, 'Kuli bagasi'], [/malivlak-char\/penyambut/, 'Penyambut'], [/malivlak-char\/pembaca/, 'Pembaca pidato'],
     [/train-char\/dragutin/, 'Dragutin'], [/train-char\/malivlak/, 'Malivlak'], [/train-char\/silver/, 'Kilat Perak'], [/train-char\/defeatist/, 'Tuan Lemas'],
     [/kereta-prop\/mail/, 'Surat'], [/kereta-prop\/ticket/, 'Loket'],
-    [/animal\/deer/, 'Rusa'], [/animal\/turtle/, 'Kura-kura'], [/animal\/(vulture|hering|raven|crow)/, 'Burung Hering'], [/animal\/bird/, 'Burung'], [/animal\/rabbit/, 'Kelinci'],
+    [/animal\/deer/, 'Rusa'], [/animal\/turtle/, 'Kura-kura'], [/animal\/(vulture|hering|raven|crow)/, 'Burung Hering'], [/animal\/bird/, 'Burung'], [/animal\/(rabbit|kelinci)/, 'Kelinci'], [/animal\/beruang/, 'Beruang'], [/animal\/ikan/, 'Ikan'],
     [/kereta-prop\/log/, 'Kayu'], [/kereta-prop\/barrel/, 'Tong'], [/kereta-prop\/lantern/, 'Lampu'], [/kereta-prop\/coal/, 'Batu bara'],
     [/kereta-prop\/sawmill/, 'Penggergajian'], [/kereta-prop\/engine-house/, 'Depo'], [/kereta-prop\/station/, 'Stasiun'], [/kereta-prop\/farmhouse/, 'Rumah']
   ]
