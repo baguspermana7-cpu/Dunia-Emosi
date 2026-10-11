@@ -108,6 +108,24 @@ for n in (1, 2): tx[f'flame_0{n}'] = ['fire', 'trail']
 for k, tags in tx.items():
     add_tex('bk-' + k.replace('_', '-'), f'{BK}/particles/alpha/{k}_a.png', B, tags)
 
+# --- Owner-supplied Blippi-set effects (clouds, rainbow, rays, leaves, ripples, splash): reusable across Bagus-owned games, never redistributed standalone ---
+OWN = os.path.expanduser('~/Documents/temporary/uiux/visual effect/sudah organized/curated/blippi-owner')
+os.makedirs(OUT + '/licenses', exist_ok=True)
+open(OUT + '/licenses/owner-supplied-internal.txt', 'w').write('Owner-supplied effects (Blippi set), copied from visual effect/sudah organized/curated/blippi-owner.\nUsage scope: Bagus-owned games only. Standalone redistribution as an asset library is NOT established.\n')
+LIC['owner'] = dict(status='owner-supplied-internal', credit='Owner-supplied Blippi effect set (internal, Bagus-owned games)', file='assets/vfx/licenses/owner-supplied-internal.txt', terms='Reusable across Bagus-owned games; no standalone redistribution')
+def add_own(id, name, tags, blend='normal'):
+    src = f'{OWN}/{name}.webp'; im = Image.open(src).convert('RGBA'); f = id + '.webp'
+    im.save(os.path.join(OUT, f), 'WEBP', quality=90, alpha_quality=100, method=5)
+    db.append(dict(id=id, file='assets/vfx/' + f, frames=1, cols=1, rows=1, fw=im.size[0], fh=im.size[1], fps=0, dur=600, loop=False, blend=blend,
+        anchor=[0.5, 0.5], scale=1.0, kind='texture', tags=tags, kid_safe=True, license=LIC['owner'], pack='Owner-supplied Blippi effect set', source=os.path.relpath(src, SRC), sha256=sha(src)))
+PA, BD = 'preschool-adventure-effects-sprite-sheet--', 'blippi-discovery-game-effects-collection--'
+for i, n, t, b in [('ow-soft-cloud', PA + 'soft-cloud', ['cloud', 'sky', 'soft'], 'normal'), ('ow-rainbow', PA + 'rainbow', ['rainbow', 'sky', 'happy'], 'normal'),
+        ('ow-light-rays', PA + 'light-rays', ['light', 'rays', 'sun'], 'screen'), ('ow-flying-leaves', BD + 'flying-leaves', ['leaves', 'wind', 'autumn'], 'normal'),
+        ('ow-leaf-swirl', PA + 'green-leaf-swirl', ['leaves', 'wind', 'green'], 'normal'), ('ow-water-ripple', BD + 'water-ripple', ['water', 'ripple'], 'screen'),
+        ('ow-blue-ripple', PA + 'blue-water-ripple', ['water', 'ripple', 'sparkle'], 'screen'), ('ow-splash-crown', BD + 'water-splash-crown', ['water', 'splash'], 'normal'),
+        ('ow-droplets', BD + 'water-droplets', ['water', 'droplets', 'rain'], 'normal')]:
+    add_own(i, n, t, b)
+
 db.sort(key=lambda e: e['id'])
 import colorsys
 def hue_stats(e):

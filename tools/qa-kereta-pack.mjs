@@ -250,6 +250,70 @@ if (!process.argv.includes('--headless')) {
       await p._ctx.close()
     }
   }
+  {   // board life (kereta-weather.js / kereta-life.js): each mood/terrain builds its overlay set, an NPC tap reacts, reduced motion builds none
+    const p = await page(390, 844); let tapped = 0, lives = 0
+    for (const id of ML.LEVELS.map(l => l.id)) {
+      await p.evaluate(i => __mojo.start(i), id); await sleep(380)
+      const r = await p.evaluate(() => {
+        const s = document.getElementById('scr-play'), n = sel => document.querySelectorAll('#scr-play ' + sel).length
+        return { mood: s.dataset.mood, terr: s.dataset.terrain, cloud: n('.kw-cloud'), wx: n('.kw-wx'), ray: n('.kw-ray'), rb: n('.kw-rainbow'), fly: n('.kw-fly'), snow: n('.kw-snow'), mist: n('.kw-mist'), leaf: n('.kw-leaf'), bfly: n('.kw-bfly') }
+      })
+      const dark = /night|dream/.test(r.mood), wet = /rain|storm/.test(r.mood), bright = !dark && !wet, tag = `${id} (${r.mood}/${r.terr})`
+      check(r.cloud >= 2 && r.wx === 1, `${tag}: sky clouds and the weather layer are built (${r.cloud} clouds)`)
+      check(dark ? r.fly >= 6 : r.fly === 0, `${tag}: fireflies only at night/dream (${r.fly})`)
+      check(bright && /meadow|logging|mountain|depot/.test(r.terr) ? r.ray >= 1 : r.ray === 0, `${tag}: light rays only on bright boards (${r.ray})`)
+      check(r.mood === 'sun' && /meadow|depot|town/.test(r.terr) ? r.rb === 1 : r.rb === 0, `${tag}: rainbow only on a sunny meadow/depot/town (${r.rb})`)
+      check(r.terr === 'mountain' && !wet ? r.snow >= 10 : r.snow === 0, `${tag}: snow only on a dry mountain (${r.snow})`)
+      check(/gorge|mountain/.test(r.terr) && !wet ? r.mist >= 1 : r.mist === 0, `${tag}: mist only in gorge/mountain valleys (${r.mist})`)
+      check(r.terr === 'logging' && r.mood !== 'storm' && !dark ? r.leaf >= 1 : r.leaf === 0, `${tag}: falling leaves only in logging (${r.leaf})`)
+      check(bright && r.terr === 'meadow' ? r.bfly >= 1 : r.bfly === 0, `${tag}: butterfly only on a bright meadow (${r.bfly})`)
+      const rbBox = await p.evaluate(() => { const r = document.querySelector('#scr-play .kw-rainbow'), b = document.getElementById('board-wrap'); return r ? [r.getBoundingClientRect().bottom, b.getBoundingClientRect().top] : null })
+      check(!rbBox || rbBox[0] <= rbBox[1] + 3, `${tag}: the ambient rainbow stays in the sky band above the board`)
+      // markers + rail must keep >= 85% of their contrast (luminance stddev) with the weather on vs off
+      await sleep(900)
+      await p.evaluate(() => { document.getAnimations().forEach(a => { try { a.pause() } catch (e) {} }); const st = document.createElement('style'); st.id = 'qa-freeze'; st.textContent = '*{animation-play-state:paused!important}'; document.head.appendChild(st) })
+      await sleep(150)
+      const rects = await p.evaluate(() => {
+        const out = [], c = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cell')) || 64, b = document.getElementById('board').getBoundingClientRect()
+        document.querySelectorAll('#objs .ob, .k-flag').forEach(e => { const r = e.getBoundingClientRect(); if (r.width > 8 && r.height > 8 && getComputedStyle(e).opacity !== '0') out.push(['marker', r.left, r.top, r.width, r.height]) })
+        const m = document.getElementById('mojo'); if (m) { const r = m.getBoundingClientRect(), y = r.top + r.height / 2; out.push(['rail', b.left + 4, y - c * .2, b.width - 8, c * .4]) }
+        return out
+      })
+      const shot = async () => (await p.screenshot({ encoding: 'base64' }))
+      const on = await shot()
+      await p.evaluate(() => document.querySelectorAll('.kw-sky,.kw-wx,.kw-under').forEach(n => { n.dataset.d = n.style.display; n.style.display = 'none' }))
+      await sleep(120); const off = await shot()
+      await p.evaluate(() => { document.querySelectorAll('.kw-sky,.kw-wx,.kw-under').forEach(n => { n.style.display = n.dataset.d || '' }); const f = document.getElementById('qa-freeze'); f && f.remove(); document.getAnimations().forEach(a => { try { a.play() } catch (e) {} }) })
+      const sd = await p.evaluate(async (a, b64, rs) => {
+        const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode()
+        const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height; const x = cv.getContext('2d'); x.drawImage(img, 0, 0)
+        return rs.map(([k, l, t, w, h]) => { l = Math.max(0, Math.round(l)); t = Math.max(0, Math.round(t)); w = Math.min(img.width - l, Math.round(w)); h = Math.min(img.height - t, Math.round(h)); if (w < 4 || h < 4) return 0
+          const d = x.getImageData(l, t, w, h).data; let n = 0, s = 0, q = 0; for (let i = 0; i < d.length; i += 4) { const y = .2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2]; s += y; q += y * y; n++ } const m = s / n; return Math.sqrt(Math.max(0, q / n - m * m)) })
+      }, null, on, rects)
+      const sdOff = await p.evaluate(async (a, b64, rs) => {
+        const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode()
+        const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height; const x = cv.getContext('2d'); x.drawImage(img, 0, 0)
+        return rs.map(([k, l, t, w, h]) => { l = Math.max(0, Math.round(l)); t = Math.max(0, Math.round(t)); w = Math.min(img.width - l, Math.round(w)); h = Math.min(img.height - t, Math.round(h)); if (w < 4 || h < 4) return 0
+          const d = x.getImageData(l, t, w, h).data; let n = 0, s = 0, q = 0; for (let i = 0; i < d.length; i += 4) { const y = .2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2]; s += y; q += y * y; n++ } const m = s / n; return Math.sqrt(Math.max(0, q / n - m * m)) })
+      }, null, off, rects)
+      const worst = rects.map((r, i) => [r[0], sdOff[i] > 6 ? sd[i] / sdOff[i] : 1]).sort((a, b) => a[1] - b[1])[0]
+      check(!worst || worst[1] >= 0.85, `${tag}: weather on keeps >= 85% of every marker's and the rail's contrast (worst ${worst ? worst[0] + ' ' + worst[1].toFixed(2) : 'n/a'} of ${rects.length})`)
+      await sleep(900)
+      const live = await p.evaluate(() => window.KeretaLife ? KeretaLife.live().filter(l => l.alive).length : -1)
+      if (live > 0 && !tapped) { lives++; const ok = await p.evaluate(() => KeretaLife.tap(0)); await sleep(250); tapped = await p.evaluate(() => document.querySelectorAll('.k-pop, .k-say').length); check(ok && tapped > 0, `${id}: a tap on an NPC/animal reacts (hearts/notes + a bubble)`) }
+    }
+    check(lives > 0, 'at least one level has a tappable NPC or animal')
+    await p._ctx.close()
+    const c = await browser.createBrowserContext(), q = await c.newPage(); await q.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true })
+    await q.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+    q.on('pageerror', e => errors.push('reduced-motion ' + e.message))
+    await q.goto(URL, { waitUntil: 'load' }); await q.waitForFunction('window.__mojo && __mojo.ready')
+    await q.evaluate(i => __mojo.start(i), ML.LEVELS[0].id); await sleep(1500)
+    const rm = await q.evaluate(() => ({ sky: document.querySelectorAll('.kw-sky,.kw-wx,.kw-cloud').length, ctl: !!window.KeretaWeather, life: document.querySelectorAll('.k-pop,.k-say,.k-live').length, fringeAnim: [...document.querySelectorAll('.k-fringe i')].some(i => getComputedStyle(i).animationName !== 'none') }))
+    check(rm.sky === 0 && !rm.ctl, `reduced motion: no sky/weather overlay is built (${rm.sky})`)
+    check(!rm.fringeAnim, 'reduced motion: the grass fringe stands still')
+    await c.close()
+  }
   {
     const p = await page(1280, 800, BASE + '/games/mojo-swoptops.html')
     check(await p.evaluate(() => !document.documentElement.getAttribute('data-pack') && __mojo.levels()[0] === 't1' && /Swoptops/.test(document.querySelector('.logo').textContent)), 'the plain Mojo page is not skinned')

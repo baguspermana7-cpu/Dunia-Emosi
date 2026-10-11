@@ -2393,6 +2393,346 @@
    "blippi_safe": true
   },
   {
+   "id": "ow-blue-ripple",
+   "file": "assets/vfx/ow-blue-ripple.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 249,
+   "fh": 145,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "screen",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "water",
+    "ripple",
+    "sparkle"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/preschool-adventure-effects-sprite-sheet--blue-water-ripple.webp",
+   "sha256": "48574699bc365cd5449af516b6f20ea2a809d176c0f975f0fecc3544dc019e61",
+   "hue": 200,
+   "sat": 0.53,
+   "fill": 1.0,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-droplets",
+   "file": "assets/vfx/ow-droplets.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 119,
+   "fh": 237,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "normal",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "water",
+    "droplets",
+    "rain"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/blippi-discovery-game-effects-collection--water-droplets.webp",
+   "sha256": "60941a8bc19ed620e3abe604e024ef751d677a0c71945efc93592f1e608f42de",
+   "hue": 207,
+   "sat": 0.54,
+   "fill": 0.96,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-flying-leaves",
+   "file": "assets/vfx/ow-flying-leaves.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 223,
+   "fh": 212,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "normal",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "leaves",
+    "wind",
+    "autumn"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/blippi-discovery-game-effects-collection--flying-leaves.webp",
+   "sha256": "fd9629c4c135357b335c5d51a6d5ff9a7709e5eedbe16837ad0b3e654930c6d6",
+   "hue": 28,
+   "sat": 0.71,
+   "fill": 0.96,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-leaf-swirl",
+   "file": "assets/vfx/ow-leaf-swirl.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 250,
+   "fh": 222,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "normal",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "leaves",
+    "wind",
+    "green"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/preschool-adventure-effects-sprite-sheet--green-leaf-swirl.webp",
+   "sha256": "29cb3f7bc43db0335b0bc8d5d64813698027eb67475f62c438fcdffaa5049b26",
+   "hue": 98,
+   "sat": 0.62,
+   "fill": 0.97,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-light-rays",
+   "file": "assets/vfx/ow-light-rays.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 185,
+   "fh": 205,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "screen",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "light",
+    "rays",
+    "sun"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/preschool-adventure-effects-sprite-sheet--light-rays.webp",
+   "sha256": "7d4fb61732ed98e3ccd5764abc1cded72ce9119e05a5bad1f6f3154c175cdad8",
+   "hue": 44,
+   "sat": 0.35,
+   "fill": 1.0,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-rainbow",
+   "file": "assets/vfx/ow-rainbow.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 248,
+   "fh": 154,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "normal",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "rainbow",
+    "sky",
+    "happy"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/preschool-adventure-effects-sprite-sheet--rainbow.webp",
+   "sha256": "57b014844c09d8bb032c73818f2b5720a71163be8977005fbdf13cfc88cc9e78",
+   "hue": 55,
+   "sat": 0.48,
+   "fill": 1.0,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-soft-cloud",
+   "file": "assets/vfx/ow-soft-cloud.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 251,
+   "fh": 173,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "normal",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "cloud",
+    "sky",
+    "soft"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/preschool-adventure-effects-sprite-sheet--soft-cloud.webp",
+   "sha256": "6fe982d17614116ec2e02430abb428bef3620f17b6a6156b30b132c3dedbe1e6",
+   "hue": 215,
+   "sat": 0.15,
+   "fill": 1.0,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-splash-crown",
+   "file": "assets/vfx/ow-splash-crown.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 243,
+   "fh": 193,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "normal",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "water",
+    "splash"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/blippi-discovery-game-effects-collection--water-splash-crown.webp",
+   "sha256": "a831ecf8067908e8a37577dc867afdd91b89d63e4c57e684077a507a5a5e46b0",
+   "hue": 203,
+   "sat": 0.53,
+   "fill": 0.96,
+   "blippi_safe": true
+  },
+  {
+   "id": "ow-water-ripple",
+   "file": "assets/vfx/ow-water-ripple.webp",
+   "frames": 1,
+   "cols": 1,
+   "rows": 1,
+   "fw": 247,
+   "fh": 99,
+   "fps": 0,
+   "dur": 600,
+   "loop": false,
+   "blend": "screen",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "scale": 1.0,
+   "kind": "texture",
+   "tags": [
+    "water",
+    "ripple"
+   ],
+   "kid_safe": true,
+   "license": {
+    "status": "owner-supplied-internal",
+    "credit": "Owner-supplied Blippi effect set (internal, Bagus-owned games)",
+    "file": "assets/vfx/licenses/owner-supplied-internal.txt",
+    "terms": "Reusable across Bagus-owned games; no standalone redistribution"
+   },
+   "pack": "Owner-supplied Blippi effect set",
+   "source": "sudah organized/curated/blippi-owner/blippi-discovery-game-effects-collection--water-ripple.webp",
+   "sha256": "535b18eff923430a537dbeface6fa6b0b5abc6a119554d6a8cf8adb3df7f5881",
+   "hue": 204,
+   "sat": 0.33,
+   "fill": 0.97,
+   "blippi_safe": true
+  },
+  {
    "id": "px-bluefire",
    "file": "assets/vfx/px-bluefire.webp",
    "frames": 61,
