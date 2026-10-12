@@ -188,7 +188,8 @@
   var KIND = { batu: 'batu bara' }
   def.verbWords = function (lv) { var w = {}, d = WORDS._, o = WORDS[lv.id] || {}, k; for (k in d) w[k] = d[k]; for (k in o) w[k] = o[k]; return w }
   // a train filling its own coal bin: "Isi", not "Tutup" (Lomba ke Kota only; other hole types keep the engine wording)
-  def.fillText = function (o, lv) { return lv && /^hb\d/.test(lv.id) ? 'Isi ' + String(o.name || 'bak').replace(/^([A-Z])([a-z])/, function (m, a, b) { return a.toLowerCase() + b }) : null }
+  // every hole on a train board is a coal bin or a firebox: the verb is ISI ("Isi tungku"), never Mojo's "Tutup"
+  def.fillText = function (o) { return 'Isi ' + String(o.name || 'bak').replace(/^([A-Z])([a-z])/, function (m, a, b) { return a.toLowerCase() + b }) }
   def.goalText = function (ob, stop, lv) {
     var lows = function (n) { return /^[A-Z][a-z]+$/.test(n) ? n : n.charAt(0).toLowerCase() + n.slice(1) }
     var items = (lv.objects || []).filter(function (o) { return PICK[o.type] && o.type !== 'wagon' && (stop.accepts === o.id || stop.accepts === o.type || stop.accepts === o.kind) })

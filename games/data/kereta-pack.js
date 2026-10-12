@@ -664,7 +664,17 @@
     swap(MA.showcase, CAST.map(function (c) { return { id: c.id, name: c.name, ability: c.ability, src: lib(c.key), film: true, note: c.ability } }))
   }
   if (D && D.addEventListener) {
-    var ready = function () { reskinStatic(); buildHub(); rewireExit(); addSteam(); startReact() }
+    // owner 2026-10-12: on a landscape phone the narrator's speech sits in the top bar's empty space beside the goal chips,
+    // so the command buttons keep their whole column; it goes back above the palette everywhere else
+    var mqTop = W.matchMedia && W.matchMedia('(orientation: landscape) and (max-height: 520px)')
+    var placeBo = function () {
+      var bo = D.getElementById('bo'), top = D.querySelector('#scr-play .p-top'), side = D.querySelector('#scr-play .p-side'), rule = D.getElementById('btn-rule')
+      if (!bo || !top || !side) return
+      if (mqTop && mqTop.matches) { if (bo.parentNode !== top) top.insertBefore(bo, rule && rule.parentNode === top ? rule : null) }
+      else if (bo.parentNode !== side) side.insertBefore(bo, side.firstChild)
+    }
+    if (mqTop) { if (mqTop.addEventListener) mqTop.addEventListener('change', placeBo); else if (mqTop.addListener) mqTop.addListener(placeBo) }
+    var ready = function () { reskinStatic(); buildHub(); rewireExit(); addSteam(); startReact(); placeBo() }
     if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', ready); else ready()
   }
 })(typeof window !== 'undefined' ? window : globalThis)

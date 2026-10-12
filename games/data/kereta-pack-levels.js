@@ -444,7 +444,7 @@
       beats: [
         { title: 'Isi tungku', story: 'Henry dan Katrina menyekop batu bara.',
           bo: 'Muat batu bara, sekop ke tungku.', hide: ['papan', 'flag'],
-          decor: [{ at: [5, 4], art: 'story-char/henry/shovel' }, { at: [1, 0], art: 'story-char/katrina/shovel' }, { at: [5, 6], art: 'story-char/baron/stand' }],
+          decor: [{ at: [5, 4], art: 'story-char/henry/shovel' }, { at: [1, 0], art: 'story-char/katrina/shovel' }, { at: [5, 7], art: 'story-char/baron/stand' }],
           objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [2, 4] }], slots: 14, budget: 11, forms: [HERO], palette: ['east', 'down', 'west', 'load', 'dump'] },
         { title: 'Papan di rel patah', story: 'Rel patah. Linus memasang papan.',
           bo: 'Pasang papan di rel patah, lalu ke bendera.', hide: ['tumpukan', 'tungku', 'flag'],
