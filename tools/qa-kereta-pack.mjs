@@ -48,7 +48,7 @@ const starts = lv => {
 const ACT = { DORONG: 'push', SEMPROT: 'spray', NAIK: 'raise', TURUN: 'lower', TOLONG: 'rescue', PERBAIKI: 'repair', LOMPAT: 'jump', AMBIL: 'pick', TERBANG: 'takeoff',
   ANTAR: 'deliver', GANDENG: 'couple', BUKA: 'unlock', ISI: 'load', TUANG: 'dump', PASANG: 'place', TUNGGU: 'wait' }
 const NAMED = ['deliver', 'visit', 'train', 'fill', 'open', 'place', 'carry']
-const report = []
+const report = [], shape = []
 for (const lv of ML.LEVELS) {
   const v = PG.verify(lv)
   check(v.ok && v.complete, `${lv.id} "${lv.title}" is solvable beat by beat within its slots ${v.problems.join(' | ')}`)
@@ -60,6 +60,11 @@ for (const lv of ML.LEVELS) {
     check(r.shortest != null && b.slots >= r.shortest + 2 && b.slots <= r.shortest + 6, `${lv.id} beat ${bi + 1}: slots ${b.slots} = shortest ${r.shortest} + 2..6`)
     const sol = (st[bi] && PG.solve(st[bi], b)) || []
     check(sol.every(c => b.palette.includes(c)), `${lv.id} beat ${bi + 1}: the solution uses only palette commands`)
+    // route shape (docs/KERETA-ROUTES-BRIEF.md): moves = movement commands, turns = direction changes between consecutive movement commands
+    const mv = sol.filter(c => ['up', 'down', 'west', 'east'].includes(c)), turns = mv.filter((c, i) => i && c !== mv[i - 1]).length
+    const opening = ML.LEVELS.indexOf(lv) < 2
+    shape.push({ id: lv.id, beat: bi + 1, moves: mv.length, turns })
+    check(mv.length >= (opening ? 6 : 8) && turns >= (opening ? 1 : 2), `${lv.id} beat ${bi + 1}: route shape moves ${mv.length} turns ${turns} (need >= ${opening ? '6/1' : '8/2'})`)
     const extra = b.palette.filter(c => !['up', 'down', 'west', 'east'].includes(c) && !sol.includes(c))
     check(!extra.length, `${lv.id} beat ${bi + 1}: palette holds only needed actions ${extra.join(',')}`)
     const first = (b.bo.match(/^.*?[.!?](?:\s|$)/) || [b.bo])[0].trim().toLowerCase()
@@ -74,6 +79,8 @@ for (const lv of ML.LEVELS) {
   // story fields the Mojo shell reads
   check(lv.title && lv.place && lv.icon && lv.bg && lv.beats.every(b => b.story && b.bo), `${lv.id}: title, place, icon, background, story and narrator line present`)
 }
+for (const r of shape) console.log(`route  ${r.id} ${r.beat} ${r.moves} ${r.turns}`)
+check(shape.filter(r => r.moves >= 11 && r.turns >= 3).length * 3 >= shape.length, `at least a third of ${STORY} beats are long winding routes (moves>=11, turns>=3): ${shape.filter(r => r.moves >= 11 && r.turns >= 3).length}/${shape.length}`)
 // Lomba ke Kota (owner 2026-10-11): the old steam train Si Gigih is the HERO (>= 55% of levels), Kilat Perak the rival; no "Tuan Lemas" / "hell" in any UI string
 if (STORY === 'hellbent') {
   const gig = ML.LEVELS.filter(l => l.mojo && l.mojo.form === 'gigih').length, kil = ML.LEVELS.filter(l => l.mojo && l.mojo.form === 'kilat').length
@@ -199,10 +206,11 @@ if (!process.argv.includes('--headless')) {
       const want = (topCam ? ['top-n', 'top-e', 'top-s', 'top-w'] : ['rear', 'front-34r', 'front', 'front-34l'])[st.h]
       check(st.id === id && !!HEROES[st.form] && st.src && (HEROES[st.form].art ? st.src.indexOf(HEROES[st.form].art) > 0 : st.src.indexOf(HEROES[st.form].sprite + '/' + want + '.') > 0), `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
       await sleep(450)
-      const clash = await p.evaluate(() => { const t = [...document.querySelectorAll('#decor .k-name, #objs .k-name')].filter(e => e.getClientRects().length && getComputedStyle(e).opacity !== '0'), out = []
+      const gap = w === 844 ? -2 : 3   // 844x390 (phone landscape): tags must also not TOUCH (within 2 px)
+      const clash = await p.evaluate(gap => { const t = [...document.querySelectorAll('#decor .k-name, #objs .k-name')].filter(e => e.getClientRects().length && getComputedStyle(e).opacity !== '0'), out = []
         const R = t.map(e => e.getBoundingClientRect())
-        for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const a = R[i], c = R[j]; const ox = Math.min(a.right, c.right) - Math.max(a.left, c.left), oy = Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top); if (ox > 3 && oy > 3) out.push(t[i].textContent + '/' + t[j].textContent) }
-        return out })
+        for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const a = R[i], c = R[j]; const ox = Math.min(a.right, c.right) - Math.max(a.left, c.left), oy = Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top); if (ox > gap && oy > gap) out.push(t[i].textContent + '/' + t[j].textContent) }
+        return out }, gap)
       check(clash.length === 0, `${w}x${h} ${id}: no two name tags overlap ${clash.slice(0, 3).join(', ')}`)
       // every name tag matches the art drawn under it (a figure takes its label from the art, never from a level's rider name)
       const tags = await p.evaluate(() => [...document.querySelectorAll('#decor .dec.cast, #objs .ob')].map(h => { const t = h.querySelector(':scope > .k-name'), i = h.querySelector('img.main, img'); const m = i && /assets\/db\/lib\/(.+?)\.webp/.exec(i.getAttribute('src') || ''); return t && m ? [t.textContent, m[1], h.className] : null }).filter(Boolean))
