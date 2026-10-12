@@ -30,7 +30,11 @@ try{
   }
   await begin(p,'m8');await p.evaluate(()=>__mojo.start('m8'));await tap(p,'#in-go');
   check(await p.$eval('#ov-card',e=>e.textContent.includes('Paling Tepat')&&e.textContent.includes('Bisa Juga')),`${width} both picker badges`);await shot(p,`${width}-picker`);await tap(p,'#picker-later');
-  const levels=process.env.QA_LEVELS?process.env.QA_LEVELS.split(','):await p.evaluate(()=>__mojo.levels());
+  // Every level is played at the FIRST size; the other sizes play every 8th level plus the last one (layout check).
+  // A full 4-size sweep took ~48 min and was killed by callers' timeouts, so it looked like a hang. QA_FULL=1 restores it.
+  const all=process.env.QA_LEVELS?process.env.QA_LEVELS.split(','):await p.evaluate(()=>__mojo.levels());
+  const levels=(process.env.QA_FULL||width===sizes[0][0]&&height===sizes[0][1])?all:all.filter((id,i)=>i%8===0||i===all.length-1);
+  console.log(`${width}x${height}: ${levels.length}/${all.length} levels`);
   for(const id of levels){
    await begin(p,id);let saved=false;const seen=new Set();
    for(let guard=0;guard<500;guard++){

@@ -141,7 +141,9 @@ try{
  await start('t2');await program(['west']);for(let k=0;k<2;k++){assert.equal(await p.$eval('#btn-show',e=>e.hidden),true);await tap('#btn-run');await idle()}
  assert.equal(await p.$eval('#btn-show',e=>e.hidden),false,'offered after two stopped runs');console.log('Tunjukkan Caranya offered after two stopped runs PASS');
  // ── show me: fills a solvable plan for EVERY beat of EVERY level, narrates it, the child runs it, 1 star ──
+ // ~22 min for all levels: print progress so a long run is never mistaken for a hang
  for(const id of await LEVELS(p)){
+  console.log(`  show-me ${id} ...`);
   await start(id);const beats=await p.evaluate(()=>__mojo.state().beats);
   for(let bi=0;bi<beats;bi++){
    await p.waitForFunction(b=>__mojo.state().beat===b&&!__mojo.state().trans&&!document.getElementById('btn-run').disabled,{},bi);
