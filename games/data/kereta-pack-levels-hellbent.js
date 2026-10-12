@@ -201,7 +201,7 @@
       grid: { rows: 5, cols: 9, map: [',,.,.,,,,', '.......,,', ',,,,.,.,,', ',,,,,,...', ',,,,,,,.,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'gigih' },
       res: { sand: 0 }, cap: { sand: 2 },
-      decor: [{ at: [3, 2], art: 'animal/deer/graze' }, { at: [0, 6], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }],
+      decor: [{ at: [3, 2], art: 'animal/deer/graze' }, { at: [0, 8], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [0, 2], res: 'sand', n: 1, art: 'obj/hb-batu', name: 'Batu bara' },
         { id: 'tungku', type: 'hole', at: [4, 7], need: 2, res: 'sand', art: 'obj/hb-bak', name: 'Bak batu bara' },

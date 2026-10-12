@@ -226,54 +226,86 @@
   }
 
   /* ── name tags never sit on each other: after each layout, a tag that overlaps an earlier one slides up or down by its own height ── */
-  var nudgeT = 0
+  var nudgeT = 0, FR = 8   // a tag may sit on the board's white frame (6 px white + 4 px rim), never past it
   function nudge () {
-    var tags = [].slice.call(D.querySelectorAll('#decor .k-name, #objs .k-name'))
-    tags.forEach(function (t) { t.style.translate = '' })
+    // every position is worked out on paper from each tag's resting place, then written once: a tag only ever glides to its new spot
+    var tags = [].slice.call(D.querySelectorAll('#decor .k-name, #objs .k-name')).filter(function (t) { return t.getClientRects().length })
+    var ov = function (a, b, m) { return Math.min(a.right, b.right) - Math.max(a.left, b.left) > m && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > m }
+    var at = function (b, dx, dy) { return { left: b.left + dx, right: b.right + dx, top: b.top + dy, bottom: b.bottom + dy, width: b.width, height: b.height } }
+    var items = tags.map(function (t) {
+      var cs = W.getComputedStyle(t), r = t.getBoundingClientRect(), cur = (cs.translate || '').split(' '), cx = parseFloat(cur[0]) || 0, cy = parseFloat(cur[1]) || 0
+      // the entrance animation slides the tag up 4 px: measure where it will rest, not where it is mid-fade
+      try { if (cs.transform && cs.transform !== 'none') cy += new W.DOMMatrix(cs.transform).m42 } catch (e) {}
+      return { t: t, own: t.closest('.ob, .dec'), base: at(r, -cx, -cy), dx: 0, dy: 0, lz: 0 }
+    })
+    items.sort(function (a, b) { return a.base.top - b.base.top || a.base.left - b.base.left })
+    // first onto the board: a tag at the left or right edge slides back, a bottom-row tag rises just enough to sit on the frame
+    var bd = D.getElementById('board'); bd = bd && bd.getBoundingClientRect()
+    if (bd) items.forEach(function (it) {
+      var r = it.base
+      if (r.left < bd.left - FR) it.dx = bd.left - FR - r.left; else if (r.right > bd.right + FR) it.dx = bd.right + FR - r.right
+      if (r.bottom > bd.bottom + FR) it.dy = bd.bottom + FR - r.bottom; else if (r.top < bd.top - FR) it.dy = bd.top - FR - r.top
+    })
     var done = []
-    tags.sort(function (a, b) { var A = a.getBoundingClientRect(), B = b.getBoundingClientRect(); return A.top - B.top || A.left - B.left })
-    tags.forEach(function (t) {
-      if (!t.getClientRects().length) return
-      var tr = 0, dir = 1, tries = 0
-      for (;;) {
-        var r = t.getBoundingClientRect(), hit = null
-        for (var i = 0; i < done.length; i++) { var o = done[i], ox = Math.min(r.right, o.right) - Math.max(r.left, o.left), oy = Math.min(r.bottom, o.bottom) - Math.max(r.top, o.top); if (ox > 2 && oy > 2) { hit = o; break } }
+    items.forEach(function (it) {
+      var dir = it.t.classList.contains('up') ? -1 : 1, y0 = it.dy
+      for (var tries = 0; ; tries++) {
+        var r = at(it.base, it.dx, it.dy), hit = null
+        for (var i = 0; i < done.length; i++) if (ov(r, done[i], 2)) { hit = done[i]; break }
         if (!hit || tries > 8) { done.push(r); break }
-        tries++; tr += (t.classList.contains('up') ? -1 : 1) * (hit.height + 1); t.style.translate = '0 ' + tr + 'px'
+        it.dy += dir * (hit.height + 1)
+        // pushed past the frame: try the other way from where it started instead
+        var n = at(it.base, it.dx, it.dy)
+        if (bd && dir === (it.t.classList.contains('up') ? -1 : 1) && (n.bottom > bd.bottom + FR || n.top < bd.top - FR)) { dir = -dir; it.dy = y0 }
       }
     })
-    // a tag behind another figure's sprite (a pine, a bird, Linus parked at the start) stays readable: its own figure comes forward
+    // a tag behind another figure's sprite (a pine, a bird) stays readable: its own figure comes forward
     var zOf = function (e) { return +(e && e.style.zIndex) || 0 }   // the row depth mojo-board-look writes inline, never the lift itself
-    var sprites = [].slice.call(D.querySelectorAll('#decor .dec img, #objs .ob img, #mojo-mod img')).filter(function (i) { return i.getClientRects().length && !i.closest('.gone, .k-name, .k-bubble, .k-ghost') })
-    var items = tags.map(function (t) { var own = t.closest('.ob, .dec'); return own && t.getClientRects().length ? { own: own, r: t.getBoundingClientRect(), z: zOf(own), lz: 0 } : null }).filter(Boolean)
+    var sprites = [].slice.call(D.querySelectorAll('#decor .dec img, #objs .ob img, #mojo-mod img')).filter(function (i) { return i.getClientRects().length && !i.closest('.gone, .k-name, .k-bubble, .k-ghost') }).map(function (i) { return { host: i.closest('.ob, .dec, #mojo'), img: i, r: i.getBoundingClientRect() } })
     var effZ = function (h) { for (var k = 0; k < items.length; k++) if (items[k].own === h && items[k].lz) return items[k].lz; return zOf(h) }
     // a lifted figure can cover the next tag (a passenger in front of the ticket booth): settle in a few passes, the later lift wins a true tie
     for (var pass = 0, changed = true; pass < 3 && changed; pass++) {
       changed = false
       items.forEach(function (it) {
-        var mine = it.lz || it.z, need = 0
-        for (var i = 0; i < sprites.length; i++) {
-          var host = sprites[i].closest('.ob, .dec, #mojo')
-          if (!host || host === it.own || it.own.contains(sprites[i])) continue
-          var hz = effZ(host); if (hz < mine) continue
-          var s = sprites[i].getBoundingClientRect(), r = it.r
-          if (Math.min(r.right, s.right) - Math.max(r.left, s.left) > 2 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) > 2) need = Math.max(need, 600 + it.z, hz + 1)
-        }
+        if (!it.own) return
+        var mine = it.lz || zOf(it.own), need = 0, r = at(it.base, it.dx, it.dy)
+        sprites.forEach(function (s) {
+          if (!s.host || s.host === it.own || it.own.contains(s.img)) return
+          var hz = effZ(s.host); if (hz < mine) return
+          if (ov(r, s.r, 2)) need = Math.max(need, 600 + zOf(it.own), hz + 1)
+        })
         if (need && need !== it.lz) { it.lz = need; changed = true }
       })
     }
+    // #objs carries the mood filter, so it is ONE layer: Linus and every decor figure always draw over it. An object's tag under one
+    // of them cannot come forward, so it steps sideways by the smallest amount that clears them all and stays on the board
+    var br = D.getElementById('board'); br = br && br.getBoundingClientRect()
+    if (br) {
+      var over = sprites.filter(function (s) { return s.host && (s.host.id === 'mojo' || s.host.closest('#decor')) })
+      var text = function (r) { return at({ left: r.left + 9, right: r.right - 9, top: r.top, bottom: r.bottom, width: r.width - 18, height: r.height }, 0, 0) }   // the letters, not the pill padding
+      var fits = function (r, me) {
+        return r.left >= br.left - FR && r.right <= br.right + FR && !over.some(function (o) { return ov(text(r), o.r, 2) }) &&
+          !items.some(function (x) { return x !== me && ov(r, at(x.base, x.dx, x.dy), 2) })
+      }
+      items.forEach(function (it) {
+        if (!it.t.closest('#objs')) return   // objects and the story's tow wagon
+        var r = at(it.base, it.dx, it.dy); if (!over.some(function (o) { return ov(text(r), o.r, 2) })) return
+        var best = null
+        over.forEach(function (o) {
+          [o.r.right - r.left - 7, o.r.left - r.right + 7].forEach(function (d) { if (fits(at(r, d, 0), it) && (best === null || Math.abs(d) < Math.abs(best))) best = d })
+        })
+        if (best !== null) it.dx += best
+      })
+    }
     ;[].forEach.call(D.querySelectorAll('.board .k-lift'), function (e) { if (!items.some(function (it) { return it.own === e && it.lz })) e.classList.remove('k-lift') })
-    items.forEach(function (it) { if (it.lz) { it.own.style.setProperty('--k-z', it.lz); it.own.classList.add('k-lift') } })
-    // #objs carries the mood filter, so it is one layer and Linus always draws over it: an object's tag under him steps sideways instead
-    var hero = D.querySelector('#mojo-mod img'), hr = hero && hero.getClientRects().length && hero.getBoundingClientRect(), br = D.getElementById('objs')
-    br = br && br.getBoundingClientRect()
-    if (hr && br) items.forEach(function (it) {
-      if (!it.own.closest('#objs')) return
-      var t = it.own.querySelector(':scope > .k-name'), r = t && t.getBoundingClientRect()
-      if (!r || Math.min(r.right, hr.right) - Math.max(r.left, hr.left) <= 2 || Math.min(r.bottom, hr.bottom) - Math.max(r.top, hr.top) <= 2) return
-      var right = hr.right - r.left + 2, left = r.right - hr.left + 2
-      var dx = (r.left + r.right) / 2 >= (hr.left + hr.right) / 2 && r.right + right <= br.right ? right : r.left - left >= br.left ? -left : right
-      t.style.translate = dx + 'px ' + ((t.style.translate || '0 0').split(' ')[1] || '0')
+    items.forEach(function (it) {
+      if (it.lz) { if (it.own.style.getPropertyValue('--k-z') !== String(it.lz)) it.own.style.setProperty('--k-z', it.lz); it.own.classList.add('k-lift') }
+      var tr = it.dx || it.dy ? Math.round(it.dx) + 'px ' + Math.round(it.dy) + 'px' : ''
+      // the first placement happens while the tag is still fading in, so it is instant; every later move glides
+      var born = +it.t.getAttribute('data-k-t') || 0, now = Date.now(); if (!born) it.t.setAttribute('data-k-t', born = now)
+      if (it.t.style.translate !== tr) {
+        if (now - born < 800) { it.t.style.transition = 'none'; it.t.style.translate = tr; void it.t.offsetWidth; it.t.style.transition = '' } else it.t.style.translate = tr
+      }
     })
   }
   def.nudgeTags = function () { clearTimeout(nudgeT); nudgeT = setTimeout(nudge, 140) }

@@ -324,7 +324,7 @@ html[data-pack="kereta"] .ob.k-filled .k-ghost{display:none}
 html[data-pack="kereta"] .ob.k-post .tag{min-width:max(34px,calc(var(--cell)*.5));height:max(34px,calc(var(--cell)*.5));border-radius:50%;font-size:max(20px,calc(var(--cell)*.32));background:linear-gradient(180deg,#fff7df,#f1d9a0);box-shadow:0 0 0 3px #8a5528,0 4px 0 rgba(0,0,0,.3);top:-14%;right:-6%}
 html[data-pack="kereta"] .ob.k-next::before{content:'';position:absolute;inset:-6%;border-radius:50%;box-shadow:0 0 0 4px rgba(255,214,90,.95),0 0 18px 6px rgba(255,214,90,.7);animation:kPulse 1.1s ease-in-out infinite;pointer-events:none}
 html[data-pack="kereta"] .ob.flag.k-final::before{content:'';position:absolute;inset:-14%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,236,140,.95),rgba(255,214,90,0));animation:kPulse 1.2s ease-in-out infinite;pointer-events:none;z-index:0}
-html[data-pack="kereta"] .k-name{position:absolute;left:50%;transform:translateX(-50%);padding:1px 8px;border-radius:999px;background:rgba(255,247,223,.94);color:#4a2d12;font:800 11px/16px 'Nunito',sans-serif;white-space:nowrap;box-shadow:0 0 0 1.5px #8a5528,0 2px 0 rgba(0,0,0,.25);z-index:7;pointer-events:none;animation:kNameIn .5s .35s both var(--ease-out,ease-out)}
+html[data-pack="kereta"] .k-name{position:absolute;left:50%;transform:translateX(-50%);padding:1px 8px;border-radius:999px;background:rgba(255,247,223,.94);color:#4a2d12;font:800 11px/16px 'Nunito',sans-serif;white-space:nowrap;box-shadow:0 0 0 1.5px #8a5528,0 2px 0 rgba(0,0,0,.25);z-index:7;pointer-events:none;animation:kNameIn .5s .35s both var(--ease-out,ease-out);transition:translate .28s var(--ease-out,ease-out)}
 html[data-pack="kereta"] .k-name.down{top:96%}
 html[data-pack="kereta"] .k-name.up{bottom:104%}
 html[data-pack="kereta"] .dec.cast .k-name.down{top:100%}
@@ -347,7 +347,7 @@ html[data-pack="kereta"] .k-check.k-ready .k-grp.done{animation:kPop .6s var(--e
 @keyframes kGhost{to{transform:scale(1.07)}}
 @keyframes kPop{0%{transform:scale(.6)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
 @keyframes kNameIn{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%)}}
-@media(prefers-reduced-motion:reduce){html[data-pack="kereta"] .k-bubble,html[data-pack="kereta"] .k-glow,html[data-pack="kereta"] .k-ghost,html[data-pack="kereta"] .k-name,.k-slot.pop,.k-next::before,.k-final::before{animation:none!important}}
+@media(prefers-reduced-motion:reduce){html[data-pack="kereta"] .k-bubble,html[data-pack="kereta"] .k-glow,html[data-pack="kereta"] .k-ghost,html[data-pack="kereta"] .k-name,.k-slot.pop,.k-next::before,.k-final::before{animation:none!important}html[data-pack="kereta"] .k-name{transition:none!important}}
 
 /* ── the tender: a carried load rides IN an open wooden car behind Linus, never on his head ── */
 html[data-pack="kereta"] .mj-cargo{left:50%;bottom:4%;width:60%;height:50%;transform:translateX(-50%);z-index:3}

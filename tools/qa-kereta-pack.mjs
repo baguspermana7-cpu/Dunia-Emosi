@@ -204,6 +204,9 @@ if (!process.argv.includes('--headless')) {
       const im = /k-flag|flag/.test(m.className) ? (m.querySelector('img') || m) : m
       if (hit(R[i], im.getBoundingClientRect())) out.push(t.textContent + '~' + (m.className || '').toString().split(' ').slice(0, 2).join('.'))
     }))
+    // and a tag stays on the board: none hangs past its 10 px frame (bottom-row tags used to dangle under it)
+    const ob = document.getElementById('board').getBoundingClientRect()
+    tags.forEach((t, i) => { const r = R[i]; if (r.left < ob.left - 10 || r.right > ob.right + 10 || r.top < ob.top - 10 || r.bottom > ob.bottom + 10) out.push(t.textContent + ' off the board') })
     // a tag must also stay readable: no other figure's sprite may be painted over its text (bl05: the blue bird hid "Tuan Men...")
     const st = document.createElement('style'); st.textContent = '#board *{pointer-events:auto!important}'; document.head.appendChild(st)
     tags.forEach((t, i) => {

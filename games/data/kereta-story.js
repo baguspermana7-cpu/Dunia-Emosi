@@ -67,6 +67,8 @@
     if (m && lay.isConnected) {
       var p = pos(m), h = +m.getAttribute('data-heading') || 1, d = DIR[h], hz = h === 1 || h === 3
       var tx = p[0] + d[0] * c * 1.15, ty = p[1] + d[1] * c * .95
+      // behind Linus can be off the board (he starts at the edge facing in): the wagon waits tucked at the edge and glides out after him
+      tx = Math.max(0, Math.min(lay.clientWidth - c, tx)); ty = Math.max(0, Math.min(lay.clientHeight - c, ty))
       if (R.virtual && !R.broken) {
         if (R.x == null) { R.x = tx; R.y = ty }
         R.x += (tx - R.x) * .16; R.y += (ty - R.y) * .16
