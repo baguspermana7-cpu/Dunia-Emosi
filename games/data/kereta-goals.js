@@ -242,6 +242,39 @@
         tries++; tr += (t.classList.contains('up') ? -1 : 1) * (hit.height + 1); t.style.translate = '0 ' + tr + 'px'
       }
     })
+    // a tag behind another figure's sprite (a pine, a bird, Linus parked at the start) stays readable: its own figure comes forward
+    var zOf = function (e) { return +(e && e.style.zIndex) || 0 }   // the row depth mojo-board-look writes inline, never the lift itself
+    var sprites = [].slice.call(D.querySelectorAll('#decor .dec img, #objs .ob img, #mojo-mod img')).filter(function (i) { return i.getClientRects().length && !i.closest('.gone, .k-name, .k-bubble, .k-ghost') })
+    var items = tags.map(function (t) { var own = t.closest('.ob, .dec'); return own && t.getClientRects().length ? { own: own, r: t.getBoundingClientRect(), z: zOf(own), lz: 0 } : null }).filter(Boolean)
+    var effZ = function (h) { for (var k = 0; k < items.length; k++) if (items[k].own === h && items[k].lz) return items[k].lz; return zOf(h) }
+    // a lifted figure can cover the next tag (a passenger in front of the ticket booth): settle in a few passes, the later lift wins a true tie
+    for (var pass = 0, changed = true; pass < 3 && changed; pass++) {
+      changed = false
+      items.forEach(function (it) {
+        var mine = it.lz || it.z, need = 0
+        for (var i = 0; i < sprites.length; i++) {
+          var host = sprites[i].closest('.ob, .dec, #mojo')
+          if (!host || host === it.own || it.own.contains(sprites[i])) continue
+          var hz = effZ(host); if (hz < mine) continue
+          var s = sprites[i].getBoundingClientRect(), r = it.r
+          if (Math.min(r.right, s.right) - Math.max(r.left, s.left) > 2 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) > 2) need = Math.max(need, 600 + it.z, hz + 1)
+        }
+        if (need && need !== it.lz) { it.lz = need; changed = true }
+      })
+    }
+    ;[].forEach.call(D.querySelectorAll('.board .k-lift'), function (e) { if (!items.some(function (it) { return it.own === e && it.lz })) e.classList.remove('k-lift') })
+    items.forEach(function (it) { if (it.lz) { it.own.style.setProperty('--k-z', it.lz); it.own.classList.add('k-lift') } })
+    // #objs carries the mood filter, so it is one layer and Linus always draws over it: an object's tag under him steps sideways instead
+    var hero = D.querySelector('#mojo-mod img'), hr = hero && hero.getClientRects().length && hero.getBoundingClientRect(), br = D.getElementById('objs')
+    br = br && br.getBoundingClientRect()
+    if (hr && br) items.forEach(function (it) {
+      if (!it.own.closest('#objs')) return
+      var t = it.own.querySelector(':scope > .k-name'), r = t && t.getBoundingClientRect()
+      if (!r || Math.min(r.right, hr.right) - Math.max(r.left, hr.left) <= 2 || Math.min(r.bottom, hr.bottom) - Math.max(r.top, hr.top) <= 2) return
+      var right = hr.right - r.left + 2, left = r.right - hr.left + 2
+      var dx = (r.left + r.right) / 2 >= (hr.left + hr.right) / 2 && r.right + right <= br.right ? right : r.left - left >= br.left ? -left : right
+      t.style.translate = dx + 'px ' + ((t.style.translate || '0 0').split(' ')[1] || '0')
+    })
   }
   def.nudgeTags = function () { clearTimeout(nudgeT); nudgeT = setTimeout(nudge, 140) }
   W.addEventListener('resize', def.nudgeTags)

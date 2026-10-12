@@ -62,7 +62,7 @@
       grid: { rows: 5, cols: 9, map: [',.,,,,,,,', '....,,,.,', ',,,.,,,.,', ',,,.....,', ',,,,,.,,,'], theme: 'town' },
       mojo: { at: [1, 0], h: 'E', form: 'gigih' },
       res: { sand: 0 }, cap: { sand: 2 },
-      decor: [{ at: [0, 5], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }, { at: [2, 6], art: 'animal/deer/graze' }],
+      decor: [{ at: [0, 5], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }, { at: [2, 5], art: 'animal/deer/graze' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [0, 1], res: 'sand', n: 1, art: 'obj/hb-batu', name: 'Batu bara' },
         { id: 'tungku', type: 'hole', at: [4, 5], need: 2, res: 'sand', art: 'obj/hb-bak', name: 'Bak batu bara' },
@@ -272,7 +272,7 @@
       bunting: { at: [0, 0], n: 8 },
       crowd: { at: [5, 3], n: 8 },
       mojo: { at: [1, 0], h: 'E', form: 'gigih' },
-      decor: [{ at: [3, 3], art: 'animal/deer/graze', label: 'Pak Rusa (juri)' }, { at: [3, 1], art: 'animal/bird-blue/fly' }, { at: [3, 5], art: 'train/kilat' }],
+      decor: [{ at: [3, 3], art: 'animal/deer/graze', label: 'Pak Rusa (juri)' }, { at: [5, 4], art: 'animal/bird-blue/fly' }, { at: [3, 5], art: 'train/kilat' }],
       objects: [
         { id: 'bendera', type: 'parcel', at: [5, 0], kind: 'bendera', name: 'Bendera pesta', art: 'game/flag-red' },
         { id: 'bintang', type: 'parcel', at: [0, 4], kind: 'bintang', name: 'Bintang', art: 'obj/semangat' },

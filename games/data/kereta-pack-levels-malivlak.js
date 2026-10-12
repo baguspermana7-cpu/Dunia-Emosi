@@ -29,7 +29,7 @@
       grid: { rows: 4, cols: 8, map: ['........', ',,,.,,,,', ',,,.,,,,', '........'], theme: 'town' },
       mojo: { at: [0, 0], h: 'E', form: 'dragutin' },
       sign: { at: [1, 4], text: 'STASIUN', w: 2 },
-      decor: [{ at: [2, 5], art: 'char/mv-petugas' }, { at: [1, 6], art: 'char/mv-jas' }, { at: [1, 1], art: 'char/mv-ungu' }, { at: [2, 1], art: 'obj/loket' }],
+      decor: [{ at: [2, 5], art: 'char/mv-petugas' }, { at: [1, 6], art: 'char/mv-jas' }, { at: [1, 2], art: 'char/mv-ungu' }, { at: [2, 0], art: 'obj/loket' }],
       objects: [{ id: 'flag', type: 'flag', at: [3, 7] }],
       beats: [{ title: 'Berhenti di peron', story: 'Dragutin masuk stasiun dan berhenti di peron.',
         bo: 'Bawa Dragutin ke bendera di peron.', objectives: [{ 'do': 'reach', at: [3, 7] }], slots: 13, budget: 10, forms: ['dragutin'], palette: ['down', 'east'] }] }),
@@ -100,10 +100,10 @@
       ],
       beats: [
         { title: 'Keluar dari rel', story: 'Malivlak menerobos ladang gandum. Ada kelinci.', hide: ['pria', 'gerbong'], fx: ['leaves'],
-          decor: [{ at: [0, 5], art: 'malivlak-char/penumpang-ungu/berdiri' }, { at: [3, 4], art: 'animal/kelinci/berdiri' }, { at: [4, 8], art: 'kereta-prop/haystack' }],
+          decor: [{ at: [0, 5], art: 'malivlak-char/penumpang-ungu/berdiri' }, { at: [4, 1], art: 'animal/kelinci/berdiri' }, { at: [4, 8], art: 'kereta-prop/haystack' }],
           bo: 'Tunggu kelinci lewat, lalu ke bendera.', objectives: [{ 'do': 'reach', at: [3, 5] }], slots: 15, budget: 12, forms: ['malivlak'], palette: ['east', 'down', 'west', 'wait'] },
         { title: 'Pria berkoper naik', story: 'Pria berkoper terjatuh, lalu naik. Kolam di depan!', hide: ['kelinci', 'flag'], start: { at: [1, 2], h: 'E' }, fx: ['leaves'],
-          decor: [{ at: [3, 3], art: 'animal/kelinci/berdiri' }, { at: [4, 8], art: 'kereta-prop/haystack' }],
+          decor: [{ at: [4, 2], art: 'animal/kelinci/berdiri' }, { at: [4, 8], art: 'kereta-prop/haystack' }],
           bo: 'Naikkan pria, turunkan di gerbong.', objectives: [{ 'do': 'deliver', id: 'gerbong' }], slots: 13, budget: 10, forms: ['malivlak'], palette: MOVE.concat(['pick', 'deliver']) }
       ] }),
 
@@ -142,10 +142,10 @@
       ],
       beats: [
         { title: 'Kumpul di bawah pohon', story: 'Gerbong berkumpul di sekitar Malivlak.', hide: ['flag'],
-          decor: [{ at: [0, 2], art: 'kereta-prop/tree-round' }, { at: [2, 6], art: 'malivlak-char/penumpang-ungu/duduk' }, { at: [0, 5], art: 'animal/kelinci/jongkok' }, { at: [0, 0], art: 'animal/kelinci/duduk-belakang' }],
+          decor: [{ at: [0, 2], art: 'kereta-prop/tree-round' }, { at: [2, 6], art: 'malivlak-char/penumpang-ungu/duduk' }, { at: [3, 1], art: 'animal/kelinci/jongkok' }, { at: [0, 0], art: 'animal/kelinci/duduk-belakang' }],
           bo: 'Gerbong 1, 2, lalu gerbong 3.', objectives: [{ 'do': 'visit', id: 'k1' }, { 'do': 'visit', id: 'k2' }, { 'do': 'visit', id: 'k3' }], slots: 12, budget: 9, forms: ['malivlak'], palette: MOVE },
         { title: 'Kembali ke rel', story: 'Rangkaian memanjang lagi dan kembali ke rel.', hide: ['k1', 'k2', 'k3'],
-          decor: [{ at: [0, 2], art: 'kereta-prop/tree-round' }, { at: [2, 6], art: 'malivlak-char/penumpang-ungu/duduk' }, { at: [0, 5], art: 'animal/kelinci/jongkok' }, { at: [0, 0], art: 'animal/kelinci/duduk-belakang' }],
+          decor: [{ at: [0, 2], art: 'kereta-prop/tree-round' }, { at: [2, 6], art: 'malivlak-char/penumpang-ungu/duduk' }, { at: [3, 1], art: 'animal/kelinci/jongkok' }, { at: [0, 0], art: 'animal/kelinci/duduk-belakang' }],
           bo: 'Bawa rangkaian ke bendera di rel.', objectives: [{ 'do': 'reach', at: [0, 6] }], slots: 13, budget: 10, forms: ['malivlak'], palette: ['east', 'west', 'up'] }
       ] }),
 
@@ -275,13 +275,13 @@
       ],
       beats: [
         { title: 'Petugas ke tuas', story: 'Petugas mengatur tuas wesel. Musik bersiap.', hide: ['sinyal', 'flag'],
-          decor: [{ at: [2, 1], art: 'malivlak-char/petugas-stasiun/berdiri' }, { at: [0, 5], art: 'kereta-prop/signal-box' }],
+          decor: [{ at: [3, 1], art: 'malivlak-char/petugas-stasiun/berdiri' }, { at: [0, 5], art: 'kereta-prop/signal-box' }],
           bo: 'Bawa Malivlak ke tuas wesel.', objectives: [{ 'do': 'visit', id: 'tuas' }], slots: 12, budget: 9, forms: ['malivlak'], palette: ['east', 'down', 'up'] },
         { title: 'Atur sinyal', story: 'Sinyal diatur. Para pemusik membawa alat tiup.', hide: ['tuas', 'flag'], start: { at: [1, 2], h: 'E' },
           decor: [{ at: [0, 1], art: 'kereta-prop/signal-box' }],
           bo: 'Bawa Malivlak ke sinyal.', objectives: [{ 'do': 'visit', id: 'sinyal' }], slots: 13, budget: 10, forms: ['malivlak'], palette: ['east', 'down', 'up'] },
         { title: 'Menunggu kereta', story: 'Kelompok musik siap di peron menunggu kereta.', hide: ['tuas', 'sinyal'], start: { at: [3, 6], h: 'E' },
-          decor: [{ at: [3, 7], art: 'malivlak-char/petugas-stasiun/berdiri' }],
+          decor: [{ at: [1, 7], art: 'malivlak-char/petugas-stasiun/berdiri' }],
           bo: 'Bawa Malivlak ke bendera di stasiun.', objectives: [{ 'do': 'reach', at: [3, 8] }], slots: 11, budget: 8, forms: ['malivlak'], palette: ['east', 'down', 'up'] }
       ] }),
 

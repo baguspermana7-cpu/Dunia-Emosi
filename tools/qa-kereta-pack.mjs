@@ -188,6 +188,35 @@ if (!process.argv.includes('--headless')) {
     p.on('pageerror', e => errors.push(`${w}x${h} ${e.message}`)); p.on('requestfailed', r => { if (/\.(webp|js|css)/.test(r.url()) && !/ERR_ABORTED/.test((r.failure() || {}).errorText || '')) errors.push(`${w}x${h} request failed ${r.url()}`) })
     await p.goto(url || URL, { waitUntil: 'load' }); await p.waitForFunction('window.__mojo && __mojo.ready'); return p
   }
+  // name tags must not overlap each other NOR a goal marker of a different object (chip, ghost target, flag, numbered post);
+  // 844x390 (phone landscape): touching within 2 px fails, elsewhere > 3 px overlap fails
+  // a patrol walking past behind Linus hides its tag for a moment: only a clash that is still there 0.7 s later counts
+  const tagClash = async (pg, w) => { const a = await tagClash1(pg, w); if (!a.length) return a; await sleep(700); const b = await tagClash1(pg, w); return a.filter(x => b.includes(x)) }
+  const tagClash1 = (pg, w) => pg.evaluate(gap => {
+    const vis = e => { if (!e.getClientRects().length) return false; for (let n = e; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (+cs.opacity < 0.05 || cs.visibility === 'hidden' || cs.display === 'none') return false } return true }
+    const tags = [...document.querySelectorAll('#decor .k-name, #objs .k-name')].filter(vis)
+    const marks = [...document.querySelectorAll('#board .ob-chip, #board .k-ghost, #board .k-flag, #board .k-post, #objs .ob.flag')].filter(vis)
+    const hit = (a, c) => Math.min(a.right, c.right) - Math.max(a.left, c.left) > gap && Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top) > gap
+    const out = [], R = tags.map(e => e.getBoundingClientRect())
+    for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) if (hit(R[i], R[j])) out.push(tags[i].textContent + '/' + tags[j].textContent)
+    tags.forEach((t, i) => marks.forEach(m => {
+      const own = t.closest('.ob, .dec'); if (own && own.contains(m)) return
+      const im = /k-flag|flag/.test(m.className) ? (m.querySelector('img') || m) : m
+      if (hit(R[i], im.getBoundingClientRect())) out.push(t.textContent + '~' + (m.className || '').toString().split(' ').slice(0, 2).join('.'))
+    }))
+    // a tag must also stay readable: no other figure's sprite may be painted over its text (bl05: the blue bird hid "Tuan Men...")
+    const st = document.createElement('style'); st.textContent = '#board *{pointer-events:auto!important}'; document.head.appendChild(st)
+    tags.forEach((t, i) => {
+      const own = t.closest('.ob, .dec'), r = R[i], y = (r.top + r.bottom) / 2
+      for (const f of [0.1, 0.3, 0.5, 0.7, 0.9]) {   // points on the text, not on the 8 px pill padding
+        // walk the stack top-down past effect layers: the first thing that is either this tag or another figure's sprite decides
+        const e = document.elementsFromPoint(r.left + 9 + (r.width - 18) * f, y).find(x => t.contains(x) || (x.tagName === 'IMG' && x.closest('.ob, .dec, #mojo-mod')))
+        if (e && !t.contains(e) && e.closest('.ob, .dec, #mojo-mod') !== own) { out.push(t.textContent + ' under ' + (e.getAttribute('src') || '').split('/').slice(-2).join('/').split('?')[0]); break }
+      }
+    })
+    st.remove()
+    return out
+  }, w === 844 ? -2 : 3)
   console.log('--- B browser')
   for (const [w, h] of [[390, 844], [844, 390], [1280, 800]]) {
     const p = await page(w, h)
@@ -199,25 +228,34 @@ if (!process.argv.includes('--headless')) {
     // every level starts and the hero faces its heading
     for (const id of ML.LEVELS.map(l => l.id)) {
       await p.evaluate(id => __mojo.start(id), id); await sleep(150)
-      const intro = await p.$('#in-go'); if (intro) { await intro.click(); await sleep(80) }
+      await p.evaluate(() => { const e = document.getElementById('in-go'); if (e) e.click() }); await sleep(80)
       const st = await p.evaluate(() => { const s = __mojo.state(), m = document.querySelector('#mojo-mod img'); return { id: s.id, h: s.position.h, src: m && m.getAttribute('src'), form: s.form, bo: document.getElementById('bo-img').getAttribute('src') } })
       // owner 2026-10-11: the board stays flat and Linus STANDS on it, drawn from the side he shows (kereta-cam.js)
       const topCam = ML.byId(id).view === 'top'
       const want = (topCam ? ['top-n', 'top-e', 'top-s', 'top-w'] : ['rear', 'front-34r', 'front', 'front-34l'])[st.h]
       check(st.id === id && !!HEROES[st.form] && st.src && (HEROES[st.form].art ? st.src.indexOf(HEROES[st.form].art) > 0 : st.src.indexOf(HEROES[st.form].sprite + '/' + want + '.') > 0), `${w}x${h} ${id}: Linus faces his heading (${want}) -> ${st.src}`)
       await sleep(450)
-      const gap = w === 844 ? -2 : 3   // 844x390 (phone landscape): tags must also not TOUCH (within 2 px)
-      const clash = await p.evaluate(gap => { const t = [...document.querySelectorAll('#decor .k-name, #objs .k-name')].filter(e => e.getClientRects().length && getComputedStyle(e).opacity !== '0'), out = []
-        const R = t.map(e => e.getBoundingClientRect())
-        for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const a = R[i], c = R[j]; const ox = Math.min(a.right, c.right) - Math.max(a.left, c.left), oy = Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top); if (ox > gap && oy > gap) out.push(t[i].textContent + '/' + t[j].textContent) }
-        return out }, gap)
-      check(clash.length === 0, `${w}x${h} ${id}: no two name tags overlap ${clash.slice(0, 3).join(', ')}`)
+      const clash = await tagClash(p, w)
+      check(clash.length === 0, `${w}x${h} ${id}: no name tag overlaps another tag or a goal marker ${clash.slice(0, 3).join(', ')}`)
       // every name tag matches the art drawn under it (a figure takes its label from the art, never from a level's rider name)
       const tags = await p.evaluate(() => [...document.querySelectorAll('#decor .dec.cast, #objs .ob')].map(h => { const t = h.querySelector(':scope > .k-name'), i = h.querySelector('img.main, img'); const m = i && /assets\/db\/lib\/(.+?)\.webp/.exec(i.getAttribute('src') || ''); return t && m ? [t.textContent, m[1], h.className] : null }).filter(Boolean))
       const wrong = await p.evaluate(tags => tags.filter(([txt, key, cls]) => /^(story-char|malivlak-char|train-char)\//.test(key) && !/\bstop\b/.test(cls) && MojoPack.def.nameOf(key) && MojoPack.def.nameOf(key) !== txt), tags)
       check(wrong.length === 0, `${w}x${h} ${id}: every figure's name tag matches its drawn art ${JSON.stringify(wrong.slice(0, 3))}`)
       check(new RegExp(NARR_KEY).test(st.bo), `${w}x${h} ${id}: the narrator chip is ${DEF.narrator.name}`)
-      if (await p.$('#ov-card.on #picker-later')) await (await p.$('#picker-later')).click()
+      await p.evaluate(() => { const e = document.querySelector('#ov-card.on #picker-later'); if (e) e.click() })
+      // every LATER beat of a multi-beat level: play the previous beat's shortest solution the way a child would, then re-measure
+      const nb = ML.byId(id).beats.length
+      for (let bi = 1; bi < nb; bi++) {
+        const sol = await p.evaluate(() => __mojo.solution()); for (const cmd of sol || []) await p.evaluate(c => { const e = document.querySelector(`[data-cmd="${c}"]`); if (e) e.click() }, cmd)
+        await p.evaluate(() => document.getElementById('btn-run').click())
+        let moved = false
+        for (let t = 0; t < 120 && !moved; t++) { await sleep(250); moved = await p.evaluate(b => __mojo.state().beat >= b, bi) }
+        check(moved, `${w}x${h} ${id}: beat ${bi} plays through to beat ${bi + 1}`)
+        if (!moved) break
+        await sleep(300); await p.evaluate(() => { const e = document.getElementById('in-go'); if (e) e.click() }); await sleep(700)
+        const c2 = await tagClash(p, w)
+        check(c2.length === 0, `${w}x${h} ${id} beat ${bi + 1}: no name tag overlaps another tag or a goal marker ${c2.slice(0, 3).join(', ')}`)
+      }
     }
     await p._ctx.close()
   }

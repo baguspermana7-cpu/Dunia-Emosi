@@ -315,7 +315,7 @@ html[data-pack="kereta"] .ob .k-bubble{position:absolute;left:50%;top:-46%;width
 html[data-pack="kereta"] .ob .k-bubble::after{content:'';position:absolute;left:50%;bottom:-7px;margin-left:-6px;border:6px solid transparent;border-top-color:#e0a63a;border-bottom:0}
 html[data-pack="kereta"] .ob .k-bubble img{width:78%;height:78%;filter:none;animation:none;position:static}
 html[data-pack="kereta"] .ob .k-glow{position:absolute;left:8%;right:8%;bottom:4%;height:26%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,224,110,.85),rgba(255,224,110,0));box-shadow:0 0 0 3px rgba(255,214,90,.8);animation:kPulse 1.4s ease-in-out infinite;pointer-events:none;z-index:0}
-html[data-pack="kereta"] .ob.gone .k-bubble,html[data-pack="kereta"] .ob.gone .k-glow,html[data-pack="kereta"] .ob.coupled .k-bubble,html[data-pack="kereta"] .ob.coupled .k-glow,html[data-pack="kereta"] .ob.gone .k-name,html[data-pack="kereta"] .ob.gone .k-ghost{display:none}
+html[data-pack="kereta"] .ob.gone .k-bubble,html[data-pack="kereta"] .ob.gone .k-glow,html[data-pack="kereta"] .ob.coupled .k-bubble,html[data-pack="kereta"] .ob.coupled .k-glow,html[data-pack="kereta"] .ob.gone .k-name,html[data-pack="kereta"] .ob.coupled .k-name,html[data-pack="kereta"] .ob.gone .k-ghost{display:none}
 html[data-pack="kereta"] .ob .k-ghost{position:absolute;right:-14%;bottom:-8%;width:56%;height:56%;display:flex;align-items:center;justify-content:center;border-radius:50%;border:3px dashed rgba(255,255,255,.9);background:rgba(255,255,255,.28);z-index:4;pointer-events:none;animation:kGhost 1.6s ease-in-out infinite alternate}
 html[data-pack="kereta"] .ob .k-ghost img{width:78%;height:78%;opacity:.6;filter:grayscale(.2) drop-shadow(0 1px 1px rgba(0,0,0,.3));animation:none}
 html[data-pack="kereta"] .ob .k-ghost b{position:absolute;right:-8px;top:-8px;min-width:20px;height:20px;border-radius:10px;background:#e0a63a;color:#fff;font:900 12px/20px 'Nunito',sans-serif;text-align:center;padding:0 4px}
@@ -401,6 +401,7 @@ html[data-pack="kereta"] #p-objs .ob-chip.k-pop{animation:kPop .5s var(--ease-ou
 html[data-pack="kereta"] .ob[data-id="kayu"] .carter{bottom:70%;left:30%;width:60%;z-index:4}
 html[data-pack="kereta"] .ob[data-id="kayu"] .whip{bottom:150%;left:70%;z-index:4}
 html[data-pack="kereta"] .ob[data-id="kayu"] .k-name{top:auto;bottom:-6%}
+html[data-pack="kereta"] .board .k-lift{z-index:var(--k-z)!important}   /* its name tag was behind another sprite (kereta-goals nudge) */
 /* storyline titles are longer than "LINUS": fit the sign */
 html[data-story="malivlak"] #scr-home .logo .l2{font-size:calc(var(--k-l2)*.6)}
 html[data-story="hellbent"] #scr-home .logo .l2{font-size:calc(var(--k-l2)*.82)}
