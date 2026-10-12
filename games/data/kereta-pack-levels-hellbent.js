@@ -15,7 +15,7 @@
     { id: 'hb-ch3', title: 'Pesta di Kota', bg: 'bg-hb-kota', card: 'card-hb-kota', open: true, levels: ['hb11', 'hb12', 'hb13', 'hb14', 'hb15'] }]
   var LIB = {
     'train/gigih': 'train-char/defeatist/34l-neutral', 'train/gigih-b': 'train-char/defeatist/34l-sad', 'train/kilat': 'train-char/silver/34l-happy', 'train/kilat-b': 'train-char/silver/34l-angry',
-    'obj/semangat': 'mojo-prop/star', 'obj/hb-batu': 'kereta-prop/coal-pile', 'obj/pasir': 'kereta-prop/coal-pile', 'obj/hb-bak': 'kereta-prop/barrel',
+    'obj/semangat': 'mojo-prop/star', 'obj/hb-batu': 'kereta-prop/coal-pile', 'obj/pasir': 'kereta-prop/coal-pile',
     'train/hb-gerbong': 'mojo-train/coach-slip', 'obj/hb-panggung': 'kereta-prop/station-small', 'obj/hb-sinyal': 'kereta-tile/signal-red'
   }
   var G = 'train-char/defeatist/front-34l', K = 'train-char/silver/front-34l'
@@ -65,11 +65,11 @@
       decor: [{ at: [0, 5], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }, { at: [2, 5], art: 'animal/deer/graze' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [0, 1], res: 'sand', n: 1, art: 'obj/hb-batu', name: 'Batu bara' },
-        { id: 'tungku', type: 'hole', at: [4, 5], need: 2, res: 'sand', art: 'obj/hb-bak', name: 'Bak batu bara' },
+        { id: 'tungku', type: 'hole', at: [4, 5], need: 2, res: 'sand', art: 'kereta-prop/tungku', art2: 'kereta-prop/tungku-nyala', name: 'Tungku' },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [{ title: 'Isi tungku Gigih', story: 'Batu bara masuk ke tungku. Uap naik lagi!',
-        bo: 'Isi bak batu bara, lalu ke bendera.', objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 17, budget: 14, forms: ['gigih'], palette: ['east', 'down', 'up', 'load', 'dump'] }] }),
+        bo: 'Isi tungku dengan batu bara, lalu ke bendera.', objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [1, 7] }], slots: 17, budget: 14, forms: ['gigih'], palette: ['east', 'down', 'up', 'load', 'dump'] }] }),
 
     // 04 KILAT: waits for the starting flag at the red signal, impatient
     L({ id: 'hb04', ch: 'hb-ch1', cards: [
@@ -204,12 +204,12 @@
       decor: [{ at: [3, 2], art: 'animal/deer/graze' }, { at: [0, 8], art: 'animal/cardinal/fly', label: 'Burung Kardinal' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [0, 2], res: 'sand', n: 1, art: 'obj/hb-batu', name: 'Batu bara' },
-        { id: 'tungku', type: 'hole', at: [4, 7], need: 2, res: 'sand', art: 'obj/hb-bak', name: 'Bak batu bara' },
+        { id: 'tungku', type: 'hole', at: [4, 7], need: 2, res: 'sand', art: 'kereta-prop/tungku', art2: 'kereta-prop/tungku-nyala', name: 'Tungku' },
         { id: 'kilat', type: 'patrol', at: [0, 4], name: 'Kilat Perak', art: 'train/kilat', path: [[0, 4], [1, 4], [2, 4], [2, 4], [1, 4], [0, 4]], phase: 5 },
         { id: 'flag', type: 'flag', at: [3, 8] }
       ],
       beats: [{ title: 'Isi tungku, tunggu Kilat', story: 'Isi tungku Gigih, tunggu Kilat lewat, jalan terus.',
-        bo: 'Isi bak batu bara, lalu ke bendera.', objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [3, 8] }], slots: 17, budget: 14, forms: ['gigih'], palette: ['east', 'down', 'load', 'dump', 'wait'] }] }),
+        bo: 'Isi tungku dengan batu bara, lalu ke bendera.', objectives: [{ 'do': 'fill', id: 'tungku' }, { 'do': 'reach', at: [3, 8] }], slots: 17, budget: 14, forms: ['gigih'], palette: ['east', 'down', 'load', 'dump', 'wait'] }] }),
 
     // 12 KILAT: opens the signal for Gigih (the apology), then goes on
     L({ id: 'hb12', ch: 'hb-ch3', cards: [
