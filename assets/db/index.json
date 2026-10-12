@@ -54670,6 +54670,50 @@
    "pose": "top-n",
    "expression": "neutral",
    "name_id": "Gerbong Merah"
+  },
+  "kereta-prop/tungku": {
+   "file": "assets/db/lib/kereta-prop/tungku.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "tungku",
+    "tungku",
+    "boiler",
+    "furnace",
+    "cartoon"
+   ],
+   "source": "Drawn for the train pack 2026-10-12 (vector, rendered by headless Chrome; owner: tungku must read clearly)",
+   "w": 203,
+   "h": 240,
+   "baseline": 237,
+   "anchor": [
+    101,
+    237
+   ],
+   "name_id": "tungku boiler"
+  },
+  "kereta-prop/tungku-nyala": {
+   "file": "assets/db/lib/kereta-prop/tungku-nyala.webp",
+   "cat": "kereta-prop",
+   "tags": [
+    "prop",
+    "cerita",
+    "tungku-nyala",
+    "tungku",
+    "boiler",
+    "furnace",
+    "cartoon"
+   ],
+   "source": "Drawn for the train pack 2026-10-12 (vector, rendered by headless Chrome; owner: tungku must read clearly)",
+   "w": 202,
+   "h": 262,
+   "baseline": 259,
+   "anchor": [
+    101,
+    259
+   ],
+   "name_id": "tungku boiler menyala"
   }
  }
 }

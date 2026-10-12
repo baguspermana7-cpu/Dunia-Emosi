@@ -15,7 +15,7 @@
     { id: 'hb-ch3', title: 'Pesta di Kota', bg: 'bg-hb-kota', card: 'card-hb-kota', open: true, levels: ['hb11', 'hb12', 'hb13', 'hb14', 'hb15'] }]
   var LIB = {
     'train/gigih': 'train-char/defeatist/34l-neutral', 'train/gigih-b': 'train-char/defeatist/34l-sad', 'train/kilat': 'train-char/silver/34l-happy', 'train/kilat-b': 'train-char/silver/34l-angry',
-    'obj/semangat': 'mojo-prop/star', 'obj/hb-batu': 'kereta-prop/coal-pile', 'obj/hb-bak': 'kereta-prop/barrel',
+    'obj/semangat': 'mojo-prop/star', 'obj/hb-batu': 'kereta-prop/coal-pile', 'obj/pasir': 'kereta-prop/coal-pile', 'obj/hb-bak': 'kereta-prop/barrel',
     'train/hb-gerbong': 'mojo-train/coach-slip', 'obj/hb-panggung': 'kereta-prop/station-small', 'obj/hb-sinyal': 'kereta-tile/signal-red'
   }
   var G = 'train-char/defeatist/front-34l', K = 'train-char/silver/front-34l'

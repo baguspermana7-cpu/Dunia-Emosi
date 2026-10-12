@@ -60,6 +60,8 @@
     'who:pinguin': { w: 0.72, h: 0.8 }, 'who:pip': { w: 0.76, h: 0.76 },
     /* the mother bird perched on her tree: clearly bigger than her chick, still smaller than the tree */
     'art:char/induk': { friend: { w: 0.84, h: 0.84 } },
+    /* the train pack's boiler furnace is a 'hole' to fill, but it stands up like a small building, not a flat pit (owner 2026-10-12) */
+    'art:kereta-prop/tungku': { w: 1.02, h: 1.24 },
     tree: { w: 1.03, h: 1.18 },        // 'T' decor: scenery, so it never reaches into the cell above it
     building: { w: 1.12, h: 1.18 }     // '#' outside: the picture fits the CELL WIDTH (canvas keeps its small one underneath)
   }

@@ -672,6 +672,7 @@
       if (!bo || !top || !side) return
       if (mqTop && mqTop.matches) { if (bo.parentNode !== top) top.insertBefore(bo, rule && rule.parentNode === top ? rule : null) }
       else if (bo.parentNode !== side) side.insertBefore(bo, side.firstChild)
+      top.classList.toggle('k-bo-top', bo.parentNode === top)
     }
     if (mqTop) { if (mqTop.addEventListener) mqTop.addEventListener('change', placeBo); else if (mqTop.addListener) mqTop.addListener(placeBo) }
     var ready = function () { reskinStatic(); buildHub(); rewireExit(); addSteam(); startReact(); placeBo() }

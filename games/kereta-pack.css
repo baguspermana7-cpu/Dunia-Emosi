@@ -575,10 +575,29 @@ html[data-pack="kereta"] .board .ob[data-id="kura"]>img.main{width:calc(var(--ce
 /* the canyon has no lawn: no grass tufts, scatter or fringe over it */
 #scr-play[data-trestle="1"] .msl-tuft,#scr-play[data-trestle="1"] .mbl-scatter,#scr-play[data-trestle="1"] .k-fringe,#scr-play[data-trestle="1"] .msl-cs,#scr-play[data-trestle="1"] .msl-sweep{display:none!important}
 #scr-play[data-trestle="1"] #board-bg{filter:brightness(.9) saturate(1.05)}
+/* Owner 2026-10-12 "jangan menutup2i" (critical): the narrator's message never leaves its own slot, on any screen. An opened
+   message (a tap, or a new hint/alert opening by itself) shows whole in smaller type and scrolls INSIDE the slot, never as a
+   popover over the commands, the board or the top bar. A tap on the opened message still opens the full card. */
+html[data-pack="kereta"] #bo{--bo-h:62px}
+html[data-pack="kereta"] #bo .bubble,html[data-pack="kereta"] #bo.open .bubble,html[data-pack="kereta"] #bo .bubble.full{position:relative;left:auto;right:auto;top:auto;height:var(--bo-h);min-height:0;max-height:var(--bo-h);box-sizing:border-box}
+html[data-pack="kereta"] #bo.open .bubble{padding:3px 60px 3px 12px;overflow-y:auto;overscroll-behavior:contain;align-items:flex-start;box-shadow:0 0 0 3px #FFC83D,0 4px 10px rgba(0,0,0,.25);animation:none}
+html[data-pack="kereta"] #bo.open .bubble::before{display:block}
+html[data-pack="kereta"] #bo.open .bo-copy{margin:auto 0}
+html[data-pack="kereta"] #bo.open #bo-task,html[data-pack="kereta"] #bo.open .bo-copy small,html[data-pack="kereta"] #bo .bubble.full #bo-task{display:none}
+html[data-pack="kereta"] #bo.open #bo-text,html[data-pack="kereta"] #bo .bubble.full #bo-text{max-height:none;overflow:visible;white-space:normal;font-size:14px;line-height:16px}
+html[data-pack="kereta"] #bo .bubble.full .spk{top:0;bottom:auto;transform:none}
+@media (orientation:portrait){html[data-pack="kereta"] .p-side>#bo{margin-top:6px}}   /* clear of the map / info / sound buttons above it */
 /* the narrator in the top bar on a landscape phone (kereta-pack.js placeBo): it fills the space between the goal chips and the info button */
-html[data-pack="kereta"] .p-top>#bo{flex:1 1 auto;min-width:0;max-width:460px;height:50px;margin:0 4px;align-self:flex-start}
+html[data-pack="kereta"] .p-top>#bo{--bo-h:48px;flex:1 1 0;min-width:0;max-width:460px;height:50px;margin:0 4px;align-self:flex-start}
 html[data-pack="kereta"] .p-top>#bo .bo-img{width:46px;height:46px}
-html[data-pack="kereta"] .p-top>#bo:not(.open) .bubble{height:48px;padding-right:52px}
-html[data-pack="kereta"] .p-top>#bo .bubble .spk{width:48px;height:48px;min-width:48px;min-height:48px}
-html[data-pack="kereta"] .p-top>#bo.open .bubble{top:0;max-height:min(70vh,300px)}
-@media (orientation:landscape) and (max-height:520px){html[data-pack="kereta"] #scr-play .p-top{z-index:40}}   /* the opened narrator bubble drops over the board and palette */
+html[data-pack="kereta"] .p-top.k-bo-top>.objs{flex:0 1 auto}
+html[data-pack="kereta"] .p-top>#bo:not(.open) .bubble{padding:0 52px 0 10px}
+html[data-pack="kereta"] .p-top>#bo.open .bubble{padding:3px 52px 3px 10px}
+html[data-pack="kereta"] .p-top>#bo.open #bo-text,html[data-pack="kereta"] .p-top>#bo .bubble.full #bo-text{font-size:13px;line-height:14px}
+html[data-pack="kereta"] .p-top>#bo .bubble .spk{top:0;bottom:auto;right:0;transform:none;width:48px;height:48px;min-width:48px;min-height:48px}
+/* owner 2026-10-12 "nggak ada gambar yg jelas klw itu tungku": on a phone a cell is ~36 px, and the action chip (26 px) plus the
+   count badge (30 px) covered the whole object, so the furnace and the coal pile read as two icons. Both shrink with the cell
+   and sit out on the corners, so the object itself is what the child sees. */
+html[data-pack="kereta"] .ob .act{width:max(16px,calc(var(--cell)*.32));height:max(16px,calc(var(--cell)*.32));left:-14%;bottom:-8%;padding:2px}
+html[data-pack="kereta"] .ob .tag{min-width:20px;height:20px;padding:0 4px;font-size:12px;right:-14%;top:-14%}
+html[data-pack="kereta"] .ob .tag img{width:13px;height:13px}

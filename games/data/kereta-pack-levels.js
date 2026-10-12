@@ -25,7 +25,7 @@
   var LIB = {
     'char/tamu-ungu': 'story-char/pelukis/stand', 'char/tamu-jam': 'story-char/tuan-merah/point',
     'char/tamu-hijab': 'story-char/anak-cat/stand', 'char/henry-j': 'story-char/henry/jongkok', 'char/henry': 'story-char/henry/wave', 'char/henry-sekop': 'story-char/henry/shovel',
-    'obj/batu-bara': 'kereta-prop/coal-pile', 'obj/stasiun-kecil': 'kereta-prop/station-small', 'obj/kura': 'animal/turtle/walk',
+    'obj/batu-bara': 'kereta-prop/coal-pile', 'obj/pasir': 'kereta-prop/coal-pile', 'obj/stasiun-kecil': 'kereta-prop/station-small', 'obj/kura': 'animal/turtle/walk',
     'obj/angka-1': 'mojo-prop/number-1', 'obj/angka-2': 'mojo-prop/number-2', 'obj/angka-3': 'mojo-prop/number-3',
     'char/baron': 'story-char/baron/stand', 'char/baron-angkuh': 'story-char/baron/angkuh', 'char/henry-cemas': 'story-char/henry/worried',
     'char/katrina': 'story-char/katrina/stand', 'train/samson': 'train-char/samson/34l-neutral', 'obj/kontrak': 'school/notebook',
@@ -403,7 +403,7 @@
       decor: [{ at: [2, 1], art: 'story-char/henry/shovel' }, { at: [0, 1], art: 'story-char/katrina/shovel' }, { at: [0, 6], art: 'story-char/baron/stand' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [0, 3], res: 'sand', n: 1, art: 'kereta-prop/coal-pile', name: 'Batu bara' },
-        { id: 'tungku', type: 'hole', at: [1, 5], need: 3, res: 'sand', art: 'obj/kotak-batu', name: 'Tungku' },
+        { id: 'tungku', type: 'hole', at: [1, 5], need: 3, res: 'sand', art: 'kereta-prop/tungku', art2: 'kereta-prop/tungku-nyala', name: 'Tungku' },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],
       beats: [{ title: 'Isi tungku, tiga sekop', story: 'Henry dan Katrina menyekop batu bara.',
@@ -437,7 +437,7 @@
       decor: [{ at: [0, 6], art: 'story-char/baron/shocked' }, { at: [2, 7], art: 'train-char/samson/34l-neutral' }],
       objects: [
         { id: 'tumpukan', type: 'pile', at: [1, 2], res: 'sand', n: 1, art: 'kereta-prop/coal-pile', name: 'Batu bara' },
-        { id: 'tungku', type: 'hole', at: [0, 4], need: 2, res: 'sand', art: 'obj/kotak-batu', name: 'Tungku' },
+        { id: 'tungku', type: 'hole', at: [0, 4], need: 2, res: 'sand', art: 'kereta-prop/tungku', art2: 'kereta-prop/tungku-nyala', name: 'Tungku' },
         { id: 'papan', type: 'part', at: [2, 3], art: 'obj/papan', name: 'Papan' },
         { id: 'flag', type: 'flag', at: [1, 7] }
       ],

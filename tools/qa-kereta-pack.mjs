@@ -245,6 +245,17 @@ if (!process.argv.includes('--headless')) {
       const wrong = await p.evaluate(tags => tags.filter(([txt, key, cls]) => /^(story-char|malivlak-char|train-char)\//.test(key) && !/\bstop\b/.test(cls) && MojoPack.def.nameOf(key) && MojoPack.def.nameOf(key) !== txt), tags)
       check(wrong.length === 0, `${w}x${h} ${id}: every figure's name tag matches its drawn art ${JSON.stringify(wrong.slice(0, 3))}`)
       check(new RegExp(NARR_KEY).test(st.bo), `${w}x${h} ${id}: the narrator chip is ${DEF.narrator.name}`)
+      // owner 2026-10-12 (critical): the narrator's message, closed OR opened, never covers a command, the hint, the board or the plan
+      const boMeasure = () => p.evaluate(async () => {
+        const bo = document.getElementById('bo'), out = []
+        const hits = st => { const a = bo.querySelector('.bubble').getBoundingClientRect(); document.querySelectorAll('#palette button, #btn-hint, #board, .p-top .ibtn, #p-objs .ob-chip, .slot, #btn-run').forEach(o => { if (!o.getClientRects().length) return; const c = o.getBoundingClientRect(); if (Math.min(a.right, c.right) - Math.max(a.left, c.left) > 1 && Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top) > 1) out.push(st + ':' + (o.id || (o.textContent || '').trim().slice(0, 10) || o.className)) }) }
+        document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); await new Promise(r => setTimeout(r, 120)); hits('closed')
+        document.getElementById('bo-details').click(); await new Promise(r => setTimeout(r, 450)); hits('open')
+        document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+        return out })
+      // an opening camera move (bl07 zooms 1.2x on Samson) may lift the board under the bar for a moment: only a lasting cover counts
+      let boHit = await boMeasure(); if (boHit.length) { await sleep(2600); boHit = await boMeasure() }
+      check(boHit.length === 0, `${w}x${h} ${id}: the narrator message, closed or opened, covers nothing ${JSON.stringify(boHit.slice(0, 4))}`)
       await p.evaluate(() => { const e = document.querySelector('#ov-card.on #picker-later'); if (e) e.click() })
       // every LATER beat of a multi-beat level: play the previous beat's shortest solution the way a child would, then re-measure
       const nb = ML.byId(id).beats.length
@@ -310,6 +321,24 @@ if (!process.argv.includes('--headless')) {
       check(/lokomotif-pemberani\.html/.test(p.url()), `${w}x${h}: the classic card opens the classic game`)
       await p._ctx.close()
     }
+  }
+  {   // the background bed (kereta-bgsound.js): starts after a tap with the scenario's own beds, fades in to its thin level,
+      // follows the sound switch, and fades away when the board is left
+    const p = await page(844, 390), lv = ML.LEVELS[0].id
+    await p.evaluate(i => __mojo.start(i), lv); await sleep(300); await p.evaluate(() => { const e = document.getElementById('in-go'); if (e) e.click() })
+    await p.mouse.click(5, 380); await sleep(2900)
+    const st = await p.evaluate(() => ({ s: __keretaBg.state(), m: document.getElementById('scr-play').dataset.mood, t: document.getElementById('scr-play').dataset.terrain }))
+    check(st.s.ctx === 'running' && st.s.key.endsWith('|' + st.m + '|' + st.t) && st.s.beds.includes('pad') && st.s.beds.includes('wind'), `bgsound: ${lv} plays its scenario's bed ${JSON.stringify(st.s)}`)
+    check(st.s.gain > 0.15 && st.s.gain <= 0.2001, `bgsound: faded in to the thin master level (${st.s.gain})`)
+    await p.evaluate(() => document.getElementById('btn-sound2').click()); await sleep(1200)
+    const mu = await p.evaluate(() => __keretaBg.state())
+    check(mu.key === '' && mu.gain < 0.01, `bgsound: the sound switch silences it ${JSON.stringify(mu)}`)
+    await p.evaluate(() => document.getElementById('btn-sound2').click()); await sleep(2900)
+    check((await p.evaluate(() => __keretaBg.state())).gain > 0.15, 'bgsound: it comes back when sound is switched on')
+    await p.evaluate(() => document.getElementById('btn-quit').click()); await sleep(1800)
+    const out = await p.evaluate(() => __keretaBg.state())
+    check(out.key === '' && out.gain < 0.01, `bgsound: leaving the board fades it out ${JSON.stringify(out)}`)
+    await p._ctx.close()
   }
   {   // board life (kereta-weather.js / kereta-life.js): each mood/terrain builds its overlay set, an NPC tap reacts, reduced motion builds none
     const p = await page(390, 844); let tapped = 0, lives = 0
