@@ -427,7 +427,7 @@
     { key: 'nature',    name: 'Nature',            id: 'Alam',                ico: 'L:park/tree',            scene: 'jungle',    ready: true, tint: '#E1F5DA' },
     { key: 'weather',   name: 'Weather and Sky',   id: 'Cuaca dan Langit',    ico: 'L:nature/rainbow',       scene: 'sky',       ready: true, tint: '#E2F0FF' },
     { key: 'shapes',    name: 'Shapes',            id: 'Bentuk',              ico: 'S:shape/triangle',       scene: 'classroom', ready: true, tint: '#FFF6C9' },
-    { key: 'numbers',   name: 'Numbers',           id: 'Angka',               ico: 'S:num/three',            scene: 'classroom', ready: true, tint: '#E6F6DF' },
+    { key: 'numbers',   name: 'Numbers',           id: 'Angka',               ico: 'S:num/icon',            scene: 'classroom', ready: true, tint: '#E6F6DF' },
     { key: 'sports',    name: 'Sports',            id: 'Olahraga',            ico: 'L:toys/soccer-ball',     scene: 'park',      ready: true, tint: '#DDF3EA' },
     { key: 'toys',      name: 'Toys',              id: 'Mainan',              ico: 'L:toys/rocking-horse',   scene: 'bedroom',   ready: true, tint: '#FFE3EC' },
     { key: 'mixed',     name: 'Mixed Challenge',   id: 'Tantangan Campur',    icon: 'mixed',    ready: true, mixed: true },

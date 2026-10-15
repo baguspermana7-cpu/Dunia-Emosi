@@ -154,6 +154,25 @@ def draw_number(word, n, key):
     return b.crop(b.getchannel('A').getbbox())
 
 
+def draw_numbers_icon():
+    # The Numbers category card: three big numeral tiles, the same chunky style as
+    # the letter tiles a child drags, so the card reads "numbers" from across the room
+    # (the counting picture for "three" shrank to three dots on the card).
+    W, H, T, G = 300, 300, 92, 12
+    im = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    f = ImageFont.truetype(FONT, 74)
+    cols = [(255, 99, 99, 255), (255, 201, 40, 255), (77, 170, 255, 255)]
+    x0 = (W - (3 * T + 2 * G)) / 2
+    for i, (txt, col) in enumerate(zip('123', cols)):
+        x, y = x0 + i * (T + G), (H - T) / 2 + (-14 if i == 1 else 10)
+        d.rounded_rectangle([x, y + 7, x + T, y + T + 7], 20, fill=(0, 0, 0, 60))
+        d.rounded_rectangle([x, y, x + T, y + T], 20, fill=col, outline=INK, width=5)
+        tb = d.textbbox((0, 0), txt, font=f)
+        d.text((x + T / 2 - (tb[2] - tb[0]) / 2 - tb[0], y + T / 2 - (tb[3] - tb[1]) / 2 - tb[1]), txt, font=f, fill=(255, 255, 255, 255), stroke_width=4, stroke_fill=INK)
+    return im.crop(im.getchannel('A').getbbox())
+
+
 def main():
     os.makedirs(OUT_S, exist_ok=True)
     os.makedirs(OUT_N, exist_ok=True)
@@ -161,6 +180,7 @@ def main():
         draw_shape(kind, fill).save(os.path.join(OUT_S, word + '.webp'), 'WEBP', quality=92, method=6)
     for word, n, key in NUMBERS:
         draw_number(word, n, key).save(os.path.join(OUT_N, word + '.webp'), 'WEBP', quality=92, method=6)
+    draw_numbers_icon().save(os.path.join(OUT_N, 'icon.webp'), 'WEBP', quality=92, method=6)
     print('shapes', len(SHAPES), 'numbers', len(NUMBERS))
 
 
