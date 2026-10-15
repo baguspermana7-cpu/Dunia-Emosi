@@ -247,16 +247,16 @@ class LiteralShipPixels(unittest.TestCase):
 
 
 class StickerOutline(unittest.TestCase):
-    """Grid sprites wear the white sticker rim (tools/tk_outline.py, the Mojo outline module)."""
-    def test_twins_are_outlined_and_rebuild_identically(self):
+    """No white sticker rim on Timmy art (owner 2026-10-10: "nggak perlu ada outline putih"). The rim the
+    2026-10-04 twins wore (tools/tk_outline.py) was stripped with tools/strip-mojo-ring.py on 2026-10-15."""
+    def test_twins_carry_no_white_rim(self):
         tko = module('tk_outline_gate', 'tk_outline.py')
-        for twin, src in tko.TARGETS.items():
+        for twin in tko.TARGETS:
             with self.subTest(twin=twin):
                 path = tko.LIB / (twin + '.webp')
                 self.assertTrue(path.exists(), twin + ' is published')
                 rgba = np.asarray(Image.open(path).convert('RGBA'))
-                self.assertGreaterEqual(tko.rim_white(rgba), 0.5, twin + ' carries a white rim')
-                self.assertEqual(path.read_bytes(), tko.build(src)[0], twin + ' rebuilds byte-identically (never double-outlined)')
+                self.assertLess(tko.rim_white(rgba), 0.4, twin + ' still wears a white rim')
 
     def test_grid_uses_the_outlined_patrol(self):
         grid = (TOOLS.parent / 'games' / 'tk-grid.js').read_text(encoding='utf-8')

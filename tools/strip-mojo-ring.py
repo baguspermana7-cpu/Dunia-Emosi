@@ -38,6 +38,14 @@ def exterior_of(alpha):
 
 
 def strip(a):
+    # A ring clipped by the canvas edge (art cropped tight to the ring) is not reached from the exterior through
+    # transparent pixels; pad first so the canvas border itself counts as outside, then crop back to the same size.
+    P = BAND + 1
+    r = strip_padded(np.pad(a, ((P, P), (P, P), (0, 0))))
+    return r and (r[0][P:-P, P:-P], r[1])
+
+
+def strip_padded(a):
     rgb = a[..., :3].astype(int)
     al = a[..., 3].astype(int)
     ext = exterior_of(al)
