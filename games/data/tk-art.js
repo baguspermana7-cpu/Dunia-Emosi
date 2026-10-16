@@ -71,7 +71,7 @@
   }
   var PLACEHOLDER = {
     'char/timmy': 'tk-key/timmy', 'char/timmy-sleeping': 'tk-key/timmy-sleeping', 'char/timmy-flying': 'tk-key/timmy-flying',
-    'char/captain': 'tk-key/captain-arms', 'char/penguin': 'tk-char/penguin-sailor', 'char/guide': 'sd/adventurer'
+    'char/captain': 'tk-key/captain-arms', 'char/penguin': 'tk-char/penguin-sailor', 'char/guide': 'tk-char/hijab-girl-map'
   }
 
   /* ── ships (side view, facing right, viewBox 0 0 400 200) ─────────────── */

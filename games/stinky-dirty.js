@@ -345,7 +345,7 @@
       if (c.scene && c.scene.indexOf('g27:') === 0) add(BASE + 'assets/spelling/scenes/' + c.scene.slice(4) + '-land.webp')
     })
     D.WORLDS.forEach(function (w) { add(BASE + 'assets/db/lib/sd/world-' + w.bg + '-land.webp'); add(BASE + 'assets/db/lib/sd/world-' + w.bg + '-port.webp'); add(lib(w.icon)) })
-    ;['sd/explorer', 'sd/adventurer', 'game/star', 'nature/cloud'].forEach(function (k) { add(lib(k)) })
+    ;['sd/explorer', 'tk-char/hijab-girl-map', 'tk-char/hijab-girl-camera', 'game/star', 'nature/cloud'].forEach(function (k) { add(lib(k)) })
     add(BASE + 'assets/spelling/prop/truck.webp'); add(BASE + 'assets/spelling/prop/digger.webp'); add(BASE + 'assets/spelling/prop/barrier.webp')
     Object.keys((window.SDAudio && SDAudio.keys) || {}).forEach(function (k) { add(BASE + 'assets/sd/audio/' + k.replace(':', '/') + '.webm') })
     return Object.keys(u)
