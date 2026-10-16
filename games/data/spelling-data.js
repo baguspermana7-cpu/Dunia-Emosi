@@ -161,6 +161,7 @@
       ['stingray', 'L:animals/stingray', 'ikan pari', "A flat sea animal that glides like a kite.", "The stingray glides over the sand."],
       ['shell', 'D:objects/94', 'kerang', "A hard home of a sea animal. You find it on the beach.", "I put the shell next to my ear."],
       ['clownfish', 'L:animals/clownfish', 'ikan badut', "A small orange fish with white stripes.", "The clownfish hides in the sea plants."],
+      ['shrimp', 'L:real/animals/shrimp', 'udang', "A small sea animal with a curved body and long feelers.", "We had shrimp for dinner."],
     ],
     birdsbugs: [
       ['bee', 'L:animals/bee', 'lebah', "A flying insect that makes honey. It buzzes.", "The bee flies to the flower."],
@@ -172,6 +173,9 @@
       ['penguin', 'L:animals/penguin', 'penguin', "A black and white bird that swims but cannot fly.", "The penguin walks on the ice."],
       ['flamingo', 'L:animals/flamingo', 'flamingo', "A pink bird that stands on one leg.", "The flamingo stands on one leg."],
       ['peacock', 'D:creatures/8', 'merak', "A bird with a big tail of blue and green feathers.", "The peacock opens its beautiful tail."],
+      ['toucan', 'L:animals/toucan', 'burung tukan', "A bird with a very big, bright orange beak.", "The toucan sits on a branch."],
+      ['pigeon', 'L:real/animals/pigeon', 'burung merpati', "A gray bird you often see in the city park.", "The pigeon eats seeds in the park."],
+      ['duckling', 'L:animals/duckling', 'anak bebek', "A baby duck with soft yellow feathers.", "The duckling follows its mother."],
     ],
     fruits: [
       ['apple', 'L:food/apple', 'apel', "A round red or green fruit that is crunchy.", "I eat an apple every day."],
@@ -189,6 +193,8 @@
       ['papaya', 'D:objects/17', 'pepaya', "An orange fruit with many black seeds inside.", "Grandma gives me a papaya."],
       ['durian', 'D:objects/18', 'durian', "A big spiky fruit with a very strong smell.", "Dad loves to eat durian."],
       ['rambutan', 'D:objects/14', 'rambutan', "A red hairy fruit, white and sweet inside.", "We pick rambutan from the tree."],
+      ['lime', 'L:real/food/lime', 'jeruk nipis', "A small green fruit that tastes very sour.", "Mom squeezes a lime into the tea."],
+      ['mangosteen', 'L:real/food/mangosteen', 'manggis', "A round purple fruit with soft white pieces inside.", "I open the mangosteen with my hands."],
     ],
     veggies: [
       ['carrot', 'L:food/carrot', 'wortel', "A long orange vegetable. Rabbits love it.", "The rabbit eats a carrot."],
@@ -206,6 +212,9 @@
       ['mushroom', 'L:food/mushroom', 'jamur', "It grows in wet places and looks like a little umbrella.", "There is a mushroom in my soup."],
       ['onion', 'L:food/onion', 'bawang bombai', "A round vegetable that can make you cry when you cut it.", "Cutting an onion makes me cry."],
       ['garlic', 'L:food/garlic', 'bawang putih', "A small white plant with a strong smell, used in cooking.", "Mom fries the garlic."],
+      ['pepper', 'L:food/bell-pepper', 'paprika', "A shiny red, green or yellow vegetable that is sweet and crunchy.", "Dad cuts the pepper into strips."],
+      ['cauliflower', 'L:food/cauliflower', 'kembang kol', "A white vegetable that looks like a little cloud.", "We eat cauliflower with rice."],
+      ['ginger', 'L:real/food/ginger', 'jahe', "A brown root with a hot taste, used in drinks and cooking.", "Grandma makes a warm ginger drink."],
     ],
     food: [
       ['bread', 'L:food/bread', 'roti', "A soft food made from flour. You make sandwiches with it.", "I eat bread for breakfast."],
@@ -225,6 +234,7 @@
       ['fries', 'L:food/french-fries', 'kentang goreng', "Long thin pieces of potato cooked in oil.", "I eat fries with my burger."],
       ['milk', 'L:food/milk', 'susu', "A white drink from cows. It makes bones strong.", "I drink milk every morning."],
       ['juice', 'L:food/orange-juice', 'jus', "A sweet drink made from fruit.", "I drink orange juice."],
+      ['popcorn', 'L:food/popcorn', 'berondong jagung', "Corn that pops and gets big and white when it is hot.", "We eat popcorn at the movies."],
     ],
     vehicles: [
       ['car', 'L:vehicles/car-red', 'mobil', "It has four wheels. Dad drives it on the road.", "We go to school by car."],
@@ -258,6 +268,7 @@
       ['xylophone', 'D:words/86', 'gambang', "You hit its colored bars to make music.", "I play notes on the xylophone."],
       ['harp', 'D:words/88', 'harpa', "A tall instrument with many strings.", "The harp makes a soft sound."],
       ['bell', 'L:game/bell', 'lonceng', "It rings ding dong.", "The school bell rings."],
+      ['harmonica', 'L:toys/harmonica', 'harmonika', "A small instrument you blow into and move side to side.", "Grandpa plays the harmonica."],
     ],
     clothes: [
       ['shirt', 'D:words2/42', 'kemeja', "You wear it on the top of your body.", "I wear a blue shirt."],
@@ -303,6 +314,9 @@
       ['microwave', 'L:things/microwave', 'oven microwave', "A kitchen box that heats food fast.", "Warm the milk in the microwave."],
       ['fridge', 'L:things/refrigerator', 'kulkas', "A cold box in the kitchen that keeps food fresh.", "The milk is in the fridge."],
       ['lock', 'L:things/padlock', 'gembok', "You need a key to open it.", "Dad puts a lock on the gate."],
+      ['camera', 'L:things/camera', 'kamera', "You take pictures with it.", "Smile at the camera!"],
+      ['flashlight', 'L:things/flashlight', 'senter', "A small lamp you hold to see in the dark.", "Turn on the flashlight in the tent."],
+      ['bulb', 'L:things/light-bulb', 'bola lampu', "A glass thing in a lamp that lights up.", "Dad changes the bulb in the lamp."],
     ],
     school: [
       ['notebook', 'L:school/notebook', 'buku tulis', "A book with empty pages for writing.", "I write in my notebook."],
@@ -391,6 +405,7 @@
       ['trophy', 'L:game/trophy-gold', 'piala', "A gold cup you win for being the best.", "Our team won a trophy."],
       ['whistle', 'D:objects/69', 'peluit', "You blow it to make a loud sound in a game.", "The coach blows the whistle."],
       ['target', 'L:game/target-board', 'papan sasaran', "A round board with rings. You aim at the middle.", "The arrow hits the target."],
+      ['goggles', 'L:real/things/swim-goggles', 'kacamata renang', "You wear them to see under the water when you swim.", "Put on your goggles before you swim."],
     ],
     toys: [
       ['doll', 'D:objects/81', 'boneka', "A toy that looks like a little person.", "My sister hugs her doll."],
@@ -402,6 +417,8 @@
       ['gamepad', 'L:toys/gamepad', 'stik game', "You hold it with two hands to play video games.", "Pass me the gamepad."],
       ['gift', 'L:things/gift', 'hadiah', "A present in a box with a ribbon.", "I got a gift for my birthday."],
       ['cards', 'D:objects/70', 'kartu', "Small paper pieces you use to play games.", "We play cards together."],
+      ['dice', 'L:real/toys/dice', 'dadu', "A small cube with dots. You roll it in board games.", "Roll the dice and move your piece."],
+      ['puzzle', 'L:real/toys/jigsaw', 'puzzle', "Pieces you fit together to make a picture.", "We finish the puzzle together."],
     ],
   }
 
