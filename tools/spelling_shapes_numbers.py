@@ -4,8 +4,8 @@ Pictures for the G27 "Shapes" and "Numbers" words (2026-10-06).
     ~/.venvs/kokoro/bin/python tools/spelling_shapes_numbers.py
 
 SHAPES are pure geometry, drawn here (no emoji, no outside art): a bright fill,
-a soft top highlight, the dark ink rim the sheet art uses, and a white sticker
-outline -- written to assets/spelling/shape/<word>.webp.
+a soft top highlight and the dark ink rim the sheet art uses -- no white sticker
+outline (owner 2026-10-10) -- written to assets/spelling/shape/<word>.webp.
 
 NUMBERS are COUNTING pictures built from the owner's own named library
 (assets/db/lib): "three" is three strawberries, laid out like dice pips so a
@@ -22,19 +22,6 @@ FONT = os.path.join(ROOT, 'assets', 'spelling', 'fonts', 'fredoka-one.ttf')
 INK = (58, 40, 30, 255)
 SS = 4                     # supersampling
 SIZE = 220                 # final px
-
-
-def sticker(im, rim=7):
-    """White sticker outline round the alpha, like the shared library sprites."""
-    a = im.getchannel('A')
-    pad = rim * 2
-    canvas = Image.new('RGBA', (im.width + pad * 2, im.height + pad * 2), (0, 0, 0, 0))
-    canvas.alpha_composite(im, (pad, pad))
-    grown = canvas.getchannel('A').filter(ImageFilter.MaxFilter(rim * 2 + 1)).filter(ImageFilter.GaussianBlur(1.2))
-    white = Image.new('RGBA', canvas.size, (255, 255, 255, 0))
-    white.putalpha(grown)
-    white.alpha_composite(canvas)
-    return white.crop(white.getchannel('A').getbbox())
 
 
 def poly(n, cx, cy, r, rot=-90):
@@ -104,7 +91,7 @@ def draw_shape(kind, fill):
     # ink rim on top
     shape(d, None, outline=INK, width=w)
     im = im.resize((SIZE, SIZE), Image.LANCZOS)
-    return sticker(im)
+    return im.crop(im.getchannel('A').getbbox())
 
 
 NUMBERS = [  # word, count, library sprite

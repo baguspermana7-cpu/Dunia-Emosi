@@ -18,12 +18,10 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 OUT = os.path.join(ROOT, 'assets', 'spelling', 'obj')
 BASE = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/'
 SRC = {
-    # At Home
-    'bed': 'Bed', 'sofa': 'Couch and lamp', 'clock': 'Mantelpiece clock', 'key': 'Key', 'spoon': 'Spoon',
-    'bowl': 'Bowl with spoon', 'soap': 'Soap', 'broom': 'Broom', 'radio': 'Radio', 'teapot': 'Teapot',
-    'mirror': 'Mirror', 'bucket': 'Bucket', 'basket': 'Basket', 'toothbrush': 'Toothbrush',
-    'television': 'Television', 'candle': 'Candle', 'umbrella': 'Umbrella', 'bathtub': 'Bathtub',
-    'toilet': 'Toilet', 'sponge': 'Sponge',
+    # At Home -- only what the owner's sheets do not draw (bed, clock, key, spoon, broom, mirror, bucket,
+    # basket, toothbrush, umbrella and toilet use the shared library since 2026-10-16)
+    'sofa': 'Couch and lamp', 'bowl': 'Bowl with spoon', 'soap': 'Soap', 'radio': 'Radio', 'teapot': 'Teapot',
+    'television': 'Television', 'candle': 'Candle', 'bathtub': 'Bathtub', 'sponge': 'Sponge',
     # Al-Qur'an ("quran" itself comes from the owner's sheet)
     'mosque': 'Mosque', 'kaaba': 'Kaaba', 'moon': 'Crescent moon', 'star': 'Star', 'camel': 'Camel',
     'palm': 'Palm tree', 'beads': 'Prayer beads', 'desert': 'Desert', 'sunrise': 'Sunrise',
