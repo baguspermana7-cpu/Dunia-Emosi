@@ -22,9 +22,8 @@ SRC = {
     # basket, toothbrush, umbrella and toilet use the shared library since 2026-10-16)
     'sofa': 'Couch and lamp', 'bowl': 'Bowl with spoon', 'soap': 'Soap', 'radio': 'Radio', 'teapot': 'Teapot',
     'television': 'Television', 'candle': 'Candle', 'bathtub': 'Bathtub', 'sponge': 'Sponge',
-    # Al-Qur'an ("quran" itself comes from the owner's sheet)
-    'mosque': 'Mosque', 'kaaba': 'Kaaba', 'moon': 'Crescent moon', 'star': 'Star', 'camel': 'Camel',
-    'palm': 'Palm tree', 'beads': 'Prayer beads', 'desert': 'Desert', 'sunrise': 'Sunrise',
+    # Al-Qur'an ("quran" comes from the owner's sheet; moon, star and palm from the shared library since 2026-10-17)
+    'mosque': 'Mosque', 'kaaba': 'Kaaba', 'camel': 'Camel', 'beads': 'Prayer beads', 'desert': 'Desert', 'sunrise': 'Sunrise',
     'prayer': 'Palms up together',
 }
 MAX = 192       # longest side, px -- sharper than the sheet crops, still tiny

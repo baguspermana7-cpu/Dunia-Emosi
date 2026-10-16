@@ -86,10 +86,10 @@
     // ── Al-Qur'an ── (same note as At Home; concrete objects and places only)
     { w: 'quran',  cat: 'quran', dir: 'obj', pic: 'quran',  id: "Al-Qur'an", clue: "The holy book that Muslims read.", pos: 'noun', say: "We read the Quran every evening." },
     { w: 'kaaba',  cat: 'quran', dir: 'obj', pic: 'kaaba',  id: "Ka'bah", clue: "The black cube in Makkah. Muslims face it when they pray.", pos: 'noun', say: "The Kaaba is in the city of Makkah." },
-    { w: 'moon',   cat: 'quran', dir: 'obj', pic: 'moon',   id: 'bulan', clue: "It shines at night. A new one starts the month of Ramadan.", pos: 'noun', say: "The moon shines at night." },
-    { w: 'star',   cat: 'quran', dir: 'obj', pic: 'star',   id: 'bintang', clue: "It twinkles in the night sky.", pos: 'noun', say: "I saw a bright star in the sky." },
+    { w: 'moon',   cat: 'quran', src: 'assets/db/lib/nature/moon-stars.webp', id: 'bulan', clue: "It shines at night. A new one starts the month of Ramadan.", pos: 'noun', say: "The moon shines at night." },
+    { w: 'star',   cat: 'quran', src: 'assets/db/lib/game/star.webp', id: 'bintang', clue: "It twinkles in the night sky.", pos: 'noun', say: "I saw a bright star in the sky." },
     { w: 'camel',  cat: 'quran', dir: 'obj', pic: 'camel',  id: 'unta', clue: "A desert animal with a hump on its back.", pos: 'noun', say: "The camel walks across the sand." },
-    { w: 'palm',   cat: 'quran', dir: 'obj', pic: 'palm',   id: 'pohon kurma', clue: "A tall tree. Dates grow on it.", pos: 'noun', say: "Dates grow on a palm tree." },
+    { w: 'palm',   cat: 'quran', src: 'assets/db/lib/mojo-prop/palm.webp', id: 'pohon kurma', clue: "A tall tree. Dates grow on it.", pos: 'noun', say: "Dates grow on a palm tree." },
     { w: 'beads',  cat: 'quran', dir: 'obj', pic: 'beads',  id: 'tasbih', clue: "You count them while you say dhikr.", pos: 'noun', say: "Grandpa counts his prayer beads." },
     { w: 'mosque', cat: 'quran', dir: 'obj', pic: 'mosque', id: 'masjid', clue: "Muslims go there to pray together.", pos: 'noun', say: "We pray together at the mosque." },
     { w: 'desert', cat: 'quran', dir: 'obj', pic: 'desert', id: 'gurun', clue: "A very hot and dry place with lots of sand.", pos: 'noun', say: "The desert is hot and full of sand." },
