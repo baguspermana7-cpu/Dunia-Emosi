@@ -698,9 +698,14 @@ class OutlineTests(unittest.TestCase):
         import importlib.util
         spec = importlib.util.spec_from_file_location('strip_ring', ROOT / 'tools/strip-mojo-ring.py')
         sr = importlib.util.module_from_spec(spec); spec.loader.exec_module(sr)
+        # white BODY at the canvas edge, not a ring: since strip() pads the canvas (2026-10-15) it reaches the white box
+        # of the delivery van's rear view; stripping only shaves the box corners (looked at, 2026-10-17)
+        white_body = {'mojo-form/delivery-rear.webp'}
         bad = []
         for d in ['mojo-top', 'mojo-char', 'mojo-hero', 'mojo-form', 'mojo-rear', 'mojo-turn', 'mojo-train', 'mojo-cross']:
             for f in sorted((ROOT / 'assets/db/lib' / d).rglob('*.webp')):
+                if str(f.relative_to(ROOT / 'assets/db/lib')) in white_body:
+                    continue
                 if sr.strip(np.asarray(Image.open(f).convert('RGBA')).copy()):
                     bad.append(str(f.relative_to(ROOT / 'assets/db/lib')))
         self.assertEqual(bad, [], 'white sticker ring still baked in (run tools/strip-mojo-ring.py):\n' + '\n'.join(bad))
