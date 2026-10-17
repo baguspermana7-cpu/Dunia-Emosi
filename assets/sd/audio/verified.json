@@ -750,29 +750,47 @@
   "heard": "karena haus lalu minum air",
   "score": 0.9
  },
+ "LNG-10-h1": {
+  "sha1": "cd4e1f2ea8caeb8dad6095309b8ea01355075fbc",
+  "text": "Pip menguap dan matanya berat.",
+  "heard": "pit menguap dan matanya berat",
+  "score": 0.936,
+  "engine": "omnivoice"
+ },
  "LNG-10-h2": {
-  "sha1": "61fdbbf79949af0399199d98b16fe7a92a1da8f1",
+  "sha1": "a166051656999a721549e1bd437fd5414cbd539f",
   "text": "Kalau menguap dan mata berat, kita ingin...",
-  "heard": "kalau menguap dan mata berat kita ingin",
-  "score": 1.0
+  "heard": "Kalau menguap dan mata berat, kita ingin!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-10-q": {
-  "sha1": "839341aef19b6e41c0c8b5fa1c3d8625eeb5c8d9",
+  "sha1": "281cabd482613297adb7c2aa271bb2d7a1130063",
   "text": "Mengantuk artinya...",
-  "heard": "mengantuk hatinya.",
-  "score": 0.938
+  "heard": "mengantuk artinya",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-10-s0": {
-  "sha1": "102f5ad6c3caca3b2ac2bb9bec24a35e5383f457",
+  "sha1": "09bd942998db62250ce8468768e7bbde4092157a",
   "text": "Pip menguap. Matanya terasa berat.",
-  "heard": "Pip memuap matanya terasa berat.",
-  "score": 0.939
+  "heard": "tip menguap matanya terasa berat",
+  "score": 0.943,
+  "engine": "omnivoice"
+ },
+ "LNG-10-s1": {
+  "sha1": "033c05e616bd0015746dd9eedb7591668b1d49c7",
+  "text": "Pip MENGANTUK.",
+  "heard": "Pip mengantuk!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-10-x": {
-  "sha1": "58a39258fa15d25417b9cf5e1874d5a88f991d6a",
+  "sha1": "acb985d43a357b4e6e22fadec46a8575da567e25",
   "text": "Mengantuk artinya ingin tidur.",
-  "heard": "mengantuk artinya ingin tidung.",
-  "score": 0.943
+  "heard": "mengantuk artinya ingin tidur.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-11-h1": {
   "sha1": "f8cac60070302970fb7e979424a8e082587f33e3",
