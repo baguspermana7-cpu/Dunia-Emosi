@@ -778,8 +778,8 @@
     // resolve the kid assist: level > TKWorlds lookup by goal text > default on
     var lvl = {}
     for (var lk in (level || {})) lvl[lk] = level[lk]
-    if ((lvl.assist == null || lvl.first == null) && lvl.goal && W.TKWorlds && typeof W.TKWorlds.findSteer === 'function') {
-      try { var fs = W.TKWorlds.findSteer(lvl.goal, lvl.mode); if (fs) { if (lvl.assist == null) lvl.assist = fs.assist; if (lvl.first == null) lvl.first = fs.first } } catch (e) {}
+    if ((lvl.assist == null || lvl.first == null || lvl.weather == null) && lvl.goal && W.TKWorlds && typeof W.TKWorlds.findSteer === 'function') {
+      try { var fs = W.TKWorlds.findSteer(lvl.goal, lvl.mode); if (fs) { if (lvl.assist == null) lvl.assist = fs.assist; if (lvl.first == null) lvl.first = fs.first; if (lvl.weather == null && fs.weather) lvl.weather = fs.weather } } catch (e) {}
     }
     if (opts.assist != null) lvl.assist = !!opts.assist
     var fleet = shipId && W.TKFleet ? W.TKFleet.get(shipId) : null
@@ -809,6 +809,15 @@
     var cv = el('canvas', 'tks-cv')
     var ctx = cv.getContext('2d')
     root.appendChild(cv)
+    // living weather (owner video 2026-10-17, games/weather-alive.js): level.weather, else a seeded pick that fits
+    // the sea -- the night Atlantic gets storms, sleet, snow and fog; a day sea gets showers, wind and heat
+    var WX = null, wxDt = 0, wxOx = null, wxOy = null, wxShower = false
+    if (W.WeatherAlive && w.palette !== 'deep' && lvl.weather !== 'none') {
+      var WXP = w.palette === 'night' ? ['storm', 'rain', 'snow', 'fog', 'hail', 'clear'] : ['rain', 'wind', 'heat', 'clear', 'fog', 'rain']
+      var wxKind = lvl.weather || opts.weather || WXP[(Math.floor(num(lvl.seed, 20260928)) >>> 0) % WXP.length]
+      WX = W.WeatherAlive.create({ kind: wxKind, view: 'top', reduced: reduced, seed: num(lvl.seed, 7), muted: function () { return !!(opts.sfx && opts.sfx.muted) || paused || dead } })
+      wxShower = wxKind === 'rain'
+    }
 
     // HUD
     var top = el('div', 'tks-top')
@@ -1725,6 +1734,15 @@
         if (themeName === 'deep') SEA.rays(ctx, vw, vh, S.t, reduced)
         if (vigGrad) vigGrad.draw(ctx, vw, vh)
       }
+      if (WX) {
+        if (wxDt > 0) {
+          if (wxShower && w.length && -S.y / w.length > 0.65) { wxShower = false; WX.set('clear') }   // the shower passes: rainbow
+          WX.step(wxDt, { w: vw, h: vh, dx: wxOx == null ? 0 : ox - wxOx, dy: wxOy == null ? 0 : oy - wxOy })
+        }
+        wxDt = 0; wxOx = ox; wxOy = oy
+        WX.lite(rq < 0.75)   // a device the game already turned its resolution down for gets the light weather
+        WX.draw(ctx, { w: vw, h: vh })
+      }
       if (S.boostT > 0 && !reduced) drawSpeedLines()
       if (confetti && confetti.n) confetti.draw(ctx)
       drawPointer()
@@ -2280,6 +2298,7 @@
       // a question just opened: the frame shows the frozen sea and the loop stops until it is answered
       if (S.waiting) { render(); return }
       if (S.frames > 20) adapt(dt)
+      wxDt = dt
       var al = acc / STEP, cur = { x: S.x, y: S.y, a: S.a, cx: S.camX, cy: S.camY }
       if (n > 0 && al > 0) {
         S.x = prev.x + (cur.x - prev.x) * al; S.y = prev.y + (cur.y - prev.y) * al; S.a = prev.a + angNorm(cur.a - prev.a) * al
@@ -2311,7 +2330,7 @@
     var handle = {
       pause: function (quiet) {
         if (dead || paused || S.waiting) return          // the open question card already holds the game
-        paused = true; stop(); audio.suspend()
+        paused = true; stop(); audio.suspend(); if (WX) WX.hush()
         releaseHolds(); input.keyL = input.keyR = false; input.drag = false; drag = null
         if (opts.pauseOverlay !== false && !quiet) pauseOv.classList.add('is-on')
       },
@@ -2321,7 +2340,7 @@
       },
       destroy: function () {
         if (dead) return
-        dead = true; stop(); audio.close()
+        dead = true; stop(); audio.close(); if (WX) WX.destroy()
         if (pending && typeof pending.close === 'function') { var pd = pending; pending = null; try { pd.close() } catch (e) {} }
         if (ro) ro.disconnect(); else W.removeEventListener('resize', resize)
         W.removeEventListener('keydown', onKey); W.removeEventListener('keyup', onKey); W.removeEventListener('blur', onBlur)
@@ -2342,6 +2361,7 @@
           theme: SEA ? themeName : null, sea: !!SEA, wake: trail.length, route: route ? route.value() : null, combo: S.combo || 0, confetti: confetti ? confetti.n : 0, vw: vw, vh: vh,
           waiting: S.waiting,
           q: { open: S.qOpen, n: { collide: S.qn.collide, buoy: S.qn.buoy, gate: S.qn.gate }, asked: S.qAsked, right: S.qRight, log: S.qLog.slice(), lastCollideT: S.lastColQ,
+            weather: WX ? WX.state() : null,
             net: !!S.net, cool: Q_COOL, count: QC.count, on: Object.keys(QC.on), topic: QC.topic, pend: !!S.qPend, shield: S.shield, boost: S.boostT, bonus: S.bonus, combo: S.qCombo, ease: S.easeT,
             buoys: qBuoys.map(function (b) { return { x: Math.round(b.x), y: Math.round(b.y), kind: b.kind, taken: b.taken } }),
             gates: qGates.map(function (g) { return { x: Math.round(g.x), y: Math.round(g.y), asked: g.asked, drop: g.drop, open: g.open } }) } }

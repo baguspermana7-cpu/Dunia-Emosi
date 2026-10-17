@@ -316,7 +316,9 @@
       }
       R.rainN = n
       if (R.wI > 0.3 && vis > 0.5 && Math.random() < dt * 34 * R.q * R.wI) { for (i = 0; i < MAXSP; i++) if (PA[i] >= 0.4) { var u = Math.pow(Math.random(), 0.7); PY[i] = 0.12 + 0.88 * u; PX[i] = 0.5 + (Math.random() - 0.5) * (0.5 + u * 0.9); PA[i] = 0; break } }
-      if (R.wI > 0.75 && !RM && vis > 0.7) { R.boltT -= dt; if (R.boltT <= 0) { R.flash = 0.0001; R.boltT = 14 + R.lr() * 12; R.stats.lightning++ } }
+      if (R.wI > 0.75 && !RM && vis > 0.7) { R.boltT -= dt; if (R.boltT <= 0) { R.flash = 0.0001; R.boltT = 14 + R.lr() * 12; R.stats.lightning++; R.thunderIn = 0.5 + R.lr() * 1.2; R.thunderPow = 0.5 + R.lr() * 0.4 } }
+      // the thunder hits a beat AFTER the flash (owner video 2026-10-17; shared synth in weather-alive.js)
+      if (R.thunderIn > 0) { R.thunderIn -= dt; if (R.thunderIn <= 0 && st && st.sound && !st.paused && W.WeatherAlive && W.WeatherAlive.thunder) W.WeatherAlive.thunder(R.thunderPow) }
     } else R.rainN = 0
     for (i = 0; i < MAXSP; i++) if (PA[i] < 0.4) PA[i] += dt
     if (R.flash > 0) { R.flash += dt; if (R.flash > 0.45) R.flash = 0 }

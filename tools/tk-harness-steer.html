@@ -22,6 +22,7 @@
 <div id="host"></div>
 <script src="../games/data/asset-index.js"></script>
 <script src="../games/speedlines-fx.js"></script>
+<script src="../games/weather-alive.js"></script>
 <script src="../games/data/sfx-engine.js"></script>
 <script src="../games/data/tk-worlds.js"></script>
 <script src="../games/tk-sea.js"></script>
@@ -48,6 +49,7 @@
     o.ship = sp ? (sp === 'pick' ? undefined : sp) : false
     o.avatar = q.get('avatar') || 'qa'
     if (q.get('theme')) o.theme = q.get('theme')
+    if (q.get('wx')) o.weather = q.get('wx')   // &wx=rain|storm|hail|snow|fog|wind|heat|clear (weather-alive.js)
     if (q.get('fresh') === '1') { try { localStorage.removeItem('tk-fleet-' + o.avatar) } catch (e) {} }
     var qm = q.get('q')
     if (qm === 'stub' || qm === 'auto' || qm === 'wrong') {

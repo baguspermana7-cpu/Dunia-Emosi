@@ -11,8 +11,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.10-20261017g">
-<link rel="stylesheet" href="du-hud.css?v=v64.10-20261017g">
+<link rel="stylesheet" href="du-buttons.css?v=v64.11-20261017h">
+<link rel="stylesheet" href="du-hud.css?v=v64.11-20261017h">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -235,32 +235,32 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=v64.10-20261017g"></script><script src="data/ui-sprites.js?v=v64.10-20261017g"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v64.10-20261017g"></script>
-<script src="train-shared.js?v=v64.10-20261017g"></script>
-<script src="train-vfx.js?v=v64.10-20261017g"></script>
-<script src="motion.js?v=v64.10-20261017g"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v64.10-20261017g"></script>
-<script src="data/bg-themes.js?v=v64.10-20261017g"></script>
-<script src="data/bg-renderers.js?v=v64.10-20261017g"></script>
-<script src="data/bg-npcs.js?v=v64.10-20261017g"></script>
-<script src="data/bg-audio.js?v=v64.10-20261017g"></script>
-<script src="data/bg-events.js?v=v64.10-20261017g"></script>
+<script src="data/emoji-map.js?v=v64.11-20261017h"></script><script src="data/ui-sprites.js?v=v64.11-20261017h"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v64.11-20261017h"></script>
+<script src="train-shared.js?v=v64.11-20261017h"></script>
+<script src="train-vfx.js?v=v64.11-20261017h"></script>
+<script src="motion.js?v=v64.11-20261017h"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v64.11-20261017h"></script>
+<script src="data/bg-themes.js?v=v64.11-20261017h"></script>
+<script src="data/bg-renderers.js?v=v64.11-20261017h"></script>
+<script src="data/bg-npcs.js?v=v64.11-20261017h"></script>
+<script src="data/bg-audio.js?v=v64.11-20261017h"></script>
+<script src="data/bg-events.js?v=v64.11-20261017h"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=v64.10-20261017g"></script>
-<script src="train-journey.js?v=v64.10-20261017g"></script>
-<script src="indo-scene.js?v=v64.10-20261017g"></script>
+<script src="obstacle-engine.js?v=v64.11-20261017h"></script>
+<script src="train-journey.js?v=v64.11-20261017h"></script>
+<script src="indo-scene.js?v=v64.11-20261017h"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=v64.10-20261017g"></script>
-<script src="train-speedfx.js?v=v64.10-20261017g"></script>
-<script src="data/kids-questions.js?v=v64.10-20261017g"></script>
-<script src="data/obstacles.js?v=v64.10-20261017g"></script>
-<script src="data/routes.js?v=v64.10-20261017g"></script>
-<script src="data/reward-catalog.js?v=v64.10-20261017g"></script>
-<script src="reward-gallery.js?v=v64.10-20261017g"></script>
-<script src="settings-modal.js?v=v64.10-20261017g"></script>
+<script src="train-backdrop.js?v=v64.11-20261017h"></script>
+<script src="train-speedfx.js?v=v64.11-20261017h"></script><script src="weather-alive.js?v=v64.11-20261017h"></script>
+<script src="data/kids-questions.js?v=v64.11-20261017h"></script>
+<script src="data/obstacles.js?v=v64.11-20261017h"></script>
+<script src="data/routes.js?v=v64.11-20261017h"></script>
+<script src="data/reward-catalog.js?v=v64.11-20261017h"></script>
+<script src="reward-gallery.js?v=v64.11-20261017h"></script>
+<script src="settings-modal.js?v=v64.11-20261017h"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v64.10-20261017g"></script>
+<script src="train-bgm.js?v=v64.11-20261017h"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -328,9 +328,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=v64.10-20261017g"></script>
-<script src="data/save-engine.js?v=v64.10-20261017g"></script>
-<script src="game-modal.js?v=v64.10-20261017g"></script>
+<script src="data/freeze-watchdog.js?v=v64.11-20261017h"></script>
+<script src="data/save-engine.js?v=v64.11-20261017h"></script>
+<script src="game-modal.js?v=v64.11-20261017h"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -387,10 +387,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=v64.10-20261017g"></script>
-<script src="data/train-world.js?v=v64.10-20261017g"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=v64.10-20261017g"></script>
-<script src="../shared/rz-responsive.js?v=v64.10-20261017g"></script>
+<script src="trains-db.js?v=v64.11-20261017h"></script>
+<script src="data/train-world.js?v=v64.11-20261017h"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=v64.11-20261017h"></script>
+<script src="../shared/rz-responsive.js?v=v64.11-20261017h"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -469,6 +469,7 @@ window.addEventListener('resize',()=>{
 });
 function togglePause() {
   gamePaused = !gamePaused;
+  if (gamePaused && g15WX) g15WX.hush();
   document.getElementById('btn-pause').textContent = gamePaused ? '▶' : '⏸';
   // Task #63 — pause the math-quiz wall-clock timer so it doesn't auto-fail while
   // user is paused. On pause: clearTimeout + record remaining. On resume: restart
@@ -902,6 +903,7 @@ let g15RailTop = 0;   // A-311 — top of the rail band; Indonesian scenery sits
 let g15CharRailOffset = 0; // B-268: Y delta so character-train wheels land exactly on rail (trainContainer.y − LANE_Y[1])
 let g15Backdrop = null;  // v55.77 — shared painterly backdrop+parallax handle (null = procedural fallback)
 let g15SpeedFX = null;   // v55.77 — shared always-on speed overlay handle
+let g15WX = null, g15WXShower = false;   // 2026-10-17 — living weather overlay (weather-alive.js)
 let g15Smoke = null, g15SmokeLayer = null, g15CraterX = 0, g15CraterY = 0, g15ScenePal = null, g15SmokeT = 0;
 let g15ParWrap = null;  // B-247: parallax far-scenery container (mountains + hills, 2-tile seamless)
 let g15Ambient = null;  // B-258: living-sky ambient engine (birds/clouds/kites)
@@ -1052,6 +1054,17 @@ async function initPixi() {
   // redundant procedural engine is skipped whenever a plate mounts.)
   // v55.77 — always-on, speed-scaled motion-streak overlay (mirrors g14 L._speedfx).
   g15SpeedFX = window.TrainSpeedFX ? TrainSpeedFX.mount(stage, app, { cap: 32 }) : null;
+  // 2026-10-17 living weather (games/weather-alive.js, owner video): a seeded pick per level that fits Indonesia
+  // (no snow, no hail) -- rain, a storm, morning fog, wind, a hot day or clear; a rain that passes leaves a rainbow
+  try {
+    if (window.WeatherAlive && !g15WX) {
+      const _pool = ['rain', 'clear', 'storm', 'wind', 'fog', 'heat', 'rain', 'clear']
+      const _k = new URLSearchParams(location.search).get('wx') || _pool[((LEVEL | 0) * 7 + 3) % _pool.length]
+      g15WX = WeatherAlive.overlay(document.getElementById('pixi-canvas'), { kind: _k, view: 'side', seed: (LEVEL | 0) + 11,
+        reduced: !!(window.TrainVFX && TrainVFX.reducedMotion && TrainVFX.reducedMotion()), muted: () => gamePaused || document.hidden })
+      g15WXShower = _k === 'rain'
+    }
+  } catch (_) { g15WX = null }
 
   buildBackground();
   buildTracks();
@@ -1135,6 +1148,10 @@ async function initPixi() {
     // v55.77 — shared painterly parallax scroll + rail-bob, then the speed overlay.
     if (g15Backdrop) g15Backdrop.tick(gameSpeed, dt, stage);
     if (g15SpeedFX) g15SpeedFX.tick(gameSpeed, dt, { maxSpeed: 2 + 30 * 0.15 + 2, top: 0, height: H });
+    if (g15WX) {
+      if (g15WXShower && WORDS_LIST && WORDS_LIST.length && currentWordIdx / WORDS_LIST.length > 0.6) { g15WXShower = false; g15WX.set('clear') }
+      g15WX.tick(dt / 60, { ground: g15RailTop + 6, dx: -gameSpeed * dt })
+    }
 
     // A-311 — volcano smoke plume
     if (window.IndoScene && g15Smoke && g15SmokeLayer && g15ScenePal) {
@@ -4640,6 +4657,6 @@ if (window.RZ) window.RZ.onResize(applyRdeScaling);
 // v54.24 G13 + G8: word-of-the-day banner + greeting hook
 try { if (window.TrainShared) { TrainShared.wordOfDay.showBanner(); TrainShared.greeting.onEnterGame('g15') } } catch(_){}
 </script>
-<script src="vfx-engine.js?v=v64.10-20261017g"></script><script src="data/vfx-db.js?v=v64.10-20261017g"></script><script src="vfx-moments.js?v=v64.10-20261017g"></script>
+<script src="vfx-engine.js?v=v64.11-20261017h"></script><script src="data/vfx-db.js?v=v64.11-20261017h"></script><script src="vfx-moments.js?v=v64.11-20261017h"></script>
 </body>
 </html>

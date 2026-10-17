@@ -741,8 +741,14 @@
     return def
   }
   // steer level -> TKSteer level: kid assist on everywhere, the first steer level of a world is the slow one
+  // living weather per scene (games/weather-alive.js, owner 2026-10-17): the sea tells the story -- a misty dawn harbour,
+  // a hot noon quay, a windy open sea, snow over the night Atlantic near the ice, and a shower that clears into a rainbow
+  // at the rescue dawn. A scene not listed falls back to TKSteer's seeded pick.
+  var SCENE_WX = { 'harbor-dawn': 'fog', 'harbor-morning': 'clear', 'harbor-day': 'heat', 'open-sea': 'wind', 'night-ocean': 'snow',
+    'collision-far': 'hail', 'antarctic': 'snow', 'research-sea': 'fog', 'rescue-dawn': 'rain', 'lifeboat': 'storm', 'time-harbor': 'clear', 'deep-sea': 'none',
+    'hospital-ship': 'rain', 'shipyard': 'clear', 'old-deck': 'wind' }
   function steer (lv) {
-    return { mode: lv.mode, vessel: lv.vessel, goal: lv.goal, assist: lv.assist !== false, first: lv.steerNo === 1, id: lv.id }
+    return { mode: lv.mode, vessel: lv.vessel, goal: lv.goal, assist: lv.assist !== false, first: lv.steerNo === 1, id: lv.id, weather: lv.weather || SCENE_WX[lv.scene] }
   }
   // TKSteer looks a level up by its goal text when the host passes only { mode, vessel, goal }
   function findSteer (goal, mode) {
