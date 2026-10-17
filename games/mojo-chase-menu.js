@@ -21,7 +21,7 @@
     // Tim Film Balap (2026-10-17): its own stars per mission + the chosen racer, kept beside the Mojo progress
     var f0 = o && o.film && typeof o.film === 'object' ? o.film : {}, fst = {}
     if (f0.st && typeof f0.st === 'object') Object.keys(f0.st).forEach(function (k) { var r = f0.st[k]; if (r && typeof r.stars === 'number' && r.stars >= 1 && r.stars <= 3) fst[k] = { stars: Math.floor(r.stars), t: r.t || 0 } })
-    return { v: 1, st: st, form: o && typeof o.form === 'string' ? o.form : null, film: { st: fst, racer: typeof f0.racer === 'string' ? f0.racer : null } }
+    return { v: 1, st: st, form: o && typeof o.form === 'string' ? o.form : null, film: { st: fst, racer: typeof f0.racer === 'string' ? f0.racer : null, rival: typeof f0.rival === 'string' ? f0.rival : 'auto' } }
   }
   function save (s) {
     try { var j = JSON.stringify(s); if (W.avatarScopedSet) W.avatarScopedSet(KEY, j); else localStorage.setItem(KEY, j); return true } catch (e) { console.warn('[Mojo chase] save failed', e); return false }
@@ -83,7 +83,7 @@
     var grid = el('div', 'team-grid'); u.content.appendChild(grid)
     T.TEAMS.forEach(function (t) {
       var b = el('button', 'team-card'); b.type = 'button'; b.setAttribute('data-team', t.id)
-      b.innerHTML = '<span class="pic"><img alt="" src="' + lib(t.card) + '"></span><span class="meta"><strong class="fk">' + t.name + '</strong><span class="sub">' + t.sub + '</span>' +
+      b.innerHTML = '<span class="pic"><img alt="" src="' + (t.pic ? '../' + t.pic : lib(t.card)) + '"></span><span class="meta"><strong class="fk">' + t.name + '</strong><span class="sub">' + t.sub + '</span>' +
         (t.soon ? '<span class="soon">Gambar pembalap segera hadir</span>' : '') + '</span>'
       b.addEventListener('click', function () { API.cue(); TEAM = t.id; menu() })
       grid.appendChild(b)
@@ -103,27 +103,66 @@
     F.racers.forEach(function (r) {
       var b = el('button', 'racer-chip' + (r.id === racer.id ? ' on' : '')); b.type = 'button'; b.setAttribute('data-racer', r.id)
       b.style.setProperty('--rc', r.color)
-      b.innerHTML = '<img alt="" src="' + lib(formSide(r.form)) + '"><span class="fk">' + r.name + '</span>'
+      b.innerHTML = '<img alt="" src="' + (r.pic ? '../' + r.pic : lib(formSide(r.form))) + '"><span class="fk">' + r.name + '</span>'
       b.addEventListener('click', function () { API.cue(); var sv = load(); sv.film.racer = r.id; save(sv); filmMenu() })
       bar.appendChild(b)
+    })
+    // the opponent bar: Otomatis (each mission its own rival / pursuer) or any racer -- who drives and who is chased
+    // (or chasing) can be combined freely; the child's own racer is never its own opponent
+    var rv = s.film.rival || 'auto', obar = el('div', 'racer-bar rival-bar'); u.content.appendChild(el('p', 'race-sub fk', 'Lawan:')); u.content.appendChild(obar)
+    var ob = el('button', 'racer-chip auto' + (rv === 'auto' ? ' on' : '')); ob.type = 'button'; ob.setAttribute('data-rival', 'auto'); ob.innerHTML = '<span class="ico-auto fk">?</span><span class="fk">Otomatis</span>'
+    ob.addEventListener('click', function () { API.cue(); var sv = load(); sv.film.rival = 'auto'; save(sv); filmMenu() }); obar.appendChild(ob)
+    F.racers.forEach(function (r) {
+      if (r.id === racer.id || !r.pic) return
+      var b = el('button', 'racer-chip' + (r.id === rv ? ' on' : '')); b.type = 'button'; b.setAttribute('data-rival', r.id)
+      b.style.setProperty('--rc', r.color)
+      b.innerHTML = '<img alt="" src="../' + r.pic + '"><span class="fk">' + r.name + '</span>'
+      b.addEventListener('click', function () { API.cue(); var sv = load(); sv.film.rival = r.id; save(sv); filmMenu() })
+      obar.appendChild(b)
     })
     u.content.appendChild(el('p', 'race-lead', racer.name + ': ' + racer.line))
     var grid = el('div', 'race-grid'); u.content.appendChild(grid)
     F.missions.forEach(function (m, i) {
       var st = W.MojoChases.stage(m.stage) || {}, rec = s.film.st[m.id]
-      var b = el('button', 'race-card film-' + m.type); b.type = 'button'; b.setAttribute('data-mission', m.id)
+      var wh = who(m, racer), tx = words(m, wh), tpic = m.mode === 'robber' ? lib('mojo-chase/vehicles/' + m.target) : wh.pic ? '../' + wh.pic : lib('mojo-chase/vehicles/speed')
+      var b = el('button', 'race-card film-' + m.mode); b.type = 'button'; b.setAttribute('data-mission', m.id)
       var stars = ''; for (var k = 1; k <= 3; k++) stars += '<img class="' + (rec && rec.stars >= k ? '' : 'off') + '" alt="" src="' + lib('mojo-chase/items/star') + '">'
-      b.innerHTML = '<span class="pic" style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + lib('mojo-chase/vehicles/' + m.target) + '"><span class="num fk">' + (i + 1) + '</span>' +
-        '<span class="mtype fk">' + (m.type === 'rival' ? 'Kejar Rival' : 'Kejar Pencuri') + '</span></span>' +
-        '<span class="meta"><strong class="fk">' + m.title + '</strong><span class="sub">' + (st.place || '') + '</span><span class="st">' + stars + '</span></span>'
+      b.innerHTML = '<span class="pic" style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + tpic + '"><span class="num fk">' + (i + 1) + '</span>' +
+        '<span class="mtype fk">' + tx.tag + '</span></span>' +
+        '<span class="meta"><strong class="fk">' + tx.title + '</strong><span class="sub">' + (st.place || '') + '</span><span class="st">' + stars + '</span></span>'
       b.addEventListener('click', function () { API.cue(); playFilm(m, racer) })
       grid.appendChild(b)
     })
     API.show('scr-race')
   }
+  // the film racer a mission is about (the one ahead, or the pursuer); never the child's own racer: then its alt
+  function who (m, racer) {
+    var id = m.mode === 'race' ? m.rival : m.mode === 'escape' ? m.pursuer : null
+    if (!id) return { id: null, name: 'Pencuri', pic: null }
+    var pick = load().film.rival   // the child's own choice of opponent (owner: "bisa pilih"), else the mission's
+    if (pick && pick !== 'auto' && W.MojoRacerSheets && W.MojoRacerSheets[pick]) id = pick
+    if (racer && racer.id === id) id = m.alt && m.alt !== racer.id ? m.alt : (m.rival !== racer.id ? m.rival : m.pursuer) || id
+    var R = W.MojoRacerSheets && W.MojoRacerSheets[id]
+    return { id: R ? id : null, name: R ? R.name : m.mode === 'escape' ? 'Pengejar' : 'Rival', pic: R ? R.pic : null }
+  }
+  // a mission's words: its own (it names its rival) unless the child picked another opponent -- then the words name them
+  function words (m, wh) {
+    var pick = load().film.rival, own = !pick || pick === 'auto' || m.mode === 'robber'
+    if (own) return { title: m.title, intro: m.intro, outro: m.outro, tag: m.tag }
+    var place = (W.MojoChases.stage(m.stage) || {}).place || ''
+    return m.mode === 'race'
+      ? { title: 'Susul ' + wh.name, intro: wh.name + ' ngebut di depan di ' + place + '! Susul sebelum garis finis!', outro: 'Hebat! ' + wh.name + ' tersusul!', tag: 'Kejar ' + wh.name.split(' ')[0] }
+      : { title: 'Lari dari ' + wh.name, intro: wh.name + ' mengejarmu di ' + place + '! Hindari rintangan, jangan sampai tersusul!', outro: 'Kamu lolos dari ' + wh.name + '!', tag: 'Dikejar ' + wh.name.split(' ')[0] }
+  }
   function playFilm (m, racer) {
-    var cfg = W.MojoChases.config(m.stage, { target: m.target, intro: m.intro, outro: m.outro, item: m.item })
-    cfg.title = m.title; cfg.mission = m.type === 'rival' ? 'Kejar rivalnya sampai terkejar!' : 'Tangkap pencurinya!'; cfg.missionType = m.type; cfg.foe = m.foe; cfg.mojo_form = racer.form; cfg.teamPicked = true; cfg.team = 'film'; cfg.racer = racer.id
+    var wh = who(m, racer), tx = words(m, wh)
+    var cfg = W.MojoChases.config(m.stage, { target: m.target || 'speed', intro: tx.intro, outro: tx.outro, item: m.item })
+    cfg.title = tx.title; cfg.mode = m.mode; cfg.missionType = m.mode; cfg.mojo_form = racer.form; cfg.teamPicked = true; cfg.team = 'film'; cfg.racer = racer.id; cfg.heroName = racer.name
+    if (m.mode === 'robber') { cfg.mission = 'Tangkap pencurinya!'; cfg.foe = { n: 'pencuri', N: 'Pencuri', caught: 'Pencuri Tertangkap!' } }
+    else if (m.mode === 'race') { cfg.mission = 'Susul ' + wh.name + ' sebelum garis finis!'; cfg.targetRacer = wh.id; cfg.foe = { n: wh.name, N: wh.name, caught: wh.name + ' Tersusul!', title: 'SUSUL ' + wh.name.toUpperCase() + '!' } }
+    else { cfg.mission = 'Jangan sampai tersusul ' + wh.name + '!'; cfg.pursuerPic = wh.pic; cfg.foe = { n: wh.name, N: wh.name, caught: 'Kamu Lolos!', title: 'LARI! ' + wh.name.toUpperCase() + ' MENGEJAR' } }
+    var me = racer.pic ? '../' + racer.pic : null
+    if (me) cfg.cast = m.mode === 'race' && wh.pic ? [me, '../' + wh.pic] : [me]
     cfg.onForm = function () {}   // a film racer never overwrites the child's saved Mojo form
     run(cfg).then(function (res) {
       if (res && res.completed) {

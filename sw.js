@@ -280,6 +280,7 @@ const SHELL = [
   './games/mojo-chase-ui.css?v=v64.12-20261017i',
   './games/mojo-chase-picker.js?v=v64.12-20261017i',
   './games/mojo-chase-quiz.js?v=v64.12-20261017i',
+  './games/data/mojo-racer-sheets.js?v=v64.12-20261017i',
   './games/data/mojo-team-film.js?v=v64.12-20261017i',
   './games/mojo-chase-menu.js?v=v64.12-20261017i',
   './assets/db/lib/mojo-top/base.webp',
