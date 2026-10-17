@@ -132,28 +132,46 @@
   "score": 0.984
  },
  "LIS-05-h1": {
-  "sha1": "30f345526d137acd6fd4b07cd9df43e5448efd40",
+  "sha1": "5fd680b62412d85955bd872759bb69b5416bd95e",
   "text": "Lihat benda yang muncul di dekat Raka.",
-  "heard": "lihat benda yang muncul di dekat Raka.",
-  "score": 1.0
+  "heard": "lihat benda yang muncul di dekat raka",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-05-h2": {
-  "sha1": "632790cb7203722470ec1d1013fd0f0d27b6c1d7",
+  "sha1": "539db47c5ed7d52c8f6e11af1527dabde30aff85",
   "text": "Kalimat kedua dimulai dengan \"Setelah bangun...\".",
   "heard": "Kalimat kedua dimulai dengan setelah bangun.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-05-q": {
-  "sha1": "adebc4384a643c1095287c10e66c11d686f8e42f",
+  "sha1": "aa8820d193dab740097b31b5298f0aa434c7b711",
   "text": "Apa yang Raka lakukan setelah bangun?",
   "heard": "Apa yang raka lakukan setelah bangun?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-05-s0": {
-  "sha1": "8b7a0f440605d89a7a65cb687c719c7286855917",
+  "sha1": "fcb6ad3d6c1c376e3c56b4697049d52da5c7393a",
   "text": "Pagi hari, Raka bangun tidur.",
-  "heard": "pagi hari raka bangun tidung",
-  "score": 0.923
+  "heard": "pagi harir kebangun tidur",
+  "score": 0.927,
+  "engine": "omnivoice"
+ },
+ "LIS-05-s1": {
+  "sha1": "2ff1f8c52f7f63537a1e1535709ea59dd5312d44",
+  "text": "Setelah bangun, Raka menggosok gigi.",
+  "heard": "Setelah bangun raka menggosok gigi.",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LIS-05-x": {
+  "sha1": "c181203db2e7860474ff981f34c5414a695e496c",
+  "text": "Setelah bangun, Raka menggosok gigi.",
+  "heard": "Setelah bangun raka menggosok gigi.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-06-h1": {
   "sha1": "19e5d54a492e791c82e1a1a26c28f92929862dab",
@@ -384,28 +402,53 @@
   "score": 1.0
  },
  "LIS-12-h1": {
-  "sha1": "7560f01a12a1557ce313a0584e8c3b91aa8e9429",
+  "sha1": "a5fa0c240aab7494e8dbc116b1b9840e3a7c0c6b",
   "text": "Koko melihat banyak hal, tapi apa yang ia BELI?",
-  "heard": "Coco melihat banyak hal tapi apa yang ia beli",
-  "score": 0.943
+  "heard": "Kokom lihat banyak hal, tapi apa yang ia beli?",
+  "score": 0.969,
+  "engine": "omnivoice"
  },
  "LIS-12-h2": {
-  "sha1": "b4b1366b98458708c28f5c6ce265294f98da7894",
+  "sha1": "f1a2ea7393331ee11881c0ec03746659f6968fcb",
   "text": "Kalimat terakhir: Koko membeli tiga buah...",
   "heard": "Kalimat terakhir, Coco membeli 3 buah.",
-  "score": 0.938
+  "score": 0.938,
+  "engine": "omnivoice"
  },
  "LIS-12-q": {
-  "sha1": "ad9adddda181d1054b4aca26687c7662a3514bbc",
+  "sha1": "b37785abd88a65375cd569f083f23d67834531fd",
   "text": "Apa yang dibeli Koko?",
   "heard": "Apa yang dibeli koko?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LIS-12-s0": {
+  "sha1": "295d4440f3c2028511f04ba9dfb72d6409b23f36",
+  "text": "Koko pergi ke pasar.",
+  "heard": "Koko pergi ke pasar!",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LIS-12-s1": {
+  "sha1": "5a2e1aeb3589c28c938c216ba84982a300589751",
+  "text": "Koko melihat layang-layang dan kucing yang tidur.",
+  "heard": "Coco melihat layang-layang dan kucing yang tidur.",
+  "score": 0.949,
+  "engine": "omnivoice"
+ },
+ "LIS-12-s2": {
+  "sha1": "dc63b2c36321c4d29e54ae112a95ba07839d31b7",
+  "text": "Koko membeli tiga buah apel.",
+  "heard": "Kokom beli tiga buah apel?",
+  "score": 0.914,
+  "engine": "omnivoice"
  },
  "LIS-12-x": {
-  "sha1": "d6e8bc162e9a4f7eb5c7758dbec99197c7049814",
+  "sha1": "c738bb2aef8fcb6c9a7beead0622f9197597b991",
   "text": "Koko hanya melihat layang-layang dan kucing. Yang dibeli Koko adalah apel.",
-  "heard": "Coco hanya melihat layang-layang dan kucing yang diberi Coco adalah apel.",
-  "score": 0.912
+  "heard": "Coco hanya melihat layang-layang dan kucing yang dibeli Coco adalah Apple.",
+  "score": 0.904,
+  "engine": "omnivoice"
  },
  "LNG-01-h1": {
   "sha1": "6d83885ad3c4c0ae00ab114786e3ee57d959f0aa",
@@ -437,23 +480,47 @@
   "heard": "ini jam jam punya angka dan jarum untuk menunjukkan waktu.",
   "score": 1.0
  },
+ "LNG-02-h1": {
+  "sha1": "04398d5ddbb8b9bfa510eb9ce8c8ad336b3bd46c",
+  "text": "Rover tidak diam. Ia bergerak.",
+  "heard": "Rover tidak diam, ia bergerak.",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
  "LNG-02-h2": {
-  "sha1": "671dc1ae846b0d3be77ac9fae883445d5f481c80",
+  "sha1": "d059d0238b3656b3787b31e57fe4976ca3133c26",
   "text": "Bergerak cepat dengan kaki disebut...",
-  "heard": "bergerak cepat dengan kaki disebu.",
-  "score": 0.983
+  "heard": "bergarak cepat dengan kaki disebut",
+  "score": 0.967,
+  "engine": "omnivoice"
+ },
+ "LNG-02-q": {
+  "sha1": "a1f563975af8472c6bcc4e8f0ec6aae8a74d4a5d",
+  "text": "Rover sedang ... di taman.",
+  "heard": "Rover sedang ditaman!",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LNG-02-s0": {
+  "sha1": "1ea24d5eb7b86cced39c0701ca83b5c93de02dc0",
+  "text": "Lihat Rover di taman!",
+  "heard": "lihat rover ditaman",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-02-s1": {
-  "sha1": "4391f4a1a22308d36b2f346525ca70b48aecc96f",
+  "sha1": "244e09490e5e555425b09ec77c12e091b0a42709",
   "text": "Rover bergerak cepat dari ujung ke ujung.",
-  "heard": "Poder bergerak cepat dari ujung ke ujung.",
-  "score": 0.921
+  "heard": "Rover bergerak cepat dari ujung ke ujung!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-02-x": {
-  "sha1": "f8d14fb5fc14660dcd1d78605cde510cc3a16ab2",
+  "sha1": "f6f6839961fc2e22cf2cd58555a4a642e0a58d44",
   "text": "Rover sedang berlari di taman.",
-  "heard": "Roer sedang berlari di taman.",
-  "score": 0.909
+  "heard": "Rover sedang berlari ditaman.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-03-h1": {
   "sha1": "2db2f103951dc73892b1f0886505cf9268e788ba",
@@ -1194,22 +1261,46 @@
   "score": 0.912
  },
  "MAT-02-h1": {
-  "sha1": "c7f1681e5d992312cb3b78d0e50224d876a11abc",
+  "sha1": "5d68216fe547ed1a855df5cef96b72642a6f1466",
   "text": "Angka tiga bentuknya seperti dua lengkungan.",
-  "heard": "angka 3 bentuknya seperti 2 lengkungan",
-  "score": 1.0
+  "heard": "Anta tiga bentuknya seperti dua lengkungan.",
+  "score": 0.96,
+  "engine": "omnivoice"
  },
  "MAT-02-h2": {
-  "sha1": "ebae21f8b5102c031b1994c39ca7afd8387ee5ff",
+  "sha1": "dd31b42b21df196b131bc5e7fac07a6c6e51f5d2",
   "text": "Hitung: satu, dua, TIGA.",
-  "heard": "Hitung 1-2-3",
-  "score": 1.0
+  "heard": "Hitung 1,2,3!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-02-q": {
-  "sha1": "ebf74ac1a7d5015bea71920484c7b000871cc72c",
+  "sha1": "b7c54ee83ccfbf14263e08712b0aa50a3f49d589",
   "text": "Ketuk angka TIGA.",
-  "heard": "Ketuk angkatia.",
-  "score": 0.963
+  "heard": "Ketuk angka 3!",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MAT-02-s0": {
+  "sha1": "2aec9b839141897e512b2faf4b83c25d85772e34",
+  "text": "Kapal Stinky membawa angka-angka.",
+  "heard": "Kapal Stinky membawa angka-angka!",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MAT-02-s1": {
+  "sha1": "7de3d7c3db296201d64158d5400effc7e571b799",
+  "text": "Stinky mencari angka TIGA.",
+  "heard": "Stinky mencari angka 3.",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MAT-02-x": {
+  "sha1": "76c150cd6ce1482711a2aa769fcbe871a19a1b7c",
+  "text": "Ini angka 3: tiga.",
+  "heard": "Ini angka 3-3.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-03-h1": {
   "sha1": "7f3fa73947a0bd46d53cd1754a2a1e3382da4212",

@@ -65,11 +65,30 @@ def profile_id():
     return json.load(U.urlopen(r))['id']
 
 
+def healthy():
+    try:
+        return json.load(U.urlopen(VS + '/health', timeout=10)).get('status') == 'ok'
+    except Exception:
+        return False
+
+
 def speak(text, voice, seed, out):
     d = {'model': 'omnivoice', 'input': text, 'language': 'id', 'voice': voice, 'response_format': 'wav',
          'seed': seed, 'num_step': STEPS}
-    r = U.Request(VS + '/v1/audio/speech', data=json.dumps(d).encode(), headers={'Content-Type': 'application/json', 'Origin': VS})
-    open(out, 'wb').write(U.urlopen(r, timeout=1800).read())
+    # the container restarts now and then (memory): wait for /health and retry instead of losing the run
+    for attempt in range(4):
+        try:
+            r = U.Request(VS + '/v1/audio/speech', data=json.dumps(d).encode(), headers={'Content-Type': 'application/json', 'Origin': VS})
+            open(out, 'wb').write(U.urlopen(r, timeout=1800).read())
+            return
+        except (OSError, ConnectionError) as e:
+            if isinstance(e, U.HTTPError) and e.code < 500:
+                raise
+            print(f'     VoiceStudio dropped the request ({e}); waiting for it to come back', flush=True)
+            t0 = time.time()
+            while not healthy() and time.time() - t0 < 900:
+                time.sleep(15)
+    raise RuntimeError('VoiceStudio did not recover')
 
 
 def voiced(x, sr):
