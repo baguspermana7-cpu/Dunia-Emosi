@@ -1407,34 +1407,46 @@
   "engine": "omnivoice"
  },
  "MAT-01-h1": {
-  "sha1": "b1fe18988999e1bc80d4b9bf2c70831e12461a50",
+  "sha1": "a2d37d48f6c06f04638e4180f9d701d316a59f9c",
   "text": "Mulai dari ikan paling kiri.",
-  "heard": "Mulai dari ikan paling kiri.",
-  "score": 1.0
+  "heard": "Mulai dari ikan paling kiri!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-01-h2": {
-  "sha1": "0a40f8caf172298916c12a9f5e72be0d8b4d63af",
+  "sha1": "aa317c6220bce1388bb2bdaa22616a0b53a4c3b8",
   "text": "Tunjuk satu per satu: satu, dua, tiga...",
-  "heard": "Tunjuk satu per satu satu dua tiga.",
-  "score": 1.0
+  "heard": "Tunjuk satu persatu! Satu dua tiga!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-01-q": {
-  "sha1": "a1afda02984258317e24bbd86d704092efba45bf",
+  "sha1": "bbc3ab3ab0aee12f5cb0b4904aacd3be54bb6a2e",
   "text": "Ada berapa ikan?",
   "heard": "Ada berapa ikan?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-01-s0": {
-  "sha1": "75f96687778798fc1e73565767bb74c7a91a5013",
+  "sha1": "45509859aa39b5a9813b0033e9bc1193d9cd7a24",
   "text": "Ikan-ikan berenang di dekat Pulau Angka.",
-  "heard": "ikan-ikan berenang di dekat pulau Angka.",
-  "score": 1.0
+  "heard": "Ikan-ikan bernang di dekat pulau angka!",
+  "score": 0.985,
+  "engine": "omnivoice"
+ },
+ "MAT-01-s1": {
+  "sha1": "a475b7bb136dfee86f4089e0337b11b0583e8640",
+  "text": "Ayo hitung ikannya!",
+  "heard": "Ayo hitung ikan ya!",
+  "score": 0.968,
+  "engine": "omnivoice"
  },
  "MAT-01-x": {
-  "sha1": "0f7089395e9447dc1e57ea0a030cc2b2be91a3fb",
+  "sha1": "019f24bc5b555998298a3aae23477dd6a0e75e45",
   "text": "Ada 4 ikan: satu, dua, tiga, empat.",
-  "heard": "Ada empat ikan satu dua tidak empah.",
-  "score": 0.912
+  "heard": "ada empat ikan 1 2 3 4",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-02-h1": {
   "sha1": "5d68216fe547ed1a855df5cef96b72642a6f1466",
@@ -1515,34 +1527,46 @@
   "score": 1.0
  },
  "MAT-04-h1": {
-  "sha1": "c39b06a51193ebe28ed7433ad0972695a5b303fa",
+  "sha1": "14b12a17ed2c236634e12a3d5f47e352a8dc6a2e",
   "text": "Hitung pisang di setiap kotak.",
-  "heard": "Hitung pisang di setiap kota.",
-  "score": 0.98
+  "heard": "Hitung pisang di setiap kotak.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-04-h2": {
-  "sha1": "b518b0217729f1c1f0637ed21a8014ca101780f3",
+  "sha1": "015726e3eebbae2b0eee67664b44123977d2a900",
   "text": "Dua atau lima, mana yang lebih banyak?",
-  "heard": "dua atau lima mana yang lebih banyak?",
-  "score": 1.0
+  "heard": "2 atau 5, mana yang lebih banyak?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-04-q": {
-  "sha1": "9b52ec8ded7bcfdfac81b4dc5c33fa3d2d01d370",
+  "sha1": "f9ac5e0516979c4683f954565ae3f57abc565d61",
   "text": "Mana yang LEBIH BANYAK?",
   "heard": "Mana yang lebih banyak?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MAT-04-s0": {
+  "sha1": "db46178c6992776db4bfbc536672b1c2ec28dbb9",
+  "text": "Rover dan Mimi memetik pisang.",
+  "heard": "Rover dan Mimi memetik pisang.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-04-s1": {
-  "sha1": "280fb1f271a250a8eb9ce17a632a7c7c69e121eb",
+  "sha1": "1284d01faad375d9c1306da4dac07b38dea4a87f",
   "text": "Siapa yang pisangnya lebih banyak?",
-  "heard": "Siapa yang pisannya lebih banyak?",
-  "score": 0.982
+  "heard": "Siapa yang pisangnya lebih banyak?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-04-x": {
-  "sha1": "4a74be5d565e6530e83d9ac2ad556ea5c80a8c12",
+  "sha1": "d3c9f8260eb203cf99a43a73e993789817126b06",
   "text": "Lima lebih banyak dari dua. Pisang Mimi lebih banyak.",
-  "heard": "5 lebih banyak dari 2 pisang mimi lebih banyak.",
-  "score": 1.0
+  "heard": "5 lebih banyak dari 2 pisang mini lebih banyak.",
+  "score": 0.951,
+  "engine": "omnivoice"
  },
  "MAT-05-h1": {
   "sha1": "c97e8f4f6359ccb84d9516a6005ee0e0afb4449c",
@@ -2097,28 +2121,46 @@
   "engine": "omnivoice"
  },
  "MEM-08-h1": {
-  "sha1": "8891b10ee2cd2ae28dc9bd1bd5bf6e0b702e0ce3",
+  "sha1": "afd292c3091387a46203478bc792c83dd6cd331a",
   "text": "Ada tiga bekal. Satu pilihan tidak ada tadi.",
-  "heard": "Ada 3 bekal 1 pilihan tidak ada tadi.",
-  "score": 1.0
+  "heard": "Ada 3 bekal, satu pilihan tidak ada tadi.",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MEM-08-h2": {
+  "sha1": "b3b4f8712a06eb176eee9b7bdc674eb911aa7dcd",
+  "text": "Tidak ada pizza di bekal Dirty.",
+  "heard": "Tidak ada pizza di bekal dirty!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-08-q": {
-  "sha1": "8b247ccd1afa84e5c94f578bcc610674def93393",
+  "sha1": "46346e68fb7e648315d15cc88e31420d8ba796e7",
   "text": "Pilih SEMUA bekal yang tadi kamu lihat.",
-  "heard": "Pilih semua bekal yang tadi kamu lihat.",
-  "score": 1.0
+  "heard": "Pilih semua bekal yang tadi kamu lihat!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-08-s0": {
-  "sha1": "80c470eae18c69ee67c2ef731d27bff70fa5eb88",
+  "sha1": "986172bee45dd26d6b10e16778da17072de6e566",
   "text": "Dirty membawa bekal ke puncak gunung.",
-  "heard": "Dia ti membawa bekal kepuncak gunung.",
-  "score": 0.912
+  "heard": "Derti membawa bekal ke puncak gunung.",
+  "score": 0.912,
+  "engine": "omnivoice"
  },
  "MEM-08-s1": {
-  "sha1": "38c875563a28ebbf4cb72678cf56fa2151f7cab9",
+  "sha1": "9873da6e9b4b556b6964aa686ed475e0b1573fa4",
   "text": "Ada apel, pisang, dan kue. Bekalnya ditutup!",
-  "heard": "Ada apa pisang dan kul bekalnya ditutup?",
-  "score": 0.925
+  "heard": "Ada apel, pisang, dan kueh, bekalnya ditutup!",
+  "score": 0.986,
+  "engine": "omnivoice"
+ },
+ "MEM-08-x": {
+  "sha1": "5f1bb1b0b12515b820456036dce1113ea37d5c1c",
+  "text": "Bekal Dirty: apel, pisang, dan kue. Tidak ada pizza.",
+  "heard": "Bekal darti apel, pisang dan kueh! Tidak ada pizza!",
+  "score": 0.919,
+  "engine": "omnivoice"
  },
  "MEM-09-h1": {
   "sha1": "37d42a412ba25d9adf2826172ab0a50f52911848",
