@@ -23,7 +23,7 @@
 
   // BENCH_MAX 0 (owner 2026-09-27: "seperti pokemon hanya 1 kartu di arena"): one truck per side;
   // the other trucks wait in the hand/deck and step in when the active one is knocked out.
-  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, LIVES: 3, WRONG_PCT: 0.25, SUPPORT_PER_TURN: 2, FUEL_AUTO: 1, TYPE_BONUS: 2, TYPE_WEAK: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2, SWAP_FUEL: 1 }
+  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, LIVES: 3, WRONG_PCT: 0.25, SUPPORT_PER_TURN: 2, FUEL_AUTO: 1, TYPE_BONUS: 2, TYPE_WEAK: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2, SWAP_FUEL: 0, LP: 50 }
 
   /* ── rng (mulberry32, state stored as an int) ─────────────────────────── */
   function rand (st) {
@@ -48,7 +48,7 @@
       var starter = p.trucks ? { deck: C.makeDeck(p.trucks) } : C.STARTERS[p.starter]
       if (!starter) throw new Error('unknown starter ' + p.starter)
       var deck = starter.deck.map(function (id) { var inst = 'c' + (st.next++); st.cards[inst] = id; return inst })
-      st.players.push({ name: p.name || ('Pemain ' + (pi + 1)), deck: deck, hand: [], discard: [], active: null, bench: [], ko: 0, lives: RULES.LIVES, skip: 0, skipImmune: false, played: 0,
+      st.players.push({ name: p.name || ('Pemain ' + (pi + 1)), deck: deck, hand: [], discard: [], active: null, bench: [], ko: 0, lp: RULES.LP, skip: 0, skipImmune: false, played: 0,
         fuelPlayed: false, swapped: false, wounds: {}, nitro: 0, boost: 0, reshuffled: false, lastAttack: null })
     })
     var ev = []
@@ -221,7 +221,7 @@
     ev.push({ t: 'turnStart', p: st.active, turn: st.turn })
     if (st.turn > st.maxTurns) {
       var a = st.players[0], b = st.players[1]
-      if (a.lives !== b.lives) return finish(st, ev, a.lives > b.lives ? 0 : 1, 'turnLimit')
+      if (a.lp !== b.lp) return finish(st, ev, a.lp > b.lp ? 0 : 1, 'turnLimit')
       var ha = a.active ? a.active.hp : 0, hb = b.active ? b.active.hp : 0
       return finish(st, ev, ha === hb ? null : (ha > hb ? 0 : 1), 'turnLimit')
     }
@@ -254,14 +254,20 @@
     }
     var before = O.active.hp
     O.active.hp = Math.max(0, O.active.hp - dmg)
+    // LIFE POINTS (owner 2026-10-17 "inflict damage ke life point ... agar fair, tidak ada cara curang"): every point of
+    // damage also comes off the player's LP, the overkill too. Swapping a hurt truck out can no longer hide damage.
+    O.lp = Math.max(0, O.lp - dmg)
     P.lastAttack = { attack: pend.attack, correct: correct, dmg: dmg }
-    ev.push({ t: 'attack', p: pi, card: P.active.inst, attack: pend.attack, correct: !!correct, glancing: !correct, breakdown: pv, dmg: dmg, absorbed: absorbed, hpBefore: before, hpAfter: O.active.hp, target: O.active.inst })
+    ev.push({ t: 'attack', p: pi, card: P.active.inst, attack: pend.attack, correct: !!correct, glancing: !correct, breakdown: pv, dmg: dmg, absorbed: absorbed, hpBefore: before, hpAfter: O.active.hp, target: O.active.inst, lp: O.lp })
     st.pending = null
+    if (O.lp <= 0) {                            // LP gone: the match is won, whatever truck is still standing
+      if (O.active.hp === 0) { var ko0 = O.active.inst; discardTruck(st, O, O.active); O.active = null; P.ko++; ev.push({ t: 'ko', p: 1 - pi, card: ko0, byP: pi, koCount: P.ko, lp: 0 }) }
+      return finish(st, ev, pi, 'lp')
+    }
     if (O.active.hp === 0) {
       var ko = O.active.inst
-      discardTruck(st, O, O.active); O.active = null; P.ko++; O.lives = Math.max(0, O.lives - 1)
-      ev.push({ t: 'ko', p: 1 - pi, card: ko, byP: pi, koCount: P.ko, lives: O.lives })
-      if (O.lives <= 0) return finish(st, ev, pi, 'ko')
+      discardTruck(st, O, O.active); O.active = null; P.ko++
+      ev.push({ t: 'ko', p: 1 - pi, card: ko, byP: pi, koCount: P.ko, lp: O.lp })
       // a KO earns a card — only while the hand has room (never forces a discard)
       if (P.hand.length < RULES.HAND_LIMIT - 1) { var bonus = draw1(st, P, pi, ev); if (bonus) ev.push({ t: 'koReward', p: pi, card: bonus }) }
     }
@@ -313,7 +319,7 @@
         P.hand.splice(P.hand.indexOf(cmd.card), 1); P.discard.push(cmd.card); P.played++
         var O = st.players[1 - pi]
         ev.push({ t: 'action', p: pi, card: cmd.card, effect: a.effect, value: a.value })
-        if (a.effect === 'heal') { var h0 = P.active.hp; P.active.hp = Math.min(P.active.maxHp, P.active.hp + a.value); ev.push({ t: 'heal', p: pi, amount: P.active.hp - h0 }) }
+        if (a.effect === 'heal') { var h0 = P.active.hp; P.active.hp = Math.min(P.active.maxHp, P.active.hp + a.value); var hl = P.active.hp - h0; P.lp = Math.min(RULES.LP, P.lp + hl); ev.push({ t: 'heal', p: pi, amount: hl, lp: P.lp }) }
         if (a.effect === 'draw') draw1(st, P, pi, ev)
         if (a.effect === 'fuel') { P.active.fuel = Math.min(RULES.FUEL_MAX, P.active.fuel + a.value); ev.push({ t: 'fuel', p: pi, fuel: P.active.fuel }) }
         if (a.effect === 'boost') P.boost += a.value

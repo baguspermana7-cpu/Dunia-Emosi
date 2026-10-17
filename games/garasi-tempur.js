@@ -25,20 +25,22 @@
 
   /* ── content: adventure stages (one per arena backdrop) ─────────────────── */
   var STAGES = [
-    { arena: 'stadion-malam', name: 'Stadion Malam', rule: 'malam', types: ['POWER', 'ARMOR'], rar: 'biasa', ai: 'rookie', champ: 'Kapten Baut', mon: ['gt-monster/robo-gorilla', 'Gorila Robot'] },
-    { arena: 'kanyon-lava', name: 'Kanyon Air Terjun', rule: 'ramp', types: ['STUNT', 'SPEED'], rar: 'biasa', ai: 'rookie', champ: 'Rara Lompat', mon: ['gt-monster/lava-tortoise', 'Kura-kura Lava'] },
-    { arena: 'permen', name: 'Negeri Permen', rule: 'malam', types: ['SPEED', 'STUNT'], rar: 'biasa', ai: 'rookie', champ: 'Momo Manis', mon: ['gt-monster/cupcake-monster', 'Monster Kue'] },
-    { arena: 'kuil-hutan', name: 'Kuil Hutan', rule: 'lumpur', types: ['MUD', 'STUNT'], rar: 'langka', ai: 'rookie', champ: 'Pak Lumut', mon: ['gt-monster/forest-ent', 'Raksasa Pohon'] },
-    { arena: 'pelabuhan', name: 'Pelabuhan Kapal', rule: 'lumpur', types: ['MUD', 'POWER'], rar: 'langka', ai: 'racer', champ: 'Bajak Bondan', mon: ['gt-monster/pirate-octopus-cannon', 'Gurita Meriam'] },
-    { arena: 'salju', name: 'Gunung Salju', rule: 'ramp', types: ['ARMOR', 'TECH'], rar: 'langka', ai: 'racer', champ: 'Salsa Salju', mon: ['gt-monster/snow-golem', 'Manusia Salju Raksasa'] },
-    { arena: 'bawah-laut', name: 'Kota Bawah Laut', rule: 'malam', types: ['TECH', 'ARMOR'], rar: 'epik', ai: 'racer', champ: 'Dr. Gelembung', mon: ['gt-monster/deep-angler', 'Ikan Lentera'] },
-    { arena: 'pulau-langit', name: 'Pulau Langit', rule: 'ramp', types: ['SPEED', 'TECH'], rar: 'epik', ai: 'racer', champ: 'Kilat Angkasa', mon: ['gt-monster/storm-cloud-2', 'Awan Badai'] },
-    { arena: 'gunung-api', name: 'Gunung Api', rule: 'lumpur', types: ['POWER', 'MUD'], rar: 'legenda', ai: 'racer', champ: 'Raja Magma', mon: ['gt-monster/fire-bone-dragon', 'Naga Tulang Api'] }
+    { arena: 'stadion-malam', name: 'Stadion Malam', rule: 'malam', types: ['POWER', 'ARMOR'], rar: 'biasa', ai: 'rookie', champ: 'Kapten Baut', mon: ['gt-monster/mecha-crab-titan', 'Kepiting Raksasa'] },
+    { arena: 'kanyon-lava', name: 'Kanyon Air Terjun', rule: 'ramp', types: ['STUNT', 'SPEED'], rar: 'biasa', ai: 'rookie', champ: 'Rara Lompat', mon: ['gt-monster/mecha-ember-golem', 'Golem Bara'] },
+    { arena: 'permen', name: 'Negeri Permen', rule: 'malam', types: ['SPEED', 'STUNT'], rar: 'biasa', ai: 'rookie', champ: 'Momo Manis', mon: ['gt-monster/mecha-gloop-slime', 'Slime Gloop'] },
+    { arena: 'kuil-hutan', name: 'Kuil Hutan', rule: 'lumpur', types: ['MUD', 'STUNT'], rar: 'langka', ai: 'rookie', champ: 'Pak Lumut', mon: ['gt-monster/mecha-moss-guardian', 'Penjaga Lumut'] },
+    { arena: 'pelabuhan', name: 'Pelabuhan Kapal', rule: 'lumpur', types: ['MUD', 'POWER'], rar: 'langka', ai: 'racer', champ: 'Bajak Bondan', mon: ['gt-monster/mecha-coral-kraken', 'Kraken Koral'] },
+    { arena: 'salju', name: 'Gunung Salju', rule: 'ramp', types: ['ARMOR', 'TECH'], rar: 'langka', ai: 'racer', champ: 'Salsa Salju', mon: ['gt-monster/mecha-frost-yeti', 'Yeti Es'] },
+    { arena: 'bawah-laut', name: 'Kota Bawah Laut', rule: 'malam', types: ['TECH', 'ARMOR'], rar: 'epik', ai: 'racer', champ: 'Dr. Gelembung', mon: ['gt-monster/mecha-storm-jelly', 'Ubur-Ubur Badai'] },
+    { arena: 'pulau-langit', name: 'Pulau Langit', rule: 'ramp', types: ['SPEED', 'TECH'], rar: 'epik', ai: 'racer', champ: 'Kilat Angkasa', mon: ['gt-monster/mecha-comet-wisp', 'Monster Komet'] },
+    { arena: 'gunung-api', name: 'Gunung Api', rule: 'lumpur', types: ['POWER', 'MUD'], rar: 'legenda', ai: 'racer', champ: 'Raja Magma', mon: ['gt-monster/mecha-teal-dragon', 'Naga Toska'] }
   ]
-  var RUSH_MONSTERS = [['gt-monster/magma-golem', 'Golem Magma'], ['gt-monster/crystal-crab', 'Kepiting Kristal'], ['gt-monster/penguin-king', 'Raja Pinguin'],
-    ['gt-monster/jester-box', 'Badut Kotak'], ['gt-monster/robo-shark', 'Hiu Robot'], ['gt-monster/ufo-alien', 'UFO Alien'], ['gt-monster/snow-rabbit', 'Kelinci Salju'],
-    ['gt-monster/spike-snail', 'Siput Duri'], ['gt-monster/clock-owl', 'Burung Hantu Jam'], ['gt-monster/bomb-pumpkin', 'Labu Bom'], ['gt-monster/rhino-tank', 'Badak Tank'],
-    ['gt-monster/crown-mimic', 'Peti Bergigi'], ['gt-monster/tar-blob', 'Lumpur Hitam'], ['gt-monster/ice-walrus', 'Walrus Es']]
+  // the owner's animated mecha monsters (Monsters_16_Front_Mecha, 2026-10-17): each plays its own rampage loop in the rush
+  var RUSH_MONSTERS = [['gt-monster/mecha-shark', 'Hiu Mekanik'], ['gt-monster/mecha-crystal-beetle', 'Kumbang Kristal'],
+    ['gt-monster/mecha-clockwork-snail', 'Siput Roda Gigi'], ['gt-monster/mecha-pumpkin-vine', 'Labu Sulur'], ['gt-monster/mecha-velvet-moth', 'Ngengat Beludru'],
+    ['gt-monster/mecha-treasure-mimic', 'Mimik Peti Harta'], ['gt-monster/mecha-mushroom-stomper', 'Penghentak Jamur'],
+    // Monster Mecha Part 2-4 (48 more, 2026-10-17)
+    ['gt-monster/mecha-abyss-angler', 'Pemancing Jurang'], ['gt-monster/mecha-amber-wasp', 'Tawon Amber'], ['gt-monster/mecha-anchor-colossus', 'Raksasa Jangkar'], ['gt-monster/mecha-astral-totem', 'Totem Astral'], ['gt-monster/mecha-aurora-centipede', 'Kelabang Aurora'], ['gt-monster/mecha-avalanche-mammoth', 'Mamut Longsor'], ['gt-monster/mecha-basilisk-crown', 'Basilisk Mahkota'], ['gt-monster/mecha-cable-crawler', 'Perayap Kabel'], ['gt-monster/mecha-cactus-marshal', 'Kaktus Berduri'], ['gt-monster/mecha-chrono-clock', 'Jam Chrono'], ['gt-monster/mecha-cinder-cerberus', 'Cerberus Bara'], ['gt-monster/mecha-cinder-rooster', 'Ayam Jantan Bara'], ['gt-monster/mecha-copper-scorpion', 'Kalajengking Tembaga'], ['gt-monster/mecha-dandelion-dread', 'Dandelion Baja'], ['gt-monster/mecha-drill-armadillo', 'Armadillo Bor'], ['gt-monster/mecha-dune-sandworm', 'Cacing Gurun'], ['gt-monster/mecha-gear-devourer', 'Pemakan Roda Gigi'], ['gt-monster/mecha-glass-gecko', 'Tokek Kaca'], ['gt-monster/mecha-ice-walrus', 'Walrus Es'], ['gt-monster/mecha-iron-puffer', 'Buntal Besi'], ['gt-monster/mecha-lantern-revenant', 'Arwah Lentera'], ['gt-monster/mecha-lunar-owl', 'Burung Hantu Bulan'], ['gt-monster/mecha-magnet-wraith', 'Hantu Magnet'], ['gt-monster/mecha-manta-wraith', 'Pari Kosmik'], ['gt-monster/mecha-neon-arcade-beast', 'Monster Arkade Neon'], ['gt-monster/mecha-obsidian-mantis', 'Belalang Obsidian'], ['gt-monster/mecha-orbital-gazer', 'Pengintai Orbit'], ['gt-monster/mecha-origami-sentinel', 'Penjaga Origami'], ['gt-monster/mecha-piranha-bloom', 'Bunga Piranha'], ['gt-monster/mecha-plasma-lynx', 'Lynx Plasma'], ['gt-monster/mecha-polar-rhino', 'Badak Kutub'], ['gt-monster/mecha-pressure-boiler', 'Ketel Tekanan'], ['gt-monster/mecha-prism-cobra', 'Kobra Prisma'], ['gt-monster/mecha-prism-obelisk', 'Obelisk Prisma'], ['gt-monster/mecha-reactor-furnace', 'Tungku Reaktor'], ['gt-monster/mecha-root-crocodile', 'Buaya Akar'], ['gt-monster/mecha-rust-vulture', 'Nasar Karat'], ['gt-monster/mecha-satellite-cyclops', 'Siklop Satelit'], ['gt-monster/mecha-scrapyard-wheel', 'Roda Rongsokan'], ['gt-monster/mecha-siege-tortoise', 'Kura-Kura Benteng'], ['gt-monster/mecha-siren-turbine', 'Turbin Sirene'], ['gt-monster/mecha-steel-hydra', 'Hydra Baja'], ['gt-monster/mecha-storm-ram', 'Domba Badai'], ['gt-monster/mecha-tar-umbrella', 'Payung Aspal'], ['gt-monster/mecha-tesla-stag', 'Rusa Tesla'], ['gt-monster/mecha-thunder-bat', 'Kelelawar Petir'], ['gt-monster/mecha-vacuum-collector', 'Pengumpul Vakum'], ['gt-monster/mecha-venus-maw', 'Rahang Venus']]
   var RAR_ORDER = ['biasa', 'langka', 'epik', 'legenda']
   function stageTrucks (i) {                         // 3 opponent trucks, deterministic per stage
     var s = STAGES[i], out = [], used = {}
@@ -310,12 +312,13 @@
       '<div class="ppanel-k">' + hearts(pi) +
       '<span class="nitro' + (Pl.nitro >= E.RULES.NITRO_FULL ? ' full' : '') + '" title="Nitro">' + nitro + '</span>' + (Pl.boost ? '<span class="boost">+' + Pl.boost + '</span>' : '') + (Pl.skip ? '<span class="stb stb-skip" title="Lewat giliran">Lewat!</span>' : '') + '</div></div>'
   }
-  // LIFE POINTS: 3 hearts per player (a knocked-out truck costs one); the heart shape + full/empty is the meaning, not colour alone
+  // LIFE POINTS (owner 2026-10-17): every point of damage comes off the player's LP, so a hurt truck swapped out still
+  // cost its damage. A heart + a bar + the number: shape, length and digits carry the meaning, not colour alone.
   var HEART = '<svg viewBox="0 0 24 22" aria-hidden="true"><path d="M12 21C5 15.2 1.5 11.6 1.5 7.4 1.5 4 4 1.6 7 1.6c2 0 3.8 1.1 5 3 1.2-1.9 3-3 5-3 3 0 5.5 2.4 5.5 5.8 0 4.2-3.500 7.800-10.500 13.600z"/></svg>'
   function hearts (pi) {
-    var n = S.players[pi].lives, h = ''
-    for (var i = 0; i < E.RULES.LIVES; i++) h += '<i class="heart' + (i < n ? ' on' : '') + '">' + HEART + '</i>'
-    return '<span class="hearts" role="img" aria-label="Nyawa ' + n + ' dari ' + E.RULES.LIVES + '">' + h + '</span>'
+    var lp = S.players[pi].lp, max = E.RULES.LP, k = Math.max(0, lp / max)
+    return '<span class="lp' + (k <= 0.3 ? ' low' : '') + '" role="img" aria-label="Nyawa ' + lp + ' dari ' + max + '"><i class="heart on">' + HEART + '</i>' +
+      '<span class="lp-bar"><i style="width:' + (k * 100).toFixed(1) + '%"></i></span><b class="lp-n fk">' + lp + '</b></span>'
   }
   // status badges that sit ON the truck: what is wrong with it, for how long
   function badgesHtml (tr) {
@@ -655,6 +658,10 @@
       S = r.state
       if (ch) return challenge(ch)
       render()
+      if (att && att.dmg > 0) {   // the hit also comes off the defender's life points: show it ON their LP bar
+        var lpEl = U('panel', 1 - att.p) && U('panel', 1 - att.p).querySelector('.lp')
+        if (lpEl) { var lc = FX.center(lpEl); FX.floatText(lc.x, lc.y - 14, '−' + att.dmg + ' nyawa', 'ko'); FX.pulse(lpEl, 'nudge') }
+      }
       return flyAll(ev, froms, before)
     })
   }
@@ -932,9 +939,9 @@
 
   /* ── tutorial (first battle, and from the pause menu) ──────────────────── */
   var TUT = [
-    ['gt/trophy', 'Tujuan', 'Kamu punya <b>3 nyawa ♥</b>. Tiap truk yang HP-nya habis = lawan kehilangan 1 nyawa. Nyawa lawan habis = <b>kamu menang</b>!'],
+    ['gt/trophy', 'Tujuan', 'Kamu punya <b>50 nyawa ♥</b>. Tiap serangan mengurangi nyawa sebanyak kekuatannya. Nyawa lawan habis = <b>kamu menang</b>!'],
     ['gt/lightning', '3 langkah tiap giliran', '<b>1 Pasang kartu</b> (maks 2 support: Turbo, Perisai, Rem Darurat, Lumpur, Oli, Bengkel…) → <b>2 Serang</b> (jawab soal) → <b>3 Selesai</b>. Yang bersinar = langkah berikutnya.'],
-    ['gt/fuel-can', 'Ganti truk', 'Boleh ganti truk 1 kali tiap giliran, pakai <b>1 bensin</b>. Truk yang diganti <b>tetap penyok</b> — HP-nya tidak penuh lagi saat keluar lagi.'],
+    ['gt/fuel-can', 'Ganti truk', 'Boleh ganti truk 1 kali tiap giliran. Truk yang diganti <b>tetap penyok</b>, dan serangan yang sudah kena <b>tetap mengurangi nyawamu</b>.'],
     ['gt/q-math', 'Jawabanmu menentukan!', 'Jawab <b>benar</b> = serangan penuh <b>+2</b>. Jawab <b>salah</b> = serangan <b>lemah</b>, cuma seperempat kekuatan. Tak apa, nanti kita hitung bareng!'],
     ['gt/timer', 'Monster Rush', 'Di akhir pertandingan muncul monster! Jawab soal sebanyak-banyaknya dalam <b>15 detik</b> untuk bonus skor.']
   ]

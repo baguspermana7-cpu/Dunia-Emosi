@@ -464,7 +464,7 @@ async function run (w, h, o = {}) {
     await sleep(600)
     check((await st(ctx.p)).screen === 'scr-battle', `${tag}: a battle starts from the home screen by taps`)
     const stats = await battle(ctx, o)
-    if (o.tutorial) check(stats.tut === 4, `${tag}: the tutorial shows 4 cards (${stats.tut || 0})`)
+    if (o.tutorial) check(stats.tut === 5, `${tag}: the tutorial shows 5 cards (the swap-rule card added 2026-10-17) (${stats.tut || 0})`)
     const errs = ctx.errs
     check(errs.length === 0, `${tag}: no page errors / console errors / failed requests${errs.length ? ' — ' + errs.slice(0, 4).join(' | ') : ''}`)
   } catch (e) {

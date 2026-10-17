@@ -138,3 +138,22 @@
   .rush .pop,.rush-end{animation:none}
 }
 @media (orientation:landscape){ .rush-rm.rush-one .rush-top{transform:none!important} }
+
+/* ── RAID (owner 2026-10-17): the monster's health bar, its hurt blink, and its strike back at a wrong answer ── */
+.rush-boss{position:absolute;z-index:5;display:flex;align-items:center;gap:8px;padding:4px 10px 4px 12px;border-radius:14px;
+  background:rgba(8,12,24,.78);box-shadow:0 3px 10px rgba(0,0,0,.4);opacity:0;transition:opacity .3s;pointer-events:none}
+.rush.play .rush-boss{opacity:1}
+.rush.over .rush-boss{opacity:.6}
+.rb-name{flex:0 0 auto;max-width:42%;font-size:15px;color:#FFE08A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rb-bar{position:relative;flex:1;height:14px;border-radius:999px;background:#2a2f40;overflow:hidden;border:2px solid #0b0f1c}
+.rb-trail,.rb-fill{position:absolute;left:0;top:0;bottom:0;width:100%;border-radius:999px}
+.rb-trail{background:#fff;transition:width .55s cubic-bezier(.4,0,.2,1)}
+.rb-fill{background:linear-gradient(90deg,#ff5a3c,#ffb43c);transition:width .12s ease-out}
+.rb-fill.low{background:linear-gradient(90deg,#ff2b2b,#ff6b4a)}
+.rush-mon.hurt{filter:brightness(0) invert(1) drop-shadow(0 0 10px rgba(255,255,255,.9))}
+.rush-half.ouch::after{content:'';position:absolute;inset:-4px;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,rgba(255,60,40,.0) 30%,rgba(255,40,20,.55) 100%);animation:rushOuch .5s ease-out forwards}
+@keyframes rushOuch{0%{opacity:1}100%{opacity:0}}
+.fx-float.rush-ouch{font-size:38px;color:#FF7A5C;text-shadow:0 3px 0 #5a1000,0 0 14px rgba(255,80,40,.7)}
+@media (prefers-reduced-motion:reduce){.rb-trail,.rb-fill{transition:none}.rush-half.ouch::after{animation:none;opacity:0}}
+.rush-spark{position:fixed;z-index:8;width:6px;height:16px;border-radius:3px;pointer-events:none}

@@ -60,13 +60,13 @@ for (let s = 1; s <= 500; s++) {
   if (r.err) { if (errs++ < 5) check(false, r.err); continue }
   if (r.st.phase === 'over') over++
   const why = r.st.log.filter(e => e.t === 'gameOver')[0]
-  if (why && why.why === 'ko') byKo++
+  if (why && (why.why === 'lp' || why.why === 'ko')) byKo++   // LP to zero (2026-10-17), formerly 3 KOs
   turns += r.st.turn
   if (r.st.winner === 0) first++
 }
 check(errs === 0, `${errs} battles hit an illegal AI command or broken invariant`)
 check(over === 500, `every battle ends (${over}/500) — no soft-lock`)
-check(byKo >= 400, `most battles end by knock-out, not the turn limit (${byKo}/500)`)
+check(byKo >= 400, `most battles end by LP running out, not the turn limit (${byKo}/500)`)
 pass(`500 battles: ${over} finished, ${byKo} by KO, avg ${(turns / 500).toFixed(1)} rounds, racer-vs-rookie P1 wins ${first}`)
 
 // rookie vs rookie: seat balance (first-player advantage within reason)
@@ -103,7 +103,7 @@ const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }
   if (hand.length >= 2) {
     const old = P.active.inst, r1 = E.apply(st, { type: 'playTruck', card: hand[0] })
     const Q = r1.state.players[0]
-    check(r1.ok && Q.active.inst === hand[0] && Q.active.fuel === 1 && Q.deck[Q.deck.length - 1] === old, 'Ganti Truk: new truck in, costs 1 bensin (2 -> 1), old truck at the deck bottom')
+    check(r1.ok && Q.active.inst === hand[0] && Q.active.fuel === 2 - E.RULES.SWAP_FUEL && Q.deck[Q.deck.length - 1] === old, `Ganti Truk: new truck in, bensin 2 -> ${2 - E.RULES.SWAP_FUEL}, old truck at the deck bottom`)
     const r2 = E.apply(r1.state, { type: 'playTruck', card: hand[1] })
     check(!r2.ok && r2.reason === 'swapOnce', 'Ganti Truk only once per turn')
     // owner 2026-10-17: swapping before a KO must not heal -- the swapped-out truck keeps its damage
@@ -116,9 +116,11 @@ const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }
     const r4 = E.apply(r3.state, { type: 'playTruck', card: hurt })
     const T = r4.state.players[0].active
     check(r4.ok && T.inst === hurt && T.hp === T.maxHp - 5 && !r4.state.players[0].wounds[hurt], 'a swapped truck comes back still dented (HP max-5), not healed')
-    const nf = JSON.parse(JSON.stringify(st)); nf.players[0].active.fuel = 0
-    const r5 = E.apply(nf, { type: 'playTruck', card: hand[0] })
-    check(!r5.ok && r5.reason === 'swapFuel', 'Ganti Truk with 0 bensin is refused (swapFuel)')
+    if (E.RULES.SWAP_FUEL > 0) {
+      const nf = JSON.parse(JSON.stringify(st)); nf.players[0].active.fuel = 0
+      const r5 = E.apply(nf, { type: 'playTruck', card: hand[0] })
+      check(!r5.ok && r5.reason === 'swapFuel', 'Ganti Truk with too little bensin is refused (swapFuel)')
+    }
   } else check(false, 'test setup: two trucks in hand')
 }
 { // opening hand always has a truck, for every seed
@@ -258,23 +260,28 @@ const attackWith = (st, correct) => E.apply(E.apply(st, { type: 'attack', attack
   for (let s = 1; s <= 60; s++) { const q = battle(s, 'kilat', 'lumpur'); const p = E.preview(q, 0); const n = p.total - p.nitro; if (p.glance !== Math.floor(n * 0.25)) seen.add(s) }
   check(seen.size === 0, 'glance == floor(25%) on 60 seeds')
 }
-{ // lives: 3 hearts, each KO costs exactly one, 0 = lose
+{ // LIFE POINTS (owner 2026-10-17): every point of damage comes off the defender's LP, overkill included; swapping
+  // a hurt truck out never gives LP back; LP 0 = game over; Bengkel heals truck HP and LP by the same amount
   let st = battle(14)
-  check(st.players.every(P => P.lives === 3) && E.RULES.LIVES === 3, 'both sides start with 3 lives')
-  for (let k = 1; k <= 3; k++) {
-    st.players[st.active].active.fuel = 4; st.players[1 - st.active].active.hp = 1
-    const pi = st.active
-    const mk = E.apply(E.apply(st, { type: 'attack', attack: 0 }).state, { type: 'answer', correct: true })
-    const ko = mk.events.find(e => e.t === 'ko')
-    check(ko && ko.lives === 3 - k && mk.state.players[1 - pi].lives === 3 - k, `KO #${k} costs the loser exactly 1 life (${3 - k} left)`)
-    if (k < 3) { st = mk.state; check(st.phase !== 'over', 'game goes on with lives left'); st = battleFix(st, pi) } else check(mk.state.phase === 'over' && mk.state.winner === pi && mk.events.some(e => e.t === 'gameOver' && e.why === 'ko'), '0 lives = game over, the attacker wins')
-  }
-  // the victim's next truck steps in (hand), the attacker keeps swinging at the same player
-  function battleFix (s0, pi) { // give the other side's active a fresh truck if none, and let pi attack again
-    const s1 = JSON.parse(JSON.stringify(s0)); const v = s1.players[1 - pi]
-    while (s1.active !== pi) { const c = E.ai(s1, 'rookie'); const r = E.apply(s1, c); if (!r.ok) break; Object.assign(s1, r.state) }
-    return s1
-  }
+  check(st.players.every(P => P.lp === 50) && E.RULES.LP === 50, 'both sides start with 50 LP')
+  const pi = st.active, lp0 = st.players[1 - pi].lp, hp0 = st.players[1 - pi].active.hp
+  st.players[pi].active.fuel = 4
+  const hit = E.apply(E.apply(st, { type: 'attack', attack: 0 }).state, { type: 'answer', correct: true })
+  const at = hit.events.find(e => e.t === 'attack')
+  check(at && hit.state.players[1 - pi].lp === lp0 - at.dmg && at.lp === lp0 - at.dmg, `an attack of ${at && at.dmg} takes exactly that much LP (${lp0} -> ${hit.state.players[1 - pi].lp})`)
+  // overkill counts: a 1-HP truck hit for more still costs the full damage
+  let s2 = battle(14); const p2 = s2.active; s2.players[p2].active.fuel = 4; s2.players[1 - p2].active.hp = 1
+  const ko = E.apply(E.apply(s2, { type: 'attack', attack: 0 }).state, { type: 'answer', correct: true })
+  const at2 = ko.events.find(e => e.t === 'attack')
+  check(ko.events.some(e => e.t === 'ko') && ko.state.players[1 - p2].lp === 50 - at2.dmg, `a KO with overkill still costs the full ${at2.dmg} LP`)
+  // LP 0 ends the match even with trucks left
+  let s3 = battle(14); const p3 = s3.active; s3.players[p3].active.fuel = 4; s3.players[1 - p3].lp = 2
+  const end = E.apply(E.apply(s3, { type: 'attack', attack: 0 }).state, { type: 'answer', correct: true })
+  check(end.state.phase === 'over' && end.state.winner === p3 && end.events.some(e => e.t === 'gameOver' && e.why === 'lp'), 'LP 0 = game over, the attacker wins')
+  // swapping does not restore LP
+  let s4 = JSON.parse(JSON.stringify(hit.state)); const v = s4.active, Pv = s4.players[v]
+  const tr = Pv.hand.find(c => C.get(s4.cards[c]).cat === 'truck')
+  if (tr && Pv.active) { const lpB = Pv.lp; const sw = E.apply(s4, { type: 'playTruck', card: tr }); check(sw.ok && sw.state.players[v].lp === lpB, `swapping trucks leaves LP unchanged (${lpB})`) }
 }
 { // support: Turbo, Perisai, Rem Darurat, Lumpur, Oli, Bengkel, Tukar Ban, Nitro Isi — each effect + the 2-per-turn cap
   let st = battle(); const T = give(st, 0, 'sup-turbo'); const base = E.preview(st, 0).total

@@ -61,7 +61,7 @@
   // element box: ~70 % of the height in portrait / ~75 % in landscape, never wider than the
   // screen (or, in 2-player landscape, much wider than the gap between the two panels).
   var TANTRUM_FX = ['boom', 'fire-sparks', 'electric-a', 'smoke-cloud', 'poison-cloud', 'rocket-fire', 'sparks']
-  var KO_HITS = 6, SHRINK = 0.03, SHRINK_MIN = 0.8     // beaten back, but never a "small picture" again
+  var KO_HITS = 6     // the raid: 6 hits (a COMBO hit counts double) bring the monster's health bar to zero
 
   function esc (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';' }) }
 
@@ -91,6 +91,9 @@
         '<div class="rush-dim"></div><div class="rush-tint"></div>' +
         '<div class="rush-mbox"><div class="rush-breath"><div class="rush-act"><div class="rush-hit">' +
           '<img class="rush-mon" src="' + lib(mon.key) + '" alt="' + esc(mon.name) + '" draggable="false"></div></div></div></div>' +
+        // RAID (owner 2026-10-17): the monster's health bar -- right answers bring it down, a white trail drains behind
+        '<div class="rush-boss" aria-label="nyawa monster"><b class="rb-name fk">' + esc(mon.name) + '</b>' +
+          '<div class="rb-bar"><i class="rb-trail"></i><i class="rb-fill"></i></div></div>' +
         '<div class="rush-top">' + panel(1) + '</div>' +
         '<div class="rush-stage"><div class="rush-ring" aria-label="sisa waktu"><svg viewBox="0 0 100 100" aria-hidden="true">' +
           '<circle class="rr-bg" cx="50" cy="50" r="43"/><circle class="rr-fg" cx="50" cy="50" r="43" pathLength="100"/></svg>' +
@@ -105,6 +108,10 @@
     var hitL = host.querySelector('.rush-hit'), img = host.querySelector('.rush-mon'), dim = host.querySelector('.rush-dim')
     var tint = host.querySelector('.rush-tint'), stage = host.querySelector('.rush-stage'), banner = host.querySelector('.rush-banner')
     var Q = [null, null], ended = false, done = false, timers = [], endTimers = [], loops = [], hits = 0
+    var boss = host.querySelector('.rush-boss'), bFill = host.querySelector('.rb-fill'), bTrail = host.querySelector('.rb-trail'), trailT = 0
+    // animated sprite sheets when the monster has them (gt-monster-anim.js), else the still picture moves procedurally
+    var anim = W.GTMonsterAnim ? W.GTMonsterAnim.mount(hitL, img, mon.key, { reduced: reduced, base: opts.base }) : null
+    function monEl () { return anim && anim.el.parentNode ? anim.el : img }
 
     function later (fn, ms) { var t = setTimeout(fn, ms); timers.push(t); return t }
     function laterEnd (fn, ms) { var t = setTimeout(fn, ms); endTimers.push(t); return t }
@@ -139,14 +146,22 @@
       var top = Math.max(H * 0.02, Math.min(H - h - H * 0.02, cy - h / 2))
       mbox.style.width = Math.round(w) + 'px'; mbox.style.height = Math.round(h) + 'px'
       mbox.style.left = Math.round((Wd - w) / 2) + 'px'; mbox.style.top = Math.round(top) + 'px'
+      var bw = Math.min(Wd * 0.7, Math.max(220, w * 0.8))
+      boss.style.width = Math.round(bw) + 'px'; boss.style.left = Math.round((Wd - bw) / 2) + 'px'
+      boss.style.top = Math.round(Math.max(4, top - 6)) + 'px'
     }
     img.addEventListener('load', layout)
     W.addEventListener('resize', layout)
     layout()
 
-    function shrinkTo () {
-      var s = Math.max(SHRINK_MIN, 1 - SHRINK * hits)
-      mbox.style.transform = s < 1 ? 'scale(' + s.toFixed(3) + ')' : ''
+    // the monster stays BIG (owner: "tetap besar dimensinya"); its health bar shows the raid instead of shrinking it
+    function hpBar () {
+      var k = Math.max(0, 1 - hits / KO_HITS)
+      bFill.style.width = (k * 100).toFixed(1) + '%'
+      bFill.classList.toggle('low', k <= 0.34)
+      clearTimeout(trailT)
+      trailT = setTimeout(function () { bTrail.style.width = (k * 100).toFixed(1) + '%' }, reduced ? 0 : 420)
+      if (k <= 0 && !ended) later(function () { stop(true) }, 650)   // the raid knocked it out before the time ran out
     }
     function jolt () {
       trucks.forEach(function (t, i) {
@@ -219,7 +234,7 @@
       if (ok) {
         pop(s); hitMonster(pi, fromEl || s, mult)
         if (streak[pi] === 3 && FX) { var sb = box(s); FX.floatText(sb.x, sb.y - 30, 'COMBO x2!', 'super') }
-      }
+      } else strikeBack(pi)
     }
     // 4. a right answer: projectile -> the monster flinches, "+10", it shrinks a little
     function hitMonster (pi, fromEl, mult) {
@@ -228,15 +243,56 @@
       var to = { x: m.x + m.w * (Math.random() * 0.3 - 0.15), y: m.t + m.h * (0.3 + Math.random() * 0.25) }
       var land = function () {
         if (done) return
-        A(hitL, [{ transform: 'none' }, { transform: 'translate(' + (pi ? -10 : 10) + 'px,-6px) rotate(' + (pi ? -5 : 5) + 'deg) scale(.92)', offset: 0.3 }, { transform: 'none' }],
-          { duration: 300, easing: 'ease-out' })
+        // raid hit: the monster blinks white and is knocked back (or plays its own 'hurt' sheet), sparks, the bar drops
+        if (!(anim && anim.play('hurt'))) {
+          var me = monEl(); me.classList.remove('hurt'); void me.offsetWidth; me.classList.add('hurt')
+          setTimeout(function () { me.classList.remove('hurt') }, 160)
+        }
+        A(hitL, [{ transform: 'none' }, { transform: 'translate(' + (pi ? -16 : 16) + 'px,-8px) rotate(' + (pi ? -6 : 6) + 'deg) scale(.9,.95)', offset: 0.3 }, { transform: 'none' }],
+          { duration: 340, easing: 'ease-out' })
+        sparkBurst(to.x, to.y, pi ? '#7FD0FF' : '#FFC24A')
         if (FX) FX.floatText(to.x, to.y, '+' + RUSH_POINTS * mult + (mult > 1 ? ' COMBO' : ''), 'rush-plus')
-        shrinkTo()
+        shake(boss, 4)
+        hpBar()
       }
       var V = VX()
       if (V && !reduced) {
         try { V.domProjectile({ x: a.x, y: a.y }, to, { fx: pi ? 'electric-a' : 'rocket-fire', size: 76, duration: 300, onHit: land }) } catch (e) { land() }
       } else { fxAt(to.x, to.y, 'pop', 110); land() }
+    }
+    // DOM sparks off a raid hit (the 'sparks' sheet sits on a near-black square that a screen blend shows over bright art)
+    function sparkBurst (x, y, col) {
+      if (reduced) return
+      for (var i = 0; i < 9; i++) {
+        var sp = document.createElement('i'), ang = Math.random() * Math.PI * 2, d = 40 + Math.random() * 60
+        sp.className = 'rush-spark'; sp.style.background = i % 3 ? '#FFF6C8' : col
+        sp.style.left = x + 'px'; sp.style.top = y + 'px'; host.appendChild(sp)
+        A(sp, [{ transform: 'translate(-50%,-50%) rotate(' + (ang * 57.3 + 90) + 'deg) scale(1)', opacity: 1 },
+          { transform: 'translate(calc(-50% + ' + (Math.cos(ang) * d).toFixed(1) + 'px),calc(-50% + ' + (Math.sin(ang) * d).toFixed(1) + 'px)) rotate(' + (ang * 57.3 + 90) + 'deg) scale(.2)', opacity: 0 }],
+        { duration: 340 + Math.random() * 140, easing: 'cubic-bezier(.1,.8,.3,1)', fill: 'forwards' })
+        ;(function (n) { setTimeout(function () { if (n.parentNode) n.parentNode.removeChild(n) }, 520) })(sp)
+      }
+    }
+    // a wrong answer: the monster strikes back at that player's panel (a raid boss attack) -- a scare, never a penalty
+    function strikeBack (pi) {
+      if (ended) return
+      var half = host.querySelector('.rush-half[data-p="' + pi + '"]'); if (!half) return
+      var m = box(monEl()), h = box(half), up = h.y < m.y
+      var dur0 = anim ? anim.play('attack') : 0
+      if (!dur0 && !reduced) {   // wind up (lean back), then lunge toward the panel
+        A(act, [{ transform: 'none' }, { transform: 'translateY(' + (up ? 3 : -3) + '%) scale(.96)', offset: 0.35 },
+          { transform: 'translateY(' + (up ? -9 : 9) + '%) scale(1.12)', offset: 0.6 }, { transform: 'none' }], { duration: 560, easing: 'ease-in-out' })
+      }
+      var land = function () {
+        if (done) return
+        half.classList.remove('ouch'); void half.offsetWidth; half.classList.add('ouch')
+        setTimeout(function () { half.classList.remove('ouch') }, 520)
+        shake(half, 10); snd('thud')
+        if (FX) FX.floatText(h.x, h.y - h.h * 0.2, 'Aduh!', 'rush-ouch')
+      }
+      var V = VX(), from = { x: m.x, y: up ? m.t + m.h * 0.25 : m.b - m.h * 0.2 }, to = { x: h.x + (Math.random() - 0.5) * h.w * 0.3, y: h.y }
+      if (V && !reduced) later(function () { try { V.domProjectile(from, to, { fx: 'fire-sparks', size: 90, duration: 280, onHit: land }) } catch (e) { land() } }, dur0 ? Math.min(300, dur0 * 0.5) : 300)
+      else later(land, 120)
     }
     host.addEventListener('pointerdown', function (e) {
       var b = e.target.closest && e.target.closest('.rush-b'); if (!b || ended || b.disabled) return
@@ -296,15 +352,15 @@
     }
 
     /* 5. time up: KO (enough hits) or the monster leaps away; then who answered most */
-    function stop () {
+    function stop (raidKO) {
       if (ended) return
       ended = true; timers.forEach(clearTimeout); timers = []
       loops.forEach(function (a) { try { a.cancel() } catch (e) {} }); loops = []
       host.querySelectorAll('.rush-b').forEach(function (x) { x.disabled = true })
       root.classList.add('over'); banner.classList.remove('show')
-      var ko = res.right[0] + res.right[1] >= KO_HITS
+      var ko = raidKO === true || hits >= KO_HITS
       var msg = document.createElement('div'); msg.className = 'rush-end fk'
-      msg.innerHTML = 'Waktu habis!<small>' + (ko ? mon.name + ' KO! Kalian hebat!' : mon.name + ' kabur!') + '</small>'
+      msg.innerHTML = (raidKO === true ? 'Raid berhasil!' : 'Waktu habis!') + '<small>' + (ko ? mon.name + ' KO! Kalian hebat!' : mon.name + ' kabur!') + '</small>'
       root.appendChild(msg)
       laterEnd(function () { ko ? knockOut() : flee() }, 350)
       laterEnd(function () {
@@ -316,7 +372,8 @@
       laterEnd(function () { finish() }, 3000)
     }
     function knockOut () {
-      var m = box(img)
+      var m = box(monEl())
+      if (anim) anim.play('ko')
       snd('ko'); shake(opts.table, 20); shake(root, 10)
       fxAt(m.x, m.y, 'boom', m.w * 1.3); fxAt(m.x, m.b - m.h * 0.1, 'smoke-cloud', m.w * 1.2)
       if (FX) FX.floatText(m.x, m.y - m.h * 0.2, 'KO!', 'ko')
@@ -337,13 +394,16 @@
       done = true
       endTimers.forEach(clearTimeout); endTimers = []
       W.removeEventListener('resize', layout)
+      if (anim) anim.destroy()
       pan(0)
       opts.onDone(res)
     }
     return {
       stop: stop, result: function () { return res },
       _force: function (a, b) { res.right = [a, b]; stop() },
-      _hits: function () { return hits }
+      _hits: function () { return hits },
+      _hp: function () { return Math.max(0, 1 - hits / KO_HITS) },
+      _anim: function () { return anim ? anim.state() : null }
     }
   }
 

@@ -54714,6 +54714,1190 @@
     259
    ],
    "name_id": "tungku boiler menyala"
+  },
+  "gt-monster/mecha-gloop-slime": {
+   "file": "assets/db/lib/gt-monster/mecha-gloop-slime.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "gloop",
+    "mecha",
+    "monster",
+    "slime"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #1",
+   "w": 532,
+   "h": 484,
+   "name_id": "Slime Gloop",
+   "name": "Gloop Slime",
+   "anim": "assets/monster-anim/mecha-gloop-slime-idle.webp"
+  },
+  "gt-monster/mecha-ember-golem": {
+   "file": "assets/db/lib/gt-monster/mecha-ember-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "ember",
+    "golem",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #2",
+   "w": 533,
+   "h": 492,
+   "name_id": "Golem Bara",
+   "name": "Ember Golem",
+   "anim": "assets/monster-anim/mecha-ember-golem-idle.webp"
+  },
+  "gt-monster/mecha-frost-yeti": {
+   "file": "assets/db/lib/gt-monster/mecha-frost-yeti.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "frost",
+    "mecha",
+    "monster",
+    "yeti"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #3",
+   "w": 533,
+   "h": 461,
+   "name_id": "Yeti Es",
+   "name": "Frost Yeti",
+   "anim": "assets/monster-anim/mecha-frost-yeti-idle.webp"
+  },
+  "gt-monster/mecha-coral-kraken": {
+   "file": "assets/db/lib/gt-monster/mecha-coral-kraken.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "coral",
+    "kraken",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #4",
+   "w": 532,
+   "h": 514,
+   "name_id": "Kraken Koral",
+   "name": "Coral Kraken",
+   "anim": "assets/monster-anim/mecha-coral-kraken-idle.webp"
+  },
+  "gt-monster/mecha-shark": {
+   "file": "assets/db/lib/gt-monster/mecha-shark.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "shark"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #5",
+   "w": 532,
+   "h": 528,
+   "name_id": "Hiu Mekanik",
+   "name": "Mecha Shark",
+   "anim": "assets/monster-anim/mecha-shark-idle.webp"
+  },
+  "gt-monster/mecha-crystal-beetle": {
+   "file": "assets/db/lib/gt-monster/mecha-crystal-beetle.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "beetle",
+    "crystal",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #6",
+   "w": 532,
+   "h": 484,
+   "name_id": "Kumbang Kristal",
+   "name": "Crystal Beetle",
+   "anim": "assets/monster-anim/mecha-crystal-beetle-idle.webp"
+  },
+  "gt-monster/mecha-clockwork-snail": {
+   "file": "assets/db/lib/gt-monster/mecha-clockwork-snail.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "clockwork",
+    "mecha",
+    "monster",
+    "snail"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #7",
+   "w": 534,
+   "h": 474,
+   "name_id": "Siput Roda Gigi",
+   "name": "Clockwork Snail",
+   "anim": "assets/monster-anim/mecha-clockwork-snail-idle.webp"
+  },
+  "gt-monster/mecha-comet-wisp": {
+   "file": "assets/db/lib/gt-monster/mecha-comet-wisp.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "comet",
+    "mecha",
+    "monster",
+    "wisp"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #8",
+   "w": 513,
+   "h": 533,
+   "name_id": "Monster Komet",
+   "name": "Comet Wisp",
+   "anim": "assets/monster-anim/mecha-comet-wisp-idle.webp"
+  },
+  "gt-monster/mecha-crab-titan": {
+   "file": "assets/db/lib/gt-monster/mecha-crab-titan.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "crab",
+    "mecha",
+    "monster",
+    "titan"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #9",
+   "w": 535,
+   "h": 407,
+   "name_id": "Kepiting Raksasa",
+   "name": "Crab Titan",
+   "anim": "assets/monster-anim/mecha-crab-titan-idle.webp"
+  },
+  "gt-monster/mecha-teal-dragon": {
+   "file": "assets/db/lib/gt-monster/mecha-teal-dragon.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "dragon",
+    "mecha",
+    "monster",
+    "teal"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #10",
+   "w": 533,
+   "h": 527,
+   "name_id": "Naga Toska",
+   "name": "Teal Dragon",
+   "anim": "assets/monster-anim/mecha-teal-dragon-idle.webp"
+  },
+  "gt-monster/mecha-pumpkin-vine": {
+   "file": "assets/db/lib/gt-monster/mecha-pumpkin-vine.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "pumpkin",
+    "vine"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #11",
+   "w": 535,
+   "h": 430,
+   "name_id": "Labu Sulur",
+   "name": "Pumpkin Vine",
+   "anim": "assets/monster-anim/mecha-pumpkin-vine-idle.webp"
+  },
+  "gt-monster/mecha-moss-guardian": {
+   "file": "assets/db/lib/gt-monster/mecha-moss-guardian.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "guardian",
+    "mecha",
+    "monster",
+    "moss"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #12",
+   "w": 532,
+   "h": 476,
+   "name_id": "Penjaga Lumut",
+   "name": "Moss Guardian",
+   "anim": "assets/monster-anim/mecha-moss-guardian-idle.webp"
+  },
+  "gt-monster/mecha-velvet-moth": {
+   "file": "assets/db/lib/gt-monster/mecha-velvet-moth.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "moth",
+    "velvet"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #13",
+   "w": 533,
+   "h": 443,
+   "name_id": "Ngengat Beludru",
+   "name": "Velvet Moth",
+   "anim": "assets/monster-anim/mecha-velvet-moth-idle.webp"
+  },
+  "gt-monster/mecha-storm-jelly": {
+   "file": "assets/db/lib/gt-monster/mecha-storm-jelly.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "jelly",
+    "mecha",
+    "monster",
+    "storm"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #14",
+   "w": 531,
+   "h": 504,
+   "name_id": "Ubur-Ubur Badai",
+   "name": "Storm Jelly",
+   "anim": "assets/monster-anim/mecha-storm-jelly-idle.webp"
+  },
+  "gt-monster/mecha-treasure-mimic": {
+   "file": "assets/db/lib/gt-monster/mecha-treasure-mimic.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "mimic",
+    "monster",
+    "treasure"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #15",
+   "w": 532,
+   "h": 457,
+   "name_id": "Mimik Peti Harta",
+   "name": "Treasure Mimic",
+   "anim": "assets/monster-anim/mecha-treasure-mimic-idle.webp"
+  },
+  "gt-monster/mecha-mushroom-stomper": {
+   "file": "assets/db/lib/gt-monster/mecha-mushroom-stomper.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "mushroom",
+    "stomper"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #16",
+   "w": 532,
+   "h": 509,
+   "name_id": "Penghentak Jamur",
+   "name": "Mushroom Stomper",
+   "anim": "assets/monster-anim/mecha-mushroom-stomper-idle.webp"
+  },
+  "gt-monster/mecha-obsidian-mantis": {
+   "file": "assets/db/lib/gt-monster/mecha-obsidian-mantis.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mantis",
+    "mecha",
+    "monster",
+    "obsidian"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #17",
+   "w": 223,
+   "h": 264,
+   "name_id": "Belalang Obsidian",
+   "name": "Obsidian Mantis",
+   "anim": "assets/monster-anim/mecha-obsidian-mantis-idle.webp",
+   "effect": "spark",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-copper-scorpion": {
+   "file": "assets/db/lib/gt-monster/mecha-copper-scorpion.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "copper",
+    "mecha",
+    "monster",
+    "scorpion"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #18",
+   "w": 270,
+   "h": 273,
+   "name_id": "Kalajengking Tembaga",
+   "name": "Copper Scorpion",
+   "anim": "assets/monster-anim/mecha-copper-scorpion-idle.webp",
+   "effect": "ember",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-polar-rhino": {
+   "file": "assets/db/lib/gt-monster/mecha-polar-rhino.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "polar",
+    "rhino"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #19",
+   "w": 238,
+   "h": 225,
+   "name_id": "Badak Kutub",
+   "name": "Polar Rhino",
+   "anim": "assets/monster-anim/mecha-polar-rhino-idle.webp",
+   "effect": "snow",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-cinder-cerberus": {
+   "file": "assets/db/lib/gt-monster/mecha-cinder-cerberus.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "cerberus",
+    "cinder",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #20",
+   "w": 275,
+   "h": 254,
+   "name_id": "Cerberus Bara",
+   "name": "Cinder Cerberus",
+   "anim": "assets/monster-anim/mecha-cinder-cerberus-idle.webp",
+   "effect": "ember",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-aurora-centipede": {
+   "file": "assets/db/lib/gt-monster/mecha-aurora-centipede.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "aurora",
+    "centipede",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #21",
+   "w": 248,
+   "h": 226,
+   "name_id": "Kelabang Aurora",
+   "name": "Aurora Centipede",
+   "anim": "assets/monster-anim/mecha-aurora-centipede-idle.webp",
+   "effect": "pixel",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-steel-hydra": {
+   "file": "assets/db/lib/gt-monster/mecha-steel-hydra.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "hydra",
+    "mecha",
+    "monster",
+    "steel"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #22",
+   "w": 274,
+   "h": 262,
+   "name_id": "Hydra Baja",
+   "name": "Steel Hydra",
+   "anim": "assets/monster-anim/mecha-steel-hydra-idle.webp",
+   "effect": "toxic",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-prism-cobra": {
+   "file": "assets/db/lib/gt-monster/mecha-prism-cobra.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "cobra",
+    "mecha",
+    "monster",
+    "prism"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #23",
+   "w": 224,
+   "h": 233,
+   "name_id": "Kobra Prisma",
+   "name": "Prism Cobra",
+   "anim": "assets/monster-anim/mecha-prism-cobra-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-drill-armadillo": {
+   "file": "assets/db/lib/gt-monster/mecha-drill-armadillo.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "armadillo",
+    "drill",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #24",
+   "w": 241,
+   "h": 231,
+   "name_id": "Armadillo Bor",
+   "name": "Drill Armadillo",
+   "anim": "assets/monster-anim/mecha-drill-armadillo-idle.webp",
+   "effect": "dust",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-tesla-stag": {
+   "file": "assets/db/lib/gt-monster/mecha-tesla-stag.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "stag",
+    "tesla"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #25",
+   "w": 201,
+   "h": 276,
+   "name_id": "Rusa Tesla",
+   "name": "Tesla Stag",
+   "anim": "assets/monster-anim/mecha-tesla-stag-idle.webp",
+   "effect": "spark",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-lunar-owl": {
+   "file": "assets/db/lib/gt-monster/mecha-lunar-owl.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "lunar",
+    "mecha",
+    "monster",
+    "owl"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #26",
+   "w": 194,
+   "h": 230,
+   "name_id": "Burung Hantu Bulan",
+   "name": "Lunar Owl",
+   "anim": "assets/monster-anim/mecha-lunar-owl-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-avalanche-mammoth": {
+   "file": "assets/db/lib/gt-monster/mecha-avalanche-mammoth.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "avalanche",
+    "mammoth",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #27",
+   "w": 248,
+   "h": 264,
+   "name_id": "Mamut Longsor",
+   "name": "Avalanche Mammoth",
+   "anim": "assets/monster-anim/mecha-avalanche-mammoth-idle.webp",
+   "effect": "snow",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-rust-vulture": {
+   "file": "assets/db/lib/gt-monster/mecha-rust-vulture.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "rust",
+    "vulture"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #28",
+   "w": 210,
+   "h": 273,
+   "name_id": "Nasar Karat",
+   "name": "Rust Vulture",
+   "anim": "assets/monster-anim/mecha-rust-vulture-idle.webp",
+   "effect": "dust",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-abyss-angler": {
+   "file": "assets/db/lib/gt-monster/mecha-abyss-angler.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "abyss",
+    "angler",
+    "animated",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #29",
+   "w": 253,
+   "h": 262,
+   "name_id": "Pemancing Jurang",
+   "name": "Abyss Angler",
+   "anim": "assets/monster-anim/mecha-abyss-angler-idle.webp",
+   "effect": "bubble",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-plasma-lynx": {
+   "file": "assets/db/lib/gt-monster/mecha-plasma-lynx.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "lynx",
+    "mecha",
+    "monster",
+    "plasma"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #30",
+   "w": 201,
+   "h": 276,
+   "name_id": "Lynx Plasma",
+   "name": "Plasma Lynx",
+   "anim": "assets/monster-anim/mecha-plasma-lynx-idle.webp",
+   "effect": "pixel",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-siege-tortoise": {
+   "file": "assets/db/lib/gt-monster/mecha-siege-tortoise.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "siege",
+    "tortoise"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #31",
+   "w": 279,
+   "h": 226,
+   "name_id": "Kura-Kura Benteng",
+   "name": "Siege Tortoise",
+   "anim": "assets/monster-anim/mecha-siege-tortoise-idle.webp",
+   "effect": "leaf",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-dune-sandworm": {
+   "file": "assets/db/lib/gt-monster/mecha-dune-sandworm.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "dune",
+    "mecha",
+    "monster",
+    "sandworm"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #32",
+   "w": 238,
+   "h": 230,
+   "name_id": "Cacing Gurun",
+   "name": "Dune Sandworm",
+   "anim": "assets/monster-anim/mecha-dune-sandworm-idle.webp",
+   "effect": "dust",
+   "part": "Monster Mecha Part 2"
+  },
+  "gt-monster/mecha-reactor-furnace": {
+   "file": "assets/db/lib/gt-monster/mecha-reactor-furnace.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "furnace",
+    "mecha",
+    "monster",
+    "reactor"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #33",
+   "w": 258,
+   "h": 183,
+   "name_id": "Tungku Reaktor",
+   "name": "Reactor Furnace",
+   "anim": "assets/monster-anim/mecha-reactor-furnace-idle.webp",
+   "effect": "ember",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-astral-totem": {
+   "file": "assets/db/lib/gt-monster/mecha-astral-totem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "astral",
+    "mecha",
+    "monster",
+    "totem"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #34",
+   "w": 189,
+   "h": 210,
+   "name_id": "Totem Astral",
+   "name": "Astral Totem",
+   "anim": "assets/monster-anim/mecha-astral-totem-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-chrono-clock": {
+   "file": "assets/db/lib/gt-monster/mecha-chrono-clock.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "chrono",
+    "clock",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #35",
+   "w": 217,
+   "h": 275,
+   "name_id": "Jam Chrono",
+   "name": "Chrono Clock",
+   "anim": "assets/monster-anim/mecha-chrono-clock-idle.webp",
+   "effect": "gear",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-magnet-wraith": {
+   "file": "assets/db/lib/gt-monster/mecha-magnet-wraith.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "magnet",
+    "mecha",
+    "monster",
+    "wraith"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #36",
+   "w": 204,
+   "h": 278,
+   "name_id": "Hantu Magnet",
+   "name": "Magnet Wraith",
+   "anim": "assets/monster-anim/mecha-magnet-wraith-idle.webp",
+   "effect": "spark",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-siren-turbine": {
+   "file": "assets/db/lib/gt-monster/mecha-siren-turbine.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "siren",
+    "turbine"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #37",
+   "w": 244,
+   "h": 207,
+   "name_id": "Turbin Sirene",
+   "name": "Siren Turbine",
+   "anim": "assets/monster-anim/mecha-siren-turbine-idle.webp",
+   "effect": "steam",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-lantern-revenant": {
+   "file": "assets/db/lib/gt-monster/mecha-lantern-revenant.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "lantern",
+    "mecha",
+    "monster",
+    "revenant"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #38",
+   "w": 233,
+   "h": 223,
+   "name_id": "Arwah Lentera",
+   "name": "Lantern Revenant",
+   "anim": "assets/monster-anim/mecha-lantern-revenant-idle.webp",
+   "effect": "toxic",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-cable-crawler": {
+   "file": "assets/db/lib/gt-monster/mecha-cable-crawler.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "cable",
+    "crawler",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #39",
+   "w": 280,
+   "h": 173,
+   "name_id": "Perayap Kabel",
+   "name": "Cable Crawler",
+   "anim": "assets/monster-anim/mecha-cable-crawler-idle.webp",
+   "effect": "spark",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-gear-devourer": {
+   "file": "assets/db/lib/gt-monster/mecha-gear-devourer.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "devourer",
+    "gear",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #40",
+   "w": 282,
+   "h": 203,
+   "name_id": "Pemakan Roda Gigi",
+   "name": "Gear Devourer",
+   "anim": "assets/monster-anim/mecha-gear-devourer-idle.webp",
+   "effect": "gear",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-satellite-cyclops": {
+   "file": "assets/db/lib/gt-monster/mecha-satellite-cyclops.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "cyclops",
+    "mecha",
+    "monster",
+    "satellite"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #41",
+   "w": 286,
+   "h": 192,
+   "name_id": "Siklop Satelit",
+   "name": "Satellite Cyclops",
+   "anim": "assets/monster-anim/mecha-satellite-cyclops-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-neon-arcade-beast": {
+   "file": "assets/db/lib/gt-monster/mecha-neon-arcade-beast.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "arcade",
+    "beast",
+    "mecha",
+    "monster",
+    "neon"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #42",
+   "w": 264,
+   "h": 208,
+   "name_id": "Monster Arkade Neon",
+   "name": "Neon Arcade Beast",
+   "anim": "assets/monster-anim/mecha-neon-arcade-beast-idle.webp",
+   "effect": "pixel",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-pressure-boiler": {
+   "file": "assets/db/lib/gt-monster/mecha-pressure-boiler.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "boiler",
+    "mecha",
+    "monster",
+    "pressure"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #43",
+   "w": 245,
+   "h": 221,
+   "name_id": "Ketel Tekanan",
+   "name": "Pressure Boiler",
+   "anim": "assets/monster-anim/mecha-pressure-boiler-idle.webp",
+   "effect": "steam",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-scrapyard-wheel": {
+   "file": "assets/db/lib/gt-monster/mecha-scrapyard-wheel.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "scrapyard",
+    "wheel"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #44",
+   "w": 280,
+   "h": 194,
+   "name_id": "Roda Rongsokan",
+   "name": "Scrapyard Wheel",
+   "anim": "assets/monster-anim/mecha-scrapyard-wheel-idle.webp",
+   "effect": "gear",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-anchor-colossus": {
+   "file": "assets/db/lib/gt-monster/mecha-anchor-colossus.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "anchor",
+    "animated",
+    "colossus",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #45",
+   "w": 275,
+   "h": 251,
+   "name_id": "Raksasa Jangkar",
+   "name": "Anchor Colossus",
+   "anim": "assets/monster-anim/mecha-anchor-colossus-idle.webp",
+   "effect": "bubble",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-origami-sentinel": {
+   "file": "assets/db/lib/gt-monster/mecha-origami-sentinel.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "origami",
+    "sentinel"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #46",
+   "w": 266,
+   "h": 235,
+   "name_id": "Penjaga Origami",
+   "name": "Origami Sentinel",
+   "anim": "assets/monster-anim/mecha-origami-sentinel-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-prism-obelisk": {
+   "file": "assets/db/lib/gt-monster/mecha-prism-obelisk.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "obelisk",
+    "prism"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #47",
+   "w": 148,
+   "h": 238,
+   "name_id": "Obelisk Prisma",
+   "name": "Prism Obelisk",
+   "anim": "assets/monster-anim/mecha-prism-obelisk-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-vacuum-collector": {
+   "file": "assets/db/lib/gt-monster/mecha-vacuum-collector.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "collector",
+    "mecha",
+    "monster",
+    "vacuum"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #48",
+   "w": 272,
+   "h": 186,
+   "name_id": "Pengumpul Vakum",
+   "name": "Vacuum Collector",
+   "anim": "assets/monster-anim/mecha-vacuum-collector-idle.webp",
+   "effect": "dust",
+   "part": "Monster Mecha Part 3"
+  },
+  "gt-monster/mecha-venus-maw": {
+   "file": "assets/db/lib/gt-monster/mecha-venus-maw.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "maw",
+    "mecha",
+    "monster",
+    "venus"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #49",
+   "w": 275,
+   "h": 251,
+   "name_id": "Rahang Venus",
+   "name": "Venus Maw",
+   "anim": "assets/monster-anim/mecha-venus-maw-idle.webp",
+   "effect": "toxic",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-cactus-marshal": {
+   "file": "assets/db/lib/gt-monster/mecha-cactus-marshal.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "cactus",
+    "marshal",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #50",
+   "w": 253,
+   "h": 278,
+   "name_id": "Kaktus Berduri",
+   "name": "Cactus Marshal",
+   "anim": "assets/monster-anim/mecha-cactus-marshal-idle.webp",
+   "effect": "dust",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-dandelion-dread": {
+   "file": "assets/db/lib/gt-monster/mecha-dandelion-dread.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "dandelion",
+    "dread",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #51",
+   "w": 202,
+   "h": 230,
+   "name_id": "Dandelion Baja",
+   "name": "Dandelion Dread",
+   "anim": "assets/monster-anim/mecha-dandelion-dread-idle.webp",
+   "effect": "leaf",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-basilisk-crown": {
+   "file": "assets/db/lib/gt-monster/mecha-basilisk-crown.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "basilisk",
+    "crown",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #52",
+   "w": 270,
+   "h": 258,
+   "name_id": "Basilisk Mahkota",
+   "name": "Basilisk Crown",
+   "anim": "assets/monster-anim/mecha-basilisk-crown-idle.webp",
+   "effect": "toxic",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-piranha-bloom": {
+   "file": "assets/db/lib/gt-monster/mecha-piranha-bloom.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "bloom",
+    "mecha",
+    "monster",
+    "piranha"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #53",
+   "w": 182,
+   "h": 226,
+   "name_id": "Bunga Piranha",
+   "name": "Piranha Bloom",
+   "anim": "assets/monster-anim/mecha-piranha-bloom-idle.webp",
+   "effect": "petal",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-storm-ram": {
+   "file": "assets/db/lib/gt-monster/mecha-storm-ram.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "ram",
+    "storm"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #54",
+   "w": 247,
+   "h": 237,
+   "name_id": "Domba Badai",
+   "name": "Storm Ram",
+   "anim": "assets/monster-anim/mecha-storm-ram-idle.webp",
+   "effect": "spark",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-manta-wraith": {
+   "file": "assets/db/lib/gt-monster/mecha-manta-wraith.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "manta",
+    "mecha",
+    "monster",
+    "wraith"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #55",
+   "w": 270,
+   "h": 209,
+   "name_id": "Pari Kosmik",
+   "name": "Manta Wraith",
+   "anim": "assets/monster-anim/mecha-manta-wraith-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-glass-gecko": {
+   "file": "assets/db/lib/gt-monster/mecha-glass-gecko.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "gecko",
+    "glass",
+    "mecha",
+    "monster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #56",
+   "w": 287,
+   "h": 238,
+   "name_id": "Tokek Kaca",
+   "name": "Glass Gecko",
+   "anim": "assets/monster-anim/mecha-glass-gecko-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-orbital-gazer": {
+   "file": "assets/db/lib/gt-monster/mecha-orbital-gazer.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "gazer",
+    "mecha",
+    "monster",
+    "orbital"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #57",
+   "w": 271,
+   "h": 240,
+   "name_id": "Pengintai Orbit",
+   "name": "Orbital Gazer",
+   "anim": "assets/monster-anim/mecha-orbital-gazer-idle.webp",
+   "effect": "star",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-tar-umbrella": {
+   "file": "assets/db/lib/gt-monster/mecha-tar-umbrella.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "mecha",
+    "monster",
+    "tar",
+    "umbrella"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #58",
+   "w": 251,
+   "h": 250,
+   "name_id": "Payung Aspal",
+   "name": "Tar Umbrella",
+   "anim": "assets/monster-anim/mecha-tar-umbrella-idle.webp",
+   "effect": "bubble",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-amber-wasp": {
+   "file": "assets/db/lib/gt-monster/mecha-amber-wasp.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "amber",
+    "animated",
+    "mecha",
+    "monster",
+    "wasp"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #59",
+   "w": 232,
+   "h": 224,
+   "name_id": "Tawon Amber",
+   "name": "Amber Wasp",
+   "anim": "assets/monster-anim/mecha-amber-wasp-idle.webp",
+   "effect": "pixel",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-ice-walrus": {
+   "file": "assets/db/lib/gt-monster/mecha-ice-walrus.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "ice",
+    "mecha",
+    "monster",
+    "walrus"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #60",
+   "w": 290,
+   "h": 196,
+   "name_id": "Walrus Es",
+   "name": "Ice Walrus",
+   "anim": "assets/monster-anim/mecha-ice-walrus-idle.webp",
+   "effect": "snow",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-cinder-rooster": {
+   "file": "assets/db/lib/gt-monster/mecha-cinder-rooster.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "cinder",
+    "mecha",
+    "monster",
+    "rooster"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #61",
+   "w": 218,
+   "h": 189,
+   "name_id": "Ayam Jantan Bara",
+   "name": "Cinder Rooster",
+   "anim": "assets/monster-anim/mecha-cinder-rooster-idle.webp",
+   "effect": "ember",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-iron-puffer": {
+   "file": "assets/db/lib/gt-monster/mecha-iron-puffer.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "iron",
+    "mecha",
+    "monster",
+    "puffer"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #62",
+   "w": 256,
+   "h": 193,
+   "name_id": "Buntal Besi",
+   "name": "Iron Puffer",
+   "anim": "assets/monster-anim/mecha-iron-puffer-idle.webp",
+   "effect": "bubble",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-root-crocodile": {
+   "file": "assets/db/lib/gt-monster/mecha-root-crocodile.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "crocodile",
+    "mecha",
+    "monster",
+    "root"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #63",
+   "w": 257,
+   "h": 247,
+   "name_id": "Buaya Akar",
+   "name": "Root Crocodile",
+   "anim": "assets/monster-anim/mecha-root-crocodile-idle.webp",
+   "effect": "leaf",
+   "part": "Monster Mecha Part 4"
+  },
+  "gt-monster/mecha-thunder-bat": {
+   "file": "assets/db/lib/gt-monster/mecha-thunder-bat.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "animated",
+    "bat",
+    "mecha",
+    "monster",
+    "thunder"
+   ],
+   "source": "owner Monsters_16_Front_Mecha #64",
+   "w": 222,
+   "h": 248,
+   "name_id": "Kelelawar Petir",
+   "name": "Thunder Bat",
+   "anim": "assets/monster-anim/mecha-thunder-bat-idle.webp",
+   "effect": "spark",
+   "part": "Monster Mecha Part 4"
   }
  }
 }

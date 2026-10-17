@@ -827,3 +827,15 @@ body[data-scr] .toast.pv-t.flip.show{transform:translate(-50%,-50%) rotate(180de
 .tp-steps li.now{animation:stepglow 1.3s ease-in-out infinite}
 @keyframes stepglow{50%{background:rgba(255,197,61,.34)}}
 @media (prefers-reduced-motion:reduce){.tp-steps li.now{animation:none}.stb:not(.stb-skip){animation:none}}
+
+/* ── LIFE POINTS 2026-10-17: heart + bar + number (replaces the three hearts) ── */
+.lp{display:inline-flex;align-items:center;gap:4px;margin-right:3px}
+.ppanel-k{flex-wrap:wrap;row-gap:2px}
+.lp .heart{width:18px;height:16px}
+.lp-bar{position:relative;width:44px;height:8px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;border:1px solid rgba(0,0,0,.35)}
+.lp-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#3DDC84,#9BF29B);transition:width .45s cubic-bezier(.4,0,.2,1)}
+.lp.low .lp-bar i{background:linear-gradient(90deg,#FF3B5C,#FF8A6B)}
+.lp-n{min-width:22px;font-size:15px;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.6)}
+.obox .lp{justify-content:center;margin-top:3px}
+@media (max-width:480px){.lp{gap:3px;margin-right:2px}.lp .heart{width:14px;height:13px}.lp-bar{width:26px;height:7px}.lp-n{min-width:0;font-size:12px}.ppanel-k{flex-wrap:wrap;row-gap:2px}}
+@media (prefers-reduced-motion:reduce){.lp-bar i{transition:none}}

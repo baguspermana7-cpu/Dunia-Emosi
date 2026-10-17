@@ -1,0 +1,1458 @@
+{
+ "gt-monster/mecha-abyss-angler": {
+  "cell": [
+   328,
+   320
+  ],
+  "effect": "bubble",
+  "fps": 20,
+  "name": "Pemancing Jurang",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-abyss-angler-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-abyss-angler-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-amber-wasp": {
+  "cell": [
+   327,
+   310
+  ],
+  "effect": "pixel",
+  "fps": 20,
+  "name": "Tawon Amber",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-amber-wasp-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-amber-wasp-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-anchor-colossus": {
+  "cell": [
+   325,
+   304
+  ],
+  "effect": "bubble",
+  "fps": 20,
+  "name": "Raksasa Jangkar",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-anchor-colossus-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-anchor-colossus-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-astral-totem": {
+  "cell": [
+   326,
+   291
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Totem Astral",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-astral-totem-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-astral-totem-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-aurora-centipede": {
+  "cell": [
+   328,
+   305
+  ],
+  "effect": "pixel",
+  "fps": 20,
+  "name": "Kelabang Aurora",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-aurora-centipede-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-aurora-centipede-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-avalanche-mammoth": {
+  "cell": [
+   325,
+   309
+  ],
+  "effect": "snow",
+  "fps": 20,
+  "name": "Mamut Longsor",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-avalanche-mammoth-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-avalanche-mammoth-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-basilisk-crown": {
+  "cell": [
+   334,
+   304
+  ],
+  "effect": "toxic",
+  "fps": 20,
+  "name": "Basilisk Mahkota",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-basilisk-crown-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-basilisk-crown-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-cable-crawler": {
+  "cell": [
+   335,
+   298
+  ],
+  "effect": "spark",
+  "fps": 20,
+  "name": "Perayap Kabel",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-cable-crawler-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-cable-crawler-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-cactus-marshal": {
+  "cell": [
+   348,
+   304
+  ],
+  "effect": "dust",
+  "fps": 20,
+  "name": "Kaktus Berduri",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-cactus-marshal-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-cactus-marshal-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-chrono-clock": {
+  "cell": [
+   322,
+   304
+  ],
+  "effect": "gear",
+  "fps": 20,
+  "name": "Jam Chrono",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-chrono-clock-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-chrono-clock-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-cinder-cerberus": {
+  "cell": [
+   322,
+   305
+  ],
+  "effect": "ember",
+  "fps": 20,
+  "name": "Cerberus Bara",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-cinder-cerberus-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-cinder-cerberus-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-cinder-rooster": {
+  "cell": [
+   324,
+   298
+  ],
+  "effect": "ember",
+  "fps": 20,
+  "name": "Ayam Jantan Bara",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-cinder-rooster-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-cinder-rooster-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-clockwork-snail": {
+  "cell": [
+   300,
+   299
+  ],
+  "fps": 20,
+  "name": "Siput Roda Gigi",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-clockwork-snail-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-clockwork-snail-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-comet-wisp": {
+  "cell": [
+   300,
+   311
+  ],
+  "fps": 20,
+  "name": "Monster Komet",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-comet-wisp-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-comet-wisp-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-copper-scorpion": {
+  "cell": [
+   331,
+   299
+  ],
+  "effect": "ember",
+  "fps": 20,
+  "name": "Kalajengking Tembaga",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-copper-scorpion-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-copper-scorpion-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-coral-kraken": {
+  "cell": [
+   300,
+   290
+  ],
+  "fps": 20,
+  "name": "Kraken Koral",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-coral-kraken-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-coral-kraken-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-crab-titan": {
+  "cell": [
+   300,
+   297
+  ],
+  "fps": 20,
+  "name": "Kepiting Raksasa",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-crab-titan-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-crab-titan-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-crystal-beetle": {
+  "cell": [
+   300,
+   286
+  ],
+  "fps": 20,
+  "name": "Kumbang Kristal",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-crystal-beetle-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-crystal-beetle-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-dandelion-dread": {
+  "cell": [
+   320,
+   309
+  ],
+  "effect": "leaf",
+  "fps": 20,
+  "name": "Dandelion Baja",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-dandelion-dread-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-dandelion-dread-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-drill-armadillo": {
+  "cell": [
+   339,
+   305
+  ],
+  "effect": "dust",
+  "fps": 20,
+  "name": "Armadillo Bor",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-drill-armadillo-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-drill-armadillo-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-dune-sandworm": {
+  "cell": [
+   343,
+   308
+  ],
+  "effect": "dust",
+  "fps": 20,
+  "name": "Cacing Gurun",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-dune-sandworm-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-dune-sandworm-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-ember-golem": {
+  "cell": [
+   300,
+   299
+  ],
+  "fps": 20,
+  "name": "Golem Bara",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-ember-golem-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-ember-golem-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-frost-yeti": {
+  "cell": [
+   300,
+   299
+  ],
+  "fps": 20,
+  "name": "Yeti Es",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-frost-yeti-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-frost-yeti-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-gear-devourer": {
+  "cell": [
+   320,
+   295
+  ],
+  "effect": "gear",
+  "fps": 20,
+  "name": "Pemakan Roda Gigi",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-gear-devourer-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-gear-devourer-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-glass-gecko": {
+  "cell": [
+   326,
+   292
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Tokek Kaca",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-glass-gecko-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-glass-gecko-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-gloop-slime": {
+  "cell": [
+   300,
+   276
+  ],
+  "fps": 20,
+  "name": "Slime Gloop",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-gloop-slime-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-gloop-slime-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-ice-walrus": {
+  "cell": [
+   321,
+   309
+  ],
+  "effect": "snow",
+  "fps": 20,
+  "name": "Walrus Es",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-ice-walrus-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-ice-walrus-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-iron-puffer": {
+  "cell": [
+   333,
+   295
+  ],
+  "effect": "bubble",
+  "fps": 20,
+  "name": "Buntal Besi",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-iron-puffer-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-iron-puffer-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-lantern-revenant": {
+  "cell": [
+   328,
+   295
+  ],
+  "effect": "toxic",
+  "fps": 20,
+  "name": "Arwah Lentera",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-lantern-revenant-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-lantern-revenant-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-lunar-owl": {
+  "cell": [
+   312,
+   296
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Burung Hantu Bulan",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-lunar-owl-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-lunar-owl-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-magnet-wraith": {
+  "cell": [
+   324,
+   330
+  ],
+  "effect": "spark",
+  "fps": 20,
+  "name": "Hantu Magnet",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-magnet-wraith-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-magnet-wraith-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-manta-wraith": {
+  "cell": [
+   315,
+   292
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Pari Kosmik",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-manta-wraith-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-manta-wraith-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-moss-guardian": {
+  "cell": [
+   300,
+   299
+  ],
+  "fps": 20,
+  "name": "Penjaga Lumut",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-moss-guardian-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-moss-guardian-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-mushroom-stomper": {
+  "cell": [
+   300,
+   289
+  ],
+  "fps": 20,
+  "name": "Penghentak Jamur",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-mushroom-stomper-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-mushroom-stomper-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-neon-arcade-beast": {
+  "cell": [
+   337,
+   292
+  ],
+  "effect": "pixel",
+  "fps": 20,
+  "name": "Monster Arkade Neon",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-neon-arcade-beast-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-neon-arcade-beast-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-obsidian-mantis": {
+  "cell": [
+   329,
+   307
+  ],
+  "effect": "spark",
+  "fps": 20,
+  "name": "Belalang Obsidian",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-obsidian-mantis-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-obsidian-mantis-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-orbital-gazer": {
+  "cell": [
+   329,
+   321
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Pengintai Orbit",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-orbital-gazer-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-orbital-gazer-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-origami-sentinel": {
+  "cell": [
+   330,
+   304
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Penjaga Origami",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-origami-sentinel-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-origami-sentinel-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-piranha-bloom": {
+  "cell": [
+   327,
+   308
+  ],
+  "effect": "petal",
+  "fps": 20,
+  "name": "Bunga Piranha",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-piranha-bloom-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-piranha-bloom-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-plasma-lynx": {
+  "cell": [
+   326,
+   305
+  ],
+  "effect": "pixel",
+  "fps": 20,
+  "name": "Lynx Plasma",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-plasma-lynx-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-plasma-lynx-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-polar-rhino": {
+  "cell": [
+   324,
+   310
+  ],
+  "effect": "snow",
+  "fps": 20,
+  "name": "Badak Kutub",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-polar-rhino-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-polar-rhino-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-pressure-boiler": {
+  "cell": [
+   350,
+   304
+  ],
+  "effect": "steam",
+  "fps": 20,
+  "name": "Ketel Tekanan",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-pressure-boiler-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-pressure-boiler-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-prism-cobra": {
+  "cell": [
+   322,
+   306
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Kobra Prisma",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-prism-cobra-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-prism-cobra-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-prism-obelisk": {
+  "cell": [
+   315,
+   293
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Obelisk Prisma",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-prism-obelisk-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-prism-obelisk-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-pumpkin-vine": {
+  "cell": [
+   300,
+   286
+  ],
+  "fps": 20,
+  "name": "Labu Sulur",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-pumpkin-vine-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-pumpkin-vine-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-reactor-furnace": {
+  "cell": [
+   311,
+   295
+  ],
+  "effect": "ember",
+  "fps": 20,
+  "name": "Tungku Reaktor",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-reactor-furnace-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-reactor-furnace-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-root-crocodile": {
+  "cell": [
+   325,
+   308
+  ],
+  "effect": "leaf",
+  "fps": 20,
+  "name": "Buaya Akar",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-root-crocodile-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-root-crocodile-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-rust-vulture": {
+  "cell": [
+   350,
+   305
+  ],
+  "effect": "dust",
+  "fps": 20,
+  "name": "Nasar Karat",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-rust-vulture-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-rust-vulture-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-satellite-cyclops": {
+  "cell": [
+   327,
+   292
+  ],
+  "effect": "star",
+  "fps": 20,
+  "name": "Siklop Satelit",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-satellite-cyclops-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-satellite-cyclops-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-scrapyard-wheel": {
+  "cell": [
+   319,
+   295
+  ],
+  "effect": "gear",
+  "fps": 20,
+  "name": "Roda Rongsokan",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-scrapyard-wheel-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-scrapyard-wheel-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-shark": {
+  "cell": [
+   300,
+   300
+  ],
+  "fps": 20,
+  "name": "Hiu Mekanik",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-shark-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-shark-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-siege-tortoise": {
+  "cell": [
+   331,
+   307
+  ],
+  "effect": "leaf",
+  "fps": 20,
+  "name": "Kura-Kura Benteng",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-siege-tortoise-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-siege-tortoise-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-siren-turbine": {
+  "cell": [
+   346,
+   305
+  ],
+  "effect": "steam",
+  "fps": 20,
+  "name": "Turbin Sirene",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-siren-turbine-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-siren-turbine-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-steel-hydra": {
+  "cell": [
+   333,
+   304
+  ],
+  "effect": "toxic",
+  "fps": 20,
+  "name": "Hydra Baja",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-steel-hydra-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-steel-hydra-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-storm-jelly": {
+  "cell": [
+   300,
+   272
+  ],
+  "fps": 20,
+  "name": "Ubur-Ubur Badai",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-storm-jelly-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-storm-jelly-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-storm-ram": {
+  "cell": [
+   331,
+   306
+  ],
+  "effect": "spark",
+  "fps": 20,
+  "name": "Domba Badai",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-storm-ram-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-storm-ram-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-tar-umbrella": {
+  "cell": [
+   322,
+   314
+  ],
+  "effect": "bubble",
+  "fps": 20,
+  "name": "Payung Aspal",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-tar-umbrella-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-tar-umbrella-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-teal-dragon": {
+  "cell": [
+   300,
+   298
+  ],
+  "fps": 20,
+  "name": "Naga Toska",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-teal-dragon-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-teal-dragon-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-tesla-stag": {
+  "cell": [
+   330,
+   304
+  ],
+  "effect": "spark",
+  "fps": 20,
+  "name": "Rusa Tesla",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-tesla-stag-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-tesla-stag-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-thunder-bat": {
+  "cell": [
+   335,
+   318
+  ],
+  "effect": "spark",
+  "fps": 20,
+  "name": "Kelelawar Petir",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-thunder-bat-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-thunder-bat-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-treasure-mimic": {
+  "cell": [
+   300,
+   276
+  ],
+  "fps": 20,
+  "name": "Mimik Peti Harta",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-treasure-mimic-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-treasure-mimic-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-vacuum-collector": {
+  "cell": [
+   343,
+   303
+  ],
+  "effect": "dust",
+  "fps": 20,
+  "name": "Pengumpul Vakum",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-vacuum-collector-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-vacuum-collector-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-velvet-moth": {
+  "cell": [
+   300,
+   298
+  ],
+  "fps": 20,
+  "name": "Ngengat Beludru",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 17,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-velvet-moth-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-velvet-moth-idle.webp"
+   }
+  }
+ },
+ "gt-monster/mecha-venus-maw": {
+  "cell": [
+   317,
+   301
+  ],
+  "effect": "toxic",
+  "fps": 20,
+  "name": "Rahang Venus",
+  "states": {
+   "attack": {
+    "cols": 10,
+    "frames": 24,
+    "loop": false,
+    "src": "assets/monster-anim/mecha-venus-maw-attack.webp"
+   },
+   "idle": {
+    "cols": 10,
+    "frames": 64,
+    "loop": true,
+    "src": "assets/monster-anim/mecha-venus-maw-idle.webp"
+   }
+  }
+ }
+}

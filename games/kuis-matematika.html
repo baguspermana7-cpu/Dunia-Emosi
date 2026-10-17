@@ -195,13 +195,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* owner: ksatria ≥2×, monster ≥3×. Scale from the feet (transform-origin bottom)
    so bigger sprites stay grounded. clamp keeps it responsive across tablet/phone. */
 .fighter img.sprite{height:clamp(150px,34vh,300px);max-height:44vh;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45));transform-origin:50% 100%}
-.fighter img.mon-sprite{height:clamp(210px,50vh,420px);max-height:62vh;filter:drop-shadow(0 16px 18px rgba(0,0,0,.5));animation:slimeWob 2.2s ease-in-out infinite;transform-origin:50% 100%}
-.fighter img.mon-sprite.boss-mon{height:clamp(260px,62vh,520px);max-height:74vh;filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(255,80,80,.55));animation:slimeWob 1.7s ease-in-out infinite,bossPulse 1.4s ease-in-out infinite}
+.fighter :is(img,canvas).mon-sprite{height:clamp(210px,50vh,420px);max-height:62vh;filter:drop-shadow(0 16px 18px rgba(0,0,0,.5));animation:slimeWob 2.2s ease-in-out infinite;transform-origin:50% 100%}
+.fighter :is(img,canvas).mon-sprite.boss-mon{height:clamp(260px,62vh,520px);max-height:74vh;filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(255,80,80,.55));animation:slimeWob 1.7s ease-in-out infinite,bossPulse 1.4s ease-in-out infinite}
 /* 2026-09-27 — a WIDE monster (library sprites: island turtle 1.42:1, storm wolf 1.18:1) sized
    by height alone ran off the right edge of a phone: the boss box is 520px tall on a 390px
    screen. Cap the width and let object-fit:contain shrink the art inside the box (never
    stretches), feet kept on the ground line. */
-.fighter img.mon-sprite{max-width:min(60vw,100%);object-fit:contain;object-position:50% 100%}
+.fighter :is(img,canvas).mon-sprite{max-width:min(60vw,100%);object-fit:contain;object-position:50% 100%}
 #fh-foe{min-width:0;flex:0 1 auto}   /* may shrink to what the knight leaves; the img follows via 100% */
 @keyframes bossPulse{0%,100%{filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(255,80,80,.5))}50%{filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 26px rgba(255,60,60,.85))}}
 .fighter .slime{font-size:clamp(150px,42vh,300px);line-height:1;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));animation:slimeWob 2s ease-in-out infinite;display:inline-block;transform-origin:50% 100%}
@@ -430,15 +430,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes conf{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(94vh) rotate(720deg)}}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;transition-duration:.05s!important}}
-@media (max-width:420px){.br-hero{height:52%}.fighter img.sprite{height:clamp(120px,26vh,220px)}.fighter img.mon-sprite{height:clamp(170px,38vh,300px)}.fighter img.mon-sprite.boss-mon{height:clamp(200px,44vh,360px)}.fighter .slime{font-size:clamp(120px,32vh,220px)}}
+@media (max-width:420px){.br-hero{height:52%}.fighter img.sprite{height:clamp(120px,26vh,220px)}.fighter :is(img,canvas).mon-sprite{height:clamp(170px,38vh,300px)}.fighter :is(img,canvas).mon-sprite.boss-mon{height:clamp(200px,44vh,360px)}.fighter .slime{font-size:clamp(120px,32vh,220px)}}
 /* short landscape (tablet): keep fighters big but leave room for the qpanel */
-@media (max-height:560px){.arena{flex:0 0 46%}.fighter img.sprite{height:clamp(140px,40vh,260px)}.fighter img.mon-sprite{height:clamp(190px,58vh,360px)}}
+@media (max-height:560px){.arena{flex:0 0 46%}.fighter img.sprite{height:clamp(140px,40vh,260px)}.fighter :is(img,canvas).mon-sprite{height:clamp(190px,58vh,360px)}}
 /* P3 — landscape: fit the whole question + ALL answer choices on-screen (owner:
    baris bawah tidak terlihat). Shrink arena + scale fonts to viewport HEIGHT. */
 @media (orientation:landscape) and (max-height:620px){
   #scr-game .arena{flex:0 0 30%}
   #scr-game .fighter img.sprite{height:clamp(70px,24vh,140px)}
-  #scr-game .fighter img.mon-sprite{height:clamp(90px,34vh,180px)}
+  #scr-game .fighter :is(img,canvas).mon-sprite{height:clamp(90px,34vh,180px)}
   #scr-game .fighter .slime{font-size:clamp(72px,28vh,150px)}
   .qpanel{gap:5px;padding:4px 12px 6px}
   .super-wrap{height:10px;margin-bottom:3px}
@@ -760,7 +760,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="vfx-engine.js?v=v64.12-20261017i"></script><!-- shared VFX (monster defeat explosion) -->
 <script src="data/math-heroes.js?v=v64.12-20261017i"></script><!-- P3b hero roster (sprite changes per op) -->
 <script src="data/emoji-map.js?v=v64.12-20261017i"></script><script src="data/ui-sprites.js?v=v64.12-20261017i"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v64.12-20261017i"></script><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/math-stories.js?v=v64.12-20261017i"></script><script src="data/gt-monster-sheets.js?v=v64.12-20261017i"></script><script src="gt-monster-anim.js?v=v64.12-20261017i"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
@@ -1123,6 +1123,8 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   game.arc=_arc||null; game.banterIdx=0; game.isBoss=isBoss;   // P3d story-mode banter cursor
   var _mfb=monFallbackEmoji(curMonId);
   byId('foe-holder').innerHTML='<img class="mon-sprite'+(isBoss?' boss-mon':'')+'" src="'+monById(curMonId)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+_mfb+'</span>\'">';
+  // the owner's animated mecha monsters (2026-10-17) play their rampage loop in place of the still picture
+  try { if (window.GTMonsterAnim && typeof curMonId === 'string') GTMonsterAnim.mount(byId('foe-holder'), byId('foe-holder').querySelector('img'), curMonId, { base: '../' }) } catch (e) {}
   byId('foe-hp').style.width='100%';
   show('game'); bgmPlay();
   playIntro(function(){
@@ -1803,6 +1805,7 @@ window.MP={ show:show, goHome:goHome, openPeta:openPeta, openSub:openSub, openSk
    deliberately and named `__g25` so it reads as a seam, not public API. */
 window.__g25 = {
   startLevel: function (g) { openSub(1); game = null; startGame(null); return !!game },
+  monster: function (key) { curMonId = key },   // pin the next level's monster (animated mecha check, 2026-10-17)
   finishWin:  function () { if (game) game.correct = game.pool.length; finish(false) },
   finishLose: function () { finish(true) },
   // survived to the end of the pool but got almost nothing right: not a loss,
