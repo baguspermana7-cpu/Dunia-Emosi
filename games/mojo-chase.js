@@ -178,6 +178,8 @@
     var formId = knownForm(cfg.mojo_form) ? cfg.mojo_form : (cfg.lastForm && FORMS.some(function (f) { return f.id === cfg.lastForm }) ? cfg.lastForm : recForm)
     var perk = cfg.perk || formPerk(formId) || null
     var rearKey = rearOf(formId), rearA = rearAnchor(RA, rearKey)
+    // who is being chased (2026-10-17 Tim Film Balap): a robber by default, or a rival racer / the enemy team
+    var FOE = Object.assign({ n: 'pencuri', N: 'Pencuri', caught: 'Pencuri Tertangkap!' }, cfg.foe || {})
     var targetName = cfg.target_type || stage.target, targetA = CA ? CA.families.vehicles.sprites[targetName] : null
     var sound = typeof cfg.sound === 'function' ? cfg.sound : function () { return true }
     var AU = Audio(sound)
@@ -196,7 +198,7 @@
       '<div class="mc-tl"><div class="mc-badge"><img alt="Bo" src="' + lib('mojo-char/bo') + '"></div><div class="mc-hearts" aria-label="Semangat"></div></div>' +
       '<div class="mc-sign mc-mission hide"><div class="plank"><b class="ol">MISI</b><span class="ol"></span></div><i class="post"></i></div>' +
       '<div class="mc-top"><div class="mc-prog"><img class="car" alt="" src="' + lib(rearPath(rearKey)) + '"><div class="bar"><i></i></div><img class="flag" alt="" src="' + lib('mojo-chase/signs/flag-checker') + '"></div>' +
-      '<div class="mc-title ol">KEJAR PENCURI!</div><div class="mc-loc ol"></div><div class="mc-dist"></div></div>' +
+      '<div class="mc-title ol">KEJAR ' + FOE.N.toUpperCase() + '!</div><div class="mc-loc ol"></div><div class="mc-dist"></div></div>' +
       '<button class="mc-pause" type="button" aria-label="Jeda"></button>' +
       '<div class="mc-counters"><span class="mc-cnt star"><img alt="" src="' + lib('mojo-chase/items/star') + '"><b class="ol">0</b></span><span class="mc-cnt crate"><img alt="" src="' + lib('mojo-chase/items/crate') + '"><b class="ol">0</b></span></div>' +
       '<div class="mc-timer"><i></i><b class="ol">00:00</b></div>' +
@@ -349,7 +351,7 @@
         /* answer every tap: the bubble (forced past the cooldown) AND a nudge on the button itself,
            so the feedback survives even if the bubble is covered or missed */
         if (!S.hasRocket) call('Cari kotak roket!', 1200, 'need', true)
-        else call('Dekati pencurinya dulu!', 1200, 'near', true)
+        else call('Dekati ' + FOE.n + 'nya dulu!', 1200, 'near', true)
         if (H.gad) { H.gad.classList.remove('nope'); void H.gad.offsetWidth; H.gad.classList.add('nope') }
         return
       }
@@ -395,7 +397,7 @@
       if (on) {
         if (S.paused || !(S.state === 'cut' || S.state === 'countdown' || S.state === 'swop' || S.state === 'tutorial' || S.state === 'active' || S.state === 'lock' || S.state === 'capture' || S.state === 'resolve')) return
         S.paused = true; S.pauseReason = 'menu'; AU.engine(0); AU.siren(false)
-        showCard('<h2 class="fk">Istirahat Sebentar</h2><p>Pencuri ikut berhenti. Siap lanjut?</p>', [
+        showCard('<h2 class="fk">Istirahat Sebentar</h2><p>' + FOE.N + ' ikut berhenti. Siap lanjut?</p>', [
           { t: 'Lanjut', id: 'mc-resume', fn: function () { hideCard(); S.paused = false; S.pauseReason = null; last = performance.now(); acc = 0 } },
           { t: 'Keluar', id: 'mc-exit', soft: true, fn: function () { finish(false, true) } }])
       }
@@ -447,10 +449,10 @@
       S.boxes++; AU.box(); ring(sx, sy, 1); burst(sx, sy, 16, TEX.sparkle, 640 * v.u, 0.7, cp * 0.18, true)
       if (W.VFX && W.VFX.dom && !RM) { try { var hr = host.getBoundingClientRect(); W.VFX.dom(hr.left + sx * v.css, hr.top + sy * v.css, { fx: 'pop', size: cp * v.css * 1.2 }) } catch (e) {} }
       var g2 = t === 'mystery' ? ['magnet', 'shield', 'stopwatch', 'boost'][Math.floor(rr() * 4)] : t
-      if (g2 === 'rocket') { S.rocket++; S.hasRocket = true; S.rocketBoxAlive = false; call('Roket siap! Dekati pencurinya!', 1600, 'rocket') }
+      if (g2 === 'rocket') { S.rocket++; S.hasRocket = true; S.rocketBoxAlive = false; call('Roket siap! Dekati ' + FOE.n + 'nya!', 1600, 'rocket') }
       else if (g2 === 'magnet') { S.magnet = 8; call('Magnet bintang!', 1200, 'magnet') }
       else if (g2 === 'shield') { S.shield = 1; call('Perisai aktif!', 1200, 'shield') }
-      else if (g2 === 'stopwatch') { S.slow = 5; S.prog = Math.min(S.hasRocket ? 1 : 0.9, S.prog + 0.06); call('Pencurinya melambat!', 1200, 'slow') }
+      else if (g2 === 'stopwatch') { S.slow = 5; S.prog = Math.min(S.hasRocket ? 1 : 0.9, S.prog + 0.06); call(FOE.N + 'nya melambat!', 1200, 'slow') }
       else { S.boost = 1.5; AU.boost() }
       H.crateBox.classList.remove('bump'); void H.crateBox.offsetWidth; H.crateBox.classList.add('bump')
     }
@@ -658,7 +660,7 @@
       var starsR = 1 + (S.stars >= starGoal() ? 1 : 0) + (S.hits <= 2 ? 1 : 0), st = ''
       for (var i = 1; i <= 3; i++) st += '<img class="' + (i <= starsR ? '' : 'off') + '" alt="" src="' + lib('mojo-chase/items/star') + '">'
       var e = S.eduResult
-      showCard('<h2 class="fk">Pencuri Tertangkap!</h2><div class="stars">' + st + '</div>' +
+      showCard('<h2 class="fk">' + FOE.caught + '</h2><div class="stars">' + st + '</div>' +
         '<div class="cast"><img alt="" src="' + lib('mojo-char/bo-celebrate') + '"><img alt="" src="' + lib('mojo-chase/vehicles/police-van') + '"></div>' +
         '<p>' + (cfg.story_outro || stage.outro) + '</p><div class="why"><span>Bintang terkumpul: ' + S.stars + '</span><span>' +
         (S.hits <= 2 ? 'Menyetir dengan rapi!' : 'Tabrakan: ' + S.hits + '. Lain kali lebih rapi, ya!') + '</span>' +
@@ -1402,7 +1404,9 @@
         startRun(); return
       }
       var p0
-      try { p0 = HK().beforeStart(cfg, API) } catch (e) { p0 = null }
+      // a team racer chosen in the Balapan team menu (Tim Film Balap) skips the Mojo form picker
+      if (cfg.teamPicked) p0 = Object.assign({}, cfg, { picked: true })
+      else try { p0 = HK().beforeStart(cfg, API) } catch (e) { p0 = null }
       Promise.resolve(p0).then(function (c2) {
         if (finished) return
         var custom = HK().beforeStart !== HOOKS.beforeStart   // a picker module ran: its choice is final (even 'racer')
@@ -1410,7 +1414,9 @@
         var chosen = !!(c2.picked || c2.formChosen)
         if ((custom || chosen) && knownForm(c2.mojo_form)) { setForm(c2.mojo_form, c2.perk || null); cfg.formChosen = true }
         else if (c2.perk) perk = c2.perk
-        if (chosen) startRun(); else intro()   // the picker already asked: no intro card, straight to the cutscene / countdown
+        // the picker already asked: no intro card, straight to the cutscene / countdown. A team racer (Tim Film Balap) had
+        // no picker, so its mission card tells who is chased (the robber or the rival) before "Ayo Kejar!"
+        if (chosen && !cfg.teamPicked) startRun(); else intro()
       }, function () { intro() })
     }
     function intro () {
@@ -1421,7 +1427,7 @@
       }).join('')
       showCard('<h2 class="fk">' + (cfg.title || stage.title) + '</h2><p>' + (cfg.story_intro || stage.intro) + '</p>' +
         (cfg.formChosen ? '' : '<p class="mc-pick-h">Pilih wujud Mojo!</p><div class="mc-forms">' + cards + '</div>') +
-        '<p style="font-size:16px;color:#54617a">Geser atau tekan panah untuk pindah jalur. Ambil kotak roket, lalu tangkap pencurinya!</p>',
+        '<p style="font-size:16px;color:#54617a">Geser atau tekan panah untuk pindah jalur. Ambil kotak roket, lalu tangkap ' + FOE.n + 'nya!</p>',
         [{ t: 'Ayo Kejar!', id: 'mc-go', fn: function () { hideCard(); startRun() } }])
       ;[].forEach.call(card.querySelectorAll('.mc-form'), function (b) {
         b.addEventListener('click', function () { AU.cue('click'); setForm(b.getAttribute('data-form')); [].forEach.call(card.querySelectorAll('.mc-form'), function (x) { x.classList.toggle('on', x === b) }) })
@@ -1436,7 +1442,7 @@
       if (RM) { countdown(); return }
       try { var cs = JSON.parse(W.localStorage.getItem(CUT_KEY) || '{}'); cs[stage.id] = 1; W.localStorage.setItem(CUT_KEY, JSON.stringify(cs)) } catch (e) {}
       S.state = 'cut'; S.cutT = 0; S.robLane = 2.9; S.cutGap = 2600; S.targetLanePos = S.targetLane = 1
-      H.skip.classList.add('on'); call('Itu pencurinya!', 1400, 'cut1'); H.mission.classList.remove('hide'); H.place.classList.remove('hide')
+      H.skip.classList.add('on'); call('Itu ' + FOE.n + 'nya!', 1400, 'cut1'); H.mission.classList.remove('hide'); H.place.classList.remove('hide')
       last = performance.now()
     }
     function endCut () { if (S.state !== 'cut') return; H.skip.classList.remove('on'); countdown() }

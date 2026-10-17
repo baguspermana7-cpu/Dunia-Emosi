@@ -14,6 +14,7 @@ for (const st0 of (wanted || [null])) {
   await p.goto((process.env.BASE || 'http://localhost:8081') + '/games/mojo-swoptops.html?unlock=1', { waitUntil: 'networkidle0' })
   await p.evaluate(() => { const b = document.querySelector('#scr-splash .splash-stage>.btn'); if (b) b.click() }); await sl(300)
   await p.click('#btn-race'); await sl(500)
+  if (await p.$('.team-card[data-team="mojo"]')) { await p.click('.team-card[data-team="mojo"]'); await sl(400) }   // team choice (2026-10-17)
   const stages = await p.$$eval('.race-card', cs => cs.map(c => c.dataset.stage)); allStages = stages
   const st = st0 || stages[0]
   const card = await p.$(`.race-card[data-stage="${st}"]`); await card.evaluate(e => e.scrollIntoView({ block: 'center' })); await card.click()

@@ -258,3 +258,25 @@
 .mc-card .row #mc-retry{min-height:64px;min-width:170px;font-size:26px}
 .mc-card .row #mc-back{min-height:64px;min-width:150px;font-size:22px}
 @media (prefers-reduced-motion:reduce){.mc-hearts img.lose{animation:none}}
+
+/* ── Balapan team choice + Tim Film Balap (2026-10-17) ── */
+.team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2.4vw,24px);max-width:900px;margin:0 auto;padding:4px 0 12px}
+@media (max-width:560px){.team-grid{grid-template-columns:1fr}}
+.team-card{display:flex;flex-direction:column;align-items:stretch;border:0;border-radius:24px;overflow:hidden;background:#fff;color:#16336b;text-align:center;cursor:pointer;
+  box-shadow:0 6px 0 rgba(0,0,0,.18),0 12px 24px rgba(0,0,0,.22);min-height:160px;transition:transform .15s cubic-bezier(.23,1,.32,1)}
+.team-card:active{transform:scale(.97)}
+.team-card .pic{display:grid;place-items:center;height:clamp(110px,26vh,200px);background:radial-gradient(circle at 50% 60%,#FFF4C2,#FFC76B 70%,#F29B3C)}
+.team-card[data-team=mojo] .pic{background:radial-gradient(circle at 50% 60%,#DFF4FF,#8FD0FF 70%,#4AA8E6)}
+.team-card .pic img{max-width:80%;max-height:88%;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}
+.team-card .meta{display:flex;flex-direction:column;gap:4px;padding:10px 14px 14px}
+.team-card strong{font-size:clamp(20px,3vw,28px)}
+.team-card .sub{font-size:15px;font-weight:800;color:#54617a}
+.team-card .soon{align-self:center;margin-top:2px;padding:3px 10px;border-radius:999px;background:#FFE8B8;color:#8A4B00;font-size:13px;font-weight:900}
+.racer-bar{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.racer-chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;width:112px;min-height:112px;padding:8px 6px;border:3px solid transparent;border-radius:18px;
+  background:#fff;color:#16336b;scroll-snap-align:start;box-shadow:0 4px 0 rgba(0,0,0,.15);cursor:pointer}
+.racer-chip img{width:84px;height:60px;object-fit:contain}
+.racer-chip span{font-size:13px;line-height:1.1;text-align:center}
+.racer-chip.on{border-color:var(--rc,#E8432E);box-shadow:0 0 0 3px rgba(255,255,255,.8),0 4px 0 rgba(0,0,0,.15)}
+.race-card .mtype{position:absolute;right:8px;top:8px;padding:3px 9px;border-radius:999px;font-size:13px;color:#fff;background:#2E7BE8;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.race-card.film-robber .mtype{background:#D93030}

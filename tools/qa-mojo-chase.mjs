@@ -138,6 +138,8 @@ try {
     await p.evaluate(() => { const b = document.querySelector('#scr-splash .splash-stage>.btn'); if (b) b.click() })
     await sleep(250)
     await p.click('#btn-race'); await sleep(400)
+    // the Balapan button opens the team choice first (2026-10-17): Tim Mojo = the stage list
+    if (await p.$('.team-card[data-team="mojo"]')) { await p.click('.team-card[data-team="mojo"]'); await sleep(400) }
     check(await p.evaluate(() => document.body.dataset.scr === 'scr-race'), 'the Balapan menu entry opens the stage list')
     const card = await p.$(`.race-card[data-stage="${stage}"]`)
     await card.evaluate(e => e.scrollIntoView({ block: 'center' })); await card.click()

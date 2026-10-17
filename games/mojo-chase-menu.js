@@ -18,7 +18,10 @@
     var o = null; try { o = raw ? JSON.parse(raw) : null } catch (e) { o = null }
     var st = {}, src = o && o.st && typeof o.st === 'object' ? o.st : {}
     ;(W.MojoChases ? W.MojoChases.STAGES : []).forEach(function (s) { var r = src[s.id]; if (r && typeof r.stars === 'number' && r.stars >= 1 && r.stars <= 3) st[s.id] = { stars: Math.floor(r.stars), t: +r.t || 0 } })
-    return { v: 1, st: st, form: o && typeof o.form === 'string' ? o.form : null }
+    // Tim Film Balap (2026-10-17): its own stars per mission + the chosen racer, kept beside the Mojo progress
+    var f0 = o && o.film && typeof o.film === 'object' ? o.film : {}, fst = {}
+    if (f0.st && typeof f0.st === 'object') Object.keys(f0.st).forEach(function (k) { var r = f0.st[k]; if (r && typeof r.stars === 'number' && r.stars >= 1 && r.stars <= 3) fst[k] = { stars: Math.floor(r.stars), t: r.t || 0 } })
+    return { v: 1, st: st, form: o && typeof o.form === 'string' ? o.form : null, film: { st: fst, racer: typeof f0.racer === 'string' ? f0.racer : null } }
   }
   function save (s) {
     try { var j = JSON.stringify(s); if (W.avatarScopedSet) W.avatarScopedSet(KEY, j); else localStorage.setItem(KEY, j); return true } catch (e) { console.warn('[Mojo chase] save failed', e); return false }
@@ -57,13 +60,89 @@
       menu()
     })
   }
+  /* ── team choice (owner 2026-10-17): Tim Mojo = the stage list below; Tim Film Balap = film racers, missions that
+     chase the robber OR the rival team, on the same chase engine and its weather/atmosphere ── */
+  var TEAM = null
+  function screen (title, bg) {
+    var scr = D.getElementById('scr-race')
+    if (!scr) { scr = el('section', 'scr menu-scene race-menu'); scr.id = 'scr-race'; D.body.appendChild(scr) }
+    scr.innerHTML = ''
+    var head = el('header', 'topbar'), back = el('button', 'btn b-soft fk', 'Kembali'); back.type = 'button'
+    head.appendChild(back); head.appendChild(el('h1', 'plate fk', title))
+    scr.appendChild(head)
+    scr.style.background = bg || 'radial-gradient(120% 80% at 50% 0%,#9EDCFF,#4AA8E6 70%,#2E86C8)'
+    var content = el('div', 'menu-content'); scr.appendChild(content)
+    return { scr: scr, head: head, back: back, content: content }
+  }
+  function teamMenu () {
+    var T = W.MojoTeams
+    if (!T) { TEAM = 'mojo'; return menu() }
+    var u = screen('Pilih Tim Balap')
+    u.back.addEventListener('click', function () { API.cue(); API.home() })
+    u.content.appendChild(el('p', 'race-lead', 'Mau balapan bersama siapa?'))
+    var grid = el('div', 'team-grid'); u.content.appendChild(grid)
+    T.TEAMS.forEach(function (t) {
+      var b = el('button', 'team-card'); b.type = 'button'; b.setAttribute('data-team', t.id)
+      b.innerHTML = '<span class="pic"><img alt="" src="' + lib(t.card) + '"></span><span class="meta"><strong class="fk">' + t.name + '</strong><span class="sub">' + t.sub + '</span>' +
+        (t.soon ? '<span class="soon">Gambar pembalap segera hadir</span>' : '') + '</span>'
+      b.addEventListener('click', function () { API.cue(); TEAM = t.id; menu() })
+      grid.appendChild(b)
+    })
+    API.show('scr-race')
+  }
+  function formSide (id) { var f = (W.MojoChases.FORMS || []).filter(function (x) { return x.id === id })[0]; return f ? (f.side || 'mojo-top/base') : 'mojo-top/base' }
+  function filmMenu () {
+    var F = W.MojoTeams.film, s = load()
+    var racer = F.racers.filter(function (r) { return r.id === s.film.racer })[0] || F.racers[0]
+    var u = screen('Tim Film Balap', 'radial-gradient(120% 80% at 50% 0%,#FFE2A8,#F2934A 70%,#C9502E)')
+    u.back.addEventListener('click', function () { API.cue(); TEAM = null; menu() })
+    var tot = 0; Object.keys(s.film.st).forEach(function (k) { tot += s.film.st[k].stars })
+    u.head.appendChild(el('span', 'sp')); u.head.appendChild(el('span', 'starpill fk', '<img src="' + lib('mojo-chase/items/star') + '" alt=""><b>' + tot + '/' + F.missions.length * 3 + '</b>'))
+    // the racer bar: pick who drives (placeholder art until the owner's film sprites land)
+    var bar = el('div', 'racer-bar'); u.content.appendChild(bar)
+    F.racers.forEach(function (r) {
+      var b = el('button', 'racer-chip' + (r.id === racer.id ? ' on' : '')); b.type = 'button'; b.setAttribute('data-racer', r.id)
+      b.style.setProperty('--rc', r.color)
+      b.innerHTML = '<img alt="" src="' + lib(formSide(r.form)) + '"><span class="fk">' + r.name + '</span>'
+      b.addEventListener('click', function () { API.cue(); var sv = load(); sv.film.racer = r.id; save(sv); filmMenu() })
+      bar.appendChild(b)
+    })
+    u.content.appendChild(el('p', 'race-lead', racer.name + ': ' + racer.line))
+    var grid = el('div', 'race-grid'); u.content.appendChild(grid)
+    F.missions.forEach(function (m, i) {
+      var st = W.MojoChases.stage(m.stage) || {}, rec = s.film.st[m.id]
+      var b = el('button', 'race-card film-' + m.type); b.type = 'button'; b.setAttribute('data-mission', m.id)
+      var stars = ''; for (var k = 1; k <= 3; k++) stars += '<img class="' + (rec && rec.stars >= k ? '' : 'off') + '" alt="" src="' + lib('mojo-chase/items/star') + '">'
+      b.innerHTML = '<span class="pic" style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + lib('mojo-chase/vehicles/' + m.target) + '"><span class="num fk">' + (i + 1) + '</span>' +
+        '<span class="mtype fk">' + (m.type === 'rival' ? 'Kejar Rival' : 'Kejar Pencuri') + '</span></span>' +
+        '<span class="meta"><strong class="fk">' + m.title + '</strong><span class="sub">' + (st.place || '') + '</span><span class="st">' + stars + '</span></span>'
+      b.addEventListener('click', function () { API.cue(); playFilm(m, racer) })
+      grid.appendChild(b)
+    })
+    API.show('scr-race')
+  }
+  function playFilm (m, racer) {
+    var cfg = W.MojoChases.config(m.stage, { target: m.target, intro: m.intro, outro: m.outro, item: m.item })
+    cfg.title = m.title; cfg.mission = m.type === 'rival' ? 'Kejar rivalnya sampai terkejar!' : 'Tangkap pencurinya!'; cfg.missionType = m.type; cfg.foe = m.foe; cfg.mojo_form = racer.form; cfg.teamPicked = true; cfg.team = 'film'; cfg.racer = racer.id
+    cfg.onForm = function () {}   // a film racer never overwrites the child's saved Mojo form
+    run(cfg).then(function (res) {
+      if (res && res.completed) {
+        var s = load(), prev = s.film.st[m.id] || { stars: 0 }
+        s.film.st[m.id] = { stars: Math.max(prev.stars, res.reward_result.stars), t: Date.now() }
+        save(s)
+      }
+      menu()
+    })
+  }
   function menu () {
     if (!API) return
+    if (!TEAM) return teamMenu()
+    if (TEAM === 'film') return filmMenu()
     var s = load(), stages = W.MojoChases.STAGES
     var scr = D.getElementById('scr-race')
     if (!scr) { scr = el('section', 'scr menu-scene race-menu'); scr.id = 'scr-race'; D.body.appendChild(scr) }
     scr.innerHTML = ''
-    var head = el('header', 'topbar'), back = el('button', 'btn b-soft fk', 'Kembali'); back.type = 'button'; back.addEventListener('click', function () { API.cue(); API.home() })
+    var head = el('header', 'topbar'), back = el('button', 'btn b-soft fk', 'Kembali'); back.type = 'button'; back.addEventListener('click', function () { API.cue(); if (W.MojoTeams) { TEAM = null; menu() } else API.home() })
     head.appendChild(back); head.appendChild(el('h1', 'plate fk', 'Balapan Kejar Pencuri'))
     var tot = 0; stages.forEach(function (st) { tot += (s.st[st.id] && s.st[st.id].stars) || 0 })
     var pill = el('span', 'starpill fk', '<img src="' + lib('mojo-chase/items/star') + '" alt=""><b>' + tot + '/' + stages.length * 3 + '</b>')
@@ -93,7 +172,7 @@
   function setup (api) {
     API = api
     var b = D.getElementById('btn-race')
-    if (b) b.addEventListener('click', function () { API.cue(); menu() })
+    if (b) b.addEventListener('click', function () { API.cue(); TEAM = null; menu() })
   }
   /** the adventure hook: run the chase beat configured for (level, beat) then call next(result) */
   function beat (levelId, beatIndex, next) {
@@ -107,5 +186,5 @@
     run(cfg).then(next)
     return true
   }
-  W.MojoChaseMenu = { setup: setup, menu: menu, run: run, beat: beat, load: load, unlocked: unlocked }
+  W.MojoChaseMenu = { setup: setup, menu: menu, run: run, beat: beat, load: load, unlocked: unlocked, team: function (t) { TEAM = t; menu() } }
 })(window, document)
