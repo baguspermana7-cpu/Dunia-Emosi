@@ -52,7 +52,7 @@
   }
   var REASON = {
     gameOver: 'Pertandingan sudah selesai.', notYourTurn: 'Tunggu giliranmu ya.', answerFirst: 'Jawab soalnya dulu.',
-    handLimit: 'Tanganmu penuh — buang 1 kartu dulu.', notATruck: 'Itu bukan kartu truk.', benchFull: 'Arena sudah ada trukmu.', swapOnce: 'Ganti truk hanya 1 kali tiap giliran.',
+    handLimit: 'Tanganmu penuh — buang 1 kartu dulu.', notATruck: 'Itu bukan kartu truk.', benchFull: 'Arena sudah ada trukmu.', swapOnce: 'Ganti truk hanya 1 kali tiap giliran.', swapFuel: 'Ganti truk butuh 1 bensin. Isi bensin dulu.',
     notFuel: 'Itu bukan bensin.', noTruck: 'Taruh truk di arena dulu.', fuelOncePerTurn: 'Bensin hanya boleh diisi 1 kali tiap giliran.',
     fuelFull: 'Tangki sudah penuh (maks 4).', notAPart: 'Itu bukan onderdil.', fullHP: 'HP truk masih penuh.', nothingToSwitch: 'Belum ada truk cadangan.',
     deckEmpty: 'Tumpukan kartu sudah habis.', noTarget: 'Lawan belum punya truk.', needFuel: 'Bensinnya belum cukup.', notInHand: 'Kartu itu tidak ada di tanganmu.',
@@ -62,7 +62,7 @@
     noTruckInHand: 'Tidak ada kartu truk di tanganmu.', badTarget: 'Pilih kartu truk dari tanganmu.'
   }
   // short word printed on a greyed card
-  var SHORT = { supportLimit: 'Maks 2 / giliran', fullHP: 'HP penuh', swapOnce: '1× / giliran', justSkipped: 'Baru dilewati', alreadyStunned: 'Sudah terjebak',
+  var SHORT = { supportLimit: 'Maks 2 / giliran', fullHP: 'HP penuh', swapOnce: '1× / giliran', swapFuel: 'Butuh 1 bensin', justSkipped: 'Baru dilewati', alreadyStunned: 'Sudah terjebak',
     alreadyOily: 'Sudah licin', alreadyShield: 'Sudah ada', alreadyBoosted: 'Sudah nyala', nitroFull: 'Nitro penuh', noTruckInHand: 'Tak ada truk', noTarget: 'Lawan kosong',
     handLimit: 'Buang dulu', noTruck: 'Taruh truk dulu', fuelFull: 'Penuh', notYourTurn: '' }
   var EXPLAIN_OK = true
@@ -934,6 +934,7 @@
   var TUT = [
     ['gt/trophy', 'Tujuan', 'Kamu punya <b>3 nyawa ♥</b>. Tiap truk yang HP-nya habis = lawan kehilangan 1 nyawa. Nyawa lawan habis = <b>kamu menang</b>!'],
     ['gt/lightning', '3 langkah tiap giliran', '<b>1 Pasang kartu</b> (maks 2 support: Turbo, Perisai, Rem Darurat, Lumpur, Oli, Bengkel…) → <b>2 Serang</b> (jawab soal) → <b>3 Selesai</b>. Yang bersinar = langkah berikutnya.'],
+    ['gt/fuel-can', 'Ganti truk', 'Boleh ganti truk 1 kali tiap giliran, pakai <b>1 bensin</b>. Truk yang diganti <b>tetap penyok</b> — HP-nya tidak penuh lagi saat keluar lagi.'],
     ['gt/q-math', 'Jawabanmu menentukan!', 'Jawab <b>benar</b> = serangan penuh <b>+2</b>. Jawab <b>salah</b> = serangan <b>lemah</b>, cuma seperempat kekuatan. Tak apa, nanti kita hitung bareng!'],
     ['gt/timer', 'Monster Rush', 'Di akhir pertandingan muncul monster! Jawab soal sebanyak-banyaknya dalam <b>15 detik</b> untuk bonus skor.']
   ]

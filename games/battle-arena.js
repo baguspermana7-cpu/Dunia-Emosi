@@ -92,6 +92,25 @@
     '@keyframes baHitFlash{0%,100%{opacity:1}30%,70%{opacity:.25}}',
     '.ba-stumble{animation:baStumble .45s ease}',
     '@keyframes baStumble{0%,100%{translate:0 0;rotate:0deg}25%{translate:-8px 2px;rotate:-4deg}60%{translate:6px 0;rotate:3deg}}',
+    /* ── 2026-10-17 hit feel (owner's "make attacks feel good" video): white blink + squash on impact, a hitstop
+       freeze, a heavier knockback, a slash arc, the HP bar's white trail and a shatter on the knockout ── */
+    '.ba-sprite.ba-white.ba-white{filter:brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,.9))}',
+    '.ba-squash{transform:scale(1.14,.84);transform-origin:50% 100%}',
+    '.ba-knock2-l{animation:baKnock2L .42s cubic-bezier(.2,.9,.3,1)}',
+    '.ba-knock2-r{animation:baKnock2R .42s cubic-bezier(.2,.9,.3,1)}',
+    '@keyframes baKnock2L{0%{translate:0 0}30%{translate:-24px -4px}62%{translate:3px 0}100%{translate:0 0}}',
+    '@keyframes baKnock2R{0%{translate:0 0}30%{translate:24px -4px}62%{translate:-3px 0}100%{translate:0 0}}',
+    '.ba-slash{position:fixed;z-index:58;pointer-events:none;overflow:visible}',
+    '.ba-slash path{fill:none;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:baSlash .3s ease-out forwards}',
+    '@keyframes baSlash{0%{stroke-dashoffset:1;opacity:1}70%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}',
+    '.ba-spark{position:fixed;z-index:58;width:5px;height:14px;border-radius:3px;pointer-events:none;transform-origin:50% 50%}',
+    '.ba-hp-track{position:relative}',
+    '.ba-hp-trail{position:absolute;left:0;top:0;height:100%;width:100%;border-radius:999px;background:#fff;box-shadow:0 0 4px rgba(255,255,255,.9)}',
+    '.ba-hp-fill{position:relative}',
+    '.ba-crit{position:fixed;z-index:61;pointer-events:none;font-weight:900;font-size:26px;color:#fde047;letter-spacing:1px;',
+    'text-shadow:0 2px 0 #b45309,0 0 12px rgba(250,204,21,.8);transform:translate(-50%,-50%) scale(.4);opacity:0;animation:baCrit .9s cubic-bezier(.34,1.56,.64,1) forwards}',
+    '@keyframes baCrit{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}',
+    '.ba-shard{position:fixed;z-index:59;pointer-events:none;background-repeat:no-repeat}',
     /* ── corner HP cards ── */
     '.ba-card{position:fixed;top:var(--ba-card-top,10px);z-index:60;background:rgba(255,255,255,.95);',
     'border-radius:16px;padding:8px 12px 9px;box-shadow:0 6px 18px rgba(0,0,0,.28),inset 0 1px 0 #fff;',
@@ -446,7 +465,7 @@
       '<div class="ba-card-name"></div>' +
       '<div class="ba-chips"><span class="ba-chip ba-chip-type"></span><span class="ba-chip ba-chip-lv"></span></div>' +
       '<div class="ba-hp-row"><span class="ba-hp-lbl">HP</span>' +
-      '<div class="ba-hp-track"><div class="ba-hp-fill"></div></div></div>' +
+      '<div class="ba-hp-track"><div class="ba-hp-trail"></div><div class="ba-hp-fill"></div></div></div>' +
       '<div class="ba-hp-text"></div>' +
       '<div class="ba-dots"></div>' +
       '<div class="ba-card-extra"></div>'
@@ -509,11 +528,19 @@
     if (f.hpShown == null || REDUCED) {
       f.hpShown = hp
       fill.style.width = (hp / maxHp * 100) + '%'
+      var tr0 = f.card.querySelector('.ba-hp-trail'); if (tr0) tr0.style.width = (hp / maxHp * 100) + '%'
       fill.className = 'ba-hp-fill ' + hpClass(hp / maxHp * 100)
       txt.textContent = hp + '/' + maxHp
       return
     }
     if (f.hpAnim) cancelAnimationFrame(f.hpAnim)
+    var trail = f.card.querySelector('.ba-hp-trail')
+    if (trail && hp < f.hpShown) {   // damage: the white trail holds the old value, then drains down behind the bar
+      clearTimeout(f.trailT)
+      trail.style.transition = 'none'
+      trail.style.width = (f.hpShown / maxHp * 100) + '%'
+      f.trailT = setTimeout(function () { trail.style.transition = 'width .55s cubic-bezier(.4,0,.2,1)'; trail.style.width = (hp / maxHp * 100) + '%' }, 420)
+    } else if (trail) { trail.style.transition = 'none'; trail.style.width = (hp / maxHp * 100) + '%' }
     var last = performance.now()
     function step (now) {
       var dt = Math.min((now - last) / 1000, 0.05) // dt-clamp (throttled tablets)
@@ -740,21 +767,96 @@
     }, 400)
   }
 
-  function hitReact (side) {
+  function hitReact (side, opts) {
     if (!S || !S.fighters[side]) return
+    opts = opts || {}
     var f = S.fighters[side]
     var dir = side === 'enemy' ? 'r' : 'l' // knock away from the center
-    f.wrap.classList.remove('ba-knock-l', 'ba-knock-r')
-    f.img.classList.remove('ba-hitflash')
+    var combo = comboStep(side)
+    crunch(combo, !!opts.superEff)
+    if (REDUCED) { punchIn(side); return }
+    f.wrap.classList.remove('ba-knock-l', 'ba-knock-r', 'ba-knock2-l', 'ba-knock2-r')
+    f.img.classList.remove('ba-hitflash', 'ba-white')
+    f.bob.classList.remove('ba-squash')
     void f.wrap.offsetWidth
-    f.wrap.classList.add('ba-knock-' + dir)
-    f.img.classList.add('ba-hitflash')
-    punchIn(side)                                  // v1.1.0 A-319 (f29) camera close-up
-    parallaxKick(side === 'enemy' ? 1 : -1)        // layers separate on the impact
-    setTimeout(function () {
-      f.wrap.classList.remove('ba-knock-' + dir)
-      f.img.classList.remove('ba-hitflash')
-    }, 420)
+    // impact frame: the target blinks pure white and squashes, and holds there (hitstop) before it is shoved back
+    f.img.classList.add('ba-white')
+    f.bob.classList.add('ba-squash')
+    slashAt(f.img, opts.color || '#ffffff', side)
+    var hold = opts.superEff ? 110 : 75
+    clearTimeout(f.hitT); clearTimeout(f.hitT2)
+    f.hitT = setTimeout(function () {
+      f.img.classList.remove('ba-white')
+      f.bob.classList.remove('ba-squash')
+      f.wrap.classList.add('ba-knock2-' + dir)
+      f.img.classList.add('ba-hitflash')
+      punchIn(side)                                  // v1.1.0 A-319 (f29) camera close-up
+      parallaxKick(side === 'enemy' ? 1 : -1)        // layers separate on the impact
+      f.hitT2 = setTimeout(function () {
+        f.wrap.classList.remove('ba-knock2-' + dir)
+        f.img.classList.remove('ba-hitflash')
+      }, 460)
+    }, hold)
+  }
+
+  // hits on the same side within 3 s climb the crunch's pitch (owner's video: "climb the pitch with every hit in a row")
+  var COMBO = { side: null, n: 0, t: 0 }
+  function comboStep (side) {
+    var now = Date.now()
+    if (COMBO.side === side && now - COMBO.t < 3000) COMBO.n++
+    else { COMBO.side = side; COMBO.n = 1 }
+    COMBO.t = now
+    return COMBO.n
+  }
+  var ACX = null
+  function crunch (combo, heavy) {
+    try {
+      var SE = global.SFXEngine
+      if (SE && SE._state && SE._state.muted) return
+      var AC = global.AudioContext || global.webkitAudioContext
+      if (!AC) return
+      if (!ACX) ACX = new AC()
+      if (ACX.state === 'suspended') ACX.resume()
+      var t = ACX.currentTime, rate = Math.pow(1.12, Math.min(6, combo - 1))
+      var len = Math.floor(ACX.sampleRate * 0.16), buf = ACX.createBuffer(1, len, ACX.sampleRate), d = buf.getChannelData(0)
+      for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3)
+      var src = ACX.createBufferSource(); src.buffer = buf; src.playbackRate.value = rate
+      var bp = ACX.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1400 * rate; bp.Q.value = 0.9
+      var g = ACX.createGain(); g.gain.setValueAtTime(heavy ? 0.5 : 0.36, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.16)
+      src.connect(bp); bp.connect(g); g.connect(ACX.destination); src.start(t)
+      var o = ACX.createOscillator(), og = ACX.createGain()   // the thump under the crunch
+      o.type = 'sine'; o.frequency.setValueAtTime(150 * rate, t); o.frequency.exponentialRampToValueAtTime(55, t + 0.14)
+      og.gain.setValueAtTime(heavy ? 0.55 : 0.4, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.15)
+      o.connect(og); og.connect(ACX.destination); o.start(t); o.stop(t + 0.16)
+    } catch (_) {}
+  }
+
+  // a bright slash arc across the target, and sparks bursting off it
+  function slashAt (img, color, side) {
+    var c = centerOf(img)
+    if (c.w < 4) return
+    var sz = Math.max(90, Math.min(220, c.w * 1.1)), ns = 'http://www.w3.org/2000/svg'
+    var svg = document.createElementNS(ns, 'svg')
+    svg.setAttribute('class', 'ba-slash'); svg.setAttribute('viewBox', '0 0 100 100')
+    svg.style.cssText = 'left:' + (c.x - sz / 2) + 'px;top:' + (c.y - sz / 2) + 'px;width:' + sz + 'px;height:' + sz + 'px'
+    var d = side === 'enemy' ? 'M14 30 Q52 66 88 74' : 'M86 30 Q48 66 12 74'
+    ;[[11, color, 0.55], [5, '#ffffff', 1]].forEach(function (L) {
+      var pth = document.createElementNS(ns, 'path')
+      pth.setAttribute('d', d); pth.setAttribute('pathLength', '1')
+      pth.setAttribute('stroke', L[1]); pth.setAttribute('stroke-width', L[0]); pth.style.opacity = L[2]
+      svg.appendChild(pth)
+    })
+    document.body.appendChild(svg)
+    setTimeout(function () { try { svg.remove() } catch (_) {} }, 360)
+    for (var i = 0; i < 9; i++) {
+      var sp = el('div', 'ba-spark', document.body), a = Math.random() * Math.PI * 2, r = 40 + Math.random() * 60
+      sp.style.background = i % 3 ? '#fff7cc' : color
+      sp.style.left = c.x + 'px'; sp.style.top = c.y + 'px'
+      sp.animate([{ transform: 'translate(-50%,-50%) rotate(' + (a * 57.3 + 90) + 'deg) scale(1)', opacity: 1 },
+        { transform: 'translate(calc(-50% + ' + Math.cos(a) * r + 'px),calc(-50% + ' + Math.sin(a) * r + 'px)) rotate(' + (a * 57.3 + 90) + 'deg) scale(.2)', opacity: 0 }],
+      { duration: 320 + Math.random() * 160, easing: 'cubic-bezier(.1,.8,.3,1)', fill: 'forwards' })
+      ;(function (sp) { setTimeout(function () { try { sp.remove() } catch (_) {} }, 520) })(sp)
+    }
   }
 
   function attack (fromSide, opts, onHit) {
@@ -765,7 +867,7 @@
     var tgt = S.fighters[toSide]
     if (!atk || !tgt) { if (onHit) onHit(); return }
     function land () {
-      hitReact(toSide)
+      hitReact(toSide, opts)
       if (onHit) onHit()
     }
     try { if (global.VFX && global.VFX.Poke && opts.type) global.VFX.Poke.prime([opts.type]) } catch (_) {}
@@ -872,9 +974,88 @@
         global.ExplosionFX.dom(c.x, c.y - c.h * 0.12, { variant: 'boom', size: Math.max(96, c.w * 0.9) })
       }
     } catch (_) {}
+    if (!REDUCED) shatter(f, side)
     f.wrap.style.transform = ''
     f.wrap.classList.add('ba-faint')
   }
+  // the finisher: the knocked-out sprite breaks into pieces that fly apart; a combo of 3+ adds "xN CRIT!"
+  function shatter (f, side) {
+    try {
+      var r = f.img.getBoundingClientRect(), src = f.img.currentSrc || f.img.src
+      if (r.width < 8 || !src) return
+      var N = 4, M = 3, w = r.width / N, h = r.height / M
+      for (var i = 0; i < N; i++) for (var j = 0; j < M; j++) {
+        var sh = el('div', 'ba-shard', document.body)
+        sh.style.cssText = 'left:' + (r.left + i * w) + 'px;top:' + (r.top + j * h) + 'px;width:' + w + 'px;height:' + h + 'px;' +
+          'background-image:url("' + src.replace(/"/g, '%22') + '");background-size:' + r.width + 'px ' + r.height + 'px;background-position:' + (-i * w) + 'px ' + (-j * h) + 'px'
+        var vx = (i - (N - 1) / 2) * 38 + (Math.random() - 0.5) * 30 + (side === 'enemy' ? 30 : -30), vy = -40 - Math.random() * 60
+        sh.animate([{ transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+          { transform: 'translate(' + vx + 'px,' + (vy * 0.4) + 'px) rotate(' + (vx * 0.6) + 'deg)', opacity: 1, offset: 0.45 },
+          { transform: 'translate(' + (vx * 1.5) + 'px,' + (90 + j * 20) + 'px) rotate(' + (vx * 1.4) + 'deg)', opacity: 0 }],
+        { duration: 700 + Math.random() * 200, easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' })
+        ;(function (sh) { setTimeout(function () { try { sh.remove() } catch (_) {} }, 950) })(sh)
+      }
+      if (COMBO.side === side && COMBO.n >= 3) {
+        var c = centerOf(f.img), lab = el('div', 'ba-crit', document.body)
+        lab.textContent = '\u00d7' + COMBO.n + ' CRIT!'
+        lab.style.left = c.x + 'px'; lab.style.top = (c.y - c.h * 0.55) + 'px'
+        setTimeout(function () { try { lab.remove() } catch (_) {} }, 950)
+      }
+    } catch (_) {}
+  }
+  // ── summon (owner 2026-10-17: "pokemon baru tidak tiba-tiba muncul ... ada VFX summon dulu lalu overlay keluar") ──
+  // recall the old fighter (white, shrinks to a point) -> magic circle + flash from the VFX library -> the new one
+  // grows out of a white silhouette into colour -> done() (the caller shows its message only then).
+  // swap() is the caller's sprite change; it runs while the fighter is invisible.
+  var SUMMON_VFX = ['px-magicspell', 'px-sunburn']
+  function summon (side, opts, swap, done) {
+    opts = opts || {}
+    var f = S && S.fighters[side]
+    var fin = function () { if (done) { var d = done; done = null; try { d() } catch (_) {} } }
+    if (!f || REDUCED) { try { if (swap) swap() } catch (_) {} setTimeout(fin, REDUCED ? 120 : 0); return }
+    var tok = f.summonTok = (f.summonTok || 0) + 1
+    var live = function () { return S && S.fighters[side] === f && f.summonTok === tok }
+    var fainted = f.wrap.classList.contains('ba-faint') || !(f.img.currentSrc || f.img.src)
+    var bob = f.bob
+    function anim (k, d, ease) { try { return bob.animate(k, { duration: d, easing: ease || 'ease', fill: 'forwards' }) } catch (_) { return null } }
+    function swapNow () {
+      if (!live()) return fin()
+      f.wrap.style.transition = 'none'
+      bob.style.opacity = '0'
+      try { if (swap) swap() } catch (_) {}
+      void f.wrap.offsetWidth
+      f.wrap.style.transition = ''
+      var c = centerOf(f.wrap)
+      try {
+        if (global.VFX && global.VFX.play) global.VFX.play(SUMMON_VFX[side === 'enemy' ? 1 : 0], { x: c.x, y: c.y + c.h * 0.1, size: Math.max(140, c.w * 1.5), vis: true, essential: true, z: 57 })
+      } catch (_) {}
+      var fl = el('div', '', document.body)   // the white flash the new fighter steps out of
+      fl.style.cssText = 'position:fixed;z-index:58;pointer-events:none;border-radius:50%;left:' + c.x + 'px;top:' + c.y + 'px;width:' + Math.max(80, c.w) + 'px;height:' + Math.max(80, c.w) + 'px;' +
+        'background:radial-gradient(circle,#fff 0,rgba(255,255,255,.85) 30%,rgba(255,255,255,0) 70%);transform:translate(-50%,-50%) scale(.2);opacity:0'
+      try { fl.animate([{ transform: 'translate(-50%,-50%) scale(.2)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.3)', opacity: 1, offset: 0.4 }, { transform: 'translate(-50%,-50%) scale(1.8)', opacity: 0 }], { duration: 520, easing: 'ease-out', fill: 'forwards' }) } catch (_) {}
+      setTimeout(function () { try { fl.remove() } catch (_) {} }, 560)
+      waitImg(f.img, 700, function () {
+        if (!live()) return fin()
+        f.img.classList.add('ba-white')
+        bob.style.opacity = '1'
+        anim([{ transform: 'scale(0)' }, { transform: 'scale(1.16)', offset: 0.65 }, { transform: 'scale(1)' }], 460, 'cubic-bezier(.3,1.4,.5,1)')
+        setTimeout(function () { if (live()) f.img.classList.remove('ba-white') }, 300)
+        setTimeout(function () { if (live()) { try { bob.getAnimations().forEach(function (a) { a.cancel() }) } catch (_) {} bob.style.transform = '' } fin() }, 520)
+      })
+    }
+    if (fainted) { swapNow(); return }
+    f.img.classList.add('ba-white')                 // recall: the old fighter turns to light and shrinks away
+    anim([{ transform: 'scale(1)' }, { transform: 'scale(1.08)', offset: 0.25 }, { transform: 'scale(0)' }], 300, 'ease-in')
+    setTimeout(function () { if (!live()) return fin(); f.img.classList.remove('ba-white'); swapNow() }, 320)
+  }
+  function waitImg (img, max, cb) {
+    var t0 = Date.now()
+    ;(function chk () {
+      if ((img.complete && img.naturalWidth > 0) || Date.now() - t0 > max) return cb()
+      setTimeout(chk, 40)
+    })()
+  }
+
   function revive (side) {
     if (!S || !S.fighters[side]) return
     var f = S.fighters[side]
@@ -908,7 +1089,7 @@
   }
 
   global.BattleArena = {
-    version: '1.1.2',
+    version: '1.2.0',
     setSceneVisible: setSceneVisible,
     setDof: setDof,
     punchIn: punchIn,
@@ -932,6 +1113,7 @@
     damagePopAt: damagePopAt,
     faintDrop: faintDrop,
     revive: revive,
+    summon: summon,
     typeColor: typeColor,
     destroyScene: destroyScene
   }

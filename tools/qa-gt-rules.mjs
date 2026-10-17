@@ -103,9 +103,22 @@ const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }
   if (hand.length >= 2) {
     const old = P.active.inst, r1 = E.apply(st, { type: 'playTruck', card: hand[0] })
     const Q = r1.state.players[0]
-    check(r1.ok && Q.active.inst === hand[0] && Q.active.fuel === 2 && Q.deck[Q.deck.length - 1] === old, 'Ganti Truk: new truck in, bensin kept, old truck at the deck bottom')
+    check(r1.ok && Q.active.inst === hand[0] && Q.active.fuel === 1 && Q.deck[Q.deck.length - 1] === old, 'Ganti Truk: new truck in, costs 1 bensin (2 -> 1), old truck at the deck bottom')
     const r2 = E.apply(r1.state, { type: 'playTruck', card: hand[1] })
     check(!r2.ok && r2.reason === 'swapOnce', 'Ganti Truk only once per turn')
+    // owner 2026-10-17: swapping before a KO must not heal -- the swapped-out truck keeps its damage
+    const sw = JSON.parse(JSON.stringify(st)), W0 = sw.players[0], hurt = W0.active.inst
+    W0.active.hp = W0.active.maxHp - 5
+    const r3 = E.apply(sw, { type: 'playTruck', card: hand[0] })
+    check(r3.ok && r3.state.players[0].wounds[hurt] === 5, 'Ganti Truk: the swapped-out truck remembers its damage (5)')
+    const back = r3.state.players[0]; back.deck.splice(back.deck.indexOf(hurt), 1); back.hand.push(hurt)
+    back.swapped = false; back.active.fuel = 1
+    const r4 = E.apply(r3.state, { type: 'playTruck', card: hurt })
+    const T = r4.state.players[0].active
+    check(r4.ok && T.inst === hurt && T.hp === T.maxHp - 5 && !r4.state.players[0].wounds[hurt], 'a swapped truck comes back still dented (HP max-5), not healed')
+    const nf = JSON.parse(JSON.stringify(st)); nf.players[0].active.fuel = 0
+    const r5 = E.apply(nf, { type: 'playTruck', card: hand[0] })
+    check(!r5.ok && r5.reason === 'swapFuel', 'Ganti Truk with 0 bensin is refused (swapFuel)')
   } else check(false, 'test setup: two trucks in hand')
 }
 { // opening hand always has a truck, for every seed

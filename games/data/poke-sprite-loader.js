@@ -109,6 +109,36 @@
   // mobile networks where each URL hits 4s watchdog. Now: launch all probes in
   // parallel via new Image(), first onload wins. Saves 4-12 seconds typically.
   const TOTAL_TIMEOUT_MS = 8000;
+  const PRIMARY_TIMEOUT_MS = 3000;   // the HD candidate's head start (see the PRIORITY CASCADE note in start())
+
+  // 2026-10-17 (owner's caching video: "cache miss falls through to the database, a hit never touches it"):
+  // remember which URL of a cascade actually loaded. A HIT tries that one URL straight away -- no 404 probes on the
+  // local HD/SVG candidates every battle; a MISS (first time, or the remembered URL stopped working) runs the full
+  // cascade and stores the winner. L1 = memory, L2 = localStorage, so the next visit is a hit too. The emoji
+  // fallback is never cached (a network blip must not pin a Pokemon to an emoji).
+  const CACHE_KEY = 'poke_sprite_winner_v1';
+  const CACHE_MAX = 600;
+  const _mem = new Map();
+  const _stats = { hit: 0, miss: 0, stale: 0 };
+  (function _loadL2() {
+    try {
+      const o = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+      Object.keys(o).forEach(k => _mem.set(k, o[k]));
+    } catch (_) {}
+  })();
+  let _saveT = null;
+  function _saveL2() {
+    if (_saveT) return;
+    _saveT = setTimeout(() => {
+      _saveT = null;
+      try {
+        while (_mem.size > CACHE_MAX) _mem.delete(_mem.keys().next().value);
+        const o = {}; _mem.forEach((v, k) => { o[k] = v; });
+        localStorage.setItem(CACHE_KEY, JSON.stringify(o));
+      } catch (_) {}
+    }, 400);
+  }
+  function _cacheKey(queue) { return queue.join('|'); }
 
   function attachSpriteCascade(imgEl, sources, fallbackEmoji, onLoadCb) {
     if (!imgEl) return;
@@ -120,6 +150,8 @@
       tried.add(u);
       return true;
     });
+    const ckey = _cacheKey(queue);
+    let primaryHardFail = false;
     let resolved = false;
     let released = false;
     let timeoutId = null;
@@ -142,6 +174,9 @@
     function finish(winningUrl) {
       if (resolved) return;
       resolved = true;
+      // a lower-quality winner is remembered only when the HD candidate really failed (404), never when it was
+      // merely slow: otherwise one slow load would pin a Pokemon to its small sprite for good
+      if (winningUrl && (winningUrl === queue[0] || primaryHardFail) && _mem.get(ckey) !== winningUrl) { _mem.delete(ckey); _mem.set(ckey, winningUrl); _saveL2(); }
       cleanup();
       imgEl.src = winningUrl || _emojiDataURL(fallbackEmoji);
       release();
@@ -160,12 +195,31 @@
       // only if it errors or times out. Browser fires onerror on 404
       // immediately, so missing-HD Pokemon (e.g. Gen 9) don't waste the
       // full timeout — they fall straight through to the SVG/CDN race.
-      const PRIMARY_TIMEOUT_MS = 3000;
       timeoutId = setTimeout(() => {
         if (_IS_DEV) console.warn('[sprite] total timeout, fallback emoji');
         finish(null);
       }, TOTAL_TIMEOUT_MS);
 
+      const cached = _mem.get(ckey);
+      if (cached && queue.indexOf(cached) >= 0) {
+        // cache HIT: one request, to the URL that worked last time
+        _stats.hit++;
+        const hitProbe = new Image();
+        hitProbe.onload = () => finish(cached);
+        hitProbe.onerror = () => {
+          // stale entry: forget it and fall through to the full cascade (a miss)
+          _stats.stale++;
+          _mem.delete(ckey); _saveL2();
+          if (!resolved) runCascade();
+        };
+        probes.push(hitProbe);
+        hitProbe.src = cached;
+        return;
+      }
+      runCascade();
+    }
+    function runCascade() {
+      _stats.miss++;
       const primaryUrl = queue[0];
       const fallbacks = queue.slice(1);
 
@@ -200,6 +254,7 @@
       };
       primary.onerror = () => {
         clearTimeout(primaryTimeoutId);
+        primaryHardFail = true;
         if (_IS_DEV) console.warn('[sprite] primary failed, racing fallbacks:', primaryUrl);
         raceFallbacks();
       };
@@ -214,5 +269,6 @@
     window.buildPokeSources = buildPokeSources;
     window.resetSpriteEl = resetSpriteEl;
     window.flushSpriteQueue = flushSpriteQueue;
+    window.spriteCacheStats = () => Object.assign({ size: _mem.size }, _stats);
   }
 })();

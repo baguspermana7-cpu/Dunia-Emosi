@@ -23,7 +23,7 @@
 
   // BENCH_MAX 0 (owner 2026-09-27: "seperti pokemon hanya 1 kartu di arena"): one truck per side;
   // the other trucks wait in the hand/deck and step in when the active one is knocked out.
-  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, LIVES: 3, WRONG_PCT: 0.25, SUPPORT_PER_TURN: 2, FUEL_AUTO: 1, TYPE_BONUS: 2, TYPE_WEAK: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2 }
+  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, LIVES: 3, WRONG_PCT: 0.25, SUPPORT_PER_TURN: 2, FUEL_AUTO: 1, TYPE_BONUS: 2, TYPE_WEAK: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2, SWAP_FUEL: 1 }
 
   /* ── rng (mulberry32, state stored as an int) ─────────────────────────── */
   function rand (st) {
@@ -49,7 +49,7 @@
       if (!starter) throw new Error('unknown starter ' + p.starter)
       var deck = starter.deck.map(function (id) { var inst = 'c' + (st.next++); st.cards[inst] = id; return inst })
       st.players.push({ name: p.name || ('Pemain ' + (pi + 1)), deck: deck, hand: [], discard: [], active: null, bench: [], ko: 0, lives: RULES.LIVES, skip: 0, skipImmune: false, played: 0,
-        fuelPlayed: false, swapped: false, nitro: 0, boost: 0, reshuffled: false, lastAttack: null })
+        fuelPlayed: false, swapped: false, wounds: {}, nitro: 0, boost: 0, reshuffled: false, lastAttack: null })
     })
     var ev = []
     st.players.forEach(function (P, pi) {
@@ -97,8 +97,15 @@
     return out
   }
   function arenaOf (st) { for (var i = 0; i < C.ARENAS.length; i++) if (C.ARENAS[i].id === st.arena) return C.ARENAS[i]; return C.ARENAS[0] }
-  function truckState (st, inst) { var d = def(st, inst); return { inst: inst, hp: d.hp, maxHp: d.hp, fuel: 0, parts: { tire: null, body: null, engine: null },
+  // A truck swapped out keeps its damage (owner 2026-10-17: "kalau kartu saya ganti sebelum kalah, selalu -- nyawa
+  // tidak berkurang, tak terkalahkan?"). It used to come back from the deck/hand at FULL HP, so swapping before a KO
+  // was free healing: in 400 simulated games the always-swap player won 96% (normal play 67%). Now the damage is
+  // remembered per card and applied when that truck rolls in again; swapping stays a type tactic, not a heal.
+  function truckState (st, inst, P) { var d = def(st, inst), w = P && P.wounds && P.wounds[inst] || 0
+    if (w) delete P.wounds[inst]
+    return { inst: inst, hp: Math.max(1, d.hp - w), maxHp: d.hp, fuel: 0, parts: { tire: null, body: null, engine: null },
     status: { stun: 0, resist: 0, down: 0, downT: 0, shield: 0, shieldT: 0 } } }
+  function wound (P, t) { if (t.hp < t.maxHp) { P.wounds = P.wounds || {}; P.wounds[t.inst] = t.maxHp - t.hp } }
   // status badges (all expire at the end of the OWNER's own turn, see tickStatus): stun = cannot attack, resist = cannot be
   // stunned again, down = next attack weaker by N, shield = absorbs N damage points
   function stat (tr) { return (tr && tr.status) || { stun: 0, resist: 0, down: 0, downT: 0, shield: 0, shieldT: 0 } }
@@ -125,6 +132,7 @@
       case 'playTruck':                       // with a truck already out this is "Ganti Truk" (once per turn)
         if (!inHand || cat(st, cmd.card) !== 'truck') return 'notATruck'
         if (P.active && P.swapped) return 'swapOnce'
+        if (P.active && P.active.fuel < RULES.SWAP_FUEL) return 'swapFuel'
         return null
       case 'attachFuel':
         if (!inHand || cat(st, cmd.card) !== 'fuel') return 'notFuel'
@@ -195,10 +203,10 @@
     if (P.active) return true
     if (P.bench.length) { P.active = P.bench.shift(); ev.push({ t: 'promote', p: pi, from: 'bench', card: P.active.inst }); return true }
     var hi = P.hand.findIndex(function (x) { return cat(st, x) === 'truck' })
-    if (hi >= 0) { var c = P.hand.splice(hi, 1)[0]; P.active = truckState(st, c); ev.push({ t: 'promote', p: pi, from: 'hand', card: c }); return true }
+    if (hi >= 0) { var c = P.hand.splice(hi, 1)[0]; P.active = truckState(st, c, P); ev.push({ t: 'promote', p: pi, from: 'hand', card: c }); return true }
     // search the deck (shown as a search, not a hidden rule), then the discard
     var di = P.deck.findIndex(function (x) { return cat(st, x) === 'truck' })
-    if (di >= 0) { var c2 = P.deck.splice(di, 1)[0]; P.active = truckState(st, c2); ev.push({ t: 'promote', p: pi, from: 'deck', card: c2 }); return true }
+    if (di >= 0) { var c2 = P.deck.splice(di, 1)[0]; P.active = truckState(st, c2, P); ev.push({ t: 'promote', p: pi, from: 'deck', card: c2 }); return true }
     return false
   }
   function finish (st, ev, winnerIdx, why) {
@@ -273,12 +281,13 @@
     switch (cmd.type) {
       case 'playTruck': {
         P.hand.splice(P.hand.indexOf(cmd.card), 1)
-        var tr = truckState(st, cmd.card)
+        var tr = truckState(st, cmd.card, P)
         if (!P.active) { P.active = tr; ev.push({ t: 'playTruck', p: pi, card: cmd.card, to: 'active' }); return }
         // swap: the old truck goes to the bottom of the deck (parts to discard), its bensin moves over
         var old = P.active
+        wound(P, old)
         ;['tire', 'body', 'engine'].forEach(function (sl) { if (old.parts[sl]) P.discard.push(old.parts[sl]) })
-        P.deck.push(old.inst); tr.fuel = old.fuel; P.active = tr; P.swapped = true
+        P.deck.push(old.inst); tr.fuel = Math.max(0, old.fuel - RULES.SWAP_FUEL); P.active = tr; P.swapped = true
         ev.push({ t: 'playTruck', p: pi, card: cmd.card, to: 'active', swap: old.inst })
         return
       }
@@ -316,7 +325,8 @@
         if (a.effect === 'swapIn') {            // Tukar Ban: a truck from the hand rolls in free (no "once per turn"), the old one returns to the hand
           var tc = cmd.target && P.hand.indexOf(cmd.target) >= 0 ? cmd.target : P.hand.filter(function (x) { return cat(st, x) === 'truck' })[0]
           P.hand.splice(P.hand.indexOf(tc), 1)
-          var oldT = P.active, nt = truckState(st, tc)
+          var oldT = P.active, nt = truckState(st, tc, P)
+          wound(P, oldT)
           ;['tire', 'body', 'engine'].forEach(function (sl) { if (oldT.parts[sl]) P.discard.push(oldT.parts[sl]) })
           P.hand.push(oldT.inst); nt.fuel = oldT.fuel; P.active = nt
           ev.push({ t: 'playTruck', p: pi, card: tc, to: 'active', swap: oldT.inst, free: true })

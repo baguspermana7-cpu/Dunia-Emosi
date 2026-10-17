@@ -58,9 +58,10 @@ async function runScenario (label, vw, vh) {
   // ── boot a battle via real clicks ──
   await clickCenter(p, '.trainer-card')                 // gym ladder → welcome
   await clickCenter(p, '#gw-fight')                     // TANTANG!
+  // the mode picker ("Pilih Cara Main") now opens right after TANTANG, before the team confirm
+  await clickCenter(p, '.bm-card[data-mode="adventure"]') // mode modal → Adventure
   await clickCenter(p, '.tcf-cta-primary')              // team confirm → VS card
   try { await clickCenter(p, '#adv-vs-skip') } catch (_) {} // skip countdown
-  await clickCenter(p, '.bm-card[data-mode="adventure"]') // mode modal → Adventure
   // 3 intro messages auto-advance (1.2s each) → action menu
   await p.waitForFunction(() =>
     document.getElementById('action-btns') &&
