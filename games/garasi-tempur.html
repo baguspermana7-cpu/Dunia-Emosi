@@ -196,6 +196,6 @@
 <script src="garasi-tempur.js?v=v64.12-20261017i"></script>
 <script src="sw-reload.js?v=v64.12-20261017i"></script>
 <script src="dunia-home.js?v=v64.12-20261017i"></script>
-<script>DuniaHome.mount({ visible: function () { return document.body.getAttribute('data-scr') === 'scr-home' } })</script>
+<script>DuniaHome.mount({ into: '#scr-home .hbar', visible: function () { return document.body.getAttribute('data-scr') === 'scr-home' } })</script>
 </body>
 </html>

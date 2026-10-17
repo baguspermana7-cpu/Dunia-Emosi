@@ -839,3 +839,8 @@ body[data-scr] .toast.pv-t.flip.show{transform:translate(-50%,-50%) rotate(180de
 .obox .lp{justify-content:center;margin-top:3px}
 @media (max-width:480px){.lp{gap:3px;margin-right:2px}.lp .heart{width:14px;height:13px}.lp-bar{width:26px;height:7px}.lp-n{min-width:0;font-size:12px}.ppanel-k{flex-wrap:wrap;row-gap:2px}}
 @media (prefers-reduced-motion:reduce){.lp-bar i{transition:none}}
+/* the Home button sits first in the header bar (2026-10-18): the player card shrinks so the sound button stays on screen */
+.hbar{min-width:0}.hbar .pcard{min-width:0}.hbar .pcard-t{min-width:0}.hbar .pcard-n,.hbar .pcard-s{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:420px){.hbar .dunia-home{width:52px!important;height:52px!important}.hbar .pcard .av{width:40px;height:40px}.hbar .sp{flex:0 0 6px}}
+/* small portrait phones (360 x 740): the arena card fits its grid row and never spills onto the coach line (2026-10-18) */
+@media (orientation:portrait) and (max-width:380px){#arena-card{max-height:100%;overflow:hidden}#arena-card .ac-img{height:30px}}
