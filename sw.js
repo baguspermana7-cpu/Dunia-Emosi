@@ -147,6 +147,7 @@ const SHELL = [
   './games/data/gt-monster-sheets.js?v=v64.12-20261017i',
   './games/gt-monster-anim.js?v=v64.12-20261017i',
   './games/gt-quiz.js?v=v64.12-20261017i',
+  './games/dunia-home.js?v=v64.12-20261017i',
   './games/data/gt-trucks.js?v=v64.12-20261017i',
   './games/data/gt-cards.js?v=v64.12-20261017i',
   './games/data/save-engine.js?v=v64.12-20261017i',
