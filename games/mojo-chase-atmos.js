@@ -170,7 +170,7 @@
   // readability caps (coordinator 2026-10-03): fog veil <= 0.35 and only above hy + 12% h; rain veil <= 0.25;
   // the road wash only darkens and stays <= 0.32; nothing is drawn outside the chase canvas (no DOM)
   var FOG_MAX = 0.35, VEIL_MAX = 0.25, GROUND_MAX = 0.32
-  var MAXR = 170, MAXS = 140, MAXM = 28, MAXSP = 20, MAXSM = 8, MAXC = 18
+  var MAXR = 170, MAXS = 140, MAXM = 40, MAXSP = 20, MAXSM = 8, MAXC = 18
   var RX = new Float32Array(MAXR), RY = new Float32Array(MAXR), RZ = new Float32Array(MAXR)
   var SX = new Float32Array(MAXS), SY = new Float32Array(MAXS), SZ = new Float32Array(MAXS), SPH = new Float32Array(MAXS)
   var MX = new Float32Array(MAXM), MY = new Float32Array(MAXM), MR = new Float32Array(MAXM), MV = new Float32Array(MAXM), MS = new Float32Array(MAXM)
@@ -246,6 +246,8 @@
     R.api = api && typeof api === 'object' ? api : null; R.preSeen = false
     var r = typeof rng === 'function' ? rng : lcg(((stage && stage.seed) || 7) + 11)
     R.plan = makePlan(stage, r, FORCE)
+    // a leaf / petal stage always shows its falling leaves (owner 2026-10-17: "daun berguguran ... harus ada")
+    R.leafStage = !!(stage && (stage.weather === 'leaves' || stage.weather === 'petals'))
     R.P = A.POOL[R.plan.kind] || A.POOL.town
     R.lr = lcg((r() * 2147483647) | 0)
     R.motes = R.P.motes ? A.MOTES[R.P.motes] : null
@@ -278,6 +280,7 @@
     dt = dt > 0.1 ? 0.1 : dt < 0 ? 0 : dt
     var qi = st.quality == null ? 2 : st.quality; R.qi = qi; R.q = CAPS[qi] * (RM ? 0.5 : 1)
     R.tunnel = st.tunnel || 0; R.st = st.state || ''; R.prog = st.prog || 0
+    R.sound = !!st.sound   // the delayed thunder (stepWeather) follows the game's sound switch
     if (st.mojoX != null) { R.mojoX = st.mojoX; R.mojoY = st.mojoY }
     R.clock += dt
     var p = R.plan
@@ -318,7 +321,7 @@
       if (R.wI > 0.3 && vis > 0.5 && Math.random() < dt * 34 * R.q * R.wI) { for (i = 0; i < MAXSP; i++) if (PA[i] >= 0.4) { var u = Math.pow(Math.random(), 0.7); PY[i] = 0.12 + 0.88 * u; PX[i] = 0.5 + (Math.random() - 0.5) * (0.5 + u * 0.9); PA[i] = 0; break } }
       if (R.wI > 0.75 && !RM && vis > 0.7) { R.boltT -= dt; if (R.boltT <= 0) { R.flash = 0.0001; R.boltT = 14 + R.lr() * 12; R.stats.lightning++; R.thunderIn = 0.5 + R.lr() * 1.2; R.thunderPow = 0.5 + R.lr() * 0.4 } }
       // the thunder hits a beat AFTER the flash (owner video 2026-10-17; shared synth in weather-alive.js)
-      if (R.thunderIn > 0) { R.thunderIn -= dt; if (R.thunderIn <= 0 && st && st.sound && !st.paused && W.WeatherAlive && W.WeatherAlive.thunder) W.WeatherAlive.thunder(R.thunderPow) }
+      if (R.thunderIn > 0) { R.thunderIn -= dt; if (R.thunderIn <= 0 && R.sound && W.WeatherAlive && W.WeatherAlive.thunder) W.WeatherAlive.thunder(R.thunderPow) }
     } else R.rainN = 0
     for (i = 0; i < MAXSP; i++) if (PA[i] < 0.4) PA[i] += dt
     if (R.flash > 0) { R.flash += dt; if (R.flash > 0.45) R.flash = 0 }
@@ -334,8 +337,8 @@
       if (R.mojoX >= 0) { R.breathT -= dt; if (R.breathT <= 0) { R.breathT = 1.3; for (i = 0; i < 4; i++) if (KA[i] >= 1.6) { KX[i] = R.mojoX; KY[i] = R.mojoY; KA[i] = 0; break } } }
     } else R.snowN = 0
     if (w === 'salju') for (i = 0; i < 4; i++) if (KA[i] < 1.6) KA[i] += dt
-    if (R.motes && (w === 'angin' || (w === 'cerah' && R.motes.leaf))) {
-      var nm = Math.round((w === 'angin' ? MAXM : 8) * R.q * vis)
+    if (R.motes && (w === 'angin' || (w === 'cerah' && R.motes.leaf) || (R.leafStage && R.motes.leaf && w !== 'hujan' && w !== 'salju'))) {
+      var nm = Math.round((w === 'angin' ? MAXM : R.leafStage ? 26 : 8) * Math.max(0.6, R.q) * vis)
       for (i = 0; i < nm; i++) {
         MX[i] += (0.09 + 0.05 * MS[i]) * sp * dt; MY[i] += (0.05 + 0.04 * Math.sin(R.clock * 1.3 + i)) * sp * dt; MR[i] += MV[i] * dt * sp
         if (MX[i] > 1.04 || MY[i] > 1.04) { MX[i] = -0.04 + Math.random() * 0.3; MY[i] = Math.random() * 0.6 - 0.1 }
@@ -655,7 +658,7 @@
       for (var cb = 0; cb < 2; cb++) {
         c.beginPath()
         for (i = cb; i < R.moteN; i += 2) {
-          x = MX[i] * w; y = MY[i] * h; s = h * (M.leaf ? 0.009 : 0.003) * MS[i]
+          x = MX[i] * w; y = MY[i] * h; s = h * (M.leaf ? 0.021 : 0.003) * MS[i]   // leaves big enough to read on a phone
           if (M.leaf) { var co = Math.cos(MR[i]) * s, si = Math.sin(MR[i]) * s; c.moveTo(x + co, y + si); c.lineTo(x - si * 0.45, y + co * 0.45); c.lineTo(x - co, y - si); c.lineTo(x + si * 0.45, y - co * 0.45); c.closePath() }
           else c.rect(x, y, s, s)
         }

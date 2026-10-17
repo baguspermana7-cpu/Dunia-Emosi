@@ -297,7 +297,12 @@
     if (!crashDecide(ctx)) return false
     cstate.pending = true
     // let the crash read first (BROK, shake, dizzy), then the run pauses on the question
-    setTimeout(function () { cstate.pending = false; if (!cur) open(ctx, api, { crash: true, q: crashQuestion() }) }, RM ? 400 : ASK_DELAY)
+    // the run may have ended in the delay (a race won, a capture, game over): a question then would freeze the finish
+    setTimeout(function () {
+      cstate.pending = false
+      var st = 'active'; try { st = api && api.state ? api.state().state : 'active' } catch (e) {}
+      if (!cur && (st === 'active' || st === 'tutorial')) open(ctx, api, { crash: true, q: crashQuestion() })
+    }, RM ? 400 : ASK_DELAY)
     return true
   }
   // core contract: onPickup(type, info, api) -> true when handled
