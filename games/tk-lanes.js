@@ -1069,6 +1069,7 @@
       S.rollS += (clamp(S.vx / 260, -1, 1) - S.rollS) * (1 - Math.exp(-dt * 8))
       // speed
       S.boostT = Math.max(0, S.boostT - dt); S.boostCd = Math.max(0, S.boostCd - dt)
+      if (W.SpeedLines && !reduced) W.SpeedLines.hold('tk-lanes', S.boostT > 0 ? Math.min(1, 0.45 + S.boostT * 0.25) : 0)   // turbo speed lines (2026-10-17)
       if (S.boostT <= 0) bB.classList.remove('is-on')
       bB.classList.toggle('is-cool', S.boostCd > 0 && S.boostT <= 0)
       var vt = V0 * S.throttle * (S.boostT > 0 ? 1.55 : 1)

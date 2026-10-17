@@ -1347,6 +1347,7 @@
       if (S.impact || S.finishing) vt = 0
       // rewards + resume: a 3 s speed boost after a right answer; after any question the ship eases back up
       if (S.boostT > 0) { S.boostT = Math.max(0, S.boostT - dt); if (!S.impact && !S.finishing) vt *= 1.35 }
+      if (W.SpeedLines && !reduced) W.SpeedLines.hold('tk-steer', S.boostT > 0 && !S.impact && !S.finishing ? Math.min(1, 0.45 + S.boostT * 0.2) : 0)   // turbo speed lines
       if (S.easeT < 1) { S.easeT = Math.min(1, S.easeT + dt / 1.2); var ez = S.easeT; vt *= 0.2 + 0.8 * ez * ez * (3 - 2 * ez) }
       var acc = S.impact ? 1.4 : S.finishing ? 0.9 : S.boostT > 0 ? Math.max(V.acc, 1.2) : V.acc
       S.v += (vt - S.v) * damp(acc, dt)

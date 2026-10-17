@@ -172,6 +172,11 @@ const nextQ = (p, ms) => qWait(p, () => { const s = window.__h.state(); return s
       check(!!af && af.q.ease < 1, `${tag}: ${o.open} answered -> the loop resumes with an ease-in (ease ${af && af.q.ease.toFixed(2)})`)
       if (o.open === 'collide') check(af && af.q.shield, `${tag}: right answer after a bump = a shield bubble`)
       if (o.open === 'buoy') check(af && af.q.bonus === bonus0 + 1 && af.q.boost > 2.5, `${tag}: right buoy answer = bonus star + 3 s speed boost (bonus ${af && af.q.bonus}, boost ${af && af.q.boost.toFixed(1)})`)
+      if (o.open === 'buoy') {
+        await sleep(1100)   // past the ease-in: the boost is pulling
+        const sl = await p.evaluate(() => window.SpeedLines ? SpeedLines.level() : -1)
+        check(rm ? sl <= 0 : sl > 0.3, `${tag}: the buoy boost ${rm ? 'shows no speed lines under reduced motion' : 'throws speed lines out'} (level ${sl.toFixed(2)})`)
+      }
       if (o.open === 'gate') {
         const cap = await p.evaluate(() => { const c = document.querySelector('.tks-cap'); return c && c.classList.contains('is-on') ? c.innerText : '' })
         check(/Tidak apa-apa, coba lagi nanti!/.test(cap) && /Kapten/.test(cap), `${tag}: wrong answer -> the captain says "Tidak apa-apa, coba lagi nanti!" (${cap.replace(/\n/g, ' ')})`)
