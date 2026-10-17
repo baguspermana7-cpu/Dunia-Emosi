@@ -1365,34 +1365,46 @@
   "score": 0.989
  },
  "LOG-12-h1": {
-  "sha1": "c5536ef09ef60d42261381d9826488cf8d3378ec",
+  "sha1": "bf700e1a37c2f43cf0901de344e7bfd154acdd28",
   "text": "Sepatu dipakai di bagian tubuh paling bawah.",
   "heard": "sepatu dipakai di bagian tubuh paling bawah.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-12-h2": {
-  "sha1": "4cc92015a85c5a709e89ad7d83bfecc15b6f2ce8",
+  "sha1": "544b95a5c045f36222de0fabe1bc6712516c8654",
   "text": "Topi dipakai di bagian tubuh paling atas.",
-  "heard": "tapi dipakai di bagian tubuh paling atas",
-  "score": 0.971
+  "heard": "Tapi dipakai di bagian tubuh paling atas.",
+  "score": 0.971,
+  "engine": "omnivoice"
  },
  "LOG-12-q": {
-  "sha1": "631d54cc26f022976941a9a4582a1f74ea251a1e",
+  "sha1": "108db4df7b65c3dd475ebb34bc1d32a5e1ecf298",
   "text": "Topi dipakai di...",
-  "heard": "tobi dipakai di",
-  "score": 0.923
+  "heard": "Topi dipakai diii!",
+  "score": 0.929,
+  "engine": "omnivoice"
  },
  "LOG-12-s0": {
-  "sha1": "55e3e1933b048448060e71e99b6971e68a456019",
+  "sha1": "f96be4da06467d2a72c72d8b0917bb77c5547849",
   "text": "Sepatu dipakai di kaki.",
-  "heard": "sepatu dipakai di kati.",
-  "score": 0.947
+  "heard": "sepatu dipake di kaki!",
+  "score": 0.919,
+  "engine": "omnivoice"
+ },
+ "LOG-12-s1": {
+  "sha1": "9a60646aba6e5eeeb751dc66f9970946c18fc462",
+  "text": "Topi dipakai di mana ya?",
+  "heard": "Tapi dipakai di mana ya?",
+  "score": 0.947,
+  "engine": "omnivoice"
  },
  "LOG-12-x": {
-  "sha1": "2dce18193b56e4432478c2480845cfeea568b387",
+  "sha1": "6d2996206587e4df58895637fa2a0dfaa7171c79",
   "text": "Sepatu dipakai di kaki, topi dipakai di kepala.",
-  "heard": "sepatu dipakai di kaki topi, dipakai di kepala.",
-  "score": 1.0
+  "heard": "sepatu dipakai di kaki, topi dipakai di kepala",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-01-h1": {
   "sha1": "b1fe18988999e1bc80d4b9bf2c70831e12461a50",
@@ -1677,34 +1689,46 @@
   "score": 1.0
  },
  "MAT-09-h1": {
-  "sha1": "8c3b10236a6db6391b21e355c3de7eb487972881",
+  "sha1": "3819edb86d6e5120d5b9053ad0bd6ec6472c6a79",
   "text": "Lihat kue yang masih ada di piring.",
-  "heard": "Lihatku yang masih ada di Pirin.",
-  "score": 0.963
+  "heard": "lihat gue yang masih ada di piring",
+  "score": 0.964,
+  "engine": "omnivoice"
  },
  "MAT-09-h2": {
-  "sha1": "dc20484d27642df1ddfd32dc4b301109dbf139ef",
+  "sha1": "f34d2e65b5b7ee2f9e9b64bfb88213d8ac6f0ea9",
   "text": "Lima dikurangi dua. Hitung yang tersisa.",
-  "heard": "5 dikurangi 2 hitung yang tersisa.",
-  "score": 1.0
+  "heard": "5 dikurangi 2 hitung yang tersisa",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-09-q": {
-  "sha1": "8d186d6894b0bcbd3e18fafcf7faebea1f6d875c",
+  "sha1": "70fa63bdd6811394484f891be32333e7aeef787c",
   "text": "Berapa kue yang tersisa?",
-  "heard": "Berapaku yang tersisa?",
-  "score": 0.974
+  "heard": "Berapa ku yang tersisa?",
+  "score": 0.974,
+  "engine": "omnivoice"
+ },
+ "MAT-09-s0": {
+  "sha1": "ba3b0c48dd75cc25971220fea90e130c468d4fa3",
+  "text": "Ada lima kue di piring.",
+  "heard": "Ada lima kue di piring!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-09-s1": {
-  "sha1": "c6a83bf1a4f96f432743448a78b838e8f4b8572d",
+  "sha1": "4e7e5243e9a22e75cae89fb563c24b0cd9fca182",
   "text": "Rover makan dua kue.",
-  "heard": "rover makan dua kue",
-  "score": 1.0
+  "heard": "Rover makan dua kuwee!",
+  "score": 0.917,
+  "engine": "omnivoice"
  },
  "MAT-09-x": {
-  "sha1": "d09c26b8f18669cbcf5425aaa7467a1ef016ac13",
+  "sha1": "42aa9ad2c25b155257cda1aa7ee44e7edb9eea57",
   "text": "Lima kue, dimakan dua, tersisa tiga kue.",
-  "heard": "5 kue dimakan 2 tersisa 3 kue.",
-  "score": 1.0
+  "heard": "5 kue dibakan 2, tersisa 3 kue!",
+  "score": 0.968,
+  "engine": "omnivoice"
  },
  "MAT-10-h1": {
   "sha1": "2201beeec05a71899420bad89de47de4b9768bd5",
@@ -1743,34 +1767,46 @@
   "score": 0.988
  },
  "MAT-11-h1": {
-  "sha1": "b1a0079ec82ecaa55a6b65c9186d4df8bf295c6c",
+  "sha1": "1d2d5cf3846697b4a66039b2d7e266707aebb957",
   "text": "Bandingkan ujung kanan setiap garis.",
-  "heard": "Bandingkan ujung, kanan setiap garis.",
-  "score": 1.0
+  "heard": "Bandingkan ujung kanan setiap garis.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-11-h2": {
-  "sha1": "5887864bef352e5d672d642a60e79e83b3490306",
+  "sha1": "463e1244fc17bef9b7c34b820feb1dfa337cdec5",
   "text": "Garis yang paling jauh ujungnya adalah yang paling panjang.",
-  "heard": "Garis yang paling jauh kujungnya adalah yang paling panjan.",
-  "score": 0.98
+  "heard": "Garis yang paling jauh ujungnya adalah yang paling panjang.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-11-q": {
-  "sha1": "ec930307a2042494849fdb96c224362791cc40a0",
+  "sha1": "607c4bdde001a1d331637217c5b26e37a49de419",
   "text": "Mana yang PALING PANJANG?",
   "heard": "Mana yang paling panjang?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MAT-11-s0": {
+  "sha1": "6a33bcd5689f49c02024e71a816ed18fa7ac88c3",
+  "text": "Dirty menggali tiga parit di pantai.",
+  "heard": "Dirty menggali tiga pari di pantai.",
+  "score": 0.98,
+  "engine": "omnivoice"
  },
  "MAT-11-s1": {
-  "sha1": "48ac4362a3629ea0416fb922115ba76c82c1a7b7",
+  "sha1": "76ce923d0ea82c1121f9e2419d09424d9f4dd1e5",
   "text": "Dirty ingin tahu mana yang paling panjang.",
-  "heard": "Ditingin tau mana yang paling panjang.",
-  "score": 0.935
+  "heard": "Jadi ingin tahu mana yang paling panjang.",
+  "score": 0.938,
+  "engine": "omnivoice"
  },
  "MAT-11-x": {
-  "sha1": "e34b7f6ccce9f6b837a266a33ed512d3be1e480e",
+  "sha1": "9205cbd622e25055b39a23f7f1991e49f715498b",
   "text": "Parit B paling panjang.",
-  "heard": "Parit paling panjang.",
-  "score": 0.973
+  "heard": "Parit B paling panjang!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-12-h1": {
   "sha1": "61bf7b232577b48be2caab3e84b9c97311640c5a",
@@ -2019,34 +2055,46 @@
   "score": 0.935
  },
  "MEM-07-h1": {
-  "sha1": "8dbe60b33484e9c63e7c2c6ee4f6c123dad5f3f9",
+  "sha1": "884d9ef8813dbbcf5b987a5dc786feb9cc4b5040",
   "text": "Dengarkan lagi kalimat kedua.",
   "heard": "dengarkan lagi kalimat kedua",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-07-h2": {
-  "sha1": "f9d31d1a1262dcd3be27dfa7a3c5b599bae92bb5",
+  "sha1": "a1a1230eb388d97d1567e5ccd69fce019f9692f1",
   "text": "Lulu makan... wortel. Angkanya setelah \"satu\".",
-  "heard": "Lulu makan kotel angkanya setelah satu.",
-  "score": 0.949
+  "heard": "Lulu makan wartel, angkanya setelah satu.",
+  "score": 0.967,
+  "engine": "omnivoice"
  },
  "MEM-07-q": {
-  "sha1": "ab88e3522e0d5affa1d2e3a4eb97d4741b623b27",
+  "sha1": "3f95692fde041a1452a911f49dd7f2a26278f8a6",
   "text": "Berapa wortel yang dimakan Lulu?",
-  "heard": "Berapa hotel yang dimakan lulu?",
-  "score": 0.933
+  "heard": "Berapa wartel yang dimakan lu?",
+  "score": 0.917,
+  "engine": "omnivoice"
  },
  "MEM-07-s0": {
-  "sha1": "0db5ec6059a6c38fdf7995aa190ff39231411f5d",
+  "sha1": "f1c35f0bcfd948ff8d879b2947ce9abc446eaf57",
   "text": "Lulu lapar setelah mendaki gunung.",
-  "heard": "Lulu lapar setelah mendakit kunung.",
-  "score": 0.941
+  "heard": "Lu lapar setelah mendaki gunung.",
+  "score": 0.962,
+  "engine": "omnivoice"
  },
  "MEM-07-s1": {
-  "sha1": "17d18b32eac2178ea1b181045ba56207b236715b",
+  "sha1": "69a5bc4a7c5f22a2aa2a2c365bfd99b82a58cfc4",
   "text": "Lulu makan dua wortel yang segar.",
-  "heard": "Lulu makan dua hotel yang segar.",
-  "score": 0.933
+  "heard": "Lu makan dua wartel yang segar!",
+  "score": 0.917,
+  "engine": "omnivoice"
+ },
+ "MEM-07-x": {
+  "sha1": "8d08c76337c728661653d61239262f3c08dff3b5",
+  "text": "Lulu makan dua wortel.",
+  "heard": "Lulu makan dua wartel?",
+  "score": 0.929,
+  "engine": "omnivoice"
  },
  "MEM-08-h1": {
   "sha1": "8891b10ee2cd2ae28dc9bd1bd5bf6e0b702e0ce3",
@@ -2145,40 +2193,53 @@
   "score": 1.0
  },
  "MEM-11-h1": {
-  "sha1": "5b896f3ea877433910b1ed6cc1bc743cc7468060",
+  "sha1": "ab1bb9fcaf258709b8611bf32238e20777c2c91f",
   "text": "Ingat kalimat paling awal.",
-  "heard": "Ingat kalimat paling awal.",
-  "score": 1.0
+  "heard": "Ingat kalimat paling awal!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-11-h2": {
-  "sha1": "52f706ec6b2e66d83f59be72ff051023862e16ac",
+  "sha1": "25cc175d7b8649d544b7eaa9c33ff2ea1a0e0ee8",
   "text": "Raka memakai sesuatu berwarna biru di kepala.",
-  "heard": "Raka memakai sesuatu berwarna biru di kepala.",
-  "score": 1.0
+  "heard": "Raka memakai sesuatu berwarna diru di kepala.",
+  "score": 0.971,
+  "engine": "omnivoice"
  },
  "MEM-11-q": {
-  "sha1": "34c266086984747f87d45c0393f7ec85a3193a48",
+  "sha1": "2d68d7250773d7b5821b8ed5353a34a9e116bf5b",
   "text": "Apa yang dipakai Raka pagi ini?",
   "heard": "Apa yang dipakai raka pagi ini?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-11-s0": {
-  "sha1": "c1a369e48006823eb0dba4e159c208a8c453c837",
+  "sha1": "3c83c078b4a11c0942393440b7d9a2c998394536",
   "text": "Pagi ini Raka memakai topi biru.",
-  "heard": "Pagi ini raka memakai topi bimu.",
-  "score": 0.955
+  "heard": "Pagi ini raka memakai kopi biru.",
+  "score": 0.955,
+  "engine": "omnivoice"
  },
  "MEM-11-s1": {
-  "sha1": "e1b88b5ad31e1d6887f00cf65cb52cd2b5ce4f5f",
+  "sha1": "319571f33947d9fa13b476150ea2757cfc406ac1",
   "text": "Raka mendaki gunung dan bermain salju.",
   "heard": "Raka mendaki gunung dan bermain salju.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MEM-11-s2": {
+  "sha1": "32144f3d255fd6ebaef61d1abf2a9e0958ebe3df",
+  "text": "Siangnya Raka makan es krim.",
+  "heard": "siangnya raka makan es krim?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-11-x": {
-  "sha1": "9d2dd0c29e108e527eaba8af2037546b59afa015",
+  "sha1": "10aacfe0a320491681c6a606f3d5ded3521dbe03",
   "text": "Pagi ini Raka memakai topi biru.",
-  "heard": "Pagi ini raka memakai topi bimu.",
-  "score": 0.955
+  "heard": "Pagi ini raka memakai kopi biru!",
+  "score": 0.955,
+  "engine": "omnivoice"
  },
  "MEM-12-h1": {
   "sha1": "dbfe96fbbeb8a42434d543d84d8910f20da5621c",
@@ -2217,34 +2278,46 @@
   "score": 0.94
  },
  "OBS-01-h1": {
-  "sha1": "5e6a61bdc05916cf8d6c032f85758e577a52c9bb",
+  "sha1": "a76fd570152b02b9dfa91c12e35590e9582ee032",
   "text": "Lihat di balik semak-semak.",
-  "heard": "lihat dibalik semaksama",
-  "score": 0.93
+  "heard": "liat dibalik semak-semak",
+  "score": 0.977,
+  "engine": "omnivoice"
  },
  "OBS-01-h2": {
-  "sha1": "ee52c3965951f8f48dc6019e813a49b2b7be182e",
+  "sha1": "9131ae83e9ef75e4b84fd37c5e3c8e8aca1b9e32",
   "text": "Ada telinga oranye yang mengintip.",
-  "heard": "Ada telinga orangnya yang mengintit.",
-  "score": 0.9
+  "heard": "Ada telinga orangnya yang mengintip?",
+  "score": 0.933,
+  "engine": "omnivoice"
  },
  "OBS-01-q": {
-  "sha1": "e41878ff3d3cef42fd776f0a94a2b530b88853a7",
+  "sha1": "ca726bdbe475725d01ae0cb6f830691b39277660",
   "text": "Ketuk Mimi yang bersembunyi.",
-  "heard": "ketuk mimi yang bersembunyi.",
-  "score": 1.0
+  "heard": "Ketup Mimi yang bersembunyi!",
+  "score": 0.95,
+  "engine": "omnivoice"
+ },
+ "OBS-01-s0": {
+  "sha1": "f1ebeb5883926fb890c102855343397c198c38cd",
+  "text": "Detektif Dirty mencari Mimi si kucing.",
+  "heard": "Detektif Dirty mencari minisi kucing.",
+  "score": 0.92,
+  "engine": "omnivoice"
  },
  "OBS-01-s1": {
-  "sha1": "2e53ea30c8734faac1b211af1b9213ba144ffb0b",
+  "sha1": "87de69d7301d96de1106c8e50d498d41916a1147",
   "text": "Mimi bersembunyi di kota. Bisa kamu temukan?",
-  "heard": "Mimi bersembunyi di kota Bisa Kamu Temukan.",
-  "score": 1.0
+  "heard": "Mimi bersembunyi di kota, bisa kamu temukan?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-01-x": {
-  "sha1": "52b1797cc4064a0719f8cbaf39a8989c5613bd04",
+  "sha1": "5691be81d0b1babab3576bce62ee65c73f23e826",
   "text": "Mimi bersembunyi di balik semak. Kamu detektif hebat!",
-  "heard": "Mimi bersembunyi dibalik semua, kamu detitis hebat.",
-  "score": 0.911
+  "heard": "Nini bersembunyi dibalik semak, kamu detektif hebat!",
+  "score": 0.952,
+  "engine": "omnivoice"
  },
  "OBS-02-h1": {
   "sha1": "812d36f50e681bc9de1709c792171ff728622d00",
