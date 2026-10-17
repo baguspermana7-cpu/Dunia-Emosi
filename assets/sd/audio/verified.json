@@ -191,23 +191,47 @@
   "heard": "Payung yang ditemukan lulu berwarna merah.",
   "score": 1.0
  },
+ "LIS-07-h1": {
+  "sha1": "8b5715558056c4311c5beb289fb8650a806cee8b",
+  "text": "Stinky bilang kuncinya ada di dekat bangku.",
+  "heard": "Stinky bilang kuncinya ada di dekat bangku.",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
  "LIS-07-h2": {
-  "sha1": "096d165d63a89efd1076a6b9f992952413bee6b5",
+  "sha1": "16181ffe5fcce849f109cbf8dc8159966181bfbf",
   "text": "Cari benda kecil berwarna emas di samping bangku.",
-  "heard": "Cari benda kecil berwanak kemas di samping bangku.",
-  "score": 0.964
+  "heard": "Cari benda kecil berwarna emas di samping bangku.",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LIS-07-q": {
+  "sha1": "d74d207205a98230175ba5ee7ca48781e9fe2b99",
+  "text": "Ketuk kunci yang diminta Stinky.",
+  "heard": "Katuk kunci yang diminta stinky!",
+  "score": 0.952,
+  "engine": "omnivoice"
+ },
+ "LIS-07-s0": {
+  "sha1": "b708ae83e5f50b3e6e7b07d74ebb3984e1f1e3f4",
+  "text": "Stinky kehilangan kuncinya.",
+  "heard": "Stinky kehilangan kuncinya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-07-s1": {
-  "sha1": "8a3e2b75ca283686150920a43ba2120a90aa50c5",
+  "sha1": "683ee881c3734ec4f616123e4b0d4bdd2100b95f",
   "text": "Stinky berkata: \"Tolong ambilkan kunci di dekat bangku!\"",
-  "heard": "Stinky berkata, tolong ambilkan kunci di dekat banku.",
-  "score": 0.987
+  "heard": "Stinky berkata, tolong ambilkan kunci di dekat bangku.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-07-x": {
-  "sha1": "f8eada957b8ab0a47560b3e679de1d941c298ad9",
+  "sha1": "9644b60540de2cb3bae65f01956f3a69358992ca",
   "text": "Kuncinya ada di dekat bangku. Terima kasih sudah menolong Stinky!",
-  "heard": "Kuncinya ada di dekat banku terima kasih sudah menolong stinti.",
-  "score": 0.931
+  "heard": "Kuncinya ada di dekat bangku. Terima kasih sudah menolong Stinky.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-08-h1": {
   "sha1": "0e938a3349a7575424fbcfcb2edb331e0056baaa",
