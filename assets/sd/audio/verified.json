@@ -1,39 +1,45 @@
 {
  "LIS-01-h1": {
-  "sha1": "2c90c1497f545ed15baec7f8e6c83e8eeec5e3ff",
+  "sha1": "53783dbffcda58915f584dc16c470a71e5d31a39",
   "text": "Lihat siapa yang ada di atas dahan.",
-  "heard": "lihat siapa yang ada di atas dahan.",
-  "score": 1.0
+  "heard": "Lihat siapa yang ada di atas dahan.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-01-h2": {
-  "sha1": "10194a2e04449aed1812fff2bb2ec13b19714335",
+  "sha1": "42cfe823ef505760f976348790b89172cafd2294",
   "text": "Yang bernyanyi adalah burung biru. Mana yang burung?",
-  "heard": "yang bernyanyi adalah burung biru mana yang burung",
-  "score": 1.0
+  "heard": "yang bernyanyi adalah burung biruk mana yang burung?",
+  "score": 0.989,
+  "engine": "omnivoice"
  },
  "LIS-01-q": {
-  "sha1": "5e6d0d72b6112b567bc04e7f887a653c40853195",
+  "sha1": "e5c65554f036462dd7a371ba268826f2e9884210",
   "text": "Siapa yang bernyanyi?",
   "heard": "Siapa yang bernyanyi?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-01-s0": {
-  "sha1": "079f547ff23cb7db1bb301ba67760263f90f3ac1",
+  "sha1": "c1ddff1c5c10134a41e6b3ca9754bbf0f2a90b45",
   "text": "Di hutan, Pip si burung biru hinggap di dahan.",
-  "heard": "di hutan pip si burung biru hinghab didahan.",
-  "score": 0.939
+  "heard": "Di hutan, pipsi burung biru hinggap didahan.",
+  "score": 0.969,
+  "engine": "omnivoice"
  },
  "LIS-01-s1": {
-  "sha1": "f5ffd812e961d055484d4e05102bb681a24b429b",
+  "sha1": "5159f7a6151d74061e2ec168214d0322580ccbb9",
   "text": "Pip bernyanyi riang untuk teman-temannya.",
-  "heard": "tapi bernyanyi riang untuk teman-temannya.",
-  "score": 0.941
+  "heard": "Pip bernyanyi Ria untuk teman temannya!",
+  "score": 0.968,
+  "engine": "omnivoice"
  },
  "LIS-01-x": {
-  "sha1": "f19b2796242856fbddc7f8885c456ed671b022bb",
+  "sha1": "f03a799a43304f387f900709d80612309da0f3ce",
   "text": "Pip si burung biru yang bernyanyi di atas dahan.",
-  "heard": "Pidsi burung biru yang bernyanyi di atas dahan.",
-  "score": 0.96
+  "heard": "Pipsi burung biru yang bernyanyi di atas dahan.",
+  "score": 0.971,
+  "engine": "omnivoice"
  },
  "LIS-02-h1": {
   "sha1": "b9c18626ee1423f2aee9aa2b1f9f7960f5580b77",
@@ -198,40 +204,46 @@
   "engine": "omnivoice"
  },
  "LIS-06-h1": {
-  "sha1": "19e5d54a492e791c82e1a1a26c28f92929862dab",
+  "sha1": "8134c227529368c22c685d9e1fb39365bda4b835",
   "text": "Lihat payung yang ditemukan Lulu.",
-  "heard": "Lihat payung yang ditemukan lulu.",
-  "score": 1.0
+  "heard": "lihat payong yang ditemukan lulu",
+  "score": 0.958,
+  "engine": "omnivoice"
  },
  "LIS-06-h2": {
-  "sha1": "2aa672ff2d0ba168633a5ef1830a9facdbe27f14",
+  "sha1": "50431795cb0b57f601b477a6e1362b09f1a4883b",
   "text": "Warnanya sama dengan warna apel.",
-  "heard": "warnanya sama dengan warna apal.",
-  "score": 0.963
+  "heard": "warnanya sama dengan warna apel",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-06-q": {
-  "sha1": "7e07c516ff24a5477aa4fcf09f898f907618711d",
+  "sha1": "d8aef48a2ad9e3621ba8fc7db2861d75183bf215",
   "text": "Apa warna payung yang ditemukan Lulu?",
   "heard": "Apa warna payung yang ditemukan lulu?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-06-s0": {
-  "sha1": "52445b35094ff45d029685eab59b92d5b990a3c4",
+  "sha1": "c884d8231129af3f6fe4fe35689332388e8bb0aa",
   "text": "Lulu si kelinci berjalan-jalan.",
-  "heard": "Lulu si Kelinci berjalan-jalan.",
-  "score": 1.0
+  "heard": "Lulusi klinci berjalan-jalan.",
+  "score": 0.927,
+  "engine": "omnivoice"
  },
  "LIS-06-s1": {
-  "sha1": "3ab6570857982bd6b598164e7405974cd63061ef",
+  "sha1": "9302323423def0498d0439aef6aede154708c668",
   "text": "Lulu menemukan payung berwarna merah di jalan.",
-  "heard": "Mulu menemukan payung berwarna merah di jalan.",
-  "score": 0.946
+  "heard": "Lulu menemukan payung berwarna merah di jalan.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-06-x": {
-  "sha1": "edd453357bd75c1d763ace692ee8024a32c9878f",
+  "sha1": "677f553a4f45728c2213bf8f581e074d90ead46a",
   "text": "Payung yang ditemukan Lulu berwarna merah.",
-  "heard": "Payung yang ditemukan lulu berwarna merah.",
-  "score": 1.0
+  "heard": "Payung yang ditemukan lulu berwarna merah!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-07-h1": {
   "sha1": "8b5715558056c4311c5beb289fb8650a806cee8b",
@@ -2656,34 +2668,46 @@
   "score": 1.0
  },
  "OBS-10-h1": {
-  "sha1": "b1a4eee095933cbdbe1e96f42899cc8d69f0eb75",
+  "sha1": "a1fa2c6be51b113599d5589a66f5633e8ca30871",
   "text": "Lihat kotak paling atas.",
-  "heard": "Lihat kotak paling atas.",
-  "score": 1.0
+  "heard": "lihat kotak paling atas?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-10-h2": {
-  "sha1": "eeeaa6bc8f967f2bcfbb0e55955babec92a68ca3",
+  "sha1": "774999325c2b2a13a8a4917d76e616bbd4e9df70",
   "text": "Benda yang miring terus lama-lama akan...",
-  "heard": "Benda yang miring terus lama-lama akan.",
-  "score": 1.0
+  "heard": "Benda yang miring terus lama-lama akan!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-10-q": {
-  "sha1": "7ff6e302245cf8598d3918dbdf34efc8d07979cd",
+  "sha1": "a08515809ed557b0260f0d90f7293609d5d57da6",
   "text": "Apa yang akan terjadi?",
   "heard": "Apa yang akan terjadi?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "OBS-10-s0": {
+  "sha1": "9da6fcdc5a969f308ed298cffb86ec3befe64640",
+  "text": "Stinky menumpuk kotak tinggi sekali.",
+  "heard": "Stinky menumpuk kotak tinggi sekali!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-10-s1": {
-  "sha1": "42c4b6c2d36a91aac77e3d511827fb47468a3709",
+  "sha1": "eee7755ed77ae0ef792e2e19b10e6cc8402ef9a4",
   "text": "Menaranya mulai miring... miring...",
   "heard": "menaranya mulai miring-miring",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-10-x": {
-  "sha1": "232e97d24a8f76d52ea842be764a63601c6ff00d",
+  "sha1": "e5504468bcc7e9078d27f4e2a046a7086a4fa2ae",
   "text": "Menara yang miring akan jatuh. Menumpuk harus lurus!",
-  "heard": "Menara yang miring akan jatuh menumpuk harus lurus.",
-  "score": 1.0
+  "heard": "Benara yang miring akan jatuh, menumpuk harus lurus!",
+  "score": 0.977,
+  "engine": "omnivoice"
  },
  "OBS-11-h1": {
   "sha1": "07425ca218af0bcd7927f7f7f0dc668af3cf178f",
