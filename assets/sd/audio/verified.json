@@ -1408,40 +1408,46 @@
   "score": 0.944
  },
  "LOG-11-h1": {
-  "sha1": "f22361298c3c7744ec24735f68af27a6c844d93b",
+  "sha1": "a26c37d13e530a1c48ca7fce4c3e5d161a327155",
   "text": "Pip bilang: bukan kucing.",
-  "heard": "Pip bilang bukan kucing.",
-  "score": 1.0
+  "heard": "Pip bilang bukan kucing!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-11-h2": {
-  "sha1": "68fb92882a1914e1fb0e3161f137770cd9d31506",
+  "sha1": "50dcceb3a96ec333bab15b25390871c1fcedf60c",
   "text": "Bukan kucing, bukan anjing. Tinggal satu.",
-  "heard": "Bukan kucing bukan anjing tinggal satu.",
-  "score": 1.0
+  "heard": "Bukan kucing, bukan anjing! Tinggal satu!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-11-q": {
-  "sha1": "8b16b85f6aff9c96c053a30e819604ab6c3150c4",
+  "sha1": "1ef295d356bbdeba13e5389b4cdb933582137214",
   "text": "Hewan rahasia Pip adalah...",
-  "heard": "Hewan rahasia Pip adalah",
-  "score": 1.0
+  "heard": "Hewan Rasia Pip adalah...",
+  "score": 0.941,
+  "engine": "omnivoice"
  },
  "LOG-11-s0": {
-  "sha1": "4407f202a92dfc7f68a3b38016c9b46441948d49",
+  "sha1": "9b9939079f4fcf32153e8ea23360bdc57cef64a7",
   "text": "Pip punya hewan rahasia.",
-  "heard": "Pi punya hewan rahasia.",
-  "score": 0.944
+  "heard": "Pip punya hewan rahasia?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-11-s1": {
-  "sha1": "dc21c8b6840519489d9be7e4a740afc2d4dca716",
+  "sha1": "3e60d28cdd3c3a5999bef549fa4f71c250d01e58",
   "text": "Hewannya bukan kucing, dan bukan anjing.",
-  "heard": "Hewannya bukan kucing dan bukan anjin.",
-  "score": 0.985
+  "heard": "Hewannya bukan kucing dan bukan anjing!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-11-x": {
-  "sha1": "e49f4a978b99ebf386a671c5b0c1b95dbf94c0d8",
+  "sha1": "1ddaaca64d5b09883590fd43e65a470df6efd5d5",
   "text": "Bukan kucing dan bukan anjing, jadi hewannya kelinci.",
-  "heard": "Bukan kucing dan bukan anjing jadi hewanya, kelinci.",
-  "score": 0.989
+  "heard": "Bukan kucing dan bukan anjing, jadi hewanya kelinci!",
+  "score": 0.989,
+  "engine": "omnivoice"
  },
  "LOG-12-h1": {
   "sha1": "bf700e1a37c2f43cf0901de344e7bfd154acdd28",
@@ -1570,40 +1576,46 @@
   "engine": "omnivoice"
  },
  "MAT-03-h1": {
-  "sha1": "7f3fa73947a0bd46d53cd1754a2a1e3382da4212",
+  "sha1": "885b84ec9f9bb25ad83217ac98f90a8ddbe41ec5",
   "text": "Mulai dari angka 1: cari satu bintang.",
-  "heard": "Mulai dari angka satu cari satu bintang.",
-  "score": 1.0
+  "heard": "Mulai dari angka satu, cari satu bintang!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-03-h2": {
-  "sha1": "0f35cba3e1a73388e0b3b9ab7c94a8aa739d37cd",
+  "sha1": "1c94cfd862b0eec6d1c1841bc2535ed065b1548e",
   "text": "Hitung bintang di setiap kotak.",
-  "heard": "Hitung bintang di setiap kota.",
-  "score": 0.98
+  "heard": "Hitung bintang di setiap kotak.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-03-q": {
-  "sha1": "bbb8de9703d7adffdee159e6a5af182b88ccd066",
+  "sha1": "0de2d9bbf3e11d790d3c79202f38894d0e86db87",
   "text": "Cocokkan angka dengan gambarnya.",
-  "heard": "Cocokkan angka dengan gambarnya.",
-  "score": 1.0
+  "heard": "cocokkan angka dengan gambarnya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-03-s0": {
-  "sha1": "08bd4a55a0fff7b5c644bffd602ada98ce9a2c25",
+  "sha1": "3d148cb42de7571d11501219e4786fe52d70f85a",
   "text": "Pip menemukan kelompok bintang di pantai.",
   "heard": "Pip menemukan kelompok bintang di pantai.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-03-s1": {
-  "sha1": "5e845a7001e9784c4a66c7c899c7e66ab5591e3d",
+  "sha1": "129947971abcc0d65f44ee8fed0686cd446f8095",
   "text": "Cocokkan angkanya dengan banyak bintang.",
-  "heard": "cocokkan angkanya dengan banyak bintang.",
-  "score": 1.0
+  "heard": "cocok kan angkanya dengan banyak bintang",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-03-x": {
-  "sha1": "4feab6dfdcedf3aacd2c25b65d2349dd115358bc",
+  "sha1": "d7e06177f14c58a97c4dc895b3d1bd4d8a62f471",
   "text": "1 dengan satu bintang, 2 dengan dua bintang, 3 dengan tiga bintang.",
   "heard": "1 dengan 1 bintang, 2 dengan 2 bintang, 3 dengan 3 bintang.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-04-h1": {
   "sha1": "14b12a17ed2c236634e12a3d5f47e352a8dc6a2e",
@@ -1648,40 +1660,46 @@
   "engine": "omnivoice"
  },
  "MAT-05-h1": {
-  "sha1": "c97e8f4f6359ccb84d9516a6005ee0e0afb4449c",
+  "sha1": "01987ce04804e53d3f9de2bc9a6ee65b6c6ee440",
   "text": "Angka terkecil adalah satu.",
   "heard": "Angka terkecil adalah satu.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-05-h2": {
-  "sha1": "4131923fba01fdf1b1d86a8978398e77ff4449e0",
+  "sha1": "94b7cb1dbbd030c24e5ac3254bc5e7efab5f4530",
   "text": "Satu, dua, tiga, empat.",
-  "heard": "1 2 3 4",
-  "score": 1.0
+  "heard": "1,2,3,4",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-05-q": {
-  "sha1": "6daba8ad9404dbac57c4f185ddf91c3d983f5ee7",
+  "sha1": "4cab04edb4dfcb5cc6cc36dd6e41d8764bf34959",
   "text": "Ketuk angka dari yang terkecil.",
   "heard": "Ketuk angka dari yang terkecil.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-05-s0": {
-  "sha1": "ff1bc1ddda0fbbff306c624a273b3f76e0a3fa41",
+  "sha1": "fa13699da80d26299f4ac9db9e38968d738104ea",
   "text": "Jembatan Pulau Angka punya papan bernomor.",
-  "heard": "jembatan pulau angka punya papan bermomong.",
-  "score": 0.932
+  "heard": "jembatan pulau angka punya papan bernomor",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-05-s1": {
-  "sha1": "74de422869c8350a2cb0e65a04afd2ecae1e6550",
+  "sha1": "2b6810a65cebd8f102521fa35ae5e7822b3df36a",
   "text": "Susun papannya dari angka terkecil.",
-  "heard": "Susun papanya dari angka terkecil.",
-  "score": 0.983
+  "heard": "Susun papanya dari angka terkecil?",
+  "score": 0.983,
+  "engine": "omnivoice"
  },
  "MAT-05-x": {
-  "sha1": "163b3c0696dd9d335f21f06c713c6191631e42dc",
+  "sha1": "e40a8ba51bc1d1391eab9697f1f676531591ba54",
   "text": "Urutannya 1, 2, 3, 4.",
-  "heard": "urutannya 1 2 3 4",
-  "score": 1.0
+  "heard": "urutannya 1,2,3,4",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-06-h1": {
   "sha1": "822b59e9edfd5ea1e508bf2ed6f97d160d8bd5e5",
