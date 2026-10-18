@@ -687,40 +687,46 @@
   "engine": "omnivoice"
  },
  "LNG-05-h1": {
-  "sha1": "6905eb7830127187156d947d611fef3ed1f25c9e",
+  "sha1": "6805e2af6f8eb8adcab92dd1252488f8b83fc2a0",
   "text": "Kendaraan dipakai untuk bepergian.",
-  "heard": "kendaraan dipakai untuk bepergian.",
-  "score": 1.0
+  "heard": "Kendaraan dipake untuk bepergian.",
+  "score": 0.949,
+  "engine": "omnivoice"
  },
  "LNG-05-h2": {
-  "sha1": "01e386a381143bef647e545f6d5404454d09fe0d",
+  "sha1": "bfefb56843679ed23c6c1883326da2daa330e75a",
   "text": "Ada satu yang bisa dimakan. Itu bukan kendaraan.",
-  "heard": "Ada satu yang bisa dimakan itu bukan kendaraan.",
-  "score": 1.0
+  "heard": "Ada satu yang bisa dimakan? Itu bukan kendaraan!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-05-q": {
-  "sha1": "052b23b02c1a7b1877599f1c7cbe5ed678bb3c15",
+  "sha1": "14b2186a96359095270e8ab14a26edd3f8d34616",
   "text": "Pilih SEMUA kendaraan.",
-  "heard": "Pilih semua kendaraan.",
-  "score": 1.0
+  "heard": "Pilih semua kendaraan!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-05-s0": {
-  "sha1": "564c64af0975ea3053414554bfbc5e624903f8ed",
+  "sha1": "2f22e81d7c8ce3e66a3a2f11f7691ff719c01e69",
   "text": "Stinky dan teman-temannya lewat di jalan desa.",
-  "heard": "Stinggi dan teman-temannya lewat di jalan desa.",
-  "score": 0.901
+  "heard": "Stinky dan teman-temannya lewat di jalan desa.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-05-s1": {
-  "sha1": "0a94a427e4d264197abf393d29cc9421669a1f6e",
+  "sha1": "6dd2af3cc6ddb2f2c36914f06c3b99ba385f5541",
   "text": "Stinky bertanya: siapa saja yang kendaraan?",
-  "heard": "Stinti bertanya siapa saja yang kendaraan?",
-  "score": 0.909
+  "heard": "Stinky bertanya siapa saja yang kendaraan?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-05-x": {
-  "sha1": "5ab4f218e01f37ab4e79bdc44e08201554515761",
+  "sha1": "934856f798537a462a71a64f073b40f569cb1c7b",
   "text": "Mobil, bus, dan sepeda adalah kendaraan. Apel bukan kendaraan.",
-  "heard": "Mobil bus dan sepeda adalah kendaraan apa bukan kendaraan.",
-  "score": 0.97
+  "heard": "Mobil bus dan sepeda adalah kendaraan atau bukan kendaraan?",
+  "score": 0.94,
+  "engine": "omnivoice"
  },
  "LNG-06-h1": {
   "sha1": "01a6daed3d738ee72e30544f259994a79faa0129",
@@ -1390,40 +1396,46 @@
   "engine": "omnivoice"
  },
  "LOG-10-h1": {
-  "sha1": "7ad750641d40a380fd6acb219c1f22919f4d336b",
+  "sha1": "b50d0bb1f7852c7951f99e28a0cea23a8c32997a",
   "text": "Es krim itu dingin. Matahari itu panas.",
-  "heard": "Reskrim itu, dingin matahari itu panas",
-  "score": 0.984
+  "heard": "Es krim itu dingin, mata hari itu panas.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-10-h2": {
-  "sha1": "df5aa4081cd4fffbe49ba5cb14991080d4ebd86e",
+  "sha1": "f60accd67e6f24cb1a8bbfdb119a9e5e80b64d01",
   "text": "Es yang kena panas akan berubah jadi cair.",
-  "heard": "guys yang kena panas akan berubah jadi cahil",
-  "score": 0.901
+  "heard": "Es yang kenapa nasi akan berubah jadi cair.",
+  "score": 0.986,
+  "engine": "omnivoice"
  },
  "LOG-10-q": {
-  "sha1": "f02717bbfd8966aaacfd86e97f02de3ff5bc43b0",
+  "sha1": "9293987df87ae7b1dda9dbf15f0e784af66d09cc",
   "text": "Apa yang terjadi pada es krim?",
-  "heard": "Apa yang terjadi pada esklin?",
-  "score": 0.917
+  "heard": "Apa yang terjadi pada Eskrim?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-10-s0": {
-  "sha1": "6fecc7c10e142a45dd60541fe280cf5c8c0b1b78",
+  "sha1": "340a187ecd1336c59b848f942e7a5e3c1a5534ad",
   "text": "Dirty meninggalkan es krim di bawah matahari yang panas.",
-  "heard": "dirti meninggalkan ke skrim dibawah matahari yang panas.",
-  "score": 0.933
+  "heard": "Derti meninggalkan es krim di bawah mata hari yang panas.",
+  "score": 0.944,
+  "engine": "omnivoice"
  },
  "LOG-10-s1": {
-  "sha1": "b45183326de1b3b6ebf46816c25d11afa4b779c1",
+  "sha1": "993a25035c511e01041487e5a0440028c0d3a139",
   "text": "Matahari bersinar terik sekali.",
-  "heard": "Matahari bersinar trik sekali.",
-  "score": 0.981
+  "heard": "Matahari bersingar terik sekali!",
+  "score": 0.982,
+  "engine": "omnivoice"
  },
  "LOG-10-x": {
-  "sha1": "fba81ec4a395c97aff7669bebd1ce7f17ddb113e",
+  "sha1": "9995e150137864e82080d2e50c137606c6b29b4d",
   "text": "Es krim meleleh karena kena panas matahari.",
-  "heard": "iskrim meleleh karena kena panas mata hali.",
-  "score": 0.944
+  "heard": "Eskrim meleleh karena kena panas mata hari.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-11-h1": {
   "sha1": "a26c37d13e530a1c48ca7fce4c3e5d161a327155",
@@ -1720,76 +1732,88 @@
   "engine": "omnivoice"
  },
  "MAT-06-h1": {
-  "sha1": "822b59e9edfd5ea1e508bf2ed6f97d160d8bd5e5",
+  "sha1": "2981a42e3ebdca6395d284634d6c590035ed6836",
   "text": "Setelah 2, angka apa?",
   "heard": "Setelah dua angka apa?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-06-h2": {
-  "sha1": "a86a95371402666e9ba81b4f810934df5b58f328",
+  "sha1": "a69e8ed5073b81d24399fe93f63d018ad8859a52",
   "text": "Satu, dua, ..., empat.",
-  "heard": "1 2 ke 4",
-  "score": 0.923
+  "heard": "Satu dua empat!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-06-q": {
-  "sha1": "197810a548f1369e58c5b35075c25426e24da813",
+  "sha1": "6b308317f0d72973554d898f9ec94811f670b290",
   "text": "Angka berapa yang hilang?",
   "heard": "Angka berapa yang hilang?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-06-s0": {
-  "sha1": "d04e0a4f956f731022657ad8abe46f5d276ec389",
+  "sha1": "47d2e1e0e12f727fe528eb85604572aa9a3fb997",
   "text": "Ombak menghapus satu angka di pasir!",
-  "heard": "Ombak menghapus satu angka di pasil.",
-  "score": 0.967
+  "heard": "Ombak menghapus satu angka di pasir.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-06-s1": {
-  "sha1": "af5245e56b897bc963e6094f3ca81c947b47d873",
+  "sha1": "5ffa3048eb001f6a2973467c1d3c51b9a7786e5f",
   "text": "1, 2, ..., 4. Angka berapa yang hilang?",
-  "heard": "1,2,4 angka berapa yang hilang?",
-  "score": 1.0
+  "heard": "Satu, dua, empat! Angka berapa yang hilang?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-06-x": {
-  "sha1": "872cc0da3640b959043136c7de48b1f6f08d7110",
+  "sha1": "9066fff1a56d48e1a19ac169835e7340e1131294",
   "text": "Satu, dua, TIGA, empat. Angka yang hilang adalah 3.",
-  "heard": "1 2 3 4, angka yang hilang adalah tiga.",
-  "score": 1.0
+  "heard": "Satu, dua, tiga, empat! Angka yang hilang adalah tiga!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-07-h1": {
-  "sha1": "53198ffb37ede415b9702e1741365dc8f2570458",
+  "sha1": "faa313c3181b2b6d2585afd1a97900afd303ab1f",
   "text": "Angkanya bergantian.",
-  "heard": "Angkannya bergantian.",
-  "score": 0.973
+  "heard": "Angkanya berdantian!",
+  "score": 0.944,
+  "engine": "omnivoice"
  },
  "MAT-07-h2": {
-  "sha1": "a14e7866068b7be5f9dc7ebc6d8d62d0d5c4a6f5",
+  "sha1": "a679bc049363333d44832c0e007b482bc88dfb1b",
   "text": "Setelah 1 selalu datang...",
-  "heard": "Setelah satu selalu datang.",
-  "score": 1.0
+  "heard": "Setelah satu selalu datang!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-07-q": {
-  "sha1": "a87ee1ee940f0f138173e5de2f56feb87e044f44",
+  "sha1": "a87c86ef6811122b048bf5788e6514f90085894e",
   "text": "Angka berikutnya?",
-  "heard": "Angka berikutnya",
-  "score": 1.0
+  "heard": "Angka berikutnya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-07-s0": {
-  "sha1": "5880073c53df6f0b93f32f6a79f6dec34fba053c",
+  "sha1": "43cd7696aa04e61d312c4e7cb2c82f0192cdcfd3",
   "text": "Pip melompat di batu: 1, 2, 1, 2, 1...",
-  "heard": "aktif melompat dibatuh 1 2 1 2 1",
-  "score": 0.914
+  "heard": "Dit melompat dibatuh satu, dua, satu, dua, satu!",
+  "score": 0.941,
+  "engine": "omnivoice"
  },
  "MAT-07-s1": {
-  "sha1": "61622ce7950e557d0f72bd7b0143d7be086da20c",
+  "sha1": "79ae80d7a0f212c2336766e21feb08b034b3180a",
   "text": "Batu berikutnya angka berapa?",
-  "heard": "Batu berikutnya anggap berapa?",
-  "score": 0.941
+  "heard": "Batu berikutnya angka berapa?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-07-x": {
-  "sha1": "b1573fe0961362cb5376d49c5d94d41a95c25781",
+  "sha1": "99c951f096209ff2faeb8bb6ca5fb2feb6a85ab2",
   "text": "Polanya 1, 2, 1, 2... jadi setelah 1 datang 2.",
-  "heard": "Polanya 1 2 1 2 jadi setelah 1 datang 2.",
-  "score": 1.0
+  "heard": "Polanya satu, dua, satu, dua, jadi setelah satu datang dua.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-08-h1": {
   "sha1": "5472814b159984c60ae11ff16ef180360baa5f80",
@@ -1870,40 +1894,46 @@
   "engine": "omnivoice"
  },
  "MAT-10-h1": {
-  "sha1": "2201beeec05a71899420bad89de47de4b9768bd5",
+  "sha1": "adb927b9cd3cd41ee77e193ed3e68b2e22e636f8",
   "text": "Lingkaran tidak punya sudut.",
-  "heard": "Ningkaran tidak punya suduk.",
-  "score": 0.917
+  "heard": "Lingkaran tidak punya sudut.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-10-h2": {
-  "sha1": "ebcd43c7872f6f01c5156c57fbd57a7b2e566245",
+  "sha1": "618f9c35ed2942ca09d9ca0454b21f6d776bc427",
   "text": "Bentuknya bulat seperti bola.",
   "heard": "Bentuknya bulat seperti bola.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-10-q": {
-  "sha1": "f16666378f24e3c4a09ff21d3686e85aa15e0390",
+  "sha1": "6d84f0ff104d10ed6c29db4734efff56998dfc62",
   "text": "Mana yang LINGKARAN?",
-  "heard": "Mana yang linggaran?",
-  "score": 0.941
+  "heard": "Mana yang lingkaran?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-10-s0": {
-  "sha1": "7aa6c4331381234e89dc3f8f3098f7b2f948afc7",
+  "sha1": "3bfaa0342ff8e86356dd84b38fa7fef954f4dbec",
   "text": "Koko menggambar bentuk-bentuk di pasir.",
-  "heard": "Coco menggambar bentuk-bentuk di pasil.",
-  "score": 0.903
+  "heard": "Kok kok menggambar bentuk-bentuk di pasir?",
+  "score": 0.906,
+  "engine": "omnivoice"
  },
  "MAT-10-s1": {
-  "sha1": "d90b3d8eb638d0f0e771b4afe736ef87db34cb96",
+  "sha1": "01a8351561de67641bd062f672894e8aa0283f6f",
   "text": "Koko mencari bentuk yang bulat seperti bola.",
-  "heard": "Coco mencari bentuk yang bulat seperti bola.",
-  "score": 0.943
+  "heard": "Koko mencari bentuk yang bulat seperti bola.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-10-x": {
-  "sha1": "9d1f6e4be0e058971c4acf04aef1673b10e18ceb",
+  "sha1": "51d0d6fa4c5cb7e1b676fceaeb7d08a8bb67fa7d",
   "text": "Lingkaran bentuknya bulat dan tidak punya sudut.",
-  "heard": "lingkaran bentuknya bula dan tidak punya sudut.",
-  "score": 0.988
+  "heard": "lingkaran bentuknya bulat dan tidak punya sudut.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-11-h1": {
   "sha1": "1d2d5cf3846697b4a66039b2d7e266707aebb957",
