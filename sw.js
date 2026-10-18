@@ -149,6 +149,7 @@ const SHELL = [
   './games/gt-quiz.js?v=v64.14-20261018b',
   './games/dunia-home.js?v=v64.14-20261018b',
   './games/dunia-icons.js?v=v64.14-20261018b',
+  './games/dunia-glfx.js?v=v64.14-20261018b',
   './games/data/gt-trucks.js?v=v64.14-20261018b',
   './games/data/gt-cards.js?v=v64.14-20261018b',
   './games/data/save-engine.js?v=v64.14-20261018b',

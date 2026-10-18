@@ -1803,6 +1803,8 @@ window.addEventListener('orientationchange', _g24Resize)
 document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 <script src="dunia-icons.js?v=v64.14-20261018b"></script>
+<script src="dunia-home.js?v=v64.14-20261018b"></script>
+<script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
 </body>
 </html>
 <!-- g24-pixi v20260506e -->

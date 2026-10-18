@@ -2,7 +2,7 @@
  * "di setiap game baru — Mojo, Garasi Tempur, Blippi, Lokomotif Pemberani — pastikan ada tombol home").
  *   DuniaHome.mount({ visible: () => bool, top, left, right, onHome, into })
  *   into: an element (or selector) to sit in as its FIRST child, in the flow of a header bar (never covers it);
- *   without it the button floats fixed at top / left.
+ *   without it the button floats fixed at top / left. into + abs: true pins it in that container's corner.
  * A round house button with a "Rumah" label, shown only while visible() says the page is on a menu screen (never in
  * the middle of play, where a small hand would tap it by accident). Checked 4x a second, cheap; no emoji (owner rule:
  * an SVG house). Tapping runs onHome (the game's own save/hush) and then goes to ../index.html.
@@ -19,11 +19,15 @@
     b.innerHTML = HOUSE + '<span>Rumah</span>'
     var pos = 'top:' + (o.top || 'calc(10px + env(safe-area-inset-top, 0px))') + ';' + (o.right ? 'right:' + o.right : 'left:' + (o.left || 'calc(12px + env(safe-area-inset-left, 0px))'))
     var host = typeof o.into === 'string' ? D.querySelector(o.into) : o.into
-    b.style.cssText = (host ? 'position:relative;flex:0 0 auto;margin-right:8px;' : 'position:fixed;' + pos + ';z-index:' + (o.z || 2000) + ';') + 'display:none;flex-direction:column;align-items:center;justify-content:center;gap:1px;' +
+    // into + abs: pinned in a corner of that container (scrolls with it) instead of in its flow
+    b.style.cssText = (host ? (o.abs ? 'position:absolute;' + pos + ';z-index:5;' : 'position:relative;flex:0 0 auto;margin-right:8px;') : 'position:fixed;' + pos + ';z-index:' + (o.z || 2000) + ';') + 'display:none;flex-direction:column;align-items:center;justify-content:center;gap:1px;' +
       'width:60px;height:60px;padding:0;border:3px solid #fff;border-radius:50%;background:linear-gradient(#FFD45C,#F5A623);color:#5A3300;' +
       'box-shadow:0 4px 0 #B86E00,0 8px 16px rgba(0,0,0,.28);cursor:pointer;font:900 11px/1 Nunito,system-ui,sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation'
     var svg = b.querySelector('svg'); svg.style.cssText = 'width:28px;height:28px;display:block'
-    b.addEventListener('click', function () {
+    // a start screen that begins the game on any tap must not see this tap
+    ;['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown'].forEach(function (ev) { b.addEventListener(ev, function (e) { e.stopPropagation() }, { passive: true }) })
+    b.addEventListener('click', function (e) {
+      e.stopPropagation()
       try { if (o.onHome) o.onHome() } catch (e) {}
       location.href = o.href || '../index.html'
     })
@@ -42,5 +46,14 @@
     setInterval(tick, 250)
     return b
   }
-  W.DuniaHome = { mount: mount }
+  // true when any of the selectors names an element that is really on screen (not display:none / hidden / faded out)
+  function shown () {
+    for (var i = 0; i < arguments.length; i++) {
+      var e = D.querySelector(arguments[i]); if (!e) continue
+      var s = getComputedStyle(e), r = e.getBoundingClientRect()
+      if (s.display !== 'none' && s.visibility !== 'hidden' && +s.opacity > 0.05 && r.width > 0 && r.height > 0) return true
+    }
+    return false
+  }
+  W.DuniaHome = { mount: mount, shown: shown }
 })(window, document)

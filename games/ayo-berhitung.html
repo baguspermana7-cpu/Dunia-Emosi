@@ -249,6 +249,8 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   #answer-key{display:block!important;break-before:page;page-break-before:always}
 }
 .print-head,#answer-key{display:none}
+/* the Home button sits in the panel's top-right corner (2026-10-18): the title and the intro keep clear of it */
+.panel{position:relative}.panel>h1,.panel>.lede{padding-right:70px}
 </style>
 </head>
 <body>
@@ -910,5 +912,7 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
 })()
 </script>
 <script src="dunia-icons.js?v=v64.14-20261018b"></script>
+<script src="dunia-home.js?v=v64.14-20261018b"></script>
+<script>DuniaHome.mount({ into: '.panel', abs: true, top: '12px', right: '12px', visible: function () { return true } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
 </body>
 </html>

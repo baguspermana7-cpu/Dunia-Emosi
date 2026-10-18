@@ -842,3 +842,6 @@ body.cine-on .tkc-ctl{right:calc(72px + env(safe-area-inset-right))}
 @media (max-width:599px),(max-height:599px){
   .sc-t small,.cat span,.shipcard .st,.bnav button,.ibtn.lbl>span,.pchip small,.tile,.tile span,.logo-rib span{font-size:13px}
 }
+
+/* the Home button joins the hub's top bar (2026-10-18): on a phone the labelled buttons go icon-only so the Timmy chip keeps its name */
+@media (max-width:430px){.hud .dunia-home{width:50px!important;height:50px!important}.hud .ibtn.lbl>span{display:none}.hud .ibtn.lbl{height:46px;width:46px}}

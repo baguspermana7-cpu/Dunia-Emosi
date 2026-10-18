@@ -210,6 +210,9 @@
     host.insertAdjacentHTML('beforeend', svgf)
     var canvas = el('canvas', 'mc-cv'); host.appendChild(canvas)
     var c = canvas.getContext('2d', { alpha: false, willReadFrequently: /[?&]cpu=1/.test(location.search) })
+    // the GPU post-process over the finished 2D frame (bloom, grade, boost blur + aberration, heat haze, grain):
+    // only at the top quality tier and, for now, only with ?gl=1; no WebGL keeps the plain 2D picture (games/dunia-glfx.js)
+    var GLX = W.DuniaGLFX && /[?&]gl=1/.test(location.search) ? W.DuniaGLFX.attach(canvas) : null   // opt-in until verified on devices
     var ARROW = '<svg viewBox="0 0 100 100"><path d="M50 10 L88 52 H64 V90 H36 V52 H12 Z" fill="#fff" stroke="#cfe6ff" stroke-width="5" stroke-linejoin="round"/></svg>'
     var hud = el('div', 'mc-hud')
     hud.innerHTML =
@@ -1040,6 +1043,15 @@
       if (A5 && A5.drawOverlay) try { A5.drawOverlay(c, AV) } catch (e) {}
       PST.quality = quality; PST.boost = Math.min(1, Math.max(0, S.boost)); PST.flash = S.flash; PST.strobe = S.strobe; PST.tunnel = S.tunnel; PST.atmosLight = atm.L
       if (!OFFK('post')) scene.post(c, PST); mark('post')
+      if (GLX) {
+        GLX.enable(quality === 2 && !RM)
+        if (quality === 2 && !RM) {
+          var tk = ''; try { var td = HK().atmos && HK().atmos.timeOfDay ? HK().atmos.timeOfDay() : null; tk = td ? td.key : '' } catch (e) {}
+          GLX.frame({ t: S.t, boost: S.boost > 0 ? Math.min(1, 0.35 + S.boost) : 0, night: night ? 1 : atm.L,
+            warm: tk === 'sore' || tk === 'senja' ? 0.8 : tk === 'pagi' ? 0.35 : night ? -0.6 : 0.1,
+            haze: /desert|volcano|canyon/.test(stage.biome || '') ? 0.7 : 0, bloom: night ? 0.75 : 0.5 })
+        }
+      }
     }
     var PST = { quality: 2, boost: 0, flash: 0, strobe: 0, tunnel: 0, atmosLight: 0 }
     function segSpr (s, j) { if (!OFFK('sp')) drawSegSprites(s, j, scene.night) }
