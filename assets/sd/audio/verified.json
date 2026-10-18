@@ -288,82 +288,95 @@
   "engine": "omnivoice"
  },
  "LIS-08-h1": {
-  "sha1": "0e938a3349a7575424fbcfcb2edb331e0056baaa",
+  "sha1": "150a30e16b4f1475f53ce11e80578987ce511cce",
   "text": "Apa yang Mimi lakukan paling awal?",
-  "heard": "Apa yang Mimi lakukan paling awal?",
-  "score": 1.0
+  "heard": "Apa yang Mini lakukan paling awal?",
+  "score": 0.923,
+  "engine": "omnivoice"
  },
  "LIS-08-h2": {
-  "sha1": "c84bc2e4969736b570c01d0e685fde0377e5a953",
+  "sha1": "dd1ff410b62d17d69c99553b51ea95d3953ba80e",
   "text": "Menyiram dulu, lalu tunas, lalu bunga.",
-  "heard": "Menyeram dulu lalu tunas lalu bunga.",
-  "score": 0.967
+  "heard": "Menyeram dulu lalu tunas lalu bunga",
+  "score": 0.967,
+  "engine": "omnivoice"
  },
  "LIS-08-q": {
-  "sha1": "088f42b4dbe70e4a4097ecbcf4ada66710dd6eca",
+  "sha1": "2f2185baa55e738f091bd6ad37421f36854e8677",
   "text": "Urutkan ceritanya: ketuk dari yang pertama.",
-  "heard": "urutkan ceritanya ketuk dari yang pertama.",
-  "score": 1.0
+  "heard": "Urutkan ceritanya ketuk dari yang pertama.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-08-s0": {
-  "sha1": "58b5ef24f400c7abd4a2b93d8bb06f49988b2564",
+  "sha1": "589247a0a69a43af6f38110e5be48735b04c8e1f",
   "text": "Mimi menyiram tanah di kebun.",
-  "heard": "Mimi menyeram tanah di kebun.",
-  "score": 0.95
+  "heard": "Mimi mengiram tanah di kebun.",
+  "score": 0.95,
+  "engine": "omnivoice"
  },
  "LIS-08-s1": {
-  "sha1": "ef94059b1473bc2d722828f22debf01df19b5823",
+  "sha1": "228b13be037e20f053a2402c1561ba808e421d1f",
   "text": "Lalu tunas kecil tumbuh.",
-  "heard": "lalu tunas kecil tumbuh.",
-  "score": 1.0
+  "heard": "Lalu tunas kecil tumbuh!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-08-s2": {
-  "sha1": "0f2cfb88ccb34af82979ec2b1f73e4864a9f2a4a",
+  "sha1": "3d3ce37b0f090082565f45a26b86e3edc50ecf55",
   "text": "Akhirnya bunga matahari mekar.",
-  "heard": "Akhirnya bunga matahari meka.",
-  "score": 0.98
+  "heard": "Akhirnya bunga matahari mekar",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-08-x": {
-  "sha1": "c37e4064bb86d54fc5a711435afb43a959ce3c62",
+  "sha1": "9c19c06672f2f86a75d72976816e0ab93c72a112",
   "text": "Mimi menyiram dulu, lalu tunas tumbuh, akhirnya bunga mekar.",
-  "heard": "Mimi menyeram dulu, lalu tunas tumbuh akhirnya bunga meka.",
-  "score": 0.966
+  "heard": "Mimi menyeram dulu, lalu tunas tumbuh, akhirnya bunga mikar!",
+  "score": 0.956,
+  "engine": "omnivoice"
  },
  "LIS-09-h1": {
-  "sha1": "137a656d8cf7797f6128452bf0342d7a95923655",
+  "sha1": "10d93644283b0319f17c5792f70db21f5ca23f98",
   "text": "Apa yang terjadi di langit?",
   "heard": "Apa yang terjadi di langit?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-09-h2": {
-  "sha1": "949f6ef607645ae5db71d8badb8d3b0206e0c078",
+  "sha1": "265196ae67214e2da49b5cf03dee9225ea7d5da6",
   "text": "Payung dipakai supaya tidak basah.",
-  "heard": "Palung dipakai supaya tidak basah.",
-  "score": 0.966
+  "heard": "Payung dipakai supaya tidak basah.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-09-q": {
-  "sha1": "c34708cb7ce6552f2a966d7174b17822819438a3",
+  "sha1": "7349abb80a31945504e7683458d5aa25d9ecd098",
   "text": "Kenapa Lala membuka payung?",
-  "heard": "Kenapa lala membuka payum?",
-  "score": 0.919
+  "heard": "Kenapa lalu membuka payung?",
+  "score": 0.905,
+  "engine": "omnivoice"
  },
  "LIS-09-s0": {
-  "sha1": "87e802c5a6d159d502c8d85cf63cfb183f88252a",
+  "sha1": "a6b89170ca0cda30cf5d632fa17c374f38a2ae9d",
   "text": "Awan gelap datang dan hujan turun.",
-  "heard": "Awan gelap datang dan hujan turun.",
-  "score": 1.0
+  "heard": "Awan gelap datang dan hujan turun!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-09-s1": {
-  "sha1": "3caf1b568159cd3ae7f991a0f9f1444b09bd4431",
+  "sha1": "c7df8433f7c631efa8d7cf80a4062ff517a06c1f",
   "text": "Lala cepat-cepat membuka payungnya.",
-  "heard": "Lala cepat-cepat membuka payungnya.",
-  "score": 1.0
+  "heard": "Lala cepat-cepat membuka payungnya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-09-x": {
-  "sha1": "e2e8b8bc912d3824c91eb64c767b055d6899b525",
+  "sha1": "fe22d1968fc8b08f25b6aa0b54bd451b076d73b1",
   "text": "Lala membuka payung karena hujan turun.",
-  "heard": "Lala membuka payung karena hujan turun.",
-  "score": 1.0
+  "heard": "Lala membuka payung karena hujan turun!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-10-h1": {
   "sha1": "8b4d2abfb5518c68e6d12e5753142006a0943efd",
@@ -415,40 +428,46 @@
   "engine": "omnivoice"
  },
  "LIS-11-h1": {
-  "sha1": "8b01b7f13de80c86a579b0778284a7d9646e25f9",
+  "sha1": "796990fbc39f876a235dac0e2f1eb9c198253e84",
   "text": "Lihat apa yang turun dari langit.",
-  "heard": "Lihat apa yang turun dari langit.",
-  "score": 1.0
+  "heard": "lihat apa yang turun dari langit",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-11-h2": {
-  "sha1": "30ec89d32bf0aa4858e215bc2e2a9b190811f8fe",
+  "sha1": "dfd86b7653809bfc0754e88a73156e0836e9b39d",
   "text": "Salju hanya ada kalau udaranya...",
-  "heard": "Salju hanya ada kalau udaranya.",
-  "score": 1.0
+  "heard": "Salju hanya ada kalo udaranya.",
+  "score": 0.941,
+  "engine": "omnivoice"
  },
  "LIS-11-q": {
-  "sha1": "7e0883d2a7c89edff94e4d43135635419c3c6b41",
+  "sha1": "1ec85ded94cc484ff653a5710b79ac46e4996f0f",
   "text": "Bagaimana cuaca di luar?",
   "heard": "Bagaimana cuaca di luar?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-11-s0": {
-  "sha1": "802bb049a964f2c07656af1272a11c3dc7117909",
+  "sha1": "8de275801e8db841d65f36d98eaf262db72d9a08",
   "text": "Raka memakai jaket tebal dan topi hangat.",
-  "heard": "Raka memakai jaket tebal dan topi hangat.",
-  "score": 1.0
+  "heard": "Raka memakai jaket tebal dan tupi hangat!",
+  "score": 0.967,
+  "engine": "omnivoice"
  },
  "LIS-11-s1": {
-  "sha1": "e22d49b72fd37c6710b65ba7aa3ceebeeb34c40a",
+  "sha1": "1248154661e669edba5c4e7597d3a4ad101f55b3",
   "text": "Di luar, ada manusia salju dan kepingan salju turun.",
-  "heard": "Di luar ada manusia salju dan kepigen salju turun.",
-  "score": 0.964
+  "heard": "Di luar, ada manusia salju dan kepingan salju turun?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-11-x": {
-  "sha1": "1a8b6527cf6ca53eda88609312b8e420dd8a5620",
+  "sha1": "d1a1c3dce7f9d146afc0de353e335106182917de",
   "text": "Ada salju dan Raka memakai jaket tebal, jadi cuacanya dingin.",
-  "heard": "Ada salju dan raka memakai jaket tebal jadi cuacanya dingin.",
-  "score": 1.0
+  "heard": "ada salju dan raka memakai jaket tebal jadi cuacanya dingin",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-12-h1": {
   "sha1": "a5fa0c240aab7494e8dbc116b1b9840e3a7c0c6b",
@@ -584,40 +603,46 @@
   "engine": "omnivoice"
  },
  "LNG-03-h1": {
-  "sha1": "2db2f103951dc73892b1f0886505cf9268e788ba",
+  "sha1": "fbfbe35cb1cb3d6a06e6672192291ec8cdbcf43e",
   "text": "Salju dan es krim itu dingin.",
-  "heard": "Salju dan kek scrim itu dingin.",
-  "score": 0.917
+  "heard": "Salju dan es krim itu dingin!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-03-h2": {
-  "sha1": "c34dc4ac1acbbc5fef01345eeb6e1080484fd1d5",
+  "sha1": "7a1830a76a8b1dbe71a2611a00c99eb1b6076a2d",
   "text": "Benda yang ada apinya terasa panas.",
-  "heard": "Benda yang ada apinya, rasa panas.",
-  "score": 0.964
+  "heard": "Benda yang ada apinya terasa panas.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-03-q": {
-  "sha1": "5505f6ccd7d4511f5b74760e31560cb61e1e3fb4",
+  "sha1": "bc74634f45c6753b35ea2ae750a7dc7bb121705b",
   "text": "Mana yang PANAS?",
-  "heard": "mana yang panas?",
-  "score": 1.0
+  "heard": "Mana yang panas?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-03-s0": {
-  "sha1": "618964fdbb62e8d688d06cb2f70be22291ff007b",
+  "sha1": "bcee55ba9ee0e966adad937f8c111f813396b3c9",
   "text": "Lala bertanya pada teman-temannya.",
-  "heard": "Lala bertanya pada teman-temannya",
-  "score": 1.0
+  "heard": "Lala bertanya pada teman-temannya.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-03-s1": {
-  "sha1": "d4288643a6727c7fc777cb541d2ca1d39bd90b77",
+  "sha1": "23cfed8fd3f07616f40348c991f0e04b6fb88d96",
   "text": "Benda mana yang terasa PANAS?",
-  "heard": "Benda mana yang terasa panas?",
-  "score": 1.0
+  "heard": "Bener mana yang terasa panas?",
+  "score": 0.917,
+  "engine": "omnivoice"
  },
  "LNG-03-x": {
-  "sha1": "8b44178ff36cab4be70f3f2c5d707aeb58403b7d",
+  "sha1": "d65d530533b43c4341570d98bebdcdb06ee7585f",
   "text": "Api unggun terasa panas. Manusia salju dan es krim terasa dingin.",
-  "heard": "Api kumun terasa panas manusia salju dan kas krim terasa dingin.",
-  "score": 0.925
+  "heard": "Api ungun rasa panas, manusia salju, dan es krim rasa dingin!",
+  "score": 0.95,
+  "engine": "omnivoice"
  },
  "LNG-04-h1": {
   "sha1": "64c4c28438b6ab60176489fec8c4f016a73e36b8",
@@ -740,40 +765,46 @@
   "engine": "omnivoice"
  },
  "LNG-07-h1": {
-  "sha1": "b239e535aa6bd24965b8bab3d2954a03c5871683",
+  "sha1": "ef8324f5b42f03cd1df7fa7ddff587395f9d3775",
   "text": "Lihat kotaknya dulu.",
-  "heard": "lihat kotaknya dulu",
-  "score": 1.0
+  "heard": "liat kotaknya dulu",
+  "score": 0.97,
+  "engine": "omnivoice"
  },
  "LNG-07-h2": {
-  "sha1": "5b3c541e4de6b5499e71b76a56e4159f5887da1e",
+  "sha1": "cfd6b25f1893b86c8f659df954774dc7ae32de6d",
   "text": "\"Di atas\" artinya lebih tinggi, menempel pada kotak.",
-  "heard": "di atas atinya lebih tinggi menempel pada kotak",
-  "score": 0.988
+  "heard": "Di atas artinya lebih tinggi menempel pada kotak.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-07-q": {
-  "sha1": "127f224de2a73057b0531703ddb9cedb51f5343e",
+  "sha1": "d1e81b996cc45981a1ec18d83015c47e37ead38b",
   "text": "Ketuk hewan yang ada DI ATAS kotak.",
-  "heard": "ketuk hewan yang ada di atas kota.",
-  "score": 0.982
+  "heard": "Ketuk hewan yang ada di atas kotak.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-07-s0": {
-  "sha1": "da61c1246d226c451039116d83ca20b911365509",
+  "sha1": "0ee4182ee9759e3226340f07a2512747185685af",
   "text": "Tiga hewan bermain dengan sebuah kotak.",
-  "heard": "tidak hewan bermain dengan sebuah kota.",
-  "score": 0.939
+  "heard": "tiga hewan bermain dengan sebuah kotak",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-07-s1": {
-  "sha1": "162baee624d7c478eb6c62fc5bc1f8f87f1af89b",
+  "sha1": "35da73e1dff28db32976cb3d98d6a7a6b90ef60c",
   "text": "Mimi duduk DI ATAS kotak.",
-  "heard": "Mimi duduk di atas kota.",
-  "score": 0.968
+  "heard": "Ini duduk di atas kotak.",
+  "score": 0.914,
+  "engine": "omnivoice"
  },
  "LNG-07-x": {
-  "sha1": "450dd8dd2a73ba6637ef08489293efa1f6eed509",
+  "sha1": "c45ae13fbb82b89fce12e28314a87b9b150ba96b",
   "text": "Mimi ada di atas kotak. Rover dan Lulu ada di samping kotak.",
-  "heard": "Mimi ada di atas kota Kroler dan Lulu ada di samping kota.",
-  "score": 0.917
+  "heard": "Ini ada di atas kotak, rover dan lulu ada di samping kotak.",
+  "score": 0.958,
+  "engine": "omnivoice"
  },
  "LNG-08-h1": {
   "sha1": "977ff09821f84324ae3fce41663b4d731b1183d6",
@@ -932,40 +963,46 @@
   "engine": "omnivoice"
  },
  "LNG-12-h1": {
-  "sha1": "a76e3afa175ccc49d9d99a9fba80b232b8da7308",
+  "sha1": "88b34fd4da49c29347fb076a203f455141f965bb",
   "text": "Lihat di mana Pip berada.",
-  "heard": "Lihat dimana piberada.",
-  "score": 0.944
+  "heard": "Ihat dimana pip berada?",
+  "score": 0.97,
+  "engine": "omnivoice"
  },
  "LNG-12-h2": {
-  "sha1": "ae1c1f5aee5162712c74000dea0f1015aa0a46be",
+  "sha1": "eb8ca246034e13e3e07d55cf3aca27cd56f36132",
   "text": "Pip ada di atas, di tempat awan berada.",
-  "heard": "Pip ada di atas di tempat awan berada.",
-  "score": 1.0
+  "heard": "Pip ada di atas di tempat awan berada!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-12-q": {
-  "sha1": "6a712ae5da604f9fecfcc061d504361a17a554a8",
+  "sha1": "19341c001f26a77dc02d4622c0a2a968f9152dac",
   "text": "Burung terbang di...",
-  "heard": "burung terbangdi",
-  "score": 1.0
+  "heard": "Burung Terbang Di!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-12-s0": {
-  "sha1": "e8e46c30b876a392b0b952d148f31c649fc82695",
+  "sha1": "cef77756eabc92b476b0ff45ae9eae805db9c816",
   "text": "Ikan hidup di air.",
-  "heard": "dikanhidup di air.",
-  "score": 0.966
+  "heard": "Ikan hidup di air.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-12-s1": {
-  "sha1": "8d0c5aaace606570a6d2cbe21c720c3d74310ccf",
+  "sha1": "816ec51bd7dc6cc7e4c5ff95ca763b19cd44db7d",
   "text": "Burung terbang di mana?",
-  "heard": "Burum terbang dimana?",
-  "score": 0.919
+  "heard": "Burung terbang dimana?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-12-x": {
-  "sha1": "41f31d93dccb5e09c70759950a9c5c43f2d91e4f",
+  "sha1": "397bca98830121f6699733911d41aecfe22ed5d1",
   "text": "Ikan hidup di air, burung terbang di langit.",
-  "heard": "ikan hidup di air burung terbang dilangit.",
-  "score": 1.0
+  "heard": "ikan hidup di air burung terbang di langit",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-01-h1": {
   "sha1": "607f6ee1f62ff52a765dba1cf61f70a3f1e49773",
@@ -1034,112 +1071,130 @@
   "engine": "omnivoice"
  },
  "LOG-03-h1": {
-  "sha1": "dcf8137a51cca5a1e52c3e01750fe478ab5cc1d7",
+  "sha1": "5f7e7d10d4ac0c61328d4ddc10ae9ed75e074c1e",
   "text": "Tiga di antaranya bisa berjalan dan makan.",
-  "heard": "tidak di antaranya bisa berjalan dan makan.",
-  "score": 0.958
+  "heard": "Tiga di antaranya bisa berjalan dan makan.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-03-h2": {
-  "sha1": "9441a57f4d9b5be5c548921a602ddfb78e12112d",
+  "sha1": "75a8509a0b9dabcee8f6512194a41bc0d4158817",
   "text": "Mana yang bukan hewan?",
   "heard": "Mana yang bukan hewan?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-03-q": {
-  "sha1": "1cac02f8a49b3632e62690610c85b9b9234e767b",
+  "sha1": "a24cd1204e5c0283e3cc76f0f79515caff9ea66c",
   "text": "Mana yang BERBEDA?",
-  "heard": "Mana yang berbeda?",
-  "score": 1.0
+  "heard": "Mana yang BRBDA?",
+  "score": 0.929,
+  "engine": "omnivoice"
  },
  "LOG-03-s0": {
-  "sha1": "0744741c1f91e8011c58ee3415e5c70e71aba965",
+  "sha1": "9087080b5a5fddfacfdb22d859ce7b032f4cfb14",
   "text": "Di Lab Logika ada barisan teman-teman.",
-  "heard": "Dilapnogika ada barisan teman-teman.",
-  "score": 0.935
+  "heard": "Dilap logika ada barisan teman-teman!",
+  "score": 0.968,
+  "engine": "omnivoice"
  },
  "LOG-03-s1": {
-  "sha1": "1a5ff6bdbfb5d84fa82ea3e2ba4fe6d458a20e18",
+  "sha1": "7ac5ce8c0eff3bef5e0e4da22802d589bcfd328f",
   "text": "Ada satu yang bukan hewan. Siapa ya?",
-  "heard": "Ada satu yang bukan hewan siapa ya?",
-  "score": 1.0
+  "heard": "Ada satu yang bukan hewan, siapa ya?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-03-x": {
-  "sha1": "537aaf83d3ed2654ae8fd4379bb642fbd322dca8",
+  "sha1": "63f3d12f207bc2d762e3157020a21438dc8afc90",
   "text": "Anjing, kucing, dan kelinci adalah hewan. Mobil bukan hewan.",
-  "heard": "Anjing kucing dan kelinci adalah hewan mobil bukan hewan.",
-  "score": 1.0
+  "heard": "Anjing kucing dan kelinci adalah hewan! Mobil bukan hewan!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-04-h1": {
-  "sha1": "d24a0158ed9ee7682eb3b540a9ea35cf95a28410",
+  "sha1": "403d21ba14f326bdfb606de16be411ebd3d40ce5",
   "text": "Lihat bentuk terakhir sebelum tanda tanya.",
-  "heard": "Lihat bentuk terakhir sebelum tanda tanya",
-  "score": 1.0
+  "heard": "Lihat bentuk terakhir sebelum tanatanya!",
+  "score": 0.986,
+  "engine": "omnivoice"
  },
  "LOG-04-h2": {
-  "sha1": "e51f856611d43227787e740ef45c8036bd26b206",
+  "sha1": "d063f775268b515daff18370ed082ec9bd979f73",
   "text": "Polanya bergantian: lingkaran, segitiga, lingkaran, segitiga, ...",
-  "heard": "Polanya bergantian lingkaran segitiga lingkaran segitiga.",
-  "score": 1.0
+  "heard": "Polanya bergantian, lingkaran segitiga, lingkaran segitiga.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-04-q": {
-  "sha1": "38bff7e457876aece9201db265bc2437bce80f4e",
+  "sha1": "a8a9896c1d4b34af42036faabb23c9fd4cb2fc56",
   "text": "Apa selanjutnya?",
   "heard": "Apa selanjutnya?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-04-s0": {
-  "sha1": "f56b1128ba2d6b4f96a50da39e9cc7f6da095244",
+  "sha1": "c8e649ee841f5829b7b6a36663dd10b0972266c4",
   "text": "Mesin Lab Logika mengeluarkan bentuk: lingkaran, segitiga, lingkaran, segitiga...",
-  "heard": "Masin lap logika mengeluarkan bentuk lingkaran sedi-tida lingkaran sedi-tiga.",
-  "score": 0.924
+  "heard": "Mesin Latlogika mengeluarkan bentuk, lingkaran segitiga, lingkaran segitiga.",
+  "score": 0.985,
+  "engine": "omnivoice"
  },
  "LOG-04-s1": {
-  "sha1": "ae1fbb8881c0f32b2283e4e459002f2cb92553d2",
+  "sha1": "8e207bdc90bbc69a9255631b13b2ba3233bd7fda",
   "text": "Bentuk apa yang keluar berikutnya?",
   "heard": "Bentuk apa yang keluar berikutnya?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-04-x": {
-  "sha1": "de98d0e20410fb409e8bb2fe401614a6bf979f04",
+  "sha1": "a71fabd73f9499b9dcf0303e57c1936a3fdfa729",
   "text": "Polanya bergantian, jadi setelah segitiga datang lingkaran.",
-  "heard": "Olanya bergantian, jadi setelah segi 3 datang lingkaran.",
-  "score": 0.99
+  "heard": "Polanya bergantian, jadi setelah segitiga datang lingkaran!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-05-h1": {
-  "sha1": "12d181f3f9377d91957ed86ba63dee4a0f67b04a",
+  "sha1": "214dedaa6f353b492af932ba6ebb3c72ff0fc182",
   "text": "Hitung ada berapa matahari sebelum bulan.",
-  "heard": "Kitung ada berapa matahari sebelum bulan.",
-  "score": 0.971
+  "heard": "Hitung ada berapa matahari sebelum bulan?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-05-h2": {
-  "sha1": "c2bde9d2f3a40e82ae632bf82a108da89df5d517",
+  "sha1": "2b9917e0d703adfafb97b2d19c433db956df0941",
   "text": "Dua matahari, lalu satu bulan. Sesudah dua matahari datang...",
-  "heard": "2 matahari, lalu 1 bulan sesudah 2 matahari datang.",
-  "score": 1.0
+  "heard": "dua matahari lalu satu bulan sesudah dua matahari datang",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-05-q": {
-  "sha1": "c250ce4c596776e3ff6d54b69aaa32dbc7ba0d16",
+  "sha1": "ab6a7b6d9c9ad26a9dbe2255c34e053669f54fa2",
   "text": "Apa selanjutnya?",
-  "heard": "Apa selanjutnya?",
-  "score": 1.0
+  "heard": "Apaas lanjutnya?",
+  "score": 0.929,
+  "engine": "omnivoice"
  },
  "LOG-05-s0": {
-  "sha1": "753a960fc031fff8e783d05c0432221d47badffa",
+  "sha1": "e5984c0dc39abbaf4ba6589537808b3bddece538",
   "text": "Pip menyusun gambar: matahari, matahari, bulan, matahari, matahari...",
-  "heard": "pit menyusun gambar matahari matahari bulan matahari matahari",
-  "score": 0.971
+  "heard": "Pip menyusun gambar matahari matahari bulan matahari matahari",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-05-s1": {
-  "sha1": "568ba0d169a5d705e9c9cac2fb65ce02a827b04c",
+  "sha1": "1b8b08fc8037e731fa1474d3fa0d345de6b7223f",
   "text": "Gambar apa berikutnya?",
-  "heard": "gambar apa berikutnya",
-  "score": 1.0
+  "heard": "Gambar apa berikutnya?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-05-x": {
-  "sha1": "617ef3a37f211bb88bac037b0618166b0a48e277",
+  "sha1": "9566c0e800ba284f4f916752fd07d2d7b10e8eb7",
   "text": "Polanya dua matahari lalu satu bulan, jadi berikutnya bulan.",
-  "heard": "Polanya dua matahari lalu satu bulan, jadi berikutnya bulan.",
-  "score": 1.0
+  "heard": "Polanya 2 mata hari lalu 1 bulan jadi berikutnya bulan.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-06-h1": {
   "sha1": "9f3db39c04c08e3232bcabad4e3da3a40ae238ab",
