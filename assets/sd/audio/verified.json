@@ -1005,28 +1005,46 @@
   "engine": "omnivoice"
  },
  "LOG-01-h1": {
-  "sha1": "607f6ee1f62ff52a765dba1cf61f70a3f1e49773",
+  "sha1": "ecc6d4381c26a795f7b90cb474bf3e6f75b44fed",
   "text": "Lihat baik-baik buah yang dipegang Dirty.",
-  "heard": "lihat baik-baik buah yang dipegang diti",
-  "score": 0.935
+  "heard": "liat baik-baik buah yang dipegang dirty",
+  "score": 0.982,
+  "engine": "omnivoice"
  },
  "LOG-01-h2": {
-  "sha1": "4dae9636d5738a1998b3acd5b3f8d19722a0d669",
+  "sha1": "5c76b54b93c749adae21ed68c29f6a7e65689900",
   "text": "Cari buah bulat berwarna merah.",
-  "heard": "Cari buah bulat berwarna merah.",
-  "score": 1.0
+  "heard": "cari buah bulat berwarna merah",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LOG-01-q": {
+  "sha1": "9706fee3f760191c2b50de6176d8127e04b220e2",
+  "text": "Mana yang SAMA dengan buah Dirty?",
+  "heard": "Mana yang sama dengan Buah Dirty?",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LOG-01-s0": {
+  "sha1": "d745db87a4d22ef8563b2cd8d7e1cdd45ec91aa4",
+  "text": "Dirty memegang sebuah apel merah.",
+  "heard": "Derti memegang sebuah apel merah!",
+  "score": 0.902,
+  "engine": "omnivoice"
  },
  "LOG-01-s1": {
-  "sha1": "b696c5ba832a22ddbfe91cf45d67a43988b64d17",
+  "sha1": "b9fd7779f890897d047acf74f261330741653ee7",
   "text": "Dirty mencari apel yang sama untuk temannya.",
-  "heard": "Dinti mencari apel yang sama untuk temannya.",
-  "score": 0.928
+  "heard": "Dirty mencari apel yang sama untuk temannya.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-01-x": {
-  "sha1": "85770d6cd314ad763370bad1bc7db5149003bd03",
+  "sha1": "94be098ae6f73ac4d0a2a472006b54154aba1221",
   "text": "Apel sama dengan buah yang dipegang Dirty.",
-  "heard": "Apel sama dengan buah yang dipegang dinti.",
-  "score": 0.923
+  "heard": "Apel sama dengan buah yang dipegang derti.",
+  "score": 0.923,
+  "engine": "omnivoice"
  },
  "LOG-02-h1": {
   "sha1": "51f6af2f9073f474e9bbf61744d1d0639c319923",
