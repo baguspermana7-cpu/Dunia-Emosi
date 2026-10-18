@@ -1197,40 +1197,46 @@
   "engine": "omnivoice"
  },
  "LOG-06-h1": {
-  "sha1": "9f3db39c04c08e3232bcabad4e3da3a40ae238ab",
+  "sha1": "ff79eb6e76efb987e02e8ba46f931b5cbcba64a5",
   "text": "Semua tanaman mulai dari yang kecil.",
-  "heard": "semua tanaman mulai dari yang kecil.",
-  "score": 1.0
+  "heard": "Semua tanaman mulai dari yang kecil",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-06-h2": {
-  "sha1": "8f4c13f5f462bf84fee9f4eed90680e55d1b3791",
+  "sha1": "a6cb03c2e9693b9e99af7a6a0d2b0ff8de65d080",
   "text": "Tunas, lalu tanaman, lalu pohon.",
-  "heard": "tunas lalu tanaman lalu pohom",
-  "score": 0.96
+  "heard": "Tuna, selalu tanaman lalu pohon!",
+  "score": 0.98,
+  "engine": "omnivoice"
  },
  "LOG-06-q": {
-  "sha1": "020b3e7319627b92d1373030568e8904dd0e406b",
+  "sha1": "dd945abd1bbe25cdeb27117141808f07e8c594e6",
   "text": "Urutkan dari yang paling kecil: ketuk dari yang pertama.",
-  "heard": "kurutkan dari yang paling kecil, ketuk dari yang pertama.",
-  "score": 0.989
+  "heard": "Urutkan dari yang paling kecil, ketuk dari yang pertama.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-06-s0": {
-  "sha1": "85f03b4cb7557455a09c2b53f557f8f9c8b5381f",
+  "sha1": "88297e87f82f59ad1ea37a0e58b9553ce1c06e89",
   "text": "Di lab ada tanaman ajaib.",
-  "heard": "Dilap ada tanaman ajain.",
-  "score": 0.9
+  "heard": "Dilab ada tanaman ajaib!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-06-s1": {
-  "sha1": "295fb1cf9ea12f61dd472d57b2e15fb09469cd00",
+  "sha1": "9b9e88d93232d7ab64b547919c70e66ec7acd28b",
   "text": "Tanaman itu tumbuh dari tunas kecil, jadi tanaman, lalu jadi pohon besar.",
-  "heard": "Tanaman itu tumbuh dari tunas kecil jadi tanaman, lalu jadi pohon besang.",
-  "score": 0.975
+  "heard": "Tanaman itu tumbuh dari tunas kecil jadi tanaman, lalu jadi pohon besar.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-06-x": {
-  "sha1": "c7c8aae4e37ee54880b7315d260c5c2d04786454",
+  "sha1": "4d6fe64a124e31b39430d122d12d488e4c46e1d7",
   "text": "Tunas tumbuh jadi tanaman, lalu jadi pohon besar.",
   "heard": "Tunas tumbuh jadi tanaman lalu jadi pohon besar.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-07-h1": {
   "sha1": "f7337269aaa1152637a6af3e4d501c84253bad84",
@@ -1324,40 +1330,46 @@
   "engine": "omnivoice"
  },
  "LOG-09-h1": {
-  "sha1": "a21e850f8f0b03ffd69bc87ccc9563fdb841700e",
+  "sha1": "b8e1360623ce1ce9b6042ee8c58c38f5c1f83142",
   "text": "Kita perlu benda supaya tidak basah.",
-  "heard": "Kita perlu benda supaya tidak basah.",
-  "score": 1.0
+  "heard": "Kita perlu benda supaya tidak basah!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-09-h2": {
-  "sha1": "e8b5c516a322acd6fb8a302b9a95645d97aef1ae",
+  "sha1": "369c02e0f70feedf7ed03ced49b915934576c6cc",
   "text": "Benda itu dipegang di atas kepala saat hujan.",
-  "heard": "Benda itu dipegang di atas kepala saat hujan.",
-  "score": 1.0
+  "heard": "Benda itu dipegang di atas kepala satu jam.",
+  "score": 0.944,
+  "engine": "omnivoice"
  },
  "LOG-09-q": {
-  "sha1": "36781e0346cfc23488479565ce8fb0a150ca4b1d",
+  "sha1": "7591e6e5246f3363d5b9cd8af27da2cdf7fec210",
   "text": "Jika hujan, kita memakai...",
   "heard": "Jika hujan kita memakai.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-09-s0": {
-  "sha1": "31e2a510900ceaaaf06d0ab89e2cd820ac50f623",
+  "sha1": "6ebdb679f1ad5c20cddbd4a027b3dfb849240980",
   "text": "Stinky berkata: \"Jika hujan turun, kita perlu sesuatu supaya tidak basah.\"",
-  "heard": "Stinghi berkata, jika hujan turun, kita perlu sesuatu supaya tidak basah.",
-  "score": 0.938
+  "heard": "Stinky berkata, jika hujan turun, kita perlu sesuatu supaya tidak basah.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-09-s1": {
-  "sha1": "dc53b4be42730e52ecf4f6ea5471b9af873cb558",
+  "sha1": "67e70e2c9811b3b46a5df12f042a41cdee81b267",
   "text": "Lihat, awan mulai gelap!",
-  "heard": "Lihat awan mulai gelap.",
-  "score": 1.0
+  "heard": "Lihat awan mulai gelap!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-09-x": {
-  "sha1": "5d015512769ddac28e647703e1ee80a9d0f471d6",
+  "sha1": "486fa76c9e5ed36a5b57d3f14ee4e3e91b70fb9d",
   "text": "Jika hujan, kita memakai payung supaya tidak basah.",
   "heard": "Jika hujan kita memakai payung supaya tidak basah.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LOG-10-h1": {
   "sha1": "7ad750641d40a380fd6acb219c1f22919f4d336b",
