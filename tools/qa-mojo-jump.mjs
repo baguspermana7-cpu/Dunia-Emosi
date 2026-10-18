@@ -10,7 +10,7 @@ const BASE = process.env.BASE || 'http://localhost:8081'
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--mute-audio', '--disable-audio-output'] })
 const st = p => p.evaluate(() => __mojoChase.state())
 // a busy machine can make a fresh tab answer "main frame too early": try again instead of dying
-async function newPage () { for (let i = 0; i < 5; i++) { try { const p = await newPage(); await p.evaluate(() => 1); return p } catch (e) { await sleep(1500) } } return b.newPage() }
+async function newPage () { for (let i = 0; i < 5; i++) { try { const p = await b.newPage(); await p.evaluate(() => 1); return p } catch (e) { await sleep(1500) } } return b.newPage() }
 async function start (p, id, extra) {
   await p.evaluate(() => { window.__mcNoLeap = 1; window.__mcNoCrashQuiz = 1; window.__mcNoPatterns = 1; window.__mcNoGameOver = 1 })
   p.evaluate((id, ex) => { const c = Object.assign(MojoChases.config(id), ex || {}); return MojoChaseMenu.run(c) }, id, extra || null).catch(() => {})

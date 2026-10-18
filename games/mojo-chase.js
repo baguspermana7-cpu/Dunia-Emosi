@@ -211,8 +211,8 @@
     var canvas = el('canvas', 'mc-cv'); host.appendChild(canvas)
     var c = canvas.getContext('2d', { alpha: false, willReadFrequently: /[?&]cpu=1/.test(location.search) })
     // the GPU post-process over the finished 2D frame (bloom, grade, boost blur + aberration, heat haze, grain):
-    // only at the top quality tier and, for now, only with ?gl=1; no WebGL keeps the plain 2D picture (games/dunia-glfx.js)
-    var GLX = W.DuniaGLFX && /[?&]gl=1/.test(location.search) ? W.DuniaGLFX.attach(canvas) : null   // opt-in until verified on devices
+    // only at the top quality tier (a slow device drops the tier and with it the shader); ?nogl=1 or no WebGL keeps the plain 2D picture (games/dunia-glfx.js)
+    var GLX = W.DuniaGLFX && !/[?&]nogl=1/.test(location.search) ? W.DuniaGLFX.attach(canvas) : null
     var ARROW = '<svg viewBox="0 0 100 100"><path d="M50 10 L88 52 H64 V90 H36 V52 H12 Z" fill="#fff" stroke="#cfe6ff" stroke-width="5" stroke-linejoin="round"/></svg>'
     var hud = el('div', 'mc-hud')
     hud.innerHTML =
