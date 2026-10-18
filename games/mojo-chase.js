@@ -184,6 +184,9 @@
     // Until they arrive a film racer drives its placeholder form, and the turn pose is drawn as a body roll (skew).
     var RS = cfg.racer && W.MojoRacerSheets && W.MojoRacerSheets[cfg.racer] || null, VIEWS = ['straight', 'left', 'right']
     var steerPose = cfg.team === 'film'
+    // the film team drives 13% slower on the road (owner 2026-10-18: "terlalu tinggi, sulit dikontrol, kurangi 10-15%");
+    // the race progress follows the speed multiplier, so a mission still lasts as long, only easier to steer
+    var TEAMK = cfg.team === 'film' ? 0.87 : 1
     if (RS) rearA = RS.anchor
     // who is being chased (2026-10-17 Tim Film Balap): a robber by default, or a rival racer / the enemy team
     var FOE = Object.assign({ n: 'pencuri', N: 'Pencuri', caught: 'Pencuri Tertangkap!' }, cfg.foe || {})
@@ -483,6 +486,7 @@
     function hopDust () { var m = mojoXY(), cp = carPx(); burst(m.x, m.y, 8, img['fx/dust'] || TEX.puff, 300 * v.u, 0.5, cp * 0.22, false) }
     function hit (o, sx, sy) {
       o.taken = true
+      if (S.state === 'won') return   // the finish (the overtake, the cheer) is never interrupted by a BROK
       var info = OBJ[o.type], cp = carPx()
       // which branch handled this hit: read by the gate (tools/qa-mojo-chase.mjs) to prove no form is immune
       S.lastHitType = o.type; S.lastHitPerk = perk
@@ -656,15 +660,30 @@
       H.ret.classList.remove('on'); AU.launch(); call('Roket jaring, meluncur!', 1300, 'launch')
     }
 
-    // 'race' / 'escape' win: a cheer and confetti (from the racer drawn level, or over the road), the car rolls out, then
-    // the result card. Its own state 'won': no net, no police vans (those belong to the robber chase)
+    // 'race' / 'escape' win. RACE (owner 2026-10-18: "di akhir lawan nabrak sehingga mobil player terlihat menyalip"):
+    // the rival bumps something (smoke, a wobble, it loses speed) and drifts out of the player's lane, then the gap
+    // closes and goes past zero -- the rival slides down the screen beside the player and out of view, a real overtake
+    // -- and only then the cheer. ESCAPE: the finish is reached, a cheer over the road.
     function winRace () {
-      S.state = 'won'; S.wonT = 0; S.stop = 1; AU.siren(false)
-      var t = S.targetScreen, cp = carPx(), cols = [TEX.glowY, TEX.glowR, TEX.glowB, TEX.glowC, TEX.glowP]
-      var bx = MODE === 'race' && t ? t.x : v.w / 2, by = MODE === 'race' && t ? t.y - t.w * 0.4 : v.hy + (v.h - v.hy) * 0.3
+      S.state = 'won'; S.wonT = 0; S.stop = 1; S.cheered = false; AU.siren(false)
+      API.clearAhead(5); H.edu.classList.remove('on')   // a clear road for the overtake; no lane question over it
+      if (MODE === 'race') {
+        S.passFrom = S.passGap = gap0(); S.slip = 1
+        S.targetLane = S.lane === 1 ? (rr() < 0.5 ? 0 : 2) : 1   // never the player's lane: the pass is side by side
+        var t = S.targetScreen, cp = carPx()
+        if (t) { burst(t.x, t.y - t.w * 0.2, 14, TEX.puff, 420 * v.u, 0.8, t.w * 0.25, false); burst(t.x, t.y - t.w * 0.3, 10, TEX.sparkle, 600 * v.u, 0.5, cp * 0.12, true) }
+        AU.lose && AU.lose()
+        call('Waduh! ' + FOE.N + ' menabrak! Ayo salip!', 1700, 'slip', true)
+      } else cheer()
+    }
+    function cheer () {
+      if (S.cheered) return
+      S.cheered = true
+      var m = mojoXY(), cp = carPx(), cols = [TEX.glowY, TEX.glowR, TEX.glowB, TEX.glowC, TEX.glowP]
+      var bx = m.x, by = m.y - cp * 0.9
       burst(bx, by, 40, TEX.sparkle, 1200 * v.u, 1.1, cp * 0.2, true)
       for (var i = 0; i < 60; i++) { var p = FX.spawn(img['fx/confetti'] || cols[i % 5], bx, by, (Math.random() - 0.5) * 1400 * v.u, -(400 + Math.random() * 900) * v.u, 2.2, cp * 0.09, false); if (p) { p.ay = 900 * v.u; p.drag = 1.2; p.vr = (Math.random() - 0.5) * 12; p.rot = 1 } }
-      call(MODE === 'race' ? 'Hore! ' + FOE.N + ' tersusul!' : 'Hore! Kamu lolos sampai finis!', 1800, 'win', true)
+      call(MODE === 'race' ? 'Hore! Kamu menyalip ' + FOE.N + '!' : 'Hore! Kamu lolos sampai finis!', 1800, 'win', true)
       if (H.callImg) { H.callImg.src = lib('mojo-char/bo-celebrate'); H.call.classList.add('cheer') }
     }
     // 'escape': the pursuer drew level -- a friendly catch; the game-over card (with COBA LAGI) names who caught you
@@ -793,7 +812,7 @@
       if (S.state === 'cut' || S.state === 'countdown') { mult = 0; S.speed = 0 }
       S.speed += (mult - S.speed) * Math.min(1, dt * 4)
       if (!S.boost || S.boost <= 0) S.boostCharge = Math.min(1, S.boostCharge + dt / (perk === 'boost' ? 4 : 5))
-      var dz = BASE_SPEED * S.speed * dt, prevPZ = S.z + Z_P
+      var dz = BASE_SPEED * TEAMK * S.speed * dt, prevPZ = S.z + Z_P
       S.z += dz
       var baseI = Math.floor(S.z / TR.SEG)
       track.ensure(Math.max(0, baseI - 4))
@@ -866,7 +885,19 @@
       S.targetLanePos += (S.targetLane - S.targetLanePos) * Math.min(1, dt * 1.6)
       // capture sequence
       if (S.state === 'capture') updateCapture(dt)
-      if (S.state === 'won') { S.wonT += dt; S.stop = Math.max(0.35, 1 - S.wonT * 0.4); if (S.wonT > (RM ? 0.5 : 2.2)) result() }
+      if (S.state === 'won') {
+        S.wonT += dt
+        if (MODE === 'race') {
+          // 0..0.6 s the rival wobbles after its bump; 0.6..2.6 s the gap closes past zero (the pass); then the cheer
+          S.slip = Math.max(0, (S.slip || 0) - dt * 0.6)
+          var pk = Math.min(1, Math.max(0, (S.wonT - 0.6) / (RM ? 0.4 : 2))), pe = pk * pk * (3 - 2 * pk)
+          S.passGap = S.passFrom + (-Z_P * 0.9 - S.passFrom) * pe
+          if (S.slip > 0 && Math.random() < dt * 14 && S.targetScreen) { var ts = S.targetScreen, pf = FX.spawn(TEX.puff, ts.x + (Math.random() - 0.5) * ts.w * 0.4, ts.y - ts.w * 0.1, (Math.random() - 0.5) * 60, -30, 0.8, ts.w * 0.18, false); if (pf) { pf.grow = ts.w * 0.3; pf.a = 0.5 } }
+          if (pk >= 1 && !S.cheered) cheer()
+          S.stop = pk < 1 ? 1 : Math.max(0.35, 1 - (S.wonT - (RM ? 1 : 2.6)) * 0.4)
+          if (S.wonT > (RM ? 1.6 : 4.4)) result()
+        } else { S.stop = Math.max(0.35, 1 - S.wonT * 0.4); if (S.wonT > (RM ? 0.5 : 2.2)) result() }
+      }
       if (S.state === 'resolve') { S.resolveT += dt; S.strobe = Math.min(1, S.strobe + dt * 2); S.policeZ += (pz + gap() + 260 - S.policeZ) * Math.min(1, dt * 1.2); if (S.resolveT > 4.2 && S.state === 'resolve') result() }
       if (S.goT > 0) { S.goT -= dtr; if (S.goT <= 0 && S.hearts <= 0) gameOver() }
       // fx timers
@@ -884,7 +915,7 @@
     }
     function starGoal () { return Math.max(6, Math.round(S.seconds / 7)) }   // the 'n/10' goal in the HUD = the second result star
     function gap0 () { return 1700 + (1 - Math.min(1, S.prog)) * 3600 }
-    function gap () { return S.state === 'cut' || S.state === 'countdown' ? S.cutGap : gap0() }   // the robber stays readable on screen (mockup)
+    function gap () { return S.state === 'cut' || S.state === 'countdown' ? S.cutGap : S.state === 'won' && S.passGap != null ? S.passGap : gap0() }   // the robber stays readable on screen (mockup)
     function laneX (lanePos) { return TR.LANES[0] * TR.ROADW + (TR.LANES[2] - TR.LANES[0]) * TR.ROADW * lanePos / 2 }
     var tmpP = { x: 0, y: 0, w: 0, s: 0 }
     function laneScreen (lane, z) {
@@ -1179,7 +1210,7 @@
       var scale = s.p1.s, x = s.p1.x + scale * laneX(S.targetLanePos) * v.hw, y = s.p1.y, wpx = scale * 1150 * v.hw
       var bounce = Math.abs(Math.sin(S.t * 11)) * wpx * 0.012 + (S.robHop > 0 ? Math.abs(Math.sin((0.6 - S.robHop) / 0.6 * Math.PI * 2)) * wpx * 0.06 : 0)   // + the laugh hop
       c.globalAlpha = 0.35; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x, y, wpx * 0.48, wpx * 0.07, 0, 0, TAU); c.fill(); c.globalAlpha = 1
-      var lean = clamp((S.targetLane - S.targetLanePos) * 0.06, -0.09, 0.09)   // leans into its swerve
+      var lean = clamp((S.targetLane - S.targetLanePos) * 0.06, -0.09, 0.09) + (S.slip > 0 && !RM ? Math.sin(S.t * 26) * 0.09 * S.slip : 0)   // leans into its swerve; wobbles after a bump
       if (TS && img['ts:straight']) {
         // a film racer ahead: its own three views, steering with its swerve, wheels at the race's pace
         var tst = clamp((S.targetLane - S.targetLanePos) * 1.6, -1, 1), tk = wpx * 0.9 / TS.anchor.bw

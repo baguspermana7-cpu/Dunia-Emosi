@@ -80,7 +80,7 @@
       var r = record(records[lv.id])
       if (integer(r.stars,1,3)) out[lv.id] = {stars:r.stars,t:bounded(r.t,8640000000000000,0)}
     })
-    return {v:1,lv:out,cp:checkpoint(raw.cp,ML,PG),set:{sound:typeof settings.sound === 'boolean' ? settings.sound : true,narr:typeof settings.narr === 'boolean' ? settings.narr : false,lang:settings.lang === 'en' ? 'en' : 'id'},seen:flags(raw.seen,Object.keys(ML.FORMS)),mg:flags(raw.mg,masteryKeys(ML.LEVELS)),rewardBolts:bounded(raw.rewardBolts,MAX_REWARDS,0)}
+    return {v:1,lv:out,cp:checkpoint(raw.cp,ML,PG),set:{sound:typeof settings.sound === 'boolean' ? settings.sound : true,music:typeof settings.music === 'boolean' ? settings.music : true,narr:typeof settings.narr === 'boolean' ? settings.narr : false,lang:settings.lang === 'en' ? 'en' : 'id'},seen:flags(raw.seen,Object.keys(ML.FORMS)),mg:flags(raw.mg,masteryKeys(ML.LEVELS)),rewardBolts:bounded(raw.rewardBolts,MAX_REWARDS,0)}
   }
   W.MojoSave = {clean:clean}
 })(typeof window !== 'undefined' ? window : globalThis)

@@ -231,9 +231,14 @@ def merge(entries, replace):
     print(len(data) - n, 'added,', len(data), 'racers')
 
 
-def single(rid, name, gif):
-    # Lightning McQueen (owner 2026-10-18): one straight-view GIF, 72 frames at 50 ms -> every 3rd frame
-    e = gif_racer(rid, name, {'straight': gif}, 3)
+def single(rid, name, gif, left=None, right=None):
+    # Lightning McQueen (owner 2026-10-18): Original_Red_Car_95_3_Motions -- Fast (straight), Left, Right GIFs, 72 frames
+    # at 50 ms -> every 3rd frame. The Left / Right pair are drawn as mirror images of each other with the "95" still
+    # readable, so they are used as given (a mirrored Left would print the number backwards).
+    gifs = {'straight': gif}
+    if left: gifs['left'] = left
+    if right: gifs['right'] = right
+    e = gif_racer(rid, name, gifs, 3)
     e['order'] = 0
     merge([(rid, e)], True)
 
@@ -255,9 +260,10 @@ def gifdir(pack, replace=False):
 if __name__ == '__main__':
     # python3 tools/ingest-film-racers.py <pack dir>
     # python3 tools/ingest-film-racers.py --single <id> "<Name>" <straight-view.gif>   (adds / replaces one racer)
+    #   python3 tools/ingest-film-racers.py --single <id> "<Name>" <straight.gif> [<left.gif> <right.gif>]
     #   python3 tools/ingest-film-racers.py --gifdir <folder with <id>/straight|left|right.gif + manifest.json>
     if sys.argv[1] == '--single':
-        single(sys.argv[2], sys.argv[3], sys.argv[4])
+        single(sys.argv[2], sys.argv[3], sys.argv[4], *(sys.argv[5:7]))
     elif sys.argv[1] == '--gifdir':
         gifdir(sys.argv[2], '--replace' in sys.argv)
     else:

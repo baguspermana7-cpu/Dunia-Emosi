@@ -110,6 +110,26 @@
   }
   W.addEventListener('storage',function (e) { if (e.key === 'dunia-emosi-sound' || e.key === null) syncSound() })
 
+  /* ── background music (owner 2026-10-18): the Mojo theme song softly (55 %) on every screen OUTSIDE the race; the
+     race brings its own engine and weather sound. It fades in and out (never a cut), dips under Bo's voice, stops when
+     the tab is hidden, and follows the sound switch and the "Musik" setting. Starts on the first tap (autoplay rule). */
+  var BGM = null, bgmVol = 0, bgmT = 0, bgmGo = false, BGM_VOL = 0.55
+  function racing () { return !!D.getElementById('chase-host') }
+  function bgmWant () { return bgmGo && soundOn() && S.set.music !== false && !racing() && !D.hidden }
+  function bgmTick () {
+    var want = bgmWant(), target = want ? BGM_VOL * (W.speechSynthesis && W.speechSynthesis.speaking ? 0.45 : 1) : 0
+    if (want && !BGM) { BGM = new Audio('../assets/audio/mojo-theme.mp3'); BGM.loop = true; BGM.volume = 0; BGM.preload = 'auto' }
+    if (!BGM) return
+    if (want && BGM.paused) { var pp = BGM.play(); if (pp && pp.catch) pp.catch(function () {}) }
+    bgmVol += (target - bgmVol) * 0.18; if (Math.abs(target - bgmVol) < 0.01) bgmVol = target
+    BGM.volume = Math.max(0, Math.min(1, bgmVol))
+    if (!want && bgmVol <= 0.001 && !BGM.paused) BGM.pause()
+  }
+  setInterval(bgmTick, 100)
+  ;['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { W.addEventListener(ev, function () { bgmGo = true }, { capture: true, passive: true }) })
+  D.addEventListener('visibilitychange', bgmTick)
+  W.__mojoBgm = function () { return { on: !!BGM && !BGM.paused, vol: +bgmVol.toFixed(2), want: bgmWant(), racing: racing() } }   // QA seam
+
   /* ── words ──────────────────────────────────────────────────────────── */
   var LABEL = { up: 'Atas', down: 'Bawah', west: 'Kiri', east: 'Kanan', fwd: 'Maju', left: 'Kiri', right: 'Kanan', push: 'Dorong', spray: 'Semprot', raise: 'Naik', lower: 'Turun', rescue: 'Tolong', pick: 'Ambil', drop: 'Taruh',
     repair: 'Perbaiki', jump: 'Lompat', takeoff: 'Terbang', land: 'Mendarat', hook: 'Kait', release: 'Lepas',
@@ -1897,6 +1917,7 @@
     function seg (key, opts) { return '<div class="seg" data-k="' + key + '">' + opts.map(function (o) { return '<button type="button" data-v="' + o[0] + '" class="' + (String(S.set[key]) === String(o[0]) ? 'on' : '') + '">' + o[1] + '</button>' }).join('') + '</div>' }
     overlay('ov-card', '<div class="card"><h2 class="fk">Pengaturan</h2>' +
       '<div class="set-row"><b>Suara efek</b>' + seg('sound', [[true, 'Nyala'], [false, 'Mati']]) + '</div>' +
+      '<div class="set-row"><b>Musik</b>' + seg('music', [[true, 'Nyala'], [false, 'Mati']]) + '</div>' +
       '<div class="set-row"><b>Bo membacakan</b>' + seg('narr', [[true, 'Nyala'], [false, 'Mati']]) + '</div>' +
       '<div class="set-row"><b>Kata alat</b>' + seg('lang', [['id', 'Indonesia'], ['en', 'English']]) + '</div>' +
       '<div class="row"><button class="btn b-soft fk" id="set-parent" type="button">Untuk Orang Tua</button><button class="btn b-go fk" id="set-ok" type="button"><i class="ico">' + MA.icon('check') + '</i><span>Selesai</span></button></div></div>')
