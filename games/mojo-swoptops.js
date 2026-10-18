@@ -110,25 +110,20 @@
   }
   W.addEventListener('storage',function (e) { if (e.key === 'dunia-emosi-sound' || e.key === null) syncSound() })
 
-  /* ── background music (owner 2026-10-18): the Mojo theme song softly (55 %) on every screen OUTSIDE the race; the
-     race brings its own engine and weather sound. It fades in and out (never a cut), dips under Bo's voice, stops when
-     the tab is hidden, and follows the sound switch and the "Musik" setting. Starts on the first tap (autoplay rule). */
-  var BGM = null, bgmVol = 0, bgmT = 0, bgmGo = false, BGM_VOL = 0.55
+  /* ── background music (owner 2026-10-18), games/dunia-music.js (seamless loops, one song at a time):
+     the Mojo theme (55 %) on the menus outside the race; "Life Is a Highway" (50 %) for Tim Film Balap, on its menu AND
+     in its races. Both dip under Bo's voice, stop when the tab is hidden and follow the sound switch + "Musik" setting. */
+  var MUS = W.DuniaMusic ? { theme: W.DuniaMusic.track('../assets/audio/mojo-theme.mp3', { vol: 0.55 }), film: W.DuniaMusic.track('../assets/audio/mojo-highway.mp3', { vol: 0.5 }) } : null
   function racing () { return !!D.getElementById('chase-host') }
-  function bgmWant () { return bgmGo && soundOn() && S.set.music !== false && !racing() && !D.hidden }
-  function bgmTick () {
-    var want = bgmWant(), target = want ? BGM_VOL * (W.speechSynthesis && W.speechSynthesis.speaking ? 0.45 : 1) : 0
-    if (want && !BGM) { BGM = new Audio('../assets/audio/mojo-theme.mp3'); BGM.loop = true; BGM.volume = 0; BGM.preload = 'auto' }
-    if (!BGM) return
-    if (want && BGM.paused) { var pp = BGM.play(); if (pp && pp.catch) pp.catch(function () {}) }
-    bgmVol += (target - bgmVol) * 0.18; if (Math.abs(target - bgmVol) < 0.01) bgmVol = target
-    BGM.volume = Math.max(0, Math.min(1, bgmVol))
-    if (!want && bgmVol <= 0.001 && !BGM.paused) BGM.pause()
+  function filmCtx () { var t = W.MojoChaseMenu && W.MojoChaseMenu.teamNow ? W.MojoChaseMenu.teamNow() : null; return t === 'film' && (racing() || D.body.getAttribute('data-scr') === 'scr-race') }
+  function musicTick () {
+    if (!MUS) return
+    var ok = soundOn() && S.set.music !== false, film = filmCtx(), talk = W.speechSynthesis && W.speechSynthesis.speaking ? 0.45 : 1
+    MUS.film.want(ok && film); MUS.theme.want(ok && !film && !racing())
+    MUS.film.duck(talk); MUS.theme.duck(talk)
   }
-  setInterval(bgmTick, 100)
-  ;['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { W.addEventListener(ev, function () { bgmGo = true }, { capture: true, passive: true }) })
-  D.addEventListener('visibilitychange', bgmTick)
-  W.__mojoBgm = function () { return { on: !!BGM && !BGM.paused, vol: +bgmVol.toFixed(2), want: bgmWant(), racing: racing() } }   // QA seam
+  setInterval(musicTick, 150)
+  W.__mojoBgm = function () { var t = MUS ? MUS.theme.state() : {}, f = MUS ? MUS.film.state() : {}; return { on: !!t.playing, vol: t.vol, film: !!f.playing, filmVol: f.vol, racing: racing(), filmCtx: filmCtx() } }   // QA seam
 
   /* ── words ──────────────────────────────────────────────────────────── */
   var LABEL = { up: 'Atas', down: 'Bawah', west: 'Kiri', east: 'Kanan', fwd: 'Maju', left: 'Kiri', right: 'Kanan', push: 'Dorong', spray: 'Semprot', raise: 'Naik', lower: 'Turun', rescue: 'Tolong', pick: 'Ambil', drop: 'Taruh',

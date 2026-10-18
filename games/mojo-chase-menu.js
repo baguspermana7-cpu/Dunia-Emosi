@@ -225,5 +225,5 @@
     run(cfg).then(next)
     return true
   }
-  W.MojoChaseMenu = { setup: setup, menu: menu, run: run, beat: beat, load: load, unlocked: unlocked, team: function (t) { TEAM = t; menu() } }
+  W.MojoChaseMenu = { setup: setup, menu: menu, run: run, beat: beat, load: load, unlocked: unlocked, team: function (t) { TEAM = t; menu() }, teamNow: function () { return TEAM } }
 })(window, document)

@@ -115,6 +115,10 @@
     // star trail: a long, safe, rewarding line to follow, drifting one lane
     trail: function (r, st) { var l = pickLane(r, st.reach == null ? 7 : st.reach), rows = []; for (var i = 0; i < 7; i++) { if (i === 3) l = Math.max(0, Math.min(2, l + (r() < 0.5 ? -1 : 1))); var row = [N, N, N]; row[l] = i === 6 ? 'coin' : 'star'; rows.push(row) } return rows },
     // final sprint when the robber is close: pads in a row, stars either side
+    // leap (2026-10-18, owner: "barrier bisa swipe ke atas untuk lompat"): an approach star, a barrier across all three
+    // lanes ('leapbar' = a barrier the chase marks as must-jump), and a row of stars where the car lands. 'leapbar' is
+    // not in BLOCK: the row is passable -- by jumping -- so the reach / never-three-blockers rules leave it alone
+    leap: function () { return [[N, 'star', N], ['leapbar', 'leapbar', 'leapbar'], ['star', 'star', 'star']] },
     sprint: function () { return [[N, 'pad', N], ['star', N, 'star'], [N, 'pad', N], ['star', 'star', 'star'], [N, 'pad', N]] }
   }
   // authored flavour per scenery (biome / base): the first name is the signature moment of that place

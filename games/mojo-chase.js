@@ -69,7 +69,7 @@
     star: { k: 'mojo-chase/items/star', w: 380, kind: 'pick', fy: 380 }, coin: { k: 'mojo-chase/items/coin', w: 380, kind: 'pick', fy: 380 },
     heart: { k: 'mojo-chase/items/heart', w: 380, kind: 'pick', fy: 400 },
     crate: { k: 'mojo-chase/items/crate', w: 650, kind: 'block' }, barrel: { k: 'mojo-chase/items/barrel', w: 450, kind: 'block' },
-    barrier: { k: 'mojo-chase/items/barrier', w: 850, kind: 'block' }, cone: { k: 'mojo-chase/items/cone', w: 380, kind: 'block' },
+    barrier: { k: 'mojo-chase/items/barrier', w: 850, kind: 'block' }, leapbar: { k: 'mojo-chase/items/barrier', w: 850, kind: 'block', leap: true }, cone: { k: 'mojo-chase/items/cone', w: 380, kind: 'block' },
     tyres: { k: 'mojo-chase/items/tyres-3', w: 520, kind: 'block' }, rock: { k: 'mojo-chase/props/rock', w: 750, kind: 'block' },
     hay: { k: 'mojo-chase/props/hay', w: 750, kind: 'block' },
     banana: { k: 'mojo-chase/items/banana', w: 450, kind: 'slip', fx: 'spin' }, oil: { k: 'mojo-chase/items/oil', w: 800, kind: 'slip', fx: 'slide', flat: true },
@@ -227,6 +227,8 @@
       '<div class="mc-call"><img alt="" src="' + lib('mojo-char/bo') + '"><span></span></div><div class="mc-edu"></div><div class="mc-reticle" role="button" aria-label="Tembakkan roket jaring"></div>' +
       '<button class="mc-btn l" type="button" aria-label="Pindah ke kiri">' + ARROW.replace('<svg', '<svg style="transform:rotate(-90deg)"') + '</button>' +
       '<button class="mc-btn u" type="button" aria-label="Ngebut"><i class="ring"></i>' + ARROW + '</button>' +
+      '<button class="mc-btn j" type="button" aria-label="Lompat"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M12 25 L24 13 L36 25" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 35 L24 23 L36 35" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/><rect x="11" y="39" width="26" height="4.5" rx="2.2" fill="#fff"/></svg><b class="ol">LOMPAT</b></button>' +
+      '<div class="mc-leap ol" aria-live="polite">LOMPAT!</div><div class="mc-swipe" aria-hidden="true"><i></i></div>' +
       '<button class="mc-btn r" type="button" aria-label="Pindah ke kanan">' + ARROW.replace('<svg', '<svg style="transform:rotate(90deg)"') + '</button>' +
       '<button class="mc-skip" type="button">Lewati</button><div class="mc-count ol" aria-live="polite"></div>' +
       '<button class="mc-gadget empty" type="button" aria-label="Roket jaring"' + (MODE !== 'robber' ? ' hidden' : '') + '><img alt="" src="' + lib('mojo-chase/items/rocket') + '"><b class="ol">0</b></button>'
@@ -237,7 +239,7 @@
     function q (s) { return host.querySelector(s) }
     var H = { hearts: q('.mc-hearts'), fill: q('.mc-prog .bar i'), car: q('.mc-prog .car'), dist: q('.mc-dist'), star: q('.mc-cnt.star b'), crate: q('.mc-cnt.crate b'),
       starBox: q('.mc-cnt.star'), crateBox: q('.mc-cnt.crate'), timer: q('.mc-timer b'), call: q('.mc-call'), callT: q('.mc-call span'), edu: q('.mc-edu'), ret: q('.mc-reticle'),
-      gad: q('.mc-gadget'), skip: q('.mc-skip'), gadN: q('.mc-gadget b'), up: q('.mc-btn.u'), mission: q('.mc-mission'), place: q('.mc-place'), count: q('.mc-count'), callImg: q('.mc-call img') }
+      gad: q('.mc-gadget'), skip: q('.mc-skip'), gadN: q('.mc-gadget b'), up: q('.mc-btn.u'), jb: q('.mc-btn.j'), leap: q('.mc-leap'), swipe: q('.mc-swipe'), mission: q('.mc-mission'), place: q('.mc-place'), count: q('.mc-count'), callImg: q('.mc-call img') }
     q('.mc-mission span').textContent = cfg.mission || stage.mission
     q('.mc-place span').textContent = (stage.place || '').toUpperCase(); q('.mc-loc').textContent = stage.place || ''
     for (var hi = 0; hi < 3; hi++) { var hImg = el('img'); hImg.alt = ''; hImg.src = lib('mojo-chase/items/heart'); H.hearts.appendChild(hImg) }
@@ -364,6 +366,61 @@
       S.laneFrom = S.lanePos; S.lane = nl; S.laneT = 0; S.laneDur = LANE_MS * Math.max(0.7, Math.abs(nl - S.lanePos)); S.laneStart = performance.now(); S.laneSim = S.simT || 0
       AU.whoosh(d); skid(d); S.laneFx = 0.4; S.laneFxLane = nl
     }
+    /* ── jump (owner 2026-10-18: "barrier bisa swipe ke atas untuk hindari, seperti loncat"): a 70 ms crouch, a 0.62 s
+       arc (the S.hop channel the Pelompat and the ramps already draw), a squash on landing with dust / splash / snow.
+       Obstacles pass under the car only in the middle of the arc (height >= 35 %): jump too late and you land on it.
+       One press is remembered while airborne or in the 0.2 s after landing. ── */
+    var JUMP_AIR = 0.62
+    function jump () {
+      if (!(S.state === 'active' || S.state === 'lock' || S.state === 'tutorial')) return
+      if (perk === 'fly') { if (!(S.hop > 0)) { S.hop = S.hopMax = 0.5; S.hopH = 0.25; AU.whoosh(0) } return }   // the helicopter just lifts a little
+      if (S.crouch > 0 || S.hop > 0 || S.jumpCd > 0) { S.qJump = true; return }
+      S.crouch = RM ? 0.001 : 0.07; S.squash = RM ? 0 : 0.3
+      var m = mojoXY(), cp = carPx(); burst(m.x, m.y, 6, img['fx/dust'] || TEX.puff, 220 * v.u, 0.4, cp * 0.16, false)
+      if (H.jb) { H.jb.classList.remove('cue'); H.jb.classList.add('on'); setTimeout(function () { H.jb && H.jb.classList.remove('on') }, 160) }
+    }
+    function takeOff () {
+      S.jmp = true; S.hop = S.hopMax = JUMP_AIR; S.hopH = (perk === 'jump' ? 0.96 : 0.8) * (RM ? 0.6 : 1); S.jumps = (S.jumps || 0) + 1; S.jt = 0
+      S.squash = RM ? 0 : -0.12   // a stretch as it leaves the road
+      AU.whoosh(0)
+      var m = mojoXY(), cp = carPx()
+      hopDust()
+      for (var i = 0; i < 6; i++) { var p = FX.spawn(TEX.glowC, m.x + (Math.random() - 0.5) * cp * 0.7, m.y - cp * 0.1, (Math.random() - 0.5) * 40 * v.u, 380 * v.u, 0.35, cp * 0.12, true); if (p) { p.grow = -cp * 0.2; p.a = 0.6 } }   // speed streaks under the car
+      if (S.swipeTeach) { S.swipeTeach = false; H.swipe.classList.remove('on') }
+    }
+    function land () {
+      S.jmp = false; S.hopH = 0; S.jumpCd = 0.2; S.squash = RM ? 0 : 0.45
+      if (!RM) S.shake = Math.max(S.shake, 0.12)
+      AU.thud && AU.thud()
+      var m = mojoXY(), cp = carPx(), wet = stage.wet, snow = /snow/.test(look0)
+      if (wet) { ring(m.x, m.y, 0); burst(m.x, m.y, 12, TEX.glowB, 520 * v.u, 0.5, cp * 0.12, true) }
+      else if (snow) burst(m.x, m.y, 14, TEX.puff, 420 * v.u, 0.7, cp * 0.24, false)
+      else { hopDust(); burst(m.x, m.y, 8, img['fx/dust'] || TEX.puff, 520 * v.u, 0.55, cp * 0.26, false) }
+      burst(m.x, m.y - cp * 0.05, 6, TEX.sparkle, 360 * v.u, 0.35, cp * 0.08, true)
+    }
+    // the must-jump row: ~1.6 s out the "LOMPAT!" pill shows and the button glows; until the child has cleared two such
+    // rows (remembered per device) a swipe-up hand demonstrates the gesture. The rival ahead hops the row too.
+    var LEARN_KEY = 'mojo-jump-learned'
+    function learned () { try { return +(W.localStorage.getItem(LEARN_KEY) || 0) } catch (e) { return 2 } }
+    function leapCue () {
+      if (!(S.state === 'active' || S.state === 'lock' || S.state === 'tutorial')) { if (S.leapCueOn) { S.leapCueOn = false; H.leap.classList.remove('on'); H.swipe.classList.remove('on'); if (H.jb) H.jb.classList.remove('cue') } return }
+      var pz = S.z + Z_P, near = 1e9, tzr = S.z + Z_P + gap()
+      for (var i = 0; i < POOL.length; i++) {
+        var o = POOL[i]; if (!o.on || o.type !== 'leapbar') continue
+        var oz = o.seg * TR.SEG + TR.SEG / 2, d = oz - pz
+        if (d > 0 && d < near) near = d
+        if (!o.rivalHop && oz < tzr && oz > tzr - TR.SEG * 3) { o.rivalHop = true; S.tgtJ = 0.6 }   // the rival clears it just ahead of us
+        if (!o.counted && d < -TR.SEG && o.cleared) { o.counted = true; try { W.localStorage.setItem(LEARN_KEY, String(learned() + 1)) } catch (e) {} }
+      }
+      var secs = near / Math.max(1, BASE_SPEED * TEAMK * Math.max(0.4, S.speed)), cue = secs < 1.6
+      S.leapSecs = near < 1e9 ? secs : null
+      if (cue !== !!S.leapCueOn) {
+        S.leapCueOn = cue; H.leap.classList.toggle('on', cue); if (H.jb) H.jb.classList.toggle('cue', cue)
+        if (cue) { AU.clack && AU.clack(); if (learned() < 2) { S.swipeTeach = true; H.swipe.classList.add('on'); call('Geser ke atas untuk LOMPAT!', 1800, 'leapteach') } }
+        else { S.swipeTeach = false; H.swipe.classList.remove('on') }
+      }
+    }
+    function airFrac () { return S.jmp && S.hop > 0 ? Math.sin((1 - S.hop / (S.hopMax || JUMP_AIR)) * Math.PI) : 0 }
     function boost () {
       if (!(S.state === 'active' || S.state === 'lock')) return
       if (S.boostCharge < 1) { call('Isi tenaga dulu!', 900, 'charge'); return }
@@ -386,7 +443,7 @@
       b.addEventListener('pointerdown', function (e) { e.preventDefault(); e.stopPropagation(); b.classList.add('on'); fn() })
       ;['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) { b.addEventListener(n, function () { b.classList.remove('on') }) })
     }
-    bindBtn(q('.mc-btn.l'), function () { laneTo(-1) }); bindBtn(q('.mc-btn.r'), function () { laneTo(1) }); bindBtn(H.up, boost); bindBtn(H.gad, fire)
+    bindBtn(q('.mc-btn.l'), function () { laneTo(-1) }); bindBtn(q('.mc-btn.r'), function () { laneTo(1) }); bindBtn(H.up, boost); bindBtn(H.jb, jump); bindBtn(H.gad, fire)
     H.ret.addEventListener('pointerdown', function (e) { e.preventDefault(); fire() })
     q('.mc-pause').addEventListener('click', function () { pause(true) })
     H.skip.addEventListener('click', function () { endCut() })
@@ -396,13 +453,13 @@
       if (!sw) return
       var dx = e.clientX - sw.x, dy = e.clientY - sw.y, dt = performance.now() - sw.t
       if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy) && dt < 700) laneTo(dx < 0 ? -1 : 1)
-      else if (dy < -40 && Math.abs(dy) > Math.abs(dx)) boost()
+      else if (dy < -40 && Math.abs(dy) > Math.abs(dx)) jump()   // swipe up = jump (owner 2026-10-18); TURBO is the big button
       else if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && S.state === 'lock') fire()
       sw = null
     })
     function key (e) {
       if (S.state === 'result' || S.paused) return
-      if (e.key === 'ArrowLeft') laneTo(-1); else if (e.key === 'ArrowRight') laneTo(1); else if (e.key === 'ArrowUp') boost(); else if (e.key === ' ' || e.key === 'Enter') fire(); else if (e.key === 'Escape') pause(true); else return
+      if (e.key === 'ArrowLeft') laneTo(-1); else if (e.key === 'ArrowRight') laneTo(1); else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') jump(); else if (e.key === 'Shift' || e.key === 'b' || e.key === 'B') boost(); else if (e.key === ' ' || e.key === 'Enter') fire(); else if (e.key === 'Escape') pause(true); else return
       e.preventDefault()
     }
     D.addEventListener('keydown', key)
@@ -490,6 +547,7 @@
     function hit (o, sx, sy) {
       o.taken = true
       if (S.state === 'won') return   // the finish (the overtake, the cheer) is never interrupted by a BROK
+      if (o.type === 'leapbar') S.leapHits = (S.leapHits || 0) + 1
       var info = OBJ[o.type], cp = carPx()
       // which branch handled this hit: read by the gate (tools/qa-mojo-chase.mjs) to prove no form is immune
       S.lastHitType = o.type; S.lastHitPerk = perk
@@ -592,7 +650,7 @@
     function tyrePuff (dir, k) {
       var a = rearA || { cx: 149, base: 247, bw: 179, dust: [], kind: 'ground' }, seg = track && track.seg(Math.floor((S.z + Z_P) / TR.SEG)), kind = tyreKind(a, seg)
       if (!kind || !a.dust || !a.dust.length) return
-      var cp = carPx(), m = mojoXY(), sc = cp / a.bw, ox = m.x - a.cx * sc, oy = m.y - a.base * sc + bob() - (S.hop > 0 ? Math.sin((1 - S.hop / (S.hopMax || 0.5)) * Math.PI) * cp * (S.hopMax > 0.5 ? 0.7 : 0.35) : 0)
+      var cp = carPx(), m = mojoXY(), sc = cp / a.bw, ox = m.x - a.cx * sc, oy = m.y - a.base * sc + bob() - (S.hop > 0 ? Math.sin((1 - S.hop / (S.hopMax || 0.5)) * Math.PI) * cp * (S.hopH || (S.hopMax > 0.5 ? 0.7 : 0.35)) : 0)
       // the outer wheel of a right turn is the LEFT one; 72% of the puffs come from it
       var outer = dir > 0 ? 0 : dir < 0 ? a.dust.length - 1 : Math.floor(Math.random() * a.dust.length), wi = Math.random() < 0.72 ? outer : a.dust.length - 1 - outer, w = a.dust[wi]
       var side = w[0] < a.cx ? -1 : 1, x = ox + w[0] * sc + (Math.random() - 0.5) * cp * 0.04, y = oy + w[1] * sc
@@ -629,7 +687,10 @@
         else {
           row = R.genRow(rr, rowSt)
           if (--S.patIn <= 0 && !W.__mcNoPatterns && !rowSt.noHazard && S.state === 'active' && S.elapsed > 6) {   // an authored moment (slalom / gates / boost tunnel / ramp / star trail), then random rows again
-            var pname = S.sprintDue && S.prog > 0.72 ? 'sprint' : R.nextPattern(rr, rowSt)
+            // a must-jump barrier row now and then (after 20 s, at most every 25 s, never near the finish or an edu gate)
+            var leapNow = !W.__mcNoLeap && S.elapsed > 20 && S.elapsed - (S.leapAt == null ? -99 : S.leapAt) > 25 && S.prog < 0.8 && !(S.edu && !S.eduDone) && rr() < 0.4
+            var pname = S.sprintDue && S.prog > 0.72 ? 'sprint' : leapNow ? 'leap' : R.nextPattern(rr, rowSt)
+            if (pname === 'leap') S.leapAt = S.elapsed
             if (pname === 'sprint') S.sprintDue = false
             S.patQ = R.pattern(pname, rr, rowSt).slice(); S.patNames.push(pname); S.patIn = 8 + Math.floor(rr() * 7)
           }
@@ -796,7 +857,12 @@
       if (S.slide > 0) { S.slide -= dt; S.lanePos += Math.sin(S.t * 14) * dt * 0.6 }
       if (S.spin > 0) S.spin -= dt
       if (S.laneFx > 0) S.laneFx -= dt
-      if (S.hop > 0) { S.hop -= dt; if (S.hop <= 0) { hopDust(); if (S.hopMax > 0.5) { if (!RM) S.shake = Math.max(S.shake, 0.3); AU.thud && AU.thud(); S.hopMax = 0.5 } else if (!RM) S.shake = Math.max(S.shake, 0.08) } }   // landing dust
+      if (S.tgtJ > 0) S.tgtJ = Math.max(0, S.tgtJ - dt)
+      leapCue()
+      if (S.crouch > 0) { S.crouch -= dt; if (S.crouch <= 0) { S.crouch = 0; takeOff() } }
+      if (S.jumpCd > 0) { S.jumpCd -= dt; if (S.jumpCd <= 0 && S.qJump) { S.qJump = false; jump() } }
+      if (S.jmp && S.hop > 0) { S.jt = (S.jt || 0) + dt; S.hop -= dt; if (S.hop <= 0) { S.hop = 0; land() } }
+      else if (S.hop > 0) { S.hop -= dt; if (S.hop <= 0) { S.hopH = 0; hopDust(); if (S.hopMax > 0.5) { if (!RM) S.shake = Math.max(S.shake, 0.3); AU.thud && AU.thud(); S.hopMax = 0.5 } else if (!RM) S.shake = Math.max(S.shake, 0.08) } }   // landing dust
       if (S.robHop > 0) S.robHop -= dtr
       // speed
       var mult = 1
@@ -855,7 +921,10 @@
         if (oz > prevPZ && oz <= pz) {
           // hazards collide with the car body (85% size: the box shrank with it); pickups keep their generous reach
           var d = Math.abs(o.lane - S.lanePos), info = OBJ[o.type], haz = info.kind === 'block' || info.kind === 'slip', reach = haz ? 0.55 * CAR_K : info.kind === 'pick' && S.magnet > 0 ? 1.6 : 0.55
-          if (d < reach && S.spin <= 0.6 && !(haz && S.hop > 0 && S.hopMax > 0.5)) {
+          if (haz && d < reach && S.jmp && airFrac() >= 0.35) {   // jumped over it: it passes under the car
+            o.pass = true; o.taken = true; S.brokWhy = 'leap'; S.leapPasses = (S.leapPasses || 0) + 1
+            if (airFrac() > 0.6 && !o.cleared) { o.cleared = true; S.cleanClears = (S.cleanClears || 0) + 1; S.stars += 1; var spc = laneScreen(o.lane, pz); burst(spc.x, spc.y - carPx() * 0.3, 16, TEX.sparkle, 700 * v.u, 0.7, carPx() * 0.14, true); if (!RM) S.hitStop = Math.max(S.hitStop || 0, 0.04); if (OBJ[o.type].leap) call('Hup! Lompat hebat!', 1000, 'leapok') }
+          } else if (d < reach && S.spin <= 0.6 && !(haz && S.hop > 0 && S.hopMax > 0.5 && !S.jmp)) {
             var sp = laneScreen(o.lane, pz)
             if (haz) hit(o, sp.x, sp.y); else pick(o, sp.x, sp.y)
           } else if (info.kind === 'block' && d < 0.95 && S.recover <= 0 && (S.state === 'active' || S.state === 'lock')) nearMiss()
@@ -904,7 +973,7 @@
       if (S.state === 'resolve') { S.resolveT += dt; S.strobe = Math.min(1, S.strobe + dt * 2); S.policeZ += (pz + gap() + 260 - S.policeZ) * Math.min(1, dt * 1.2); if (S.resolveT > 4.2 && S.state === 'resolve') result() }
       if (S.goT > 0) { S.goT -= dtr; if (S.goT <= 0 && S.hearts <= 0) gameOver() }
       // fx timers
-      S.shake = Math.max(0, S.shake - dt * 1.6); S.flash = Math.max(0, S.flash - dt * 2.4); S.squash = Math.max(0, (S.squash || 0) - dt)
+      S.shake = Math.max(0, S.shake - dt * 1.6); S.flash = Math.max(0, S.flash - dt * 2.4); S.squash = (S.squash || 0) > 0 ? Math.max(0, S.squash - dt * (S.jmp || S.jumpCd > 0 || S.crouch > 0 ? 3.2 : 1)) : Math.min(0, (S.squash || 0) + dt * 1.4)
       if (S.punch > 0) { S.punch -= dt; canvas.classList.toggle('punch', S.punch > 0) }
       if (callT > 0) { callT -= dtr; if (callT <= 0) H.call.classList.remove('on') }
       // emitters
@@ -1047,7 +1116,7 @@
         GLX.enable(quality === 2 && !RM)
         if (quality === 2 && !RM) {
           var tk = ''; try { var td = HK().atmos && HK().atmos.timeOfDay ? HK().atmos.timeOfDay() : null; tk = td ? td.key : '' } catch (e) {}
-          GLX.frame({ t: S.t, boost: S.boost > 0 ? Math.min(1, 0.35 + S.boost) : 0, night: night ? 1 : atm.L,
+          GLX.frame({ t: S.t, boost: S.boost > 0 ? Math.min(1, 0.35 + S.boost) : S.jmp && S.jt < 0.15 ? 0.25 : 0, night: night ? 1 : atm.L,
             warm: tk === 'sore' || tk === 'senja' ? 0.8 : tk === 'pagi' ? 0.35 : night ? -0.6 : 0.1,
             haze: /desert|volcano|canyon/.test(stage.biome || '') ? 0.7 : 0, bloom: night ? 0.75 : 0.5 })
         }
@@ -1216,11 +1285,18 @@
       }
       c.globalAlpha = 0.3 * alpha; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x, p1.y, wpx * 0.5, wpx * 0.09, 0, 0, TAU); c.fill(); c.globalAlpha = 1
       spr(im, x, p1.y, wpx, an, alpha)
+      if (info.leap && wpx > 6) {   // must-jump: an up-chevron sign above the barrier, blinking as it nears
+        var sy = p1.y - wpx * 0.62, sw = wpx * 0.42, lit = RM || Math.floor(S.t * 6) % 2
+        c.globalAlpha = alpha; c.fillStyle = lit ? '#FFD23F' : '#FFB000'; roundRect(x - sw / 2, sy - sw * 0.55, sw, sw * 0.62, sw * 0.12); c.fill()
+        c.strokeStyle = '#1B1B1B'; c.lineWidth = Math.max(1, sw * 0.1); c.lineCap = 'round'; c.lineJoin = 'round'
+        c.beginPath(); c.moveTo(x - sw * 0.24, sy - sw * 0.06); c.lineTo(x, sy - sw * 0.34); c.lineTo(x + sw * 0.24, sy - sw * 0.06); c.stroke()
+        c.globalAlpha = 1
+      }
     }
     function drawTarget (s, tz) {
       if (MODE === 'escape') { S.targetScreen = null; return }   // nobody ahead: the pursuer is behind (drawEscape)
       var scale = s.p1.s, x = s.p1.x + scale * laneX(S.targetLanePos) * v.hw, y = s.p1.y, wpx = scale * 1150 * v.hw
-      var bounce = Math.abs(Math.sin(S.t * 11)) * wpx * 0.012 + (S.robHop > 0 ? Math.abs(Math.sin((0.6 - S.robHop) / 0.6 * Math.PI * 2)) * wpx * 0.06 : 0)   // + the laugh hop
+      var bounce = (S.tgtJ > 0 ? Math.sin((1 - S.tgtJ / 0.6) * Math.PI) * wpx * 0.32 : 0) + Math.abs(Math.sin(S.t * 11)) * wpx * 0.012 + (S.robHop > 0 ? Math.abs(Math.sin((0.6 - S.robHop) / 0.6 * Math.PI * 2)) * wpx * 0.06 : 0)   // + the laugh hop
       c.globalAlpha = 0.35; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x, y, wpx * 0.48, wpx * 0.07, 0, 0, TAU); c.fill(); c.globalAlpha = 1
       var lean = clamp((S.targetLane - S.targetLanePos) * 0.06, -0.09, 0.09) + (S.slip > 0 && !RM ? Math.sin(S.t * 26) * 0.09 * S.slip : 0)   // leans into its swerve; wobbles after a bump
       if (TS && img['ts:straight']) {
@@ -1348,13 +1424,13 @@
       var m = mojoXY(), cp = carPx(), a = rearA || { cx: 149, base: 247, bw: 179, lights: [], kind: 'ground' }, im = img.rear
       // amph (the Perahu catamaran) glides on its pontoons: a slow swell bob and a gentle roll, never wheel bounce
       var air = a.kind === 'air', amph = a.kind === 'amph', hover = air ? -cp * 0.14 + Math.sin(S.t * 3) * cp * 0.02 : amph && !RM ? -cp * 0.012 + Math.sin(S.t * 4.2) * cp * 0.014 : 0
-      var lean = (S.lane - S.lanePos) * -0.12 + (amph && !RM ? Math.sin(S.t * 2.1) * 0.025 : 0) + (S.spin > 0 ? (0.8 - S.spin) / 0.8 * TAU : 0), sq = S.squash > 0 ? 1 - S.squash * 0.4 : 1
+      var lean = (S.lane - S.lanePos) * -0.12 + (amph && !RM ? Math.sin(S.t * 2.1) * 0.025 : 0) + (S.spin > 0 ? (0.8 - S.spin) / 0.8 * TAU : 0), sq = S.squash ? 1 - S.squash * 0.4 : 1
       // headlight cone at night / in tunnels
       scene.headlights(c, m.x, m.y - cp * 0.3, cp, night || S.tunnel > 0.4 ? 1 : atm.L)
       // soft contact shadow (aerial forms: offset and smaller)
-      c.globalAlpha = air ? 0.22 : 0.42; c.fillStyle = '#000'; c.beginPath(); c.ellipse(m.x + (air ? cp * 0.06 : 0), m.y + (air ? cp * 0.04 : 0), cp * (air ? 0.4 : 0.55), cp * 0.09, 0, 0, TAU); c.fill(); c.globalAlpha = 1
+      var af = airFrac(); c.globalAlpha = (air ? 0.22 : 0.42) * (1 - af * 0.55); c.fillStyle = '#000'; c.beginPath(); c.ellipse(m.x + (air ? cp * 0.06 : 0), m.y + (air ? cp * 0.04 : 0), cp * (air ? 0.4 : 0.55) * (1 - af * 0.35), cp * 0.09 * (1 - af * 0.35), 0, 0, TAU); c.fill(); c.globalAlpha = 1
       var k = cp / a.bw
-      var hopY = S.hop > 0 ? Math.sin((1 - S.hop / (S.hopMax || 0.5)) * Math.PI) * cp * (S.hopMax > 0.5 ? 0.7 : 0.35) : 0   // the jumper's hop over a pothole or rock
+      var hopY = S.hop > 0 ? Math.sin((1 - S.hop / (S.hopMax || 0.5)) * Math.PI) * cp * (S.hopH || (S.hopMax > 0.5 ? 0.7 : 0.35)) : 0   // the jumper's hop over a pothole or rock
       var st = steerPose ? steerNow() : 0
       var sideArt = RS && img['rs:left'] && img['rs:right']   // a racer with drawn turn poses (McQueen has only straight)
       if (sideArt) lean *= 0.35   // the art itself turns; the body only follows a little
@@ -1521,6 +1597,14 @@
     /* autopilot (QA test seam; never used for the child) */
     function autopilot () {
       var A = S.auto, pz = S.z + Z_P, baseI = Math.floor(pz / TR.SEG)
+      if (A.mode !== 'crash' && !(S.hop > 0) && !(S.crouch > 0)) {   // jump a must-jump row (or, with A.jump, any hazard) ~0.4 s before it
+        var lead = BASE_SPEED * TEAMK * Math.max(0.4, S.speed) * 0.4
+        for (var ai = 0; ai < POOL.length; ai++) {
+          var ao = POOL[ai]; if (!ao.on || ao.taken) continue
+          var ak = OBJ[ao.type].kind, d0 = ao.seg * TR.SEG + TR.SEG / 2 - pz
+          if ((ak === 'block' || ak === 'slip') && Math.abs(ao.lane - S.lanePos) < 0.5 && d0 > 0 && d0 < lead && (ao.type === 'leapbar' || A.jump)) { jump(); break }
+        }
+      }
       if (S.state === 'lock' && S.lockT > 0.4) { fire(); return }
       if (S.laneT < 1) return
       // look at the next row ahead (6..30 segments)
@@ -1680,7 +1764,7 @@
           frameMedian: med(ringArr(FR, frN)), frameTimes: ringArr(FR, frN), workMedian: { 0: med(ringArr(TF[0].a, TF[0].n)), 1: med(ringArr(TF[1].a, TF[1].n)), 2: med(ringArr(TF[2].a, TF[2].n)) }, frames: frN,
           par: scene ? { far: scene.par.far, mid: scene.par.mid, roadside: scene.par.roadside, road: scene.par.road } : null,
           ring: track ? track.ring.length : 0, made: track ? track.made() : 0, chevrons: track ? track.chevronAudit() : null,
-          edu: S.eduResult, eduPrompt: S.edu ? S.edu.prompt : null, particles: FX.live(), cap: FX.cap(), stage: stage.id, target: targetName, corridor: v.w ? { hy: v.hy * v.css, top: (v.playerY - carPx() * 1.15) * v.css, cx: v.cx * v.css, wTop: v.w * 0.04 * v.css, wBot: TR.ROADW * v.hw / Z_P * 1.1 * v.css } : null, rear: rearKey, form: formId, captureMs: S.captureMs, recForm: recForm, mode: MODE, press: S.press || 0, racerSheet: !!(RS && img['rs:straight']), targetSheet: !!(TS && img['ts:straight']), pursuer: !!img.pursuer, steer: S.steer || 0, curveSteer: S.curveS || 0,
+          edu: S.eduResult, eduPrompt: S.edu ? S.edu.prompt : null, particles: FX.live(), cap: FX.cap(), stage: stage.id, target: targetName, corridor: v.w ? { hy: v.hy * v.css, top: (v.playerY - carPx() * 1.15) * v.css, cx: v.cx * v.css, wTop: v.w * 0.04 * v.css, wBot: TR.ROADW * v.hw / Z_P * 1.1 * v.css } : null, rear: rearKey, form: formId, captureMs: S.captureMs, recForm: recForm, air: +airFrac().toFixed(2), jumps: S.jumps || 0, cleanClears: S.cleanClears || 0, leapPasses: S.leapPasses || 0, leapHits: S.leapHits || 0, leapCue: !!S.leapCueOn, leapSecs: S.leapSecs == null ? null : +S.leapSecs.toFixed(2), hits: S.hits, boost: S.boost, mode: MODE, press: S.press || 0, racerSheet: !!(RS && img['rs:straight']), targetSheet: !!(TS && img['ts:straight']), pursuer: !!img.pursuer, steer: S.steer || 0, curveSteer: S.curveS || 0,
           perk: perk, taunt: TN.on ? TN.text : null, tauntBox: TN.on && TN.box ? { x: TN.box.x * v.css, y: TN.box.y * v.css, w: TN.box.w * v.css, h: TN.box.h * v.css, fs: TN.box.fs * v.css } : null, taunts: S.taunts, smoke: S.smoke, near: S.near, carCss: carPx() * v.css, playerYCss: v.playerY * v.css, formLoading: !!formLoad, count: S.state === 'countdown' ? S.cdN : 0,
           imgs: Object.keys(img).length, prof: S.prof, missing: Object.keys(need).filter(function (n) { return !img[n] }), boost: S.boost, z: S.z,
           // the BROK gate (owner 2026-10-07): which branch swallowed the last hit, whether a burst is on
@@ -1704,6 +1788,8 @@
       forceDizzy: function (k) { S.forceDizzy = k || null },          // QA: pin the dizzy look ('stars' | 'birds')
       tap: function (what) { if (what === 'go') { var b = host.querySelector('#mc-go'); if (b) b.click() } },
       force: function (o) { for (var k in o) S[k] = o[k] },
+      jump: function () { jump() },
+      spawnLeap: function (ahead) { var si = Math.floor((S.z + Z_P) / TR.SEG) + (ahead || 40); for (var l = 0; l < 3; l++) addObj('leapbar', l, si) },
       quality: function (qv, lock) { quality = qv; S.qLock = !!lock; resize() }, profile: function (on) { S.prof = on ? {} : null },
       // 'barrier' and not 'crate': no perk neutralises the steel barrier, so the seam fires a real BROK
       // whatever form is on the road (a crate is smashed by the wrecking ball)
