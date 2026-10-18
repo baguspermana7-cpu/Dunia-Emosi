@@ -2020,148 +2020,172 @@
   "engine": "omnivoice"
  },
  "MEM-01-h1": {
-  "sha1": "c718edb5f2d36b63063027dfbb3603f6ba27d2de",
+  "sha1": "035c42360ddbf77c85ee2f957da57f785c16e706",
   "text": "Pip terbang tinggi bersama benda itu.",
   "heard": "Pip terbang tinggi bersama benda itu.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-01-h2": {
-  "sha1": "269ca73aa55567d0211a057e133a0f6a917ba142",
+  "sha1": "12e1c0be8fda3985503ddf00bd2b2664f7bf0605",
   "text": "Bendanya bisa terbang dengan angin.",
-  "heard": "Bendanya bisa terbang dengan angin.",
-  "score": 1.0
+  "heard": "Bendanya bisa terbang dengan angin!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-01-q": {
-  "sha1": "6764868933e13d7d772b92a98f8a35783af99b2f",
+  "sha1": "ad052bbb01ca56815d101134ad47da48d55ea4aa",
   "text": "Apa yang dibawa Pip?",
-  "heard": "Apa yang dibawati?",
-  "score": 0.929
+  "heard": "Apa yang dibawa pip?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-01-s0": {
-  "sha1": "1a82205b5fdafdb0d19a1c19dfe0a4ad97c3343a",
+  "sha1": "422ab77ab17f95d6a7e73716f3dba11f912ade3b",
   "text": "Pip terbang membawa sesuatu.",
-  "heard": "Pete terbang membawa sesuatu.",
-  "score": 0.913
+  "heard": "Pip terbang membawa sesuatu?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-01-s1": {
-  "sha1": "4675eedeee05eae6bab8ee8fcc158a44135d8fe9",
+  "sha1": "9bf5d20e489a5e62409e99a147de2f9b9cc0e56a",
   "text": "Perhatikan baik-baik... Pip sudah pergi!",
-  "heard": "Perhatikan baik baik, Pip sudah pergi.",
-  "score": 1.0
+  "heard": "Perhatikan baik baik, VIP sudah pergi!",
+  "score": 0.949,
+  "engine": "omnivoice"
  },
  "MEM-01-x": {
-  "sha1": "c531a3fc9a13b4f110a4c0e5cfe27f2f2f6fbb32",
+  "sha1": "809330a1f964c7b41524df1a2317fbc6546dfbbd",
   "text": "Pip membawa layang-layang.",
-  "heard": "Pip membawa mayang layang.",
-  "score": 0.947
+  "heard": "Pip membawa layang-layang.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-02-h1": {
-  "sha1": "d872ecf677c07934cdd5eb9e4d46c0bdfae4f320",
+  "sha1": "bbb5b725c5a3458c7335b57bfc54ab358b66ca0d",
   "text": "Coba ingat payung yang tadi dibuka Lulu.",
   "heard": "coba ingat payung yang tadi dibuka lulu",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-02-h2": {
-  "sha1": "0fdd9772efe7b3b9957678307de27d0694c52a53",
+  "sha1": "020d371a53776c9738c6d7da2655a5796586ff26",
   "text": "Warnanya sama seperti tomat.",
-  "heard": "Warnanya sama seperti tomat.",
-  "score": 1.0
+  "heard": "Warnanya sama seperti tomat!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-02-q": {
-  "sha1": "3a7390ee33833187e956bbd5bc7513ede361333b",
+  "sha1": "e3bd6c659ee27b3a9debef20e61b5e20b1b29785",
   "text": "Apa warna payung Lulu?",
-  "heard": "apa wanapayung lulu?",
-  "score": 0.963
+  "heard": "Apa warna tayung lulu?",
+  "score": 0.929,
+  "engine": "omnivoice"
  },
  "MEM-02-s0": {
-  "sha1": "c4f802a7a6dd2842b067aa7f5b1f56b1b79a071c",
+  "sha1": "229cf9ad4e3fd8d7972bad7f84b087ad19c550d1",
   "text": "Lulu membuka payung sebentar.",
-  "heard": "Lulu membuka payu sebentar.",
-  "score": 0.95
+  "heard": "Lulu membuka payong sebentar!",
+  "score": 0.952,
+  "engine": "omnivoice"
  },
  "MEM-02-s1": {
-  "sha1": "d243a4cbbdb24934053e6f25aa0dc21e22d246bf",
+  "sha1": "dd7c3818161c30f3f795ead6753564c25683ab6b",
   "text": "Lalu Lulu menutup dan menyimpannya.",
-  "heard": "lalu lulu menutup dan menyimpannya",
-  "score": 1.0
+  "heard": "lalu lalu menutup dan menyimpannya",
+  "score": 0.929,
+  "engine": "omnivoice"
  },
  "MEM-02-x": {
-  "sha1": "9eed4a6136b9aeda8537d6095442b7bd2af81fac",
+  "sha1": "4072cf5cead5f77d07022d5680cd2f05812a6327",
   "text": "Payung Lulu berwarna merah.",
-  "heard": "Payung lulu berwarna merah.",
-  "score": 1.0
+  "heard": "Payung lulu berwarna merah!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-03-h1": {
-  "sha1": "767fe9b4defbdfe62566ca4e7fdfa41dc0aae261",
+  "sha1": "621f9620d00ee52004f78c6395a8700ba138b8b5",
   "text": "Bentuknya punya ujung yang runcing.",
-  "heard": "bentuknya punya ujung yang runtin",
-  "score": 0.949
+  "heard": "Bentuknya punya ujung yang runcing.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-03-h2": {
-  "sha1": "eca64b5f41a43088507cbbba17f03e70bc141bc7",
+  "sha1": "9ef18ad2ccf29570369259fa888a6dc59563fd07",
   "text": "Bentuknya punya tiga sisi.",
-  "heard": "Bentuknya punya tidak sisi.",
-  "score": 0.933
+  "heard": "Bentuknya punya 3 sisi.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-03-q": {
-  "sha1": "f97fece34a2a3d24b5d4ab89fdce46e4af4a8062",
+  "sha1": "f50e506f23ce98036fb9ec2be5c7011133e2c79b",
   "text": "Bentuk apa yang ditunjukkan Koko?",
-  "heard": "Bentuk apa yang ditunjukkan Koko?",
-  "score": 1.0
+  "heard": "Bantu kata yang ditunjukkan kokoh!",
+  "score": 0.917,
+  "engine": "omnivoice"
  },
  "MEM-03-s0": {
-  "sha1": "6dc83f3f4d0ad474193d734921a1a7e60d2844de",
+  "sha1": "958f36ca91868ed90f8bae88055ee4434597174d",
   "text": "Koko menunjukkan sebuah kartu bentuk.",
-  "heard": "Kau menunjukkan sebuah katu bentuk.",
-  "score": 0.931
+  "heard": "Koko menunjukkan sebuah kartu bentuk!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-03-s1": {
-  "sha1": "1613db77e93061404226cd87a53be23ca9455a8b",
+  "sha1": "92cb3a169ed0e37c93683898be04d93cdd3bd791",
   "text": "Kartunya dibalik! Ingat bentuknya?",
-  "heard": "Kartunya dibalik ingat bentuknya.",
-  "score": 1.0
+  "heard": "Kartunya dibalik! Ingat bentuknya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-03-x": {
-  "sha1": "85949d14d5223bff420cc6dacedb785035c06fff",
+  "sha1": "ea43973becac2c8d14f2713ec81a286dd0ef5d86",
   "text": "Koko menunjukkan segitiga: bentuk dengan tiga sisi.",
-  "heard": "Koko menunjukkan segitiga bentuk dengan tidak sisi.",
-  "score": 0.962
+  "heard": "Coco menunjukkan segitiga, bentuk dengan tiga sisi.",
+  "score": 0.951,
+  "engine": "omnivoice"
  },
  "MEM-04-h1": {
-  "sha1": "4c9cdc5e81f2db6bd47d539879754b246017cf38",
+  "sha1": "aecbcc8f046584169b059982c9196f12532a604f",
   "text": "Bintangnya bergerak ke arah kanan.",
-  "heard": "Dintangnya bergerah ke arah kanan.",
-  "score": 0.931
+  "heard": "Pintangnya bergerak ke arah kanan.",
+  "score": 0.966,
+  "engine": "omnivoice"
  },
  "MEM-04-h2": {
-  "sha1": "4e1040ddee64b2fc3e9f59ce36b56ee0915aad82",
+  "sha1": "176f4e5bcccb9624fd7bce3c9afd135ee2eebf3b",
   "text": "Bintangnya masuk ke kotak paling kanan.",
-  "heard": "Bintannya masuk ke kotak paling kanan.",
-  "score": 0.985
+  "heard": "Bintangnya masuk ke kotak paling kanan.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-04-q": {
-  "sha1": "dffd5287c5e2c5fc5d564e89681f3ec7e66df579",
+  "sha1": "9c981e19d5dcb1aab160dd63a55b62937106ee7d",
   "text": "Ketuk kotak yang menyimpan bintang.",
-  "heard": "Ketuk otak yang menyimpan bintang.",
-  "score": 0.983
+  "heard": "Ketuh kotak yang menyimpan bintang.",
+  "score": 0.967,
+  "engine": "omnivoice"
  },
  "MEM-04-s0": {
-  "sha1": "106b848e0b5a544e514a2a3349c90cf24f61da8d",
+  "sha1": "390ed34f2d6a0756ccd0b540157a7f45b4120327",
   "text": "Koko menyembunyikan bintang di bawah salah satu kotak.",
-  "heard": "Coco menyembunyikan bintang di bawah salah satu kota.",
-  "score": 0.943
+  "heard": "Kokum nyambunyikan bintang dibawa salah satu kotak.",
+  "score": 0.907,
+  "engine": "omnivoice"
  },
  "MEM-04-s1": {
-  "sha1": "e23989b4ac7bcd73cef4209b0c6a935cc56fde0e",
+  "sha1": "28b0e2002c9d7720cb3faaadd22fa36a202d7ae0",
   "text": "Kotak mana yang menyimpan bintang?",
-  "heard": "kotak mana yang menyimpan bintang?",
-  "score": 1.0
+  "heard": "Kotak mana yang menyimpan bintang?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-04-x": {
-  "sha1": "787dcb73d4b925f1659646db7fb0f4516db533c6",
+  "sha1": "50f427dfed429140832117581171adce08ed340d",
   "text": "Bintangnya disembunyikan di kotak paling kanan.",
-  "heard": "Dintangnya disembunyikan di kotak paling kanan.",
-  "score": 0.976
+  "heard": "Bintangnya disembunyikan di kotak paling kanan.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-05-h1": {
   "sha1": "657223f4d175fc8aa066b34c3d9ea9109223650c",
@@ -2308,76 +2332,88 @@
   "engine": "omnivoice"
  },
  "MEM-09-h1": {
-  "sha1": "37d42a412ba25d9adf2826172ab0a50f52911848",
+  "sha1": "c59d9d4693f5233a03f7110f2829efa5c368ea47",
   "text": "Yang pertama muncul paling terang.",
-  "heard": "yang pertama muncul paling terang.",
-  "score": 1.0
+  "heard": "Yang pertama muncul paling terang!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-09-h2": {
-  "sha1": "450fd615ba0a3ec23bd29376c77236126e4f8647",
+  "sha1": "8e7647af8a11c0e44665877d23941fa6306da1a8",
   "text": "Matahari, awan, lalu bulan.",
-  "heard": "Matahari awan lalu bulan.",
-  "score": 1.0
+  "heard": "Matahari awan lalu bulan!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-09-q": {
-  "sha1": "3e80f8413bfea9489c7f7c9890c715fbde4b9f6d",
+  "sha1": "90bfde6e0a8edb6a3de316d6257d82614e827f2d",
   "text": "Ulangi urutannya: ketuk dari yang pertama.",
-  "heard": "Kulangi urutannya ketuk dari yang pertama.",
-  "score": 0.986
+  "heard": "Ulangi urutannya! Ketup dari yang pertama!",
+  "score": 0.971,
+  "engine": "omnivoice"
  },
  "MEM-09-s0": {
-  "sha1": "b3879fd81eac9d8e97a78283d54a7621cc62c1a8",
+  "sha1": "15c0ed60a114bd5bd3fd5efbed14d8302f4e2a42",
   "text": "Di langit gunung muncul: matahari, lalu awan, lalu bulan.",
-  "heard": "Dilangit kunung muncul matahari lalu awan lalu bulan.",
-  "score": 0.978
+  "heard": "Dilangit gunung muncul matahari lalu awan lalu bulan",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-09-s1": {
-  "sha1": "8289a01f2536994c69693cb833da7c2d3486c8ca",
+  "sha1": "aa14dcfff9a318c7e4155b83d8526bc75f50dba9",
   "text": "Bisakah kamu mengulang urutannya?",
   "heard": "Bisakah kamu mengulang urutannya?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-09-x": {
-  "sha1": "4aefeceaae8b491dfeb876782a655d7cba5d314c",
+  "sha1": "a516be39ef929ff9d3e54fa8a00e0babffdffd17",
   "text": "Urutannya matahari, awan, lalu bulan.",
-  "heard": "Urutannya matahari awan lalu bulan.",
-  "score": 1.0
+  "heard": "Urtanya matahari awan lalu bulan!",
+  "score": 0.966,
+  "engine": "omnivoice"
  },
  "MEM-10-h1": {
-  "sha1": "fe023297c94eb17a0806a125a58329f1a4ca3cdc",
+  "sha1": "13bcae833b78bb42c586b26f451b0b1638eecca1",
   "text": "Abaikan anjingnya. Lihat kucingnya saja.",
-  "heard": "Abaikan anjingnya lihat kucingnya saja.",
-  "score": 1.0
+  "heard": "Abaikan anjingnya, lihat kucingnya saja!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-10-h2": {
-  "sha1": "ec7e29ceecddc70ba3076a799c615c76986fb809",
+  "sha1": "99b283f5c083d16d444af70d520c8dd3e3ddb7fe",
   "text": "Tunjuk setiap kucing satu per satu sambil menghitung.",
-  "heard": "Tunjuk setiap ucing satu per satu sambil menghitung.",
-  "score": 0.989
+  "heard": "Tunjuk setiap kucing satu per satu sambil menghitung.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-10-q": {
-  "sha1": "667938c4e2c3ea3508f89b68839533c21741a1e7",
+  "sha1": "fbd7b3e79fcb0e7707337b2301c645c00da43e96",
   "text": "Ada berapa kucing?",
-  "heard": "ada berapa kucing",
-  "score": 1.0
+  "heard": "Ada berapa kucing?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-10-s0": {
-  "sha1": "ac71c1d64963e6ed70250ceb506a03b40692f8b8",
+  "sha1": "59a81401c7ab6bc1bdac055d104492fa88c5db6b",
   "text": "Banyak hewan bermain di salju.",
-  "heard": "banyak hewan bermain di salju",
-  "score": 1.0
+  "heard": "Banyak hewan bermain di salju!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-10-s1": {
-  "sha1": "68273b8e88ab2c2f4898ba264a5b0695d2e33533",
+  "sha1": "2d2d0679726d9808bb69368fa7af47c2d44f32cf",
   "text": "Hitung KUCING saja, ya!",
-  "heard": "Hitung kucing saja.",
-  "score": 0.941
+  "heard": "Hitung kucing saja ya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-10-x": {
-  "sha1": "0c270a4e39fc75d39a32a6ea8297fdbbd59c0407",
+  "sha1": "c1f8a6e9c7aae2c8806a45175b0a9595c8e25d7f",
   "text": "Ada 3 kucing. Anjingnya tidak dihitung.",
-  "heard": "Ada 3 kucing anjingnya tidak dihitung.",
-  "score": 1.0
+  "heard": "Ada 3 kucing, anjingnya tidak dihitung!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-11-h1": {
   "sha1": "ab1bb9fcaf258709b8611bf32238e20777c2c91f",
@@ -2429,40 +2465,46 @@
   "engine": "omnivoice"
  },
  "MEM-12-h1": {
-  "sha1": "dbfe96fbbeb8a42434d543d84d8910f20da5621c",
+  "sha1": "6e49dba6292380f098f6641735169a45814806ee",
   "text": "Koin dan permata hanya lewat saja.",
-  "heard": "oin dan permata hanya lewat saja.",
-  "score": 0.982
+  "heard": "Koin dan permata hanya lewat saja?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-12-h2": {
-  "sha1": "fd7d4bb58210761b45bf0b6f38bdc9599e2b2799",
+  "sha1": "813eda5c972ef0c0fdbaf2a733b8e6578e7a4987",
   "text": "Benda Koko punya lima ujung.",
-  "heard": "Benda kokok punya 5 ujung.",
-  "score": 1.0
+  "heard": "Benda kokok punya 5 ujung?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-12-q": {
-  "sha1": "fb8aef5c9c1c6cef96ec7be3c5e38c7e923695b2",
+  "sha1": "51832a2d05d79c3c949328160605dc46235be73e",
   "text": "Apa yang dibawa Koko?",
-  "heard": "Kapai yang dibawa koko.",
-  "score": 0.929
+  "heard": "Apa yang dibawa koko?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-12-s0": {
-  "sha1": "ec35aa2a54a9b8cb0621374405b1e5dab7994758",
+  "sha1": "080664df91818f57b54f9154c002b9a9bdc87ef1",
   "text": "Koko membawa sebuah bintang emas.",
-  "heard": "Koko membawa sebuah bintang emas.",
-  "score": 1.0
+  "heard": "Kokom bawa sebuah bintang emas?",
+  "score": 0.933,
+  "engine": "omnivoice"
  },
  "MEM-12-s1": {
-  "sha1": "c97fb98268e5d93c0b21a2cef7c1ba422e6c5f5c",
+  "sha1": "5c7673b115c3ecbcb3270c9ab0b9d7d83730974b",
   "text": "Tiba-tiba banyak benda lain lewat!",
-  "heard": "tiba-tiba banyak benda lain ngewa",
-  "score": 0.929
+  "heard": "Tiba-tiba banyak benda lain lewat!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-12-x": {
-  "sha1": "1426661e0935861dbe5e8bdfe7df3b13ca01bc23",
+  "sha1": "189873af0907906a3fa3dee5ee3599e73e1bc1a4",
   "text": "Koko membawa bintang emas. Koin dan permata hanya lewat.",
-  "heard": "Koko membawa bintang mas koin dan permata hanya newak.",
-  "score": 0.94
+  "heard": "Koko membawa bintang emas, coin dan permata hanya lewat!",
+  "score": 0.976,
+  "engine": "omnivoice"
  },
  "OBS-01-h1": {
   "sha1": "a76fd570152b02b9dfa91c12e35590e9582ee032",
@@ -2507,148 +2549,172 @@
   "engine": "omnivoice"
  },
  "OBS-02-h1": {
-  "sha1": "812d36f50e681bc9de1709c792171ff728622d00",
+  "sha1": "560167de95aa6363e31c5b5ed1083e6e5ced3c8e",
   "text": "Bandingkan buah di ujung kanan.",
-  "heard": "Bandingkan puah di kujung kanan.",
-  "score": 0.943
+  "heard": "Bandingkan gue di ujung kanan.",
+  "score": 0.902,
+  "engine": "omnivoice"
  },
  "OBS-02-h2": {
-  "sha1": "718c19bfeb8d5a385a6bd4dd493096e628b7d142",
+  "sha1": "fac2ca667c8e97faae4e268d626283c81d4000a6",
   "text": "Di atas anggur, di bawah...",
-  "heard": "di atas angur di bawah",
-  "score": 0.973
+  "heard": "Di atas anggur dibawa.",
+  "score": 0.973,
+  "engine": "omnivoice"
  },
  "OBS-02-q": {
-  "sha1": "4125e1da698254e7d80d8614046147c340848eff",
+  "sha1": "1c9dbcf27beca7bf8980f7b6ccd8dd7269a5bad5",
   "text": "Buah mana di baris bawah yang BERBEDA?",
-  "heard": "Buah mana di baris, bawah yang berbeda.",
-  "score": 1.0
+  "heard": "Buah mana dibaris bawah yang BRBDA?",
+  "score": 0.967,
+  "engine": "omnivoice"
  },
  "OBS-02-s0": {
-  "sha1": "ded2370d9530054a04bd2dd44a1eecd428c09502",
+  "sha1": "3c5c2f6477366848b842104f85b8a0968d05fb55",
   "text": "Di etalase ada dua baris buah.",
-  "heard": "di etalah seada dua baris buah.",
-  "score": 0.98
+  "heard": "Di etal-lasa ada dua baris buah!",
+  "score": 0.939,
+  "engine": "omnivoice"
  },
  "OBS-02-s1": {
-  "sha1": "0815663357901c74bdd00a258250af26ee8da2bf",
+  "sha1": "7aabcaa2af7260899bb717e5c7d4f8c8fdaf8286",
   "text": "Satu buah di baris bawah berbeda dari baris atas.",
-  "heard": "Satu buah di baris bawah berbeda dari baris atas.",
-  "score": 1.0
+  "heard": "Satu buah dibaris bawah berbeda dari baris atas.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-02-x": {
-  "sha1": "bbebdd5a27a1603ee98e75650bd7e223ffa3274f",
+  "sha1": "46954fa94d6b4d8f78a4241b807c73105fc119b2",
   "text": "Di atas ada anggur, di bawah ada stroberi. Itu bedanya.",
-  "heard": "Di atas ada ampur di bawah ada stroberi itu bedanya.",
-  "score": 0.941
+  "heard": "di atas ada anggur di bawah ada strawberry itu bedanya",
+  "score": 0.932,
+  "engine": "omnivoice"
  },
  "OBS-03-h1": {
-  "sha1": "d76487438f32a999730b3afce8fec3c7c2ecc5d3",
+  "sha1": "66be27aa01e219a2a57bf358dc3027c70ff5420b",
   "text": "Lihat bentuk telinganya.",
   "heard": "lihat bentuk telinganya",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-03-h2": {
-  "sha1": "5ba2a76cc54427457939b438415587b9ad9dfc22",
+  "sha1": "c9c294485184c4cb028434fd7d243b8030d33aa3",
   "text": "Telinganya panjang dan terkulai ke bawah.",
-  "heard": "Telingannya panjang dan terkulai ke bawah.",
-  "score": 0.986
+  "heard": "Telinganya panjang dan terkulai ke bawah.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-03-q": {
-  "sha1": "0f9ae55f8308b2f3fa8ad88a8bb9ea4636bf3761",
+  "sha1": "e23a46869483153b9e74b659caaff93c0027f450",
   "text": "Itu bayangan siapa?",
   "heard": "Itu bayangan siapa?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-03-s0": {
-  "sha1": "23c41c4d952a56b97035dadceb1497eff369c896",
+  "sha1": "7f4c3cc7ab244bdd69db87a487abc6d344bc7425",
   "text": "Di tembok ada bayangan misterius.",
-  "heard": "Di tembok ada bayangan misterius.",
-  "score": 1.0
+  "heard": "Di tembuk ada bayangan misterius.",
+  "score": 0.964,
+  "engine": "omnivoice"
  },
  "OBS-03-s1": {
-  "sha1": "53ba03a777e363e0d7acdbaddad5f88a9726fa45",
+  "sha1": "ba18a5ede26dc9e5e9ea49a5044cb3baa31a4bf7",
   "text": "Bayangan siapa ya?",
   "heard": "Bayangan siapa ya?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-03-x": {
-  "sha1": "9d2843ab1693822058f50b76fd54c55d79e97fbf",
+  "sha1": "ddb8feaaf775d2678e3ff1e733e26d8afb4b9221",
   "text": "Itu bayangan Rover: telinganya terkulai ke bawah.",
-  "heard": "Itu, bayangan rover telinganya terkulai ke bawah.",
-  "score": 1.0
+  "heard": "Itu bayangan rover, telinganya terkulai ke bawah!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-04-h1": {
-  "sha1": "61f946d7f71a7b8a3e1c66b0b2871b6cbae01492",
+  "sha1": "eac6146e3062c530629af195b47e3515c527fdc3",
   "text": "Lihat bagian kepala setiap teman.",
-  "heard": "Lihat bagian kepala setiap teman.",
-  "score": 1.0
+  "heard": "lihat bagian kepala setiap teman",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-04-h2": {
-  "sha1": "e5ea80474f3f29df9a11d050c3ffdea8ca6824c2",
+  "sha1": "83ee95a0eaa1f57325fe68b906d8de850ca5f3b0",
   "text": "Mahkotanya kuning emas, di atas kepala panda.",
-  "heard": "Mahkotannya kuning emas di atas kepala panda.",
-  "score": 0.987
+  "heard": "Makotanya kuning mas, di atas kepala panda!",
+  "score": 0.972,
+  "engine": "omnivoice"
  },
  "OBS-04-q": {
-  "sha1": "91d051ba81047a93160fc57e9952418cc85f8b1d",
+  "sha1": "b08d570688144c1217f6c649ac80f02bb0c55c88",
   "text": "Siapa yang memakai mahkota?",
-  "heard": "Siapa yang memakai mahkota?",
-  "score": 1.0
+  "heard": "Siapa yang memakai Makota?",
+  "score": 0.978,
+  "engine": "omnivoice"
  },
  "OBS-04-s0": {
-  "sha1": "f3ea0acce9cd4fd730ea21804f5f85c5a5d7ca7e",
+  "sha1": "858092f67ac6090ca30bfb20f6a56fcc85bd4016",
   "text": "Empat teman berfoto bersama.",
-  "heard": "keempat teman bersoto bersama.",
-  "score": 0.92
+  "heard": "Empat teman berfoto bersama?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-04-s1": {
-  "sha1": "3b547e1fb692037b89100857927ec090f7d1b2f5",
+  "sha1": "3a9aa9d7fd30ac93c9d6814893887b54ce1e17f5",
   "text": "Salah satunya memakai mahkota!",
-  "heard": "salah satunya memakai mahkota",
-  "score": 1.0
+  "heard": "Salah satunya memakai mahkota!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-04-x": {
-  "sha1": "296bbd7dfd03950bd90c7cf50c5f4c708bce207a",
+  "sha1": "59d0c4365dba209a9b69ffc12bd74fec074104d3",
   "text": "Koko si panda memakai mahkota.",
-  "heard": "Kokosi Panda memakai Mahkota.",
-  "score": 0.95
+  "heard": "Coco si panda memakai mahkota!",
+  "score": 0.913,
+  "engine": "omnivoice"
  },
  "OBS-05-h1": {
-  "sha1": "86fd9eedf7778cca43d298f6f80471d3b287fcfb",
+  "sha1": "28e67f309b893032e16ede30aeb89719c62de2b3",
   "text": "Mulai dari pohonnya.",
   "heard": "Mulai dari pohonnya.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-05-h2": {
-  "sha1": "3dc14624351a5538ce0290728c72461a83c108b5",
+  "sha1": "59af322d5589e42283b607b61c9d4998a622680d",
   "text": "Kiri adalah sisi tangan yang biasa dipakai... lihat panah di layar.",
-  "heard": "Kiri adalah sisi tangan yang biasa dipakai kelihat panah di layah.",
-  "score": 0.963
+  "heard": "Kiri adalah sisi tangan yang biasa dipakai, ya panah di layar.",
+  "score": 0.951,
+  "engine": "omnivoice"
  },
  "OBS-05-q": {
-  "sha1": "83cab7a01590753fb5e6de924bbc62c8b3ba179c",
+  "sha1": "11aeb600fd0ada7592e084a5c02c2a9eef45a720",
   "text": "Ketuk benda di SEBELAH KIRI pohon.",
   "heard": "Ketuk benda di sebelah kiri pohon.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-05-s0": {
-  "sha1": "c2156b78a6078d99e59174705a31f93da4da158c",
+  "sha1": "0972f14cb7d8ea03a870f098e76cd9da3736d1d3",
   "text": "Ada sebuah pohon di tengah taman.",
-  "heard": "ada sebuah pohon di tengah taman.",
-  "score": 1.0
+  "heard": "Ada sebuah pohon di tengah taman.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-05-s1": {
-  "sha1": "f961391ca2abe1762268b6da62ba28ff4650f101",
+  "sha1": "1cd5058fff3be0276fb22f517888ab291e2feb3f",
   "text": "Detektif Stinky mencari benda di SEBELAH KIRI pohon.",
-  "heard": "Detektis, Stinti mencari benda di sebelah kiri pohon.",
-  "score": 0.902
+  "heard": "Detektif Stinky mencari benda di ses belah kiri pohon.",
+  "score": 0.987,
+  "engine": "omnivoice"
  },
  "OBS-05-x": {
-  "sha1": "172c0a92afa8966526a9d32209a8590546f97d0c",
+  "sha1": "b251b83b37bb1a5e9569081469064691bbd647a4",
   "text": "Bola ada di sebelah kiri pohon, apel di sebelah kanan.",
-  "heard": "Wola ada di sebelah kiri pohon apel di sebelah kanan.",
-  "score": 0.977
+  "heard": "bola ada di sebelah kiri pohon, apel di sebelah kanan!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-06-h1": {
   "sha1": "5b05910065ee4fd00294634686c82409bff4cb83",
@@ -2693,112 +2759,130 @@
   "engine": "omnivoice"
  },
  "OBS-07-h1": {
-  "sha1": "d5b4cd4f081836c84afc7fff8468dec7faa0efb0",
+  "sha1": "85c45dddf6bf64dfa14b0607216f1cba5cf1f212",
   "text": "Lihat warna kulit dan isinya.",
-  "heard": "Lihat warna kulit dan isinya.",
-  "score": 1.0
+  "heard": "lihat warna kulit dan isinya",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-07-h2": {
-  "sha1": "c948556d5c046bbdfab329ec61e053b05c99d74f",
+  "sha1": "c05bcec0c152a93518871658b7a29389cbe3cc23",
   "text": "Kulitnya hijau bergaris, isinya merah.",
-  "heard": "kulitnya hijau bergaris isinya merah",
-  "score": 1.0
+  "heard": "kulitnya hijau bergaris, isinya merah!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-07-q": {
-  "sha1": "c868b2bb95d14019317f4c68cf2c0fb8ccf56bb0",
+  "sha1": "2d2f1c1d3280c67166880a745ae4daa6e62a8c5a",
   "text": "Potongan mana yang cocok?",
-  "heard": "potongan mana yang chok-chok",
-  "score": 0.933
+  "heard": "Potongan malah yang cocok!",
+  "score": 0.93,
+  "engine": "omnivoice"
  },
  "OBS-07-s0": {
-  "sha1": "45d771fccbd194d700ad0e79f1ba3328044cd82b",
+  "sha1": "0c21fa6d77e2e87a4b01ce89d6eb66eeae30544e",
   "text": "Gambar semangka ini robek!",
-  "heard": "gambar semangka ini robot",
-  "score": 0.909
+  "heard": "Gambar semangka ini Robert!",
+  "score": 0.933,
+  "engine": "omnivoice"
  },
  "OBS-07-s1": {
-  "sha1": "3cd6f659b593f7915c153ecf12a815df8c753a9f",
+  "sha1": "4ad808149e6a0a9ef1eb420fb1cd05ae41a16db1",
   "text": "Potongan mana yang melengkapinya?",
-  "heard": "Potongan manah yang melengkapinya.",
-  "score": 0.983
+  "heard": "potongan mana yang melengkapinya?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-07-x": {
-  "sha1": "6b516b950c2850c2349379d6706b58846809beb0",
+  "sha1": "3ce4b35b18955273a2b31614ee17dc2d40143117",
   "text": "Potongan semangka melengkapi gambar semangka.",
-  "heard": "Otongan semangka melengkapi gambar semangka.",
-  "score": 0.987
+  "heard": "Potongan semangka melengkapi gambar semangka.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-08-h1": {
-  "sha1": "ef2b6db354252493045024161f73634c4593d22c",
+  "sha1": "0446195267d12a9edc243b19d823df8a90f47c7e",
   "text": "Keranjangnya hanya untuk buah.",
-  "heard": "Kerenjangnya hanya untuk buah.",
-  "score": 0.962
+  "heard": "Kerenjangnya hanya untuk buah!",
+  "score": 0.962,
+  "engine": "omnivoice"
  },
  "OBS-08-h2": {
-  "sha1": "72eefe31252e2bfa6d45e41ea803c159da2e8f5f",
+  "sha1": "4f9da5264ca25e89102a580521a3c39275241fd5",
   "text": "Mobil bukan buah. Biarkan mobil di luar.",
-  "heard": "Mobil bukan buah biarkan mobil dinual.",
-  "score": 0.938
+  "heard": "Mobil bukan buah biarkan mobil di luar!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-08-q": {
-  "sha1": "6bc1c8baae77ff1496a4564ffa1be113228bd2a4",
+  "sha1": "6f3176931414303663d4d61a8da3d0da7878be12",
   "text": "Seret SEMUA buah ke keranjang.",
-  "heard": "Serit semua buah kekeranjang.",
-  "score": 0.96
+  "heard": "Seret semua buat kekranjang!",
+  "score": 0.939,
+  "engine": "omnivoice"
  },
  "OBS-08-s0": {
-  "sha1": "5e36bf1b604f373d21f8cf80f4b91d12719bb027",
+  "sha1": "1b60b03c3d71e535812090b1e5c2839d3feb110b",
   "text": "Detektif Dirty merapikan meja.",
-  "heard": "Detektis di merapikan meja.",
-  "score": 0.909
+  "heard": "Detektif dirty merapikan meja!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-08-s1": {
-  "sha1": "304ce97a52c29cfa4680f184043d8c62b183060e",
+  "sha1": "ba72ec1e8cdf3bab29da07c8082399a963b6adc7",
   "text": "Semua buah harus masuk ke keranjang.",
-  "heard": "Semua buah harus masuk ke kranjang.",
-  "score": 0.983
+  "heard": "Semua buah harus masuk ke keranggang.",
+  "score": 0.951,
+  "engine": "omnivoice"
  },
  "OBS-08-x": {
-  "sha1": "801bd5fba9aec097512201899ad51289d6197b4d",
+  "sha1": "957c4219ea88066be998ef9055906a607c608f27",
   "text": "Apel dan pisang masuk keranjang. Mobil bukan buah.",
-  "heard": "apal dan bisa masuk keranjang mobil bukan buah.",
-  "score": 0.925
+  "heard": "Apel dan pisang masuk kranjang, mobil bukan buah!",
+  "score": 0.988,
+  "engine": "omnivoice"
  },
  "OBS-09-h1": {
-  "sha1": "1422dd1216be38a3d6b4cf2bd4deadb18cad9a6d",
+  "sha1": "c5c64eac021f95f415bde4aec82aec4b2cdcf302",
   "text": "Di pantai cuacanya panas dan ada pasir.",
-  "heard": "di pantai cuacanya panas dan ada pasing.",
-  "score": 0.954
+  "heard": "Dipantai cuacanya panas dan ada pasir.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-09-h2": {
-  "sha1": "d035eb942627501ec84484da9179095f1d17a84f",
+  "sha1": "9e2fe5225d7e6b97c224a372d69669d36bee6f3a",
   "text": "Benda itu dipakai bermain di pantai.",
-  "heard": "Benda itu dipakai bermain di pantai.",
-  "score": 1.0
+  "heard": "Benda itu dipakai bermain di pantai!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-09-q": {
-  "sha1": "3773bfae841083d87b642b37c29e202a2c7da636",
+  "sha1": "c98f9d9381c0f7ecdd266194170f32f9e354440a",
   "text": "Apa yang cocok untuk ke pantai?",
-  "heard": "Apa yang cocok untuk kepantai?",
-  "score": 1.0
+  "heard": "Apa yang cocok untuk kebantai?",
+  "score": 0.96,
+  "engine": "omnivoice"
  },
  "OBS-09-s0": {
-  "sha1": "c15725df43b82bf261a4c8953c46042916f9d1e6",
+  "sha1": "1f8071d726d83e6622c6bf6105cc190c96972dfe",
   "text": "Lala dan Raka pergi ke pantai.",
   "heard": "Lala dan Raka pergi ke pantai.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-09-s1": {
-  "sha1": "69d82976681d1754f054ac37aae08d0fd107ef50",
+  "sha1": "30b4242227928123382aed459ea457fcba9b4391",
   "text": "Benda apa yang cocok dibawa ke pantai?",
-  "heard": "Benda apa yang cocok dibawa ke pantai?",
-  "score": 1.0
+  "heard": "Benda apa yang cocok di boke pantai?",
+  "score": 0.933,
+  "engine": "omnivoice"
  },
  "OBS-09-x": {
-  "sha1": "32e8ee617e7d13a3119cd0e0cccd4ff57cfadc8c",
+  "sha1": "95ca02e3f4483b073808c638fc440a7034b0ea28",
   "text": "Bola pantai cocok dibawa ke pantai.",
-  "heard": "bola pantai cocok dibawa ke pantai",
-  "score": 1.0
+  "heard": "bola pantai cocok di bawah pantai",
+  "score": 0.947,
+  "engine": "omnivoice"
  },
  "OBS-10-h1": {
   "sha1": "a1fa2c6be51b113599d5589a66f5633e8ca30871",
@@ -2843,93 +2927,108 @@
   "engine": "omnivoice"
  },
  "OBS-11-h1": {
-  "sha1": "07425ca218af0bcd7927f7f7f0dc668af3cf178f",
+  "sha1": "d09796ee306977f8ca63af03a93053edc773c947",
   "text": "Asap bisa berbahaya.",
-  "heard": "Asap bisa berbahaya.",
-  "score": 1.0
+  "heard": "Asap bisa berbahaya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-11-h2": {
-  "sha1": "aa7bc730fbdcf9a597ef5b2e5fdf8bf5a3e86d88",
+  "sha1": "512a12d88aaf0c3906e41b6f10022754ea539dcc",
   "text": "Anak-anak minta tolong kepada siapa kalau ada bahaya?",
   "heard": "Anak-anak minta tolong kepada siapa kalau ada bahaya.",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-11-q": {
-  "sha1": "5e3b9d649de876d8a6ab42c194f6f26b4e867898",
+  "sha1": "33f6d85ad14144eb2614c088efc27c076b7c5568",
   "text": "Apa yang harus Mimi lakukan?",
-  "heard": "Apa yang harus Mimi lakukan?",
-  "score": 1.0
+  "heard": "Apa yang harus mini lakukan?",
+  "score": 0.905,
+  "engine": "omnivoice"
  },
  "OBS-11-s0": {
-  "sha1": "46022bee20453cbb70f4cfa4debf0ed00d0648e4",
+  "sha1": "83e7fb3735335cdd16eb0355eb91037cb8f9ce6e",
   "text": "Mimi melihat asap keluar dari dapur.",
-  "heard": "Mimi melihat asap keluar dari dapur.",
-  "score": 1.0
+  "heard": "ini melihat asap keluar dari dapur",
+  "score": 0.945,
+  "engine": "omnivoice"
  },
  "OBS-11-s1": {
-  "sha1": "8a84e8297589b10098211e65b93ecb47c099dc15",
+  "sha1": "85e389b606b280556601c57a279e3c53014a40d0",
   "text": "Mimi harus bagaimana?",
   "heard": "Mimi harus bagaimana?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-11-x": {
-  "sha1": "dc6eda8d7aad078101933bd1cf0b7ef9b7ea1762",
+  "sha1": "fab0d195b3270705654e56c4b5a27902158c0e15",
   "text": "Kalau ada asap atau api, segera panggil orang dewasa.",
-  "heard": "kalau ada asap atau api segera panggim orang dewasa",
-  "score": 0.977
+  "heard": "Kalau ada asap atau api, segera panggil orang dewasa.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-12-h1": {
-  "sha1": "cfc466d45abba041d52240947c0821cda1b0308c",
+  "sha1": "83081eedb4f82d89f33c3159b53bee95dc9802fd",
   "text": "Ikan tidak punya bulu.",
-  "heard": "ikan tidak punya bulu.",
-  "score": 1.0
+  "heard": "ikan tidak punya bulu",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-12-h2": {
-  "sha1": "1cd368bdfe7b20095e745a3b18d5102e5c405a32",
+  "sha1": "2199232b8e021316a01b4776ec48e7781bb8b66a",
   "text": "Hewan berbulu yang telinganya panjang dan suka wortel...",
-  "heard": "Hewan berbulu yang telinganya panjang dan suka warthong.",
-  "score": 0.915
+  "heard": "Hewan berbulu yang pelingannya panjang dan suka wortel.",
+  "score": 0.968,
+  "engine": "omnivoice"
  },
  "OBS-12-q": {
-  "sha1": "3f9e887bae41577d0c5118f880376f29da5bb23d",
+  "sha1": "7983cfea3dc5f8fb490f38578ae24a9ea26780f2",
   "text": "Hewan apa itu?",
   "heard": "Hewan apa itu?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-12-s0": {
-  "sha1": "81ef10419304cbb913b00fc144d5f8c030c6eb40",
+  "sha1": "47b00c052a761635d316e0dd4d8c0b20bd53fcd4",
   "text": "Petunjuk 1: bulunya lembut.",
-  "heard": "bertunjuk 1 bulunya lembu.",
-  "score": 0.92
+  "heard": "petunjuk satu bulunya lembut",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-12-s1": {
-  "sha1": "e1c45c124d48ea9aa431fe3b0d66bfca927ed08c",
+  "sha1": "92e34eb4c63cd27a61f9957831a1e29553c2d5c5",
   "text": "Petunjuk 2: suka makan wortel.",
-  "heard": "betunjuk 2 suka makan wortel",
-  "score": 0.962
+  "heard": "Petunjuk 2 suka makan wortel?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "OBS-12-s2": {
-  "sha1": "931486a1a6fee8801964db4bbfac456a7a800d49",
+  "sha1": "6c556b6981e956117c19b8b3aaf53c6671a050cf",
   "text": "Petunjuk 3: telinganya panjang.",
-  "heard": "Bertunjuk 3 telinganya panjang.",
-  "score": 0.949
+  "heard": "Petunjuk 3. Telingannya panjang.",
+  "score": 0.983,
+  "engine": "omnivoice"
  },
  "OBS-12-x": {
-  "sha1": "e178a87c605419a1f00ec1fac199c90621d44127",
+  "sha1": "1df55ccbc0fae28b838707cccef768436a304858",
   "text": "Kelinci: berbulu lembut, suka wortel, dan telinganya panjang.",
-  "heard": "Kelinci berbulu nebut suka warthell, dan telingannya panjang.",
-  "score": 0.922
+  "heard": "Kelinci, berbulu lembut suka wartel dan telinganya panjang.",
+  "score": 0.98,
+  "engine": "omnivoice"
  },
  "line:hebat": {
-  "sha1": "53e560791e60ba613d1ea19b56d60ccf60bed283",
+  "sha1": "a25e3242e3076b29060353cefe57c7ab87685527",
   "text": "Hebat! Jawabanmu benar.",
-  "heard": "hebat jawabanmu benang",
-  "score": 0.923
+  "heard": "Hebat! Jawabanmu benar!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "line:lihat-lagi": {
-  "sha1": "a2e96e362849771d579e8765daea350df9f90b26",
+  "sha1": "916d8321ac8494708fa08ab48f90f47389c9397c",
   "text": "Ayo lihat lagi.",
-  "heard": "ayo lihat lagi",
-  "score": 1.0
+  "heard": "ayo liat lagi",
+  "score": 0.957,
+  "engine": "omnivoice"
  }
 }
