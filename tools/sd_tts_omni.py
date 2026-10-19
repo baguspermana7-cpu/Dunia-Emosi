@@ -33,7 +33,7 @@ VS = 'http://127.0.0.1:3900'
 REF = os.path.join(base.ROOT, 'tools', 'voices', 'sd-narrator-id.flac')
 REF_TEXT = 'Halo! Ayo kita dengarkan ceritanya bersama. Lihat baik-baik gambarnya, lalu pilih jawaban yang benar.'
 PROFILE = 'Dunia SD narrator (id)'
-TRIES = 3
+TRIES = int(os.environ.get("SD_TRIES", "3"))   # more seeds for a stubborn card: SD_TRIES=8
 STEPS = 16
 HOT = 88.0
 

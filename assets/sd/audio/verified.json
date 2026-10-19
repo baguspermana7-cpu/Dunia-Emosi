@@ -126,40 +126,46 @@
   "engine": "omnivoice"
  },
  "LIS-04-h1": {
-  "sha1": "317ab63964c436bf60322cae9ee9f7cdc7fbb732",
+  "sha1": "4271194798012d74582e5bd20f95d89956e8006f",
   "text": "Lihat ke mana Koko berjalan.",
-  "heard": "Jihat kemana Koko berjalan.",
-  "score": 0.947
+  "heard": "liat kemana koko berjalan",
+  "score": 0.973,
+  "engine": "omnivoice"
  },
  "LIS-04-h2": {
-  "sha1": "b69e14d85af11b1b3717f0f06d64fbe08e8c9d6a",
+  "sha1": "f405aba8b71e9ba157773918e5415b94b59fafbf",
   "text": "Cerita bilang: tempatnya teduh dan besar.",
-  "heard": "Cerita bilang tempatnya teduh dan besar.",
-  "score": 1.0
+  "heard": "Cerita bilang, tempatnya teduh dan besar.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-04-q": {
-  "sha1": "43aa7adb45e381524e387a78ad6cf251f0c3c6bc",
+  "sha1": "19e6fe4086200e959c6d3a5bb2e33c630ce96610",
   "text": "Di mana Koko tidur?",
-  "heard": "Dimana Koko tidur?",
-  "score": 1.0
+  "heard": "Dimana koko tidur?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-04-s0": {
-  "sha1": "707d1deb48f6691b3c00882cf23fd61fe8cc9ae0",
+  "sha1": "5c84f13f9e55e775d56c63640fbd35d3cfabf339",
   "text": "Koko si panda mengantuk.",
-  "heard": "Kokosi Panda mengantuk.",
-  "score": 0.933
+  "heard": "Kokosi pandai mengantuk!",
+  "score": 0.903,
+  "engine": "omnivoice"
  },
  "LIS-04-s1": {
-  "sha1": "c55d0fdfe2946066afe50b8f07fd493dff4df4ed",
+  "sha1": "2e7d5421c7e4cac53475b2a15a1dff20f6b6a0ae",
   "text": "Koko tidur di bawah pohon besar yang teduh.",
-  "heard": "Koko tidur di bawah pohon besar yang terduh.",
-  "score": 0.984
+  "heard": "Koko tidur di bawah pohon besar yang teduh?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LIS-04-x": {
-  "sha1": "42b10ececd44c63a8d23e53d9d9b7be38ffa5713",
+  "sha1": "27000faabe967bd730fcfdb8a8e7a66d6f50c36d",
   "text": "Koko tidur di bawah pohon besar yang teduh.",
-  "heard": "Koko tidur di bawah pohon besar yang terduh.",
-  "score": 0.984
+  "heard": "Kokoh tidur di bawah puan besar yang terduh?",
+  "score": 0.903,
+  "engine": "omnivoice"
  },
  "LIS-05-h1": {
   "sha1": "5fd680b62412d85955bd872759bb69b5416bd95e",
@@ -1816,40 +1822,46 @@
   "engine": "omnivoice"
  },
  "MAT-08-h1": {
-  "sha1": "5472814b159984c60ae11ff16ef180360baa5f80",
+  "sha1": "30533749c429d7252500cc17b72b699a90ae31d9",
   "text": "Lihat semua apel di keranjang.",
-  "heard": "lihat semua apel di kerenjan",
-  "score": 0.939
+  "heard": "lihat semua apel di keranjang",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-08-h2": {
-  "sha1": "789495e96bb46cb1f36519894c329da9f1ac80b7",
+  "sha1": "3411d6156a6e604c0b78d7b8fbb6ff4d57121401",
   "text": "Hitung tiga apel, lalu tambah dua lagi.",
-  "heard": "Hitung 3 apal lalu tambah 2 lagi.",
-  "score": 0.968
+  "heard": "Hitung tiga apa, lalu tambah dua lagi!",
+  "score": 0.951,
+  "engine": "omnivoice"
  },
  "MAT-08-q": {
-  "sha1": "3da108cf101f957ab0e02917a22e8feb52310ff2",
+  "sha1": "039f8cb4b89ceedc8da0057026ab7e6e517d97b1",
   "text": "Berapa apel Lala sekarang?",
-  "heard": "Berapa apel nala sekarang?",
-  "score": 0.9
+  "heard": "Berapa apelala sekarang?",
+  "score": 0.923,
+  "engine": "omnivoice"
  },
  "MAT-08-s0": {
-  "sha1": "49cc2740dd880da66411b314b20e8b1623501606",
+  "sha1": "c2e295bb1a67386010dc338ac5bc461502f856da",
   "text": "Lala punya tiga apel di keranjang.",
-  "heard": "Lala punya 3 apel di keranjang.",
-  "score": 1.0
+  "heard": "Wala punya tiga apel di kranjang",
+  "score": 0.902,
+  "engine": "omnivoice"
  },
  "MAT-08-s1": {
-  "sha1": "f2d4bf99ae501c8b8acad5ce73c46ecd14932540",
+  "sha1": "66220f89af4d72ce8d3ab057939d452ad5bb2ff9",
   "text": "Nenek memberi dua apel lagi.",
-  "heard": "nenek memberi dua apa lagi?",
-  "score": 0.933
+  "heard": "Nenek memberi dua apel lagi!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-08-x": {
-  "sha1": "39937d52ed31d8f0b0cc316f4d9c862b6fc9b31b",
+  "sha1": "d78028de16fe70630d149ac4c1f4b542bd6ec5ff",
   "text": "Tiga apel ditambah dua apel jadi lima apel.",
-  "heard": "3 apel ditambah 2 apel, jadi 5 apel.",
-  "score": 1.0
+  "heard": "3 apel ditambah 2 apel jadi 5 apel",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MAT-09-h1": {
   "sha1": "3819edb86d6e5120d5b9053ad0bd6ec6472c6a79",
@@ -2188,34 +2200,46 @@
   "engine": "omnivoice"
  },
  "MEM-05-h1": {
-  "sha1": "657223f4d175fc8aa066b34c3d9ea9109223650c",
+  "sha1": "e5620a3f09d56ccb6deadf707deb0941a7f714b4",
   "text": "Yang pertama datang adalah anjing.",
-  "heard": "Yang pertama datang adalah anjin.",
-  "score": 0.982
+  "heard": "Yang pertama datang adalah anjing!",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MEM-05-h2": {
+  "sha1": "4095feb4f68cebbcefea4647fc87944414a197d3",
+  "text": "Rover, lalu kucing, lalu kelinci.",
+  "heard": "Rover lalu kucing, lalu kelinci?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-05-q": {
-  "sha1": "7dd869d6368478477f94f88eceac9f726b92fb3d",
+  "sha1": "e0f5b4b3102e95bb58bb8826532650dfcc74b955",
   "text": "Urutkan yang datang: ketuk dari yang pertama.",
-  "heard": "kurutkan yang datang ketuk dari yang pertama.",
-  "score": 0.987
+  "heard": "Urutkan yang datang ketuk dari yang pertama.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-05-s0": {
-  "sha1": "adece6d53e8cefd37983abc4eb709c8d41767463",
+  "sha1": "4b73a57dda8025d9d87ba8526e4a34a6fa2ad532",
   "text": "Teman-teman datang ke gunung satu per satu.",
-  "heard": "Teman-teman datang ke gunung satu per satu.",
-  "score": 1.0
+  "heard": "teman-teman datang ke gunung satu persatu",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-05-s1": {
-  "sha1": "b5bce7987fdfa3aab634c70f3006529b65dca68f",
+  "sha1": "f0d053c5684a03a8f3d3366f1b4ccbe4c521cdc5",
   "text": "Siapa yang datang pertama, kedua, dan ketiga?",
-  "heard": "Siapa yang datang pertama kedua dan ketiga?",
-  "score": 1.0
+  "heard": "Siapa yang datang pertama, kedua dan ketiga?",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-05-x": {
-  "sha1": "669b9aa46edc51a6d6fe7cd0236f28c6ccc9f900",
+  "sha1": "d2e5352632a586a63cdcf4032d16de110dc821a3",
   "text": "Rover datang pertama, lalu Mimi, lalu Lulu.",
-  "heard": "Roer datang pertama lalu mimi lalu lulu.",
-  "score": 0.913
+  "heard": "Rover datang pertama lalu mini lalu lulu.",
+  "score": 0.913,
+  "engine": "omnivoice"
  },
  "MEM-06-h1": {
   "sha1": "2a388ab3848cf5a49f75a5606badbc5adf5759f0",
