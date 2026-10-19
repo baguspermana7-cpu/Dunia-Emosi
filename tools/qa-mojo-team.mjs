@@ -36,7 +36,7 @@ for (const [w, h] of [[844, 390], [390, 844], [1280, 800]]) {
   const film = await p.evaluate(() => ({ racers: document.querySelectorAll('.racer-bar:not(.rival-bar) .racer-chip').length, sheets: Object.keys(window.MojoRacerSheets || {}).length, missions: document.querySelectorAll('.race-card[data-mission]').length,
     race: document.querySelectorAll('.race-card.film-race').length, robber: document.querySelectorAll('.race-card.film-robber').length, escape: document.querySelectorAll('.race-card.film-escape').length,
     bad: [...document.querySelectorAll('.racer-chip img, .race-card[data-mission] .tgt')].filter(i => !(i.complete && i.naturalWidth > 0)).map(i => i.src.split('/').pop()) }))
-  ok(film.racers === film.sheets && film.racers >= 20 && film.missions === 12 && film.race >= 6 && film.robber >= 3 && film.escape >= 2, `${tag}: Tim Film Balap — ${film.racers} racers (${film.sheets} sheet sets), ${film.missions} missions (${film.race} race, ${film.robber} robber, ${film.escape} escape)`)
+  ok(film.racers === film.sheets && film.racers >= 20 && film.missions >= 36 && film.race >= 6 && film.robber >= 3 && film.escape >= 2, `${tag}: Tim Film Balap — ${film.racers} racers (${film.sheets} sheet sets), ${film.missions} missions (${film.race} race, ${film.robber} robber, ${film.escape} escape)`)
   ok(!film.bad.length, `${tag}: every racer and target picture loads ${film.bad.slice(0, 3)}`)
   // the opponent bar: pick Mack, a race mission then names Mack; back to Otomatis
   await p.click('.rival-bar .racer-chip[data-rival="mack"]'); await sleep(500)
@@ -56,7 +56,8 @@ for (const [w, h] of [[844, 390], [390, 844], [1280, 800]]) {
     const steer = await p.evaluate(async () => { const s = [], dir = __mojoChase.state().lane < 2 ? 1 : -1; document.dispatchEvent(new KeyboardEvent('keydown', { key: dir > 0 ? 'ArrowRight' : 'ArrowLeft', bubbles: true })); for (let i = 0; i < 14; i++) { await new Promise(r => setTimeout(r, 40)); { const z0 = __mojoChase.state(); s.push([z0.steer * dir, z0.curveSteer * dir]) } } await new Promise(r => setTimeout(r, 900)); const z = __mojoChase.state(); return { s, end: z.steer - z.curveSteer } })
     // the turn pose rises clearly above whatever the road's curve already asks (the sum saturates at 1), then lets go
     const pk = Math.max(...steer.s.map(x => x[0])), cv = Math.max(...steer.s.map(x => x[1]))
-    ok(pk >= Math.min(0.95, Math.max(0.35, cv + 0.25)) && Math.abs(steer.end) < 0.2, `${tag} race: a lane change steers into the turn (peak ${pk.toFixed(2)}, curve ${cv.toFixed(2)}) and straightens, the road's own curve aside (${steer.end.toFixed(2)})`)
+    const kick = Math.max(...steer.s.map(x => x[0] - x[1]))   // the lane change's own share (a bend against it lowers the sum, not the kick)
+    ok((pk >= Math.min(0.95, Math.max(0.35, cv + 0.25)) || kick >= 0.6) && Math.abs(steer.end) < 0.2, `${tag} race: a lane change steers into the turn (peak ${pk.toFixed(2)}, curve ${cv.toFixed(2)}, kick ${kick.toFixed(2)}) and straightens, the road's own curve aside (${steer.end.toFixed(2)})`)
     await p.evaluate(() => { __mojoChase.force({ prog: 0.97, best: 0.97 }); __mojoChase.auto({ mode: 'clean' }) })
     await p.waitForFunction(() => __mojoChase.state().state === 'result', { timeout: 30000 }).catch(() => {})
     const res = await p.evaluate(() => ({ t: document.body.innerText, cast: [...document.querySelectorAll('.cast img')].map(i => i.complete && i.naturalWidth > 0) }))

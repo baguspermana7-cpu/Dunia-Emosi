@@ -125,9 +125,13 @@
       // curve eases in over the first 20% and out over the last 20%; an S-curve flips sign halfway
       var e = t < 0.2 ? t / 0.2 : t > 0.8 ? (1 - t) / 0.2 : 1
       if (piece.s) cv = t < 0.5 ? cv : -cv
+      // esses: the bend swings smoothly left-right `weave` times (no ease ramp needed, the sine starts and ends at 0)
+      if (piece.weave) { cv = cv * Math.sin(t * Math.PI * 2 * piece.weave); e = 1 }
       seg.curve = cv * clamp(e, 0, 1)
       seg.y1 = lastY
-      seg.y2 = pieceY0 + easeInOut(0, piece.hill || 0, (i - pieceStart + 1) / piece.len)
+      // crest / dip / rollers: up and back down `wave` times, ending at the height the piece began
+      var tn = (i - pieceStart + 1) / piece.len
+      seg.y2 = piece.wave ? pieceY0 + (piece.hill || 0) * Math.pow(Math.sin(tn * Math.PI * piece.wave), 2) : pieceY0 + easeInOut(0, piece.hill || 0, tn)
       lastY = seg.y2
       seg.surface = piece.surface || (stage.biome === 'snow' ? 'snow' : '')
       seg.tunnel = piece.surface === 'tunnel'; seg.tunnelEntry = seg.tunnel && i === pieceStart; seg.tunnelExit = seg.tunnel && i === pieceStart + piece.len - 1

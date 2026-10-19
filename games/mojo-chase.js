@@ -1059,9 +1059,9 @@
     function atmCalm () { var A = AT(); try { return !!(A && A.calm && A.calm()) } catch (e) { return false } }
     // hooks v2 values read ONCE per rendered frame; AV = the view handed to the atmosphere (one object, refreshed)
     var atm = { L: 0, tint: null, tg: 0, sw: 0 }, AV = { w: 0, h: 0, hy: 0, css: 1, port: false, u: 1, pr: 1, cx: 0, playerY: 0, curveOff: 0, quality: 2, skyPre: true }
-    var BK = { pre: null, tint: null }
+    var BK = { pre: null, tint: null, late: null }
     function atmFrame () {
-      var A = AT(); atm.L = 0; atm.tint = null; atm.tg = 0; atm.sw = 0; BK.pre = null; BK.tint = null
+      var A = AT(); atm.L = 0; atm.tint = null; atm.tg = 0; atm.sw = 0; BK.pre = null; BK.tint = null; BK.late = null
       if (!A) return null
       try {
         atm.L = A.lightsOn ? clamp(+A.lightsOn() || 0, 0, 1) : 0
@@ -1070,9 +1070,12 @@
       } catch (e) {}
       AV.w = v.w; AV.h = v.h; AV.hy = v.hy; AV.css = v.css; AV.port = v.port; AV.u = v.u; AV.pr = v.pr; AV.cx = v.cx; AV.playerY = v.playerY; AV.curveOff = scene.curveOff || 0; AV.quality = quality
       BK.pre = A.drawSky ? skyPre : null; BK.tint = atm.tint
+      // a second-round stage (stage.base) paints its light OVER the base biome's daytime strips (their sky is painted in)
+      BK.late = A.drawSky && stage.base ? skyLate : null
       return A
     }
     function skyPre () { try { AT().drawSky(c, AV, 'pre') } catch (e) {} }
+    function skyLate () { try { AT().drawSky(c, AV, 'late') } catch (e) {} }
     function roadOv (s, k) { try { AT().roadSeg(c, s, k, AV) } catch (e) {} }
     function laneObjsNear () { var n = 0, s0 = Math.floor((S.z + Z_P) / TR.SEG); for (var i = 0; i < POOL.length; i++) { var o = POOL[i]; if (o.on && !o.taken && o.seg >= s0 && o.seg < s0 + 60) n++ } return n }
     var API = {

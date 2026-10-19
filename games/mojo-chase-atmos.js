@@ -121,7 +121,11 @@
     if (!stage) return 'town'
     return A.KIND[stage.id] || (stage.fx === 'space' ? 'space' : null) || A.BY_BIOME[stage.biome] || 'town'
   }
+  // a second-round stage (MojoChases variant, `tint`) is ABOUT its light and weather: it fixes them, no random pick
+  var TINT_F = { senja: { time: 'senja', weather: 'cerah' }, malam: { time: 'malam', weather: 'cerah' }, hujan: { time: 'sore', weather: 'hujan' },
+    salju: { time: 'senja', weather: 'salju' }, kabut: { time: 'pagi', weather: 'kabut' } }
   function makePlan (stage, r, F) {
+    if (!F && stage && TINT_F[stage.tint]) { var tf = TINT_F[stage.tint]; F = { time: stage.night ? 'malam' : tf.time, weather: tf.weather } }
     var kind = kindOf(stage), P = A.POOL[kind] || A.POOL.town
     var tk = pickW(r, P.times), wk = pickW(r, P.weather), iR = r(), rollT = r(), rollPick = r(), r1 = r(), r2 = r()
     var t = TIDX[tk], I = wk === 'hujan' ? (iR < 0.5 ? 0.4 : 0.95) : wk === 'salju' ? 0.55 + iR * 0.4 : wk === 'kabut' ? 0.6 + iR * 0.3 : 1
@@ -145,8 +149,10 @@
     else if (tr === 'hujan-reda') { p.weather = 'hujan'; p.w0 = 1; p.w1 = 0; p.wStart = 12 + r1 * 10; p.wDur = 22 + r2 * 10; p.rainbow = p.t0 < 2.9; if (p.t0 > 2.6) p.t0 = p.t1 = 1 }
     else if (tr === 'salju-tebal') { p.weather = 'salju'; p.w0 = 0.2; p.w1 = 1; p.wStart = 4 + r1 * 6; p.wDur = 40 + r2 * 15 }
     p.trans = tr || null
-    p.baseT = stage && stage.night ? 4 : STAGE_T[stage && stage.sky] != null ? STAGE_T[stage.sky] : 1
-    p.baseOver = stage && (stage.sky === 'rain' || stage.weather === 'rain') ? 0.4 : stage && stage.sky === 'cloudy' ? 0.15 : 0
+    // the painted look is the ART's: a second-round stage reuses its base biome's daytime strips, so grade from those
+    var art = stage && stage.base && W.MojoChases && W.MojoChases.stage ? W.MojoChases.stage(stage.base) || stage : stage
+    p.baseT = art && art.night ? 4 : STAGE_T[art && art.sky] != null ? STAGE_T[art.sky] : 1
+    p.baseOver = art && (art.sky === 'rain' || art.weather === 'rain') ? 0.4 : art && art.sky === 'cloudy' ? 0.15 : 0
     if (!skyPre() && stage && STAGE_W[stage.weather] && !(F && F.weather)) {   // late-sky core: its own weather keeps running, so the plan matches it
       p.weather = STAGE_W[stage.weather]; p.w0 = p.w1 = 0.9; p.coreW = true; p.rainbow = false
       if (tr && tr !== 'sore-malam' && tr !== 'siang-sore') { tr = null; p.trans = null }
@@ -397,7 +403,7 @@
   function env (age, life, fin, fout) { return Math.min(1, age / fin, (life - age) / fout) }
   function drawSky (c, v, mode) {
     if (!R.on || OFF()) return
-    var pre = mode === 'pre' || v.skyPre === true || skyPre(); R.preSeen = pre
+    var pre = mode === 'late' ? false : mode === 'pre' || v.skyPre === true || skyPre(); if (mode !== 'late') R.preSeen = pre
     var p0 = R.prof ? performance.now() : 0
     R.calls.sky++
     var w = v.w, hy = v.hy, pr = v.pr || 1, curve = v.curveOff || 0, i, x, y, a, s

@@ -174,6 +174,7 @@
         // the atmosphere's ambient tint over the FAR/MID band (one fill; the ROADSIDE band and the road stay untinted)
         var tn = bk && bk.tint
         if (tn && tn.a > 0.005) { var ty0 = Math.max(0, Math.min(my, far ? fy : my)); c.globalAlpha = Math.min(1, tn.a); c.fillStyle = tn.c; c.fillRect(0, ty0, w, hy + v.h * 0.02 - ty0 + 2); c.globalAlpha = 1 }
+        if (bk && bk.late) bk.late()
         // ROADSIDE band (0.70x)
         var nh = hy * 0.11, ny = hy - nh + 4 + hill, nw = nh * near.width / near.height
         var nxo = -(((S.par.roadside * 0.004 + S.curveOff * 6) * v.u) % nw + nw) % nw

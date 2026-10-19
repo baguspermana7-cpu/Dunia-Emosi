@@ -96,7 +96,14 @@ for (const st of CH.STAGES) {
   check(CA.families.vehicles.sprites[st.target] && !CA.denylist.includes(st.target), `stage ${st.id}: target vehicle resolves and is kid-safe (${st.target})`)
   for (const p of TR.BIOME[st.biome].props) check(TR.PROP_KEY[p[0]], `stage ${st.id}: prop ${p[0]} has a key`)
 }
-check(CH.STAGES.length === 25, `25 stages, one per owner biome (${CH.STAGES.length})`)
+check(CH.STAGES.filter(s => !s.base).length === 25, `25 first-round stages, one per owner biome (${CH.STAGES.filter(s => !s.base).length})`)
+// second round (2026-10-19): every biome again at another light/weather on a harder road of its own
+const R2 = CH.STAGES.filter(s => s.base)
+check(R2.length >= 20 && R2.every(s => CH.stage(s.base) && !CH.stage(s.base).base && s.tint && s.pieces !== CH.stage(s.base).pieces), `${R2.length} second-round stages, each on its base biome with a tint and its own road pool`)
+const unknown = []; CH.STAGES.forEach(s => s.pieces.forEach(p => { if (!CH.PIECES[p[0]]) unknown.push(s.id + '/' + p[0]) }))
+check(!unknown.length, `every stage's road pool names real pieces (${unknown.slice(0, 3)})`)
+check(Object.keys(CH.PIECES).length >= 38 && ['hairpin-left', 'chicane-right', 'esses-left', 'crest', 'rollers', 'climb-right', 'crest-left'].every(k => CH.PIECES[k]), `road piece library: ${Object.keys(CH.PIECES).length} pieces incl. hairpins, chicanes, esses, crests, rollers`)
+const pools = new Set(CH.STAGES.map(s => JSON.stringify(s.pieces))); check(pools.size >= 15, `stages drive ${pools.size} distinct road mixes`)
 check(['malam', 'tol-malam', 'antariksa'].every(id => CH.stage(id).night === true), 'night stages turn the headlights on')
 
 const launched = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-gpu-blocklist'].concat(GPU ? ['--use-angle=vulkan', '--enable-gpu'] : []) })
@@ -428,7 +435,7 @@ try {
       await p.screenshot({ path: `${out}/stages/${st.id}.png` })
       await p.click('.mc-pause'); await sleep(150); await p.click('#mc-exit'); await done
     }
-    check(!errors.length, `25 stages: no page errors or 404s (${errors.slice(0, 3)})`)
+    check(!errors.length, `${CH.STAGES.length} stages: no page errors or 404s (${errors.slice(0, 3)})`)
     await p.close()
   }
   // perf: 10 s traces at 1280x800 and 390x844, CPU throttle 1x and 4x (frame-interval percentiles + main-thread work)

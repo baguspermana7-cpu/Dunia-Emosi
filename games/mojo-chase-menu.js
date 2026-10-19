@@ -127,7 +127,7 @@
       var wh = who(m, racer), tx = words(m, wh), tpic = m.mode === 'robber' ? lib('mojo-chase/vehicles/' + m.target) : wh.pic ? '../' + wh.pic : lib('mojo-chase/vehicles/speed')
       var b = el('button', 'race-card film-' + m.mode); b.type = 'button'; b.setAttribute('data-mission', m.id)
       var stars = ''; for (var k = 1; k <= 3; k++) stars += '<img class="' + (rec && rec.stars >= k ? '' : 'off') + '" alt="" src="' + lib('mojo-chase/items/star') + '">'
-      b.innerHTML = '<span class="pic" style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + tpic + '"><span class="num fk">' + (i + 1) + '</span>' +
+      b.innerHTML = '<span class="pic"' + (st.tint ? ' data-tint="' + st.tint + '"' : '') + ' style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + tpic + '"><span class="num fk">' + (i + 1) + '</span>' +
         '<span class="mtype fk">' + tx.tag + '</span></span>' +
         '<span class="meta"><strong class="fk">' + tx.title + '</strong><span class="sub">' + (st.place || '') + '</span><span class="st">' + stars + '</span></span>'
       b.addEventListener('click', function () { API.cue(); playFilm(m, racer) })
@@ -173,6 +173,7 @@
       menu()
     })
   }
+  var TINT = { senja: 'Senja', malam: 'Malam', hujan: 'Hujan', salju: 'Badai', kabut: 'Kabut' }
   function menu () {
     if (!API) return
     if (!TEAM) return teamMenu()
@@ -196,7 +197,7 @@
       var b = el('button', 'race-card' + (ok ? '' : ' lock')); b.type = 'button'; b.setAttribute('data-stage', st.id)
       b.setAttribute('aria-label', st.title + (ok ? '' : ' (terkunci)'))
       var stars = ''; for (var k = 1; k <= 3; k++) stars += '<img class="' + (rec && rec.stars >= k ? '' : 'off') + '" alt="" src="' + lib('mojo-chase/items/star') + '">'
-      b.innerHTML = '<span class="pic" style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + lib('mojo-chase/vehicles/' + st.target) + '"><span class="num fk">' + (i + 1) + '</span></span>' +
+      b.innerHTML = '<span class="pic"' + (st.tint ? ' data-tint="' + st.tint + '"' : '') + ' style="background-image:url(' + lib(st.cardKey ? 'mojo-chase/' + st.cardKey : 'mojo-chase/biome/' + st.card) + ')"><img class="tgt" alt="" src="' + lib('mojo-chase/vehicles/' + st.target) + '"><span class="num fk">' + (i + 1) + '</span>' + (st.tint ? '<span class="rtag fk">' + TINT[st.tint] + '</span>' : '') + '</span>' +
         (ok ? '' : '<span class="lk"><i class="ico">' + (W.MojoArt && W.MojoArt.icon ? W.MojoArt.icon('lock') : '') + '</i></span>') +
         '<span class="meta"><strong class="fk">' + st.title + '</strong><span class="sub">' + st.place + '</span>' + (ok ? '<span class="st">' + stars + '</span>' : '<span class="hint">Selesaikan tahap ' + (i - OPEN_AHEAD + 1) + ' dulu</span>') + '</span>'
       b.addEventListener('click', function () {

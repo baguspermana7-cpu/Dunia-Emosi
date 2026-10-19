@@ -37,8 +37,40 @@
     'mud': { len: 40, curve: 0, hill: 0, surface: 'mud' },
     'snow': { len: 50, curve: 0.8, hill: 0, surface: 'snow' },
     'crosswalk': { len: 30, curve: 0, hill: 0, surface: 'crosswalk' },
-    'finish': { len: 60, curve: 0, hill: 0, set: true, finish: true }
+    'finish': { len: 60, curve: 0, hill: 0, set: true, finish: true },
+    // road variety (owner 2026-10-19: "variasi jalan sangat kurang"). wave: the hill rises and comes back down
+    // `wave` times inside the piece (a crest, a dip, rollers -- the road ends at the height it started); weave: the
+    // curve swings left-right `weave` times (esses); both are read by mojo-chase-track.js build()
+    'hairpin-left': { len: 46, curve: -4.6, hill: 0, chevron: 'left' },
+    'hairpin-right': { len: 46, curve: 4.6, hill: 0, chevron: 'right' },
+    'chicane-left': { len: 54, curve: -3.6, s: true, hill: 0, chevron: 'left' },
+    'chicane-right': { len: 54, curve: 3.6, s: true, hill: 0, chevron: 'right' },
+    'esses-left': { len: 120, curve: -2.4, weave: 2, hill: 0, chevron: 'left' },
+    'esses-right': { len: 120, curve: 2.4, weave: 2, hill: 0, chevron: 'right' },
+    'sweep-left': { len: 110, curve: -1.1, hill: 0, chevron: 'left' },
+    'sweep-right': { len: 110, curve: 1.1, hill: 0, chevron: 'right' },
+    'crest': { len: 64, curve: 0, hill: 1500, wave: 1 },
+    'dip': { len: 60, curve: 0, hill: -1200, wave: 1 },
+    'rollers': { len: 96, curve: 0, hill: 560, wave: 3 },
+    'climb-left': { len: 70, curve: -2.4, hill: 1400, chevron: 'left' },
+    'climb-right': { len: 70, curve: 2.4, hill: 1400, chevron: 'right' },
+    'descent-left': { len: 70, curve: -2.4, hill: -1400, chevron: 'left' },
+    'descent-right': { len: 70, curve: 2.4, hill: -1400, chevron: 'right' },
+    'crest-left': { len: 72, curve: -2.2, hill: 1200, wave: 1, chevron: 'left' },
+    'crest-right': { len: 72, curve: 2.2, hill: 1200, wave: 1, chevron: 'right' },
+    'rollers-weave': { len: 110, curve: 1.8, weave: 2, hill: 480, wave: 2, chevron: 'right' }
   }
+  // road personalities: a stage's piece pool (weights) by the kind of land it crosses
+  var POOL = {
+    city: [['straight-a', 3], ['straight-b', 3], ['chicane-left', 2], ['chicane-right', 2], ['crosswalk', 2], ['left', 2], ['right', 2], ['town', 2], ['sweep-left', 1], ['sweep-right', 1], ['dip', 1]],
+    hills: [['straight-a', 2], ['crest', 3], ['dip', 2], ['rollers', 2], ['crest-left', 2], ['crest-right', 2], ['wide-left', 2], ['wide-right', 2], ['uphill', 1], ['downhill', 1]],
+    mountain: [['straight-a', 2], ['hairpin-left', 2], ['hairpin-right', 2], ['climb-left', 2], ['climb-right', 2], ['descent-left', 2], ['descent-right', 2], ['esses-left', 1], ['esses-right', 1], ['crest', 1]],
+    coast: [['straight-a', 2], ['sweep-left', 3], ['sweep-right', 3], ['coastal', 3], ['crest-left', 1], ['crest-right', 1], ['esses-left', 1], ['esses-right', 1], ['dip', 1]],
+    twisty: [['straight-a', 2], ['esses-left', 2], ['esses-right', 2], ['chicane-left', 2], ['chicane-right', 2], ['left', 2], ['right', 2], ['rollers-weave', 2], ['hairpin-left', 1], ['hairpin-right', 1]],
+    open: [['straight-a', 3], ['straight-c', 2], ['sweep-left', 2], ['sweep-right', 2], ['rollers', 2], ['crest', 2], ['dip', 1], ['wide-left', 1], ['wide-right', 1]],
+    circuit: [['straight-b', 3], ['straight-a', 2], ['hairpin-left', 2], ['hairpin-right', 2], ['chicane-left', 2], ['chicane-right', 2], ['sweep-left', 2], ['sweep-right', 2], ['esses-left', 1]]
+  }
+  function mix (base, extra) { return base.concat(extra || []) }
 
   function rng (seed) { var s = (seed | 0) || 1; return function () { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff } }
 
@@ -75,47 +107,47 @@
       biome: 'coastal', target: 'striped-07', weather: 'none', tier: 'A', seconds: 70, gadget: 'rocket',
       mission: 'Tangkap pencuri dan jaga kota tetap aman!', intro: 'Pencuri kabur membawa karung koin warga! Ayo kejar dengan Mojo Pembalap!',
       outro: 'Pencuri tertangkap jaring! Polisi datang dan koin warga kembali.', item: 'karung koin',
-      pieces: [['straight-a', 4], ['straight-b', 2], ['coastal', 3], ['wide-left', 2], ['wide-right', 2], ['left', 1], ['right', 1], ['uphill', 1], ['downhill', 1]],
+      pieces: mix([['straight-a', 4], ['straight-b', 2], ['coastal', 3], ['wide-left', 2], ['wide-right', 2], ['left', 1], ['right', 1], ['uphill', 1], ['downhill', 1]], [['sweep-left', 2], ['sweep-right', 2], ['crest-left', 1], ['crest-right', 1], ['esses-right', 1]]),
       script: [{ at: 5, id: 'bridge' }] },
     { id: 'kota', cfar: 'town', cmid: 'town', cardKey: 'biome25/01-town', title: 'Keliling Kota', place: 'Kota Swoppiton', card: 'town', far: 'castle', sky: 'clear', biome: 'town', target: 'striped-14',
       weather: 'none', tier: 'B', seconds: 80, gadget: 'rocket', mission: 'Kejar mobil pencuri sampai tertangkap!',
       intro: 'Mobil belang mengambil bel sekolah! Kejar dia keliling kota.', outro: 'Bel sekolah kembali. Terima kasih, Mojo!', item: 'bel sekolah',
-      pieces: [['straight-a', 3], ['town', 4], ['crosswalk', 2], ['left', 2], ['right', 2], ['straight-b', 2], ['s-left', 1], ['s-right', 1]],
+      pieces: mix([['straight-a', 3], ['town', 4], ['crosswalk', 2], ['left', 2], ['right', 2], ['straight-b', 2], ['s-left', 1], ['s-right', 1]], [['chicane-left', 2], ['chicane-right', 2], ['dip', 1], ['sweep-left', 1]]),
       script: [{ at: 4, id: 'tunnel' }] },
     { id: 'hutan', cfar: 'forest', cmid: 'forest', cardKey: 'biome25/03-forest', title: 'Truk Kayu Kabur', place: 'Hutan Pinus', card: 'forest', far: 'forest-lake', sky: 'cloudy', biome: 'forest', target: 'logs',
       weather: 'leaves', tier: 'C', seconds: 85, gadget: 'rocket', mission: 'Hentikan truk kayu yang kabur!',
       intro: 'Truk kayu kabur tanpa izin! Ayo susul di jalan hutan.', outro: 'Truk kayu berhenti dengan aman. Hutan tetap lestari!', item: 'kayu',
-      pieces: [['straight-a', 3], ['forest', 4], ['s-left', 2], ['s-right', 2], ['uphill', 2], ['downhill', 2], ['mud', 1], ['left', 1], ['right', 1]],
+      pieces: mix([['straight-a', 3], ['forest', 4], ['s-left', 2], ['s-right', 2], ['uphill', 2], ['downhill', 2], ['mud', 1], ['left', 1], ['right', 1]], [['esses-left', 2], ['esses-right', 2], ['crest', 2], ['rollers', 1], ['climb-left', 1]]),
       script: [{ at: 6, id: 'bridge' }] },
     { id: 'gurun', cfar: 'desert', cmid: 'desert', cardKey: 'biome25/04-desert', title: 'Ngarai Batu Merah', place: 'Ngarai Batu Merah', card: 'desert', far: 'mesas', sky: 'sunset', biome: 'desert', target: 'junk',
       weather: 'dust', heat: true, tier: 'C', seconds: 90, gadget: 'rocket', mission: 'Tangkap truk rongsok di ngarai!',
       intro: 'Truk rongsok membawa kotak alat Kakek! Kejar ke ngarai!', outro: 'Kotak alat Kakek selamat. Hebat sekali!', item: 'kotak alat',
-      pieces: [['straight-a', 3], ['straight-c', 2], ['wide-left', 2], ['wide-right', 2], ['uphill', 2], ['downhill', 2], ['left', 1], ['right', 1]],
+      pieces: mix([['straight-a', 3], ['straight-c', 2], ['wide-left', 2], ['wide-right', 2], ['uphill', 2], ['downhill', 2], ['left', 1], ['right', 1]], [['rollers', 2], ['crest', 2], ['sweep-left', 1], ['sweep-right', 1], ['dip', 2]]),
       script: [{ at: 7, id: 'tunnel' }] },
     { id: 'salju', cfar: 'snow', cmid: 'snow', cardKey: 'biome25/05-snow', title: 'Jalan Salju Licin', place: 'Gunung Salju', card: 'snow', far: 'aurora', sky: 'snow', biome: 'snow', target: 'work',
       weather: 'snow', tier: 'D', seconds: 90, gadget: 'rocket', mission: 'Kejar truk batu di jalan bersalju!',
       intro: 'Truk batu meluncur kencang di jalan salju! Pelan-pelan, tapi terus kejar!', outro: 'Truk batu berhenti. Jalan salju aman lagi!', item: 'batu bangunan',
-      pieces: [['straight-a', 3], ['snow', 4], ['wide-left', 2], ['wide-right', 2], ['downhill', 2], ['uphill', 1], ['s-left', 1], ['s-right', 1]],
+      pieces: mix([['straight-a', 3], ['snow', 4], ['wide-left', 2], ['wide-right', 2], ['downhill', 2], ['uphill', 1], ['s-left', 1], ['s-right', 1]], [['hairpin-left', 2], ['hairpin-right', 2], ['descent-left', 1], ['descent-right', 1], ['sweep-left', 1]]),
       script: [{ at: 5, id: 'tunnel' }] },
     { id: 'jembatan', cfar: 'bridge', cmid: 'bridge', cardKey: 'biome25/06-bridge', title: 'Jembatan Merah', place: 'Teluk Mercusuar', card: 'bridge', far: 'lighthouse', sky: 'clear', biome: 'coastal', target: 'striped-02',
       weather: 'none', tier: 'D', seconds: 85, gadget: 'rocket', mission: 'Kejar mobil cepat melewati jembatan dan terowongan!',
       intro: 'Mobil cepat mengambil peta harta warga! Lewati jembatan merah!', outro: 'Peta warga kembali. Jembatan aman!', item: 'peta warga',
-      pieces: [['straight-a', 3], ['coastal', 2], ['wide-left', 2], ['wide-right', 2], ['straight-b', 2]],
+      pieces: mix([['straight-a', 3], ['coastal', 2], ['wide-left', 2], ['wide-right', 2], ['straight-b', 2]], [['sweep-left', 2], ['sweep-right', 2], ['crest', 1]]),
       script: [{ at: 2, id: 'bridge' }, { at: 5, id: 'tunnel' }, { at: 8, id: 'bridge' }] },
     { id: 'proyek', cfar: 'construction', cmid: 'construction', cardKey: 'biome25/08-construction', title: 'Proyek Kacau', place: 'Lokasi Proyek', card: 'construction', far: 'castle', sky: 'cloudy', biome: 'construction', target: 'chaos',
       weather: 'dust', tier: 'D', seconds: 85, gadget: 'rocket', mission: 'Hentikan bus usil di lokasi proyek!',
       intro: 'Bus usil kabur membawa helm para pekerja! Hati-hati banyak kerucut!', outro: 'Helm pekerja kembali. Proyek aman lagi!', item: 'helm pekerja',
-      pieces: [['straight-a', 3], ['construction', 4], ['left', 2], ['right', 2], ['mud', 2], ['straight-c', 1]],
+      pieces: mix([['straight-a', 3], ['construction', 4], ['left', 2], ['right', 2], ['mud', 2], ['straight-c', 1]], [['chicane-left', 2], ['chicane-right', 2], ['dip', 1], ['rollers', 1]]),
       script: [] },
     { id: 'desa', cfar: 'farm', cmid: 'farm', cardKey: 'biome25/09-farm', title: 'Es Krim Usil', place: 'Desa Peternakan', card: 'farm', far: 'forest-lake', sky: 'clear', biome: 'farm', target: 'sweet',
       weather: 'leaves', tier: 'B', seconds: 75, gadget: 'rocket', mission: 'Kejar truk es krim yang usil!',
       intro: 'Truk es krim usil membawa susu Pak Tani! Susul di jalan desa!', outro: 'Susu Pak Tani kembali. Es krim untuk semua!', item: 'susu segar',
-      pieces: [['straight-a', 3], ['straight-c', 3], ['mud', 2], ['wide-left', 2], ['wide-right', 2], ['uphill', 1], ['downhill', 1]],
+      pieces: mix([['straight-a', 3], ['straight-c', 3], ['mud', 2], ['wide-left', 2], ['wide-right', 2], ['uphill', 1], ['downhill', 1]], [['rollers', 2], ['crest', 2], ['dip', 1], ['sweep-right', 1]]),
       script: [] },
     { id: 'malam', cfar: 'city-night', cmid: 'city-night', cardKey: 'biome25/10-city-night', title: 'Kejar Malam', place: 'Kota Malam', card: 'city-night', far: 'night-city', sky: 'night', biome: 'city', night: true, wet: true, target: 'speed',
       weather: 'rain', tier: 'E', seconds: 95, gadget: 'rocket', mission: 'Kejar mobil kencang di kota malam!',
       intro: 'Malam hujan, mobil kencang membawa lampu taman! Nyalakan lampu Mojo!', outro: 'Lampu taman kembali. Kota bersinar lagi!', item: 'lampu taman',
-      pieces: [['straight-a', 3], ['straight-b', 3], ['wide-left', 2], ['wide-right', 2], ['s-left', 1], ['s-right', 1], ['town', 2]],
+      pieces: mix([['straight-a', 3], ['straight-b', 3], ['wide-left', 2], ['wide-right', 2], ['s-left', 1], ['s-right', 1], ['town', 2]], [['chicane-left', 2], ['chicane-right', 2], ['esses-left', 1], ['esses-right', 1]]),
       script: [{ at: 4, id: 'tunnel' }, { at: 9, id: 'bridge' }] }
   ]
 
@@ -128,40 +160,97 @@
       pieces: o.pieces || [['straight-a', 3], ['straight-b', 2], ['wide-left', 2], ['wide-right', 2], ['left', 1], ['right', 1], ['uphill', 1], ['downhill', 1]], script: o.script || [] }
   }
   ;[
-    { id: 'terowongan', look: 'town', title: 'Terowongan Panjang', place: 'Terowongan Gunung', card: 'biome25/07-tunnel', strip: 'town', base: 'town', sky: 'clear', target: 'striped-09', item: 'senter tambang', tier: 'C',
+    { id: 'terowongan', pieces: POOL.twisty, look: 'town', title: 'Terowongan Panjang', place: 'Terowongan Gunung', card: 'biome25/07-tunnel', strip: 'town', base: 'town', sky: 'clear', target: 'striped-09', item: 'senter tambang', tier: 'C',
       mission: 'Kejar pencuri di dalam terowongan!', intro: 'Pencuri belang masuk terowongan membawa senter tambang! Lampu Mojo menyala otomatis!', outro: 'Senter tambang kembali. Terowongan terang lagi!',
       script: [{ at: 2, id: 'tunnel' }, { at: 4, id: 'tunnel' }, { at: 6, id: 'tunnel' }] },
-    { id: 'rimba', look: 'jungle', title: 'Air Terjun Rimba', place: 'Hutan Rimba', card: 'biome25/11-jungle', strip: 'jungle', base: 'forest', sky: 'cloudy', weather: 'leaves', target: 'army', item: 'peta hutan',
+    { id: 'rimba', pieces: POOL.twisty, look: 'jungle', title: 'Air Terjun Rimba', place: 'Hutan Rimba', card: 'biome25/11-jungle', strip: 'jungle', base: 'forest', sky: 'cloudy', weather: 'leaves', target: 'army', item: 'peta hutan',
       mission: 'Kejar mobil hijau di jalan rimba!', intro: 'Mobil hijau membawa peta hutan para penjaga! Kejar sampai air terjun!', outro: 'Peta hutan kembali ke penjaga. Hebat!' },
-    { id: 'gunung-api', look: 'volcano', title: 'Kaki Gunung Api', place: 'Gunung Api Ceria', card: 'biome25/12-volcano', strip: 'volcano', base: 'desert', sky: 'sunset', fx: 'embers', heat: true, target: 'fuel', item: 'tabung bahan bakar',
+    { id: 'gunung-api', pieces: POOL.mountain, look: 'volcano', title: 'Kaki Gunung Api', place: 'Gunung Api Ceria', card: 'biome25/12-volcano', strip: 'volcano', base: 'desert', sky: 'sunset', fx: 'embers', heat: true, target: 'fuel', item: 'tabung bahan bakar',
       mission: 'Hentikan truk tangki dengan aman!', intro: 'Truk tangki membawa bahan bakar bengkel! Gunungnya hanya bercahaya, kita aman. Kejar!', outro: 'Bahan bakar bengkel kembali. Aman dan selamat!' },
-    { id: 'tol-malam', look: 'city', title: 'Jalan Tol Malam', place: 'Tol Bulan Purnama', card: 'biome25/13-night-highway', strip: 'night-highway', base: 'city', sky: 'night', night: true, target: 'rich', item: 'lampu kota', tier: 'D',
+    { id: 'tol-malam', pieces: POOL.open, look: 'city', title: 'Jalan Tol Malam', place: 'Tol Bulan Purnama', card: 'biome25/13-night-highway', strip: 'night-highway', base: 'city', sky: 'night', night: true, target: 'rich', item: 'lampu kota', tier: 'D',
       mission: 'Kejar mobil hitam di bawah bulan!', intro: 'Malam purnama, mobil hitam membawa lampu kota! Nyalakan lampu Mojo!', outro: 'Lampu kota menyala lagi. Terima kasih, Mojo!' },
-    { id: 'musim-gugur', look: 'autumn', title: 'Daun Berguguran', place: 'Lembah Gugur', card: 'biome25/14-autumn', strip: 'autumn', base: 'farm', sky: 'sunset', weather: 'leaves', target: 'striped-19', item: 'keranjang apel',
+    { id: 'musim-gugur', pieces: POOL.hills, look: 'autumn', title: 'Daun Berguguran', place: 'Lembah Gugur', card: 'biome25/14-autumn', strip: 'autumn', base: 'farm', sky: 'sunset', weather: 'leaves', target: 'striped-19', item: 'keranjang apel',
       mission: 'Ambil kembali keranjang apel!', intro: 'Pencuri belang membawa keranjang apel petani! Kejar di antara daun jatuh!', outro: 'Keranjang apel kembali ke petani!' },
-    { id: 'sakura', look: 'cherry', title: 'Jalan Bunga Sakura', place: 'Taman Sakura', card: 'biome25/15-cherry-blossom', strip: 'cherry-blossom', base: 'town', sky: 'clear', weather: 'petals', target: 'striped-17', item: 'pot bunga', tier: 'B',
+    { id: 'sakura', pieces: POOL.hills, look: 'cherry', title: 'Jalan Bunga Sakura', place: 'Taman Sakura', card: 'biome25/15-cherry-blossom', strip: 'cherry-blossom', base: 'town', sky: 'clear', weather: 'petals', target: 'striped-17', item: 'pot bunga', tier: 'B',
       mission: 'Kejar pencuri pot bunga!', intro: 'Pencuri belang membawa pot bunga taman! Kejar di jalan sakura!', outro: 'Pot bunga kembali ke taman. Indah sekali!' },
-    { id: 'hujan', look: 'rainy', title: 'Kejar di Hujan', place: 'Kota Hujan', card: 'biome25/16-rain', strip: 'rain', base: 'city', sky: 'rain', wet: true, weather: 'rain', target: 'trash', item: 'payung warga', tier: 'D',
+    { id: 'hujan', pieces: POOL.city, look: 'rainy', title: 'Kejar di Hujan', place: 'Kota Hujan', card: 'biome25/16-rain', strip: 'rain', base: 'city', sky: 'rain', wet: true, weather: 'rain', target: 'trash', item: 'payung warga', tier: 'D',
       mission: 'Kejar truk hijau di jalan basah!', intro: 'Hujan turun, truk hijau membawa payung warga! Hati-hati jalan licin!', outro: 'Payung warga kembali. Semua tetap kering!' },
-    { id: 'resor', look: 'beach', title: 'Pantai Resor', place: 'Pantai Kelapa', card: 'biome25/17-beach-resort', strip: 'beach-resort', base: 'coastal', sky: 'clear', fx: 'glare', target: 'striped-25', item: 'pelampung',
+    { id: 'resor', pieces: POOL.coast, look: 'beach', title: 'Pantai Resor', place: 'Pantai Kelapa', card: 'biome25/17-beach-resort', strip: 'beach-resort', base: 'coastal', sky: 'clear', fx: 'glare', target: 'striped-25', item: 'pelampung',
       mission: 'Kejar pencuri pelampung!', intro: 'Pencuri belang membawa pelampung pantai! Kejar di bawah matahari!', outro: 'Pelampung kembali ke penjaga pantai!' },
-    { id: 'kereta-ngarai', look: 'canyon', title: 'Jembatan Kereta Ngarai', place: 'Ngarai Rel', card: 'biome25/18-canyon-railway', strip: 'canyon-railway', base: 'desert', sky: 'sunset', weather: 'dust', target: 'logs', item: 'kayu rel',
+    { id: 'kereta-ngarai', pieces: POOL.mountain, look: 'canyon', title: 'Jembatan Kereta Ngarai', place: 'Ngarai Rel', card: 'biome25/18-canyon-railway', strip: 'canyon-railway', base: 'desert', sky: 'sunset', weather: 'dust', target: 'logs', item: 'kayu rel',
       mission: 'Hentikan truk kayu di ngarai!', intro: 'Truk kayu membawa kayu untuk rel kereta! Kejar di bawah jembatan!', outro: 'Kayu rel kembali. Kereta bisa lewat lagi!' },
-    { id: 'kincir-angin', look: 'windfarm', title: 'Ladang Kincir Angin', place: 'Bukit Kincir', card: 'biome25/19-wind-farm', strip: 'wind-farm', base: 'farm', sky: 'cloudy', target: 'striped-12', item: 'baling-baling',
+    { id: 'kincir-angin', pieces: POOL.hills, look: 'windfarm', title: 'Ladang Kincir Angin', place: 'Bukit Kincir', card: 'biome25/19-wind-farm', strip: 'wind-farm', base: 'farm', sky: 'cloudy', target: 'striped-12', item: 'baling-baling',
       mission: 'Kejar mobil pencuri baling-baling!', intro: 'Mobil belang membawa baling-baling kincir! Kejar di bukit berangin!', outro: 'Baling-baling kembali. Kincir berputar lagi!' },
-    { id: 'antariksa', look: 'space', title: 'Pangkalan Antariksa', place: 'Stasiun Bintang', card: 'biome25/20-space-base', strip: 'space-base', base: 'city', sky: 'night', night: true, fx: 'space', target: 'striped-20', item: 'antena roket', tier: 'D',
+    { id: 'antariksa', pieces: POOL.open, look: 'space', title: 'Pangkalan Antariksa', place: 'Stasiun Bintang', card: 'biome25/20-space-base', strip: 'space-base', base: 'city', sky: 'night', night: true, fx: 'space', target: 'striped-20', item: 'antena roket', tier: 'D',
       mission: 'Kejar pencuri antena roket!', intro: 'Pencuri belang membawa antena roket! Di sini Mojo terasa melayang!', outro: 'Antena roket kembali. Siap meluncur!' },
-    { id: 'perumahan', look: 'suburb', title: 'Kompleks Perumahan', place: 'Kompleks Pelangi', card: 'biome25/21-suburb', strip: 'suburb', base: 'town', sky: 'clear', target: 'sweet', item: 'surat warga', tier: 'B',
+    { id: 'perumahan', pieces: POOL.city, look: 'suburb', title: 'Kompleks Perumahan', place: 'Kompleks Pelangi', card: 'biome25/21-suburb', strip: 'suburb', base: 'town', sky: 'clear', target: 'sweet', item: 'surat warga', tier: 'B',
       mission: 'Kejar truk es krim yang usil!', intro: 'Truk es krim usil membawa kantong surat! Kejar di kompleks!', outro: 'Surat warga sampai ke rumah masing-masing!' },
-    { id: 'pelabuhan', look: 'harbour', title: 'Pelabuhan Peti Kemas', place: 'Pelabuhan Biru', card: 'biome25/22-harbor-port', strip: 'harbor-port', base: 'construction', sky: 'cloudy', target: 'big', item: 'peti mainan',
+    { id: 'pelabuhan', pieces: POOL.city, look: 'harbour', title: 'Pelabuhan Peti Kemas', place: 'Pelabuhan Biru', card: 'biome25/22-harbor-port', strip: 'harbor-port', base: 'construction', sky: 'cloudy', target: 'big', item: 'peti mainan',
       mission: 'Kejar truk besar di pelabuhan!', intro: 'Truk besar membawa peti mainan anak-anak! Kejar di pelabuhan!', outro: 'Peti mainan kembali ke anak-anak!' },
-    { id: 'stadion', look: 'stadium', title: 'Balapan Stadion', place: 'Stadion Mojo', card: 'biome25/23-stadium', strip: 'stadium', base: 'town', sky: 'clear', fx: 'flash', target: 'speed', item: 'piala', tier: 'E',
+    { id: 'stadion', pieces: POOL.circuit, look: 'stadium', title: 'Balapan Stadion', place: 'Stadion Mojo', card: 'biome25/23-stadium', strip: 'stadium', base: 'town', sky: 'clear', fx: 'flash', target: 'speed', item: 'piala', tier: 'E',
       mission: 'Rebut kembali piala juara!', intro: 'Mobil kencang membawa piala stadion! Penonton bersorak untuk Mojo!', outro: 'Piala kembali! Penonton bersorak!' },
-    { id: 'candi', look: 'ruins', title: 'Gerbang Candi Tua', place: 'Reruntuhan Candi', card: 'biome25/24-ruins-temple', strip: 'ruins-temple', base: 'forest', sky: 'cloudy', weather: 'leaves', target: 'junk', item: 'batu pahat',
+    { id: 'candi', pieces: POOL.twisty, look: 'ruins', title: 'Gerbang Candi Tua', place: 'Reruntuhan Candi', card: 'biome25/24-ruins-temple', strip: 'ruins-temple', base: 'forest', sky: 'cloudy', weather: 'leaves', target: 'junk', item: 'batu pahat',
       mission: 'Kejar truk rongsok di candi!', intro: 'Truk rongsok membawa batu pahat candi! Kejar dengan hati-hati!', outro: 'Batu pahat kembali ke candi. Terima kasih!' },
-    { id: 'permen', look: 'candy', title: 'Negeri Permen', place: 'Negeri Permen', card: 'biome25/25-candy-land', strip: 'candy-land', base: 'farm', sky: 'clear', fx: 'sugar', target: 'yum', item: 'kotak permen', tier: 'B',
+    { id: 'permen', pieces: POOL.hills, look: 'candy', title: 'Negeri Permen', place: 'Negeri Permen', card: 'biome25/25-candy-land', strip: 'candy-land', base: 'farm', sky: 'clear', fx: 'sugar', target: 'yum', item: 'kotak permen', tier: 'B',
       mission: 'Kejar truk hot dog yang usil!', intro: 'Truk hot dog usil membawa kotak permen! Kejar di negeri permen!', outro: 'Kotak permen kembali. Manis sekali!' }
   ].forEach(function (o) { STAGES.push(extraStage(o)) })
+
+  /* ── second-round stages (owner 2026-10-19: "level balapan sangat kurang"): every biome again at another time of
+     day or weather, a harder road (its own pool), a longer run and a new getaway vehicle. The card reuses the biome
+     art with a light tint (`tint`: senja | malam | hujan | salju | kabut) so the grid reads which round it is. ── */
+  function variant (base, o) {
+    var b = stage(base), v = {}, k
+    for (k in b) v[k] = b[k]
+    for (k in o) v[k] = o[k]
+    v.base = base; v.script = o.script || b.script || []
+    return v
+  }
+  ;[
+    ['pantai', { id: 'pantai-senja', title: 'Pantai Senja', place: 'Jalan Pantai', sky: 'sunset', tint: 'senja', target: 'striped-01', item: 'kerang hias', tier: 'C', seconds: 85, pieces: POOL.coast,
+      mission: 'Kejar pencuri kerang saat matahari terbenam!', intro: 'Matahari terbenam di pantai! Pencuri belang membawa kerang hias warga. Kejar!', outro: 'Kerang hias kembali. Senjanya indah sekali!' }],
+    ['kota', { id: 'kota-malam', title: 'Kota Bercahaya', place: 'Kota Swoppiton', sky: 'night', night: true, tint: 'malam', target: 'cash', item: 'celengan sekolah', tier: 'D', seconds: 90, pieces: POOL.city,
+      mission: 'Kejar mobil celengan di kota malam!', intro: 'Malam di kota! Mobil usil membawa celengan sekolah. Nyalakan lampu Mojo!', outro: 'Celengan sekolah kembali. Kota tenang lagi!' }],
+    ['hutan', { id: 'hutan-hujan', title: 'Hutan Hujan Berkabut', place: 'Hutan Pinus', sky: 'rain', wet: true, weather: 'rain', tint: 'hujan', target: 'army', item: 'teropong penjaga', tier: 'D', seconds: 90, pieces: POOL.twisty,
+      mission: 'Kejar mobil hijau di hutan basah!', intro: 'Hujan turun di hutan pinus! Mobil hijau membawa teropong penjaga hutan. Kejar pelan-pelan!', outro: 'Teropong kembali ke penjaga hutan!' }],
+    ['gurun', { id: 'gurun-malam', title: 'Gurun Bintang', place: 'Ngarai Batu Merah', sky: 'night', night: true, tint: 'malam', target: 'loot', item: 'kompas emas', tier: 'D', seconds: 95, pieces: POOL.open,
+      mission: 'Kejar truk kompas di bawah bintang!', intro: 'Malam di gurun, bintang bersinar! Truk usil membawa kompas emas. Ikuti lampunya!', outro: 'Kompas emas kembali. Bintangnya cantik!' }],
+    ['salju', { id: 'salju-badai', title: 'Badai Salju', place: 'Gunung Salju', sky: 'snow', weather: 'snow', tint: 'salju', target: 'big', item: 'selimut hangat', tier: 'E', seconds: 95, pieces: POOL.mountain,
+      mission: 'Kejar truk besar di tikungan gunung!', intro: 'Salju makin tebal! Truk besar membawa selimut hangat warga desa. Hati-hati di tikungan tajam!', outro: 'Selimut hangat sampai ke desa. Semua hangat!' }],
+    ['jembatan', { id: 'jembatan-senja', title: 'Jembatan Senja', place: 'Teluk Mercusuar', sky: 'sunset', tint: 'senja', target: 'vroom', item: 'lampu mercusuar', tier: 'D', seconds: 90, pieces: POOL.coast,
+      mission: 'Kejar mobil kencang sebelum gelap!', intro: 'Lampu mercusuar dibawa kabur! Kejar sebelum malam tiba!', outro: 'Lampu mercusuar menyala lagi. Kapal-kapal aman!' }],
+    ['proyek', { id: 'proyek-hujan', title: 'Proyek Berlumpur', place: 'Lokasi Proyek', sky: 'rain', wet: true, weather: 'rain', tint: 'hujan', target: 'work', item: 'meteran tukang', tier: 'D', seconds: 90, pieces: POOL.twisty,
+      mission: 'Kejar truk batu di proyek berlumpur!', intro: 'Hujan membuat proyek berlumpur! Truk batu membawa meteran tukang. Kejar!', outro: 'Meteran tukang kembali. Pembangunan lanjut!' }],
+    ['desa', { id: 'desa-senja', title: 'Desa Senja', place: 'Desa Peternakan', sky: 'sunset', tint: 'senja', target: 'joke', item: 'telur ayam', tier: 'C', seconds: 85, pieces: POOL.hills,
+      mission: 'Kejar mobil usil pembawa telur!', intro: 'Sore di desa! Mobil usil membawa sekeranjang telur ayam. Pelan-pelan di bukit!', outro: 'Telur ayam selamat semua. Pak Tani senang!' }],
+    ['malam', { id: 'malam-badai', title: 'Kota Badai', place: 'Kota Malam', tint: 'hujan', target: 'steal', item: 'lonceng menara', tier: 'E', seconds: 100, pieces: POOL.twisty,
+      mission: 'Kejar mobil pencuri di malam badai!', intro: 'Malam badai! Mobil pencuri membawa lonceng menara kota. Jalan licin, tetap fokus!', outro: 'Lonceng menara berbunyi lagi. Hebat, Mojo!' }],
+    ['rimba', { id: 'rimba-senja', title: 'Rimba Senja', place: 'Hutan Rimba', sky: 'sunset', tint: 'senja', target: 'striped-05', item: 'benih pohon', tier: 'D', seconds: 90, pieces: POOL.mountain,
+      mission: 'Kejar pencuri benih di rimba!', intro: 'Matahari turun di rimba! Pencuri belang membawa benih pohon. Kejar di jalan berliku!', outro: 'Benih pohon kembali. Hutan makin hijau!' }],
+    ['gunung-api', { id: 'gunung-api-malam', title: 'Gunung Api Malam', place: 'Gunung Api Ceria', sky: 'night', night: true, tint: 'malam', target: 'bad1', item: 'kotak P3K', tier: 'E', seconds: 95, pieces: POOL.twisty,
+      mission: 'Kejar mobil di jalan gunung malam!', intro: 'Malam di kaki gunung api yang bercahaya. Mobil usil membawa kotak P3K. Kejar dengan hati-hati!', outro: 'Kotak P3K kembali. Semua aman!' }],
+    ['musim-gugur', { id: 'musim-gugur-hujan', title: 'Gugur Berhujan', place: 'Lembah Gugur', sky: 'rain', wet: true, weather: 'rain', tint: 'hujan', target: 'striped-10', item: 'labu besar', tier: 'D', seconds: 90, pieces: POOL.open,
+      mission: 'Kejar pencuri labu di lembah!', intro: 'Hujan di lembah gugur! Pencuri belang membawa labu besar petani. Kejar!', outro: 'Labu besar kembali. Panen selamat!' }],
+    ['sakura', { id: 'sakura-malam', title: 'Sakura Lampion', place: 'Taman Sakura', sky: 'night', night: true, tint: 'malam', target: 'striped-21', item: 'lampion taman', tier: 'D', seconds: 90, pieces: POOL.twisty,
+      mission: 'Kejar pencuri lampion!', intro: 'Malam di taman sakura, lampion menyala! Pencuri belang membawa lampion. Kejar!', outro: 'Lampion kembali. Taman bercahaya lagi!' }],
+    ['resor', { id: 'resor-senja', title: 'Resor Senja', place: 'Pantai Kelapa', sky: 'sunset', tint: 'senja', target: 'striped-22', item: 'papan selancar', tier: 'C', seconds: 85, pieces: POOL.twisty,
+      mission: 'Kejar pencuri papan selancar!', intro: 'Senja di pantai resor! Pencuri belang membawa papan selancar. Kejar di jalan pantai!', outro: 'Papan selancar kembali ke penjaga pantai!' }],
+    ['kereta-ngarai', { id: 'kereta-ngarai-malam', title: 'Ngarai Bulan', place: 'Ngarai Rel', sky: 'night', night: true, tint: 'malam', target: 'fuel', item: 'lentera kereta', tier: 'E', seconds: 95, pieces: mix(POOL.mountain, [['esses-left', 2], ['esses-right', 2], ['rollers', 1]]),
+      mission: 'Kejar truk tangki di ngarai malam!', intro: 'Bulan terang di ngarai! Truk tangki membawa lentera kereta. Jalannya menanjak dan berkelok!', outro: 'Lentera kereta kembali. Kereta malam bisa lewat!' }],
+    ['kincir-angin', { id: 'kincir-angin-senja', title: 'Bukit Kincir Senja', place: 'Bukit Kincir', sky: 'sunset', tint: 'senja', weather: 'leaves', target: 'striped-15', item: 'roda kincir', tier: 'D', seconds: 90, pieces: mix(POOL.open, [['rollers', 3], ['rollers-weave', 2]]),
+      mission: 'Kejar pencuri di bukit bergelombang!', intro: 'Senja di bukit kincir! Pencuri belang membawa roda kincir. Jalannya naik turun!', outro: 'Roda kincir kembali. Kincir berputar lagi!' }],
+    ['perumahan', { id: 'perumahan-hujan', title: 'Kompleks Hujan', place: 'Kompleks Pelangi', sky: 'rain', wet: true, weather: 'rain', tint: 'hujan', target: 'trash', item: 'paket warga', tier: 'C', seconds: 85, pieces: POOL.twisty,
+      mission: 'Kejar truk paket di kompleks basah!', intro: 'Hujan di kompleks! Truk hijau membawa paket warga. Kejar di tikungan kompleks!', outro: 'Paket sampai ke rumah warga. Terima kasih!' }],
+    ['pelabuhan', { id: 'pelabuhan-malam', title: 'Pelabuhan Malam', place: 'Pelabuhan Biru', sky: 'night', night: true, tint: 'malam', target: 'police-van', item: 'jangkar kecil', tier: 'E', seconds: 95, pieces: POOL.circuit,
+      mission: 'Kejar mobil van di pelabuhan malam!', intro: 'Malam di pelabuhan, lampu kapal berkelip! Mobil van membawa jangkar kecil. Kejar!', outro: 'Jangkar kecil kembali ke kapal!' }],
+    ['stadion', { id: 'stadion-malam', title: 'Stadion Malam', place: 'Stadion Mojo', sky: 'night', night: true, tint: 'malam', target: 'vroom', item: 'medali emas', tier: 'E', seconds: 100, pieces: mix(POOL.circuit, [['esses-left', 2], ['esses-right', 2], ['crest', 1]]),
+      mission: 'Rebut kembali medali emas!', intro: 'Balapan malam di stadion, lampu sorot menyala! Mobil kencang membawa medali emas!', outro: 'Medali emas kembali! Penonton bersorak!' }],
+    ['candi', { id: 'candi-kabut', title: 'Candi Berkabut', place: 'Reruntuhan Candi', sky: 'cloudy', tint: 'kabut', target: 'striped-24', item: 'gong kecil', tier: 'D', seconds: 90, pieces: POOL.mountain,
+      mission: 'Kejar pencuri gong di candi!', intro: 'Kabut tipis di candi tua! Pencuri belang membawa gong kecil. Kejar di jalan menanjak!', outro: 'Gong kecil kembali ke candi. Dung, dung!' }],
+    ['permen', { id: 'permen-senja', title: 'Permen Senja', place: 'Negeri Permen', sky: 'sunset', tint: 'senja', target: 'sweet', item: 'toples permen', tier: 'C', seconds: 85, pieces: POOL.twisty,
+      mission: 'Kejar truk es krim usil!', intro: 'Senja di negeri permen! Truk es krim usil membawa toples permen. Kejar!', outro: 'Toples permen kembali. Manis sekali!' }],
+    ['antariksa', { id: 'antariksa-orbit', title: 'Jalur Orbit', place: 'Stasiun Bintang', tint: 'malam', target: 'striped-11', item: 'satelit mini', tier: 'E', seconds: 100, pieces: POOL.circuit,
+      mission: 'Kejar pencuri satelit mini!', intro: 'Jalur orbit penuh tikungan! Pencuri belang membawa satelit mini. Kejar!', outro: 'Satelit mini kembali. Siap mengorbit!' }]
+  ].forEach(function (x) { STAGES.push(variant(x[0], x[1])) })
 
   /* ── adventure beats: type 'chase' after the given grid beat of an existing mission ─────────────────── */
   var ADVENTURE = [
