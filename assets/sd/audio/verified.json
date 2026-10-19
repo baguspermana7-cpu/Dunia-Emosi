@@ -861,34 +861,46 @@
   "engine": "omnivoice"
  },
  "LNG-09-h1": {
-  "sha1": "5dbf47cf02730bf79edf51491ff605b89ad297a9",
+  "sha1": "8b898efea13c9a7fdb967363b166959f2501814a",
   "text": "Kalau haus, kita perlu minum.",
-  "heard": "kalau harus kita perlu minum",
-  "score": 0.979
+  "heard": "Kalau haus kita perlu minum...",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-09-h2": {
-  "sha1": "44e49f26f9511d8fa630a4d08e147f2e2f34709d",
+  "sha1": "90b5144a6976a9da37cdd889d878b17925cee14a",
   "text": "Mana yang bisa diminum?",
   "heard": "Mana yang bisa diminum?",
-  "score": 1.0
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-09-q": {
-  "sha1": "6c0013116a5adac30652ea60bad02fc18b0b476f",
-  "text": "Karena haus, Lala minum ...",
-  "heard": "Karena haus lala minum.",
-  "score": 1.0
+  "sha1": "99faa08f5c108a2223d252baf8dd63e5aada2ce8",
+  "text": "Lala haus. Lala minum ...",
+  "heard": "Lala haus! Lala minum!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-09-s0": {
-  "sha1": "e0213f3dcf559f6e8ad5b19cdbbe39616b1e1eb5",
+  "sha1": "9b6348a61f76372d7f03b99cb1ebd49ec6645e94",
   "text": "Lala bermain lama di taman.",
-  "heard": "Lala bermain lama ditaman.",
-  "score": 1.0
+  "heard": "Lala bermain lama di taman.",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "LNG-09-s1": {
+  "sha1": "980801793bcf741aba4ba6cbdceafc3dd15f2cd0",
+  "text": "Lala haus sekali.",
+  "heard": "lalah haus sekali",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "LNG-09-x": {
-  "sha1": "4238341acbf7e9fe543c851cba1ba7409dda0a12",
+  "sha1": "9625c87c2f2449b5fa251f75c7cc67323fa35b96",
   "text": "Karena haus, Lala minum air.",
-  "heard": "karena haus lalu minum air",
-  "score": 0.9
+  "heard": "Karena haus lalu minum air.",
+  "score": 0.9,
+  "engine": "omnivoice"
  },
  "LNG-10-h1": {
   "sha1": "cd4e1f2ea8caeb8dad6095309b8ea01355075fbc",

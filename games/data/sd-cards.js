@@ -376,7 +376,7 @@
     objective: 'Melengkapi kalimat dengan kata yang tepat.',
     story: ['Lala bermain lama di taman.', 'Lala haus sekali.'],
     beats: [{ t: 'show', id: 'lala', s: 'tk-char/hijab-girl-map', x: 32, y: 80, h: 50, from: 'left' }, { t: 'say', i: 0 }, { t: 'show', id: 'sun', s: 'nature/sun', x: 80, y: 18, h: 20, from: 'up' }, { t: 'say', i: 1 }],
-    q: 'Karena haus, Lala minum ...', options: [{ l: 'air' }, { l: 'sepatu' }, { l: 'buku' }], answer: 0,
+    q: 'Lala haus. Lala minum ...', options: [{ l: 'air' }, { l: 'sepatu' }, { l: 'buku' }], answer: 0,
     hintTarget: null, hints: ['Kalau haus, kita perlu minum.', 'Mana yang bisa diminum?'],
     explain: 'Karena haus, Lala minum air.' })
   card({ id: 'LNG-10', world: 'language', family: 'Arti dari konteks', archetype: 'choice', scene: 'g27:bedroom',
