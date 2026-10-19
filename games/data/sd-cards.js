@@ -268,7 +268,7 @@
       { t: 'show', id: 'r', s: 'sd/rover', x: 80, y: 52, h: 20, from: 'up' }, { t: 'show', id: 'ra', s: 'toys/soccer-ball', x: 80, y: 78, h: 12, from: 'fade' },
       { t: 'say', i: 0 }, { t: 'wait', ms: 1800 }, { t: 'cover', id: 'pa' }, { t: 'cover', id: 'ma' }, { t: 'cover', id: 'ra' }, { t: 'say', i: 1 }],
     q: 'Cocokkan tokoh dengan bendanya.', left: [{ s: 'sd/pip', l: 'Pip' }, { s: 'sd/mimi', l: 'Mimi' }, { s: 'sd/rover', l: 'Rover' }], right: [{ s: 'toys/soccer-ball', l: 'Bola' }, { s: 'food/apple', l: 'Apel' }, { s: 'food/milk', l: 'Susu' }], answer: [1, 2, 0],
-    hintTarget: null, hints: ['Mulai dari Pip: benda Pip bisa dimakan.', 'Pip-apel, Mimi-susu, Rover-bola.'],
+    hintTarget: null, hints: ['Mulai dari Pip: benda Pip bisa dimakan.', 'Pip punya apel, Mimi punya susu, Rover punya bola.'],
     explain: 'Pip membawa apel, Mimi membawa susu, dan Rover membawa bola.' })
   card({ id: 'MEM-07', world: 'memory', family: 'Detail cerita', archetype: 'choice', scene: 'world',
     objective: 'Mengingat jumlah yang disebut cerita.',

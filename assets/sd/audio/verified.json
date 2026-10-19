@@ -2242,34 +2242,46 @@
   "engine": "omnivoice"
  },
  "MEM-06-h1": {
-  "sha1": "2a388ab3848cf5a49f75a5606badbc5adf5759f0",
+  "sha1": "cc75cf9cfb0ad21462d13969f956d0fcf77c35ac",
   "text": "Mulai dari Pip: benda Pip bisa dimakan.",
-  "heard": "Mulai dari pip benda pip bisa dimakan.",
-  "score": 1.0
+  "heard": "Mulai dari Pip, Benda Pip bisa dimakan!",
+  "score": 1.0,
+  "engine": "omnivoice"
+ },
+ "MEM-06-h2": {
+  "sha1": "b0e46443e5f46154c3fa28d2bbcd02124877036d",
+  "text": "Pip punya apel, Mimi punya susu, Rover punya bola.",
+  "heard": "Pip punya apel, Mimi punya susu, Rover punya bola!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-06-q": {
-  "sha1": "9da16ba7f843f515deefa666471dee72f72c0fc1",
+  "sha1": "92e346476fe9405923ddee98e02eb9b775b86752",
   "text": "Cocokkan tokoh dengan bendanya.",
-  "heard": "cocokkan toko dengan bendanya",
-  "score": 0.981
+  "heard": "Cecokkan tokoh dengan bendanya.",
+  "score": 0.963,
+  "engine": "omnivoice"
  },
  "MEM-06-s0": {
-  "sha1": "25405ff1cdcb200d6412f9d932c314a4b5fcf502",
+  "sha1": "a4c31f7adee6edd13ae6823201c638b82b0b71cb",
   "text": "Pip membawa apel. Mimi membawa susu. Rover membawa bola.",
-  "heard": "Pip membawa apel mimi membawa susu roher membawa bola.",
-  "score": 0.93
+  "heard": "Pip membawa apel, Mimi membawa susu, Rover membawa bola.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-06-s1": {
-  "sha1": "56ece740e7a4e674b0776979e5e4efb958de993c",
+  "sha1": "a21c49560f8e47d0a4eac9adf50481ccab8a9dd9",
   "text": "Semua bendanya disimpan. Ingat pasangannya?",
-  "heard": "Semua bendanya disimpan ingat pasangannya.",
-  "score": 1.0
+  "heard": "Semua bendanya disimpan! Ingat pasangannya!",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-06-x": {
-  "sha1": "270a33666830db32faece2c4b1fcc6812ea019fa",
+  "sha1": "0ebb51241d79f9c2ceb2bce732650a3f68abab7f",
   "text": "Pip membawa apel, Mimi membawa susu, dan Rover membawa bola.",
-  "heard": "Pip membawa apel mimi membawa susu dan roher membawa bola.",
-  "score": 0.935
+  "heard": "Pip membawa apel, Mimi membawa susu, dan Rover membawa bola.",
+  "score": 1.0,
+  "engine": "omnivoice"
  },
  "MEM-07-h1": {
   "sha1": "884d9ef8813dbbcf5b987a5dc786feb9cc4b5040",
