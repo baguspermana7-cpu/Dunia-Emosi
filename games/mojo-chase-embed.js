@@ -38,7 +38,7 @@
       var rname = Q.rivalName || rv.name
       var pace = (Q.pace || '0.8,0.9').split(',').map(parseFloat)
       var cfg = W.MojoChases.config(Q.stage || 'kota', { target: 'speed', intro: Q.intro, outro: Q.outro || ('Hebat! ' + rname + ' tersusul. Kamu juara!'), item: Q.item || 'piala', seconds: +Q.seconds || 75 })
-      cfg.title = Q.title || 'Balapan'; cfg.mode = 'race'; cfg.missionType = 'race'
+      cfg.title = Q.title || 'Balapan'; if (Q.place) cfg.place = Q.place; cfg.mode = 'race'; cfg.missionType = 'race'
       cfg.team = 'film'; cfg.racer = 'host:me'; cfg.targetRacer = 'host:rival'; cfg.teamPicked = true; cfg.formChosen = true
       cfg.mojo_form = 'racer'; cfg.heroName = Q.hero || me.name; cfg.paceK = [pace[0] || 0.8, pace[1] || pace[0] || 0.9]
       cfg.mission = Q.mission || ('Susul ' + rname + ' sebelum garis finis!')

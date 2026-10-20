@@ -246,7 +246,8 @@
       starBox: q('.mc-cnt.star'), crateBox: q('.mc-cnt.crate'), timer: q('.mc-timer b'), call: q('.mc-call'), callT: q('.mc-call span'), edu: q('.mc-edu'), ret: q('.mc-reticle'),
       gad: q('.mc-gadget'), skip: q('.mc-skip'), gadN: q('.mc-gadget b'), up: q('.mc-btn.u'), jb: q('.mc-btn.j'), leap: q('.mc-leap'), swipe: q('.mc-swipe'), mission: q('.mc-mission'), place: q('.mc-place'), count: q('.mc-count'), callImg: q('.mc-call img') }
     q('.mc-mission span').textContent = cfg.mission || stage.mission
-    q('.mc-place span').textContent = (stage.place || '').toUpperCase(); q('.mc-loc').textContent = stage.place || ''
+    var PLACE = cfg.place || stage.place || ''   // a host race names its own place (Blippi: the level's name)
+    q('.mc-place span').textContent = PLACE.toUpperCase(); q('.mc-loc').textContent = PLACE
     for (var hi = 0; hi < 3; hi++) { var hImg = el('img'); hImg.alt = ''; hImg.src = lib('mojo-chase/items/heart'); H.hearts.appendChild(hImg) }
 
     /* images */
