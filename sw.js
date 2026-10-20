@@ -196,6 +196,7 @@ const SHELL = [
   './games/data/soal-pack-kapal.js?v=v64.22-20261020a',
   // G31 Mojo Swoptops — shared interpreter, supplied art, menus and questions.
   './games/mojo-swoptops.html',
+  './games/mojo-chase-embed.html',
   './games/mojo-pack.js?v=v64.22-20261020a',
   './games/kereta-pack.css?v=v64.22-20261020a',
   './games/data/kereta-pack.js?v=v64.22-20261020a',
@@ -278,6 +279,7 @@ const SHELL = [
   './games/mojo-chase-track.js?v=v64.22-20261020a',
   './games/mojo-chase-scene.js?v=v64.22-20261020a',
   './games/mojo-chase.js?v=v64.22-20261020a',
+  './games/mojo-chase-embed.js?v=v64.22-20261020a',
   './games/data/mojo-chase-atmos-data.js?v=v64.22-20261020a',
   './games/mojo-chase-atmos.js?v=v64.22-20261020a',
   './games/mojo-chase-ui.css?v=v64.22-20261020a',

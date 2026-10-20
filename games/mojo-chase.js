@@ -60,7 +60,7 @@
   function rearAnchor (RA, k) { return RA ? (RA.sprites[k] || (RA.extra && RA.extra[k]) || null) : null }
   function knownForm (id) { var RA = W.MojoRearAnchors; return !!id && (!!formRow(id) || !!(RA && RA.forms[id])) }
   var RM = false; try { RM = W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) {}
-  function lib (k) { if (/^assets\//.test(k)) return '../' + k; return (W.AssetIndex && W.AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') }   // 'assets/...' = a file outside the library (film racer sheets)
+  function lib (k) { if (/^(https?:|\/|\.\.\/)/.test(k)) return k; if (/^assets\//.test(k)) return '../' + k; return (W.AssetIndex && W.AssetIndex.path(k)) || ('../assets/db/lib/' + k + '.webp') }   // 'assets/...' = a file outside the library (film racer sheets)
   function clamp (v, a, b) { return v < a ? a : v > b ? b : v }
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
 
@@ -187,6 +187,10 @@
     // the film team drives 13% slower on the road (owner 2026-10-18: "terlalu tinggi, sulit dikontrol, kurangi 10-15%");
     // the race progress follows the speed multiplier, so a mission still lasts as long, only easier to steer
     var TEAMK = cfg.team === 'film' ? 0.87 : 1
+    // a host race (games/mojo-chase-embed.js) sets its own road speed as a share of the Mojo race: paceK[0] at the start
+    // rising to paceK[1] at the finish (owner 2026-10-20, Blippi: 80 % -> 90 %)
+    var PACEK = cfg.paceK && cfg.paceK.length === 2 ? cfg.paceK : null
+    if (PACEK) TEAMK = PACEK[0]
     if (RS) rearA = RS.anchor
     // who is being chased (2026-10-17 Tim Film Balap): a robber by default, or a rival racer / the enemy team
     var FOE = Object.assign({ n: 'pencuri', N: 'Pencuri', caught: 'Pencuri Tertangkap!' }, cfg.foe || {})
@@ -199,6 +203,7 @@
     var TS = MODE === 'race' && cfg.targetRacer && W.MojoRacerSheets && W.MojoRacerSheets[cfg.targetRacer] || null
     if (TS) targetA = TS.anchor
     var HERO = cfg.heroName || 'Mojo'
+    W.__mcCallerPic = cfg.callerPic || null   // the quiz card's helper picture follows the caller (a host race: Blippi)
     var sound = typeof cfg.sound === 'function' ? cfg.sound : function () { return true }
     var AU = Audio(sound)
     var resolve, done = new Promise(function (res) { resolve = res })
@@ -216,7 +221,7 @@
     var ARROW = '<svg viewBox="0 0 100 100"><path d="M50 10 L88 52 H64 V90 H36 V52 H12 Z" fill="#fff" stroke="#cfe6ff" stroke-width="5" stroke-linejoin="round"/></svg>'
     var hud = el('div', 'mc-hud')
     hud.innerHTML =
-      '<div class="mc-tl"><div class="mc-badge"><img alt="Bo" src="' + lib('mojo-char/bo') + '"></div><div class="mc-hearts" aria-label="Semangat"></div></div>' +
+      '<div class="mc-tl"><div class="mc-badge"><img alt="" src="' + (cfg.callerPic || lib('mojo-char/bo')) + '"></div><div class="mc-hearts" aria-label="Semangat"></div></div>' +
       '<div class="mc-sign mc-mission hide"><div class="plank"><b class="ol">MISI</b><span class="ol"></span></div><i class="post"></i></div>' +
       '<div class="mc-top"><div class="mc-prog"><img class="car" alt="" src="' + lib(rearPath(rearKey)) + '"><div class="bar"><i></i></div><img class="flag" alt="" src="' + lib('mojo-chase/signs/flag-checker') + '"></div>' +
       '<div class="mc-title ol">' + (FOE.title || 'KEJAR ' + FOE.N.toUpperCase() + '!') + '</div><div class="mc-loc ol"></div><div class="mc-dist"></div></div>' +
@@ -224,7 +229,7 @@
       '<div class="mc-counters"><span class="mc-cnt star"><img alt="" src="' + lib('mojo-chase/items/star') + '"><b class="ol">0</b></span><span class="mc-cnt crate"><img alt="" src="' + lib('mojo-chase/items/crate') + '"><b class="ol">0</b></span></div>' +
       '<div class="mc-timer"><i></i><b class="ol">00:00</b></div>' +
       '<div class="mc-sign mc-place hide"><div class="plank"><svg viewBox="0 0 84 40"><path d="M2 38 L26 8 L38 22 L50 4 L82 38 Z" fill="#fff3dc" stroke="#4e2710" stroke-width="3" stroke-linejoin="round"/></svg><span></span><svg viewBox="0 0 84 30"><path d="M8 15 H62 M50 4 L66 15 L50 26" fill="none" stroke="#fff3dc" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><i class="post"></i></div>' +
-      '<div class="mc-call"><img alt="" src="' + lib('mojo-char/bo') + '"><span></span></div><div class="mc-edu"></div><div class="mc-reticle" role="button" aria-label="Tembakkan roket jaring"></div>' +
+      '<div class="mc-call"><img alt="" src="' + (cfg.callerPic || lib('mojo-char/bo')) + '"><span></span></div><div class="mc-edu"></div><div class="mc-reticle" role="button" aria-label="Tembakkan roket jaring"></div>' +
       '<button class="mc-btn l" type="button" aria-label="Pindah ke kiri">' + ARROW.replace('<svg', '<svg style="transform:rotate(-90deg)"') + '</button>' +
       '<button class="mc-btn u" type="button" aria-label="Ngebut"><i class="ring"></i>' + ARROW + '</button>' +
       '<button class="mc-btn j" type="button" aria-label="Lompat"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M12 25 L24 13 L36 25" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 35 L24 23 L36 35" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/><rect x="11" y="39" width="26" height="4.5" rx="2.2" fill="#fff"/></svg><b class="ol">LOMPAT</b></button>' +
@@ -748,7 +753,7 @@
       burst(bx, by, 40, TEX.sparkle, 1200 * v.u, 1.1, cp * 0.2, true)
       for (var i = 0; i < 60; i++) { var p = FX.spawn(img['fx/confetti'] || cols[i % 5], bx, by, (Math.random() - 0.5) * 1400 * v.u, -(400 + Math.random() * 900) * v.u, 2.2, cp * 0.09, false); if (p) { p.ay = 900 * v.u; p.drag = 1.2; p.vr = (Math.random() - 0.5) * 12; p.rot = 1 } }
       call(MODE === 'race' ? 'Hore! Kamu menyalip ' + FOE.N + '!' : 'Hore! Kamu lolos sampai finis!', 1800, 'win', true)
-      if (H.callImg) { H.callImg.src = lib('mojo-char/bo-celebrate'); H.call.classList.add('cheer') }
+      if (H.callImg) { H.callImg.src = cfg.callerPic || lib('mojo-char/bo-celebrate'); H.call.classList.add('cheer') }
     }
     // 'escape': the pursuer drew level -- a friendly catch; the game-over card (with COBA LAGI) names who caught you
     function caught () {
@@ -771,7 +776,7 @@
       if (S.state === 'over' || finished) return
       S.state = 'over'; S.goT = 0; AU.siren(false); AU.engine(0); S.overs = (S.overs || 0) + 1
       var hs = ''; for (var i = 0; i < 3; i++) hs += '<img class="off" alt="" src="' + lib('mojo-chase/items/heart') + '">'
-      showCard('<h2 class="fk">' + (S.caughtBy ? FOE.N + ' menyusulmu!' : 'Yah, ' + HERO + ' kehabisan nyawa!') + '</h2><div class="cast"><img alt="" src="' + lib('mojo-char/bo') + '"></div>' +
+      showCard('<h2 class="fk">' + (S.caughtBy ? FOE.N + ' menyusulmu!' : 'Yah, ' + HERO + ' kehabisan nyawa!') + '</h2><div class="cast"><img alt="" src="' + (cfg.callerPic || lib('mojo-char/bo')) + '"></div>' +
         '<div class="hearts-row">' + hs + '</div><p>Tidak apa-apa! Ayo coba lagi, pasti bisa.</p><div class="why"><span>Bintang terkumpul: ' + S.stars + '</span><span>Perjalanan: ' + Math.round(Math.min(1, S.prog) * 100) + '%</span></div>',
         [{ t: 'COBA LAGI', id: 'mc-retry', fn: function () { finish(false, false, true) } }, { t: 'KEMBALI', id: 'mc-back', soft: true, fn: function () { finish(false, true) } }])
     }
@@ -881,6 +886,7 @@
       if (S.state === 'cut' || S.state === 'countdown') { mult = 0; S.speed = 0 }
       S.speed += (mult - S.speed) * Math.min(1, dt * 4)
       if (!S.boost || S.boost <= 0) S.boostCharge = Math.min(1, S.boostCharge + dt / (perk === 'boost' ? 4 : 5))
+      if (PACEK) TEAMK = PACEK[0] + (PACEK[1] - PACEK[0]) * clamp(S.prog || 0, 0, 1)
       var dz = BASE_SPEED * TEAMK * S.speed * dt, prevPZ = S.z + Z_P
       S.z += dz
       var baseI = Math.floor(S.z / TR.SEG)
@@ -1013,7 +1019,7 @@
           for (var i = 0; i < 70; i++) { var p = FX.spawn(img['fx/confetti'] || cols[i % 5], tp.x, ty, (Math.random() - 0.5) * 1400 * v.u, -(400 + Math.random() * 900) * v.u, 2.2, cp * 0.09, false); if (p) { p.ay = 900 * v.u; p.drag = 1.2; p.vr = (Math.random() - 0.5) * 12; p.rot = 1 } }
           for (var fw = 0; fw < 4; fw++) { var fx = v.w * (0.2 + fw * 0.2), fy = v.hy * (0.3 + (fw % 2) * 0.2); burst(fx, fy, 26, cols[fw % 5], 700 * v.u, 1.2, cp * 0.1, true); if (img['fx/fireworks']) { var fwp = FX.spawn(img['fx/fireworks'], fx, fy, 0, 0, 1.1, cp * 0.6, true); if (fwp) fwp.grow = cp * 0.8 } }
           call('Hore! Kena jaring!', 1500, 'netok', true); taunt(rr() < 0.5 ? 'Waduh!' : 'Ampun!', true)
-          if (H.callImg) { H.callImg.src = lib('mojo-char/bo-celebrate'); H.call.classList.add('cheer') }   // Bo cheers the capture
+          if (H.callImg) { H.callImg.src = cfg.callerPic || lib('mojo-char/bo-celebrate'); H.call.classList.add('cheer') }   // Bo cheers the capture
         }
       } else {
         CAP.netT += dt
@@ -1647,7 +1653,7 @@
       else {   // a picker form that was not preloaded (jumper, rescue, boat, chopper, jet...): decode it now; the countdown waits
         var pl = formLoad = loadOne(rearPath(rk)).then(function (im) { if (im) RIMG[rk] = im; if (im && rearKey === rk) img.rear = im; if (formLoad === pl) formLoad = null })
       }
-      H.car.src = RS && RS.pic ? '../' + RS.pic : lib(rearPath(rearKey))   // the progress bar shows who drives
+      H.car.src = RS && RS.pic ? lib(RS.pic) : lib(rearPath(rearKey))   // the progress bar shows who drives
       if (cfg.onForm) try { cfg.onForm(id) } catch (e) {}
     }
     function startIntro () {
@@ -1680,7 +1686,7 @@
       }).join('')
       showCard('<h2 class="fk">' + (cfg.title || stage.title) + '</h2><p>' + (cfg.story_intro || stage.intro) + '</p>' +
         (cfg.formChosen ? '' : '<p class="mc-pick-h">Pilih wujud Mojo!</p><div class="mc-forms">' + cards + '</div>') +
-        '<p style="font-size:16px;color:#54617a">Geser atau tekan panah untuk pindah jalur. Ambil kotak roket, lalu tangkap ' + FOE.n + 'nya!</p>',
+        '<p style="font-size:16px;color:#54617a">Geser atau tekan panah untuk pindah jalur. ' + (MODE === 'race' ? 'Ambil bintang, hindari rintangan, lalu susul ' + FOE.n + ' sebelum garis finis!' : MODE === 'escape' ? 'Hindari rintangan dan jangan sampai tersusul ' + FOE.n + '!' : 'Ambil kotak roket, lalu tangkap ' + FOE.n + 'nya!') + '</p>',
         [{ t: 'Ayo Kejar!', id: 'mc-go', fn: function () { hideCard(); startRun() } }])
       ;[].forEach.call(card.querySelectorAll('.mc-form'), function (b) {
         b.addEventListener('click', function () { AU.cue('click'); setForm(b.getAttribute('data-form')); [].forEach.call(card.querySelectorAll('.mc-form'), function (x) { x.classList.toggle('on', x === b) }) })
@@ -1769,7 +1775,7 @@
           ring: track ? track.ring.length : 0, made: track ? track.made() : 0, chevrons: track ? track.chevronAudit() : null,
           edu: S.eduResult, eduPrompt: S.edu ? S.edu.prompt : null, particles: FX.live(), cap: FX.cap(), stage: stage.id, target: targetName, corridor: v.w ? { hy: v.hy * v.css, top: (v.playerY - carPx() * 1.15) * v.css, cx: v.cx * v.css, wTop: v.w * 0.04 * v.css, wBot: TR.ROADW * v.hw / Z_P * 1.1 * v.css } : null, rear: rearKey, form: formId, captureMs: S.captureMs, recForm: recForm, air: +airFrac().toFixed(2), jumps: S.jumps || 0, cleanClears: S.cleanClears || 0, leapPasses: S.leapPasses || 0, leapHits: S.leapHits || 0, leapCue: !!S.leapCueOn, leapSecs: S.leapSecs == null ? null : +S.leapSecs.toFixed(2), hits: S.hits, boost: S.boost, mode: MODE, press: S.press || 0, racerSheet: !!(RS && img['rs:straight']), targetSheet: !!(TS && img['ts:straight']), pursuer: !!img.pursuer, steer: S.steer || 0, curveSteer: S.curveS || 0,
           perk: perk, taunt: TN.on ? TN.text : null, tauntBox: TN.on && TN.box ? { x: TN.box.x * v.css, y: TN.box.y * v.css, w: TN.box.w * v.css, h: TN.box.h * v.css, fs: TN.box.fs * v.css } : null, taunts: S.taunts, smoke: S.smoke, near: S.near, carCss: carPx() * v.css, playerYCss: v.playerY * v.css, formLoading: !!formLoad, count: S.state === 'countdown' ? S.cdN : 0,
-          imgs: Object.keys(img).length, prof: S.prof, missing: Object.keys(need).filter(function (n) { return !img[n] }), boost: S.boost, z: S.z,
+          imgs: Object.keys(img).length, teamK: TEAMK, racerSheet: !!RS, targetSheet: !!TS, prof: S.prof, missing: Object.keys(need).filter(function (n) { return !img[n] }), boost: S.boost, z: S.z,
           // the BROK gate (owner 2026-10-07): which branch swallowed the last hit, whether a burst is on
           // screen, and how big it actually drew relative to the car
           hearts: S.hearts, brokWhy: S.brokWhy || null, lastHitType: S.lastHitType || null, lastHitPerk: S.lastHitPerk || null,

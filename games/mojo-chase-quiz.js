@@ -143,7 +143,7 @@
     var root = el('div', 'mcq' + (RM ? ' rm' : '') + (crash ? ' crash' : ''))
     root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', 'Kotak Soal')
     root.innerHTML = '<div class="mcq-dim"></div><div class="mcq-card"><div class="mcq-plank">' +
-      '<div class="mcq-head"><img class="bo" alt="Bo" src="' + lib('mojo-char/bo') + '"><h2>' + (crash ? 'Soal Cepat!' : 'Kotak Soal!') + '</h2><img class="box" alt="" src="' + lib(crash ? 'mojo-chase/items/star' : 'mojo-chase/items/mystery') + '"></div>' +
+      '<div class="mcq-head"><img class="bo" alt="" src="' + (W.__mcCallerPic || lib('mojo-char/bo')) + '"><h2>' + (crash ? 'Soal Cepat!' : 'Kotak Soal!') + '</h2><img class="box" alt="" src="' + lib(crash ? 'mojo-chase/items/star' : 'mojo-chase/items/mystery') + '"></div>' +
       '<p class="mcq-lab">' + (crash ? 'JAWAB UNTUK LANJUT!' : 'JAWAB UNTUK MELAJU!') + '</p><p class="mcq-eq"></p>' +
       '<p class="mcq-q"></p><div class="mcq-pics' + (q.groups.some(function (g) { return g.n > 10 }) ? ' tiny' : '') + '">' + q.groups.map(function (g) { return g.op ? '<span class="op">' + g.op + '</span>' : pics(g) }).join('') + '</div>' +
       '<p class="mcq-say" aria-live="polite"></p><div class="mcq-ans"></div></div></div><div class="mcq-go"><span></span></div>'

@@ -8,7 +8,7 @@ import fs from 'fs'
 // Pages are ENUMERATED from the filesystem, not hand-listed: a hand list silently
 // skipped G27 (ejaan-inggris) for its whole first release. Every games/*.html is
 // swept except `_`-prefixed test fixtures; SKIP names any exemption WITH a reason.
-const SKIP = {}
+const SKIP = { 'mojo-chase-embed.html': 'a race framed by another game with its parameters (game1 tools/qa-blippi-mojorace.mjs drives it); bare it has nothing to show' }
 const PAGES = ['index.html', 'secondbrain.html'].concat(
   fs.readdirSync('games').filter(f => f.endsWith('.html') && !f.startsWith('_') && !SKIP[f])
     .sort().map(f => 'games/' + f))
