@@ -1,0 +1,11 @@
+/* games/dunia-splash.css — the "Tap untuk mulai" splash of the canvas games (2026-10-20 polish). The games already
+ * draw their world behind the splash (forest, sea, rainbow, beach); a 92 % dark veil + 8 px blur hid all of it and left
+ * a black screen with a small title. Now: a light scrim that is darker only behind the words, a whisper of blur, and a
+ * text shadow so the title and hint stay readable over a bright sky. Loaded AFTER each page's own <style>. */
+#start-overlay {
+  background: radial-gradient(ellipse 72% 50% at 50% 48%, rgba(6, 10, 32, .66) 0%, rgba(6, 10, 32, .38) 62%, rgba(6, 10, 32, .52) 100%) !important;
+  -webkit-backdrop-filter: blur(1.5px) !important;
+  backdrop-filter: blur(1.5px) !important;
+}
+#start-overlay > *, #start-overlay .start-card > * { text-shadow: 0 2px 6px rgba(0, 0, 0, .7), 0 0 2px rgba(0, 0, 0, .85) }
+#start-overlay .start-card { background: rgba(6, 10, 32, .42); border-radius: 22px; padding: 18px 22px }

@@ -15,6 +15,9 @@ const PAGES = ['index.html', 'secondbrain.html'].concat(
 // QA_ONLY=<regex> narrows a run (debugging only; the full sweep is the gate).
 if (process.env.QA_ONLY) { const re = new RegExp(process.env.QA_ONLY); PAGES.splice(0, PAGES.length, ...PAGES.filter(p => re.test(p))) }
 else if (!PAGES.includes('games/ejaan-inggris.html')) { console.error('❌ enumeration lost G27'); process.exit(1) }
+// a page that frames ANOTHER site (blippi.html -> /game1/) is served from the rz-work root, where both sites live
+// (on :8081 only Dunia exists, so the frame showed a 404 and the page failed for the test server, not for children)
+const FRAMED = { 'games/blippi.html': process.env.QA_FRAMED_BASE || 'http://localhost:8090/Dunia-Emosi/' }
 const OUT = 'tools/qa-out'
 fs.mkdirSync(OUT, { recursive: true })
 const IGNORE = /favicon|pokemondb|showdown|play\.pokemonshowdown|net::ERR|Failed to load resource|ERR_INTERNET|googleapis|gstatic|unpkg/i
@@ -41,17 +44,19 @@ for (const pg of PAGES) {
     page.on('console', m => { if (m.type() === 'error') errs.push(m.text()) })
     page.on('pageerror', e => errs.push('PAGEERROR: ' + e.message))
     try {
-      await page.goto('http://localhost:8081/' + pg, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto((FRAMED[pg] || 'http://localhost:8081/') + pg, { waitUntil: 'domcontentloaded', timeout: 30000 })
     } catch (e) { errs.push('GOTO: ' + e.message) }
     await sleep(2800)   // let the game/page boot to its landing/select screen
     // v56.0 — sw-reload.js may reload the page ONCE mid-probe on a fresh SW install
     // (detached-frame crash). Probe with one retry after the reload settles.
     const probe = () => page.evaluate(() => {
-      const cv = document.querySelector('#pixi-canvas, canvas')
-      const body = document.body
+      // a framing page is judged by its frame's document (same origin): the game inside must render
+      const fr = document.querySelector('body > iframe'), doc = fr && fr.contentDocument && fr.contentDocument.body ? fr.contentDocument : document
+      const cv = doc.querySelector('#pixi-canvas, canvas')
+      const body = doc.body
       return {
         canvasOK: cv ? (cv.width > 0 && cv.height > 0) : null,
-        hasContent: !!(body && body.innerText && body.innerText.trim().length > 0) || !!document.querySelector('canvas'),
+        hasContent: (!!(body && body.innerText && body.innerText.trim().length > 0) || !!doc.querySelector('canvas')) && !(fr && /Error response|404|Not Found/i.test((doc.title || '') + ' ' + (body ? body.innerText.slice(0, 200) : ''))),
         scrollW: document.documentElement.scrollWidth, innerW: window.innerWidth,
       }
     })
