@@ -77,18 +77,7 @@ async function main() {
       },
       postSettle: 2500,
     },
-    {
-      id: 'D12', label: 'g17 rope-swing',
-      url: '/games/jembatan-goyang.html', preSettle: 2200,
-      interact: async (page) => {
-        return await page.evaluate(() => {
-          const start = Array.from(document.querySelectorAll('button')).find(b => /Mulai/i.test(b.textContent || ''))
-          if (start) { start.click(); return true }
-          return false
-        })
-      },
-      postSettle: 2500,
-    },
+    // D12 g17 rope-swing (jembatan-goyang) retired in v55.67 (B-271): row removed 2026-10-25
     {
       id: 'D13', label: 'g20 duck volley',
       url: '/games/ducky-volley.html', preSettle: 2200,

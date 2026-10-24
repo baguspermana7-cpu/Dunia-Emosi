@@ -43,8 +43,7 @@ const TARGETS = [
     ready: () => document.querySelectorAll('.tcard').length > 0 },
   { id: 'F07', label: 'g16 train picker',    url: '/games/selamatkan-kereta.html',
     ready: () => document.querySelectorAll('#ts-trains .ts-card, #ts-trains > *').length > 0 },
-  { id: 'F08', label: 'g17 intro',           url: '/games/jembatan-goyang.html',
-    ready: () => !!document.querySelector('button') },
+  // F08 g17 (jembatan-goyang) retired in v55.67 (B-271 deleted the page and its tile): row removed 2026-10-25
   { id: 'F09', label: 'g19 splash',          url: '/games/pokemon-birds.html',
     ready: () => !!document.querySelector('canvas') },
   { id: 'F10', label: 'g20 splash',          url: '/games/ducky-volley.html',
