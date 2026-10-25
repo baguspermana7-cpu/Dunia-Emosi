@@ -592,7 +592,7 @@
         if (!immune) taunt('Kamu jelek!')
         return
       }
-      S.brokWhy = 'brok'
+      S.brokWhy = 'brok'; S.brokType = o.type
       S.hits++; S.brok++; S.hearts = Math.max(0, S.hearts - 1); S.heartT = 0
       if (MODE === 'escape') { S.press = Math.min(1, (S.press || 0) + 0.3); call(FOE.N + ' makin dekat!', 1200, 'press') }
       taunt('Kamu jelek!')
@@ -1779,7 +1779,7 @@
           imgs: Object.keys(img).length, teamK: TEAMK, racerSheet: !!RS, targetSheet: !!TS, prof: S.prof, missing: Object.keys(need).filter(function (n) { return !img[n] }), boost: S.boost, z: S.z,
           // the BROK gate (owner 2026-10-07): which branch swallowed the last hit, whether a burst is on
           // screen, and how big it actually drew relative to the car
-          hearts: S.hearts, brokWhy: S.brokWhy || null, lastHitType: S.lastHitType || null, lastHitPerk: S.lastHitPerk || null,
+          hearts: S.hearts, brokWhy: S.brokWhy || null, lastHitType: S.lastHitType || null, brokType: S.brokType || null, lastHitPerk: S.lastHitPerk || null,
           crashFx: S.crashFx || null, dizzy: S.dizzy || null, burstOn: S.bursts.filter(function (b) { return b.on }).length, brokDraw: S.brokDraw || null, call: H.call && H.call.classList.contains('on') ? H.callT.textContent : null }
       },
       // drive one obstacle type into Mojo with the current form, from a clean state: which branch takes it?
@@ -1799,6 +1799,7 @@
       tap: function (what) { if (what === 'go') { var b = host.querySelector('#mc-go'); if (b) b.click() } },
       force: function (o) { for (var k in o) S[k] = o[k] },
       jump: function () { jump() },
+      clearObjs: function () { for (var i = 0; i < POOL.length; i++) POOL[i].on = false },   // QA: drop every object already on the road
       spawnLeap: function (ahead) { var si = Math.floor((S.z + Z_P) / TR.SEG) + (ahead || 40); for (var l = 0; l < 3; l++) addObj('leapbar', l, si) },
       quality: function (qv, lock) { quality = qv; S.qLock = !!lock; resize() }, profile: function (on) { S.prof = on ? {} : null },
       // 'barrier' and not 'crate': no perk neutralises the steel barrier, so the seam fires a real BROK

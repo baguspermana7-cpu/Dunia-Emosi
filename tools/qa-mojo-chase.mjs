@@ -106,7 +106,7 @@ check(Object.keys(CH.PIECES).length >= 38 && ['hairpin-left', 'chicane-right', '
 const pools = new Set(CH.STAGES.map(s => JSON.stringify(s.pieces))); check(pools.size >= 15, `stages drive ${pools.size} distinct road mixes`)
 check(['malam', 'tol-malam', 'antariksa'].every(id => CH.stage(id).night === true), 'night stages turn the headlights on')
 
-const launched = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-gpu-blocklist'].concat(GPU ? ['--use-angle=vulkan', '--enable-gpu'] : []) })
+const launched = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-gpu-blocklist', '--disable-audio-output'].concat(GPU ? ['--use-angle=vulkan', '--enable-gpu'] : []) })
 // pages bypass the service worker: another session editing sw.js mid-run would otherwise reload a page (sw-reload.js)
 const browser = { newPage: async () => { const pg = await launched.newPage(); await pg.setBypassServiceWorker(true); return pg }, close: () => launched.close() }
 // QA_ONLY=brok runs section C2 (the BROK gate) alone, QA_ONLY=jumper the back-to-back pothole hop; unset = the whole gate, which is what ships
@@ -404,13 +404,21 @@ try {
     let s = await waitState(p, s => s.state === 'active', 30000)
     const line = await p.evaluate(() => MojoChases.form('jumper').line)
     await p.evaluate(() => { window.__mcNoDrops = true; window.__mcNoPatterns = true; window.__hk0 = MojoChase.hooks; MojoChase.hooks = Object.assign({}, MojoChase.hooks, { spawnFilter: () => 'pothole' }) })
-    await sleep(5000)   // rows generated before the filter (170 segments of lookahead) have passed
+    // rows generated before the filter (170 segments of lookahead) are dropped: waiting 5 s for them to pass was not
+    // enough at chase speed, and a leftover barrel was read as a pothole BROK (1 run in 3)
+    await p.evaluate(() => __mojoChase.clearObjs())
+    // the new rows start a lookahead away: measure from the first hop, so the window always holds back-to-back rows
+    const j0 = (await state(p)).jumps
+    for (let i = 0; i < 100 && (await state(p)).jumps === j0; i++) await sleep(150)
+    // a pre-filter row may have bumped the car in those 5 s: start measuring once its recovery is over, so a leftover
+    // slowdown is not read as a pothole one (it made this check flaky: hits 2->2, recover 0.08 at the first sample)
+    for (let i = 0; i < 40 && ((await state(p)).recover || 0) > 0; i++) await sleep(150)
     const s0 = await state(p), rec = []
     let passing = 0
     for (let i = 0; i < 66; i++) { const k = await state(p); rec.push(k.recover); passing = Math.max(passing, k.passing || 0); await sleep(120) }
     const s1 = await state(p)
     await p.evaluate(() => { MojoChase.hooks = window.__hk0 })
-    check(s.form === 'jumper' && s1.jumps - s0.jumps >= 2 && s1.hits === s0.hits && s1.brok === s0.brok && rec.every(r => !(r > 0)), `jumper: pothole rows back to back are hopped, no BROK, no slip, no slowdown (${s1.jumps - s0.jumps} hops, hits ${s0.hits}->${s1.hits}, recover max ${Math.max(...rec).toFixed(2)}, last ${s1.lastHitType}/${s1.brokWhy})`)
+    check(s.form === 'jumper' && s1.jumps - s0.jumps >= 2 && s1.hits === s0.hits && s1.brok === s0.brok && rec.every(r => !(r > 0)), `jumper: pothole rows back to back are hopped, no BROK, no slip, no slowdown (${s1.jumps - s0.jumps} hops, hits ${s0.hits}->${s1.hits}, recover max ${Math.max(...rec).toFixed(2)}, last ${s1.lastHitType}/${s1.brokWhy}, brok type ${s1.brokType})`)
     check(passing > 0, `jumper: a hopped-over hole stays on the road and passes under the car, it does not vanish (owner: "dari jauh ada object tapi saat mendekat jadi hilang") - passing max ${passing}`)
     check(/lubang/.test(line), `jumper: the perk line promises the holes it clears ("${line}")`)
     check(!errors.length, `jumper run: no page errors (${errors.slice(0, 2).join(' | ')})`)

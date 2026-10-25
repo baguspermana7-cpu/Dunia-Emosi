@@ -125,7 +125,7 @@
   var TINT_F = { senja: { time: 'senja', weather: 'cerah' }, malam: { time: 'malam', weather: 'cerah' }, hujan: { time: 'sore', weather: 'hujan' },
     salju: { time: 'senja', weather: 'salju' }, kabut: { time: 'pagi', weather: 'kabut' } }
   function makePlan (stage, r, F) {
-    if (!F && stage && TINT_F[stage.tint]) { var tf = TINT_F[stage.tint]; F = { time: stage.night ? 'malam' : tf.time, weather: tf.weather } }
+    if (!F && stage && TINT_F[stage.tint]) { var tf = TINT_F[stage.tint]; F = { time: stage.night ? 'malam' : tf.time, weather: tf.weather }; if (tf.weather === 'kabut') F.intensity = 1 }
     var kind = kindOf(stage), P = A.POOL[kind] || A.POOL.town
     var tk = pickW(r, P.times), wk = pickW(r, P.weather), iR = r(), rollT = r(), rollPick = r(), r1 = r(), r2 = r()
     var t = TIDX[tk], I = wk === 'hujan' ? (iR < 0.5 ? 0.4 : 0.95) : wk === 'salju' ? 0.55 + iR * 0.4 : wk === 'kabut' ? 0.6 + iR * 0.3 : 1
