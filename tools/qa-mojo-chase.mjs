@@ -398,6 +398,9 @@ try {
     const form0 = await p.evaluate(() => MojoChasePicker.readSave().form || null)   // restored at the end: later sections share this profile
     const done = p.evaluate(() => MojoChaseMenu.run(MojoChases.config('kota')).catch(() => null))
     await p.waitForSelector('.mcp-go', { timeout: 30000 }); await sleep(400)
+    // the road rolls behind the picker / intro card: nothing on it may be collected or hit before the child starts
+    // (stars, progress and lost hearts used to carry into the race: 5 stars and 1.5 % progress after 9 s on the picker)
+    { await sleep(6000); const pre = await state(p); check(pre.stars === 0 && !(pre.prog > 0) && pre.hits === 0 && pre.hearts === 3 && (pre.z || 0) > 0, `pre-start: the road rolls behind the picker but nothing is collected or hit (${JSON.stringify({ st: pre.state, stars: pre.stars, prog: pre.prog, hits: pre.hits, hearts: pre.hearts, z: Math.round(pre.z || 0) })})`) }
     while (await p.$('.mcp-new-ok')) { await p.click('.mcp-new-ok'); await sleep(100) }
     await p.evaluate(() => document.querySelector('.mcp-card[data-form="jumper"]').click()); await sleep(520)
     await p.evaluate(() => document.querySelector('.mcp-go').click()); await sleep(600); await p.click('.mc-skip').catch(() => {})

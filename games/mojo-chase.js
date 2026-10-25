@@ -919,12 +919,16 @@
       spawnRows()
       // collisions + pickups: objects whose z crosses the player plane this frame
       var pz = S.z + Z_P
+      // the road rolls behind the picker, the intro card and the cutscene: what crosses the car then only passes by.
+      // Stars, progress and lost hearts collected before "Ayo Kejar!" used to carry into the race
+      var pre = S.state === 'intro0' || S.state === 'intro' || S.state === 'cut' || S.state === 'countdown'
       for (var i = 0; i < POOL.length; i++) {
         var o = POOL[i]; if (!o.on) continue
         o.t += dt
         if (o.seg < baseI - 2) { o.on = false; continue }
         if (o.taken) continue
         var oz = o.seg * TR.SEG + TR.SEG / 2
+        if (pre) { if (oz > prevPZ && oz <= pz) o.pass = true; continue }
         if (oz > prevPZ && oz <= pz) {
           // hazards collide with the car body (85% size: the box shrank with it); pickups keep their generous reach
           var d = Math.abs(o.lane - S.lanePos), info = OBJ[o.type], haz = info.kind === 'block' || info.kind === 'slip', reach = haz ? 0.55 * CAR_K : info.kind === 'pick' && S.magnet > 0 ? 1.6 : 0.55
