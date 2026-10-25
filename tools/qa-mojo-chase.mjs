@@ -391,6 +391,42 @@ try {
   /* ── J. the jumper clears HOLES (owner 2026-10-04 "Pelompat bisa lompat batu tapi tidak bisa lompat lubang"): every
      spawned lane becomes a pothole, so Mojo must drive into pothole rows back to back (also while still airborne);
      each one is a hop, never a BROK, a slip or a slowdown. ───────────────────────────────────────────────────── */
+  /* ── the end cards fit the phone (Blippi race 2026-10-25): the won card with a three-picture cast (caller + both
+     vehicles, as the shared race shows it) and the game-over card keep every picture inside the card and their buttons
+     on screen with no scrolling, upright and on its side ─────────────────────────────────────────────────── */
+  if (!ONLY || ONLY === 'card') {
+    for (const [w, h] of [[360, 780], [390, 844], [844, 390], [740, 360], [1280, 800]]) {
+      const p = await browser.newPage(); await p.setViewport({ width: w, height: h, hasTouch: w < 900, isMobile: w < 900 })
+      await p.goto(url, { waitUntil: 'networkidle2' }); await p.waitForFunction(() => window.MojoChaseMenu); await wire(p)
+      for (const kind of ['result', 'over']) {
+        p.evaluate(() => { MojoChaseMenu.run(MojoChases.config('kota')) })
+        await go(p); await waitState(p, s => s.state === 'active', 20000)
+        if (kind === 'result') await p.evaluate(() => { __mojoChase.force({ prog: 0.97, best: 0.97 }); __mojoChase.auto({ mode: 'clean' }) })
+        else await p.evaluate(() => { window.__mcNoGameOver = false; __mojoChase.force({ hearts: 1 }); __mojoChase.emitTest('brok') })
+        const s = await waitState(p, s => s.state === kind, 30000)
+        await p.waitForSelector('.mc-card.on .row button', { timeout: 8000 }).catch(() => {})
+        if (kind === 'result') await p.evaluate(() => {   // the shared race's cast: the caller and both vehicles (all pictures already on the page)
+          const c = document.querySelector('.mc-card.on .cast'); if (!c) return
+          const v = c.lastElementChild; if (c.children.length < 2) c.appendChild(v.cloneNode()); if (c.children.length < 3) c.insertBefore(v.cloneNode(), c.firstChild)
+        })
+        await sleep(700)   // the pop-in settles
+        const m = await p.evaluate(() => {
+          const b = document.querySelector('.mc-card.on .box'); if (!b) return null
+          const br = b.getBoundingClientRect(), R = r => [r.left, r.top, r.right, r.bottom].map(Math.round)
+          const out = [...b.querySelectorAll('.cast img')].map(i => i.getBoundingClientRect()).filter(r => r.left < br.left - 1 || r.right > br.right + 1)
+          const btn = [...b.querySelectorAll('.row button')].map(x => x.getBoundingClientRect())
+          return { scroll: b.scrollHeight - b.clientHeight, out: out.map(R), box: R(br), btn: btn.map(R), offscreen: btn.filter(r => r.top < 0 || r.bottom > innerHeight || r.left < 0 || r.right > innerWidth).length }
+        })
+        check(s.state === kind && m && m.btn.length && !m.offscreen && m.scroll <= 1 && !m.out.length,
+          `card ${w}x${h} ${kind}: every cast picture inside the card, the buttons on screen with no scrolling (${JSON.stringify(m)})`)
+        await p.screenshot({ path: `${out}/card-${kind}-${w}x${h}.png` })
+        await p.evaluate(() => { const b = document.querySelector('#mc-back') || document.querySelector('#mc-done'); if (b) b.click() }); await sleep(800)
+        await p.evaluate(() => { window.__mcNoGameOver = true; const h = document.getElementById('chase-host'); if (h) h.remove() })
+      }
+      await p.close()
+    }
+  }
+
   if (!ONLY || ONLY === 'jumper') {
     const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 }); const errors = []
     p.on('pageerror', e => errors.push(e.message))
