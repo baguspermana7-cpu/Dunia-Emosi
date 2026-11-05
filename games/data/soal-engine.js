@@ -459,8 +459,9 @@
       if (!c || unsafe(c) || validate(c).length || validateItem(c).length) continue
       c = applyPictures(c, X.pictures, X.P)
       if (!c) continue
-      if (!fallback && !used[c.id]) fallback = c
-      if (used[c.id] || recent[sigOf(c)] || words(c.prompt) > maxWordsFor(X, c.grade)) continue
+      var taken = used[c.id] || X.ex[c.id]   // the caller's exclude list binds generated items too, like the bank's
+      if (!fallback && !taken) fallback = c
+      if (taken || recent[sigOf(c)] || words(c.prompt) > maxWordsFor(X, c.grade)) continue
       if (t < 20 && !o.kind && (kc[c.gen + ':' + (c.kind || c.shape || '')] || 0) >= KIND_MAX) continue
       q = c; break
     }

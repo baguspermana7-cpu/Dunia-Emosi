@@ -134,6 +134,15 @@ function distribution (opts, N) {
   const sess = []
   for (let s = 0; s < 40; s++) sess.push(...S.pick({ game: 'g30', count: 1, seed: s, topic: 'umum', avatar: null }).map(q => q.id))
   check(new Set(sess).size === sess.length, `no repeat inside a session without an avatar (${new Set(sess).size}/${sess.length})`)
+  // exclude is honoured by generated items too (2026-11-06: Blippi's gates asked m1-count-opcount,n4 twice in one session,
+  // 17 of 200 sessions; the bank filter read opts.exclude, the generator path only the call's own list)
+  let exRep = 0, exEx = null
+  for (let r = 0; r < 200; r++) {
+    const o = []
+    for (let i = 0; i < 16; i++) { const q = S.pick({ game: 'g30', count: 1, topic: 'matematika', level: 1, easy: true, avatar: null, history: false, seed: r * 100 + i, exclude: o })[0]; if (q) o.push(q.id) }
+    if (new Set(o).size !== o.length) { exRep++; exEx = exEx || o.filter((x, i) => o.indexOf(x) !== i) }
+  }
+  check(exRep === 0, `exclude honoured by generated math: ${exRep} of 200 sessions of 16 repeat an excluded id ${JSON.stringify(exEx)}`)
   // generated items: no signature twice inside any 50 consecutive math questions
   const sigs = []
   for (let s = 0; s < 300; s++) { const q = S.one({ game: 'g30', avatar: 'qa-gen', topic: 'matematika', seed: s, level: 3 }); sigs.push(q.prompt + '|' + q.answer + '|' + JSON.stringify(q.calc)) }
