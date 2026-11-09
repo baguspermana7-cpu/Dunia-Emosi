@@ -11,6 +11,7 @@
  *   particles   dust motes in the light, light specks, leaves, petals, bubbles or stars per theme (secondary motion:
  *               each one sways on its own sine, drifts with a shared breeze)
  *   scene       an opaque canvas2D scene (Timmy's sailing, lanes) gets bloom/grade/vignette through DuniaGLFX
+ *   body        a DOM hero that jumps (Mario's Pikachu) stretches on take-off and squashes on landing, feet planted
  *   press       every button/card squashes on pointerdown (anticipation) and springs back with an overshoot
  *               (slow-in/slow-out), added on top of any transform the game already animates (composite: add)
  *
@@ -158,7 +159,7 @@
   function setQuality (q) {
     quality = q
     light.classList.toggle('off', q < 1)
-    grade.classList.toggle('off', q < 2)
+    grade.classList.toggle('off', q < 2 || inScene)
     cv.style.display = q < 1 ? 'none' : ''
     if (q < 2) light.style.backgroundPosition = '50% 50%,50% 50%,0 0,0 0'
   }
@@ -197,6 +198,11 @@
     if (V.Poke) wrap(V.Poke, 'impact', 'hit')
   }
 
+  // a Pixi game lights and grades its own scene in the shader (key, fill, form, contrast); the screen-wide soft-light and
+  // backdrop saturate on top only doubled them (hills 34,197,94 went 11,217,87, the sky clipped), so once the shader is
+  // on, dunia-cinema-pixi.js calls inScene(): the light drops to half and the backdrop grade goes (it was also the
+  // costliest layer)
+  var lightK = 1, inScene = false
   function tick (now) {
     raf = W.requestAnimationFrame(tick); frames++
     if (D.hidden) { last = now; secStart = 0; return }
@@ -224,10 +230,39 @@
       light.style.backgroundPosition = dx.toFixed(2) + '% ' + dy.toFixed(2) + '%,' + (100 - dx).toFixed(2) + '% ' + (100 - dy).toFixed(2) + '%,0 0,0 0'
     }
     if (pulseDur) { pulseUntil = now + pulseDur; pulseDur = 0 }   // a pulse starts on the next drawn frame, so even a 2 fps page shows it
-    var pk = now < pulseUntil ? (pulseKind === 'win' ? 1 : 0.55) : 0.85
+    // a win still lifts the light well above its resting level when the shader owns the scene (a pulse scaled down with
+    // the rest was a 0.30 -> 0.35 flicker nobody would see)
+    var pk = now < pulseUntil ? (pulseKind === 'win' ? Math.min(1, 0.85 * lightK + 0.5) : 0.55 * lightK) : 0.85 * lightK
     if (light._o !== pk) { light._o = pk; light.style.opacity = pk }
     if (!rm && quality >= 1 && parts.length) drawParts(dt, t)
     else if (parts.length && rm) { parts = []; ctx.clearRect(0, 0, cv.width, cv.height) }
+    if (!rm) bodyTick()
+  }
+
+  // squash and stretch on a DOM hero that jumps: stretch on take-off, squash on landing scaled by the fall, settled with
+  // an overshoot. Read from the game's own state by name (game files stay untouched); added on top of its transform,
+  // around its own transform-origin (feet), so position and facing stay the game's. Pokemon Run already has its own.
+  var BODIES = { 'mario-pokemon': { el: 'pikachu-sprite', st: 'S', ground: 'onGround', vy: 'vy' } }
+  var body = BODIES[(W.location.pathname || '').split('/').pop().replace(/\.html$/, '')], bodyAir = false, bodyFall = 0, bodyN = 0
+  function bodyAnim (el, k) {
+    try { el.animate(k.f, { duration: k.d, easing: 'cubic-bezier(.22,1,.36,1)', composite: 'add', id: 'dcine-body' }); bodyN++ } catch (x) {}
+  }
+  function bodyTick () {
+    if (!body || !Element.prototype.animate) return
+    var s = null
+    try { s = (0, eval)('typeof ' + body.st + '!=="undefined"?' + body.st + ':null') } catch (e) { return }
+    var el = s && D.getElementById(body.el)
+    if (!el) return
+    var air = !s[body.ground], vy = +s[body.vy] || 0
+    if (air && !bodyAir) {
+      bodyFall = 0
+      bodyAnim(el, { d: 260, f: [{ transform: 'scale(.86,1.14)' }, { transform: 'scale(.96,1.04)', offset: 0.5 }, { transform: 'scale(1,1)' }] })
+    } else if (air) bodyFall = Math.max(bodyFall, vy)
+    else if (bodyAir) {
+      var a = Math.min(1, Math.max(0.35, bodyFall / 12))
+      bodyAnim(el, { d: 340, f: [{ transform: 'scale(' + (1 + 0.16 * a).toFixed(3) + ',' + (1 - 0.2 * a).toFixed(3) + ')' }, { transform: 'scale(' + (1 - 0.04 * a).toFixed(3) + ',' + (1 + 0.05 * a).toFixed(3) + ')', offset: 0.45 }, { transform: 'scale(1,1)' }] })
+    }
+    bodyAir = air
   }
 
   // anticipation + squash on press, overshoot on release; added on top of the element's own transform
@@ -290,8 +325,10 @@
     set: function (o) { if (o && o.theme && THEMES[o.theme]) { theme = o.theme; if (root) { paint(); seed() } } },
     pulse: function (kind) { pulseKind = kind; pulseDur = kind === 'win' ? 900 : 260 },
     theme: function () { return THEMES[theme] },
+    inScene: function () { inScene = true; lightK = 0.5; if (grade) grade.classList.add('off') },
     glfxEnable: function (v) { glOff = !v; drawScenes(0) },
     glfx: function () { return { scenes: gls.length, frames: glFrames } },
+    body: function () { return { on: !!body, anims: bodyN, air: bodyAir } },
     themes: Object.keys(THEMES)
   }
   if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', build); else build()

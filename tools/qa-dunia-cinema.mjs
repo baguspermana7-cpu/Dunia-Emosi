@@ -95,9 +95,12 @@ for (const pg of PAGES) {
       // the pulse shows from the next drawn frame; a 2 fps page may spend its whole 900 ms in two frames, so look at each
       window.DuniaCinema.pulse('win'); const seen = []
       for (let i = 0; i < 3; i++) { await new Promise(r => requestAnimationFrame(r)); seen.push(document.querySelector('.dcine.dl').style.opacity) }
-      return { hooked, op: seen.includes('1') ? '1' : seen.join('/') }
+      // the resting level after the pulse: on a Pixi page the light rests at half (the shader lights the scene itself)
+      await new Promise(r => setTimeout(r, 1100)); await new Promise(r => requestAnimationFrame(r))
+      const rest = +document.querySelector('.dcine.dl').style.opacity
+      return { hooked, peak: Math.max(...seen.map(Number)), rest, seen: seen.join('/') }
     })
-    if (!mo.none) ok(mo.hooked && mo.op === '1', `${name}: a reward moment does not light the scene ${JSON.stringify(mo)}`)
+    if (!mo.none) ok(mo.hooked && mo.peak >= Math.min(1, mo.rest + 0.4) - 1e-6, `${name}: a reward moment does not light the scene ${JSON.stringify(mo)}`)
     const hits = await p.evaluate(() => [[.5, .5], [.15, .2], [.85, .2], [.15, .85], [.85, .85]].map(([x, y]) => { const e = document.elementFromPoint(innerWidth * x, innerHeight * y); return !!(e && e.closest && e.closest('[data-dcine]')) }))
     ok(!hits.some(Boolean), `${name}: a tap lands on the cinematic layer ${JSON.stringify(hits)}`)
     // press: a neutral test button the gate adds at the centre (a page's own buttons navigate, start a round or start
@@ -123,6 +126,7 @@ for (const pg of PAGES) {
     })
     ok(pr.squash < 0.99 && pr.settled, `${name}: press does not squash and settle ${JSON.stringify(pr)}`)
     // the layer's own effect: the same moment with and without it (a second load differs by its animations alone)
+    const pxOn = await p.evaluate(() => !!(window.DuniaCinema.pixi && window.DuniaCinema.pixi().filter))
     const shotA = await p.screenshot({ type: 'png' })
     await p.evaluate(() => { document.querySelectorAll('[data-dcine]').forEach(e => { e.style.display = 'none' }); if (window.DuniaCinema.pixiEnable) window.DuniaCinema.pixiEnable(false) })
     await p.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))
@@ -133,7 +137,10 @@ for (const pg of PAGES) {
     ok(eOn >= eOff * 0.85, `${name}: the game loses detail under the layer (edges ${(eOn / eOff * 100).toFixed(0)}% of bare)`)
     await p.close()
     const base = await open(b, BASE + pg + (pg.includes('?') ? '&' : '?') + 'nocine=1')
-    ok(d >= 1.5 && d <= 22, `${name}: centre changes by ${d.toFixed(1)} (want 1.5..22)`)
+    // a page whose Pixi scene is lit by the shader shows its effect as form (edges), not as a colour wash: on a dark night
+    // scene the mean change can stay small while the detail rises
+    const formed = pxOn && eOn >= eOff * 1.04
+    ok((d >= 1.5 || formed) && d <= 22, `${name}: centre changes by ${d.toFixed(1)} (want 1.5..22, or added form on a shaded scene; edges ${(eOn / eOff * 100).toFixed(0)}%)`)
     // 8. it costs little: at 4x CPU, once its quality tier has settled, the page keeps >= 80% of its frame rate
     // a tab behind another runs no requestAnimationFrame: bring the measured one to the front first
     const fps = async pg2 => { await pg2.bringToFront(); const c = await pg2.target().createCDPSession(); await c.send('Emulation.setCPUThrottlingRate', { rate: 4 }); await sleep(5000)
@@ -218,6 +225,91 @@ for (const [pg, sel] of [['tools/tk-harness-steer.html', '.tks-cv'], ['tools/tk-
   const back = await p.evaluate(sel => { const gl = document.querySelector('canvas.dcine-glfx'); return { srcOp: getComputedStyle(document.querySelector(sel)).opacity, glShown: !!gl && getComputedStyle(gl).display !== 'none' } }, sel)
   ok(back.srcOp === '1' && !back.glShown, `${pg}: switched off, the game's own canvas does not show again ${JSON.stringify(back)}`)
   ok(!errs.length, `${pg}: page errors ${errs.slice(0, 2).join(' | ')}`)
+  await b.close()
+}
+// 13. a DOM hero that jumps stretches on take-off and squashes on landing (Mario's Pikachu): the shape changes on the
+//     right frames, the feet stay on the ground while squashed, walking on flat ground adds nothing, and the reduced
+//     motion setting turns it off
+for (const reduced of [false, true]) {
+  if (process.env.QA_ONLY && !/mario/.test(process.env.QA_ONLY)) break
+  // tier 0: the squash does not depend on the tier, and the post filter at a pinned tier 2 slowed this software renderer
+  // to a few frames a second (Pikachu took 6 s to fall onto the ground)
+  const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--mute-audio', '--disable-audio-output', '--enable-gpu', '--use-angle=gl', '--ignore-gpu-blocklist'] })
+  const { p, errs } = await open(b, pin(BASE + 'games/mario-pokemon.html', 0), reduced)
+  await p.evaluate(() => {
+    const cv = document.getElementById('pixi-canvas')
+    if (cv) { cv.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 200, clientY: 300 })); cv.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 200, clientY: 300 })) }
+  })
+  // a loaded machine (the full gate) takes far longer than 8 s to drop Pikachu onto the ground
+  await p.waitForFunction(() => typeof S !== 'undefined' && S.running && S.onGround, { timeout: 30000, polling: 100 }).catch(() => {})
+  await sleep(600)
+  const key = (type, k) => p.evaluate((type, k) => window.dispatchEvent(new KeyboardEvent(type, { key: k, bubbles: true })), type, k)
+  const n0 = await p.evaluate(() => window.DuniaCinema.body ? window.DuniaCinema.body().anims : -1)
+  // walk LEFT, into the level's start wall: walking right ran into a question block on a fast run, and the math prompt
+  // then swallowed the jump
+  await key('keydown', 'ArrowLeft'); await sleep(900); await key('keyup', 'ArrowLeft'); await sleep(300)
+  await p.waitForFunction(() => !S.pendingMath && !S.paused && S.onGround, { timeout: 15000, polling: 100 }).catch(() => {})
+  const n1 = await p.evaluate(() => window.DuniaCinema.body ? window.DuniaCinema.body().anims : -1)
+  // sample the sprite every frame through one jump: its box height against the resting height, and where its feet are
+  await p.evaluate(() => {
+    const el = document.getElementById('pikachu-sprite'); window.__jb = []
+    const t0 = performance.now()
+    const f = () => { const r = el.getBoundingClientRect(); window.__jb.push({ t: performance.now() - t0, h: r.height, w: r.width, bot: r.bottom, g: !!S.onGround }); if (performance.now() - t0 < 2600) requestAnimationFrame(f) }
+    requestAnimationFrame(f)
+  })
+  await sleep(80); await key('keydown', ' '); await sleep(160); await key('keyup', ' ')
+  await p.waitForFunction(() => window.__jb.length && window.__jb[window.__jb.length - 1].t >= 6000, { timeout: 30000, polling: 200 }).catch(() => {})
+  const j = await p.evaluate(() => ({ s: window.__jb, n: window.DuniaCinema.body ? window.DuniaCinema.body().anims : -1 }))
+  const rest = j.s[0], air = j.s.findIndex(x => !x.g), land = air < 0 ? -1 : j.s.findIndex((x, i) => i > air && x.g)
+  const hiAir = air < 0 ? 0 : Math.max(...j.s.slice(air, air + 12).map(x => x.h / rest.h))
+  const after = land < 0 ? [] : j.s.slice(land, land + 20)
+  const loLand = after.length ? Math.min(...after.map(x => x.h / rest.h)) : 1
+  const feet = after.length ? Math.max(...after.map(x => Math.abs(x.bot - after[after.length - 1].bot))) : 99
+  const tag = reduced ? 'reduced' : 'full'
+  ok(!errs.length, `mario ${tag}: page errors ${errs.slice(0, 2).join(' | ')}`)
+  const why = await p.evaluate(() => JSON.stringify({ g: S.onGround, pm: !!S.pendingMath, paused: S.paused, over: S.gameOver, run: S.running, n: (window.__jb || []).length }))
+  ok(air >= 0 && land > air, `mario ${tag}: the jump never left and landed (air ${air}, land ${land}) ${why}`)
+  if (!reduced) {
+    ok(n1 === n0 && n0 >= 0, `mario: walking on flat ground fired ${n1 - n0} squash animations (${n0} -> ${n1})`)
+    ok(hiAir >= 1.06, `mario: no stretch on take-off (tallest ${hiAir.toFixed(3)} of rest)`)
+    ok(loLand <= 0.92, `mario: no squash on landing (shortest ${loLand.toFixed(3)} of rest)`)
+    ok(feet <= 1.5, `mario: the feet leave the ground while squashed (${feet.toFixed(1)} px)`)
+  } else {
+    ok(j.n === n0 && hiAir < 1.02 && loLand > 0.98, `mario reduced: squash still plays (anims ${n0} -> ${j.n}, ${hiAir.toFixed(3)}/${loLand.toFixed(3)})`)
+  }
+  console.log(`  mario ${tag}: stretch ${hiAir.toFixed(3)} squash ${loLand.toFixed(3)} feet ${feet.toFixed(1)}px anims ${n0}/${n1}/${j.n}`)
+  await b.close()
+}
+// 14. on a phone the in-scene shader adds form without changing the picture's colour (owner screenshot 2026-11-09: Birds
+//     came out soft, stair-stepped and washed orange): the filter renders at the game's own resolution, the frame gains
+//     edge detail (lit and shaded sides, cast shadows), and its mean brightness and saturation stay within a few
+//     percent of the game's own. Same frame on and off (the game's ticker stopped).
+const satLum = async buf => {
+  const { data, info } = await sharp(buf).removeAlpha().raw().toBuffer({ resolveWithObject: true })
+  let L = 0, S = 0, n = 0
+  for (let i = 0; i < data.length; i += 3 * 7) { const r = data[i], g = data[i + 1], b = data[i + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b); L += 0.299 * r + 0.587 * g + 0.114 * b; S += mx ? (mx - mn) / mx : 0; n++ }
+  return { L: L / n, S: S / n }
+}
+for (const pg of ['games/pokemon-birds.html', 'games/monster-candy.html', 'games/ducky-volley.html']) {
+  if (process.env.QA_ONLY && !new RegExp(process.env.QA_ONLY).test(pg + ' form')) continue
+  const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--mute-audio', '--disable-audio-output', '--enable-gpu', '--use-angle=gl', '--ignore-gpu-blocklist'] })
+  const p = await b.newPage(); await p.setViewport({ width: 390, height: 844, deviceScaleFactor: 3, isMobile: true, hasTouch: true })
+  const errs = []; p.on('pageerror', e => { if (!IGNORE.test(String(e))) errs.push(String(e).slice(0, 120)) })
+  await p.goto(pin(BASE + pg, 2), { waitUntil: 'load' }); await sleep(2500)
+  for (let i = 0; i < 4; i++) { await p.mouse.click(195, 500); await sleep(300) }
+  await sleep(2500)
+  const r = await p.evaluate(() => { const a = (0, eval)('typeof app!=="undefined"?app:null'); if (!a) return null; a.ticker.stop(); a.render()
+    const f = a.stage.filters && a.stage.filters.find(x => x.resources && x.resources.cine); return { res: a.renderer.resolution, fres: f ? f.resolution : null } })
+  const on = await p.screenshot()
+  await p.evaluate(() => { window.DuniaCinema.pixiEnable(false); document.querySelectorAll('[data-dcine],canvas.dcine-glfx').forEach(e => { e.style.display = 'none' }); (0, eval)('app').render() })
+  const off = await p.screenshot()
+  const [eOn, eOff, cOn, cOff] = await Promise.all([detail(on), detail(off), satLum(on), satLum(off)])
+  const dL = cOn.L / cOff.L - 1, dS = cOn.S / cOff.S - 1
+  console.log(`  form ${pg}: res ${JSON.stringify(r)} edges ${(eOn / eOff * 100).toFixed(0)}% lum ${(dL * 100).toFixed(1)}% sat ${(dS * 100).toFixed(1)}%`)
+  ok(r && r.fres === r.res, `${pg}: the scene filter renders at ${r && r.fres}, the game at ${r && r.res} (soft, stair-stepped on a phone)`)
+  ok(eOn >= eOff * 1.04, `${pg}: the shader adds no form (edges ${(eOn / eOff * 100).toFixed(0)}% of the game's own)`)
+  ok(Math.abs(dL) <= 0.06 && Math.abs(dS) <= 0.08, `${pg}: the shader shifts the colour (brightness ${(dL * 100).toFixed(1)}%, saturation ${(dS * 100).toFixed(1)}%)`)
+  ok(!errs.length, `${pg} form: page errors ${errs.slice(0, 2).join(' | ')}`)
   await b.close()
 }
 console.log(`qa-dunia-cinema: ${pass}/${pass + fail} checks passed`)
