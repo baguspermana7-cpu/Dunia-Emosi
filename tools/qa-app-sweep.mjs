@@ -44,7 +44,7 @@ for (const pg of PAGES) {
     page.on('console', m => { if (m.type() === 'error') errs.push(m.text()) })
     page.on('pageerror', e => errs.push('PAGEERROR: ' + e.message))
     try {
-      await page.goto((FRAMED[pg] || 'http://localhost:8081/') + pg, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto((FRAMED[pg] || process.env.QA_BASE || 'http://localhost:8081/') + pg, { waitUntil: 'domcontentloaded', timeout: 30000 })
     } catch (e) { errs.push('GOTO: ' + e.message) }
     await sleep(2800)   // let the game/page boot to its landing/select screen
     // v56.0 — sw-reload.js may reload the page ONCE mid-probe on a fresh SW install
