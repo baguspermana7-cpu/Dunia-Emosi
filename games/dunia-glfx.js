@@ -11,7 +11,7 @@
  * while the GL canvas shows. No WebGL, a lost context or a slow device -> the GL canvas hides and the 2D canvas
  * shows again (enable(false)), so the game never depends on it.
  *
- *   var fx = DuniaGLFX.attach(canvas2d)          // null when WebGL is unavailable
+ *   var fx = DuniaGLFX.attach(canvas2d [, { cls, css }])   // null when WebGL is unavailable; cls/css replace the copied class
  *   fx.frame({ boost, warm, night, haze, bloom, t })   // after the 2D frame is drawn
  *   fx.enable(bool); fx.active(); fx.destroy()
  */
@@ -53,7 +53,8 @@
     o = o || {}
     if (!src || !src.parentNode) return null
     var cv = D.createElement('canvas'), gl = null
-    cv.className = (src.className || '') + ' glfx'
+    cv.className = o.cls != null ? o.cls : (src.className || '') + ' glfx'   // o.cls: a caller that must keep the source's class unique
+    if (o.css) cv.style.cssText = o.css
     cv.setAttribute('aria-hidden', 'true')
     cv.style.pointerEvents = 'none'
     try { gl = cv.getContext('webgl', { alpha: false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false, powerPreference: 'high-performance' }) } catch (e) { gl = null }

@@ -10,6 +10,7 @@
  *   grade       a touch more saturation and contrast (backdrop-filter), per-theme colour temperature through the lights
  *   particles   dust motes in the light, light specks, leaves, petals, bubbles or stars per theme (secondary motion:
  *               each one sways on its own sine, drifts with a shared breeze)
+ *   scene       an opaque canvas2D scene (Timmy's sailing, lanes) gets bloom/grade/vignette through DuniaGLFX
  *   press       every button/card squashes on pointerdown (anticipation) and springs back with an overshoot
  *               (slow-in/slow-out), added on top of any transform the game already animates (composite: add)
  *
@@ -162,6 +163,27 @@
     if (q < 2) light.style.backgroundPosition = '50% 50%,50% 50%,0 0,0 0'
   }
 
+  // an opaque canvas2D scene (Timmy's sailing and lanes) gets the in-scene half through DuniaGLFX: bloom, grade, vignette.
+  // The copy takes its own class so the game's selectors still find exactly one scene canvas; tier 2 only.
+  var GL_SCENES = ['.tks-cv', '.tkl-cv'], gls = [], glOff = false, glFrames = 0
+  var GL_CSS = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none'
+  function scanScenes () {
+    for (var i = gls.length - 1; i >= 0; i--) if (!gls[i].src.isConnected) { gls[i].fx.destroy(); gls.splice(i, 1) }
+    if (!W.DuniaGLFX) return
+    for (var k = 0; k < GL_SCENES.length; k++) {
+      var el = D.querySelector(GL_SCENES[k])
+      if (!el || el.__dcGl || !el.isConnected) continue
+      el.__dcGl = true
+      var fx = W.DuniaGLFX.attach(el, { cls: 'dcine-glfx', css: GL_CSS })
+      if (fx) { gls.push({ src: el, fx: fx }); fx.frame(glUniforms(0)) }
+    }
+  }
+  function glUniforms (t) { var th = THEMES[theme] || THEMES.meadow; return { t: t, warm: th.side > 0 ? 0.35 : 0.2, bloom: 0.55, grain: 0.012, night: theme === 'night' ? 1 : 0 } }
+  function drawScenes (t) {
+    var on = quality >= 2 && !glOff
+    for (var i = 0; i < gls.length; i++) { var g = gls[i]; g.fx.enable(on); if (on) { g.fx.frame(glUniforms(t)); glFrames++ } }
+  }
+
   // the game's own big moments light the scene: a reward or celebration warms the key light, a hit dims it for a beat
   function wrap (o, k, kind) {
     if (!o || typeof o[k] !== 'function' || o[k].__dcine) return
@@ -193,7 +215,8 @@
       else if (fast >= 3 && quality < cap) { setQuality(quality + 1); fast = 0 }
       secStart = now; secFrames = 0
     }
-    if (now - lastHook > 1000) { lastHook = now; hookMoments() }
+    if (now - lastHook > 1000) { lastHook = now; hookMoments(); scanScenes() }
+    if (gls.length) drawScenes(t)
     // gentle camera drift on the light: a slow figure-eight of a few percent, moved 10 times a second (sub-pixel steps)
     if (!rm && quality >= 2 && now - lastDrift > 100) {
       lastDrift = now
@@ -252,6 +275,10 @@
     if (mq && mq.addEventListener) mq.addEventListener('change', function () { seed() })
     t0 = W.performance ? W.performance.now() : 0
     raf = W.requestAnimationFrame(tick)
+    // a page with a Timmy scene canvas needs DuniaGLFX (same cache token) unless the page already loads it
+    if (!W.DuniaGLFX && me && me.src && (D.querySelector('script[src*="tk-steer"],script[src*="tk-lanes"]'))) {
+      var gs = D.createElement('script'); gs.src = me.src.replace('dunia-cinema.js', 'dunia-glfx.js'); D.body.appendChild(gs)
+    }
     // a PixiJS game gets the in-scene half (bloom, DoF, depth fog, rim) from its sibling file, same cache token
     if (W.PIXI && me && me.src) {
       var sc = D.createElement('script'); sc.src = me.src.replace('dunia-cinema.js', 'dunia-cinema-pixi.js'); D.body.appendChild(sc)
@@ -263,6 +290,8 @@
     set: function (o) { if (o && o.theme && THEMES[o.theme]) { theme = o.theme; if (root) { paint(); seed() } } },
     pulse: function (kind) { pulseKind = kind; pulseDur = kind === 'win' ? 900 : 260 },
     theme: function () { return THEMES[theme] },
+    glfxEnable: function (v) { glOff = !v; drawScenes(0) },
+    glfx: function () { return { scenes: gls.length, frames: glFrames } },
     themes: Object.keys(THEMES)
   }
   if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', build); else build()

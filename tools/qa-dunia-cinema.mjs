@@ -14,6 +14,8 @@
 //  10. nothing of the game disappears: with the layer the whole frame keeps >= 85% of its edge detail (2026-11-09: a rim
 //      filter on Mario's whole-level container wiped the bricks, coins and hills while the centre-crop law passed)
 //  11. a smooth page earns the full look on its own: on the GPU, unthrottled, a light page reaches tier 2 within 15 s
+//  12. an opaque canvas2D scene (Timmy's sailing and lanes) gets bloom/grade/vignette through DuniaGLFX, drawn over it
+//      live, its class still unique, no detail lost, and the game's own canvas back below tier 2
 // Pages are enumerated from games/*.html (plus index.html); SKIP names each exemption with its reason.
 // Server: ~/rz-work on port 8090.   BASE=http://localhost:8090/<checkout>/ node tools/qa-dunia-cinema.mjs
 import puppeteer from 'puppeteer'
@@ -174,6 +176,48 @@ for (const pg of ['games/ayo-berhitung.html', 'games/kuis-matematika.html', 'gam
   const seen = []
   for (let i = 0; i < 15; i++) { await sleep(1000); seen.push(await p.evaluate(() => window.DuniaCinema.state().quality)) }
   ok(seen.includes(2) && seen.at(-1) >= 1, `${pg}: unthrottled the layer never earns its full look (tiers ${seen.join('')})`)
+  await b.close()
+}
+// 12. an opaque canvas2D scene gets the in-scene half too (bloom, grade, vignette through DuniaGLFX): Timmy's sailing and
+//     lane canvases. The copy draws over the scene, the scene's own class stays unique, the picture is live, nothing of
+//     the game is lost, and below tier 2 the copy hides and the game's own canvas shows again
+for (const [pg, sel] of [['tools/tk-harness-steer.html', '.tks-cv'], ['tools/tk-harness-lanes.html', '.tkl-cv']]) {
+  if (process.env.QA_ONLY && !new RegExp(process.env.QA_ONLY).test(pg)) continue
+  const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--mute-audio', '--disable-audio-output', '--enable-gpu', '--use-angle=gl', '--ignore-gpu-blocklist'] })
+  const p = await b.newPage(); await p.setViewport({ width: 1024, height: 700 })
+  const errs = []; p.on('pageerror', e => errs.push(String(e).slice(0, 120)))
+  await p.goto(BASE + pg + '?cineq=2', { waitUntil: 'load' })
+  // the harness pages do not carry the layer; add it exactly as a game page loads it
+  await p.addScriptTag({ url: BASE + 'games/dunia-cinema.js?cineq=2' }).catch(e => errs.push('inject ' + e.message))
+  await sleep(3500)
+  const g = await p.evaluate(async sel => {
+    const src = document.querySelector(sel), gl = document.querySelector('canvas.dcine-glfx')
+    if (!src || !gl) return { src: !!src, gl: !!gl }
+    const r1 = src.getBoundingClientRect(), r2 = gl.getBoundingClientRect()
+    return { src: true, gl: true, count: document.querySelectorAll(sel).length, over: Math.abs(r1.left - r2.left) < 2 && Math.abs(r1.top - r2.top) < 2 && Math.abs(r1.width - r2.width) < 2, srcOp: getComputedStyle(src).opacity, glShown: getComputedStyle(gl).display !== 'none' }
+  }, sel)
+  // live picture, read off the screen (a WebGL canvas without preserveDrawingBuffer reads back blank once shown)
+  // (the layer's own particles hidden: they move by themselves and would pass a frozen scene as live)
+  await p.evaluate(() => document.querySelectorAll('[data-dcine]').forEach(e => { e.style.visibility = 'hidden' }))
+  const f1 = await p.evaluate(() => window.DuniaCinema.glfx().frames)
+  const s1 = await p.screenshot(); await sleep(700)
+  const f2 = await p.evaluate(() => window.DuniaCinema.glfx().frames)
+  await p.evaluate(() => document.querySelectorAll('[data-dcine]').forEach(e => { e.style.visibility = '' }))
+  // the picture shows content, and fresh frames keep reaching the GL copy (screen motion alone proved nothing: the
+  // harness animates its own overlays, so a frozen copy still looked live)
+  g.lum = +(await sharp(s1).greyscale().stats()).channels[0].mean.toFixed(1); g.moved = f2 - f1
+  ok(g.src && g.gl && g.over && g.glShown && g.srcOp === '0', `${pg}: no GL copy drawn over the scene ${JSON.stringify(g)}`)
+  ok(g.count === 1, `${pg}: the scene's own class ${sel} is no longer unique (${g.count})`)
+  ok(g.lum > 15 && g.moved >= 10, `${pg}: the GL copy is not a live picture ${JSON.stringify(g)}`)
+  const on = await p.screenshot()
+  await p.evaluate(() => { if (window.DuniaCinema && window.DuniaCinema.glfxEnable) window.DuniaCinema.glfxEnable(false); document.querySelectorAll('[data-dcine]').forEach(e => { e.style.display = 'none' }) })
+  await p.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))
+  const off = await p.screenshot()
+  const [eOn, eOff] = await Promise.all([detail(on), detail(off)])
+  ok(eOn >= eOff * 0.85, `${pg}: the scene loses detail under the GL copy (edges ${(eOn / eOff * 100).toFixed(0)}%)`)
+  const back = await p.evaluate(sel => { const gl = document.querySelector('canvas.dcine-glfx'); return { srcOp: getComputedStyle(document.querySelector(sel)).opacity, glShown: !!gl && getComputedStyle(gl).display !== 'none' } }, sel)
+  ok(back.srcOp === '1' && !back.glShown, `${pg}: switched off, the game's own canvas does not show again ${JSON.stringify(back)}`)
+  ok(!errs.length, `${pg}: page errors ${errs.slice(0, 2).join(' | ')}`)
   await b.close()
 }
 console.log(`qa-dunia-cinema: ${pass}/${pass + fail} checks passed`)
