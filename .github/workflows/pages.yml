@@ -15,7 +15,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Nothing deploys unless these pass: cache tokens, script syntax, local references + precache list,
+  # the freeze watchdog on every game page, and a headless smoke of every page (load, render, 0 errors,
+  # no 390 px overflow). Same script locally: CI_SMOKE=1 bash tools/ci-verify.sh
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install the headless browser (verify job only; the deploy job checks out clean)
+        run: npm install --no-save --no-package-lock puppeteer@24.43.1
+
+      - name: Gates
+        env:
+          CI_SMOKE: '1'
+        run: bash tools/ci-verify.sh
+
   deploy:
+    needs: verify
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
