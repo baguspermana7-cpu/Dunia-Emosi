@@ -311,6 +311,7 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
 <script src="data/emoji-map.js?v=v64.33-20261110a"></script><script src="data/ui-sprites.js?v=v64.33-20261110a"></script><!-- zero-emoji engine: toolbar + badges draw as the shared sprites -->
 <script src="data/berhitung-engine.js?v=v64.33-20261110a"></script>
 <script src="data/freeze-watchdog.js?v=v64.33-20261110a"></script>
+<script src="data/save-engine.js?v=v64.33-20261110a"></script>
 <script src="sw-reload.js?v=v64.33-20261110a"></script>
 <script>
 (function () {
@@ -339,18 +340,25 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   // ── persistence ──────────────────────────────────────────────────────────
   // One versioned store. The panel promises "jawaban tersimpan saat pindah
   // halaman", so every keystroke is checkpointed, not just page turns.
+  // Each child keeps their own book: the store lives under the active avatar (save-engine). The first read
+  // moves a pre-avatar global 'berhitung-v2' to the child playing, once; with no avatar chosen the global
+  // key is used unchanged. The avatar is locked for the session so a sibling switch elsewhere cannot
+  // redirect this page's saves mid-play.
   var STORE = 'berhitung-v2', SCHEMA = 2
+  if (window.lockGameAvatarSession) window.lockGameAvatarSession()
+  function readStore () { return window.avatarScopedGet ? window.avatarScopedGet(STORE) : localStorage.getItem(STORE) }
+  function writeStore (v) { if (window.avatarScopedSet) window.avatarScopedSet(STORE, v); else localStorage.setItem(STORE, v) }
   function fresh () { return { schemaVersion: SCHEMA, prefs: { sound: true }, op: 'add', level: 'medium', digits: 0, page: 1, sets: {}, xp: 0 } }
   function load () {
     try {
-      var raw = JSON.parse(localStorage.getItem(STORE) || 'null')
+      var raw = JSON.parse(readStore() || 'null')
       if (!raw || raw.schemaVersion !== SCHEMA) return fresh()
       raw.sets = raw.sets || {}
       return raw
     } catch (_) { return fresh() }     // corrupt data fails safe
   }
   var DB = load()
-  function save () { try { localStorage.setItem(STORE, JSON.stringify(DB)) } catch (_) {} }
+  function save () { try { writeStore(JSON.stringify(DB)) } catch (_) {} }
 
   // A set is one (operation, level, page). Its answers and its "Soal Baru"
   // nonce live under that key, so every page keeps its own work and every page
