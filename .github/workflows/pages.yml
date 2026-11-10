@@ -93,3 +93,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        # Pages processing took 10.5 min on 2026-11-11 and the default 10 min limit failed the v64.34 deploy
+        # ("Timeout reached, aborting!") with the artifact already uploaded. 30 min.
+        with:
+          timeout: 1800000

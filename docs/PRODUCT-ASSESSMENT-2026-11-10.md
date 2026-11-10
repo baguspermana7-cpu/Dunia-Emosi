@@ -324,7 +324,7 @@ push → job verify (token, sintaks, gate statis, smoke) → hijau: deploy Pages
 
 ---
 
-## Deliverable 5 — Existing Task Completion Report (2026-11-10)
+## Deliverable 5 — Existing Task Completion Report (2026-11-10, diperbarui 2026-11-11)
 
 | Tugas | Status | Bukti |
 |---|---|---|
@@ -332,7 +332,11 @@ push → job verify (token, sintaks, gate statis, smoke) → hijau: deploy Pages
 | Bloom Timmy in-scene (fase 2) | Live v64.30 | law 12 |
 | Bentuk/bayangan Pixi + tajam di HP + squash Pikachu | Live v64.31 | law 13, 14 merah→hijau |
 | Kontras layar mode/nama + tombol hijau | Live v64.32 | `qa-index-contrast` 26/44 → 44/44 |
-| **Bug tablet Timmy "no respond, glitch"** | Diperbaiki di branch, **menunggu commit** | law 15: live 140 ms → 58 ms (bare 60); `qa-dunia-cinema-input` 220/220; cinema 271/271; sweep 26/26 |
-| Grade backdrop-filter dihapus | Di branch | ~20 ms/ketuk di HP DPR3 |
-| Verifikasi di tablet asli | **Belum** | butuh #6 |
-| Gate Timmy di kode final | Berjalan saat dokumen ditulis | lihat laporan sesi |
+| **Bug tablet Timmy "no respond, glitch"** | Live v64.33 | law 15: 140 ms → 61 ms (tanpa lapisan 60); `qa-dunia-cinema-input` 220/220; cinema 271/271 |
+| Grade backdrop-filter dihapus | Live v64.33 | ~20 ms/ketuk di HP DPR3 |
+| #1 Watchdog di 5 halaman game | Live v64.33 | `qa-watchdog-wired` 18/23 → 23/23 (+ runtime 33/33) |
+| #3 Save per anak Ayo Berhitung | Live v64.35 (deploy Pages v64.34 timeout, Vercel live) | `qa-ayo-per-child` 3/9 → 9/9; `qa-ayo-berhitung` ALL PASS |
+| #4 Gate sebelum deploy (CI) | Live | job `verify` lulus di runner GitHub (v64.34 4 menit, v64.35 5 menit); batas `deploy-pages` dinaikkan ke 30 menit; `qa-local-refs` merah 779/800 saat satu berkas dihilangkan |
+| #8 + #9 DuniaBus + LearningLog | Live v64.35 (Pages + Vercel) | `qa-learning-log` 18/18 dari ketukan sungguhan (merah di situs v64.34); tk-play 1504/0 |
+| #16 Spesifikasi dunia emosi | Ditulis, menunggu owner | `docs/SPEC-EMOSI-REPLACEMENT-2026-11-11.md` (tanpa kode) |
+| Verifikasi di tablet asli | **Belum** | butuh #6 (owner menyalakan USB debugging) |
