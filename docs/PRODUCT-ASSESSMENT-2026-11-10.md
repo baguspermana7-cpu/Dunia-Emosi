@@ -22,11 +22,11 @@ dan tanpa jaringan.** Setiap ide di bawah diuji terhadap kalimat itu dulu.
 | Permainan | 17 layar game di dalam `index.html` (`screen-game3..25`) + 25 halaman `games/*.html` (termasuk hub film, embed, shell-smoke) | `grep -c 'id="screen-game' index.html` = 17; `ls games/*.html` = 25 |
 | Game emosi | **Semua dipensiunkan** 2026-09-20: G1 Aku Merasa, G2 Napas Pelangi, G5 Cocokkan Emosi, G12; "owner is building replacement" | `game.js:1219`, `game.js:1231` `RETIRED_GAMES = [1, 2, 5, 12]`, `game.js:1877` |
 | Profil anak | Multi-avatar (saudara) dengan save ber-avatar lewat `save-engine.js` (19 halaman) | `games/data/save-engine.js:1-40`, `:85 saveLevelProgress` |
-| Celah save per anak | Ayo Berhitung menyimpan ke kunci global `berhitung-v2`; Balapan Kereta samping ke `dunia_side_train`, tanpa `saveLevelProgress` — progres saudara tercampur dan bintangnya tidak sampai ke peta | `games/ayo-berhitung.html:342`, `games/balapan-kereta-side.html:541` |
+| Celah save per anak | Ayo Berhitung menyimpan lembar kerja + XP ke kunci global `berhitung-v2`, jadi saudara saling menimpa — **diperbaiki 2026-11-11** (save ber-avatar + migrasi sekali; `tools/qa-ayo-per-child.mjs`). Koreksi draf awal: `dunia_side_train` di Balapan samping hanya kereta pilihan, bukan progres; runner itu tidak menyimpan progres sama sekali | `games/ayo-berhitung.html` (store), `games/balapan-kereta-side.html:541` |
 | Dasbor | Nyata (dari save): bintang, tier XP, lencana, streak, jumlah game dimainkan. **Tanpa** wawasan belajar (skill, kesalahan, waktu); memakai emoji (🔥 🎮, `p.animal`) | `game.js:4041-4110` |
 | Narasi suara | Parsial: Timmy (klip + TTS `id-ID` fallback), Lokomotif (huruf), train-shared, Selamatkan (bark). Game lain teks saja **[BELUM TERVERIFIKASI per layar]** | `games/tk-hub.js:88-117`, `games/lokomotif-pemberani.html:2356`, `games/train-shared.js:360` |
-| Adaptivitas | Tidak ada model kemampuan anak; kesulitan = setelan statis/tier level | grep `adaptive\|autoLevel` → hanya komentar (`game.js:6412`, `:8999`) |
-| Log belajar | Tidak ada pencatat jawaban lintas game. `question-bank.wrongAnswers()` membuat **pengecoh**, bukan log kesalahan | `games/question-bank.js:10,74` |
+| Adaptivitas | **Koreksi draf awal:** Timmy sudah punya model penguasaan per domain (`TKQuiz.mastery`, 0–100, 4 tier) yang disimpan di save Timmy dan menyetel tingkat + penyajian soal (`levelFor`, `present`); soal-engine menyimpan riwayat soal per avatar agar tidak berulang. Game lain (Kuis Matematika, Ayo Berhitung, dll.) memakai tier level statis | `games/tk-quiz.js:63-80`, `games/timmy-kapal.js:962,1043`, `games/data/soal-engine.js:225` |
+| Log belajar | Sebelum 2026-11-11 tidak ada pencatat jawaban lintas game. **Kini ada** `DuniaBus` + `LearningLog` per anak, terpasang di Kuis Matematika, Ayo Berhitung, dan semua soal TKQuiz (Timmy); game lain belum memancarkan | `games/data/dunia-bus.js`, `games/data/learning-log.js`, `tools/qa-learning-log.mjs` |
 | Freeze watchdog | Modul mencatat galat/stall ke `localStorage.__freezeLog` dan, bila frame berhenti >5 s dua kali berturut, menampilkan kartu pulih "Permainannya berhenti sebentar" + tombol **Main Lagi** (reload seluruh halaman), dengan catatan teknis di kartu. Kartu itu **berbasis teks** (anak belum bisa membaca) dan reload tidak kembali ke level yang sama. Sebelum 2026-11-10 **tidak dimuat** di 5 halaman game: timmy-kapal, garasi-tempur, kereta-maze, mojo-swoptops, stinky-dirty — kini dipasang (lihat Deliverable 5) | `games/data/freeze-watchdog.js:138-262`; `tools/qa-watchdog-wired.mjs` |
 | Update PWA | Benar: reload deploy ditunda sampai halaman tersembunyi (tidak menarik anak keluar di tengah main) | `games/sw-reload.js:40-50` |
 | Cloud sync | Dikirim ke klien tapi **dorman**: tidak ada `CLOUD_SYNC_CONFIG` di halaman mana pun | `games/data/cloud-sync.js:14-21`; grep `CLOUD_SYNC_CONFIG =` hanya di komentar |
@@ -44,7 +44,7 @@ dan tanpa jaringan.** Setiap ide di bawah diuji terhadap kalimat itu dulu.
 2. **Tidak ada lingkar belajar:** jawaban anak tidak dicatat, tidak ada model kemampuan, tidak ada pengulangan, dasbor tidak bisa menjawab "anak saya sudah bisa apa?".
 3. **Keandalan di perangkat asli tidak teruji:** gate jalan di headless saja; bug tablet 2026-11-10 (jeda ketuk 2×) lolos semua gate sampai ada law yang mengukur jeda ketuk. Lima halaman bahkan tanpa watchdog (diperbaiki 2026-11-10, v64.33).
 4. **Gate tidak menjaga deploy:** CI hanya deploy; ship bergantung pada sesi yang ingat menjalankan gate yang benar dengan port yang benar.
-5. **Fragmentasi save:** dua game menyimpan di luar profil anak.
+5. **Fragmentasi save:** Ayo Berhitung menyimpan di luar profil anak (diperbaiki 2026-11-11).
 
 ### 1.4 Roadmap 50-ide sebelumnya — status nyata
 | Sprint lama | Status di kode |
@@ -52,7 +52,7 @@ dan tanpa jaringan.** Setiap ide di bawah diuji terhadap kalimat itu dulu.
 | Sprint 0 Audit & Stabilitas | Sebagian (watchdog, sw-reload, cinema gates) |
 | Sprint 1 Learning Event System | **Belum ada** (tidak ada modul log jawaban) |
 | Sprint 2 Game 10 Learning Feedback | [BELUM TERVERIFIKASI] |
-| Sprint 3 Mastery Tree | **Belum ada** |
+| Sprint 3 Mastery Tree | Model penguasaan ada **hanya di Timmy** (`TKQuiz.mastery`); belum lintas game |
 | Sprint 4 Daily Training Routine | Streak harian ada (`game.js` `pkey('streak')`); rutinitas tidak |
 | Sprint 6 Pulau Emosi 2D | **Belum ada**; game emosi justru dipensiunkan |
 
@@ -73,14 +73,14 @@ ke angka supaya terlihat terpisah.
 |---|---|---|---|---|---|---|---|
 | 1 | Pasang freeze-watchdog di 5 halaman yang belum + gate kabel | 7 | 2 | 6 | 1.0 | S | **22.0** |
 | 2 | Watchdog → pemulihan bergambar (stall/error → "Coba lagi" + progres utuh) | 9 | 6 | 7 | 0.75 | M | 11.6 |
-| 3 | Perbaiki save per anak (Ayo Berhitung, Balapan samping) + migrasi | 8 | 2 | 4 | 1.0 | S | **22.0** |
+| 3 | Perbaiki save per anak (Ayo Berhitung) + migrasi — **selesai** | 8 | 2 | 4 | 1.0 | S | **22.0** |
 | 4 | Gate sebelum deploy di CI (statis + smoke) | 8 | 3 | 8 | 1.0 | M | 13.5 |
 | 5 | Satu runner gate + satu env URL | 6 | 3 | 8 | 1.0 | M | 11.5 |
 | 6 | Jalur uji perangkat asli (adb + CDP ke tablet owner) | 9 | 7 | 7 | 0.75 | M | 12.0 |
 | 7 | Telemetri lokal ringan (jeda ketuk, stall, error) + halaman "Kesehatan perangkat" | 7 | 6 | 6 | 0.75 | M | 9.4 |
 | 8 | Bus peristiwa bersama `DuniaBus` (level mulai/selesai, jawaban, hadiah) | 7 | 5 | 10 | 1.0 | M | 14.5 |
 | 9 | Log belajar per anak (Learning Event) di atas bus | 9 | 5 | 9 | 1.0 | M | 16.0 |
-| 10 | Model penguasaan per skill → generator soal memilih tingkat berikut | 10 | 8 | 7 | 0.75 | L | 8.8 |
+| 10 | Model penguasaan lintas game (angkat `TKQuiz.mastery` yang sudah ada) | 10 | 6 | 7 | 1.0 | M | 16.5 |
 | 11 | Antrean pengulangan: soal yang salah muncul lagi di gerbang soal game lain | 8 | 8 | 5 | 0.75 | M | 10.9 |
 | 12 | Halaman orang tua berbasis bukti belajar (ganti dasbor bintang/XP) | 9 | 5 | 4 | 1.0 | M | 13.5 |
 | 13 | Petunjuk sesuai jenis kesalahan (salah satu, terbalik, kiri/kanan) | 7 | 7 | 3 | 0.75 | M | 9.0 |
@@ -133,8 +133,8 @@ Format: **Keterbatasan** · **Transformasi** · **UX** · **Alur** · **Nilai** 
 - Risiko: false positive (boot berat). Pakai pembeda `stall` vs `boot-slow` yang sudah ada.
 - Terima: injeksi galat di 3 game → kartu muncul ≤1 s, ketukan kembali ke level yang sama dengan bintang utuh; tidak ada kartu pada boot-slow.
 
-**#3 Save per anak untuk Ayo Berhitung & Balapan samping**
-- Keterbatasan: kunci global `berhitung-v2` (`ayo-berhitung.html:342`) dan `dunia_side_train` — saudara saling menimpa; bintang tidak tampil di peta.
+**#3 Save per anak untuk Ayo Berhitung** — *SELESAI 2026-11-11 (v64.34)*
+- Keterbatasan: kunci global `berhitung-v2` — saudara saling menimpa lembar kerja dan XP. (Draf awal juga menyebut `dunia_side_train`; itu hanya kereta pilihan, bukan progres — dicoret.)
 - Transformasi: pakai `avatarScopedGet/Set` + `saveLevelProgress`; migrasi satu kali kunci global ke avatar aktif.
 - UX: tiap anak melihat progresnya sendiri.
 - Alur: boot → `lockGameAvatarSession()` → baca kunci ber-avatar; jika kosong dan kunci global ada → salin ke avatar aktif sekali, tandai migrasi.
@@ -192,9 +192,9 @@ Format: **Keterbatasan** · **Transformasi** · **UX** · **Alur** · **Nilai** 
 - Risiko: kuota penyimpanan; pemadatan harian + batas 90 hari.
 - Terima: 20 jawaban di Kuis + Timmy tercatat dengan skill benar; ukuran per hari <5 KB.
 
-**#10 Model penguasaan per skill**
-- Keterbatasan: kesulitan statis; anak bosan/terlalu sulit.
-- Transformasi: skor per skill (Elo sederhana atau rata-rata bergerak berbobot) dari log #9; generator soal (`soal-engine`, `soal-gen-matematika`, `g23-question-engine`, `tk-quiz`) menerima `targetDifficulty` per skill.
+**#10 Model penguasaan per skill (perluas model Timmy)**
+- Keterbatasan: Timmy sudah adaptif per domain (`TKQuiz.mastery`), tapi game lain tidak, dan skor Timmy hidup di save Timmy saja — penguasaan yang ditunjukkan di Kuis Matematika tidak diketahui Timmy dan sebaliknya.
+- Transformasi: angkat `TKQuiz.mastery` menjadi modul bersama yang membaca log #9 (per domain, lalu per skill); generator soal (`soal-engine`, `soal-gen-matematika`, `g23-question-engine`, `tk-quiz`) menerima `targetDifficulty` per skill.
 - Alur: jawaban → update skor → soal berikut dipilih di sekitar 70–80% peluang benar.
 - Kompleksitas Tinggi · 2–3 minggu · Skor 10/8/0.75.
 - Risiko: memetakan item lama ke skill dan tingkat; mulai dari matematika (sudah ada `MATH-DIFFICULTY-STANDARD.md`).
