@@ -1,6 +1,6 @@
 // qa-dunia-cinema.mjs — the cinematic layer (games/dunia-cinema.js) is on EVERY game page and helps without harming
 // (owner 2026-11-09: "Semua game di dunia emosi enhance animation nya. Literally semuanya"). Laws, per page:
-//   1. the layer is on: DuniaCinema.state().on, the page's theme, grade + light (key/fill/haze/vignette) + particles
+//   1. the layer is on: DuniaCinema.state().on, the page's theme, light (key/fill/haze/vignette) + particles
 //   2. it never takes a tap: elementFromPoint at 5 points never lands on a [data-dcine] layer
 //   3. reduced motion: no particles, the lights stop drifting
 //   4. a button squashes on press (an added animation, scale below 1) and, released, leaves no press animation behind
@@ -57,9 +57,9 @@ const detail = async buf => {
   for (let y = 0; y < info.height - 1; y++) for (let x = 0; x < w - 1; x++) { const i = y * w + x; e += Math.abs(data[i] - data[i + 1]) + Math.abs(data[i] - data[i + w]) }
   return e
 }
-const meanDiff = async (a, c) => {
+const meanDiff = async (a, c, whole) => {
   const crop = { left: 256, top: 175, width: 512, height: 350 }
-  const [x, y] = await Promise.all([a, c].map(buf => sharp(buf).extract(crop).raw().toBuffer()))
+  const [x, y] = await Promise.all([a, c].map(buf => (whole ? sharp(buf) : sharp(buf).extract(crop)).raw().toBuffer()))
   let s = 0; for (let i = 0; i < x.length; i++) s += Math.abs(x[i] - y[i]); return s / x.length
 }
 
@@ -70,7 +70,7 @@ for (const pg of PAGES) {
     const { p, errs } = await open(b, pin(BASE + pg, 2))
     const st = await p.evaluate(() => {
       const L = [...document.querySelectorAll('[data-dcine]')], s = window.DuniaCinema && window.DuniaCinema.state()
-      return { s, layers: ['dg', 'dl', 'dp'].every(c => L.some(e => e.classList.contains(c))), pe: L.length && L.every(e => getComputedStyle(e).pointerEvents === 'none') ? 'none' : 'auto' }
+      return { s, layers: ['dl', 'dp'].every(c => L.some(e => e.classList.contains(c))), pe: L.length && L.every(e => getComputedStyle(e).pointerEvents === 'none') ? 'none' : 'auto' }
     })
     ok(st.s && st.s.on && st.layers && st.pe === 'none', `${name}: the cinematic layer is not on ${JSON.stringify(st)}`)
     if (THEME[name]) ok(st.s && st.s.theme === THEME[name], `${name}: theme ${st.s && st.s.theme}, want ${THEME[name]}`)
@@ -140,7 +140,10 @@ for (const pg of PAGES) {
     // a page whose Pixi scene is lit by the shader shows its effect as form (edges), not as a colour wash: on a dark night
     // scene the mean change can stay small while the detail rises
     const formed = pxOn && eOn >= eOff * 1.04
-    ok((d >= 1.5 || formed) && d <= 22, `${name}: centre changes by ${d.toFixed(1)} (want 1.5..22, or added form on a shaded scene; edges ${(eOn / eOff * 100).toFixed(0)}%)`)
+    // the effect may show anywhere in the frame (a page that opens on a tutorial card in the middle hid it from the
+    // centre crop: balapan-kereta-side, 2026-11-10); the upper bound stays on the centre, where the action is
+    const dAll = await meanDiff(shotA, shotB, true)
+    ok((d >= 1.5 || dAll >= 1.5 || formed) && d <= 22, `${name}: centre changes by ${d.toFixed(1)}, the frame by ${dAll.toFixed(1)} (want 1.5..22, or added form on a shaded scene; edges ${(eOn / eOff * 100).toFixed(0)}%)`)
     // 8. it costs little: at 4x CPU, once its quality tier has settled, the page keeps >= 80% of its frame rate
     // a tab behind another runs no requestAnimationFrame: bring the measured one to the front first
     const fps = async pg2 => { await pg2.bringToFront(); const c = await pg2.target().createCDPSession(); await c.send('Emulation.setCPUThrottlingRate', { rate: 4 }); await sleep(5000)
@@ -311,6 +314,40 @@ for (const pg of ['games/pokemon-birds.html', 'games/monster-candy.html', 'games
   ok(Math.abs(dL) <= 0.06 && Math.abs(dS) <= 0.08, `${pg}: the shader shifts the colour (brightness ${(dL * 100).toFixed(1)}%, saturation ${(dS * 100).toFixed(1)}%)`)
   ok(!errs.length, `${pg} form: page errors ${errs.slice(0, 2).join(' | ')}`)
   await b.close()
+}
+// 15. the layer never slows a tap down: on Timmy's route board at tablet size (owner 2026-11-10, a tablet: "gak bisa
+//     diperintah, no respond dan glitch") every tap on the arrow adds a command, and the time from the tap to the
+//     screen showing it stays within 25 ms of the bare page. A full-screen particle canvas redrawn each frame doubled
+//     it (60 -> 130 ms) while the frame rate still read 60, so the auto tier never noticed
+const tapLatency = async (q) => {
+  const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--mute-audio', '--disable-audio-output', '--enable-gpu', '--use-angle=gl', '--ignore-gpu-blocklist'] })
+  const p = await b.newPage(); await p.setViewport({ width: 800, height: 1280, deviceScaleFactor: 2, isMobile: true, hasTouch: true })
+  const errs = []; p.on('pageerror', e => { if (!IGNORE.test(String(e))) errs.push(String(e).slice(0, 120)) })
+  await p.goto(BASE + 'games/timmy-kapal.html' + q, { waitUntil: 'networkidle2' })
+  await p.evaluate(() => { __tk.reset(); __tk.start('kamar', 1) }); await sleep(8000)
+  const at = await p.evaluate(() => { const e = document.querySelector('.tkg-chip[data-cmd="E"]') || document.querySelector('.tkg-chip'); const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 } })
+  const lat = []
+  for (let i = 0; i < 6; i++) {
+    await p.evaluate(() => { window.__t = null; new MutationObserver((m, o) => { o.disconnect(); requestAnimationFrame(() => requestAnimationFrame(() => { window.__t = performance.now() - window.__t0 })) }).observe(document.querySelector('.tkg-root') || document.body, { subtree: true, childList: true }); window.__t0 = performance.now() })
+    await p.touchscreen.tap(at.x, at.y)
+    await p.waitForFunction(() => window.__t != null, { timeout: 10000 }).catch(() => {})
+    lat.push(await p.evaluate(() => window.__t == null ? 9999 : window.__t))
+    if (i === 3) await p.evaluate(() => __tk.handle().setProgram([]))
+    await sleep(350)
+  }
+  const prog = await p.evaluate(() => __tk.handle().state().program.length)
+  const canv = await p.evaluate(() => [...document.querySelectorAll('canvas[data-dcine],.dcine canvas')].length)
+  await b.close()
+  lat.sort((a, c) => a - c)
+  return { med: lat[lat.length >> 1], lat: lat.map(Math.round), prog, canv, errs }
+}
+if (!process.env.QA_ONLY || /tap|timmy/.test(process.env.QA_ONLY)) {
+  const bare = await tapLatency('?nocine=1'), on = await tapLatency('')
+  console.log(`  tap latency: bare ${bare.med.toFixed(0)} ms ${JSON.stringify(bare.lat)} | layer ${on.med.toFixed(0)} ms ${JSON.stringify(on.lat)}`)
+  ok(on.prog === 2 && bare.prog === 2, `timmy board: taps on the arrow did not all add a command (layer ${on.prog}, bare ${bare.prog} of 2 after the reset)`)
+  ok(on.med <= bare.med + 25, `timmy board: a tap takes ${on.med.toFixed(0)} ms to show with the layer, ${bare.med.toFixed(0)} ms bare`)
+  ok(on.canv === 0, `timmy board: the layer still draws a full-screen canvas (${on.canv})`)
+  ok(!on.errs.length, `timmy board: page errors ${on.errs.slice(0, 2).join(' | ')}`)
 }
 console.log(`qa-dunia-cinema: ${pass}/${pass + fail} checks passed`)
 process.exit(fail ? 1 : 0)

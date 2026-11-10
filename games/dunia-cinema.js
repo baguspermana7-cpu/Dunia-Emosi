@@ -7,15 +7,17 @@
  *               handheld camera so the scene never sits dead still
  *   fill light  the cool sky colour lifting the opposite, shadowed side
  *   glow + fog  a thin haze band at the horizon (behind the action, never over the foreground) and a soft vignette
- *   grade       a touch more saturation and contrast (backdrop-filter), per-theme colour temperature through the lights
+ *   grade       in the scene only (the Pixi shader, DuniaGLFX); the per-theme colour temperature comes through the lights.
+ *               A screen-wide backdrop-filter grade cost a frame on every tap on a phone (2026-11-10) and is gone
  *   particles   dust motes in the light, light specks, leaves, petals, bubbles or stars per theme (secondary motion:
- *               each one sways on its own sine, drifts with a shared breeze)
+ *               each one sways, twinkles or tumbles on its own timing). Small elements moved by CSS animations on the
+ *               compositor: no per-frame script, no full-screen canvas (that doubled the tap-to-screen time on a tablet)
  *   scene       an opaque canvas2D scene (Timmy's sailing, lanes) gets bloom/grade/vignette through DuniaGLFX
  *   body        a DOM hero that jumps (Mario's Pikachu) stretches on take-off and squashes on landing, feet planted
  *   press       every button/card squashes on pointerdown (anticipation) and springs back with an overshoot
  *               (slow-in/slow-out), added on top of any transform the game already animates (composite: add)
  *
- * Three fixed layers (grade, light, particles) with pointer-events:none, so no tap ever lands on them. Reduced motion
+ * Two fixed layers (light, particles) with pointer-events:none, so no tap ever lands on them. Reduced motion
  * (the OS setting or localStorage du-reduced-motion=1): lights stay, drift/particles/press stop. A slow page (two seconds
  * under 45 fps) drops the grade, then the light and particles. ?nocine=1 turns it all off (gates compare against it);
  * ?cineq=0|1|2 pins a tier (gates and screenshots on a slow headless renderer).
@@ -66,20 +68,32 @@
   // grace, two seconds in a row under 45 fps drop a tier (under 25 fps straight to 0: the game's smoothness comes first)
   // and lower the ceiling. The ceiling comes back after 10 s of smooth frames, then 20 s, 40 s... (a single slow loading
   // second once sent every 61 fps page to tier 0 for good - a good tablet showed no effect at all):
-  //   2 = grade + light drifting + particles   1 = light still + particles   0 = nothing drawn (the page as it was)
+  //   2 = light drifting + particles (+ the in-scene shaders)   1 = light still + particles   0 = nothing drawn (the page as it was)
   var capMax = lowEnd ? 1 : 2, cap = capMax, quality = 1, fast = 0, slow = 0, backoff = 10
   var pinned = /[?&]cineq=([012])/.exec(Q)      // gates and screenshots pin a tier: ?cineq=2
   if (pinned) { quality = +pinned[1]; cap = capMax = quality }
-  var root, grade, light, cv, ctx, sprites = {}, parts = [], raf = 0, t0 = 0, last = 0, secStart = 0, secFrames = 0, lastDrift = 0, lastHook = 0, frames = 0, pulseDur = 0, pulseUntil = 0, pulseKind = ''
+  var root, light, cv, sprites = {}, parts = [], raf = 0, t0 = 0, last = 0, secStart = 0, secFrames = 0, lastDrift = 0, lastHook = 0, frames = 0, pulseDur = 0, pulseUntil = 0, pulseKind = ''
 
   // two fixed children of <body> (a shared wrapper would be a stacking context, and a blend inside one mixes only with
   // that empty wrapper): ONE soft-light layer carries key, fill, horizon haze and vignette as four gradients
   var CSS = [
     '.dcine{position:fixed;z-index:2147483000;pointer-events:none;inset:0}',
     '.dcine.dl{mix-blend-mode:soft-light;transition:opacity .6s cubic-bezier(.22,1,.36,1)}',
-    '.dcine.dl.off,.dcine.dg.off{display:none}',
-    '.dcine.dg{-webkit-backdrop-filter:saturate(1.12) contrast(1.06);backdrop-filter:saturate(1.12) contrast(1.06)}',
-    'canvas.dcine{width:100%;height:100%}'
+    '.dcine.dl.off{display:none}',
+    // particles: small elements moved by CSS animations on the compositor. A full-screen canvas redrawn every frame
+    // (1200x1920 on a tablet) was uploaded to the GPU each frame and doubled the time from a tap to the screen showing
+    // it (60 -> 130 ms on Timmy's route board; owner on a tablet: "no respond dan glitch", 2026-11-10)
+    '.dcine.dp{overflow:hidden}',
+    '.dcm{position:absolute;top:0;will-change:transform;animation:dcine-up var(--d) linear infinite}',
+    '.dcm.dn{animation-name:dcine-dn}',
+    '.dcm>b{display:block;width:100%;height:100%;border-radius:50%;animation:dcine-sw var(--s) ease-in-out infinite alternate}',
+    '.dcm.tw>b{animation:dcine-sw var(--s) ease-in-out infinite alternate,dcine-tw 2.6s ease-in-out infinite alternate}',
+    '.dcm.lf>b{border-radius:70% 0;animation:dcine-lf var(--s) ease-in-out infinite alternate}',
+    '@keyframes dcine-up{from{transform:translate3d(0,calc(100vh + 24px),0)}to{transform:translate3d(0,-40px,0)}}',
+    '@keyframes dcine-dn{from{transform:translate3d(0,-40px,0)}to{transform:translate3d(0,calc(100vh + 24px),0)}}',
+    '@keyframes dcine-sw{from{transform:translateX(calc(var(--w) * -1))}to{transform:translateX(var(--w))}}',
+    '@keyframes dcine-tw{from{opacity:.4}to{opacity:1}}',
+    '@keyframes dcine-lf{from{transform:translateX(calc(var(--w) * -1)) rotate(-40deg) scaleY(.5)}to{transform:translateX(var(--w)) rotate(50deg) scaleY(.9)}}'
   ].join('')
 
   function paint () {
@@ -103,63 +117,39 @@
 
   function seed () {
     parts = []
-    if (reduced() || !cv) return
-    var w = cv.width, h = cv.height, n = Math.min(36, Math.max(10, Math.round(w * h / 52000)))
-    for (var i = 0; i < n; i++) parts.push(spawn(w, h, true))
+    if (!cv) return
+    cv.textContent = ''
+    if (reduced()) return
+    var n = Math.min(22, Math.max(8, Math.round(W.innerWidth * W.innerHeight / 34000)))
+    for (var i = 0; i < n; i++) { var m = mote(); cv.appendChild(m); parts.push(m) }
   }
-  function spawn (w, h, any) {
-    var th = THEMES[theme] || THEMES.meadow, k = th.kind, up = k === 'mote' || k === 'bubble' || k === 'spark' || k === 'speck'
-    var r = Math.random
-    return {
-      x: r() * w, y: any ? r() * h : (up ? h + 10 : -10),
-      vy: (up ? -1 : 1) * (k === 'spark' ? 18 + r() * 22 : k === 'bubble' ? 14 + r() * 16 : k === 'leaf' || k === 'petal' ? 16 + r() * 14 : 4 + r() * 6),
-      sz: k === 'leaf' || k === 'petal' ? 4 + r() * 4 : k === 'bubble' ? 3 + r() * 5 : k === 'star' ? 1 + r() * 1.6 : 1.2 + r() * 2.2,
-      ph: r() * 6.28, sw: 8 + r() * 18, rot: r() * 6.28, vr: (r() - 0.5) * 1.6, a: 0.35 + r() * 0.45,
-      c: th.cols[(r() * th.cols.length) | 0]
-    }
-  }
-  // a soft glow dot, drawn once per colour and stamped (a gradient per particle per frame was the slow way)
-  function glow (c) {
-    if (sprites[c]) return sprites[c]
-    var g = D.createElement('canvas'); g.width = g.height = 32
-    var x = g.getContext('2d'), r = x.createRadialGradient(16, 16, 0, 16, 16, 16)
-    r.addColorStop(0, c); r.addColorStop(0.35, c); r.addColorStop(1, 'rgba(255,255,255,0)')
-    x.fillStyle = r; x.fillRect(0, 0, 32, 32)
-    return (sprites[c] = g)
-  }
-  function drawParts (dt, t) {
-    var w = cv.width, h = cv.height, k = (THEMES[theme] || THEMES.meadow).kind, dpr = cv._dpr || 1
-    ctx.clearRect(0, 0, w, h)
-    var breeze = Math.sin(t * 0.13) * 10 * dpr
-    for (var i = 0; i < parts.length; i++) {
-      var p = parts[i]
-      p.y += p.vy * dt * dpr; p.rot += p.vr * dt
-      var x = p.x + Math.sin(t * 0.9 + p.ph) * p.sw * dpr + breeze
-      if (p.y < -20 || p.y > h + 20) { parts[i] = spawn(w, h, false); continue }
-      var sz = p.sz * dpr
-      ctx.globalAlpha = k === 'star' || k === 'speck' ? p.a * (0.55 + 0.45 * Math.sin(t * 2.4 + p.ph)) : p.a
-      if (k === 'leaf' || k === 'petal') {
-        ctx.save(); ctx.translate(x, p.y); ctx.rotate(p.rot); ctx.scale(1, 0.45 + 0.4 * Math.abs(Math.sin(t * 1.7 + p.ph)))
-        ctx.fillStyle = p.c; ctx.beginPath(); ctx.ellipse(0, 0, sz, sz * (k === 'leaf' ? 0.5 : 0.7), 0, 0, 6.2832); ctx.fill(); ctx.restore()
-      } else if (k === 'bubble') {
-        ctx.strokeStyle = p.c; ctx.lineWidth = 1.2 * dpr; ctx.beginPath(); ctx.arc(x, p.y, sz, 0, 6.2832); ctx.stroke()
-        ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.beginPath(); ctx.arc(x - sz * 0.35, p.y - sz * 0.35, sz * 0.25, 0, 6.2832); ctx.fill()
-      } else ctx.drawImage(glow(p.c), x - sz * 3, p.y - sz * 3, sz * 6, sz * 6)
-    }
-    ctx.globalAlpha = 1
+  // one particle: the outer element travels the screen (rise or fall), the inner one sways, twinkles or tumbles
+  function mote () {
+    var th = THEMES[theme] || THEMES.meadow, k = th.kind, r = Math.random
+    var up = k === 'mote' || k === 'bubble' || k === 'spark' || k === 'speck', lf = k === 'leaf' || k === 'petal'
+    var vy = k === 'spark' ? 18 + r() * 22 : k === 'bubble' ? 14 + r() * 16 : lf ? 16 + r() * 14 : 6 + r() * 8
+    var sz = lf ? 7 + r() * 6 : k === 'bubble' ? 6 + r() * 7 : k === 'star' ? 3 + r() * 3 : 4 + r() * 5
+    var c = th.cols[(r() * th.cols.length) | 0], d = (W.innerHeight + 64) / vy
+    var o = D.createElement('i'), b = D.createElement('b')
+    o.className = 'dcm' + (up ? '' : ' dn') + (k === 'star' || k === 'speck' ? ' tw' : '') + (lf ? ' lf' : '')
+    o.style.cssText = 'left:' + (r() * 100).toFixed(1) + '%;width:' + sz.toFixed(1) + 'px;height:' + sz.toFixed(1) + 'px;opacity:' + (0.35 + r() * 0.45).toFixed(2) +
+      ';--d:' + d.toFixed(1) + 's;animation-delay:-' + (r() * d).toFixed(1) + 's'
+    b.style.cssText = '--s:' + (2.4 + r() * 3).toFixed(1) + 's;--w:' + (6 + r() * 14).toFixed(0) + 'px;animation-delay:-' + (r() * 4).toFixed(1) + 's;background:' +
+      (lf ? c : 'radial-gradient(circle,' + c + ' 0,' + c + ' 30%,rgba(255,255,255,0) 70%)')
+    o.appendChild(b)
+    return o
   }
 
   function size () {
     if (!cv) return
-    var dpr = Math.min(1.5, W.devicePixelRatio || 1)
-    cv._dpr = dpr; cv.width = Math.round(W.innerWidth * dpr); cv.height = Math.round(W.innerHeight * dpr)
-    seed()
+    var a = W.innerWidth * W.innerHeight
+    if (cv._a && Math.abs(a - cv._a) / cv._a < 0.25) return    // a phone's URL bar showing/hiding is not a new screen
+    cv._a = a; seed()
   }
 
   function setQuality (q) {
     quality = q
     light.classList.toggle('off', q < 1)
-    grade.classList.toggle('off', q < 2 || inScene)
     cv.style.display = q < 1 ? 'none' : ''
     if (q < 2) light.style.backgroundPosition = '50% 50%,50% 50%,0 0,0 0'
   }
@@ -200,8 +190,7 @@
 
   // a Pixi game lights and grades its own scene in the shader (key, fill, form, contrast); the screen-wide soft-light and
   // backdrop saturate on top only doubled them (hills 34,197,94 went 11,217,87, the sky clipped), so once the shader is
-  // on, dunia-cinema-pixi.js calls inScene(): the light drops to half and the backdrop grade goes (it was also the
-  // costliest layer)
+  // on, dunia-cinema-pixi.js calls inScene(): the light drops to half
   var lightK = 1, inScene = false
   function tick (now) {
     raf = W.requestAnimationFrame(tick); frames++
@@ -234,8 +223,7 @@
     // the rest was a 0.30 -> 0.35 flicker nobody would see)
     var pk = now < pulseUntil ? (pulseKind === 'win' ? Math.min(1, 0.85 * lightK + 0.5) : 0.55 * lightK) : 0.85 * lightK
     if (light._o !== pk) { light._o = pk; light.style.opacity = pk }
-    if (!rm && quality >= 1 && parts.length) drawParts(dt, t)
-    else if (parts.length && rm) { parts = []; ctx.clearRect(0, 0, cv.width, cv.height) }
+    if (parts.length && rm) seed()                               // reduced motion turned on: the particles go
     if (!rm) bodyTick()
   }
 
@@ -249,9 +237,9 @@
   }
   function bodyTick () {
     if (!body || !Element.prototype.animate) return
-    var s = null
-    try { s = (0, eval)('typeof ' + body.st + '!=="undefined"?' + body.st + ':null') } catch (e) { return }
-    var el = s && D.getElementById(body.el)
+    var s = body._s
+    if (!s) { try { s = body._s = (0, eval)('typeof ' + body.st + '!=="undefined"?' + body.st + ':null') } catch (e) { return } }   // a const object: look it up once
+    var el = s && (body._el && body._el.isConnected ? body._el : (body._el = D.getElementById(body.el)))
     if (!el) return
     var air = !s[body.ground], vy = +s[body.vy] || 0
     if (air && !bodyAir) {
@@ -296,12 +284,11 @@
   function build () {
     if (root || !D.body) return
     var st = D.createElement('style'); st.id = 'dcine-css'; st.textContent = CSS; D.head.appendChild(st)
-    root = ['dg', 'dl', 'dp'].map(function (c) {
-      var e = D.createElement(c === 'dp' ? 'canvas' : 'div'); e.className = 'dcine ' + c; e.setAttribute('aria-hidden', 'true')
+    root = ['dl', 'dp'].map(function (c) {
+      var e = D.createElement('div'); e.className = 'dcine ' + c; e.setAttribute('aria-hidden', 'true')
       e.setAttribute('data-dcine', ''); D.body.appendChild(e); return e
     })
-    grade = root[0]; light = root[1]; cv = root[2]
-    ctx = cv.getContext('2d')
+    light = root[0]; cv = root[1]
     paint(); size(); setQuality(quality)
     W.addEventListener('resize', size)
     W.addEventListener('pointerdown', function (e) { var el = pressTarget(e); lastPressed = el; onDown(e) }, true)
@@ -325,7 +312,7 @@
     set: function (o) { if (o && o.theme && THEMES[o.theme]) { theme = o.theme; if (root) { paint(); seed() } } },
     pulse: function (kind) { pulseKind = kind; pulseDur = kind === 'win' ? 900 : 260 },
     theme: function () { return THEMES[theme] },
-    inScene: function () { inScene = true; lightK = 0.5; if (grade) grade.classList.add('off') },
+    inScene: function () { inScene = true; lightK = 0.5 },
     glfxEnable: function (v) { glOff = !v; drawScenes(0) },
     glfx: function () { return { scenes: gls.length, frames: glFrames } },
     body: function () { return { on: !!body, anims: bodyN, air: bodyAir } },
