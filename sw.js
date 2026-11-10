@@ -156,6 +156,8 @@ const SHELL = [
   './games/data/gt-trucks.js?v=v64.34-20261111a',
   './games/data/gt-cards.js?v=v64.34-20261111a',
   './games/data/save-engine.js?v=v64.34-20261111a',
+  './games/data/dunia-bus.js?v=v64.34-20261111a',
+  './games/data/learning-log.js?v=v64.34-20261111a',
   './games/data/sfx-engine.js?v=v64.34-20261111a',
   // Shared UI/gameplay cues used by G30/G31. Media range requests may never
   // produce a cacheable 200 response, so cache each complete MP3 at install.

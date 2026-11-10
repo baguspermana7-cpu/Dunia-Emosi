@@ -767,6 +767,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="data/freeze-watchdog.js?v=v64.34-20261111a"></script>
 <script src="data/math-rules.js?v=v64.34-20261111a"></script>
 <script src="data/save-engine.js?v=v64.34-20261111a"></script>
+<script src="data/dunia-bus.js?v=v64.34-20261111a"></script>
+<script src="data/learning-log.js?v=v64.34-20261111a"></script>
 <script src="data/sfx-engine.js?v=v64.34-20261111a"></script>
 <script src="vfx-engine.js?v=v64.34-20261111a"></script><!-- shared VFX (monster defeat explosion) -->
 <script src="data/math-heroes.js?v=v64.34-20261111a"></script><!-- P3b hero roster (sprite changes per op) -->
@@ -1206,6 +1208,7 @@ function renderQ(){
       game.pool[game.idx]=q;
     }
     byId('qprog').style.width=(game.idx/game.pool.length*100)+'%';
+    game.shownAt=Date.now();
     var card=byId('qcard'); card.style.boxShadow=''; card.textContent=q.q; card.classList.toggle('word',q.shape==='word');
     var ch=byId('choices'); ch.innerHTML=''; ch.classList.toggle('sym',q.shape==='comparison');
     q.choices.forEach(function(c,i){
@@ -1238,6 +1241,8 @@ function answer(btn,picked,q){
   if(!game||game.done||game.run!==runId) return;   // ignore taps from a finished/superseded run
   var correct=String(picked)===String(q.ans);
   Array.prototype.forEach.call(byId('choices').children,function(b){ b.disabled=true; });
+  // learning log (DuniaBus): one record per question; a wrong pick ends the question here
+  if(window.DuniaBus) window.DuniaBus.emit('answer',{domain:'matematika',skill:({'+':'tambah','-':'kurang','\u2212':'kurang','\u00d7':'kali','x':'kali','*':'kali','\u00f7':'bagi',':':'bagi','/':'bagi'}[q.op]||'campur')+'-'+(q.shape||'standard'),item:q.q,ok:correct,tries:1,ms:game.shownAt?Date.now()-game.shownAt:null});
   if(correct){
     btn.classList.add('right'); sfx('correct');
     game.correct++; game.streak++; if(game.streak>game.best) game.best=game.streak;
@@ -1825,6 +1830,8 @@ window.__g25 = {
   maxUnlocked: function () { return maxUnlocked() },
   starsOf:     function (g) { return starsOf(g) },
   inProgress: function () { return !!(game && !game.done) },
+  // the question on screen (learning-log gate taps a right and a wrong choice)
+  current: function () { var q = game && !game.done && game.pool[game.idx]; return q ? { ans: String(q.ans), idx: game.idx } : null },
 };
 /* Enter submits the ask sheet, Escape cancels — the on-screen keyboard's "done" key is
    how a parent will actually close it. */

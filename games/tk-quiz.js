@@ -1254,6 +1254,8 @@
       var before = ms[q.domain]
       ms[q.domain] = mastery.update(before, { right: true, firstTry: first, rung: S.rung, streak: S.streak - 1 })
       S.results.push({ id: q.id, domain: q.domain, first: first, rung: S.rung })
+      // learning log (DuniaBus): one record per question, right = right on the first try
+      if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: q.domain, skill: q.topic || q.domain, item: q.id, ok: first, tries: S.wrong + 1, ms: S.shownAt ? Date.now() - S.shownAt : null })
       consequence(q)
       if (E.hint) E.hint.classList.remove('glow')
       burst(b || E.ans)
@@ -1334,7 +1336,7 @@
 
     function show (i) {
       var q = qs[i]
-      S.rung = 0; S.wrong = 0; S.counted = 0; S.answered = false; AR = null
+      S.rung = 0; S.wrong = 0; S.counted = 0; S.answered = false; AR = null; S.shownAt = Date.now()
       root.classList.toggle('tkq-easy', !!q.easy)
       if (E.hint) E.hint.classList.remove('glow')
       E.count.textContent = chal ? '' : 'Soal ' + (i + 1) + ' dari ' + qs.length

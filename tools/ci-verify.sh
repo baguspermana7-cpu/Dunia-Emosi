@@ -31,5 +31,9 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   for i in $(seq 1 20); do python3 -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:$port/index.html')" 2>/dev/null && break; sleep 0.5; done
   # blippi frames the separate game1 repo, which is not in this checkout
   QA_BASE="http://127.0.0.1:$port/" QA_ONLY='^(?!games/blippi\.html)' node tools/qa-app-sweep.mjs
+  echo "== learning log: answers recorded per child from real taps (kuis, Timmy quiz, Ayo Berhitung)"
+  QA_BASE="http://127.0.0.1:$port/" node tools/qa-learning-log.mjs
+  echo "== Ayo Berhitung keeps each child's book"
+  QA_URL="http://127.0.0.1:$port/games/ayo-berhitung.html" node tools/qa-ayo-per-child.mjs
 fi
 echo "== ci-verify: all gates passed"
