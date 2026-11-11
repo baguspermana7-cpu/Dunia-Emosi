@@ -54,6 +54,7 @@
       '#dbreath .dbr-go:active{transform:translateY(3px) scale(0.97);box-shadow:0 1px 0 #D4A017}',
       '#dbreath .dbr-x:active{transform:scale(0.92)}',
       '@media (prefers-reduced-motion: reduce){#dbreath .dbr-go:active,#dbreath .dbr-x:active{transform:none}}',
+      '#dbreath[data-closing] .dbr-card{pointer-events:none}',   // a second tap while it fades does nothing
       '#dbreath h2{margin:0 0 6px;padding:0 52px;font-size:22px;font-weight:900;line-height:1.25}'
     ].join('\n')
     document.head.appendChild(s)
@@ -104,6 +105,8 @@
 
   function open (opts) {
     opts = opts || {}
+    // a run already going: drop its timers quietly, one breath at a time
+    if (run) { run.timers.forEach(clearTimeout); [run.anim, run.ring].forEach(function (a) { if (a) try { a.cancel() } catch (e) {} }); run = null }
     var card = shell()
     card.appendChild(closeBtn(function () { stop(false, opts.onClose) }))
     var stage = document.createElement('div'); stage.className = 'dbr-stage'
@@ -167,11 +170,13 @@
     say('Ayo tarik napas bersama.')
   }
 
-  // the last answers this child gave, newest last: three wrong in a row = offer a breath, once a day
+  // the last answers this child gave, newest last: three wrong in a row within the last half hour = offer a breath,
+  // once a day (three wrong from last week say nothing about how the child feels now)
+  var FRESH_MS = 30 * 60 * 1000
   function frustrated () {
     try {
       var r = W.LearningLog ? W.LearningLog.recent(3) : []
-      return r.length === 3 && r.every(function (x) { return x.ok === false })
+      return r.length === 3 && r.every(function (x) { return x.ok === false && Date.now() - x.t < FRESH_MS })
     } catch (e) { return false }
   }
   function maybeOffer () {

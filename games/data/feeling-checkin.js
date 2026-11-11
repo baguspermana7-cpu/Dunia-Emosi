@@ -78,6 +78,7 @@
       '#dfeel .dfeel-skip:active{transform:scale(0.92)}',
       '@media (prefers-reduced-motion: reduce){#dfeel .dfeel-face:active,#dfeel .dfeel-go:active{transform:none}}',
       '#dfeel .dfeel-skip{position:absolute;top:10px;right:10px;width:48px;height:48px;border:0;border-radius:50%;background:#F1E4C8;cursor:pointer;display:flex;align-items:center;justify-content:center}',
+      '#dfeel[data-closing] .dfeel-card{pointer-events:none}',   // a tap while it fades changes nothing
       '#dfeel .dfeel-big{width:150px;height:150px;object-fit:contain;display:block;margin:0 auto 8px}',
       '#dfeel .dfeel-line{font-size:18px;font-weight:800;margin:0 0 16px}',
       '#dfeel .dfeel-go{min-height:56px;padding:0 32px;border:0;border-radius:18px;background:#FFD968;box-shadow:0 5px 0 #D4A017;font:inherit;font-size:18px;font-weight:900;color:#3A2B12;cursor:pointer}',

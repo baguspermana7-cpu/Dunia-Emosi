@@ -1185,7 +1185,7 @@ function showScreen(id) {
   if (id === 'screen-menu') renderWorldMapStars()
   // once a day per child: "Hari ini kamu merasa apa?" (games/data/feeling-checkin.js)
   // otherwise, after three wrong answers in a row: "Mau tarik napas dulu?" (games/data/breathe.js), once a day
-  if (id === 'screen-menu') setTimeout(function () { try { const asked = window.DuniaFeeling && window.DuniaFeeling.maybeAsk(); if (!asked && window.DuniaBreath) window.DuniaBreath.maybeOffer() } catch (_) {} }, 700)
+  if (id === 'screen-menu') setTimeout(function () { try { if (!el.classList.contains('active')) return; const asked = window.DuniaFeeling && window.DuniaFeeling.maybeAsk(); if (!asked && window.DuniaBreath) window.DuniaBreath.maybeOffer() } catch (_) {} }, 700)
   // Backsound: play on menu/landing screens, pause during gameplay
   bgMusicToggle(MUSIC_SCREENS.has(id))
 }
