@@ -148,6 +148,9 @@
   var innerWin = null;
   var innerTick = null;
   var recovering = false;
+  // the card's picture sits next to this script: games/data/ -> assets/db/mascots/ (works from index and games/)
+  var SELF = (document.currentScript && document.currentScript.src) || '';
+  var MASCOT = SELF ? new URL('../../assets/db/mascots/012.webp', SELF).href : '';
 
   function beat() { lastFrame = Date.now(); try { requestAnimationFrame(beat); } catch (_) {} }
   requestAnimationFrame(beat);
@@ -185,6 +188,15 @@
   setInterval(watchInnerFrame, 2000);
   window.addEventListener('load', watchInnerFrame);
 
+  // one spoken line in Indonesian, unless the app's sound setting is off; silent where speech is unavailable
+  function say(text) {
+    try {
+      if (localStorage.getItem('dunia-emosi-sound') === 'off' || !window.speechSynthesis) return;
+      var u = new SpeechSynthesisUtterance(text); u.lang = 'id-ID'; u.rate = 0.95;
+      window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+    } catch (_) {}
+  }
+
   function showRecovery(kind, gap) {
     if (recovering || document.getElementById('__freezeRecover')) return;
     recovering = true;
@@ -201,32 +213,44 @@
     var card = document.createElement('div');
     card.style.cssText = 'max-width:340px;width:100%;background:#fff8e7;border:3px solid #ffd6a0;' +
       'border-radius:24px;box-shadow:0 10px 0 #d4956a;padding:22px 20px;text-align:center;color:#3a2b12';
+    // Picture first: a child of five cannot read the card. A friendly mascot, one big round replay button that
+    // carries its own icon (inline SVG, so it draws offline) and a spoken line; the words are for the parent.
+    var pic = document.createElement('img');
+    pic.id = '__freezePic'; pic.alt = ''; pic.src = MASCOT;
+    pic.style.cssText = 'display:block;width:112px;height:112px;object-fit:contain;margin:-6px auto 4px';
+    pic.onerror = function () { pic.remove(); };
     var h = document.createElement('div');
     h.textContent = 'Permainannya berhenti sebentar';
-    h.style.cssText = 'font-size:19px;font-weight:900;margin-bottom:6px';
-    var p2 = document.createElement('div');
-    p2.textContent = 'Ayo mulai lagi, ya!';
-    p2.style.cssText = 'font-size:14px;font-weight:700;opacity:.75;margin-bottom:16px';
+    h.style.cssText = 'font-size:16px;font-weight:900;margin-bottom:14px';
     var row = document.createElement('div');
-    row.style.cssText = 'display:flex;gap:10px;justify-content:center;flex-wrap:wrap';
-    function btn(label, bg, shadow, onClick) {
+    row.style.cssText = 'display:flex;gap:14px;justify-content:center;align-items:flex-end;flex-wrap:wrap';
+    function btn(label, bg, shadow, onClick, big) {
       var b = document.createElement('button');
-      b.textContent = label;
-      b.style.cssText = 'min-height:48px;padding:0 22px;border:0;border-radius:16px;font:inherit;' +
-        'font-size:15px;font-weight:900;cursor:pointer;color:#3a2b12;background:' + bg +
-        ';box-shadow:0 4px 0 ' + shadow;
+      b.setAttribute('aria-label', label);
+      if (big) {
+        b.className = '__freezeGo';
+        b.innerHTML = '<svg viewBox="0 0 24 24" width="56" height="56" aria-hidden="true" fill="none" stroke="#3a2b12" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>';
+        var t = document.createElement('span'); t.textContent = label;
+        t.style.cssText = 'display:block;font-size:14px;font-weight:900;margin-top:2px';
+        b.appendChild(t);
+        b.style.cssText = 'width:120px;height:120px;border:0;border-radius:50%;font:inherit;cursor:pointer;color:#3a2b12;' +
+          'background:' + bg + ';box-shadow:0 6px 0 ' + shadow + ';display:flex;flex-direction:column;align-items:center;justify-content:center';
+      } else {
+        b.textContent = label;
+        b.style.cssText = 'min-height:48px;padding:0 22px;border:0;border-radius:16px;font:inherit;' +
+          'font-size:15px;font-weight:900;cursor:pointer;color:#3a2b12;background:' + bg + ';box-shadow:0 4px 0 ' + shadow;
+      }
       b.addEventListener('click', onClick);
       return b;
     }
-    row.appendChild(btn('Main Lagi', '#ffd968', '#d4a017', function () {
-      if (isFilm) { location.reload(); } else { location.reload(); }
-    }));
+    row.appendChild(btn('Main Lagi', '#ffd968', '#d4a017', function () { location.reload(); }, true));
     if (isFilm) {
       row.appendChild(btn('Beranda', '#bfe3ff', '#7aaddd', function () {
         location.href = 'film-anak.html';
       }));
     }
-    card.appendChild(h); card.appendChild(p2); card.appendChild(row);
+    card.appendChild(pic); card.appendChild(h); card.appendChild(row);
+    say('Ups! Ayo main lagi.');
 
     // Carry the evidence ON the card. A freeze on the owner's tablet is the one
     // reproduction nobody can rerun, and asking him to open a log later loses

@@ -130,6 +130,7 @@ const SHELL = [
   './games/data/sd-audio.js?v=v64.36-20261111a',
   './games/data/asset-index.js?v=v64.36-20261111a',
   './assets/db/lib/sd/logo.webp',
+  './assets/db/mascots/012.webp',   // freeze recovery card picture (games/data/freeze-watchdog.js), offline
   './assets/db/lib/sd/logo-sd.webp',
   // G32 Blippi moved to its own repo (baguspermana7-cpu.github.io/game1/, same origin); games/blippi.html
   // only redirects there now.
