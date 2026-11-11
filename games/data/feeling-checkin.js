@@ -22,9 +22,9 @@
   var ASSET = function (p) { return SELF ? new URL('../../assets/db/' + p, SELF).href : '' }
   var FEELINGS = [
     { id: 'senang', name: 'Senang', img: 'faces/001.webp', line: 'Kamu senang! Asyik, ayo bermain.' },
-    { id: 'sedih', name: 'Sedih', img: 'faces/003.webp', line: 'Kamu sedih. Tidak apa-apa merasa sedih.' },
-    { id: 'marah', name: 'Marah', img: 'faces/005.webp', line: 'Kamu marah. Tarik napas pelan-pelan, ya.' },
-    { id: 'takut', name: 'Takut', img: 'faces2/007.webp', line: 'Kamu takut. Kamu aman di sini.' },
+    { id: 'sedih', calm: true, name: 'Sedih', img: 'faces/003.webp', line: 'Kamu sedih. Tidak apa-apa merasa sedih.' },
+    { id: 'marah', calm: true, name: 'Marah', img: 'faces/005.webp', line: 'Kamu marah. Tarik napas pelan-pelan, ya.' },
+    { id: 'takut', calm: true, name: 'Takut', img: 'faces2/007.webp', line: 'Kamu takut. Kamu aman di sini.' },
     { id: 'capek', name: 'Capek', img: 'faces2/005.webp', line: 'Kamu capek. Boleh istirahat dulu, ya.' }
   ]
 
@@ -73,17 +73,41 @@
       '#dfeel .dfeel-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}',
       '#dfeel .dfeel-face{width:104px;min-height:120px;border:0;border-radius:22px;background:#fff;box-shadow:0 4px 0 #E8C99A;cursor:pointer;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;font-size:15px;font-weight:900;color:#3A2B12}',
       '#dfeel .dfeel-face img{width:76px;height:76px;object-fit:contain}',
-      '#dfeel .dfeel-face:active{transform:translateY(3px);box-shadow:0 1px 0 #E8C99A}',
+      '#dfeel .dfeel-face,#dfeel .dfeel-go,#dfeel .dfeel-skip{transition:transform 120ms cubic-bezier(0.23,1,0.32,1),box-shadow 120ms cubic-bezier(0.23,1,0.32,1);-webkit-tap-highlight-color:transparent;touch-action:manipulation}',
+      '#dfeel .dfeel-face:active,#dfeel .dfeel-go:active{transform:translateY(3px) scale(0.97);box-shadow:0 1px 0 #E8C99A}',
+      '#dfeel .dfeel-skip:active{transform:scale(0.92)}',
+      '@media (prefers-reduced-motion: reduce){#dfeel .dfeel-face:active,#dfeel .dfeel-go:active{transform:none}}',
       '#dfeel .dfeel-skip{position:absolute;top:10px;right:10px;width:48px;height:48px;border:0;border-radius:50%;background:#F1E4C8;cursor:pointer;display:flex;align-items:center;justify-content:center}',
       '#dfeel .dfeel-big{width:150px;height:150px;object-fit:contain;display:block;margin:0 auto 8px}',
       '#dfeel .dfeel-line{font-size:18px;font-weight:800;margin:0 0 16px}',
       '#dfeel .dfeel-go{min-height:56px;padding:0 32px;border:0;border-radius:18px;background:#FFD968;box-shadow:0 5px 0 #D4A017;font:inherit;font-size:18px;font-weight:900;color:#3A2B12;cursor:pointer}',
+      '#dfeel .dfeel-go.dfeel-calm{background:#DBEAFE;box-shadow:0 5px 0 #93B4DA;margin:0 10px 10px 0}',
       '@media (max-width:420px){#dfeel h2{font-size:20px}#dfeel .dfeel-face{width:88px}#dfeel .dfeel-face img{width:64px;height:64px}}'
     ].join('\n')
     document.head.appendChild(s)
   }
 
-  function close () { var o = document.getElementById('dfeel'); if (o) o.remove() }
+  // motion (owner 2026-11-11 "Polish more"): the overlay fades in, the card rises from scale .96, its children
+  // follow 40 ms apart; it leaves faster than it came. transform/opacity only; reduced motion = fade only.
+  var EASE = 'cubic-bezier(0.23, 1, 0.32, 1)'
+  function still () { try { return W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) { return false } }
+  function enter (back, card, kids) {
+    try {
+      back.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: EASE })
+      card.animate(still() ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(10px) scale(0.96)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: EASE })
+      ;(kids || []).forEach(function (k, i) {
+        k.animate(still() ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 220, delay: 80 + i * 40, easing: EASE, fill: 'backwards' })
+      })
+    } catch (e) {}
+  }
+  function leave (back, done) {
+    try {
+      var a = back.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: EASE, fill: 'forwards' })
+      a.onfinish = done; return
+    } catch (e) {}
+    done()
+  }
+  function close () { var o = document.getElementById('dfeel'); if (!o || o.dataset.closing) return; o.dataset.closing = '1'; leave(o, function () { o.remove() }) }
 
   function answered (f) {
     store(f.id)
@@ -94,7 +118,19 @@
     var p = document.createElement('p'); p.className = 'dfeel-line'; p.textContent = f.line
     var go = document.createElement('button'); go.className = 'dfeel-go'; go.textContent = 'Ayo main'
     go.addEventListener('click', close)
-    card.appendChild(img); card.appendChild(p); card.appendChild(go)
+    card.appendChild(img); card.appendChild(p)
+    // a hard feeling gets a calm tool next to "Ayo main" (games/data/breathe.js)
+    if (f.calm && W.DuniaBreath) {
+      var br = document.createElement('button'); br.className = 'dfeel-go dfeel-calm'; br.textContent = 'Tarik napas bareng'
+      br.addEventListener('click', function () { close(); W.DuniaBreath.open() })
+      card.appendChild(br)
+    }
+    card.appendChild(go)
+    // the chosen face arrives a little bigger than the rest of the card: this is the moment that answers the child
+    try {
+      img.animate(still() ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'scale(0.9)' }, { opacity: 1, transform: 'none' }], { duration: 280, easing: EASE })
+      ;[p].concat([].slice.call(card.querySelectorAll('button'))).forEach(function (k, i) { k.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay: 120 + i * 40, easing: EASE, fill: 'backwards' }) })
+    } catch (e) {}
     say(f.line)
   }
 
@@ -118,6 +154,7 @@
     })
     card.appendChild(skip); card.appendChild(h); card.appendChild(row)
     o.appendChild(card); document.body.appendChild(o)
+    enter(o, card, [h].concat([].slice.call(row.children)))
     say('Hari ini kamu merasa apa?')
   }
 

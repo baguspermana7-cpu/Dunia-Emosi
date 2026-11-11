@@ -204,6 +204,8 @@
            page: location.pathname.split('/').pop(), ctx: String(window.__freezeContext || '') });
 
     var isFilm = /film-play/.test(location.pathname);
+    var still = false;
+    try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) {}
     var d = document.createElement('div');
     d.id = '__freezeRecover';
     d.setAttribute('role', 'alertdialog');
@@ -241,6 +243,13 @@
           'font-size:15px;font-weight:900;cursor:pointer;color:#3a2b12;background:' + bg + ';box-shadow:0 4px 0 ' + shadow;
       }
       b.addEventListener('click', onClick);
+      // press feedback (inline styles cannot use :active): 120 ms, transform only
+      b.style.transition = 'transform 120ms cubic-bezier(0.23,1,0.32,1)';
+      b.style.touchAction = 'manipulation';
+      var down = function () { if (!still) b.style.transform = 'translateY(3px) scale(0.97)'; };
+      var up = function () { b.style.transform = ''; };
+      b.addEventListener('pointerdown', down);
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) { b.addEventListener(ev, up); });
       return b;
     }
     row.appendChild(btn('Main Lagi', '#ffd968', '#d4a017', function () { location.reload(); }, true));
@@ -274,6 +283,12 @@
 
     d.appendChild(card);
     document.body.appendChild(d);
+    // arrive softly instead of slamming over a frozen picture; reduced motion = fade only
+    try {
+      var EASE = 'cubic-bezier(0.23, 1, 0.32, 1)';
+      d.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: EASE });
+      card.animate(still ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(10px) scale(0.96)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: EASE });
+    } catch (_) {}
 
     // If frames come back on their own (a long GC pause, a slow level load),
     // take the overlay away rather than making the child reload for nothing.

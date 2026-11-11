@@ -3,7 +3,10 @@
 > **Status 2026-11-11: mekanik A (cek perasaan) dibangun** setelah owner menyerahkan keputusan
 > ("Kmu ygputuskan yg terbaik"): `games/data/feeling-checkin.js`, gate `tools/qa-feeling-checkin.mjs` 28/28.
 > Keputusan yang diambil: wajah bulat `faces*` (netral gender, jadi tidak bertabrakan dengan aturan hijab dan
-> tidak menunggu aset baru), lima perasaan (senang, sedih, marah, takut, capek). B dan C belum dibangun.
+> tidak menunggu aset baru), lima perasaan (senang, sedih, marah, takut, capek).
+> **Mekanik B (napas bersama) dibangun** di hari yang sama: `games/data/breathe.js`, gate `tools/qa-breathe.mjs`.
+> Ditawarkan hanya di momen tenang (setelah Sedih/Marah/Takut di cek perasaan; di peta setelah 3 jawaban salah
+> berturut, sekali sehari), tidak pernah di atas game yang sedang berjalan. C belum dibangun.
 >
 > Status awal: usulan untuk ditinjau owner.
 > Owner memensiunkan G1 Aku Merasa, G2 Napas Pelangi, G5 Cocokkan Emosi, G12

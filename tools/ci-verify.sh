@@ -39,6 +39,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-feeling-checkin.mjs
+  echo "== napas bersama: timing, offers at calm moments only, motion"
+  QA_BASE="http://127.0.0.1:$port/" node tools/qa-breathe.mjs
   echo "== Ayo Berhitung keeps each child's book"
   QA_URL="http://127.0.0.1:$port/games/ayo-berhitung.html" node tools/qa-ayo-per-child.mjs
 fi

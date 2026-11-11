@@ -137,6 +137,7 @@ const SHELL = [
   './assets/db/faces/005.webp',
   './assets/db/faces2/007.webp',
   './assets/db/faces2/005.webp',
+  './assets/db/breathe/001.webp',   // napas bersama (games/data/breathe.js), offline
   './assets/db/lib/sd/logo-sd.webp',
   // G32 Blippi moved to its own repo (baguspermana7-cpu.github.io/game1/, same origin); games/blippi.html
   // only redirects there now.

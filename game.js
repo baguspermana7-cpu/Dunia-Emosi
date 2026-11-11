@@ -1184,7 +1184,8 @@ function showScreen(id) {
   // after returning from a standalone game the node stars would stay blank.
   if (id === 'screen-menu') renderWorldMapStars()
   // once a day per child: "Hari ini kamu merasa apa?" (games/data/feeling-checkin.js)
-  if (id === 'screen-menu' && window.DuniaFeeling) setTimeout(function () { try { window.DuniaFeeling.maybeAsk() } catch (_) {} }, 700)
+  // otherwise, after three wrong answers in a row: "Mau tarik napas dulu?" (games/data/breathe.js), once a day
+  if (id === 'screen-menu') setTimeout(function () { try { const asked = window.DuniaFeeling && window.DuniaFeeling.maybeAsk(); if (!asked && window.DuniaBreath) window.DuniaBreath.maybeOffer() } catch (_) {} }, 700)
   // Backsound: play on menu/landing screens, pause during gameplay
   bgMusicToggle(MUSIC_SCREENS.has(id))
 }
