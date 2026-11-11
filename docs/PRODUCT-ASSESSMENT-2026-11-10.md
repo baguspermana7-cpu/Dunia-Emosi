@@ -341,4 +341,7 @@ push → job verify (token, sintaks, gate statis, smoke) → hijau: deploy Pages
 | #12 Wawasan belajar di dasbor orang tua | Live v64.36 | `qa-dash-learning` 23/23 (merah di situs lama); screenshot 390 + 1280 |
 | #2 Kartu pulih bergambar + suara | Live v64.37 | `qa-freeze-card` 3/11 → 11/11; `qa-freeze-recovery`, `qa-freeze-armed` lulus; maskot di-precache |
 | #16 Dunia emosi: mekanik A cek perasaan | v64.38 | `qa-feeling-checkin` 28/28; law tumpang-tindih judul/tombol X merah → hijau dari screenshot 390; ringkasan perasaan di dasbor |
+| #16 mekanik B napas bersama + polish gerak | Live v64.39 | `qa-breathe` 23/23 |
+| Audit kartu tenang (tap ganda, frustrasi basi, peta ditinggal <700 ms, run dobel) | Live v64.40 | `qa-breathe` 31/36 → 36/36 (+ law tablet/HP mendatar) |
+| #5 Satu runner gate | Ada di repo (alat lokal) | `node tools/run-gates.mjs --tag timmy`: atlas/lifecycle/quiz-fit lulus tanpa env (langsung tanpa env: `ERR_CONNECTION_REFUSED`); fixture membedakan pass/fail/flaky/no-env/lock-busy. 14 dari 28 gate Timmy masih hardcode 8081 (`no-env`). **Temuan terbuka:** `qa-tk-steer` macet (frame lepas) di mesin ini, juga saat dijalankan langsung; probe putaran pertama lulus 24 s, sebab belum ketemu |
 | Verifikasi di tablet asli | **Belum** | butuh #6 (owner menyalakan USB debugging) |
