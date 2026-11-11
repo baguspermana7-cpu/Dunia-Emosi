@@ -4966,6 +4966,9 @@ body { background: #0a0a1a !important; }
 .dash-learn-bar { height:8px; border-radius:100px; background:rgba(255,255,255,0.12); margin:10px 0 6px; overflow:hidden; }
 .dash-learn-bar > i { display:block; height:100%; border-radius:100px; background:#FCD34D; }
 .dash-learn-num { font-size:13px; color:#CBD5E1; }
+.dash-feel-list { display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:8px; }
+.dash-feel-item { display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:700; color:#F1F5F9; }
+.dash-feel-item img { width:28px; height:28px; object-fit:contain; }
 .dash-learn-empty { background:#18142B; border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:14px; color:#CBD5E1; font-size:14px; line-height:1.5; width:100%; max-width:500px; box-sizing:border-box; }
 
 /* Mobile-specific touch area improvements */

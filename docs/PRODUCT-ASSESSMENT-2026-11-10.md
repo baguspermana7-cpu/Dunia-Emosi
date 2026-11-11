@@ -338,5 +338,7 @@ push → job verify (token, sintaks, gate statis, smoke) → hijau: deploy Pages
 | #3 Save per anak Ayo Berhitung | Live v64.35 (deploy Pages v64.34 timeout, Vercel live) | `qa-ayo-per-child` 3/9 → 9/9; `qa-ayo-berhitung` ALL PASS |
 | #4 Gate sebelum deploy (CI) | Live | job `verify` lulus di runner GitHub (v64.34 4 menit, v64.35 5 menit); tiga deploy Pages 2026-11-10 17:05–18:33 UTC makan 15–16 menit (2 kena batas keras 10 menit `deploy-pages`), run berikutnya dengan workflow yang sama selesai 3 menit — lambatnya dari sisi Pages, bukan dari job `verify`. Bila gagal, Pages tetap menyajikan versi sebelumnya dan Vercel tetap ter-deploy; `qa-local-refs` merah 779/800 saat satu berkas dihilangkan |
 | #8 + #9 DuniaBus + LearningLog | Live v64.35 (Pages + Vercel) | `qa-learning-log` 18/18 dari ketukan sungguhan (merah di situs v64.34); tk-play 1504/0 |
-| #16 Spesifikasi dunia emosi | Ditulis, menunggu owner | `docs/SPEC-EMOSI-REPLACEMENT-2026-11-11.md` (tanpa kode) |
+| #12 Wawasan belajar di dasbor orang tua | Live v64.36 | `qa-dash-learning` 23/23 (merah di situs lama); screenshot 390 + 1280 |
+| #2 Kartu pulih bergambar + suara | Live v64.37 | `qa-freeze-card` 3/11 → 11/11; `qa-freeze-recovery`, `qa-freeze-armed` lulus; maskot di-precache |
+| #16 Dunia emosi: mekanik A cek perasaan | v64.38 | `qa-feeling-checkin` 28/28; law tumpang-tindih judul/tombol X merah → hijau dari screenshot 390; ringkasan perasaan di dasbor |
 | Verifikasi di tablet asli | **Belum** | butuh #6 (owner menyalakan USB debugging) |

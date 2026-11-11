@@ -131,6 +131,12 @@ const SHELL = [
   './games/data/asset-index.js?v=v64.37-20261111a',
   './assets/db/lib/sd/logo.webp',
   './assets/db/mascots/012.webp',   // freeze recovery card picture (games/data/freeze-watchdog.js), offline
+  // daily feeling check-in faces (games/data/feeling-checkin.js), offline
+  './assets/db/faces/001.webp',
+  './assets/db/faces/003.webp',
+  './assets/db/faces/005.webp',
+  './assets/db/faces2/007.webp',
+  './assets/db/faces2/005.webp',
   './assets/db/lib/sd/logo-sd.webp',
   // G32 Blippi moved to its own repo (baguspermana7-cpu.github.io/game1/, same origin); games/blippi.html
   // only redirects there now.

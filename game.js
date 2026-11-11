@@ -1183,6 +1183,8 @@ function showScreen(id) {
   // The landing "PILIH GAME" button opens the map without buildMenuHeader(), so
   // after returning from a standalone game the node stars would stay blank.
   if (id === 'screen-menu') renderWorldMapStars()
+  // once a day per child: "Hari ini kamu merasa apa?" (games/data/feeling-checkin.js)
+  if (id === 'screen-menu' && window.DuniaFeeling) setTimeout(function () { try { window.DuniaFeeling.maybeAsk() } catch (_) {} }, 700)
   // Backsound: play on menu/landing screens, pause during gameplay
   bgMusicToggle(MUSIC_SCREENS.has(id))
 }
@@ -4043,15 +4045,20 @@ document.addEventListener('keydown',(e)=>{
 function renderDashLearning() {
   const box=document.getElementById('dash-learn')
   if(!box) return
-  let rows=[]
+  let rows=[], feel={}
   try { rows=window.LearningLog ? window.LearningLog.bySkill({days:7}) : [] } catch(e) { rows=[] }
+  try { feel=window.DuniaFeeling ? window.DuniaFeeling.week() : {} } catch(e) { feel={} }
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
+  // the daily feeling check-in: which faces this child picked over the week
+  const F=(window.DuniaFeeling&&window.DuniaFeeling.FEELINGS)||[]
+  const feelHtml=F.filter(f=>feel[f.id]).map(f=>`<span class="dash-feel-item"><img src="assets/db/${f.img}" alt="">${esc(f.name)} ${feel[f.id]}</span>`).join('')
+  const feelRow=feelHtml?`<div class="dash-learn-row dash-feel"><div class="dash-learn-skill">Perasaan minggu ini</div><div class="dash-feel-list">${feelHtml}</div></div>`:''
   if(!rows.length){
-    box.innerHTML='<div class="dash-learn-empty">Belum ada jawaban tercatat minggu ini. Jawaban dari Kuis Matematika, Ayo Berhitung dan soal di Timmy Kapal akan muncul di sini.</div>'
+    box.innerHTML=feelRow+'<div class="dash-learn-empty">Belum ada jawaban tercatat minggu ini. Jawaban dari Kuis Matematika, Ayo Berhitung dan soal di Timmy Kapal akan muncul di sini.</div>'
     return
   }
   const WORD={bisa:'Sudah bisa',berkembang:'Berkembang',sulit:'Masih sulit',baru:'Baru mulai'}
-  box.innerHTML=rows.slice(0,8).map(r=>`
+  box.innerHTML=feelRow+rows.slice(0,8).map(r=>`
     <div class="dash-learn-row" data-status="${r.status}">
       <div class="dash-learn-top"><span class="dash-learn-skill">${esc(r.skill)}</span><span class="dash-learn-chip">${WORD[r.status]}</span></div>
       <div class="dash-learn-bar"><i style="width:${Math.round(r.rate*100)}%"></i></div>

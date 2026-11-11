@@ -1,6 +1,11 @@
 # Spesifikasi usulan — pengganti dunia emosi (2026-11-11)
 
-> **Status: usulan untuk ditinjau owner. Tidak ada kode yang ditulis.**
+> **Status 2026-11-11: mekanik A (cek perasaan) dibangun** setelah owner menyerahkan keputusan
+> ("Kmu ygputuskan yg terbaik"): `games/data/feeling-checkin.js`, gate `tools/qa-feeling-checkin.mjs` 28/28.
+> Keputusan yang diambil: wajah bulat `faces*` (netral gender, jadi tidak bertabrakan dengan aturan hijab dan
+> tidak menunggu aset baru), lima perasaan (senang, sedih, marah, takut, capek). B dan C belum dibangun.
+>
+> Status awal: usulan untuk ditinjau owner.
 > Owner memensiunkan G1 Aku Merasa, G2 Napas Pelangi, G5 Cocokkan Emosi, G12
 > Tebak Bayangan dan zona Pulau Emosi pada 2026-09-20 karena *sedang membangun
 > mekanik pengganti sendiri* (commit `6d9db4b3`, `game.js:1218`). Dokumen ini
