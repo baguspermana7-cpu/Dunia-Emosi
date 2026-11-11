@@ -4038,6 +4038,26 @@ document.addEventListener('keydown',(e)=>{
 // ================================================================
 // DASHBOARD
 // ================================================================
+// What this child has been learning (games/data/learning-log.js): one row per skill, last 7 days, from the
+// answers the games recorded. Numbers are always shown next to the status word, so a parent can judge it.
+function renderDashLearning() {
+  const box=document.getElementById('dash-learn')
+  if(!box) return
+  let rows=[]
+  try { rows=window.LearningLog ? window.LearningLog.bySkill({days:7}) : [] } catch(e) { rows=[] }
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
+  if(!rows.length){
+    box.innerHTML='<div class="dash-learn-empty">Belum ada jawaban tercatat minggu ini. Jawaban dari Kuis Matematika, Ayo Berhitung dan soal di Timmy Kapal akan muncul di sini.</div>'
+    return
+  }
+  const WORD={bisa:'Sudah bisa',berkembang:'Berkembang',sulit:'Masih sulit',baru:'Baru mulai'}
+  box.innerHTML=rows.slice(0,8).map(r=>`
+    <div class="dash-learn-row" data-status="${r.status}">
+      <div class="dash-learn-top"><span class="dash-learn-skill">${esc(r.skill)}</span><span class="dash-learn-chip">${WORD[r.status]}</span></div>
+      <div class="dash-learn-bar"><i style="width:${Math.round(r.rate*100)}%"></i></div>
+      <div class="dash-learn-num">${r.ok} dari ${r.n} benar pada percobaan pertama</div>
+    </div>`).join('')
+}
 function showDashboard() {
   const p=state.players[state.currentPlayer]
   const xp=getXP(), tier=getLevelTier(xp)
@@ -4065,6 +4085,7 @@ function showDashboard() {
       </div>
       <div style="font-size:13px;margin-top:8px;opacity:0.85">${nextTier===tier?'Max level!':`${nextTier.min-xp} XP lagi ke ${nextTier.icon} ${nextTier.name}`}</div>
     </div>`
+  renderDashLearning()
   // Achievements
   const unlocked=JSON.parse(localStorage.getItem(pkey('achievements'))||'{}')
   const BADGE_MAP={first_star:'badge-first-win.webp',hard_mode:'badge-perfect.webp',letter_master:'badge-reader.webp',word_master:'badge-reader.webp',streak3:'badge-streak-7.webp'}

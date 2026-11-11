@@ -83,6 +83,40 @@
     })
   }
 
-  W.LearningLog = { record: record, summary: summary, recent: recent, KEY: KEY }
+  /* ── for parents: one row per skill a parent recognises, across games ──────────────────────────────────────
+     A recorded skill is game-specific ('tambah-standard' in Kuis, 'add-medium-d0' in Ayo Berhitung, 'add' in a
+     TKQuiz question); its first part names the skill. Unknown skills fall back to their domain's name. */
+  var SKILL = {
+    add: 'Penjumlahan', tambah: 'Penjumlahan', sub: 'Pengurangan', kurang: 'Pengurangan', subtract: 'Pengurangan',
+    multiply: 'Perkalian', kali: 'Perkalian', groups: 'Perkalian', divide: 'Pembagian', bagi: 'Pembagian', share: 'Pembagian',
+    count: 'Menghitung benda', clock: 'Membaca jam', diff: 'Selisih', twostep: 'Soal cerita dua langkah'
+  }
+  var DOMAIN = {
+    matematika: 'Matematika', islam: 'Pengetahuan Islam', arab: 'Huruf Arab', umum: 'Pengetahuan umum',
+    logika: 'Logika', bahasa: 'Bahasa', bentuk: 'Bentuk', emosi: 'Mengenal perasaan'
+  }
+  function label (skill, domain) {
+    var head = String(skill || '').split('-')[0]
+    return SKILL[head] || DOMAIN[domain] || DOMAIN[head] || (domain ? String(domain) : 'Lainnya')
+  }
+  // status rule (shown to the parent with the numbers, never instead of them)
+  function status (n, ok) {
+    if (n < 5) return 'baru'
+    var r = ok / n
+    return r >= 0.8 ? 'bisa' : r < 0.5 ? 'sulit' : 'berkembang'
+  }
+  function bySkill (opts) {
+    var acc = {}
+    summary(opts).forEach(function (row) {
+      var k = label(row.skill, row.domain), a = acc[k] = acc[k] || { skill: k, n: 0, ok: 0, games: {} }
+      a.n += row.n; a.ok += row.ok; a.games[row.game] = 1
+    })
+    return Object.keys(acc).map(function (k) {
+      var a = acc[k]
+      return { skill: a.skill, n: a.n, ok: a.ok, rate: a.n ? a.ok / a.n : 0, status: status(a.n, a.ok), games: Object.keys(a.games) }
+    }).sort(function (x, y) { return y.n - x.n })
+  }
+
+  W.LearningLog = { record: record, summary: summary, recent: recent, bySkill: bySkill, label: label, KEY: KEY }
   if (W.DuniaBus) W.DuniaBus.on('answer', record)
 })()

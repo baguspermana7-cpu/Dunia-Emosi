@@ -4954,6 +4954,19 @@ body { background: #0a0a1a !important; }
   border: 1px solid rgba(255,255,255,0.12) !important;
   box-shadow: 0 0 40px rgba(139,92,246,0.15) !important;
 }
+/* Learning rows (renderDashLearning in game.js): for the parent, numbers always beside the status word */
+.dash-learn { display:flex; flex-direction:column; gap:8px; width:100%; max-width:500px; }
+.dash-learn-row { background:#18142B; border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:12px 14px; color:#F1F5F9; }
+.dash-learn-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.dash-learn-skill { font-weight:800; font-size:16px; }
+.dash-learn-chip { font-size:12px; font-weight:800; padding:3px 10px; border-radius:100px; background:#334155; color:#F1F5F9; white-space:nowrap; }
+.dash-learn-row[data-status="bisa"] .dash-learn-chip { background:#0F766E; color:#fff; }
+.dash-learn-row[data-status="sulit"] .dash-learn-chip { background:#B45309; color:#fff; }
+.dash-learn-row[data-status="berkembang"] .dash-learn-chip { background:#1D4ED8; color:#fff; }
+.dash-learn-bar { height:8px; border-radius:100px; background:rgba(255,255,255,0.12); margin:10px 0 6px; overflow:hidden; }
+.dash-learn-bar > i { display:block; height:100%; border-radius:100px; background:#FCD34D; }
+.dash-learn-num { font-size:13px; color:#CBD5E1; }
+.dash-learn-empty { background:#18142B; border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:14px; color:#CBD5E1; font-size:14px; line-height:1.5; width:100%; max-width:500px; box-sizing:border-box; }
 
 /* Mobile-specific touch area improvements */
 @media (max-width: 480px) {

@@ -1255,7 +1255,7 @@
       ms[q.domain] = mastery.update(before, { right: true, firstTry: first, rung: S.rung, streak: S.streak - 1 })
       S.results.push({ id: q.id, domain: q.domain, first: first, rung: S.rung })
       // learning log (DuniaBus): one record per question, right = right on the first try
-      if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: q.domain, skill: q.topic || q.domain, item: q.id, ok: first, tries: S.wrong + 1, ms: S.shownAt ? Date.now() - S.shownAt : null })
+      if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: q.domain, skill: q.kind || q.topic || q.domain, item: q.id, ok: first, tries: S.wrong + 1, ms: S.shownAt ? Date.now() - S.shownAt : null })
       consequence(q)
       if (E.hint) E.hint.classList.remove('glow')
       burst(b || E.ans)

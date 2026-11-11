@@ -33,6 +33,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port/" QA_ONLY='^(?!games/blippi\.html)' node tools/qa-app-sweep.mjs
   echo "== learning log: answers recorded per child from real taps (kuis, Timmy quiz, Ayo Berhitung)"
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-learning-log.mjs
+  echo "== the parent dashboard shows this child's learning"
+  QA_BASE="http://127.0.0.1:$port/" node tools/qa-dash-learning.mjs
   echo "== Ayo Berhitung keeps each child's book"
   QA_URL="http://127.0.0.1:$port/games/ayo-berhitung.html" node tools/qa-ayo-per-child.mjs
 fi
