@@ -7,6 +7,8 @@
 > **Mekanik B (napas bersama) dibangun** di hari yang sama: `games/data/breathe.js`, gate `tools/qa-breathe.mjs`.
 > Ditawarkan hanya di momen tenang (setelah Sedih/Marah/Takut di cek perasaan; di peta setelah 3 jawaban salah
 > berturut, sekali sehari), tidak pernah di atas game yang sedang berjalan. C belum dibangun.
+> **Owner mengonfirmasi A dan B tetap jalan** (2026-11-11, setelah bertanya "kok ada game emosi?" dan diberi
+> pilihan matikan / napas saja / biarkan: "Ok lah go ahead aja"). G1/G2/G5/G12 tetap pensiun.
 >
 > Status awal: usulan untuk ditinjau owner.
 > Owner memensiunkan G1 Aku Merasa, G2 Napas Pelangi, G5 Cocokkan Emosi, G12
