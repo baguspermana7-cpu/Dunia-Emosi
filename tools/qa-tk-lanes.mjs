@@ -18,6 +18,7 @@
 // Screenshots (390x844, 844x390, 1280x800) -> QA_SHOTS (default: the session scratchpad tk-lanes/).
 // QA_FAULT=1 burns 45 ms per frame during the fps probe — the gate MUST fail (proves it can see jank).
 // Run: node tools/qa-tk-lanes.mjs   (dev server on :8081)
+// run-gates: timeout 1500
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
 const BASE = process.env.QA_URL || 'http://localhost:8081/tools/tk-harness-lanes.html'
@@ -73,7 +74,10 @@ async function open (b, w, h, qs) {
   p.on('pageerror', e => errs.push(e.message))
   p.on('console', m => { if (m.type() === 'error' && !/favicon|Failed to load resource/.test(m.text())) errs.push(m.text()) })
   await p.setViewport({ width: w, height: h, isMobile: w < 900, hasTouch: true })
-  await p.goto(BASE + '?' + qs, { waitUntil: 'networkidle2', timeout: 90000 })
+  // 'load' + the harness mount, not networkidle2: the game's rAF loop delays Chrome's idle signal (measured 2026-11-13:
+  // 9.8 s here, 31.8 s on the steer harness) so the level ran on its own before the first check
+  await p.goto(BASE + '?' + qs, { waitUntil: 'load', timeout: 90000 })
+  await p.waitForFunction(() => window.__mount && (window.__h || /manual=1/.test(location.search)), { timeout: 30000 })
   await p.evaluate(WATCH)
   return { p, errs }
 }
@@ -96,6 +100,9 @@ async function fps (p, ms) {
 }
 
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
+// frame budgets on the real GPU + CPU throttling (see qa-tk-steer.mjs: headless software compositing spends most of each
+// frame copying the 2D canvas through SwiftShader and made these budgets flip run to run). QA_SOFTWARE_PERF=1 = old path
+const perfBrowser = () => puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required', ...(process.env.QA_SOFTWARE_PERF ? [] : ['--enable-gpu', '--use-angle=gl', '--ignore-gpu-blocklist'])] })
 
 // ── Q. embedded questions (owner 2026-09-29: action first; questions on a bump, a Soal buoy, a lighthouse gate) ──
 //   stub opts.onQuestion (harness &q=stub): each trigger opens exactly ONE question, the sim is frozen while it is
@@ -313,6 +320,9 @@ if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n
 {
   const { p, errs } = await open(b, 390, 844, 'manual=1&quiz=stub')
   await p.evaluate(() => __mount({ seed: 4, sections: [{ kind: 'open', length: 6000 }] }))
+  // stage 2 (the wheel) shows for 4 s game time; a slow tap round-trip could read it after it ended (tutorial -2,
+  // 2026-11-13), so a frame watcher records what the screen showed WHILE stage 2 was on
+  await p.evaluate(() => { window.__tut2 = null; const w = () => { if (!window.__h) return; if (__h.state().tutorial === 2) window.__tut2 = { b: document.querySelector('.tkl-boost').classList.contains('is-demo'), l: document.querySelector('.tkl-left').classList.contains('is-demo') }; requestAnimationFrame(w) }; requestAnimationFrame(w) })
   await sleep(900)
   const tut = await p.evaluate(() => ({ s: __h.state().tutorial, l: document.querySelector('.tkl-left').classList.contains('is-demo'), r: document.querySelector('.tkl-right').classList.contains('is-demo'),
     anim: getComputedStyle(document.querySelector('.tkl-left')).animationName, hint: document.querySelector('.tkl-hint.is-on') ? document.querySelector('.tkl-hint').textContent : '', said: window.__said.join(' | ') }))
@@ -325,7 +335,8 @@ if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n
   await tapEl(p, '.tkl-right'); await sleep(500); await tapEl(p, '.tkl-right'); await sleep(500)
   s = await st(p)
   check(s.lane === 2 && Math.abs(s.x - 100) < 0.5, `two RIGHT taps: lane 2 (lane ${s.lane}, x ${s.x.toFixed(1)})`)
-  const tut2 = await p.evaluate(() => ({ s: __h.state().tutorial, b: document.querySelector('.tkl-boost').classList.contains('is-demo'), l: document.querySelector('.tkl-left').classList.contains('is-demo'), said: window.__said.join(' | ') }))
+  await p.waitForFunction(() => window.__tut2, { timeout: 3000 }).catch(() => {})
+  const tut2 = await p.evaluate(() => ({ s: window.__tut2 ? 2 : __h.state().tutorial, b: !!(window.__tut2 && window.__tut2.b), l: !!(window.__tut2 && window.__tut2.l), said: window.__said.join(' | ') }))
   check(tut2.s === 2 && tut2.b && !tut2.l && /roda kemudi/.test(tut2.said), `after the first lane change the wheel (Cepat) is taught once (tutorial ${tut2.s}, boost pulse ${tut2.b})`)
   await tapEl(p, '.tkl-right'); await sleep(300)
   s = await st(p)
@@ -615,7 +626,8 @@ for (const [w, h, fight] of [[390, 844, false], [844, 390, false], [1280, 800, f
 
 // ── F. fps: densest field, CPU throttled 4x ──
 for (const [w, h] of [[390, 844], [1024, 768]]) {
-  const { p, errs } = await open(b, w, h, 'seed=3&diff=3&sections=dense,extreme,dense&quiz=stub')
+  const bp = await perfBrowser()
+  const { p, errs } = await open(bp, w, h, 'seed=3&diff=3&sections=dense,extreme,dense&quiz=stub')
   await p.evaluate(AUTOPILOT, false)
   await sleep(3000)
   if (process.env.QA_FAULT) await p.evaluate(() => { const f = () => { const t = performance.now(); while (performance.now() - t < 45); requestAnimationFrame(f) }; requestAnimationFrame(f) })
@@ -628,7 +640,7 @@ for (const [w, h] of [[390, 844], [1024, 768]]) {
   console.log(`  ${w}x${h} dense @4x CPU: p90 ${f1} fps (render quality ${s.quality}, section ${s.section})`)
   check(f1 >= 24, `${w}x${h}: p90 frame rate >= 24 fps at 4x CPU (${f1})`)
   check(errs.length === 0, `${w}x${h}: fps run no page errors`)
-  await p.close()
+  await p.close(); await bp.close()
 }
 
 // ── H. fleet (owner 2026-09-28): Character Selection, top-view sprite, 2x controls, no overlap, timers pruned ──
@@ -761,7 +773,8 @@ for (const [w, h] of [[390, 844], [1024, 768]]) {
   }
   // 2) perf budget: 1280x800, 5 s unthrottled then 5 s at 4x CPU (software canvas in headless Chrome)
   {
-    const { p, errs } = await open(b, 1280, 800, HQ.perf)
+    const bp = await perfBrowser()
+    const { p, errs } = await open(bp, 1280, 800, HQ.perf)
     await p.evaluate(M.drive)
     await sleep(2500)
     const MEASURE = ms => new Promise(res => {
@@ -785,13 +798,13 @@ for (const [w, h] of [[390, 844], [1024, 768]]) {
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 })
     const q = await p.evaluate(() => __h.state().quality)
     console.log(`  ${M.name} perf 1280x800: unthrottled median ${u.med} ms, p95 ${u.p95} ms, long tasks ${u.long.length}; 4x CPU median ${th.med} ms, p95 ${th.p95} ms, long tasks ${th.long.length} (max ${Math.max(0, ...th.long)} ms), render quality ${q}`)
-    // budget (software canvas, no GPU in headless): unthrottled = one 60 Hz frame; 4x CPU = never slower than
+    // budget (real GPU via perfBrowser since 2026-11-13; was software canvas): unthrottled = one 60 Hz frame; 4x CPU = never slower than
     // 30 fps at p95 and no long task > 50 ms. The owner's "median <= 20 ms at 4x" is NOT met by tk-steer
     // (33 ms = 30 fps after the adaptive resolution drop) and is reported, not faked.
     check(u.med <= 20 && u.long.length === 0, `${M.name} perf: unthrottled median ${u.med} ms (<= 20), no long task > 50 ms (${u.long.length})`)
     check(th.p95 <= 50 && th.long.filter(x => x > 50).length === 0, `${M.name} perf 4x CPU: p95 ${th.p95} ms (<= 50), median ${th.med} ms, long tasks > 50 ms: ${th.long.filter(x => x > 50).length}`)
     check(errs.length === 0, `${M.name} perf: no page errors (${errs.join(' | ')})`)
-    await p.close()
+    await p.close(); await bp.close()
   }
   // 3) rotate mid-play: 390x844 -> 844x390 and 1280x800 -> 800x1280, no restart, no overlaps
   for (const [a, c] of [[[390, 844], [844, 390]], [[1280, 800], [800, 1280]]]) {

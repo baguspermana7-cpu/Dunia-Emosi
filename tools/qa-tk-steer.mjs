@@ -17,6 +17,7 @@
 //   4x CPU p95, long tasks), rotation mid-play, 11 viewports (game + picker fit, controls clear, ship uncovered).
 // QA_FAULT=1 burns 45 ms per frame during the fps probe — the gate MUST fail (proves it can see jank).
 // Screenshots -> QA_SHOTS (default: the session scratchpad tk-steer/ folder).
+// run-gates: timeout 2400
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
 import { execFileSync } from 'node:child_process'
@@ -74,7 +75,10 @@ async function open (b, w, h, qs) {
   const errs = []
   p.on('pageerror', e => errs.push(e.message))
   await p.setViewport({ width: w, height: h, isMobile: w < 900, hasTouch: true })
-  await p.goto(BASE + '?' + qs, { waitUntil: 'networkidle2', timeout: 90000 })
+  // 'load' + the harness mount, not networkidle2: the game's rAF loop delays Chrome's idle signal 30-90 s (measured
+  // 2026-11-13: 31.8 s with the loop, 1.0 s without), so the level played itself before any check and timed out under load
+  await p.goto(BASE + '?' + qs, { waitUntil: 'load', timeout: 90000 })
+  await p.waitForFunction(() => window.__mount && (window.__h || /manual=1/.test(location.search)), { timeout: 30000 })
   await p.evaluate(WATCH)
   return { p, errs }
 }
@@ -116,6 +120,13 @@ async function perfContext (page, browser, label, failed, cdp) {
 }
 
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
+// Frame-time budgets run on the machine's real GPU (+ CPU throttling for the slow device). Headless software
+// compositing copies every 2D canvas frame through SwiftShader: measured 2026-11-13 that copy
+// (Canvas2DResourceProviderSharedImage::ProduceCanvasResource) is 1.7-2.0 s of a 3 s window and every 50-64 ms long
+// task, while the game's own JS is ~0.5 s - p90 flipped 20/30 fps run to run on the same frame. A tablet rasters
+// canvas on its GPU: same page, same 4x CPU, GPU = 60/60/60 fps. QA_SOFTWARE_PERF=1 keeps the old software path.
+const GPU_ARGS = process.env.QA_SOFTWARE_PERF ? [] : ['--enable-gpu', '--use-angle=gl', '--ignore-gpu-blocklist']
+const perfBrowser = () => puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required', ...GPU_ARGS] })
 
 // ── Q. embedded questions (owner 2026-09-29: action first; questions on a bump, a Soal buoy, a lighthouse gate) ──
 //   stub opts.onQuestion (harness &q=stub): each trigger opens exactly ONE question, the sim is frozen while it is
@@ -354,7 +365,7 @@ for (const [w, h] of SIZES) {
       await sleep(300)
     }
     const st = await p.evaluate(() => ({ s: __h.state(), presses: window.__presses, bad: window.__bad }))
-    check(!!d, `${tag} ${mode}/${vessel}: finished via real button input (${d ? `stars ${d.stars}, ${d.time}s, hits ${d.hits}, nearMiss ${d.nearMiss}, missed ${d.missed}` : 'no onDone; y=' + Math.round(st.s.y) + ' zoneY=' + st.s.zoneY + ' gate ' + st.s.gate + '/' + st.s.gates}; ${st.presses} presses)`)
+    check(!!d && st.presses > 0, `${tag} ${mode}/${vessel}: finished via real button input (${d ? `stars ${d.stars}, ${d.time}s, hits ${d.hits}, nearMiss ${d.nearMiss}, missed ${d.missed}` : 'no onDone; y=' + Math.round(st.s.y) + ' zoneY=' + st.s.zoneY + ' gate ' + st.s.gate + '/' + st.s.gates}; ${st.presses} presses)`)
     // a gate dead ahead before the autopilot's first press is not credited (no steering yet) — every gate
     // the ship was steered to must be passed
     if (d && (mode === 'gates' || mode === 'sail')) check(d.missed - d.unsteered === 0, `${tag} ${mode}/${vessel}: every steered gate passed in order (missed ${d.missed}, of which ${d.unsteered} before the first input)`)
@@ -393,10 +404,13 @@ for (const [w, h] of SIZES) {
 
   // ── fps budget: densest scene (ice), CPU throttled 4x ──
   {
-    const { p, errs } = await open(b, w, h, 'mode=ice&vessel=liner&len=3200&seed=3&muted=1')
+    const bp = await perfBrowser()
+    const { p, errs } = await open(bp, w, h, 'mode=ice&vessel=liner&len=3200&seed=3&muted=1')
     await p.evaluate(AUTOPILOT)
     await sleep(6000)
     if (process.env.QA_FAULT) await p.evaluate(() => { const f = () => { const t = performance.now(); while (performance.now() - t < 45); requestAnimationFrame(f) }; requestAnimationFrame(f) })
+    // an idle speed-line overlay costs nothing: no clear/upload of its full-screen canvas while no turbo is on
+    await p.evaluate(() => { window.__slc = 0; const o = CanvasRenderingContext2D.prototype.clearRect; CanvasRenderingContext2D.prototype.clearRect = function (...a) { if (this.canvas.className === 'speedlines-fx') window.__slc++; return o.apply(this, a) } })
     const cdp = await p.createCDPSession()
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 })
     await sleep(2500)   // a device that is slow from the start adapts its render resolution in its first ~1 s
@@ -404,10 +418,12 @@ for (const [w, h] of SIZES) {
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 })
     const s = await p.evaluate(() => __h.state())
     console.log(`  ${tag} ice @4x CPU: p90 ${f1} fps (ship y ${Math.round(s.y)}, ${s.ice} bergs, render quality ${s.quality})`)
-    await perfContext(p, b, tag + '-ice', f1 < 24, cdp)
+    await perfContext(p, bp, tag + '-ice', f1 < 24, cdp)
     check(f1 >= 24, `${tag}: p90 frame rate >= 24 fps at 4x CPU (${f1})`)
+    const sl = await p.evaluate(() => ({ n: window.__slc, lvl: window.SpeedLines ? SpeedLines.level() : 0 }))
+    check(sl.lvl === 0 && sl.n === 0, `${tag}: idle speed-line overlay is never redrawn without a turbo (${sl.n} clears in ~5.5 s, level ${sl.lvl})`)
     check(errs.length === 0, `${tag}: fps run no page errors`)
-    await p.close()
+    await p.close(); await bp.close()
   }
 }
 
@@ -547,7 +563,9 @@ for (const rm of [0, 1]) {
     check(c0.cd === '3' && /Siap/.test(c0.txt), `${tag}: countdown shows 3 + "${c0.txt}"`)
     check(c0.demoL && +c0.demoVis > 0.3 && c0.s.heading < -0.05 && c0.s.y === 0 && c0.s.t === 0, `${tag}: demo 1 = LEFT button glows + label, bow swings left (${c0.s.heading.toFixed(2)}), ship waits (y ${c0.s.y})`)
     check(Math.min(...c0.sizes) >= 80 && c0.side, `${tag}: turn buttons >= 80 px (${c0.sizes}) — left button left, right button right`)
-    await sleep(1000)
+    // wait for the "2" second itself, not a fixed 1 s: the 1280 screenshot above can take a whole second in software
+    // rendering, and a fixed sleep then read the "1" second (heading back to 0.00) - 2026-11-13
+    await p.waitForFunction(() => document.querySelector('.tks-cd b').textContent === '2' && __h.state().heading > 0.05, { timeout: 1500, polling: 'raf' }).catch(() => {})
     const c1 = await p.evaluate(() => ({ s: __h.state(), cd: document.querySelector('.tks-cd b').textContent, demoR: document.querySelector('.tks-right-btn').classList.contains('is-demo') }))
     check(c1.cd === '2' && c1.demoR && c1.s.heading > 0.05 && c1.s.y === 0, `${tag}: demo 2 = RIGHT button glows, bow swings right (${c1.s.heading.toFixed(2)})`)
     await p.screenshot({ path: `${EASE}steer-${w}x${h}-countdown-right.png` })
@@ -639,7 +657,7 @@ for (const rm of [0, 1]) {
     const p = await b.newPage(); const errs = []
     p.on('pageerror', e => errs.push(e.message))
     await p.setViewport({ width: w, height: h, deviceScaleFactor: dpr, isMobile: w < 900, hasTouch: true })
-    await p.goto(BASE + '?ship=pick&fresh=1&avatar=qa' + w + '&mode=gates&seed=7&muted=1', { waitUntil: 'networkidle2' })
+    await p.goto(BASE + '?ship=pick&fresh=1&avatar=qa' + w + '&mode=gates&seed=7&muted=1', { waitUntil: 'load', timeout: 90000 })
     await p.evaluate(WATCH)
     await sleep(700)
     const sel = await p.evaluate(() => {
@@ -729,7 +747,7 @@ for (const rm of [0, 1]) {
     const p = await b.newPage(); const errs = []
     p.on('pageerror', e => errs.push(e.message))
     await p.setViewport({ width: w, height: h, deviceScaleFactor: 1, isMobile: w < 900, hasTouch: true })
-    await p.goto(BASE + '?ship=pick&fresh=1&avatar=lg' + w + '&mode=gates&seed=7&muted=1', { waitUntil: 'networkidle2', timeout: 90000 })
+    await p.goto(BASE + '?ship=pick&fresh=1&avatar=lg' + w + '&mode=gates&seed=7&muted=1', { waitUntil: 'load', timeout: 90000 })
     await p.evaluate(WATCH)
     await sleep(700)
     const t0 = await p.evaluate(() => {
@@ -917,9 +935,10 @@ for (const rm of [0, 1]) {
     check(errs.length === 0, `${M.name} HUD/wake: no page errors (${errs.join(' | ')})`)
     await p.close()
   }
-  // 2) perf budget: 1280x800, 5 s unthrottled then 5 s at 4x CPU (software canvas in headless Chrome)
+  // 2) perf budget: 1280x800, 5 s unthrottled then 5 s at 4x CPU (real GPU via perfBrowser since 2026-11-13)
   {
-    const { p, errs } = await open(b, 1280, 800, HQ.perf)
+    const bp = await perfBrowser()
+    const { p, errs } = await open(bp, 1280, 800, HQ.perf)
     await p.evaluate(M.drive)
     await sleep(2500)
     const MEASURE = ms => new Promise(res => {
@@ -943,14 +962,14 @@ for (const rm of [0, 1]) {
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 })
     const q = await p.evaluate(() => __h.state().quality)
     console.log(`  ${M.name} perf 1280x800: unthrottled median ${u.med} ms, p95 ${u.p95} ms, long tasks ${u.long.length}; 4x CPU median ${th.med} ms, p95 ${th.p95} ms, long tasks ${th.long.length} (max ${Math.max(0, ...th.long)} ms), render quality ${q}`)
-    // budget (software canvas, no GPU in headless): unthrottled = one 60 Hz frame; 4x CPU = never slower than
+    // budget (real GPU via perfBrowser since 2026-11-13; was software canvas): unthrottled = one 60 Hz frame; 4x CPU = never slower than
     // 30 fps at p95 and no long task > 50 ms. The owner's "median <= 20 ms at 4x" is NOT met by tk-steer
     // (33 ms = 30 fps after the adaptive resolution drop) and is reported, not faked.
-    await perfContext(p, b, M.name + '-1280-polish', u.med > 20 || u.long.length > 0 || th.p95 > 50 || th.long.some(x => x > 50), cdp)
+    await perfContext(p, bp, M.name + '-1280-polish', u.med > 20 || u.long.length > 0 || th.p95 > 50 || th.long.some(x => x > 50), cdp)
     check(u.med <= 20 && u.long.length === 0, `${M.name} perf: unthrottled median ${u.med} ms (<= 20), no long task > 50 ms (${u.long.length})`)
     check(th.p95 <= 50 && th.long.filter(x => x > 50).length === 0, `${M.name} perf 4x CPU: p95 ${th.p95} ms (<= 50), median ${th.med} ms, long tasks > 50 ms: ${th.long.filter(x => x > 50).length}`)
     check(errs.length === 0, `${M.name} perf: no page errors (${errs.join(' | ')})`)
-    await p.close()
+    await p.close(); await bp.close()
   }
   // 3) rotate mid-play: 390x844 -> 844x390 and 1280x800 -> 800x1280, no restart, no overlaps
   for (const [a, c] of [[[390, 844], [844, 390]], [[1280, 800], [800, 1280]]]) {

@@ -10,7 +10,8 @@
 //   node tools/run-gates.mjs --only 'qa-tk-(steer|lanes)'
 //   node tools/run-gates.mjs tools/qa-breathe.mjs   explicit files
 //   --list            show what would run, run nothing
-//   --timeout 600     seconds per gate (default 600)
+//   --timeout 600     seconds per gate (default 600); a gate that needs longer says so in its own source with a line
+//                     `// run-gates: timeout <s>` (qa-tk-steer runs ~24 min: a 600 s kill left "detached Frame" as its last word)
 //   --lock-wait 3600  seconds to wait for the browser lock (another session's gate) before giving up
 //   --out file.json   summary path (default $TMPDIR/run-gates-summary.json)
 //
@@ -54,8 +55,12 @@ function envFor (file, origin) {
 
 // a gate with no env default and no hardcoded local URL needs no server of ours (node-only, or it serves itself)
 const HARD = /https?:\/\/(?:localhost|127\.0\.0\.1):\d{2,5}/
-const plan = files.map(f => { const vars = Object.keys(envFor(f, 'http://x')); return { file: f, name: basename(f), vars, stuck: !vars.length && HARD.test(readFileSync(f, 'utf8').replace(/^\s*\/\/.*$/gm, '')) } })
-if (LIST) { for (const p of plan) console.log(p.stuck ? 'no-env' : 'run   ', p.name, p.vars.join(' ')); process.exit(0) }
+const OWN_TIMEOUT = /^\/\/ run-gates: timeout (\d+)\s*$/m
+const plan = files.map(f => {
+  const src = readFileSync(f, 'utf8'), vars = Object.keys(envFor(f, 'http://x')), own = src.match(OWN_TIMEOUT)
+  return { file: f, name: basename(f), vars, timeout: own ? Math.max(TIMEOUT, +own[1]) : TIMEOUT, stuck: !vars.length && HARD.test(src.replace(/^\s*\/\/.*$/gm, '')) }
+})
+if (LIST) { for (const p of plan) console.log(p.stuck ? 'no-env' : 'run   ', p.name, p.timeout + 's', p.vars.join(' ')); process.exit(0) }
 
 const freePort = () => new Promise(r => { const s = createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)) }) })
 const port = await freePort(), origin = `http://127.0.0.1:${port}`
@@ -71,16 +76,16 @@ for (let i = 0; i < 50 && !same; i++) {
 }
 if (!same) { console.error('run-gates: server on ' + origin + ' does not serve this tree'); process.exit(1) }
 
-function runOnce (file, env) {
+function runOnce (file, env, timeout) {
   const t0 = Date.now()
   // -E 75: a lock we never got is "lock-busy", not a failure of the gate
-  const r = spawnSync('flock', ['-E', '75', '-w', String(LOCK_WAIT), LOCK, 'timeout', String(TIMEOUT), 'node', file], {
+  const r = spawnSync('flock', ['-E', '75', '-w', String(LOCK_WAIT), LOCK, 'timeout', String(timeout), 'node', file], {
     cwd: ROOT, encoding: 'utf8', maxBuffer: 64 << 20,
     env: { ...process.env, ...env, TMPDIR: process.env.TMPDIR || join(process.env.HOME, '.cache/qa-tmp') }
   })
   const out = ((r.stdout || '') + (r.stderr || '')).trim().split('\n')
   const err = out.find(l => /^\s*(\w*Error|TimeoutError|ProtocolError)\b.*:/.test(l))
-  const last = r.status === 124 ? 'timed out after ' + TIMEOUT + ' s' + (err ? ' (' + err.trim().slice(0, 150) + ')' : '') : (err || out[out.length - 1]).trim().slice(0, 200)
+  const last = r.status === 124 ? 'timed out after ' + timeout + ' s' + (err ? ' (' + err.trim().slice(0, 150) + ')' : '') : (err || out[out.length - 1]).trim().slice(0, 200)
   return { code: r.status, ms: Date.now() - t0, last, fails: out.filter(l => /✗|❌|FAIL\b/.test(l)).slice(0, 5) }
 }
 
@@ -88,8 +93,8 @@ const results = []
 for (const p of plan) {
   if (p.stuck) { results.push({ gate: p.name, status: 'no-env' }); console.log('no-env  ', p.name, '(hardcoded port, not run)'); continue }
   const env = envFor(p.file, origin)
-  let a = runOnce(p.file, env), status = a.code === 0 ? 'pass' : a.code === 75 ? 'lock-busy' : 'fail', retry = null
-  if (status === 'fail') { retry = runOnce(p.file, env); if (retry.code === 0) status = 'flaky'; else if (retry.code === 75) status = 'lock-busy' }
+  let a = runOnce(p.file, env, p.timeout), status = a.code === 0 ? 'pass' : a.code === 75 ? 'lock-busy' : 'fail', retry = null
+  if (status === 'fail') { retry = runOnce(p.file, env, p.timeout); if (retry.code === 0) status = 'flaky'; else if (retry.code === 75) status = 'lock-busy' }
   results.push({ gate: p.name, status, env, first: a, retry })
   console.log(status.padEnd(8), p.name, Math.round((a.ms + (retry ? retry.ms : 0)) / 1000) + 's', '|', (retry || a).last)
   if (status === 'fail') for (const l of (retry || a).fails) console.log('          ', l.trim())

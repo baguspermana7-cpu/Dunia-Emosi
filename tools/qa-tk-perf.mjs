@@ -55,11 +55,14 @@ for(const [width,height,query,settle,kind] of [
  [1024,768,'mode=ice&vessel=liner&len=3200&seed=3&muted=1',6000,'budget'],
  [1280,800,'mode=ice&theme=night&ship=titanic&seed=3&muted=1&cd=0&len=6000',2500,'polish']
 ]){
- const browser=await puppeteer.launch({headless:'new',args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']})
+ // 'load' + harness mount, not networkidle2: the rAF loop delays Chrome's idle signal ~30 s (2026-11-13)
+ // real GPU (a tablet rasters canvas on its GPU); headless software compositing spends 1.7-2.0 s of every 3 s copying the
+ // canvas through SwiftShader and made these budgets flip run to run. QA_SOFTWARE_PERF=1 = the old software path
+ const browser=await puppeteer.launch({headless:'new',args:['--no-sandbox','--autoplay-policy=no-user-gesture-required',...(process.env.QA_SOFTWARE_PERF?[]:['--enable-gpu','--use-angle=gl','--ignore-gpu-blocklist'])]})
  try{
   const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message))
   await page.setViewport({width,height,isMobile:width<900,hasTouch:true})
-  await page.goto(BASE+'?'+query,{waitUntil:'networkidle2'});if(process.env.QA_WATCH!=='0')await page.evaluate(WATCH);await page.evaluate(AUTOPILOT);await sleep(settle)
+  await page.goto(BASE+'?'+query,{waitUntil:'load',timeout:90000});await page.waitForFunction(()=>window.__mount&&(window.__h||/manual=1/.test(location.search)),{timeout:30000});if(process.env.QA_WATCH!=='0')await page.evaluate(WATCH);await page.evaluate(AUTOPILOT);await sleep(settle)
   const cdp=await page.createCDPSession()
   const normal=kind==='polish'?await page.evaluate(measure,5000):null
   await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});await sleep(kind==='polish'?4500:2500)

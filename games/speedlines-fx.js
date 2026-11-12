@@ -16,7 +16,7 @@
   'use strict'
   if (W.SpeedLines) return
   var D = W.document
-  var cv = null, cx = null, raf = 0, bursts = [], holds = {}, frame = 0, deal = null, lastW = 0, lastH = 0, shown = 0
+  var cv = null, cx = null, raf = 0, bursts = [], holds = {}, frame = 0, deal = null, lastW = 0, lastH = 0, shown = 0, inked = false
   var REDUCED = false
   try { REDUCED = W.matchMedia && W.matchMedia('(prefers-reduced-motion: reduce)').matches } catch (_) {}
   var N = 40
@@ -58,7 +58,9 @@
     var s = strength(now)
     shown = s.p
     size()
-    cx.clearRect(0, 0, lastW, lastH)
+    // clear only what was drawn: a clearRect on an empty canvas still re-uploads it, and a game calling hold(key, 0)
+    // every frame paid one full-screen canvas copy per frame for nothing (tk-steer, 2026-11-13)
+    if (inked) { cx.clearRect(0, 0, lastW, lastH); inked = false }
     if (s.p <= 0.01) { return }
     if (!deal || frame++ % 3 === 0) redeal()
     var w = lastW, h = lastH, fx = s.fx || {}
@@ -77,6 +79,7 @@
     }
     cx.fill()
     cx.globalAlpha = 1
+    inked = true
     raf = W.requestAnimationFrame(loop)
   }
   function kick () { if (!raf && ensure()) raf = W.requestAnimationFrame(loop) }
@@ -91,7 +94,7 @@
     hold: function (key, power, o) {
       if (REDUCED) return
       o = o || {}
-      if (!power || power <= 0) delete holds[key]
+      if (!power || power <= 0) { if (!holds[key]) return; delete holds[key] }   // releasing what is not held: nothing to redraw
       else holds[key] = { power: Math.min(1, power), x: o.x, y: o.y, color: o.color, t: W.performance.now() }
       kick()
     },
