@@ -28,6 +28,7 @@ import { fileURLToPath } from 'node:url'
 
 const require = createRequire(import.meta.url)
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const HARNESS = process.env.QA_URL || 'http://localhost:8081/tools/tk-harness-grid.html'
 const SLACK = 2
 const fails = []
 let passes = 0
@@ -440,7 +441,7 @@ if (process.env.QA_UI !== '0') {
         p.on('requestfailed', q => errs.push('failed ' + q.url()))
         try {
           await p.setViewport({ width: vw, height: vh, isMobile: vw < 1000, hasTouch: vw < 1000 })
-          await p.goto(`http://localhost:8081/tools/tk-harness-grid.html?w=${r.w}&lv=${r.id}&coach=0&rm=1`, { waitUntil: 'networkidle0', timeout: 30000 })
+          await p.goto(`${HARNESS}?w=${r.w}&lv=${r.id}&coach=0&rm=1`, { waitUntil: 'networkidle0', timeout: 30000 })
           await p.waitForFunction(() => window.__h && document.querySelector('.tkg-go'), { timeout: 10000 })
           const info = await p.evaluate((prog) => {
             window.__h.setProgram(prog)

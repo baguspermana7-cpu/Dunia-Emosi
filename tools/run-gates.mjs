@@ -16,8 +16,8 @@
 //
 // Each gate runs under the shared browser lock (one headless browser at a time on this machine) and `timeout`.
 // A failing gate is run once more: pass on the retry = "flaky" (reported, not hidden), fail twice = "fail".
-// A gate that reads no URL from the environment only knows its hardcoded port, so it is reported "no-env" and not
-// run. Exit 1 when any gate fails.
+// A gate that hardcodes a local URL without reading it from the environment only knows that port, so it is reported
+// "no-env" and not run; a gate with no local URL at all (node-only, or it serves itself) runs as it is. Exit 1 when any gate fails.
 import { spawn, spawnSync } from 'node:child_process'
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:net'
@@ -52,8 +52,10 @@ function envFor (file, origin) {
   return env
 }
 
-const plan = files.map(f => ({ file: f, name: basename(f), vars: Object.keys(envFor(f, 'http://x')) }))
-if (LIST) { for (const p of plan) console.log(p.vars.length ? 'run   ' : 'no-env', p.name, p.vars.join(' ')); process.exit(0) }
+// a gate with no env default and no hardcoded local URL needs no server of ours (node-only, or it serves itself)
+const HARD = /https?:\/\/(?:localhost|127\.0\.0\.1):\d{2,5}/
+const plan = files.map(f => { const vars = Object.keys(envFor(f, 'http://x')); return { file: f, name: basename(f), vars, stuck: !vars.length && HARD.test(readFileSync(f, 'utf8').replace(/^\s*\/\/.*$/gm, '')) } })
+if (LIST) { for (const p of plan) console.log(p.stuck ? 'no-env' : 'run   ', p.name, p.vars.join(' ')); process.exit(0) }
 
 const freePort = () => new Promise(r => { const s = createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)) }) })
 const port = await freePort(), origin = `http://127.0.0.1:${port}`
@@ -84,7 +86,7 @@ function runOnce (file, env) {
 
 const results = []
 for (const p of plan) {
-  if (!p.vars.length) { results.push({ gate: p.name, status: 'no-env' }); console.log('no-env  ', p.name, '(hardcoded port, not run)'); continue }
+  if (p.stuck) { results.push({ gate: p.name, status: 'no-env' }); console.log('no-env  ', p.name, '(hardcoded port, not run)'); continue }
   const env = envFor(p.file, origin)
   let a = runOnce(p.file, env), status = a.code === 0 ? 'pass' : a.code === 75 ? 'lock-busy' : 'fail', retry = null
   if (status === 'fail') { retry = runOnce(p.file, env); if (retry.code === 0) status = 'flaky'; else if (retry.code === 75) status = 'lock-busy' }

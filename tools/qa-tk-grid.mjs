@@ -407,7 +407,7 @@ if (process.env.QA_UI !== '0') {
   const SHOTS = process.env.QA_SHOTS || ''
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true })
   const SIZES = (process.env.QA_SIZES || '390x844,844x390,1024x768,1280x800').split(',').map(s => s.split('x').map(Number))
-  const BASE = 'http://localhost:8081/tools/tk-harness-grid.html'
+  const BASE = process.env.QA_URL || 'http://localhost:8081/tools/tk-harness-grid.html'
   const sleep = ms => new Promise(r => setTimeout(r, ms))
   const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] })
 

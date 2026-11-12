@@ -410,7 +410,7 @@ if (!process.env.QA_NODE_ONLY) {
   const { default: puppeteer } = await import('puppeteer')
   const SHOTS = process.env.TKQ_SHOTS || '/tmp/claude-1000/-home-baguspermana7/006f0cec-d381-48ee-882e-83cf434d8153/scratchpad/tk-quiz'
   fs.mkdirSync(SHOTS, { recursive: true })
-  const BASE = 'http://localhost:8081/tools/tk-harness-quiz.html'
+  const BASE = process.env.QA_URL || 'http://localhost:8081/tools/tk-harness-quiz.html'
   const sleep = ms => new Promise(r => setTimeout(r, ms))
   const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] })
   const SIZES = [[390, 844], [844, 390], [1280, 800], [1024, 768]]   // 844x390 = phone on its side (stats panel was clipped there)
