@@ -1,0 +1,22 @@
+{
+  "note": "Sprites of people in assets/db/people/NNN.webp that a human looked at (owner rules: women and girls only with hijab, no white sticker outline). tools/qa-content-rules.mjs fails when code uses a people sprite that is not in 'ok'. Reviewed 2026-11-14 from a contact sheet of all 128.",
+  "ok": {
+    "1": "boy, blue cap",
+    "2": "boy, yellow cap",
+    "3": "boy, green cap",
+    "4": "boy, collar shirt",
+    "6": "boy"
+  },
+  "blocked": {
+    "5": "boy, but the body has holes from an old colour key",
+    "10": "woman without hijab", "11": "woman without hijab", "12": "woman without hijab",
+    "17": "girl without hijab", "18": "girl without hijab",
+    "23": "woman without hijab", "24": "woman without hijab", "25": "girl without hijab", "26": "girl without hijab",
+    "27": "girl without hijab", "28": "girl without hijab", "29": "girl without hijab", "30": "girl without hijab",
+    "34": "woman without hijab", "35": "woman without hijab",
+    "43": "woman without hijab", "44": "woman without hijab", "45": "woman without hijab", "46": "woman without hijab", "47": "woman without hijab",
+    "48": "couple, woman without hijab", "49": "couple, woman without hijab", "50": "couple, woman without hijab",
+    "51": "couple, woman without hijab", "52": "couple, woman without hijab", "53": "family, woman without hijab",
+    "61": "couple, woman without hijab"
+  }
+}

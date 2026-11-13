@@ -158,7 +158,7 @@
     // ── people pack (assets/db/people, owner sheet 3) — friendly avatars.
     //    Decorative person chrome (not quiz content) → generic-avatar match is fine. ──
     '👤': 'people/1', '👥': 'people/1', '🧑': 'people/1', '🙋': 'people/1', '👦': 'people/2',
-    '🧒': 'people/3', '👧': 'people/3', '👨': 'people/4', '👩': 'people/5', '👫': 'people/6',
+    '🧒': 'people/3', '👧': 'people/3', '👨': 'people/4', '👩': 'people/4',   /* people/5 has holes in its body (an old colour key); 4 is whole. No hijab art in this pack, so no woman figure */ '👫': 'people/6',
     '👪': 'people/6', '👨‍👩‍👧': 'people/6',
 
     // ── misc pack (assets/db/misc, owner-generated sheet 4) ──

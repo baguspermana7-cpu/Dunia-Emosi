@@ -101,12 +101,17 @@
       })
     } catch (e) {}
   }
+  // the overlay stops catching taps at once and is gone within 300 ms even when frames run slow: removal used to wait
+  // for the fade's onfinish, 330-700 ms in a headless browser (2026-11-14), an invisible layer over the game meanwhile
   function leave (back, done) {
+    var fin = false, once = function () { if (fin) return; fin = true; done() }
+    back.style.pointerEvents = 'none'
+    setTimeout(once, 300)
     try {
       var a = back.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: EASE, fill: 'forwards' })
-      a.onfinish = done; return
+      a.onfinish = once; return
     } catch (e) {}
-    done()
+    once()
   }
   function close () { var o = document.getElementById('dfeel'); if (!o || o.dataset.closing) return; o.dataset.closing = '1'; leave(o, function () { o.remove() }) }
 

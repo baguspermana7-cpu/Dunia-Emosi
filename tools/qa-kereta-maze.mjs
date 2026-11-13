@@ -96,8 +96,11 @@ check(/games\/kereta-maze\.html/.test(rd('index.html')) && rd('index.html').incl
   const bgdir = path.join(ROOT, 'assets/kereta/bg'), cards = path.join(ROOT, 'assets/kereta/cards')
   const bgs = fs.existsSync(bgdir) ? fs.readdirSync(bgdir) : [], cs = fs.existsSync(cards) ? fs.readdirSync(cards) : []
   check(bgs.length === 44 && bgs.every(f => f.endsWith('.webp')) && cs.length === 11, `owner art shipped as webp only: ${bgs.length} backgrounds (22 x landscape + portrait), ${cs.length} chapter cards`)
+  // the prop set grew 25 -> 27 on purpose (the furnace, b0531bed 2026-10-12): an exact count went stale, so check that
+  // every prop the game names exists instead
+  const propRefs = [...new Set(gameFiles.flatMap(f => rd(f).match(/kereta-prop\/[a-z0-9-]+/g) || []))]
   const tileKeys = ['rail-h', 'rail-v', 'curve-ne', 'curve-nw', 'switch-left', 'switch-right', 'crossing', 'grass', 'grass-flowers', 'water', 'dirt-path', 'bridge', 'gravel', 'bridge-broken', 'tunnel-portal', 'signal-red', 'signal-green', 'platform', 'water-tower', 'coal-bunker']
-  check(tileKeys.every(k => idx['kereta-tile/' + k]) && Object.keys(idx).filter(k => k.startsWith('kereta-prop/')).length === 25 && Object.keys(idx).filter(k => k.startsWith('kereta-tile/')).length === 25, 'all 25 board tiles + 25 story props are in the database')
+  check(tileKeys.every(k => idx['kereta-tile/' + k]) && Object.keys(idx).filter(k => k.startsWith('kereta-prop/')).length >= 25 && Object.keys(idx).filter(k => k.startsWith('kereta-tile/')).length === 25 && propRefs.every(k => idx[k]), `all 25 board tiles + every story prop the game uses are in the database${propRefs.filter(k => !idx[k]).length ? ' - missing ' + propRefs.filter(k => !idx[k]) : ''}`)
   const sw2 = rd('sw.js'); check(['rail-h', 'curve-ne', 'grass', 'water'].every(k => sw2.includes('kereta-tile/' + k)), 'sw.js precaches the board tiles')
   const need = ['story-char/carter/hands-hips', 'story-char/carter/point', 'story-char/carter/arms-crossed', 'story-char/carter/watch', 'story-char/carter/surprised', 'story-char/carter/defeated', 'story-char/pelukis/stand', 'story-char/anak-cat/stand', 'story-char/mekanik/stand', 'story-char/anak-kura/hold', 'story-char/mekanik-wanita/stand', 'story-char/nyonya-topi/stand-fan', 'story-char/tuan-merah/stand', 'train-char/rongsokan-a/v1', 'train-char/rongsokan-b/v1']
   check(need.every(k => idx[k] && idx[k].name_id), 'Mr Carter (6 safe poses), the workshop cast and the wrecked engines are in the database with official names')

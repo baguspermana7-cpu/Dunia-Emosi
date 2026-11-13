@@ -1953,17 +1953,19 @@ function loadSlotIntoForm(playerIdx, slotIdx) {
     state.players[playerIdx].ageTier = s.ageTier||'tumbuh'
     state.players[playerIdx].stars = s.stars||0
     buildAnimalPicker(animalsId, playerIdx)
-    // Update age buttons
-    document.getElementById(ageId).querySelectorAll('.age-btn').forEach(btn=>{
-      btn.classList.toggle('active', btn.dataset.age===s.ageTier)
-    })
   } else {
     document.getElementById(nameInputId).value = ''
     state.players[playerIdx].animal = '🦁'
-    state.players[playerIdx].ageTier = 'tumbuh'
+    // a new child starts on the band the name screen shows first (5-6); before 2026-11-14 the screen lit 5-6
+    // while 'tumbuh' (7-8) was saved for every child whose parent left it alone (tools/qa-profile-age.mjs L1)
+    state.players[playerIdx].ageTier = 'cilik'
     state.players[playerIdx].stars = 0
     buildAnimalPicker(animalsId, playerIdx)
   }
+  // light the band this child will actually be saved with (a saved child with no band on record plays as 7-8)
+  document.getElementById(ageId).querySelectorAll('.age-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.age===state.players[playerIdx].ageTier)
+  })
 }
 function savePlayerToSlot(playerIdx) {
   const slotIdx = window._pSlot[playerIdx]

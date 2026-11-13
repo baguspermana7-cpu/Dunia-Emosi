@@ -66,8 +66,12 @@ ok(/Kamu sedih/.test(r.line) && r.said && /Kamu sedih/.test(r.said.text), `the p
 ok(r.stored && r.stored.days[today] === 'sedih', `stored for this child (${JSON.stringify(r.stored)})`)
 ok(r.bus.join() === 'sedih', `sent on DuniaBus (${r.bus})`)
 if (SHOTS) await p.screenshot({ path: `${SHOTS}/feel-picked-1280.png` })
-ok(await tap('#dfeel .dfeel-go'), 'tap "Ayo main"'); await sleep(400)
-ok(!(await shown()), '"Ayo main" closes the card')
+ok(await tap('#dfeel .dfeel-go'), 'tap "Ayo main"')
+{ // the card lets taps through at once and is gone within 700 ms (it used to wait for the fade's onfinish)
+  const pe = await p.evaluate(() => { const o = document.getElementById('dfeel'); return o ? getComputedStyle(o).pointerEvents : 'gone' })
+  const gone = await p.waitForFunction(() => !document.getElementById('dfeel'), { timeout: 700 }).then(() => true, () => false)
+  ok((pe === 'none' || pe === 'gone') && gone, `"Ayo main" closes the card: taps pass at once (${pe}), gone within 700 ms (${gone})`)
+}
 await p.evaluate(() => goToMenu()); await sleep(1500)
 ok(!(await shown()), 'not asked twice the same day')
 // dashboard shows the week

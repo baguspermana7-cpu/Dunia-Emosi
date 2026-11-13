@@ -22,6 +22,15 @@ node tools/qa-local-refs.mjs
 echo "== every game page loads the freeze watchdog"
 node tools/qa-watchdog-wired.mjs
 
+echo "== every Timmy board, kereta maze and Mojo pattern can be finished"
+node tools/qa-levels-solvable.mjs
+
+echo "== sprites fill their box (people pack trimmed, PRD-26)"
+node tools/qa-sprite-fill.mjs
+
+echo "== people sprites in use were reviewed (hijab rule), no random person pick"
+node tools/qa-content-rules.mjs
+
 if [ "${CI_SMOKE:-}" = "1" ]; then
   echo "== smoke: every page loads, renders, 0 errors, no 390px overflow"
   port=${CI_PORT:-8197}
@@ -43,5 +52,9 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-breathe.mjs
   echo "== Ayo Berhitung keeps each child's book"
   QA_URL="http://127.0.0.1:$port/games/ayo-berhitung.html" node tools/qa-ayo-per-child.mjs
+  echo "== the age band on the name screen is the one saved, and every game page can read it"
+  BASE="http://127.0.0.1:$port/" node tools/qa-profile-age.mjs
+  echo "== the parent's vibration setting holds in every game"
+  BASE="http://127.0.0.1:$port/" node tools/qa-vibrate.mjs
 fi
 echo "== ci-verify: all gates passed"

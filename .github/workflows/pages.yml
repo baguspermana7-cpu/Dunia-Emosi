@@ -35,6 +35,14 @@ jobs:
       - name: Install the headless browser (verify job only; the deploy job checks out clean)
         run: npm install --no-save --no-package-lock puppeteer@24.43.1
 
+      - name: Setup Python (qa-sprite-fill reads webp alpha with Pillow)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Pillow
+        run: python3 -m pip install --quiet pillow==11.3.0
+
       - name: Gates
         env:
           CI_SMOKE: '1'

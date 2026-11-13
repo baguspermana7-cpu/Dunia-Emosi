@@ -170,7 +170,44 @@
     } catch (_) { return false }
   }
 
+  // Child profile (docs/prd/PRD-19a): what the name screen stored for the child who is playing, readable on every
+  // page that loads this file. The slot is found by the avatar this page plays as, so a page that locked its child
+  // keeps that child's band after a sibling picks another slot.
+  const AGE_BANDS = { cilik: '5-6', tumbuh: '7-8', pintar: '9-10' };
+  function _playingSlot() {
+    try {
+      const av = _activeAvatarSlug();
+      if (!av) return null;
+      const slots = JSON.parse(localStorage.getItem('dunia-players') || '[]');
+      const aSlot = JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]');
+      const idx = (Array.isArray(aSlot) ? parseInt(aSlot[0]) : 0) || 0;
+      const slugOf = s => s && s.animal ? (SLUG_MAP[s.animal] || String(s.animal)) : null;
+      if (slugOf(slots[idx]) === av) return slots[idx];
+      return slots.find(s => slugOf(s) === av) || null;
+    } catch (_) { return null }
+  }
+  const DuniaProfile = {
+    // a child with no band on record plays as 7-8 everywhere game.js reads it (state.players[i].ageTier || 'tumbuh')
+    ageTier() { const s = _playingSlot(); return (s && AGE_BANDS[s.ageTier]) ? s.ageTier : 'tumbuh' },
+    age() { return AGE_BANDS[DuniaProfile.ageTier()] }
+  };
+
+  // The parent's "Getar" setting (index settings, 'dunia-emosi-vibrate' = 'off') applies to every game: 15 calls in 7
+  // game pages buzzed through it until 2026-11-14 (docs/prd/PRD-32). One guard here instead of one check per call site,
+  // so a future call cannot forget it.
+  DuniaProfile.vibrateOn = function () { try { return localStorage.getItem('dunia-emosi-vibrate') !== 'off' } catch (_) { return true } };
+  try {
+    const nav = typeof navigator !== 'undefined' ? navigator : null;
+    if (nav && typeof nav.vibrate === 'function' && !nav.vibrate.__duniaGuard) {
+      const raw = nav.vibrate.bind(nav);
+      const guarded = function (pattern) { return DuniaProfile.vibrateOn() ? raw(pattern) : false };
+      guarded.__duniaGuard = true;
+      nav.vibrate = guarded;
+    }
+  } catch (_) {}
+
   if (typeof window !== 'undefined') {
+    window.DuniaProfile = DuniaProfile;
     window.saveLevelProgress = saveLevelProgress;
     window.activeAvatarBadgeKey = activeAvatarBadgeKey;
     window.avatarScopedGet = avatarScopedGet;

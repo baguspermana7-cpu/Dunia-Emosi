@@ -30,12 +30,21 @@ async function seed (slot, extra) {
 const page = async q => { await p.goto(BASE + 'index.html?nocine=1' + q, { waitUntil: 'load' }); await sleep(2200) }
 const tap = async sel => { const h = await p.$(sel); if (!h) return false; const r = await h.boundingBox(); await p.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2); return true }
 const has = () => p.evaluate(() => !!document.getElementById('dbreath'))
+// right after a close tap the overlay must already let taps through, and leave the DOM within 700 ms (the module's own
+// 300 ms guarantee plus the round trip); it used to wait for the fade's onfinish, 330-700 ms headless, layer still on top
+const leaves = async () => { const pe = await p.evaluate(() => { const o = document.getElementById('dbreath'); return o ? getComputedStyle(o).pointerEvents : 'gone' }); const gone = await p.waitForFunction(() => !document.getElementById('dbreath'), { timeout: 700 }).then(() => true, () => false); return (pe === 'none' || pe === 'gone') && gone }
 const st = () => p.evaluate(() => { const c = document.querySelector('#dbreath .dbr-cue'), i = document.querySelector('#dbreath .dbr-pic'); return { phase: c && c.dataset.phase, on: document.querySelectorAll('#dbreath .dbr-dots i.on').length, w: i ? i.getBoundingClientRect().width : 0, done: (document.querySelector('#dbreath .dbr-card') || {}).dataset?.doneMs } })
 
 // ── a full run ──
 await seed(0, { 'dunia-avatar-lion-feelings': JSON.stringify({ days: { [DAY]: 'senang' } }) })
 await page('&feel=1')
-await p.evaluate(() => DuniaBreath.open())
+// record every phase change against the page's own clock: sampling at fixed wall-clock sleeps read a phase 200 ms
+// before its boundary, so a busy machine turned a correct run red (2026-11-14: in,out,out,in twice under the runner)
+await p.evaluate(() => {
+  DuniaBreath.open(); window.__ph = []
+  const t0 = performance.now(), tick = () => { const c = document.querySelector('#dbreath .dbr-cue'), f = c && c.dataset.phase, l = window.__ph[window.__ph.length - 1]; if (f && (!l || l.f !== f)) window.__ph.push({ f, t: Math.round(performance.now() - t0) }); if (performance.now() - t0 < 10000) requestAnimationFrame(tick) }
+  tick()
+})
 const motion = await p.evaluate(() => { const c = document.querySelector('#dbreath .dbr-card'); return c.getAnimations().some(a => a.effect.getKeyframes().some(k => k.transform && k.transform !== 'none')) })
 ok(motion, 'the card enters with a transform (scale/translate)')
 await sleep(300); const s0 = await st()
@@ -44,7 +53,9 @@ await sleep(3500); const s1 = await st()
 if (SHOTS) await p.screenshot({ path: `${SHOTS}/breathe-in.png` })
 await sleep(1600); const s2 = await st()
 await sleep(4000); const s3 = await st()
-ok(s0.phase === 'in' && s1.phase === 'in' && s2.phase === 'out' && s3.phase === 'in', `cues follow in / out every 4 s (${[s0.phase, s1.phase, s2.phase, s3.phase]})`)
+const ph = await p.evaluate(() => window.__ph)
+const gaps = ph.slice(1).map((x, i) => x.t - ph[i].t)
+ok(ph.map(x => x.f).join() === 'in,out,in' && gaps.every(g => g >= 3700 && g <= 4400), `cues follow in / out every 4 s (${ph.map(x => x.f + '@' + x.t).join(' ')})`)
 ok(s1.w > s0.w * 1.2, `the cloud grows on the in-breath (${Math.round(s0.w)} -> ${Math.round(s1.w)} px)`)
 ok(s0.on === 1 && s3.on === 2, `one dot per round (${s0.on}, ${s3.on})`)
 await sleep(16500)
@@ -53,13 +64,13 @@ ok(end.done && Math.abs(+end.done - 24000) <= 1000, `the ending card arrives aft
 const said = await p.evaluate(() => window.__said.map(x => x.lang + ':' + x.text))
 ok(said.filter(x => /id-ID:Tarik napas$/.test(x)).length === 3 && said.some(x => /Hebat/.test(x)), `cues spoken in Indonesian (${said.length} lines)`)
 if (SHOTS) await p.screenshot({ path: `${SHOTS}/breathe-done.png` })
-ok(await tap('#dbreath .dbr-go'), 'tap "Ayo main"'); await sleep(400)
-ok(!(await has()) && (await p.evaluate(() => window.__calm.join())) === 'true', 'closes and sends calm done:true')
+ok(await tap('#dbreath .dbr-go'), 'tap "Ayo main"')
+ok(await leaves() && (await p.evaluate(() => window.__calm.join())) === 'true', 'lets taps through at once, leaves within 700 ms, sends calm done:true')
 
 // ── closing mid-run ──
 await p.evaluate(() => { window.__calm = []; DuniaBreath.open() }); await sleep(2000)
-ok(await tap('#dbreath .dbr-x'), 'tap close mid-run'); await sleep(400)
-ok(!(await has()), 'closed at once')
+ok(await tap('#dbreath .dbr-x'), 'tap close mid-run')
+ok(await leaves(), 'closed at once: lets taps through at once, gone within 700 ms')
 await sleep(23000)
 ok(!(await has()) && (await p.evaluate(() => window.__calm.join())) === 'false', 'nothing comes back later; calm done:false')
 
