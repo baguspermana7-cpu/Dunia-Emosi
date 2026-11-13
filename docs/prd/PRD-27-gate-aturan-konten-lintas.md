@@ -1,0 +1,16 @@
+# PRD-27 Gate aturan konten lintas game
+
+- **Gelombang:** Gelombang 0 — verifikasi & pagar murah (tanpa fitur anak)
+- **Status:** belum mulai
+- **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #27
+- **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
+
+- **Desain:**
+  - `audit-no-emoji.mjs` dan audit outline putih (deteksi cincin terang di tepi alpha sprite) dibuat membaca env URL agar masuk runner (`--tag content`);
+  - hijab: checklist manual tetap, tapi gate mendaftar setiap sprite orang baru (diff terhadap `tools/qa-out/people-reviewed.json`) supaya tidak ada yang lolos tanpa ditinjau.
+- **Laws:**
+  - (L1) emoji yang sudah dipetakan muncul di layar → gagal;
+  - (L2) sprite planted dengan ring putih 2 px → gagal;
+  - (L3) sprite orang baru yang belum ditinjau → gagal sampai saya tinjau dan catat;
+  - (L4) dasbor (`game.js:4041-4110`) bebas emoji.
+- **Usaha:** M.

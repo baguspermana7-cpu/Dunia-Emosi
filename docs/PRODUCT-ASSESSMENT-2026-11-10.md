@@ -313,6 +313,8 @@ push → job verify (token, sintaks, gate statis, smoke) → hijau: deploy Pages
 
 ## Deliverable 4 — Implementation Roadmap
 
+> **2026-11-14:** semua ide yang tersisa punya PRD sendiri di `docs/prd/` (25 berkas, indeks + aturan selesai di `docs/prd/README.md`). Urutan gelombang di sana menggantikan tabel fase di bawah untuk pekerjaan berikutnya.
+
 | Fase | Isi | Usaha | Ketergantungan |
 |---|---|---|---|
 | 0 (minggu ini) | #1, #3, #26, #32 quick wins; #15 laporan | 3–5 hari | — |
