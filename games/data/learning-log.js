@@ -52,7 +52,7 @@
       var row = (d.days[day] = d.days[day] || {})[k] = d.days[day][k] || [0, 0, 0, 0]
       row[0]++; if (ev.ok) row[1]++
       if (ms !== null) { row[2] += ms; row[3]++ }
-      d.recent.push([t, game, domain, skill, clean(ev.item, 60), ev.ok, +ev.tries || 1, ms])
+      d.recent.push([t, game, domain, skill, clean(ev.item, 60), ev.ok, +ev.tries || 1, ms, clean(ev.hint, 20) || null])
       if (d.recent.length > RECENT_MAX) d.recent = d.recent.slice(-RECENT_MAX)
       var cut = dayOf(t - KEEP_DAYS * 864e5)
       Object.keys(d.days).forEach(function (x) { if (x < cut) delete d.days[x] })
@@ -79,7 +79,7 @@
 
   function recent (n) {
     return read().recent.slice(-(n || 20)).map(function (r) {
-      return { t: r[0], game: r[1], domain: r[2], skill: r[3], item: r[4], ok: r[5], tries: r[6], ms: r[7] }
+      return { t: r[0], game: r[1], domain: r[2], skill: r[3], item: r[4], ok: r[5], tries: r[6], ms: r[7], hint: r[8] || null }
     })
   }
 

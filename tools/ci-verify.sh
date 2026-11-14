@@ -34,6 +34,7 @@ node tools/qa-white-outline.mjs
 
 echo "== shared mastery settles a child near 75 % right, per child (PRD-10)"
 node tools/qa-mastery.mjs
+node tools/qa-error-kinds.mjs
 
 if [ "${CI_SMOKE:-}" = "1" ]; then
   echo "== smoke: every page loads, renders, 0 errors, no 390px overflow"
@@ -68,6 +69,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-soften.mjs
   echo "== a missed maths question comes back on later days in another game (PRD-11)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-review.mjs
+  echo "== a wrong maths answer gets the hint for its kind of mistake, fully on screen (PRD-13)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-error-kinds.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

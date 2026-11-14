@@ -764,24 +764,25 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/freeze-watchdog.js?v=v64.49-20261114a"></script>
-<script src="data/math-rules.js?v=v64.49-20261114a"></script>
-<script src="data/save-engine.js?v=v64.49-20261114a"></script>
-<script src="data/dunia-bus.js?v=v64.49-20261114a"></script>
-<script src="data/learning-log.js?v=v64.49-20261114a"></script>
-<script src="data/mastery.js?v=v64.49-20261114a"></script>
-<script src="data/review-queue.js?v=v64.49-20261114a"></script>
-<script src="data/sfx-engine.js?v=v64.49-20261114a"></script>
-<script src="vfx-engine.js?v=v64.49-20261114a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=v64.49-20261114a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v64.49-20261114a"></script><script src="data/ui-sprites.js?v=v64.49-20261114a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v64.49-20261114a"></script><script src="data/gt-monster-sheets.js?v=v64.49-20261114a"></script><script src="gt-monster-anim.js?v=v64.49-20261114a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/freeze-watchdog.js?v=v64.50-20261114a"></script>
+<script src="data/math-rules.js?v=v64.50-20261114a"></script>
+<script src="data/save-engine.js?v=v64.50-20261114a"></script>
+<script src="data/dunia-bus.js?v=v64.50-20261114a"></script>
+<script src="data/learning-log.js?v=v64.50-20261114a"></script>
+<script src="data/mastery.js?v=v64.50-20261114a"></script>
+<script src="data/review-queue.js?v=v64.50-20261114a"></script>
+<script src="data/error-kinds.js?v=v64.50-20261114a"></script>
+<script src="data/sfx-engine.js?v=v64.50-20261114a"></script>
+<script src="vfx-engine.js?v=v64.50-20261114a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=v64.50-20261114a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v64.50-20261114a"></script><script src="data/ui-sprites.js?v=v64.50-20261114a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v64.50-20261114a"></script><script src="data/gt-monster-sheets.js?v=v64.50-20261114a"></script><script src="gt-monster-anim.js?v=v64.50-20261114a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v64.49-20261114a"></script>
+<script src="data/math-cloud.js?v=v64.50-20261114a"></script>
 <script>
 (function(){
 'use strict';
@@ -1203,6 +1204,7 @@ function renderQ(){
   try{
     renderHearts();
     if(game.idx>=game.pool.length) return finish();
+    try{ if(window.DuniaErrorKinds) DuniaErrorKinds.clear(byId('qcard')); }catch(_){}
     var q=game.pool[game.idx];
     // PRD-17b: after a hard moment (breathing card offered on the map) the next maths question is one step easier
     try{
@@ -1269,8 +1271,10 @@ function answer(btn,picked,q){
   if(!game||game.done||game.run!==runId) return;   // ignore taps from a finished/superseded run
   var correct=String(picked)===String(q.ans);
   Array.prototype.forEach.call(byId('choices').children,function(b){ b.disabled=true; });
+  // PRD-13: what kind of mistake this is (off by one, swapped sign) picks the hint the child sees and hears
+  var hk=null; try{ if(!correct&&window.DuniaErrorKinds) hk=DuniaErrorKinds.classify(q,picked); }catch(_){}
   // learning log (DuniaBus): one record per question; a wrong pick ends the question here
-  if(window.DuniaBus) window.DuniaBus.emit('answer',{domain:'matematika',skill:({'+':'tambah','-':'kurang','\u2212':'kurang','\u00d7':'kali','x':'kali','*':'kali','\u00f7':'bagi',':':'bagi','/':'bagi'}[q.op]||'campur')+'-'+(q.shape||'standard'),item:q.q,ok:correct,tries:1,review:q.atom||null,ms:game.shownAt?Date.now()-game.shownAt:null});
+  if(window.DuniaBus) window.DuniaBus.emit('answer',{domain:'matematika',skill:({'+':'tambah','-':'kurang','\u2212':'kurang','\u00d7':'kali','x':'kali','*':'kali','\u00f7':'bagi',':':'bagi','/':'bagi'}[q.op]||'campur')+'-'+(q.shape||'standard'),item:q.q,ok:correct,tries:1,review:q.atom||null,hint:hk?hk.kind:null,ms:game.shownAt?Date.now()-game.shownAt:null});
   if(correct){
     btn.classList.add('right'); sfx('correct');
     game.correct++; game.streak++; if(game.streak>game.best) game.best=game.streak;
@@ -1292,13 +1296,14 @@ function answer(btn,picked,q){
     game.super=0; game.superReady=false; updateSuper();
     foeAttack(); renderHearts(); juiceHit(false,0);
     mpStepBanter();   // cerita tetap berlanjut walau jawaban salah (latihan membaca)
+    try{ if(hk) DuniaErrorKinds.show(byId('qcard'),hk,q,picked); }catch(_){}
     if(navigator.vibrate) try{ navigator.vibrate([15,40,15]); }catch(e){}
     if(game.hearts<=0){ laterRun(function(){ finish(true); },900); return; }
   }
   refreshHUD();
   game.idx++;
   // snappier on correct; linger on wrong so the child can read the highlighted right answer
-  var _d = correct ? 560 : 1250;
+  var _d = correct ? 560 : (hk&&hk.kind!=='general' ? 2400 : 1250);
   laterRun(renderQ,_d);
   armStuckGuard(_d);
 }
@@ -1870,7 +1875,7 @@ document.addEventListener('keydown',function(e){
 });
 })();
 </script>
-<script src="dunia-icons.js?v=v64.49-20261114a"></script>
-<script src="dunia-cinema.js?v=v64.49-20261114a" defer></script>
+<script src="dunia-icons.js?v=v64.50-20261114a"></script>
+<script src="dunia-cinema.js?v=v64.50-20261114a" defer></script>
 </body>
 </html>
