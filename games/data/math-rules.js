@@ -358,11 +358,23 @@
 
   // Public V2 entry — `shape` ∈ 'standard' | 'missingOperand' | 'missingOperator'
   // | 'comparison' | 'word' | 'auto' (caller cycles).
+  // PRD-11: every question carries its atom {a, b, op, ans} so a missed one can be asked again later (review queue);
+  // opts.atom asks exactly that item again (in whatever shape the caller wants)
+  function _atomOf (x) {
+    var a = +x.a, b = +x.b, op = _normOp(x.op) || '+';
+    var ans = op === '-' ? a - b : op === '*' ? a * b : op === '÷' ? a / b : a + b;
+    return { a: a, b: b, op: op, ans: ans };
+  }
   function makeMathQuestionV2 (level, maxLevel, difficulty, shape, opts) {
+    var atom = opts && opts.atom ? _atomOf(opts.atom) : _mathAtom(Math.max(1, parseInt(level) || 1), (difficulty || 'easy').toLowerCase(), opts);
+    var q = _makeV2(level, maxLevel, difficulty, shape, atom, opts);
+    if (q) q.atom = { a: atom.a, b: atom.b, op: atom.op };
+    return q;
+  }
+  function _makeV2 (level, maxLevel, difficulty, shape, atom, opts) {
     var lv = Math.max(1, parseInt(level) || 1);
     var diff = (difficulty || 'easy').toLowerCase();
     var sh = shape || 'standard';
-    var atom = _mathAtom(lv, diff, opts);
 
     if (sh === 'standard') {
       return {

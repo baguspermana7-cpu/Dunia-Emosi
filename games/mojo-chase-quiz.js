@@ -70,7 +70,7 @@
     for (var x = 0; c.length < 3; x++) if (c.indexOf(x) < 0) c.push(x)
     return shuffle(r, c).map(function (v) { return { v: v, t: String(v) } })
   }
-  function make (r, want) {
+  function make (r, want, fix) {
     var kind = want || ['count', 'add', 'sub', 'compare'][ri(r, 0, 3)], a, b, q
     // PRD-10: a child on tier 1 in matematika (or one tier down after a hard moment, PRD-17b) counts up to 5, else 10
     var mx = 10
@@ -81,10 +81,10 @@
       a = mx <= 5 ? ri(r, 2, 5) : ri(r, 3, 9)
       q = { kind: kind, key: 'c' + a + p.n, text: 'Ada berapa ' + p.n + '?', groups: [{ n: a, k: p.k }], answer: a, hint: 'Sentuh dan hitung satu per satu, ya.' }
     } else if (kind === 'add') {
-      a = ri(r, 1, Math.min(6, mx - 1)); b = ri(r, 1, mx - a)
+      a = fix ? fix.a : ri(r, 1, Math.min(6, mx - 1)); b = fix ? fix.b : ri(r, 1, mx - a)
       q = { kind: kind, key: 'a' + a + '+' + b + p.n, text: 'Mojo punya ' + a + ' ' + p.n + ', dapat ' + b + ' lagi. Jadi berapa?', groups: [{ n: a, k: p.k }, { op: '+' }, { n: b, k: p.k }], answer: a + b, hint: 'Hitung semua gambarnya bersama-sama.' }
     } else if (kind === 'sub') {
-      a = ri(r, 3, mx); b = ri(r, 1, a - 1)
+      a = fix ? fix.a : ri(r, 3, mx); b = fix ? fix.b : ri(r, 1, a - 1)
       q = { kind: kind, key: 's' + a + '-' + b + p.n, text: 'Ada ' + a + ' ' + p.n + '. ' + b + ' diambil pencuri. Sisa berapa?', groups: [{ n: a, k: p.k, gone: b }], answer: a - b, hint: 'Hitung yang masih terang saja.' }
     } else {
       a = ri(r, 1, Math.min(8, mx)); b = r() < 0.2 ? a : ri(r, 1, Math.min(8, mx))
@@ -94,12 +94,21 @@
       q.answerText = a > b ? 'Kiri lebih banyak' : a < b ? 'Kanan lebih banyak' : 'Sama banyak'
       return q
     }
+    if (kind === 'add' || kind === 'sub') q.atom = { a: a, b: b, op: kind === 'add' ? '+' : '-' }
     q.choices = numChoices(r, q.answer); q.answerText = String(q.answer)
     return q
   }
   function question (r, kind) {
     r = r || plan.r
     var q = null
+    // PRD-11: an addition or subtraction this child missed on an earlier day comes back as pictures, if it fits in 10
+    if (!kind && W.DuniaReview) {
+      try {
+        var mx = W.DuniaMastery ? W.DuniaMastery.cap('matematika', 10, { 1: 5 }) : 10
+        var it = W.DuniaReview.next('matematika', function (x) { return (x.op === '+' && x.a >= 1 && x.b >= 1 && x.a + x.b <= mx) || (x.op === '-' && x.a <= mx && x.b >= 1 && x.b < x.a) })
+        if (it) { q = make(r, it.op === '+' ? 'add' : 'sub', it); q.review = true; seen[q.key] = 1; return q }
+      } catch (e) {}
+    }
     for (var i = 0; i < 40; i++) { q = make(r, kind); if (!seen[q.key]) break }
     seen[q.key] = true
     return q
@@ -166,7 +175,7 @@
     cur = { root: root, q: q, tries: 0, phase: 'ask', info: info || {}, host: host, api: api || null, crash: crash, at: Date.now() }
     // one record per question once it is settled (right, or the answer shown): docs/prd/PRD-08b
     var SK = { count: 'count', add: 'add', sub: 'sub', compare: 'compare' }
-    function record (right) { try { if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: 'matematika', skill: SK[q.kind] || q.kind || 'count', item: q.key || q.text, ok: right && cur.tries === 0, tries: cur.tries + 1, ms: Date.now() - cur.at }) } catch (e) {} }
+    function record (right) { try { if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: 'matematika', skill: SK[q.kind] || q.kind || 'count', item: q.key || q.text, review: q.atom || null, ok: right && cur.tries === 0, tries: cur.tries + 1, ms: Date.now() - cur.at }) } catch (e) {} }
     q.choices.forEach(function (c) {
       var b = el('button', 'mcq-btn'); b.type = 'button'; b.textContent = c.t; b.setAttribute('data-v', c.v)
       b.addEventListener('click', function () { pick(b, c.v) })

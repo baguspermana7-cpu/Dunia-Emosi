@@ -764,23 +764,24 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/freeze-watchdog.js?v=v64.48-20261114a"></script>
-<script src="data/math-rules.js?v=v64.48-20261114a"></script>
-<script src="data/save-engine.js?v=v64.48-20261114a"></script>
-<script src="data/dunia-bus.js?v=v64.48-20261114a"></script>
-<script src="data/learning-log.js?v=v64.48-20261114a"></script>
-<script src="data/mastery.js?v=v64.48-20261114a"></script>
-<script src="data/sfx-engine.js?v=v64.48-20261114a"></script>
-<script src="vfx-engine.js?v=v64.48-20261114a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=v64.48-20261114a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v64.48-20261114a"></script><script src="data/ui-sprites.js?v=v64.48-20261114a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v64.48-20261114a"></script><script src="data/gt-monster-sheets.js?v=v64.48-20261114a"></script><script src="gt-monster-anim.js?v=v64.48-20261114a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/freeze-watchdog.js?v=v64.49-20261114a"></script>
+<script src="data/math-rules.js?v=v64.49-20261114a"></script>
+<script src="data/save-engine.js?v=v64.49-20261114a"></script>
+<script src="data/dunia-bus.js?v=v64.49-20261114a"></script>
+<script src="data/learning-log.js?v=v64.49-20261114a"></script>
+<script src="data/mastery.js?v=v64.49-20261114a"></script>
+<script src="data/review-queue.js?v=v64.49-20261114a"></script>
+<script src="data/sfx-engine.js?v=v64.49-20261114a"></script>
+<script src="vfx-engine.js?v=v64.49-20261114a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=v64.49-20261114a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v64.49-20261114a"></script><script src="data/ui-sprites.js?v=v64.49-20261114a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v64.49-20261114a"></script><script src="data/gt-monster-sheets.js?v=v64.49-20261114a"></script><script src="gt-monster-anim.js?v=v64.49-20261114a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v64.48-20261114a"></script>
+<script src="data/math-cloud.js?v=v64.49-20261114a"></script>
 <script>
 (function(){
 'use strict';
@@ -1211,6 +1212,22 @@ function renderQ(){
         if(validQ(sq)){ q=sq; game.pool[game.idx]=sq; game.softIdx=game.idx; game.softQ=sq; }
       }
     }catch(_){}
+    // PRD-11: a maths item this child missed on an earlier day comes back (at most one of three questions), if it fits
+    // the chosen operation
+    try{
+      game.revSeen=game.revSeen||{};
+      if(window.DuniaReview&&game.softIdx!==game.idx&&game.revIdx!==game.idx&&!game.revSeen[game.idx]){
+        game.revSeen[game.idx]=1;
+        var it=DuniaReview.next('matematika',function(x){
+          var ops=curSkill?curSkill.map(function(o){return o==='\u00d7'||o==='x'?'*':o==='\u2212'?'-':o}):null;
+          return !ops||ops.indexOf(x.op)>=0;
+        });
+        if(it){
+          var rq=window.makeMathQuestionV2(game.g,MAX_LEVEL,tierFor(game.g),'standard',{atom:it});
+          if(validQ(rq)){ q=rq; game.pool[game.idx]=rq; game.revIdx=game.idx; }
+        }
+      }
+    }catch(_){}
     if(!validQ(q)){
       logFreeze('bad-question','idx '+game.idx+' g '+game.g);
       try{ q=window.makeMathQuestionV2(game.g,MAX_LEVEL,tierFor(game.g),'standard',
@@ -1253,7 +1270,7 @@ function answer(btn,picked,q){
   var correct=String(picked)===String(q.ans);
   Array.prototype.forEach.call(byId('choices').children,function(b){ b.disabled=true; });
   // learning log (DuniaBus): one record per question; a wrong pick ends the question here
-  if(window.DuniaBus) window.DuniaBus.emit('answer',{domain:'matematika',skill:({'+':'tambah','-':'kurang','\u2212':'kurang','\u00d7':'kali','x':'kali','*':'kali','\u00f7':'bagi',':':'bagi','/':'bagi'}[q.op]||'campur')+'-'+(q.shape||'standard'),item:q.q,ok:correct,tries:1,ms:game.shownAt?Date.now()-game.shownAt:null});
+  if(window.DuniaBus) window.DuniaBus.emit('answer',{domain:'matematika',skill:({'+':'tambah','-':'kurang','\u2212':'kurang','\u00d7':'kali','x':'kali','*':'kali','\u00f7':'bagi',':':'bagi','/':'bagi'}[q.op]||'campur')+'-'+(q.shape||'standard'),item:q.q,ok:correct,tries:1,review:q.atom||null,ms:game.shownAt?Date.now()-game.shownAt:null});
   if(correct){
     btn.classList.add('right'); sfx('correct');
     game.correct++; game.streak++; if(game.streak>game.best) game.best=game.streak;
@@ -1842,7 +1859,7 @@ window.__g25 = {
   starsOf:     function (g) { return starsOf(g) },
   inProgress: function () { return !!(game && !game.done) },
   // the question on screen (learning-log gate taps a right and a wrong choice)
-  current: function () { var q = game && !game.done && game.pool[game.idx]; return q ? { ans: String(q.ans), idx: game.idx, softened: game.softIdx === game.idx } : null },
+  current: function () { var q = game && !game.done && game.pool[game.idx]; return q ? { ans: String(q.ans), idx: game.idx, softened: game.softIdx === game.idx, review: game.revIdx === game.idx, q: q.q, atom: q.atom || null } : null },
 };
 /* Enter submits the ask sheet, Escape cancels — the on-screen keyboard's "done" key is
    how a parent will actually close it. */
@@ -1853,7 +1870,7 @@ document.addEventListener('keydown',function(e){
 });
 })();
 </script>
-<script src="dunia-icons.js?v=v64.48-20261114a"></script>
-<script src="dunia-cinema.js?v=v64.48-20261114a" defer></script>
+<script src="dunia-icons.js?v=v64.49-20261114a"></script>
+<script src="dunia-cinema.js?v=v64.49-20261114a" defer></script>
 </body>
 </html>

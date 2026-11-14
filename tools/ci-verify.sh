@@ -66,6 +66,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-game-a11y.mjs
   echo "== after a hard moment the next maths question is one tier easier, once (PRD-17b)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-soften.mjs
+  echo "== a missed maths question comes back on later days in another game (PRD-11)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-review.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi
