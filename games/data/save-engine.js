@@ -206,6 +206,44 @@
     }
   } catch (_) {}
 
+  // Settings per child (docs/prd/PRD-18): every game reads the global keys ('dunia-emosi-sound' ...); each child keeps
+  // its own copy under 'dunia-settings' and it is put into the global keys when that child plays. Never read through
+  // avatarScopedGet on the global key names: that would move them into one child's scope.
+  const SETTING_KEYS = ['dunia-emosi-sound', 'dunia-emosi-vibrate', 'dunia-emosi-mathadv'];
+  DuniaProfile.saveSettings = function () {
+    try {
+      if (!_activeAvatarSlug()) return false;
+      const o = {};
+      SETTING_KEYS.forEach(k => { const v = localStorage.getItem(k); if (v !== null) o[k] = v });
+      return avatarScopedSet('dunia-settings', JSON.stringify(o));
+    } catch (_) { return false }
+  };
+  // one time: every child already on this device starts from the settings in force now, so the update changes nothing
+  // anyone hears; a child added later starts from the defaults (sound on, vibration on, maths normal)
+  function _migrateSettings() {
+    if (localStorage.getItem('dunia-settings-v1')) return;
+    const o = {};
+    SETTING_KEYS.forEach(k => { const v = localStorage.getItem(k); if (v !== null) o[k] = v });
+    const slots = JSON.parse(localStorage.getItem('dunia-players') || '[]');
+    slots.forEach(sl => {
+      const slug = sl && sl.animal ? (SLUG_MAP[sl.animal] || String(sl.animal)) : null;
+      if (slug && localStorage.getItem('dunia-avatar-' + slug + '-settings') === null) localStorage.setItem('dunia-avatar-' + slug + '-settings', JSON.stringify(o));
+    });
+    localStorage.setItem('dunia-settings-v1', '1');
+  }
+  DuniaProfile.applySettings = function () {
+    try {
+      if (!_activeAvatarSlug()) return 'no-child';
+      _migrateSettings();
+      const raw = localStorage.getItem(_scopedKey('dunia-settings'));
+      const o = raw === null ? {} : (JSON.parse(raw) || {});
+      SETTING_KEYS.forEach(k => { if (k in o) localStorage.setItem(k, String(o[k])); else localStorage.removeItem(k) });
+      if (raw === null) DuniaProfile.saveSettings();
+      return raw === null ? 'defaults' : 'applied';
+    } catch (_) { return 'error' }
+  };
+  try { DuniaProfile.applySettings() } catch (_) {}
+
   if (typeof window !== 'undefined') {
     window.DuniaProfile = DuniaProfile;
     window.saveLevelProgress = saveLevelProgress;

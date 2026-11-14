@@ -68,7 +68,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-13](PRD-13-petunjuk-sesuai-jenis-kesalahan.md) | Petunjuk sesuai jenis kesalahan **[ANAK]** | Gelombang 1 | live v64.50 (matematika) |
 | [PRD-20](PRD-20-kartu-main-berikutnya-di.md) | Kartu "main berikutnya" di hub **[ANAK — hal baru di menu]** | Gelombang 1 | belum mulai |
 | [PRD-17b](PRD-17b-momen-tenang-versi-lebih.md) | Momen tenang → versi lebih mudah **[ANAK]** | Gelombang 1 | live v64.48 |
-| [PRD-18](PRD-18-setelan-profil-dipakai-semua.md) | Setelan profil dipakai semua game | Gelombang 2 | belum mulai |
+| [PRD-18](PRD-18-setelan-profil-dipakai-semua.md) | Setelan profil dipakai semua game | Gelombang 2 | live v64.51 |
 | [PRD-14](PRD-14-cakupan-narasi-suara.md) | Cakupan narasi suara **[ANAK — suara baru]** | Gelombang 2 | belum mulai |
 | [PRD-21](PRD-21-ritme-sesi.md) | Ritme sesi **[ANAK]** | Gelombang 2 | belum mulai |
 | [PRD-23](PRD-23-indikator-siap-luring-per.md) | Indikator siap luring per game | Gelombang 2 | belum mulai |

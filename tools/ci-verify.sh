@@ -71,6 +71,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-review.mjs
   echo "== a wrong maths answer gets the hint for its kind of mistake, fully on screen (PRD-13)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-error-kinds.mjs
+  echo "== sound, vibration and maths level are each child's own (PRD-18)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-profile-settings.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

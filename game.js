@@ -1921,6 +1921,8 @@ function _loadActiveSlot() {
 }
 function _saveActiveSlot() {
   try { localStorage.setItem(ACTIVE_SLOT_KEY, JSON.stringify(window._pSlot)) } catch (_) {}
+  // PRD-18: the child now playing gets its own sound / vibration / maths settings
+  try { window.DuniaProfile && DuniaProfile.applySettings() } catch (_) {}
 }
 if(!window._pSlot) window._pSlot = _loadActiveSlot()
 function renderPlayerSlotRow(playerIdx) {
@@ -2189,6 +2191,7 @@ function openSettingsFromPause() {
 function toggleSoundSetting() {
   const next=localStorage.getItem('dunia-emosi-sound')==='off'?'on':'off'
   localStorage.setItem('dunia-emosi-sound',next)
+  try{ window.DuniaProfile && DuniaProfile.saveSettings() }catch(_){}
   const btn=document.getElementById('settings-sound-btn')
   btn.textContent=next==='off'?'OFF':'ON'
   btn.style.background=next==='off'?'rgba(255,255,255,0.15)':'linear-gradient(135deg,#8B5CF6,#6D28D9)'
@@ -2206,12 +2209,14 @@ function getMathLimits(){
 function toggleMathAdvanced(){
   const next=isMathAdvanced()?'off':'on'
   localStorage.setItem('dunia-emosi-mathadv',next)
+  try{ window.DuniaProfile && DuniaProfile.saveSettings() }catch(_){}
   const btn=document.getElementById('settings-mathadv-btn')
   if(btn){btn.textContent=next==='on'?'ON':'OFF';btn.style.background=next==='on'?'linear-gradient(135deg,#8B5CF6,#6D28D9)':'rgba(255,255,255,0.15)'}
 }
 function toggleVibrateSetting() {
   const next=localStorage.getItem('dunia-emosi-vibrate')==='off'?'on':'off'
   localStorage.setItem('dunia-emosi-vibrate',next)
+  try{ window.DuniaProfile && DuniaProfile.saveSettings() }catch(_){}
   const btn=document.getElementById('settings-vibrate-btn')
   btn.textContent=next==='off'?'OFF':'ON'
   btn.style.background=next==='off'?'rgba(255,255,255,0.15)':'linear-gradient(135deg,#8B5CF6,#6D28D9)'
