@@ -7,6 +7,7 @@
 // origin swapped for its own server. No gate is edited and no fixed port is shared with another session.
 //
 //   node tools/run-gates.mjs --tag timmy            the Timmy gates (qa-tk-*)
+//   node tools/run-gates.mjs --tag content          content rules: instruction companions, reviewed people sprites, sprite fill
 //   node tools/run-gates.mjs --only 'qa-tk-(steer|lanes)'
 //   node tools/run-gates.mjs tools/qa-breathe.mjs   explicit files
 //   --list            show what would run, run nothing
@@ -28,7 +29,7 @@ import { tmpdir } from 'node:os'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const LOCK = '/tmp/claude-1000/kereta-browser.lock'
-const TAGS = { timmy: /^qa-tk-/, mojo: /^qa-mojo-/, dunia: /^qa-dunia-/, calm: /^qa-(breathe|feeling-checkin|freeze-card)\.mjs$/ }
+const TAGS = { timmy: /^qa-tk-/, mojo: /^qa-mojo-/, dunia: /^qa-dunia-/, calm: /^qa-(breathe|feeling-checkin|freeze-card)\.mjs$/, content: /^qa-(instruction-companion|content-rules|sprite-fill)\.mjs$/ }
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 
 const args = process.argv.slice(2)

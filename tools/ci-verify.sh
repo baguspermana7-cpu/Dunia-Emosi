@@ -59,5 +59,7 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   BASE="http://127.0.0.1:$port/" node tools/qa-profile-age.mjs
   echo "== the parent's vibration setting holds in every game"
   BASE="http://127.0.0.1:$port/" node tools/qa-vibrate.mjs
+  echo "== no long instruction text without a picture or a voice beside it (ratchet, tools/instruction-baseline.json)"
+  QA_BASE="http://127.0.0.1:$port/" node tools/qa-instruction-companion.mjs
 fi
 echo "== ci-verify: all gates passed"
