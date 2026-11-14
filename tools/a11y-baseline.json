@@ -1,0 +1,106 @@
+{
+ "/index.html": {
+  "small": 1,
+  "lowContrast": 0
+ },
+ "/games/ayo-berhitung.html": {
+  "small": 22,
+  "lowContrast": 10
+ },
+ "/games/balapan-kereta-side.html": {
+  "small": 1,
+  "lowContrast": 0
+ },
+ "/games/balapan-kereta.html": {
+  "small": 15,
+  "lowContrast": 0
+ },
+ "/games/blippi.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/ducky-volley.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/ejaan-inggris.html": {
+  "small": 0,
+  "lowContrast": 1
+ },
+ "/games/film-anak.html": {
+  "small": 5,
+  "lowContrast": 0
+ },
+ "/games/film-play.html": {
+  "small": 2,
+  "lowContrast": 0
+ },
+ "/games/garasi-tempur.html": {
+  "small": 2,
+  "lowContrast": 2
+ },
+ "/games/gym-pokemon.html": {
+  "small": 1,
+  "lowContrast": 0
+ },
+ "/games/kereta-maze.html": {
+  "small": 9,
+  "lowContrast": 0
+ },
+ "/games/kuis-matematika.html": {
+  "small": 1,
+  "lowContrast": 0
+ },
+ "/games/lokomotif-pemberani.html": {
+  "small": 4,
+  "lowContrast": 0
+ },
+ "/games/mario-pokemon.html": {
+  "small": 2,
+  "lowContrast": 1
+ },
+ "/games/mobil.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/mojo-chase-embed.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/mojo-swoptops.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/monster-candy.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/museum-kereta.html": {
+  "small": 7,
+  "lowContrast": 2
+ },
+ "/games/pokemon-bawah-laut.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/pokemon-birds.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/pokemon-run.html": {
+  "small": 0,
+  "lowContrast": 0
+ },
+ "/games/selamatkan-kereta.html": {
+  "small": 4,
+  "lowContrast": 0
+ },
+ "/games/stinky-dirty.html": {
+  "small": 0,
+  "lowContrast": 1
+ },
+ "/games/timmy-kapal.html": {
+  "small": 6,
+  "lowContrast": 0
+ }
+}

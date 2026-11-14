@@ -62,6 +62,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   BASE="http://127.0.0.1:$port/" node tools/qa-vibrate.mjs
   echo "== no long instruction text without a picture or a voice beside it (ratchet, tools/instruction-baseline.json)"
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-instruction-companion.mjs
+  echo "== big enough buttons and readable text on every game page (primary buttons >= 48 px; ratchet tools/a11y-baseline.json)"
+  QA_BASE="http://127.0.0.1:$port/" node tools/qa-game-a11y.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi
