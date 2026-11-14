@@ -3,7 +3,7 @@
 //   L3 every people sprite the code can show (assets/db/people via 'people/N' keys) is one a human reviewed and passed
 //      (tools/people-reviewed.json 'ok'); a random pick from the people pack is not allowed at all (it could land on one of
 //      the many women and girls without hijab in that pack)
-// (rendered emoji and the white-outline check need a browser: tools/audit-no-emoji.mjs, PRD-27 part 2)
+// (rendered emoji: tools/qa-no-emoji.mjs; white sticker outline: tools/qa-white-outline.mjs — PRD-27 part 2)
 // Usage: node tools/qa-content-rules.mjs   (also in tools/ci-verify.sh)
 import fs from 'node:fs'
 import path from 'node:path'

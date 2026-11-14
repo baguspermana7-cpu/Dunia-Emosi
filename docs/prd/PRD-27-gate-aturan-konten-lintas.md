@@ -28,3 +28,21 @@
 - `audit-no-emoji.mjs` dibuat membaca env URL agar masuk runner;
 - deteksi outline putih pada sprite;
 - L4 dasbor tanpa emoji.
+
+## Hasil bagian 2 (2026-11-14)
+
+- **L1 emoji di layar:** `tools/audit-no-emoji.mjs` (kini juga `tools/qa-no-emoji.mjs` di runner, `--tag content`, dan
+  smoke CI) berjalan di 27 tampilan: 7 halaman yang dulu tidak pernah diperiksa ditambahkan (ayo-berhitung, kereta-maze,
+  mojo-swoptops, mojo-chase-embed, film-anak, film-play, blippi). Semua lulus. Merah: resolver dimatikan
+  (`QA_PLANT=nores`) → beranda 287 emoji terpetakan tertinggal, Kuis 21 → gagal.
+- **L4 dasbor:** tampilan `index.html#dashboard` (memanggil `showDashboard()`, hanya subtree `#screen-dashboard`, mode
+  ketat) lulus, 848 karakter teks. Merah: satu emoji tanpa art (U+1F9FF) ditanam di dasbor → gagal; ditanam di halaman
+  biasa → tercatat sebagai gap, bukan gagal (aturan lama). Catatan: ⭐ yang ditanam langsung diganti sprite oleh resolver
+  — itu resolver bekerja, jadi bukan bukti merah.
+- **L2 outline putih:** `tools/white-outline.py` (+ `tools/qa-white-outline.mjs`, di `ci-verify.sh` statis): pita tepi
+  alpha 2 px ≥50 % hampir putih DAN pita 4 px di dalamnya ≤35 % putih (benda putih seperti kapas/asap tidak terhitung).
+  Baseline menyimpan sha1 semua 9180 gambar, jadi CI hanya mendekode berkas baru/berubah: 1,4 s. Merah: sprite people/001
+  dengan tepi putih 2 px ditaruh di `assets/` → exit 1 ("NEW WHITE RIM"), dihapus → exit 0.
+- **Temuan untuk owner:** 1048 sprite yang dipakai game sudah ber-outline putih (utang tercatat di
+  `tools/white-outline-baseline.json`): Pokemon `pokemondb_hd_alt2` 618 (4 game Pokemon), `math/monsters` 276 (cerita
+  matematika), `db/elements` 100, sisanya tersebar (linus-body di 3 game kereta, math/heroes). Dikerjakan di PRD-27c.

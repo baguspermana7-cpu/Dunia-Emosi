@@ -30,6 +30,7 @@ node tools/qa-sprite-fill.mjs
 
 echo "== people sprites in use were reviewed (hijab rule), no random person pick"
 node tools/qa-content-rules.mjs
+node tools/qa-white-outline.mjs
 
 echo "== shared mastery settles a child near 75 % right, per child (PRD-10)"
 node tools/qa-mastery.mjs
@@ -61,5 +62,7 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   BASE="http://127.0.0.1:$port/" node tools/qa-vibrate.mjs
   echo "== no long instruction text without a picture or a voice beside it (ratchet, tools/instruction-baseline.json)"
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-instruction-companion.mjs
+  echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
+  node tools/audit-no-emoji.mjs
 fi
 echo "== ci-verify: all gates passed"

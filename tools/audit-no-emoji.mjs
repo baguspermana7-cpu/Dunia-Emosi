@@ -5,6 +5,8 @@
  *   - MAPPED emoji still on screen  → FAIL (resolver missed a swap = bug).
  *   - UNMAPPED emoji                → recorded as a GAP (needs owner art), NOT a fail.
  * Writes tools/qa-out/emoji-gaps.json (aggregate unmapped char → count + pages).
+ * QA_PLANT=1 [QA_PLANT_PAGE=index.html#dashboard] writes one unmapped emoji into a page (strict views fail);
+ * QA_PLANT=nores QA_PLANT_PAGE=<page> stops the resolver on that page (its mapped emoji must fail).
  * Run: node tools/audit-no-emoji.mjs                                          */
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
@@ -22,11 +24,16 @@ const PAGES = [
   // G27-G30 standalone games (added 2026-09-28; they were never walked)
   'games/ejaan-inggris.html', 'games/stinky-dirty.html', 'games/garasi-tempur.html',
   'games/timmy-kapal.html',
+  // PRD-27 part 2 (2026-11-14): the pages this list never walked
+  'games/ayo-berhitung.html', 'games/kereta-maze.html', 'games/mojo-swoptops.html', 'games/mojo-chase-embed.html',
+  'games/film-anak.html', 'games/film-play.html', 'games/blippi.html',
+  // the parent dashboard (index.html, drawn by showDashboard()): strict, only its own subtree is walked
+  'index.html#dashboard',
 ]
 // STRICT pages were built emoji-free by owner rule: ANY pictographic character in
 // their rendered DOM fails, mapped or not (an unmapped one is not a "gap" there,
 // it is a regression).
-const STRICT = new Set(['games/timmy-kapal.html', 'games/garasi-tempur.html', 'games/stinky-dirty.html', 'games/ejaan-inggris.html'])
+const STRICT = new Set(['index.html#dashboard', 'games/timmy-kapal.html', 'games/garasi-tempur.html', 'games/stinky-dirty.html', 'games/ejaan-inggris.html'])
 
 // tiny static server
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
@@ -45,10 +52,12 @@ function serve () {
   })
 }
 
-const WALK = () => {
+const WALK = (rootSel) => {
   const EMO = /\p{Extended_Pictographic}/u
   const SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, NOSCRIPT: 1, CANVAS: 1 }
-  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+  const root = rootSel ? document.querySelector(rootSel) : document.body
+  if (!root) return { mapped: { 'NO-ROOT': 1 }, unmapped: {}, gaps: {} }
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
   const mapped = {}, unmapped = {}
   let n
   const has = (window.EmojiMap && window.EmojiMap.has) ? (c) => window.EmojiMap.has(c) : () => false
@@ -64,7 +73,7 @@ const WALK = () => {
     }
   }
   const gaps = (window.UISprites && window.UISprites.gaps) ? window.UISprites.gaps() : {}
-  return { mapped, unmapped, gaps }
+  return { mapped, unmapped, gaps, text: (root.innerText || '').replace(/\s+/g, ' ').trim().length }
 }
 
 const server = await serve()
@@ -73,15 +82,34 @@ const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox']
 const gapAgg = {}   // char -> { count, pages:Set }
 let failPages = []
 
-for (const rel of PAGES) {
+const ONLY = process.env.QA_ONLY ? new RegExp(process.env.QA_ONLY) : null
+for (const rel of PAGES.filter(r => !ONLY || ONLY.test(r))) {
   const page = await browser.newPage()
   await page.setViewport({ width: 390, height: 800 })
+  const [file, view] = rel.split('#')
+  // QA_PLANT=nores: the resolver script is not loaded on QA_PLANT_PAGE, so its mapped emoji stay (the L1 red proof)
+  if (process.env.QA_PLANT === 'nores' && rel === process.env.QA_PLANT_PAGE) {
+    await page.setRequestInterception(true)
+    page.on('request', q => (/ui-sprites\.js/.test(q.url()) ? q.abort() : q.continue()))
+  }
+  if (view === 'dashboard') {
+    await page.evaluateOnNewDocument(() => {
+      localStorage.setItem('dunia-players', JSON.stringify([{ name: 'Ana', animal: '🦁', ageTier: 'cilik', stars: 12 }]))
+      localStorage.setItem('dunia-active-slot', '[0,1]')
+    })
+  }
   try {
-    await page.goto(`http://localhost:${port}/${rel}`, { waitUntil: 'networkidle2', timeout: 30000 })
+    await page.goto(`http://localhost:${port}/${file}`, { waitUntil: 'networkidle2', timeout: 30000 })
   } catch (_) {}
+  if (view === 'dashboard') await page.evaluate(() => { try { showDashboard() } catch (e) { console.error(e) } })
+  // QA_PLANT=1: one emoji the resolver has no art for (U+1F9FF) is written into the page: a strict view must fail,
+  // a normal page records it as a gap (a mapped one would be swapped for its sprite, which is the resolver working)
+  if (process.env.QA_PLANT && process.env.QA_PLANT !== 'nores' && rel === (process.env.QA_PLANT_PAGE || 'games/kuis-matematika.html')) {
+    await page.evaluate(sel => { const d = document.createElement('div'); d.textContent = 'Hebat \u{1F9FF}'; (document.querySelector(sel) || document.body).appendChild(d) }, view === 'dashboard' ? '#screen-dashboard' : 'body')
+  }
   await new Promise(r => setTimeout(r, 1200))   // let observer + idle sweep settle
   let r
-  try { r = await page.evaluate(WALK) } catch (e) { r = { mapped: {}, unmapped: {}, gaps: {} } }
+  try { r = await page.evaluate(WALK, view === 'dashboard' ? '#screen-dashboard' : null) } catch (e) { r = { mapped: {}, unmapped: {}, gaps: {} } }
   const mappedN = Object.values(r.mapped).reduce((a, b) => a + b, 0)
   const unmappedN = Object.values(r.unmapped).reduce((a, b) => a + b, 0)
   for (const [ch, c] of Object.entries(r.unmapped)) {
@@ -91,7 +119,7 @@ for (const rel of PAGES) {
   const strict = STRICT.has(rel)
   const ok = mappedN === 0 && (!strict || unmappedN === 0)
   if (!ok) failPages.push({ rel, mapped: r.mapped, unmapped: strict ? r.unmapped : {} })
-  console.log(`${ok ? '✅' : '❌'} ${rel.padEnd(34)} mapped-left=${mappedN}  unmapped(gap)=${unmappedN}${strict ? '  [strict]' : ''}`)
+  console.log(`${ok ? '✅' : '❌'} ${rel.padEnd(34)} mapped-left=${mappedN}  unmapped(gap)=${unmappedN}${strict ? '  [strict]' : ''}  text=${r.text}`)
   if (mappedN) console.log('     STILL-MAPPED:', JSON.stringify(r.mapped))
   if (strict && unmappedN) console.log('     EMOJI ON AN EMOJI-FREE PAGE:', JSON.stringify(r.unmapped))
   await page.close()
