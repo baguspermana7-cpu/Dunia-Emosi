@@ -336,7 +336,7 @@ const GAME_META = {
   7:{icon:'🖼️',name:'Tebak Gambar'},
   8:{icon:'🔡',name:'Susun Kata'},
   9:{icon:'✍️',name:'Jejak Huruf'},
-  10:{icon:'⚡',name:'Pertarungan Pokemon'},
+  10:{icon:'⚡',name:'Pertarungan Pokémon'},
   11:{icon:'🔬',name:'Kuis Sains'},
   13:{icon:'🔥',name:'Evolusi Math'},
   14:{icon:'🏁',name:'Balapan Kereta'},
@@ -346,12 +346,12 @@ const GAME_META = {
   18:{icon:'🏛️',name:'Museum Ambarawa'},
   19:{icon:'🐦',name:'Pokemon Birds',iconImg:'assets/Pokemon/pokemondb_hd_alt2/0018_pidgeot.webp'},
   20:{icon:'🏐',name:'Ducky Volley'},
-  21:{icon:'🍄',name:'Mario Pokemon',iconImg:'assets/mario-pokemon/icon.png'},
+  21:{icon:'🍄',name:'Mario Pokemon',iconImg:'assets/mario-pokemon/sprites/mushroom.webp'},
   22:{icon:'🍬',name:'Monster Candy'},
   23:{icon:'🏃',name:'Pokemon Run',iconImg:'assets/g23-icon.png'},
   24:{icon:'🌊',name:'Bawah Laut'},
-  25:{icon:'🧮',name:'Kuis Matematika'},
-  '13c':{icon:'🏅',name:'Gym Huruf & Suara'}
+  25:{icon:'🧮',name:'Matematika Petualangan'},
+  '13c':{icon:'🏅',name:'Gym Pokémon'}
 }
 
 // XP & Level system
@@ -1572,7 +1572,7 @@ function g13cStartGym(letter) {
   if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
     attachSpriteCascade(pImg, buildPokeSources(slug, null), '🎮')
   } else {
-    pImg.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+    pImg.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `assets/Pokemon/others/pokeball.svg`
   }
   pImg.style.display = 'block'
   g13cShowRound()
@@ -1712,8 +1712,10 @@ function openLevelSelect(gameNum) {
   banner.style.setProperty('--icon-bg', glowAlpha('0.14'))
   banner.style.setProperty('--icon-border', glowAlpha('0.5'))
   // Banner image — use banner-gameN.webp as background if available
-  const bannerImg = `assets/banner-game${gameNum}.webp`
-  banner.style.backgroundImage = `url('${bannerImg}'), var(--banner-base, linear-gradient(180deg,#1a0540,#0a0a25))`
+  // Only games that have a banner file ask for one (audit A-7: game 21 and up requested a 404).
+  const HAS_BANNER = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22]
+  const bannerLayer = HAS_BANNER.includes(gameNum) ? `url('assets/banner-game${gameNum}.webp'), ` : ''
+  banner.style.backgroundImage = `${bannerLayer}var(--banner-base, linear-gradient(180deg,#1a0540,#0a0a25))`
   banner.style.backgroundSize = 'cover, 100% 100%'
   banner.style.backgroundPosition = 'center, center'
 
@@ -1721,10 +1723,10 @@ function openLevelSelect(gameNum) {
   const iconEl = document.getElementById('level-game-icon')
   if (gameNum === 10) {
     // Task #96: local-first per L16 (was remote-primary)
-    const _pikaSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2('pikachu') : 'https://img.pokemondb.net/sprites/home/normal/pikachu.png'
-    iconEl.innerHTML = `<img src="${_pikaSrc}" style="width:60px;height:60px;image-rendering:auto;display:block;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/pikachu.png';this.onerror=function(){this.outerHTML='⚡'}">`
+    const _pikaSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2('pikachu') : 'assets/Pokemon/others/pokeball.svg'
+    iconEl.innerHTML = `<img src="${_pikaSrc}" style="width:60px;height:60px;image-rendering:auto;display:block;" onerror="this.src='assets/Pokemon/others/pokeball.svg';this.onerror=function(){this.style.visibility='hidden'}">`
   } else if (meta.iconImg) {
-    iconEl.innerHTML = `<img src="${meta.iconImg}" style="width:64px;height:70px;display:block;" alt="${meta.icon}">`
+    iconEl.innerHTML = `<img src="${meta.iconImg}" style="width:64px;height:70px;display:block;object-fit:contain;" alt="">`
   } else {
     iconEl.textContent = meta.icon
   }
@@ -2407,6 +2409,9 @@ function flyStarToCounter(srcEl) {
 // Task #99 (2026-04-27): Section-level try-catch refactor. Previous monolithic
 // flow threw on any unguarded DOM/storage access, falling through to fallback.
 // Each section now isolated; CRITICAL sections (text + showScreen) always run.
+// A player name is typed by a child (or anyone holding the tablet): it is text, never markup. Audit A-5.
+function escHtml(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) }
+
 function showResult(mascot, title, msg) {
   if (state._showingResult) return
   state._showingResult = true
@@ -2474,7 +2479,7 @@ function showResult(mascot, title, msg) {
     if (scoresEl) {
       if (state.mode === 'duo') {
         scoresEl.style.display = 'flex'
-        scoresEl.innerHTML = [0,1].map(i => `<div class="rs-card"><div class="rs-animal">${state.players[i] && state.players[i].animal || '🦁'}</div><div class="rs-name">${state.players[i] && state.players[i].name || 'Pemain'}</div><div class="rs-stars">⭐ ${state.gameStars[i] || 0}</div></div>`).join('')
+        scoresEl.innerHTML = [0,1].map(i => `<div class="rs-card"><div class="rs-animal">${state.players[i] && state.players[i].animal || '🦁'}</div><div class="rs-name">${escHtml(state.players[i] && state.players[i].name || 'Pemain')}</div><div class="rs-stars">⭐ ${state.gameStars[i] || 0}</div></div>`).join('')
       } else scoresEl.style.display = 'none'
     }
   } catch(e) { console.warn('[showResult] next/scores:', e) }
@@ -3263,7 +3268,7 @@ function renderG4Content(){
       if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
         attachSpriteCascade(img, buildPokeSources(slug, poke.id), '🐾')
       } else {
-        img.src = pokeSpriteAlt2(slug) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+        img.src = pokeSpriteAlt2(slug) || `assets/Pokemon/others/pokeball.svg`
       }
       img.alt=poke.name
       img.style.animationDelay=(i*55)+'ms'
@@ -4081,7 +4086,7 @@ function showDashboard() {
     <div style="display:flex;align-items:center;gap:16px;background:white;border-radius:24px;padding:20px;box-shadow:0 8px 24px rgba(139,92,246,0.12);width:100%;max-width:500px;">
       <span style="font-size:52px">${p.animal}</span>
       <div>
-        <div style="font-family:var(--font-display);font-size:22px;color:var(--text)">${p.name||'Pemain'}</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:var(--text)">${escHtml(p.name||'Pemain')}</div>
         <div style="font-size:15px;color:var(--text-light);margin-top:4px">⭐ ${p.stars} bintang</div>
         <div style="font-size:15px;color:var(--brand);font-weight:700;margin-top:2px">${tier.icon} ${tier.name}</div>
       </div>
@@ -5843,15 +5848,15 @@ function spawnTypeAura(el, type, dur){
   setTimeout(function(){ r.remove() }, d)
 }
 
-function pokeSprite(slug){return pokeSpriteAlt2(slug) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`}
-function pokeSpriteArtwork(slug){return `https://img.pokemondb.net/artwork/large/${slug}.jpg`}
+function pokeSprite(slug){return pokeSpriteAlt2(slug) || `assets/Pokemon/others/pokeball.svg`}
+function pokeSpriteArtwork(slug){return `assets/Pokemon/others/pokeball.svg`}
 // Both legacy names map to identical pokemondb HD raster. Kept as separate
 // functions because many call-sites reference each name directly. Cascade
 // helpers de-dup URLs at runtime so duplicate calls cost nothing.
-function pokeSpriteOnline(slug){return `https://img.pokemondb.net/sprites/home/normal/${slug}.png`}
+function pokeSpriteOnline(slug){return `assets/Pokemon/others/pokeball.svg`}
 function pokeSpriteCDN(slug){return pokeSpriteOnline(slug)}
-function pokeSpriteBackup(id){return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-function pokeSpriteBack(id){return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`}
+function pokeSpriteBackup(id){return `assets/Pokemon/others/pokeball.svg`}
+function pokeSpriteBack(id){return `assets/Pokemon/others/pokeball.svg`}
 // SVG variant — 751 vector Pokemon sprites for visual variety
 function pokeSpriteSVG(slug){const id=POKE_IDS[slug];return id?`assets/Pokemon/svg/${id}.svg`:null}
 // Alt2 HD WebP variant — 1025 Pokemon 630×630 RGBA, covers full Gen 1-9.
@@ -9099,7 +9104,7 @@ function openG13FamilySelector() {
   // Was returning broken path 'pokemondb_hd_alt2/${slug}.webp' (missing ID + dash) → 63 broken
   // images → onerror cascade to remote → connection pool blocked → modal freeze (same root
   // cause pattern as Task #64 party picker bug)
-  const pokeImg = (slug) => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  const pokeImg = (slug) => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `assets/Pokemon/others/pokeball.svg`
 
   // Determine initial tab from currentId — only on fresh open, not tab-click re-render
   const _overlayVis = document.getElementById('g13-fam-overlay').style.display === 'block'
@@ -9115,7 +9120,7 @@ function openG13FamilySelector() {
     const selCls = fam.id === currentId ? ' g13-fam-selected' : ''
     const catBadge = fam.category === 'popular' ? '⭐ POPULER' : fam.category === 'ash' ? '🎒 ASH' : fam.category === 'cool' ? '💎 KEREN' : '🎲 ACAK'
     const catColor = fam.category === 'popular' ? '#fbbf24' : fam.category === 'ash' ? '#ef4444' : fam.category === 'cool' ? '#c084fc' : '#38bdf8'
-    const _thumbErr = (slug) => `this.onerror=null;this.src='https://img.pokemondb.net/sprites/home/normal/${slug}.png'`
+    const _thumbErr = (slug) => `this.onerror=null;this.src='assets/Pokemon/others/pokeball.svg'`
     const _thumb = (slug, name) => `<img src="${pokeImg(slug)}" alt="${name}" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="${_thumbErr(slug)}">`
     const thumbsHtml = fam.id === 'random'
       ? '<div style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:700;padding:8px 0;">🎲 Acak dari semua evolusi yang ada — tiap level beda Pokémon!</div>'
@@ -9298,7 +9303,7 @@ function _initGame13Impl() {
   // Task #71: local-first sprite per Lesson L16 — was CDN-primary causing wrong facing
   const pokeUrl = slug => pokeSpriteAlt2(slug) || pokeSpriteCDN(slug)
   const pokeUrlRemote = slug => pokeSpriteCDN(slug)
-  const pokeFallbackUrl = slug => { const id = POKE_IDS[slug]; return id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png` : null }
+  const pokeFallbackUrl = slug => { const id = POKE_IDS[slug]; return id ? `assets/Pokemon/others/pokeball.svg` : null }
   const sprFbStyle = 'font-size:min(18vw,11vh);line-height:1;display:flex;align-items:center;justify-content:center;width:clamp(140px, min(34vw, 28vh), 280px);height:clamp(140px, min(34vw, 28vh), 280px);position:relative;z-index:2;'
 
   // Hotfix #117: use shared cascade (HD WebP 630x630 first) instead of custom
@@ -9837,7 +9842,7 @@ function g13TriggerEvolution() {
   if (!baseImg || !evolvedImg || !nameEl || !textEl) { overlay.style.display = 'none'; return }
   // Hotfix #117: use shared cascade (HD WebP 630x630 first) instead of direct src.
   // Legacy pokeUrl kept inside else for safety if helpers not loaded.
-  const pokeUrl = slug => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  const pokeUrl = slug => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `assets/Pokemon/others/pokeball.svg`
 
   // Determine which evolution stage is triggering
   const isMegaDirect = s.evolved && !s.chain.evolved2 && s.chain.mega && !s.megaForm
@@ -9942,7 +9947,7 @@ function g13TriggerEvolution() {
       if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
         attachSpriteCascade(pspr, buildPokeSources(nowForm.slug, _eid), '⚡')
       } else {
-        pspr.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(nowForm.slug)) || `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
+        pspr.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(nowForm.slug)) || `assets/Pokemon/others/pokeball.svg`
       }
       const megaScale = (wasMegaDirect || wasStage3) ? 1.3 : 1.0
       pspr.style.width = pspr.style.height = `calc(clamp(140px, min(34vw, 28vh), 280px) * ${pokeFinalScale(nowForm.slug) * megaScale})`
@@ -10810,7 +10815,7 @@ function g13bTriggerLegendary() {
       attachSpriteCascade(legSpr, buildPokeSources(leg.slug, null), leg.icon || '🌟')
     } else {
       // LEGACY-FALLBACK-EXEMPT: only fires when cascade helpers unloaded.
-      legSpr.src = `https://img.pokemondb.net/sprites/home/normal/${leg.slug}.png`
+      legSpr.src = `assets/Pokemon/others/pokeball.svg`
       legSpr.onerror = function(){ this.alt = leg.icon || '🌟' }
     }
   }

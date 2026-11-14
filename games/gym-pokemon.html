@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.51-20261114a">
+<link rel="stylesheet" href="du-buttons.css?v=v64.52-20261114a">
 <title>Gym Pokémon ⚔️</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.52-20261114a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a0212;font-family:'Fredoka One',sans-serif;touch-action:none;user-select:none}
@@ -596,24 +596,24 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
   <div id="badge-gym-text"></div>
 </div>
 
-<script src="data/poke-sprite-cdn.js?v=v64.51-20261114a"></script>
-<script src="data/poke-sprite-loader.js?v=v64.51-20261114a"></script>
-<script src="data/freeze-watchdog.js?v=v64.51-20261114a"></script>
-<script src="data/save-engine.js?v=v64.51-20261114a"></script>
-<script src="data/math-rules.js?v=v64.51-20261114a"></script>
-<script src="data/emoji-map.js?v=v64.51-20261114a"></script><script src="data/ui-sprites.js?v=v64.51-20261114a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/poke-sprite-cdn.js?v=v64.52-20261114a"></script>
+<script src="data/poke-sprite-loader.js?v=v64.52-20261114a"></script>
+<script src="data/freeze-watchdog.js?v=v64.52-20261114a"></script>
+<script src="data/save-engine.js?v=v64.52-20261114a"></script>
+<script src="data/math-rules.js?v=v64.52-20261114a"></script>
+<script src="data/emoji-map.js?v=v64.52-20261114a"></script><script src="data/ui-sprites.js?v=v64.52-20261114a"></script><!-- UIUX/gameplay sprite packs -->
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=v64.51-20261114a"></script>
+<script src="quiz-engine.js?v=v64.52-20261114a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=v64.51-20261114a"></script>
-<script src="vfx-engine.js?v=v64.51-20261114a"></script><script src="data/vfx-db.js?v=v64.51-20261114a"></script><script src="vfx-poke.js?v=v64.51-20261114a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/move-id-translations.js?v=v64.51-20261114a"></script>
-<script src="data/sfx-engine.js?v=v64.51-20261114a"></script>
-<script src="data/weather-fx.js?v=v64.51-20261114a"></script>
-<script src="data/poke-packages.js?v=v64.51-20261114a"></script>
-<script src="data/battle-modes.js?v=v64.51-20261114a"></script>
-<script src="data/poke-type-chart.js?v=v64.51-20261114a"></script>
+<script src="battle-arena.js?v=v64.52-20261114a"></script>
+<script src="vfx-engine.js?v=v64.52-20261114a"></script><script src="data/vfx-db.js?v=v64.52-20261114a"></script><script src="vfx-poke.js?v=v64.52-20261114a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/move-id-translations.js?v=v64.52-20261114a"></script>
+<script src="data/sfx-engine.js?v=v64.52-20261114a"></script>
+<script src="data/weather-fx.js?v=v64.52-20261114a"></script>
+<script src="data/poke-packages.js?v=v64.52-20261114a"></script>
+<script src="data/battle-modes.js?v=v64.52-20261114a"></script>
+<script src="data/poke-type-chart.js?v=v64.52-20261114a"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -687,8 +687,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
     };
   });
 </script>
-<script src="game-modal.js?v=v64.51-20261114a"></script>
-<script src="battle-sprite-engine.js?v=v64.51-20261114a"></script>
+<script src="game-modal.js?v=v64.52-20261114a"></script>
+<script src="battle-sprite-engine.js?v=v64.52-20261114a"></script>
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -1455,16 +1455,24 @@ const TRAINER_GROUPS = [
 
 const BG_BASE      = '../assets/background/Gym pokemon/';
 // Hotfix #101-J: SPRITE_HD now returns true HD WebP (was 96px CDN — non-HD complaint)
-const SPRITE_HD_REMOTE = s => `https://img.pokemondb.net/sprites/home/normal/${s}.png`; // 96px CDN, last resort
+const SPRITE_HD_REMOTE = s => `../assets/Pokemon/others/pokeball.svg`; // 96px CDN, last resort
 const SPRITE_HD        = s => (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null) || SPRITE_HD_REMOTE(s); // true HD WebP
 const TRAINER_SPRITE_LOCAL = s => `../assets/Pokemon/trainer/${s}.webp`;
-const TRAINER_SPRITE_REMOTE = s => `https://play.pokemonshowdown.com/sprites/trainers/${s}.png`;
-// v55.15 — only 6 trainer slugs ship local; everything else was 404→remote-fallback
-// which spammed ~94 wasted requests + broken-image flashes per visit. Allowlist
-// the known-local set so we go straight to remote for the rest. onerror chain
-// still rescues if remote fails for any trainer (player.webp keeps its own path).
-const LOCAL_TRAINER_SET = new Set(['agatha', 'lorelei', 'gary', 'james', 'jessie', 'goh']);
-const TRAINER_SPRITE = s => LOCAL_TRAINER_SET.has(s) ? TRAINER_SPRITE_LOCAL(s) : TRAINER_SPRITE_REMOTE(s);
+const TRAINER_SPRITE_REMOTE = s => `../assets/Pokemon/trainer/${s}.webp`; // vendored 2026-11-14: no other host
+// 2026-11-14 — every trainer sprite ships locally (assets/Pokemon/trainer/, 94 files), so the game
+// works offline and never asks another host. Five names Showdown never had (cissy, danny, drake,
+// luana, rudy) have no file: their card shows their lead Pokemon instead (never a 404, never an emoji).
+const TRAINER_SPRITE = s => TRAINER_SPRITE_LOCAL(s);
+const NO_TRAINER_FILE = new Set(['cissy','danny','drake','luana','rudy']);
+// Owner rule: women and girls appear only wearing hijab. None of these trainer sprites does, so their face
+// is their lead Pokemon (audit A-6, gate tools/qa-gym-hijab.mjs). A new female trainer goes on this list.
+const HIJAB_SWAP = new Set(['acerola','agatha','akari','bea','candice','cissy','clair','cynthia','dawn','diantha','elesa','erika',
+  'flannery','gardenia','iono','irida','iris','jasmine','jessie','karen','katy','korrina','lana','lenora','lorelei','luana','mallow',
+  'may','maylene','misty','nessa','olivia','roxanne','ryme','sabrina','serena','skyla','tulip','valerie','viola','whitney','winona']);
+function trainerFaceSrc(t){
+  if (NO_TRAINER_FILE.has(t.sprite) || HIJAB_SWAP.has(t.sprite)) { const lead = t.team && t.team[0]; return (lead && pokeSpriteVariant(lead.slug)) || SPRITE_HD_REMOTE(); }
+  return TRAINER_SPRITE(t.sprite);
+}
 
 // Type effectiveness — KID-FRIENDLY (2026-05-04): 2x→1.5x, 0.5x→0.75x, 0→0.5x
 // Prefer shared chart from window.calcTypeMult (poke-type-chart.js); fall back to inline.
@@ -2113,16 +2121,10 @@ function badgeHtml(trainer, size, extraStyle){
 
 // Replace broken trainer img with badge-emoji avatar
 function trainerFallback(img, badge) {
-  // Try remote CDN before falling back to emoji.
-  // Only 6 trainer slugs ship locally (LOCAL_TRAINER_SET); the other 99 are
-  // served straight from the remote CDN. The old guard only asked "have I
-  // retried?", never "am I already ON the remote URL?" — so for those 99 a CDN
-  // 404 re-requested the IDENTICAL failing URL before giving up. Verified: 6
-  // unique failing URLs produced 12 failed requests per visit. Skip the retry
-  // when the current src is already the remote one.
+  // One retry of the local file, then the badge avatar.
   const sprite = img.dataset.sprite;
   const remote = sprite ? TRAINER_SPRITE_REMOTE(sprite) : '';
-  if (sprite && !img.dataset.triedRemote && img.src !== remote) {
+  if (sprite && !HIJAB_SWAP.has(sprite) && !NO_TRAINER_FILE.has(sprite) && !img.dataset.triedRemote && img.src !== remote) {
     img.dataset.triedRemote = '1';
     img.src = remote;
     return;
@@ -2161,7 +2163,7 @@ function buildGymSelect(){
       html += `<div class="trainer-card ${beaten?'beaten':''} ${!unlocked?'locked':''} ${isCurrent?'current':''}"
         ${unlocked ? `onclick="showGymWelcome('${t.id}')"` : ''}>
         <div class="tc-order" style="color:${grp.color}">${idx+1}</div>
-        <img src="${TRAINER_SPRITE(t.sprite)}" data-sprite="${t.sprite}"
+        <img src="${trainerFaceSrc(t)}" data-sprite="${t.sprite}"
           onerror="trainerFallback(this,'${t.badge}')" alt="${t.name}">
         <div class="tc-info">
           <div class="tc-name">${t.name}</div>
@@ -2234,8 +2236,8 @@ function showGymWelcome(trainerId) {
   const mainType = trainer.team[0]?.type || 'normal'
   document.getElementById('gw-type').textContent = 'Type: ' + (typeMap[mainType] || mainType)
   const spr = document.getElementById('gw-sprite')
-  spr.src = TRAINER_SPRITE(trainer.sprite)
-  spr.onerror = () => { if (!spr.dataset.tried) { spr.dataset.tried = '1'; spr.src = TRAINER_SPRITE_REMOTE(trainer.sprite) } else { spr.style.display = 'none' } }
+  spr.src = trainerFaceSrc(trainer)
+  spr.onerror = () => { if (!spr.dataset.tried) { spr.dataset.tried = '1'; spr.src = trainerFaceSrc(trainer) } else { spr.style.display = 'none' } }
   document.getElementById('gw-fight').onclick = () => {
     closeWelcome();
     // A-343 — pick the MODE first (Adventure/PvP/Tournament). The Adventure prep
@@ -2443,9 +2445,9 @@ function startBattle(trainerId){
   const epFb = document.getElementById('portrait-enemy-fb');
   epFb.style.display = 'none'; epFb.textContent = '';
   ep.style.display = ''; ep.dataset.triedRemote = ''; // reset flag for new battle
-  ep.src = TRAINER_SPRITE(trainer.sprite);
+  ep.src = trainerFaceSrc(trainer);
   ep.onerror = ()=>{
-    if(!ep.dataset.triedRemote){ep.dataset.triedRemote='1';ep.src=TRAINER_SPRITE_REMOTE(trainer.sprite);return}
+    if(!ep.dataset.triedRemote){ep.dataset.triedRemote='1';ep.src=trainerFaceSrc(trainer);return}
     ep.style.display = 'none';
     epFb.textContent = trainer.name.charAt(0); // show first letter, not badge emoji
     epFb.style.display = 'flex';
@@ -3183,8 +3185,8 @@ window.__g13c = {
   endBattleLose: function () { return endBattleLose() }
 }
 </script>
-<script src="dunia-icons.js?v=v64.51-20261114a"></script>
-<script src="dunia-cinema.js?v=v64.51-20261114a" defer></script>
+<script src="dunia-icons.js?v=v64.52-20261114a"></script>
+<script src="dunia-cinema.js?v=v64.52-20261114a" defer></script>
 </body>
 </html>
 <!-- g13c-pixi v56.8-20260704b -->

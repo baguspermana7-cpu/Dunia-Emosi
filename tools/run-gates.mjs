@@ -29,7 +29,7 @@ import { tmpdir } from 'node:os'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const LOCK = '/tmp/claude-1000/kereta-browser.lock'
-const TAGS = { timmy: /^qa-tk-/, mojo: /^qa-mojo-/, dunia: /^qa-dunia-/, calm: /^qa-(breathe|feeling-checkin|freeze-card)\.mjs$/, content: /^qa-(instruction-companion|content-rules|sprite-fill|white-outline|no-emoji|game-a11y)\.mjs$/ }
+const TAGS = { timmy: /^qa-tk-/, mojo: /^qa-mojo-/, dunia: /^qa-dunia-/, calm: /^qa-(breathe|feeling-checkin|freeze-card)\.mjs$/, content: /^qa-(instruction-companion|content-rules|sprite-fill|white-outline|no-emoji|game-a11y|no-third-party|name-escape|gym-hijab)\.mjs$/ }
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 
 const args = process.argv.slice(2)
@@ -65,8 +65,24 @@ if (LIST) { for (const p of plan) console.log(p.stuck ? 'no-env' : 'run   ', p.n
 
 const freePort = () => new Promise(r => { const s = createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)) }) })
 const port = await freePort(), origin = `http://127.0.0.1:${port}`
-const srv = spawn('python3', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], { cwd: ROOT, stdio: 'ignore' })
-const stopServer = () => { try { srv.kill() } catch (e) {} }
+// The server has died mid-run under heavy machine load (no OOM in the journal); every gate after that failed with
+// ERR_CONNECTION_REFUSED. Record each death and start it again on the same port before the next gate.
+let srv, restarts = 0
+const startServer = () => {
+  srv = spawn('python3', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], { cwd: ROOT, stdio: 'ignore' })
+  srv.on('exit', (code, sig) => { if (!stopping) console.log(`run-gates: server exited (code ${code}, signal ${sig})`) })
+}
+let stopping = false
+startServer()
+const alive = async () => { try { return (await fetch(origin + '/tools/run-gates.mjs')).ok } catch (e) { return false } }
+const ensureServer = async () => {
+  if (srv.exitCode === null && srv.signalCode === null && await alive()) return
+  try { srv.kill() } catch (e) {}
+  restarts++; startServer()
+  for (let i = 0; i < 50 && !(await alive()); i++) await new Promise(r => setTimeout(r, 200))
+  console.log('run-gates: server restarted (' + restarts + ')')
+}
+const stopServer = () => { stopping = true; try { srv.kill() } catch (e) {} }
 process.on('exit', stopServer); process.on('SIGINT', () => process.exit(130)); process.on('SIGTERM', () => process.exit(143))
 // identity: the server must hand back THIS file, not another session's tree on a reused port
 const me = readFileSync(fileURLToPath(import.meta.url), 'utf8')
@@ -94,14 +110,15 @@ const results = []
 for (const p of plan) {
   if (p.stuck) { results.push({ gate: p.name, status: 'no-env' }); console.log('no-env  ', p.name, '(hardcoded port, not run)'); continue }
   const env = envFor(p.file, origin)
+  await ensureServer()
   let a = runOnce(p.file, env, p.timeout), status = a.code === 0 ? 'pass' : a.code === 75 ? 'lock-busy' : 'fail', retry = null
-  if (status === 'fail') { retry = runOnce(p.file, env, p.timeout); if (retry.code === 0) status = 'flaky'; else if (retry.code === 75) status = 'lock-busy' }
+  if (status === 'fail') { await ensureServer(); retry = runOnce(p.file, env, p.timeout); if (retry.code === 0) status = 'flaky'; else if (retry.code === 75) status = 'lock-busy' }
   results.push({ gate: p.name, status, env, first: a, retry })
   console.log(status.padEnd(8), p.name, Math.round((a.ms + (retry ? retry.ms : 0)) / 1000) + 's', '|', (retry || a).last)
   if (status === 'fail') for (const l of (retry || a).fails) console.log('          ', l.trim())
 }
 const count = s => results.filter(r => r.status === s).length
-const summary = { origin, at: new Date().toISOString(), pass: count('pass'), flaky: count('flaky'), fail: count('fail'), noEnv: count('no-env'), lockBusy: count('lock-busy'), results }
+const summary = { origin, serverRestarts: restarts, at: new Date().toISOString(), pass: count('pass'), flaky: count('flaky'), fail: count('fail'), noEnv: count('no-env'), lockBusy: count('lock-busy'), results }
 writeFileSync(OUT, JSON.stringify(summary, null, 1))
 console.log(`run-gates: ${summary.pass} pass, ${summary.flaky} flaky, ${summary.fail} fail, ${summary.noEnv} no-env, ${summary.lockBusy} lock-busy (summary ${OUT})`)
 stopServer()

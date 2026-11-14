@@ -769,7 +769,7 @@
     // for everything else. The onerror handlers throughout the file already
     // catch 404s and replace with the emoji span.
     if (LOCAL_SPRITE_BLOCKLIST.has(id)) {
-      return 'https://img.pokemondb.net/sprites/home/normal/' + cdnSlug(slug) + '.png';
+      return _ASSET_BASE + 'assets/Pokemon/others/pokeball.svg';
     }
     var padded = String(id).padStart(4, '0');
     return _ASSET_BASE + 'assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
@@ -795,13 +795,12 @@
       try {
         if (!img.dataset.bmCdnTried) {
           img.dataset.bmCdnTried = '1';
-          img.src = 'https://img.pokemondb.net/sprites/home/normal/' + cdnSlug(slug) + '.png';
+          img.src = _ASSET_BASE + 'assets/Pokemon/others/pokeball.svg';
           return;
         }
         if (!img.dataset.bmSdTried) {
           img.dataset.bmSdTried = '1';
-          img.src = 'https://play.pokemonshowdown.com/sprites/gen5/' +
-            cdnSlug(slug).replace(/-/g, '') + '.png';
+          img.src = _ASSET_BASE + 'assets/Pokemon/others/pokeball.svg';
           return;
         }
         if (!img.dataset.bmBallTried) {

@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Ducky Volley 🏐</title>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.52-20261114a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf8;font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -65,7 +65,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
 .start-hint{font-size:15px;color:#86efac;animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.5;transform:scale(.96)}}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.51-20261114a">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.52-20261114a">
 </head>
 <body>
 
@@ -142,15 +142,15 @@ if(!('ontouchstart' in window)){
 </script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="game-modal.js?v=v64.51-20261114a"></script>
-<script src="../shared/rz-responsive.js?v=v64.51-20261114a"></script>
-<script src="data/poke-sprite-cdn.js?v=v64.51-20261114a"></script>
-<script src="data/poke-sprite-loader.js?v=v64.51-20261114a"></script>
-<script src="data/freeze-watchdog.js?v=v64.51-20261114a"></script>
-<script src="data/save-engine.js?v=v64.51-20261114a"></script>
-<script src="data/sfx-engine.js?v=v64.51-20261114a"></script><!-- shared answer cues (owner) -->
-<script src="data/emoji-map.js?v=v64.51-20261114a"></script><script src="data/ui-sprites.js?v=v64.51-20261114a"></script><!-- win-screen sprites -->
-<script src="vfx-engine.js?v=v64.51-20261114a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=v64.52-20261114a"></script>
+<script src="../shared/rz-responsive.js?v=v64.52-20261114a"></script>
+<script src="data/poke-sprite-cdn.js?v=v64.52-20261114a"></script>
+<script src="data/poke-sprite-loader.js?v=v64.52-20261114a"></script>
+<script src="data/freeze-watchdog.js?v=v64.52-20261114a"></script>
+<script src="data/save-engine.js?v=v64.52-20261114a"></script>
+<script src="data/sfx-engine.js?v=v64.52-20261114a"></script><!-- shared answer cues (owner) -->
+<script src="data/emoji-map.js?v=v64.52-20261114a"></script><script src="data/ui-sprites.js?v=v64.52-20261114a"></script><!-- win-screen sprites -->
+<script src="vfx-engine.js?v=v64.52-20261114a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -1388,7 +1388,7 @@ function loadPokeSprite(imgId, slug, mirror) {
   // dedup loader replaces 3-step inline onerror chain.
   const id = {pikachu:25,machamp:68,snorlax:143,eevee:133,jigglypuff:39,lucario:448,hitmonchan:107,primeape:57,psyduck:54,mewtwo:150}[slug]
   const svgUrl = id ? `../assets/Pokemon/svg/${id}.svg` : null
-  const cdnUrl = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  const cdnUrl = `../assets/Pokemon/others/pokeball.svg`
   const hdUrl = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(slug) : null)
   if (typeof attachSpriteCascade === 'function') {
     attachSpriteCascade(el, [hdUrl, svgUrl, cdnUrl], '⚡')
@@ -1535,7 +1535,7 @@ function showPokeSelector(){
       const img=document.createElement('img')
       img.style.cssText='width:40px;height:40px;object-fit:contain'
       const _hdT=(typeof pokeSpriteAlt2==='function'?pokeSpriteAlt2(p.slug):null)
-      const _cdnT=`https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
+      const _cdnT=`../assets/Pokemon/others/pokeball.svg`
       if(typeof attachSpriteCascade==='function'){attachSpriteCascade(img,[_hdT,_cdnT],'⚡')}
       else{img.src=_hdT||_cdnT;img.onerror=()=>{img.src=_cdnT;img.onerror=null}}
       card.appendChild(img)
@@ -1592,10 +1592,10 @@ window.addEventListener('resize',()=>{
   _duckyResizeT = setTimeout(_duckyResize, 150)
 })
 </script>
-<script src="dunia-icons.js?v=v64.51-20261114a"></script>
-<script src="dunia-home.js?v=v64.51-20261114a"></script>
+<script src="dunia-icons.js?v=v64.52-20261114a"></script>
+<script src="dunia-home.js?v=v64.52-20261114a"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.51-20261114a" defer></script>
+<script src="dunia-cinema.js?v=v64.52-20261114a" defer></script>
 </body>
 </html>
 <!-- v20260418d -->

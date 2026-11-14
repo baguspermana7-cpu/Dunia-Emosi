@@ -18,5 +18,14 @@ for (const pg of pages) {
 const sw = fs.readFileSync('sw.js', 'utf8')
 const shell = [...sw.matchAll(/'(\.\/[^']+)'/g)].map(m => m[1])
 for (const u of shell) ok(fs.existsSync(file('sw.js', u)), `sw.js precache: ${u} does not exist`)
-console.log(`qa-local-refs: ${pass}/${pass + fail} checks passed (${pages.length} pages, ${shell.length} precache entries)`)
+// Hub code and hub CSS: every literal asset path (audit A-7: a missing level icon and a missing game-7 background
+// shipped because only <script>/<link> were checked). Paths built from variables are not literals and are skipped.
+let lit = 0
+for (const f of ['game.js', 'style.css']) {
+  const src = fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+  for (const m of src.matchAll(/['"(](assets\/[^'"()`$]+?\.(?:webp|png|jpe?g|gif|svg|mp3|ogg|wav|json))['")]/gi)) {
+    lit++; ok(fs.existsSync(file(f, m[1])), `${f}: ${m[1]} does not exist`)
+  }
+}
+console.log(`qa-local-refs: ${pass}/${pass + fail} checks passed (${pages.length} pages, ${shell.length} precache entries, ${lit} hub asset literals)`)
 process.exit(fail ? 1 : 0)

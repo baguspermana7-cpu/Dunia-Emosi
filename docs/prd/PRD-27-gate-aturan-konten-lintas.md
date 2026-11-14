@@ -1,7 +1,7 @@
 # PRD-27 Gate aturan konten lintas game
 
 - **Gelombang:** Gelombang 0 — verifikasi & pagar murah (tanpa fitur anak)
-- **Status:** bagian statis dikerjakan 2026-11-14; bagian browser (emoji tampil, outline putih) belum
+- **Status:** live v64.45 (outline 1048 → 142) (lihat "Hasil")
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #27
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 

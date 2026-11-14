@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Monster Wants Candy 🍬</title>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.52-20261114a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#B4D9E7;font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -62,7 +62,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 
 #monster-img{transition:none;will-change:transform}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.51-20261114a">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.52-20261114a">
 </head>
 <body>
 
@@ -113,19 +113,19 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <!-- Hotfix #104 (2026-04-28): removed inline `bottom:25%` — was overriding
      placeMonsterOnGround() pixel anchoring, causing Bulbasaur/etc to float
      above grass. JS now anchors based on actual sprite height. -->
-<img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/psyduck.png';this.onerror=null" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:0;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
+<img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='../assets/Pokemon/others/pokeball.svg';this.onerror=null" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:0;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="../shared/rz-responsive.js?v=v64.51-20261114a"></script>
-<script src="game-modal.js?v=v64.51-20261114a"></script>
-<script src="data/poke-sprite-cdn.js?v=v64.51-20261114a"></script>
-<script src="data/poke-sprite-loader.js?v=v64.51-20261114a"></script>
-<script src="data/freeze-watchdog.js?v=v64.51-20261114a"></script>
-<script src="data/save-engine.js?v=v64.51-20261114a"></script>
+<script src="../shared/rz-responsive.js?v=v64.52-20261114a"></script>
+<script src="game-modal.js?v=v64.52-20261114a"></script>
+<script src="data/poke-sprite-cdn.js?v=v64.52-20261114a"></script>
+<script src="data/poke-sprite-loader.js?v=v64.52-20261114a"></script>
+<script src="data/freeze-watchdog.js?v=v64.52-20261114a"></script>
+<script src="data/save-engine.js?v=v64.52-20261114a"></script>
 <script src="question-bank.js"></script>
-<script src="data/sfx-engine.js?v=v64.51-20261114a"></script><!-- shared coin/answer cues (owner) -->
-<script src="data/emoji-map.js?v=v64.51-20261114a"></script><script src="data/ui-sprites.js?v=v64.51-20261114a"></script><!-- eco HUD sprites -->
-<script src="vfx-engine.js?v=v64.51-20261114a"></script><!-- shared VFX (combo-milestone pop) -->
+<script src="data/sfx-engine.js?v=v64.52-20261114a"></script><!-- shared coin/answer cues (owner) -->
+<script src="data/emoji-map.js?v=v64.52-20261114a"></script><script src="data/ui-sprites.js?v=v64.52-20261114a"></script><!-- eco HUD sprites -->
+<script src="vfx-engine.js?v=v64.52-20261114a"></script><!-- shared VFX (combo-milestone pop) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -974,7 +974,7 @@ function laserAbsorbSwap(candy) {
     g22SelectedPoke = next.slug
     // Hotfix 2026-04-28: route via attachSpriteCascade — terminating dedup loader.
     const _hdNext = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(next.slug) : null)
-    const _cdnNext = `https://img.pokemondb.net/sprites/home/normal/${next.slug}.png`
+    const _cdnNext = `../assets/Pokemon/others/pokeball.svg`
     if (typeof attachSpriteCascade === 'function') {
       attachSpriteCascade(monsterEl, [_hdNext, _cdnNext], '🐾')
     } else {
@@ -1254,7 +1254,7 @@ function renderPokePicker() {
     const card = document.createElement('div')
     card.style.cssText = `background:${p.slug===g22SelectedPoke?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.08)'};border:2px solid ${p.slug===g22SelectedPoke?'#a78bfa':'rgba(255,255,255,0.15)'};border-radius:10px;padding:4px;text-align:center;cursor:pointer;transition:all .12s`
     const _hdCard = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
-    const _cdnCard = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
+    const _cdnCard = `../assets/Pokemon/others/pokeball.svg`
     const thumb = document.createElement('img')
     thumb.style.cssText = 'width:40px;height:40px;image-rendering:auto'
     if (typeof attachSpriteCascade === 'function') {
@@ -1272,7 +1272,7 @@ function renderPokePicker() {
       g22SelectedPoke = p.slug
       const img = document.getElementById('monster-img')
       const _hdPick = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
-      const _cdnPick = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
+      const _cdnPick = `../assets/Pokemon/others/pokeball.svg`
       if (typeof attachSpriteCascade === 'function') {
         attachSpriteCascade(img, [_hdPick, _cdnPick], '🐾')
       } else {
@@ -1341,9 +1341,9 @@ window.addEventListener('resize', () => {
 })
 
 </script>
-<script src="dunia-icons.js?v=v64.51-20261114a"></script>
-<script src="dunia-home.js?v=v64.51-20261114a"></script>
+<script src="dunia-icons.js?v=v64.52-20261114a"></script>
+<script src="dunia-home.js?v=v64.52-20261114a"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.51-20261114a" defer></script>
+<script src="dunia-cinema.js?v=v64.52-20261114a" defer></script>
 </body>
 </html>

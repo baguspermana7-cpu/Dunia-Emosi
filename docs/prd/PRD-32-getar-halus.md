@@ -1,7 +1,7 @@
 # PRD-32 Getar halus
 
 - **Gelombang:** Gelombang 0 — verifikasi & pagar murah (tanpa fitur anak)
-- **Status:** dikerjakan 2026-11-14 (lihat "Hasil")
+- **Status:** live v64.43 (lihat "Hasil")
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #32
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 

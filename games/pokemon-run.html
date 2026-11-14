@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Pokemon Run 🏃</title>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.52-20261114a">
 <style>
 /* v54.5 — WCAG 2.1 AAA reduced-motion respect. Also kills parallax via JS guard. */
 @media (prefers-reduced-motion: reduce){
@@ -189,7 +189,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #jump-btn.in-air #jump-x2{display:block}
 @media (pointer:coarse){#jump-btn{display:flex}}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.51-20261114a">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.52-20261114a">
 </head>
 <body>
 
@@ -254,7 +254,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
         <div class="tr-hp-hearts" id="tr-player-hp">❤️❤️❤️</div>
       </div>
     </div>
-    <div id="tr-trainer-tag">Jessie · Team Rocket</div>
+    <div id="tr-trainer-tag">James · Team Rocket</div>
     <img id="tr-trainer-sprite" src="" alt="">
     <img id="tr-poke-enemy" src="" alt="">
     <img id="tr-poke-player" src="" alt="">
@@ -409,14 +409,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='1'
   },600)
 </script>
-<script src="data/emoji-map.js?v=v64.51-20261114a"></script><script src="data/ui-sprites.js?v=v64.51-20261114a"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=v64.51-20261114a"></script>
+<script src="data/emoji-map.js?v=v64.52-20261114a"></script><script src="data/ui-sprites.js?v=v64.52-20261114a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=v64.52-20261114a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="data/poke-sprite-cdn.js?v=v64.51-20261114a"></script>
-<script src="data/sfx-engine.js?v=v64.51-20261114a"></script>
-<script src="vfx-engine.js?v=v64.51-20261114a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/weather-fx.js?v=v64.51-20261114a"></script>
-<script src="data/poke-type-chart.js?v=v64.51-20261114a"></script>
+<script src="data/poke-sprite-cdn.js?v=v64.52-20261114a"></script>
+<script src="data/sfx-engine.js?v=v64.52-20261114a"></script>
+<script src="vfx-engine.js?v=v64.52-20261114a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/weather-fx.js?v=v64.52-20261114a"></script>
+<script src="data/poke-type-chart.js?v=v64.52-20261114a"></script>
 <script>
   // Licensed Pokemon SFX + weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -433,10 +433,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     } catch (e) {}
   });
 </script>
-<script src="data/freeze-watchdog.js?v=v64.51-20261114a"></script>
-<script src="data/save-engine.js?v=v64.51-20261114a"></script>
-<script src="data/g23-question-engine.js?v=v64.51-20261114a"></script>
-<script src="game-modal.js?v=v64.51-20261114a"></script>
+<script src="data/freeze-watchdog.js?v=v64.52-20261114a"></script>
+<script src="data/save-engine.js?v=v64.52-20261114a"></script>
+<script src="data/g23-question-engine.js?v=v64.52-20261114a"></script>
+<script src="game-modal.js?v=v64.52-20261114a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -474,7 +474,7 @@ function _hdAlt2(slug) {
   const fname = norm.replace(/-/g, '_');
   return `../assets/Pokemon/pokemondb_hd_alt2/${String(id).padStart(4,'0')}_${fname}.webp`;
 }
-const HD_DB = n => _hdAlt2(n) || `https://img.pokemondb.net/sprites/home/normal/${n}.png`
+const HD_DB = n => _hdAlt2(n) || `../assets/Pokemon/others/pokeball.svg`
 // All Pokemon use LOCAL animated WebP from assets/Pokemon/g23/ (user-provided
 // running sprites). Lycanroc/Cinderace RESTORED — user has the assets locally.
 // chespin.png and lucario.png are static (no .webp version locally).
@@ -511,7 +511,7 @@ const TR_POKEMON = [
   { name:'Frillish',   slug:'frillish',   type:'water'   },{ name:'Chimecho',   slug:'chimecho',   type:'psychic' },
 ]
 const TR_TRAINERS = [
-  { name:'Jessie', sprite:'../assets/Pokemon/trainer/jessie.webp' },
+  // Jessie left the pool: owner rule, women and girls appear only wearing hijab (audit A-6).
   { name:'James',  sprite:'../assets/Pokemon/trainer/james.webp'  },
 ]
 const GYM_BGS = [
@@ -1993,9 +1993,9 @@ function engageTRBattle(){
   const pokeDbSlug=trPoke.slug.replace(/\s+/g,'-')
   const enemyHD = _hdAlt2(pokeDbSlug)
   document.getElementById('tr-poke-enemy').src = enemyHD ||
-    `https://img.pokemondb.net/sprites/home/normal/${pokeDbSlug}.png`
+    `../assets/Pokemon/others/pokeball.svg`
   document.getElementById('tr-poke-enemy').onerror=function(){
-    this.src=`https://img.pokemondb.net/sprites/home/normal/${pokeDbSlug}.png`
+    this.src=`../assets/Pokemon/others/pokeball.svg`
     this.onerror=null
   }
   // Player Pokemon (HD static sprite) — prefer local HD WebP
@@ -2003,7 +2003,7 @@ function engageTRBattle(){
   const playerPokeEl=document.getElementById('tr-poke-player')
   const playerHD = _hdAlt2(playerSlug)
   playerPokeEl.src = playerHD ||
-    `https://img.pokemondb.net/sprites/home/normal/${playerSlug}.png`
+    `../assets/Pokemon/others/pokeball.svg`
   playerPokeEl.onerror=function(){ this.src=playerPoke.src; this.onerror=null }
   updateTRHPDisplay()
   // Reset atk-name
@@ -2629,7 +2629,7 @@ function openBag(){
     card.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;border:2px solid '+(i===selectedPokemon?'#fbbf24':'rgba(255,255,255,.15)')+';background:'+(i===selectedPokemon?'rgba(251,191,36,.15)':'rgba(255,255,255,.05)')+';cursor:pointer'
     const hdSrc = p.evo ? p.evo[0].hd : p.hd
     const img=document.createElement('img'); img.src=hdSrc; img.style.cssText='width:64px;height:60px;object-fit:contain'
-    img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase()}.png`; img.onerror=null }
+    img.onerror=()=>{ img.src=`../assets/Pokemon/others/pokeball.svg`; img.onerror=null }
     card.appendChild(img)
     const nm=document.createElement('div'); nm.style.cssText='font-size:10px;color:#e9d5ff;font-weight:700;text-align:center'; nm.textContent=p.name; card.appendChild(nm)
     if(p.evo && p.evo.length>1){ const evoTag=document.createElement('div'); evoTag.style.cssText='font-size:9px;color:#fbbf24;font-weight:700'; evoTag.textContent=`${p.evo.length}x Evo`; card.appendChild(evoTag) }
@@ -2970,10 +2970,10 @@ function updateCoinTrail(dt){
   if (S.frame % 60 === 0) S.coins = S.coins.filter(c => !c.collected)
 }
 </script>
-<script src="dunia-icons.js?v=v64.51-20261114a"></script>
-<script src="dunia-home.js?v=v64.51-20261114a"></script>
+<script src="dunia-icons.js?v=v64.52-20261114a"></script>
+<script src="dunia-home.js?v=v64.52-20261114a"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.51-20261114a" defer></script>
+<script src="dunia-cinema.js?v=v64.52-20261114a" defer></script>
 </body>
 </html>
 <!-- g23-pixi v20260506h -->

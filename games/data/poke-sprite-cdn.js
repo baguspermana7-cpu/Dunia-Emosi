@@ -33,7 +33,7 @@ function pokeSpriteSVG(slug) {
 
 // Online CDN (96px). Use ONLY as last resort after HD WebP + SVG fail.
 function pokeSpriteCDN(slug) {
-  return 'https://img.pokemondb.net/sprites/home/normal/' + slug + '.png';
+  return '../assets/Pokemon/others/pokeball.svg';
 }
 
 // Cascade: HD WebP -> SVG -> 96px CDN. Returns first non-null path.

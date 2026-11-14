@@ -25,6 +25,14 @@ node tools/qa-watchdog-wired.mjs
 echo "== every Timmy board, kereta maze and Mojo pattern can be finished"
 node tools/qa-levels-solvable.mjs
 
+echo "== one name per game: hub tile = GAME_META (audit A-8)"
+node tools/qa-game-names.mjs
+
+echo "== Mojo: award persistence, hub mute, precache of every G31 script (were unwired and went stale)"
+node tools/qa-mojo-award.mjs
+node tools/qa-mojo-sound.mjs
+node tools/qa-mojo-integration.mjs
+
 echo "== sprites fill their box (people pack trimmed, PRD-26)"
 node tools/qa-sprite-fill.mjs
 
@@ -73,6 +81,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-error-kinds.mjs
   echo "== sound, vibration and maths level are each child's own (PRD-18)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-profile-settings.mjs
+  echo "== nothing asks another host; fonts and PixiJS come from this origin (audit 2026-11-14)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-no-third-party.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

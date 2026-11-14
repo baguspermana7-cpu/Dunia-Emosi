@@ -147,7 +147,7 @@
   function renderStory (card) {
     $('story-t').innerHTML = card.story.map(function (s, i) { return '<span class="s" data-i="' + i + '">' + esc(s) + '</span> ' }).join('')
   }
-  function esc (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;') }
+  function esc (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') } // also used inside aria-label="..." (audit A-5)
   function sayLine (i) {
     var sp = $('story-t').querySelector('[data-i="' + i + '"]')
     $('story-t').querySelectorAll('.s').forEach(function (x) { x.classList.remove('now') })

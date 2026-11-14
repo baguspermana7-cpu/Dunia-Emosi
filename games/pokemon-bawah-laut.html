@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Pokemon Bawah Laut 🌊</title>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.52-20261114a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,#0077B6 0%,#00B4D8 60%,#023E8A 100%);font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -93,7 +93,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 @keyframes starSpin{0%{rotate:0deg}100%{rotate:360deg}}
 .swim-starspin{animation:starSpin 4s linear infinite}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.51-20261114a">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.52-20261114a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
@@ -154,14 +154,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat... ⏳</div>
 </div>
 
-<script src="data/emoji-map.js?v=v64.51-20261114a"></script><script src="data/ui-sprites.js?v=v64.51-20261114a"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=v64.51-20261114a"></script>
+<script src="data/emoji-map.js?v=v64.52-20261114a"></script><script src="data/ui-sprites.js?v=v64.52-20261114a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=v64.52-20261114a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v64.51-20261114a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
-<script src="data/freeze-watchdog.js?v=v64.51-20261114a"></script>
-<script src="data/save-engine.js?v=v64.51-20261114a"></script>
-<script src="data/g23-question-engine.js?v=v64.51-20261114a"></script>
-<script src="game-modal.js?v=v64.51-20261114a"></script>
+<script src="vfx-engine.js?v=v64.52-20261114a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
+<script src="data/freeze-watchdog.js?v=v64.52-20261114a"></script>
+<script src="data/save-engine.js?v=v64.52-20261114a"></script>
+<script src="data/g23-question-engine.js?v=v64.52-20261114a"></script>
+<script src="game-modal.js?v=v64.52-20261114a"></script>
 <script>
 // ══════════════════════════════════════════════════════════════
 //  CONFIG
@@ -220,7 +220,7 @@ const THEME = getRegion(cfg.level)
 // hd  → pokemondb_hd_alt2 WebP (bag + start overlay + fallback)
 // src → PS() Showdown animated GIF; Magikarp uses HD WebP + wiggle:true CSS micro-animation
 const HD = p => `../assets/Pokemon/pokemondb_hd_alt2/${p}.webp`
-const PS = n => `https://play.pokemonshowdown.com/sprites/ani/${n}.gif`
+const PS = n => `../assets/Pokemon/showdown-ani/${n}.gif`
 const G24_POKEMON = [
   // ── KANTO (Region 0) ──
   { name:'Magikarp', region:0, evo:[
@@ -910,7 +910,7 @@ function _rebuildParallaxLayers() {
 // ══════════════════════════════════════════════════════════════
 // Anglerfish: Pokemon Lanturn (real anglerfish Pokemon, glowing lure).
 // Showdown sprites face LEFT by default — matches our movement direction.
-const _angler = {img:'https://play.pokemonshowdown.com/sprites/ani/lanturn.gif',sp:0.45,bAmp:8,bFq:0.022,sz:46}
+const _angler = {img:'../assets/Pokemon/showdown-ani/lanturn.gif',sp:0.45,bAmp:8,bFq:0.022,sz:46}
 const NPC_TYPES_BY_REGION = [
   [{e:'🐠',sp:1.1,bAmp:18,bFq:0.04,sz:22},{e:'🐟',sp:0.85,bAmp:14,bFq:0.05,sz:20},{e:'🦐',sp:0.5,bAmp:10,bFq:0.06,sz:18},{e:'🐡',sp:0.75,bAmp:20,bFq:0.03,sz:22},{e:'🦀',sp:0.22,bAmp:0,bFq:0,sz:22,benthic:true},_angler],
   [{e:'🪼',sp:0.4,bAmp:30,bFq:0.035,sz:28},{e:'🦑',sp:0.7,bAmp:22,bFq:0.05,sz:24},{e:'💫',sp:0.3,bAmp:40,bFq:0.02,sz:20},{e:'🐙',sp:0.55,bAmp:18,bFq:0.04,sz:26},_angler],
@@ -1803,10 +1803,10 @@ window.addEventListener('orientationchange', _g24Resize)
 // HUD level + start text
 document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
-<script src="dunia-icons.js?v=v64.51-20261114a"></script>
-<script src="dunia-home.js?v=v64.51-20261114a"></script>
+<script src="dunia-icons.js?v=v64.52-20261114a"></script>
+<script src="dunia-home.js?v=v64.52-20261114a"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.51-20261114a" defer></script>
+<script src="dunia-cinema.js?v=v64.52-20261114a" defer></script>
 </body>
 </html>
 <!-- g24-pixi v20260506e -->

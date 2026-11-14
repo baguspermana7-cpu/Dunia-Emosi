@@ -1,7 +1,7 @@
 # PRD-10 Model penguasaan lintas game **[ANAK — mengubah tingkat soal]**
 
 - **Gelombang:** Gelombang 1 — lingkar belajar (inti produk)
-- **Status:** inti + Timmy dikerjakan 2026-11-14; generator Kuis/kereta belum memakai tingkat
+- **Status:** live v64.44; generator v64.48 (lihat "Hasil")
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #10
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 

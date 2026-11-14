@@ -1,7 +1,7 @@
 # PRD-24 Penghangatan cache Timmy yang sopan
 
 - **Gelombang:** Gelombang 0 — verifikasi & pagar murah (tanpa fitur anak)
-- **Status:** dikerjakan 2026-11-14 (lihat "Hasil")
+- **Status:** live v64.44 (lihat "Hasil")
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #24
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 

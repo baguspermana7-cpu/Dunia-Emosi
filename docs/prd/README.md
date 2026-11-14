@@ -18,7 +18,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 - `LearningLog` (`games/data/learning-log.js`) menyimpan ringkasan harian + 100 jawaban terakhir per avatar.
 - Getar sudah ada di `game.js:2153`; setelannya global (`dunia-emosi-vibrate`, `game.js:2176`).
 - Audit yang sudah ada:
-  - `tools/touch-target-audit.mjs` dan `tools/audit-no-emoji.mjs` (lokal, hardcode port, belum masuk runner);
+  - `tools/touch-target-audit.mjs` dan `tools/audit-no-emoji.mjs` (lokal, hardcode port, belum masuk runner — sejak v64.45–46 masuk runner lewat `qa-no-emoji` dan `qa-game-a11y`);
   - `tools/qa-index-contrast.mjs` (index saja);
   - gate offline per game (`qa-tk-offline`, `qa-gt-offline`, `qa-sd-offline`, `qa-g27-offline`, `qa-app-offline`).
 - `adb devices` kosong: tablet belum tersambung.

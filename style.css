@@ -1217,8 +1217,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 #screen-game4 { background: url('assets/bg-game4-savanna.webp') center/cover no-repeat, linear-gradient(180deg, #451A03 0%, #78350F 50%, #451A03 100%); }
 #screen-game7 {
   background:
-    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(109,40,217,0.22) 0%, transparent 70%),
-    url('assets/bg-game7-bayangan.webp') center/cover no-repeat !important;
+    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(109,40,217,0.22) 0%, transparent 70%) !important; /* bg-game7-bayangan.webp never existed (audit A-7) */
 }
 #screen-game8 { background: linear-gradient(160deg, #1a0020 0%, #2D1B69 50%, #1a0020 100%); }
 #screen-game9 { background: linear-gradient(160deg, #052e16 0%, #14532d 40%, #166534 70%, #15803d 100%); }

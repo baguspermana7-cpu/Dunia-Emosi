@@ -1,7 +1,7 @@
 # PRD-08b Bus di semua game soal
 
 - **Gelombang:** Gelombang 1 — lingkar belajar (inti produk)
-- **Status:** dikerjakan 2026-11-14 (lihat "Hasil")
+- **Status:** live v64.44 (lihat "Hasil")
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #8
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 

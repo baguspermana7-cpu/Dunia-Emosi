@@ -41,6 +41,8 @@ ok(!(await shown()), 'an automated browser without ?feel=1 is not shown the card
 for (const [w, h] of [[390, 844], [1280, 800]]) {
   await seed(0, true); await menu('&feel=1', w, h)
   ok(await shown(), `${w}: the card opens on the map`)
+  // measure the card at rest: its entrance scales 0.95 -> 1, and a sample taken mid-way reads 46 px for a 48 px button
+  await p.evaluate(() => Promise.all(document.getAnimations().filter(a => { const t = a.effect && a.effect.getComputedTiming(); return t && isFinite(t.endTime) }).map(a => a.finished.catch(() => {}))))
   const c = await p.evaluate(() => {
     const faces = [...document.querySelectorAll('#dfeel .dfeel-face')], skip = document.querySelector('#dfeel .dfeel-skip').getBoundingClientRect()
     return { n: faces.length, ids: faces.map(f => f.dataset.feel), loaded: faces.every(f => { const i = f.querySelector('img'); return i.complete && i.naturalWidth > 0 }),
