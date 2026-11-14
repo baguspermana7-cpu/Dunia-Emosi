@@ -48,7 +48,7 @@
     var q = pick(place)
     if (!q) { if (done) done(true); return }
     cur = q
-    var tries = 0, over = document.createElement('div')
+    var tries = 0, shownAt = Date.now(), over = document.createElement('div')
     over.className = 'kq-overlay'; over.setAttribute('role', 'dialog'); over.setAttribute('aria-modal', 'true'); over.setAttribute('aria-label', TITLE[place] || 'Pertanyaan')
     var ch = ''
     q.choices.forEach(function (c, i) {
@@ -67,6 +67,8 @@
         if (W.KeretaFX) W.KeretaFX.sound.unlock()
         if (String(c) === String(q.answer)) {
           b.classList.add('ok'); btns.forEach(function (x) { x.disabled = true })
+          // one record per question once it is solved: right on the first try or not (docs/prd/PRD-08b)
+          if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: q.topic || 'umum', skill: q.kind || q.topic || 'umum', item: q.id || q.prompt, ok: tries === 0, tries: tries + 1, ms: Date.now() - shownAt })
           msg.textContent = 'Benar! ' + (q.explain || '')
           if (W.KeretaFX) W.KeretaFX.sound.ok()
           setTimeout(finish, W.KeretaFX && W.KeretaFX.reduced() ? 500 : 900)

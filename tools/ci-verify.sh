@@ -31,6 +31,9 @@ node tools/qa-sprite-fill.mjs
 echo "== people sprites in use were reviewed (hijab rule), no random person pick"
 node tools/qa-content-rules.mjs
 
+echo "== shared mastery settles a child near 75 % right, per child (PRD-10)"
+node tools/qa-mastery.mjs
+
 if [ "${CI_SMOKE:-}" = "1" ]; then
   echo "== smoke: every page loads, renders, 0 errors, no 390px overflow"
   port=${CI_PORT:-8197}

@@ -160,7 +160,10 @@
     host.appendChild(root)
     if (host.classList) host.classList.add('mcq-open')
     var ans = root.querySelector('.mcq-ans'), say = root.querySelector('.mcq-say')
-    cur = { root: root, q: q, tries: 0, phase: 'ask', info: info || {}, host: host, api: api || null, crash: crash }
+    cur = { root: root, q: q, tries: 0, phase: 'ask', info: info || {}, host: host, api: api || null, crash: crash, at: Date.now() }
+    // one record per question once it is settled (right, or the answer shown): docs/prd/PRD-08b
+    var SK = { count: 'count', add: 'add', sub: 'sub', compare: 'compare' }
+    function record (right) { try { if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: 'matematika', skill: SK[q.kind] || q.kind || 'count', item: q.key || q.text, ok: right && cur.tries === 0, tries: cur.tries + 1, ms: Date.now() - cur.at }) } catch (e) {} }
     q.choices.forEach(function (c) {
       var b = el('button', 'mcq-btn'); b.type = 'button'; b.textContent = c.t; b.setAttribute('data-v', c.v)
       b.addEventListener('click', function () { pick(b, c.v) })
@@ -170,6 +173,7 @@
     function pick (b, v) {
       if (!cur || cur.phase !== 'ask' || b.disabled) return
       if (v === q.answer) {
+        record(true)
         cur.phase = 'right'; cue('correct'); b.classList.add('right'); root.classList.add('win')
         say.textContent = crash ? 'Hebat! Hati kembali dan ngebut sedikit!' : 'Hebat! Dapat 2 bintang dan ngebut!'
         if (!RM) sparkle(b)
@@ -189,6 +193,7 @@
         root.classList.add('hint')
         return
       }
+      record(false)
       cur.phase = 'shown'
       say.textContent = 'Jawabannya ' + q.answerText + '. Kamu sudah berusaha, ayo lanjut!'
       ;[].forEach.call(ans.children, function (x) { x.disabled = true; if (x.getAttribute('data-v') === String(q.answer)) x.classList.add('show') })

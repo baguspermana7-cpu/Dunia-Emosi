@@ -54,16 +54,16 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | PRD | Judul | Gelombang | Status |
 |---|---|---|---|
 | [PRD-19a](PRD-19a-verifikasi-pita-usia.md) | Verifikasi pita usia | Gelombang 0 | live v64.43 |
-| [PRD-24](PRD-24-penghangatan-cache-timmy-yang.md) | Penghangatan cache Timmy yang sopan | Gelombang 0 | belum mulai |
+| [PRD-24](PRD-24-penghangatan-cache-timmy-yang.md) | Penghangatan cache Timmy yang sopan | Gelombang 0 | live v64.44 |
 | [PRD-32](PRD-32-getar-halus.md) | Getar halus | Gelombang 0 | live v64.43 |
 | [PRD-26](PRD-26-potong-padding-sprite.md) | Potong padding sprite | Gelombang 0 | live v64.43 (people/; misc/ui/extra belum) |
 | [PRD-15](PRD-15-gate-instruksi-tanpa-pendamping.md) | Gate instruksi tanpa pendamping | Gelombang 0 | belum mulai |
 | [PRD-27](PRD-27-gate-aturan-konten-lintas.md) | Gate aturan konten lintas game | Gelombang 0 | bagian statis live v64.43 |
 | [PRD-28](PRD-28-kontras-target-sentuh-semua.md) | Kontras + target sentuh semua game | Gelombang 0 | belum mulai |
 | [PRD-25](PRD-25-validator-keterselesaian-level-di.md) | Validator keterselesaian level di CI | Gelombang 0 | live v64.43 |
-| [PRD-08b](PRD-08b-bus-di-semua-game.md) | Bus di semua game soal | Gelombang 1 | belum mulai |
-| [PRD-10](PRD-10-model-penguasaan-lintas-game.md) | Model penguasaan lintas game **[ANAK — mengubah tingkat soal]** | Gelombang 1 | belum mulai |
-| [PRD-19b](PRD-19b-usia-menyetel-tingkat-awal.md) | Usia menyetel tingkat awal | Gelombang 1 | belum mulai |
+| [PRD-08b](PRD-08b-bus-di-semua-game.md) | Bus di semua game soal | Gelombang 1 | live v64.44 |
+| [PRD-10](PRD-10-model-penguasaan-lintas-game.md) | Model penguasaan lintas game **[ANAK — mengubah tingkat soal]** | Gelombang 1 | live v64.44 |
+| [PRD-19b](PRD-19b-usia-menyetel-tingkat-awal.md) | Usia menyetel tingkat awal | Gelombang 1 | live v64.44 |
 | [PRD-11](PRD-11-antrean-pengulangan-lintas-game.md) | Antrean pengulangan lintas game **[ANAK]** | Gelombang 1 | belum mulai |
 | [PRD-13](PRD-13-petunjuk-sesuai-jenis-kesalahan.md) | Petunjuk sesuai jenis kesalahan **[ANAK]** | Gelombang 1 | belum mulai |
 | [PRD-20](PRD-20-kartu-main-berikutnya-di.md) | Kartu "main berikutnya" di hub **[ANAK — hal baru di menu]** | Gelombang 1 | belum mulai |

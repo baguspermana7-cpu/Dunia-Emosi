@@ -89,11 +89,13 @@
   var SKILL = {
     add: 'Penjumlahan', tambah: 'Penjumlahan', sub: 'Pengurangan', kurang: 'Pengurangan', subtract: 'Pengurangan',
     multiply: 'Perkalian', kali: 'Perkalian', groups: 'Perkalian', divide: 'Pembagian', bagi: 'Pembagian', share: 'Pembagian',
-    count: 'Menghitung benda', clock: 'Membaca jam', diff: 'Selisih', twostep: 'Soal cerita dua langkah'
+    count: 'Menghitung benda', clock: 'Membaca jam', diff: 'Selisih', twostep: 'Soal cerita dua langkah',
+    plus: 'Penjumlahan', join: 'Penjumlahan', minus: 'Pengurangan', compare: 'Membandingkan', max: 'Membandingkan', min: 'Membandingkan',
+    pattern: 'Pola', series: 'Pola', shape: 'Bentuk', awal: 'Huruf awal', susun: 'Menyusun kata', gambar: 'Kata dan gambar', pasang: 'Kegunaan alat'
   }
   var DOMAIN = {
     matematika: 'Matematika', islam: 'Pengetahuan Islam', arab: 'Huruf Arab', umum: 'Pengetahuan umum',
-    logika: 'Logika', bahasa: 'Bahasa', bentuk: 'Bentuk', emosi: 'Mengenal perasaan'
+    logika: 'Logika', bahasa: 'Bahasa', inggris: 'Bahasa Inggris', bentuk: 'Bentuk', emosi: 'Mengenal perasaan'
   }
   function label (skill, domain) {
     var head = String(skill || '').split('-')[0]

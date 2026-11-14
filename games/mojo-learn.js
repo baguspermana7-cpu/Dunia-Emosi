@@ -51,6 +51,7 @@
     var r = L.rounds[L.i], host = L.host
     host.innerHTML = ''; L.solved = false
     if (!r) return reward()
+    L.m0 = L.mistakes; L.at = Date.now()   // this round's own misses and time, for the answer record
     var card = node('div', 'learn-card learn-' + r.kind), pic = node('div', 'learn-pic'), play = node('div', 'learn-play')
     card.setAttribute('data-kind', r.kind)
     var head = node('div', 'learn-head')
@@ -164,6 +165,8 @@
   /* ── a round is solved: say the word, sparkle, show its meaning ──────── */
   function solved (r) {
     L.solved = true
+    // one record per round (docs/prd/PRD-08b): English rounds are language practice, the others vocabulary
+    try { if (W.DuniaBus) W.DuniaBus.emit('answer', { domain: r.lang === 'en' ? 'inggris' : 'bahasa', skill: r.kind + '-' + r.lang, item: r.id || r.word, ok: L.mistakes === L.m0, tries: L.mistakes - L.m0 + 1, ms: Date.now() - L.at }) } catch (e) {}
     API.say(r.word, r.lang, true)
     var card = L.host.querySelector('.learn-card')
     card.classList.add('solved')

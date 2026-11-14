@@ -171,6 +171,11 @@
   }
   function save () { try { var s = JSON.stringify(S); if (W.avatarScopedSet) avatarScopedSet(KEY, s); else localStorage.setItem(KEY, s) } catch (e) {} }
   load()
+  // docs/prd/PRD-10: question difficulty follows the child's mastery across games (DuniaMastery, fed by every game's
+  // answers). Timmy's own per-domain scores seed it once as a floor, so nothing a child earned here is lost.
+  var TK_DOMAINS = ['matematika', 'umum', 'arab', 'logika', 'islam']
+  try { if (W.DuniaMastery && !S.migrated.mastery1) { TK_DOMAINS.forEach(function (d) { if (S.mastery[d]) W.DuniaMastery.seed(d, S.mastery[d]) }); S.migrated.mastery1 = true; save() } } catch (e) {}
+  function masteryNow () { if (!W.DuniaMastery) return S.mastery; var o = {}; TK_DOMAINS.forEach(function (d) { o[d] = W.DuniaMastery.score(d) }); return o }
   // the main app's Settings > Suara OFF mutes this session without overwriting the child's own choice
   var GLOBAL_MUTE = false; try { GLOBAL_MUTE = localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) {}
   function soundOn () { return S.settings.sound && !GLOBAL_MUTE }
@@ -956,7 +961,7 @@
   }
   // one Knowledge Challenge card over the play host (lanes collisions, cinema questions)
   function challenge (host, o) {
-    var p = TKQuiz.challenge(host, Object.assign({ hard: S.settings.level === 'sulit', world: CUR.w && CUR.w.id, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery, lib: Art.lib, reducedMotion: reduced(),
+    var p = TKQuiz.challenge(host, Object.assign({ hard: S.settings.level === 'sulit', world: CUR.w && CUR.w.id, grade: S.settings.grade, islam: S.settings.islam, mastery: masteryNow(), lib: Art.lib, reducedMotion: reduced(),
       timmy: Art.src('char/timmy'), penguin: Art.src(charKey('char/penguin', 'animals/penguin')), sound: soundOn() ? undefined : false, readAloud: !!S.settings.narrate, say: say,
       title: 'Tantangan Pengetahuan', nextLabel: 'Lanjut' }, o))
     p.then(function (r) { if (r && r.masteryDelta && r.domain) { S.mastery[r.domain] = Math.max(0, Math.min(100, (S.mastery[r.domain] || 0) + r.masteryDelta)); save() } }, function () {})
@@ -1019,7 +1024,7 @@
         // (final:true) ends in the scripted impact that the next step's cinema continues
         P0.handle = TKLanes.mount(host, { seed: lv.seed || (Date.now() >>> 0), difficulty: lv.difficulty, final: !!lv.final, title: chN ? stepLabel(chN, P0.chap.i) + ' · ' + lv.title : lv.title, goal: lv.goal, sections: lv.sections,
           night: lv.night, lengthScale: FAST ? 0.6 : lv.lengthScale, tutorial: lv.tutorial, world: w.id, questions: lv.questions, obstacle: lv.obstacle }, {
-          world: w.id, grade: S.settings.grade, mastery: S.mastery, islam: S.settings.islam, lib: Art.lib, sfx: { muted: !soundOn() }, reducedMotion: reduced(), topInset: 70,
+          world: w.id, grade: S.settings.grade, mastery: masteryNow(), islam: S.settings.islam, lib: Art.lib, sfx: { muted: !soundOn() }, reducedMotion: reduced(), topInset: 70,
           // the Titanic's chapters are the Titanic's own story: the child sails the Titanic (no ship picker there);
           // lanes in other worlds keep the TKFleet choice (saved pick, or the "Pilih Kapalmu" screen first)
           ship: w.chapters ? w.id : undefined,
@@ -1038,7 +1043,7 @@
       var quit = function () { try { PLAYING && PLAYING.handle && PLAYING.handle.destroy && PLAYING.handle.destroy() } catch (e) {} var virt = PLAYING && PLAYING.virtual; PLAYING = null; $('play-host').innerHTML = ''; if (virt) home(); else worldMap(w.id) }
       // Kembali mid-quiz (playtest: a child left by accident) opens the pause menu: Lanjut Main / Peta / Beranda
       var askQuit = function () { var pb = $('btn-pause'); if (pb) pb.click(); else quit() }
-      var opts = Object.assign({ scene: Art.scene(lv.scene || w.scene || 'harbor-day'), topic: lv.goal, onBack: askQuit, penguin: Art.src('char/penguin'), domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0,
+      var opts = Object.assign({ scene: Art.scene(lv.scene || w.scene || 'harbor-day'), topic: lv.goal, onBack: askQuit, penguin: Art.src('char/penguin'), domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: masteryNow()[lv.domain] || 0,
         onDone: function (res) {
           if (res && res.masteryDelta && lv.domain) S.mastery[lv.domain] = Math.max(0, Math.min(100, (S.mastery[lv.domain] || 0) + res.masteryDelta))
           var pct = res && res.asked ? res.right / res.asked : 1
@@ -1050,7 +1055,7 @@
         // the questions are picked with the step's goal (on-topic first), but the plate subtitle describes the
         // QUIZ itself: a mission line ("Antar barang…", "Bantu pasien…") never sits above an unrelated question
         // mix: about half Matematika, the step's own topic fills the rest (owner 2026-09-29); hard = Tingkat Soal Sulit
-        var qs = TKQuiz.build({ mix: true, hard: S.settings.level === 'sulit', domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: S.mastery[lv.domain] || 0, topic: lv.goal, easy: common.easy, seed: (Date.now() ^ (CUR.k * 7919)) >>> 0 })
+        var qs = TKQuiz.build({ mix: true, hard: S.settings.level === 'sulit', domain: lv.domain, world: w.id, count: lv.count || 4, grade: S.settings.grade, islam: S.settings.islam, mastery: masteryNow()[lv.domain] || 0, topic: lv.goal, easy: common.easy, seed: (Date.now() ^ (CUR.k * 7919)) >>> 0 })
         // the subtitle follows the CURRENT question's topic (a mixed step keeps the neutral line)
         var subFor = function (d) { return lv.domain === 'campur' || !lv.domain ? QUIZ_SUB.campur : quizSub(d) }
         P0.handle = TKQuiz.mount(host, qs, Object.assign({}, opts, { topic: subFor(qs[0] && qs[0].domain), subFor: subFor }))
@@ -1389,7 +1394,15 @@
   function warm () {
     if (warmed || W.__TK_NO_WARM || !navigator.onLine || !('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return
     warmed = true; var list = warmList(), i = 0
-    function nx () { if (i >= list.length) return; fetch(list[i++], { cache: 'no-cache' }).catch(function () {}).then(function () { setTimeout(nx, 30) }) }
+    // only what the cache does not hold yet: every request through the SW is answered from cache AND revalidated on
+    // the network, so warming a full cache re-downloaded ~600 files on every open, while the child played
+    // (docs/prd/PRD-24: 692 vs 91 server hits in the first 30 s of a reopen, +13 long tasks at 4x CPU)
+    function nx () {
+      if (i >= list.length) return
+      var u = list[i++]
+      ;(W.caches ? caches.match(u) : Promise.resolve(null)).then(function (hit) { return hit ? null : fetch(u, { cache: 'no-cache' }) })
+        .catch(function () {}).then(function () { setTimeout(nx, 30) })
+    }
     for (var k = 0; k < 3; k++) nx()
   }
   if ('serviceWorker' in navigator) {
@@ -1403,6 +1416,7 @@
 
   /* test seam for the QA gates */
   W.__tk = {
+    mastery: function () { return masteryNow() },   // what the next question is levelled from (PRD-10)
     state: function () { return { screen: document.body.getAttribute('data-scr'), world: CUR.w && CUR.w.id, k: CUR.k, playing: !!PLAYING, stars: totalStars(), fragments: S.fragments.length } },
     save: function () { return JSON.parse(JSON.stringify(S)) }, reset: function () { S = fill({}); save(); home(); return 'ok' },
     open: openWorld, start: function (wid, k) { var w = WD.get(wid); if (!w) return 'no world'; CUR.w = w; startLevel(k || 0); return 'ok' },
