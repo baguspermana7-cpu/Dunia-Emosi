@@ -146,8 +146,8 @@
 
     // ── extra pack (assets/db/extra, owner clean 6×6 sheet) — scenes/props/actions ──
     '🏛': 'extra/1', '🏙': 'extra/2', '🌆': 'extra/2', '🏖': 'extra/3', '🏝': 'extra/3', '🌉': 'extra/4',
-    '🌁': 'extra/4', '🏫': 'extra/5', '🚧': 'extra/7', '🏗': 'extra/9', '♨': 'extra/10', '🌑': 'extra/11',
-    '🌌': 'extra/12', '🌃': 'extra/12', '🌬': 'extra/13', '🌧': 'extra/15', '⛈': 'extra/15', '🌦': 'extra/15',
+    '🌁': 'extra/4', '🏫': 'extra/5', '🚧': 'extra/7', '🏗': 'extra/9', '♨': 'extra/10', '🌑': 'deco:moon',
+    '🌌': 'extra/12', '🌃': 'extra/12', '🌬': 'extra/13', '🌧': 'deco:cloud', '⛈': 'deco:cloud', '🌦': 'deco:cloud',
     '🤝': 'extra/17', '🏃': 'extra/18', '💪': 'extra/20', '⚕': 'extra/21', '🤔': 'extra/22', '🎓': 'extra/23',
     '🧠': 'extra/25', '🎭': 'extra/26', '🃏': 'extra/28', '🪝': 'extra/30', '🐾': 'extra/31', '🐚': 'extra/34',
     '🛢': 'extra/37', '⛓': 'extra/38', '🔱': 'extra/39', '🛺': 'extra/41', '📍': 'extra/42',

@@ -24,5 +24,11 @@ for (const f of files) {
 const bad = [...used].filter(([n]) => !rev.ok[n]).map(([n, f]) => `people/${n} in ${f} (${rev.blocked[n] || 'not reviewed'})`)
 ok(!bad.length, `L3 ${used.size} people sprites in use, all reviewed and passed${bad.length ? ' - ' + bad.join('; ') : ''}`)
 ok(!randomPicks.length, `L3 no random pick from the people pack${randomPicks.length ? ' - ' + randomPicks.join(', ') : ''}`)
+// sprites whose art is damaged (hollow body from an old colour key, or a fragment), seen on contact sheets 2026-11-14
+// (PRD-26): no code may point at them; the emoji map draws intact art instead
+const BROKEN = ['misc/13', 'misc/14', 'misc/22', 'extra/11', 'extra/15', 'extra/16']
+const brokenUse = []
+for (const f of files) { const s = rd(f); for (const id of BROKEN) if (new RegExp(`['"]${id}['"]`).test(s)) brokenUse.push(`${id} in ${f}`) }
+ok(!brokenUse.length, `PRD-26 no code draws a damaged sprite (${BROKEN.join(', ')})${brokenUse.length ? ' - ' + brokenUse.join('; ') : ''}`)
 console.log(`qa-content-rules: ${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)

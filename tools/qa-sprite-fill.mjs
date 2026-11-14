@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const PACKS = ['assets/db/people']
+const PACKS = (process.env.QA_PACKS || 'assets/db/people,assets/db/misc,assets/db/ui,assets/db/extra').split(',')
 const py = `
 import glob, json, sys
 from PIL import Image

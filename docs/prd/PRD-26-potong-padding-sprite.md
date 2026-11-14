@@ -39,3 +39,17 @@
 - `people/5` berlubang di badan (bekas colour key lama), padahal dipakai untuk 👩 ("Ibu" di `game.js:1457`). 👩 kini memakai `people/4` yang utuh. Pack ini tidak punya figur perempuan berhijab.
 
 **Belum:** `misc/`, `ui/`, `extra/`. Ikon UI bisa jadi sengaja berpadding, jadi tiap pack perlu ditinjau sendiri di rilis berikutnya; gate tinggal ditambah path-nya.
+
+## Hasil bagian 2 (2026-11-14): `misc`, `ui`, `extra`
+
+- Ditinjau dulu lewat contact sheet: padding nyata (figur kecil di kanvas besar), ikon UI tidak sengaja berpadding.
+- `trim-sprite-padding.py` kini mencari kotak figur tanpa serpihan: mask dibuka 5 px (garis lepas hilang), lalu tiap
+  sisi tumbuh selama strip di luarnya masih menyentuh figur (tali/benang yang menempel ikut, serpihan di seberang celah
+  tidak). Contoh: ui/034–035 punya garis putus di atas yang dulu akan melebarkan kotak.
+- 177 sprite dipotong (4 di `extra` sudah rapat). Ukuran pack 635 → 654 KB.
+- **Gate `qa-sprite-fill`** kini 4 pack: HEAD → median 0,495, 160 di bawah 0,60, exit 1; sesudah → median 0,895, 0, exit 0.
+  `white-outline` menilai 177 berkas yang berubah: tidak ada tepi putih baru.
+- **Temuan:** 6 sprite rusak (badan berlubang bekas colour key lama / serpihan): misc/13, 14, 22, extra/11, 15, 16.
+  Dua dipakai peta emoji: 🌑 (`extra/11`, gumpalan abu) dan 🌧 ⛈ 🌦 (`extra/15`, petir dengan awan berlubang) → kini
+  `deco:moon` dan `deco:cloud` yang utuh. `qa-content-rules` melarang kode menunjuk keenamnya (merah dengan peta lama).
+- Dilihat: beranda di 3 ukuran (ikon main/progres/setelan lebih besar, tidak terpotong).

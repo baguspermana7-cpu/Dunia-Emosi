@@ -56,7 +56,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-19a](PRD-19a-verifikasi-pita-usia.md) | Verifikasi pita usia | Gelombang 0 | live v64.43 |
 | [PRD-24](PRD-24-penghangatan-cache-timmy-yang.md) | Penghangatan cache Timmy yang sopan | Gelombang 0 | live v64.44 |
 | [PRD-32](PRD-32-getar-halus.md) | Getar halus | Gelombang 0 | live v64.43 |
-| [PRD-26](PRD-26-potong-padding-sprite.md) | Potong padding sprite | Gelombang 0 | live v64.43 (people/; misc/ui/extra belum) |
+| [PRD-26](PRD-26-potong-padding-sprite.md) | Potong padding sprite | Gelombang 0 | live v64.47 (4 pack) |
 | [PRD-15](PRD-15-gate-instruksi-tanpa-pendamping.md) | Gate instruksi tanpa pendamping | Gelombang 0 | selesai (CI, tanpa rilis aset) |
 | [PRD-27](PRD-27-gate-aturan-konten-lintas.md) | Gate aturan konten lintas game | Gelombang 0 | live v64.45 (outline 1048 â†’ 142) |
 | [PRD-28](PRD-28-kontras-target-sentuh-semua.md) | Kontras + target sentuh semua game | Gelombang 0 | live v64.46 |

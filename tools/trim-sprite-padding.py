@@ -13,13 +13,29 @@ No colour keying of any kind (a global key hollows white bodies).
   python3 tools/trim-sprite-padding.py assets/db/people               rewrite the pack in place
 """
 import sys, glob, os
-from PIL import Image
+from PIL import Image, ImageFilter
 
 MARGIN = 0.06
 
 
 def box(im):
-    return im.getchannel('A').point(lambda a: 255 if a > 16 else 0).getbbox()
+    """the figure's box without stray specks: start from the mask opened by 5 px (thin loose dashes vanish), then grow
+    each side one pixel at a time while the strip just outside still has figure pixels touching it (thin parts that are
+    attached, a string or a fishing line, come back; a speck across a gap does not)"""
+    m = im.getchannel('A').point(lambda a: 255 if a > 16 else 0)
+    bb = m.filter(ImageFilter.MinFilter(5)).filter(ImageFilter.MaxFilter(5)).getbbox() or m.getbbox()
+    if not bb:
+        return None
+    x0, y0, x1, y1 = bb
+    W, H = m.size
+    grew = True
+    while grew:
+        grew = False
+        if x0 > 0 and m.crop((x0 - 1, y0, x0, y1)).getbbox(): x0 -= 1; grew = True
+        if x1 < W and m.crop((x1, y0, x1 + 1, y1)).getbbox(): x1 += 1; grew = True
+        if y0 > 0 and m.crop((x0, y0 - 1, x1, y0)).getbbox(): y0 -= 1; grew = True
+        if y1 < H and m.crop((x0, y1, x1, y1 + 1)).getbbox(): y1 += 1; grew = True
+    return (x0, y0, x1, y1)
 
 
 def plan(im):
