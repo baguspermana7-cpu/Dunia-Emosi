@@ -44,3 +44,14 @@
 **Belum:**
 - Kuis Matematika dan soal kereta/Mojo memilih tingkat sendiri (pilihan level / pack), belum dari `DuniaMastery`. Mengubahnya mengubah alur anak di game itu; dikerjakan sebagai lanjutan.
 - Skor per skill (bukan hanya per domain).
+
+## Hasil bagian 2 (2026-11-14): generator membaca penguasaan
+
+- `DuniaMastery.cap(domain, mx, {tier: batas})`: game tetap memakai rentang angkanya sendiri, dibatasi tier anak.
+  - **Mojo kejar** (kotak soal, dibuat saat dibuka): tier 1 → angka sampai 5, selain itu sampai 10.
+  - **Kuis Matematika** (soal satu level dibuat di awal): `maxNum` level dibatasi tier 1 → 10, tier 2 → 15; tier 3–4
+    memakai angka level itu sendiri.
+  - **Timmy**: sudah membaca skor bersama sejak bagian 1 (kini lewat `scoreNow`, lihat PRD-17b).
+  - **Kuis kereta** (soal-engine cerita): tidak punya tombol tingkat kesulitan — tidak diubah; dicatat.
+- Bukti: `qa-mastery` L7 (anak 5–6 / 7–8 / 9–10 → Mojo 5/10/10, level Kuis 18 → 10/15/18); `qa-soften` L4 di browser
+  (anak 5–6: angka Mojo ≤ 5 dari 40 soal; anak 9–10: sampai 10).

@@ -62,12 +62,12 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-28](PRD-28-kontras-target-sentuh-semua.md) | Kontras + target sentuh semua game | Gelombang 0 | live v64.46 |
 | [PRD-25](PRD-25-validator-keterselesaian-level-di.md) | Validator keterselesaian level di CI | Gelombang 0 | live v64.43 |
 | [PRD-08b](PRD-08b-bus-di-semua-game.md) | Bus di semua game soal | Gelombang 1 | live v64.44 |
-| [PRD-10](PRD-10-model-penguasaan-lintas-game.md) | Model penguasaan lintas game **[ANAK — mengubah tingkat soal]** | Gelombang 1 | live v64.44 |
+| [PRD-10](PRD-10-model-penguasaan-lintas-game.md) | Model penguasaan lintas game **[ANAK — mengubah tingkat soal]** | Gelombang 1 | live v64.44; generator v64.48 |
 | [PRD-19b](PRD-19b-usia-menyetel-tingkat-awal.md) | Usia menyetel tingkat awal | Gelombang 1 | live v64.44 |
 | [PRD-11](PRD-11-antrean-pengulangan-lintas-game.md) | Antrean pengulangan lintas game **[ANAK]** | Gelombang 1 | belum mulai |
 | [PRD-13](PRD-13-petunjuk-sesuai-jenis-kesalahan.md) | Petunjuk sesuai jenis kesalahan **[ANAK]** | Gelombang 1 | belum mulai |
 | [PRD-20](PRD-20-kartu-main-berikutnya-di.md) | Kartu "main berikutnya" di hub **[ANAK — hal baru di menu]** | Gelombang 1 | belum mulai |
-| [PRD-17b](PRD-17b-momen-tenang-versi-lebih.md) | Momen tenang → versi lebih mudah **[ANAK]** | Gelombang 1 | belum mulai |
+| [PRD-17b](PRD-17b-momen-tenang-versi-lebih.md) | Momen tenang → versi lebih mudah **[ANAK]** | Gelombang 1 | live v64.48 |
 | [PRD-18](PRD-18-setelan-profil-dipakai-semua.md) | Setelan profil dipakai semua game | Gelombang 2 | belum mulai |
 | [PRD-14](PRD-14-cakupan-narasi-suara.md) | Cakupan narasi suara **[ANAK — suara baru]** | Gelombang 2 | belum mulai |
 | [PRD-21](PRD-21-ritme-sesi.md) | Ritme sesi **[ANAK]** | Gelombang 2 | belum mulai |

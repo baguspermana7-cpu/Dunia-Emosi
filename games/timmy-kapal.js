@@ -175,7 +175,7 @@
   // answers). Timmy's own per-domain scores seed it once as a floor, so nothing a child earned here is lost.
   var TK_DOMAINS = ['matematika', 'umum', 'arab', 'logika', 'islam']
   try { if (W.DuniaMastery && !S.migrated.mastery1) { TK_DOMAINS.forEach(function (d) { if (S.mastery[d]) W.DuniaMastery.seed(d, S.mastery[d]) }); S.migrated.mastery1 = true; save() } } catch (e) {}
-  function masteryNow () { if (!W.DuniaMastery) return S.mastery; var o = {}; TK_DOMAINS.forEach(function (d) { o[d] = W.DuniaMastery.score(d) }); return o }
+  function masteryNow () { if (!W.DuniaMastery) return S.mastery; var o = {}; TK_DOMAINS.forEach(function (d) { o[d] = W.DuniaMastery.scoreNow ? W.DuniaMastery.scoreNow(d) : W.DuniaMastery.score(d) }); return o }
   // the main app's Settings > Suara OFF mutes this session without overwriting the child's own choice
   var GLOBAL_MUTE = false; try { GLOBAL_MUTE = localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) {}
   function soundOn () { return S.settings.sound && !GLOBAL_MUTE }

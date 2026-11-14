@@ -12,6 +12,8 @@
 //      (seed never lowers)
 //   L6 (PRD-19b) the age band sets the start only: after 10 answers a 9-10 child answering weakly is on tier 1-2 and a
 //      5-6 child answering strongly on 3-4
+//   L7 (PRD-10) a game's number range is capped by the child's tier (Mojo chase 5 on tier 1; Kuis 10 / 15)
+//   L8 (PRD-17b) after a frustration moment the next question in that domain is one tier easier, once per session
 //   L5 TKQuiz's +5 / -3 rule, run through the same children, settles lower: shown, not failed (the reason for the change)
 // Usage: node tools/qa-mastery.mjs   (also in tools/ci-verify.sh)
 import fs from 'node:fs'
@@ -23,7 +25,9 @@ let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? '  ok ' : '  ✗ ') + m) }
 const store = {}
 const ls = { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v) }, removeItem: k => { delete store[k] } }
-const ctx = { console, JSON, Math, Date, localStorage: ls, location: { pathname: '/games/x.html' }, CustomEvent: class { constructor (t, o) { this.type = t; this.detail = o && o.detail } }, dispatchEvent () {} }
+const sstore = {}
+const sess = { getItem: k => (k in sstore ? sstore[k] : null), setItem: (k, v) => { sstore[k] = String(v) }, removeItem: k => { delete sstore[k] } }
+const ctx = { console, JSON, Math, Date, localStorage: ls, sessionStorage: sess, location: { pathname: '/games/x.html' }, CustomEvent: class { constructor (t, o) { this.type = t; this.detail = o && o.detail } }, dispatchEvent () {} }
 ctx.window = ctx; vm.createContext(ctx)
 for (const f of ['games/data/save-engine.js', 'games/data/dunia-bus.js', 'games/data/mastery.js']) vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f })
 const M = ctx.DuniaMastery
@@ -77,6 +81,23 @@ for (const a of [1.4, 2.1, 2.8]) {
   const st = M.START, down = seeds.map(s => child(1.2, s, shared, 80, st.pintar).tierAt10), up = seeds.map(s => child(3.6, s, shared, 80, st.cilik).tierAt10)
   ok(st.pintar > st.tumbuh && st.tumbuh > st.cilik && M.tierOf(st.pintar) > M.tierOf(st.cilik), `L6 an older band starts higher (5-6 ${st.cilik}, 7-8 ${st.tumbuh}, 9-10 ${st.pintar})`)
   ok(down.filter(t => t <= 2).length >= 18 && up.filter(t => t >= 3).length >= 18, `L6 after 10 answers the answers decide, not the age (9-10 weak child ${down.join('')}, 5-6 strong child ${up.join('')}; >= 18 of 20 seeds)`)
+}
+// PRD-10 (rest): games cap their own number range by the child's tier. Mojo chase {1: 5}, Kuis {1: 10, 2: 15}
+{
+  const who = slot => { ctx.localStorage.setItem('dunia-active-slot', JSON.stringify([slot, 1])) }
+  ctx.localStorage.setItem('dunia-players', JSON.stringify([{ name: 'C', animal: '🐯', ageTier: 'cilik' }, { name: 'T', animal: '🐼', ageTier: 'tumbuh' }, { name: 'P', animal: '🦊', ageTier: 'pintar' }]))
+  const got = []
+  for (const sl of [0, 1, 2]) { who(sl); got.push([M.cap('matematika', 10, { 1: 5 }), M.cap('matematika', 18, { 1: 10, 2: 15 })]) }
+  ok(JSON.stringify(got) === JSON.stringify([[5, 10], [10, 15], [10, 18]]), `L7 number range by tier: 5-6 / 7-8 / 9-10 child -> Mojo ${got.map(x => x[0])}, Kuis level of 18 -> ${got.map(x => x[1])}`)
+  // PRD-17b: one tier easier for the next question only, once per session per domain
+  who(1)
+  const t0 = M.tierNow('matematika'), first = M.soften('matematika'), t1 = M.tierNow('matematika'), s1 = M.scoreNow('matematika')
+  ctx.DuniaBus.emit('answer', { domain: 'matematika', skill: 'add', ok: true })
+  const t2 = M.tierNow('matematika'), again = M.soften('matematika'), t3 = M.tierNow('matematika')
+  ok(t0 === 2 && first && t1 === 1 && s1 <= 30, `L8 after a hard moment the next question is one tier down (tier ${t0} -> ${t1}, score now ${s1})`)
+  ok(t2 === M.tierOf(M.score('matematika')) && !again && t3 === t2, `L8 one answer later it is back (tier ${t2}); a second hard moment the same session does not lower it again (${again})`)
+  const other = M.soften('logika')
+  ok(other && M.tierNow('logika') === 1 && M.tierNow('matematika') === t2, `L8 per domain: logika softens on its own (${M.tierNow('logika')}), matematika stays ${M.tierNow('matematika')}`)
 }
 {
   const accTk = mean(seeds.map(s => child(2.1, s, tk).acc)), accSh = mean(seeds.map(s => child(2.1, s, shared).acc))

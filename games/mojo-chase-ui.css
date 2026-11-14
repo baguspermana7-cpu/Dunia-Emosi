@@ -95,6 +95,8 @@
 .mcp-new .art.many img{position:static;width:100%;height:auto;aspect-ratio:1;object-fit:contain}
 .mcp-new .art.many figcaption{font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;line-height:1.1;color:#5a3500}
 .mcp.rm .mcp-new .spark,.mcp.rm .mcp-new .art img,.mcp.rm .mcp-new .box{animation:none}
+/* a short phone in portrait (360x780): many unlocked friends pushed "Hore!" past the box edge (qa-mojo-chase-ui) */
+@media (orientation:portrait) and (max-height:820px){ .mcp-new{padding:10px} .mcp-new .box{padding:10px 14px 12px;gap:4px} .mcp-new .art.many figure{width:clamp(56px,20%,84px)} .mcp-new-ok{margin-top:2px} }
 @media (orientation:landscape) and (max-height:560px){ .mcp-new .art{width:min(180px,40vh)} .mcp-new .box{padding:8px 14px 12px} .mcp-new-ok{min-height:58px} }
 @media (orientation:landscape) and (max-height:560px){ .mcp-new .box{width:min(760px,100%);gap:4px} .mcp-new .art.many{width:100%;gap:2px 6px;padding:2px 0} .mcp-new .art.many figure{width:clamp(56px,10%,72px)} .mcp-new .art.many figcaption{font-size:12px} .mcp-new h2{font-size:clamp(18px,5vh,24px)} }
 @media (min-width:900px) and (min-height:600px){ .mcp-card.lock b{font-size:13px} .mcp-card .padlock{top:30px;width:36px;height:40px} }

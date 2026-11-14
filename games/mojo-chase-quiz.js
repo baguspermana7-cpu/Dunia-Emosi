@@ -72,19 +72,22 @@
   }
   function make (r, want) {
     var kind = want || ['count', 'add', 'sub', 'compare'][ri(r, 0, 3)], a, b, q
+    // PRD-10: a child on tier 1 in matematika (or one tier down after a hard moment, PRD-17b) counts up to 5, else 10
+    var mx = 10
+    try { if (W.DuniaMastery) mx = W.DuniaMastery.cap('matematika', 10, { 1: 5 }) } catch (e) {}
     // the police van is only counted or compared; Mojo collects and the robber takes the other pictures
     var pool = kind === 'add' || kind === 'sub' ? PICS.filter(function (x) { return !x.look }) : PICS, p = pool[ri(r, 0, pool.length - 1)]
     if (kind === 'count') {
-      a = ri(r, 3, 9)
+      a = mx <= 5 ? ri(r, 2, 5) : ri(r, 3, 9)
       q = { kind: kind, key: 'c' + a + p.n, text: 'Ada berapa ' + p.n + '?', groups: [{ n: a, k: p.k }], answer: a, hint: 'Sentuh dan hitung satu per satu, ya.' }
     } else if (kind === 'add') {
-      a = ri(r, 1, 6); b = ri(r, 1, 10 - a)
+      a = ri(r, 1, Math.min(6, mx - 1)); b = ri(r, 1, mx - a)
       q = { kind: kind, key: 'a' + a + '+' + b + p.n, text: 'Mojo punya ' + a + ' ' + p.n + ', dapat ' + b + ' lagi. Jadi berapa?', groups: [{ n: a, k: p.k }, { op: '+' }, { n: b, k: p.k }], answer: a + b, hint: 'Hitung semua gambarnya bersama-sama.' }
     } else if (kind === 'sub') {
-      a = ri(r, 3, 10); b = ri(r, 1, a - 1)
+      a = ri(r, 3, mx); b = ri(r, 1, a - 1)
       q = { kind: kind, key: 's' + a + '-' + b + p.n, text: 'Ada ' + a + ' ' + p.n + '. ' + b + ' diambil pencuri. Sisa berapa?', groups: [{ n: a, k: p.k, gone: b }], answer: a - b, hint: 'Hitung yang masih terang saja.' }
     } else {
-      a = ri(r, 1, 8); b = r() < 0.2 ? a : ri(r, 1, 8)
+      a = ri(r, 1, Math.min(8, mx)); b = r() < 0.2 ? a : ri(r, 1, Math.min(8, mx))
       q = { kind: kind, key: 'm' + a + '?' + b + p.n, text: 'Mana yang lebih banyak?', groups: [{ n: a, k: p.k, side: 'Kiri' }, { op: 'atau' }, { n: b, k: p.k, side: 'Kanan' }],
         answer: a > b ? 'L' : a < b ? 'R' : 'S', hint: 'Hitung kiri, lalu hitung kanan.' }
       q.choices = [{ v: 'L', t: 'Kiri' }, { v: 'S', t: 'Sama' }, { v: 'R', t: 'Kanan' }]

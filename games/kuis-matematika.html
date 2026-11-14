@@ -764,23 +764,23 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/freeze-watchdog.js?v=v64.47-20261114a"></script>
-<script src="data/math-rules.js?v=v64.47-20261114a"></script>
-<script src="data/save-engine.js?v=v64.47-20261114a"></script>
-<script src="data/dunia-bus.js?v=v64.47-20261114a"></script>
-<script src="data/learning-log.js?v=v64.47-20261114a"></script>
-<script src="data/mastery.js?v=v64.47-20261114a"></script>
-<script src="data/sfx-engine.js?v=v64.47-20261114a"></script>
-<script src="vfx-engine.js?v=v64.47-20261114a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=v64.47-20261114a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v64.47-20261114a"></script><script src="data/ui-sprites.js?v=v64.47-20261114a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v64.47-20261114a"></script><script src="data/gt-monster-sheets.js?v=v64.47-20261114a"></script><script src="gt-monster-anim.js?v=v64.47-20261114a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/freeze-watchdog.js?v=v64.48-20261114a"></script>
+<script src="data/math-rules.js?v=v64.48-20261114a"></script>
+<script src="data/save-engine.js?v=v64.48-20261114a"></script>
+<script src="data/dunia-bus.js?v=v64.48-20261114a"></script>
+<script src="data/learning-log.js?v=v64.48-20261114a"></script>
+<script src="data/mastery.js?v=v64.48-20261114a"></script>
+<script src="data/sfx-engine.js?v=v64.48-20261114a"></script>
+<script src="vfx-engine.js?v=v64.48-20261114a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=v64.48-20261114a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v64.48-20261114a"></script><script src="data/ui-sprites.js?v=v64.48-20261114a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v64.48-20261114a"></script><script src="data/gt-monster-sheets.js?v=v64.48-20261114a"></script><script src="gt-monster-anim.js?v=v64.48-20261114a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v64.47-20261114a"></script>
+<script src="data/math-cloud.js?v=v64.48-20261114a"></script>
 <script>
 (function(){
 'use strict';
@@ -1097,6 +1097,8 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   _startSafety=setTimeout(function(){ starting=false; },6000);
   econ.energy-=LEVEL_COST; econ.energyTs=(econ.energy===ENERGY_MAX-1)?Date.now():econ.energyTs; saveEcon(); refreshHUD();
   var g=(curWorld-1)*SUBS+curSub, tier=tierFor(g), n=qCountFor(g), mn=maxNumFor(g);
+  // PRD-10: numbers no bigger than the child's shared maths tier allows (tier 1: 10, tier 2: 15; higher tiers: the level's own)
+  try{ if(window.DuniaMastery) mn=DuniaMastery.cap('matematika',mn,{1:10,2:15}); }catch(_){}
   var isBoss=(g%SUBS===0);          // every 10th level = world boss
   if(isBoss) n=Math.ceil(n*1.5);    // tougher: more HP / longer fight
   var specific=!!(ops&&ops.length);
@@ -1201,6 +1203,14 @@ function renderQ(){
     renderHearts();
     if(game.idx>=game.pool.length) return finish();
     var q=game.pool[game.idx];
+    // PRD-17b: after a hard moment (breathing card offered on the map) the next maths question is one step easier
+    try{
+      if(window.DuniaMastery&&DuniaMastery.soft('matematika')&&game.softIdx!==game.idx){
+        var easier={hard:'medium',medium:'easy',easy:'easy'}[tierFor(game.g)];
+        var sq=window.makeMathQuestionV2(game.g,MAX_LEVEL,easier,'standard',{maxNum:DuniaMastery.cap('matematika',maxNumFor(game.g),{1:10,2:15,3:15}),forceOps:curSkill});
+        if(validQ(sq)){ q=sq; game.pool[game.idx]=sq; game.softIdx=game.idx; game.softQ=sq; }
+      }
+    }catch(_){}
     if(!validQ(q)){
       logFreeze('bad-question','idx '+game.idx+' g '+game.g);
       try{ q=window.makeMathQuestionV2(game.g,MAX_LEVEL,tierFor(game.g),'standard',
@@ -1832,7 +1842,7 @@ window.__g25 = {
   starsOf:     function (g) { return starsOf(g) },
   inProgress: function () { return !!(game && !game.done) },
   // the question on screen (learning-log gate taps a right and a wrong choice)
-  current: function () { var q = game && !game.done && game.pool[game.idx]; return q ? { ans: String(q.ans), idx: game.idx } : null },
+  current: function () { var q = game && !game.done && game.pool[game.idx]; return q ? { ans: String(q.ans), idx: game.idx, softened: game.softIdx === game.idx } : null },
 };
 /* Enter submits the ask sheet, Escape cancels — the on-screen keyboard's "done" key is
    how a parent will actually close it. */
@@ -1843,7 +1853,7 @@ document.addEventListener('keydown',function(e){
 });
 })();
 </script>
-<script src="dunia-icons.js?v=v64.47-20261114a"></script>
-<script src="dunia-cinema.js?v=v64.47-20261114a" defer></script>
+<script src="dunia-icons.js?v=v64.48-20261114a"></script>
+<script src="dunia-cinema.js?v=v64.48-20261114a" defer></script>
 </body>
 </html>

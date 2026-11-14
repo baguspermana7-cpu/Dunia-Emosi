@@ -64,6 +64,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-instruction-companion.mjs
   echo "== big enough buttons and readable text on every game page (primary buttons >= 48 px; ratchet tools/a11y-baseline.json)"
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-game-a11y.mjs
+  echo "== after a hard moment the next maths question is one tier easier, once (PRD-17b)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-soften.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

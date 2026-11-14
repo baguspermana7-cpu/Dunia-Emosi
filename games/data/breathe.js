@@ -190,6 +190,8 @@
       if (document.getElementById('dfeel') || document.getElementById('dbreath')) return false
       if (getS(KEY) === today() || !frustrated()) return false
       setS(KEY, today())
+      // PRD-17b: the next question in the domain the child just struggled with comes one tier easier
+      try { var last = W.LearningLog.recent(1)[0]; if (last && last.domain && W.DuniaMastery) W.DuniaMastery.soften(last.domain) } catch (e) {}
       var card = shell()
       card.appendChild(closeBtn(function () { stop(false) }))
       var p = document.createElement('img'); p.className = 'dbr-pic'; p.alt = ''; p.src = PIC
