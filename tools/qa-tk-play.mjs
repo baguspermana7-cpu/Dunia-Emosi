@@ -250,6 +250,8 @@ async function checkLevelMap (p, tag, wid, rotate) {
     __tk.load({ stars: all, fragments: [], guide: Object.assign({}, g, { map: 1 }) }); __tk.map(id)
   }, wid)
   await sleep(2100)
+  // measure at rest: a star read mid-entrance (scale < 1) gave 17.49 px for an 18 px icon (audit A-20 class)
+  await p.evaluate(() => Promise.all(document.getAnimations().filter(a => a.effect && isFinite(a.effect.getComputedTiming().endTime)).map(a => a.finished.catch(() => {}))))
   const probe = () => p.evaluate(() => {
     const hit = (a, b) => a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1
     const ch = [...document.querySelectorAll('#route .chap')], vw = innerWidth
