@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <meta name="theme-color" content="#2f6bd8">
 <title>⚔️ Matematika Petualangan</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.54-20261115a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.55-20261115a">
 <style>
 /* ═══════════════════════════════════════════════════════════════
    MATEMATIKA PETUALANGAN — kids math adventure (A-344, 2026-07-12)
@@ -762,26 +762,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/speak.js?v=v64.54-20261115a"></script>
-<script src="data/freeze-watchdog.js?v=v64.54-20261115a"></script>
-<script src="data/math-rules.js?v=v64.54-20261115a"></script>
-<script src="data/save-engine.js?v=v64.54-20261115a"></script>
-<script src="data/dunia-bus.js?v=v64.54-20261115a"></script>
-<script src="data/learning-log.js?v=v64.54-20261115a"></script>
-<script src="data/mastery.js?v=v64.54-20261115a"></script>
-<script src="data/review-queue.js?v=v64.54-20261115a"></script>
-<script src="data/error-kinds.js?v=v64.54-20261115a"></script>
-<script src="data/sfx-engine.js?v=v64.54-20261115a"></script>
-<script src="vfx-engine.js?v=v64.54-20261115a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=v64.54-20261115a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v64.54-20261115a"></script><script src="data/ui-sprites.js?v=v64.54-20261115a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v64.54-20261115a"></script><script src="data/gt-monster-sheets.js?v=v64.54-20261115a"></script><script src="gt-monster-anim.js?v=v64.54-20261115a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/speak.js?v=v64.55-20261115a"></script>
+<script src="data/freeze-watchdog.js?v=v64.55-20261115a"></script>
+<script src="data/math-rules.js?v=v64.55-20261115a"></script>
+<script src="data/save-engine.js?v=v64.55-20261115a"></script>
+<script src="data/dunia-bus.js?v=v64.55-20261115a"></script>
+<script src="data/learning-log.js?v=v64.55-20261115a"></script>
+<script src="data/mastery.js?v=v64.55-20261115a"></script>
+<script src="data/review-queue.js?v=v64.55-20261115a"></script>
+<script src="data/error-kinds.js?v=v64.55-20261115a"></script>
+<script src="data/sfx-engine.js?v=v64.55-20261115a"></script>
+<script src="vfx-engine.js?v=v64.55-20261115a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=v64.55-20261115a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v64.55-20261115a"></script><script src="data/ui-sprites.js?v=v64.55-20261115a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v64.55-20261115a"></script><script src="data/gt-monster-sheets.js?v=v64.55-20261115a"></script><script src="gt-monster-anim.js?v=v64.55-20261115a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v64.54-20261115a"></script>
+<script src="data/math-cloud.js?v=v64.55-20261115a"></script>
 <script>
 (function(){
 'use strict';
@@ -923,7 +923,7 @@ function refreshHUD(){
   Array.prototype.forEach.call(document.querySelectorAll('.hud-energy2'),function(e){ e.textContent=econ.energy; });
   set('bomb-n',econ.bombs);
 }
-setInterval(function(){ if(byId('scr-beranda').classList.contains('active')||byId('scr-peta').classList.contains('active')) refreshHUD(); },1000);
+setInterval(function(){ if(document.hidden) return; /* a hidden tab does no work (audit A-15) */ if(byId('scr-beranda').classList.contains('active')||byId('scr-peta').classList.contains('active')) refreshHUD(); },1000);
 
 /* ── util ── */
 function byId(id){ return document.getElementById(id); }
@@ -1554,6 +1554,7 @@ function tzStartRound(){
       '<span>🧒 <span id="t-score">0</span></span><span id="t-lead" style="font-size:14px;color:var(--ink-soft)">Seri</span><span>👾 <span id="t-oppsc">0</span></span></div>'+
     '<div class="qcard" id="t-card" style="font-size:30px">…</div><div class="choices" id="t-choices" style="margin-top:10px"></div></div>';
   tourn.iv=setInterval(function(){
+    if(document.hidden) return;   // the round's clock and the opponent pause while the tab is hidden (audit A-15)
     tourn.left--; set('t-timer',tourn.left);
     // live opponent scoring — a point roughly every spp seconds
     if(Math.random() < 1/tourn.spp){ tourn.oppScore++; tzBump('t-foe',-6); tzBoard(); }
@@ -1699,6 +1700,7 @@ function goHome(){ window.location.href='../index.html'; }
   window.addEventListener('pointermove',function(e){ tpx=(e.clientX/window.innerWidth-.5); tpy=(e.clientY/window.innerHeight-.5); },{passive:true});
   window.addEventListener('deviceorientation',function(e){ if(e.gamma!=null){ tpx=Math.max(-.5,Math.min(.5,e.gamma/45)); tpy=Math.max(-.5,Math.min(.5,(e.beta-45)/45)); } },{passive:true});
   function loop(){
+    if(document.hidden){ requestAnimationFrame(loop); return; }   // a hidden tab does no work (audit A-15)
     px+=(tpx-px)*.06; py+=(tpy-py)*.06; t+=.006;
     var bx=Math.sin(t)*1.1, by=Math.cos(t*.8)*.9;
     var imgs=document.querySelectorAll('.scr.active .bgimg, .scr.active .map-img');
@@ -1874,7 +1876,7 @@ document.addEventListener('keydown',function(e){
 });
 })();
 </script>
-<script src="dunia-icons.js?v=v64.54-20261115a"></script>
-<script src="dunia-cinema.js?v=v64.54-20261115a" defer></script>
+<script src="dunia-icons.js?v=v64.55-20261115a"></script>
+<script src="dunia-cinema.js?v=v64.55-20261115a" defer></script>
 </body>
 </html>

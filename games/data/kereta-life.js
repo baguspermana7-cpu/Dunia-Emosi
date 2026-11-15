@@ -57,7 +57,7 @@
     return true
   }
   function tick () {
-    if (RM || D.body.getAttribute('data-scr') !== 'scr-play') return
+    if (RM || D.hidden || D.body.getAttribute('data-scr') !== 'scr-play') return   // a hidden tab does no work (audit A-15)
     adopt()
     var st = W.__mojo && W.__mojo.state && W.__mojo.state(), now = Date.now(), c = cell()
     LIVE = LIVE.filter(function (L) { return L.n.isConnected })
@@ -181,7 +181,7 @@
   }, true)
   // every few seconds: look around (or at Linus when he is near), and now and then say something unprompted
   function life () {
-    if (RM || D.body.getAttribute('data-scr') !== 'scr-play') return
+    if (RM || D.hidden || D.body.getAttribute('data-scr') !== 'scr-play') return
     var s = W.__mojo && W.__mojo.state && W.__mojo.state(), now = Date.now(), cand = []
     LIVE.forEach(function (L) {
       if (!L.n.isConnected || L.gone || !L.alive) return
@@ -220,7 +220,7 @@
   }
   // the fringe drifts against Linus: he goes right, the near grass slides left a little
   function drift () {
-    if (RM || !FR || !FR.isConnected) return
+    if (RM || D.hidden || !FR || !FR.isConnected) return
     var m = $('mojo'), b = $('board'); if (!m || !b) return
     var mr = m.getBoundingClientRect(), br = b.getBoundingClientRect()
     var k = ((mr.left + mr.width / 2) - (br.left + br.width / 2)) / Math.max(1, br.width)

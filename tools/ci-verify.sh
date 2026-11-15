@@ -36,6 +36,9 @@ node tools/qa-mojo-integration.mjs
 echo "== one sound check, one speech path: no direct reads of the sound setting, no speech outside speak.js (audit A-13)"
 node tools/qa-sound-one-path.mjs
 
+echo "== every hub image reserves its box: width and height on each img (audit A-16)"
+node tools/qa-hub-img-size.mjs
+
 echo "== sprites fill their box (people pack trimmed, PRD-26)"
 node tools/qa-sprite-fill.mjs
 
@@ -86,6 +89,10 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-profile-settings.mjs
   echo "== nothing asks another host; fonts and PixiJS come from this origin (audit 2026-11-14)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-no-third-party.mjs
+  echo "== the side race keeps each child's own train (audit A-14)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-side-train-per-child.mjs
+  echo "== always-on timers rest while the tab is hidden (audit A-15)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-hidden-timers.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

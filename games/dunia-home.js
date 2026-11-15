@@ -43,7 +43,7 @@
       if (v !== last) { b.style.display = v ? 'flex' : 'none'; last = v }
     }
     if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', tick); else tick()
-    setInterval(tick, 250)
+    setInterval(function () { if (!D.hidden) tick() }, 250)   // a hidden tab does no work (audit A-15)
     return b
   }
   // true when any of the selectors names an element that is really on screen (not display:none / hidden / faded out)

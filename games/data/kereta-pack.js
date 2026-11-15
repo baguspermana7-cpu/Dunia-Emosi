@@ -474,7 +474,7 @@
   function startReact () {
     if (startReact.on) return; startReact.on = true
     setInterval(function () {
-      if (D.body.getAttribute('data-scr') !== 'scr-play' || !W.__mojo) return
+      if (D.hidden || D.body.getAttribute('data-scr') !== 'scr-play' || !W.__mojo) return   // a hidden tab does no work (audit A-15)
       var st = W.__mojo.state(); if (!st) return
       var r = st.position.r, c = st.position.c
       ;[].forEach.call(D.querySelectorAll('#decor .cast[data-react]'), function (d) {

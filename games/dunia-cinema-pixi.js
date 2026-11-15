@@ -152,8 +152,10 @@
   }
   // some games build their Pixi app only after the child picks a train, so the search never gives up (4 Hz for the
   // first 30 s, then once a second)
+  // a hidden tab does no work in any of these loops (audit A-15): the search waits, the checks skip a beat
   var tries = 0
   ;(function poll () {
+    if (W.document.hidden) { W.setTimeout(poll, 1000); return }
     var a = findApp()
     if (a && attach(a)) return
     W.setTimeout(poll, ++tries < 120 ? 250 : 1000)
@@ -161,7 +163,7 @@
 
   // quality follows the layer's own tier: tier 2 = everything, below = grade only (no bloom/DoF taps)
   W.setInterval(function () {
-    if (!filter) return
+    if (!filter || W.document.hidden) return
     var s = W.DuniaCinema.state(), u = filter.resources.cine.uniforms
     var full = s.quality >= 2 && !s.reduced
     u.uBloom = full ? 0.6 : 0; u.uDof = full ? 0.35 : 0; u.uForm = full ? 0.85 : 0
@@ -194,7 +196,7 @@
   }
   var page = (W.location.pathname || '').split('/').pop().replace(/\.html$/, ''), rims = [], rimSeen = false
   W.setInterval(function () {
-    var ex = RIM_TARGETS[page]; if (!ex || !theApp) return
+    var ex = RIM_TARGETS[page]; if (!ex || !theApp || W.document.hidden) return
     var o = null
     try { o = (0, eval)('typeof ' + ex.split('.')[0] + '!=="undefined"?' + ex + ':null') } catch (e) { o = null }
     if (o) rimSeen = true
@@ -235,7 +237,7 @@
     }
   }
   W.setInterval(function () {
-    if (!theApp || !W.DuniaCinema.state().on) return
+    if (!theApp || W.document.hidden || !W.DuniaCinema.state().on) return
     var full = W.DuniaCinema.state().quality >= 2
     if (full) scanLayers()
     for (var i = 0; i < shades.length; i++) shades[i].enabled = full && !shadeOff
