@@ -58,3 +58,8 @@ prompt/image/
 tools/qa-screenshots/
 docs/kereta-maze-mockups/
 docs/ref-malivlak/
+
+# v64.53 (audit A-9) — archive/editor debris that shipped as assets: macOS zip forks, Godot import metadata, backup copies
+__MACOSX/
+*.import
+**/_backup/

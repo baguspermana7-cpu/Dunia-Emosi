@@ -16,10 +16,6 @@ const DIFF = {
 // DATA
 // ================================================================
 
-// emotion name → assets/db/faces sprite id (illustrated expression faces, A-356).
-// Hand-verified from the faces montage; used by g1 Aku Merasa + g5 Cocokkan Emosi.
-const EMOTION_FACE = { Senang:1, Sedih:3, Marah:4, Takut:13, Terkejut:12, Malu:14, Bahagia:8, Bosan:20, Kesal:30, Kagum:22 }
-function emoFaceSrc(name){ try{ if(window.UISprites){ var s=UISprites.path('emo',(name||'').toLowerCase()); if(s) return s; } if(window.DBSprites) return DBSprites.path('faces', EMOTION_FACE[name]||1); }catch(e){} return ''; }
 // owner emo pack: match each emotion's companion animal to a real sprite (emoji fallback)
 const EMO_ANIMAL={'🦁':'singa','🐰':'kelinci','🐯':'harimau','🐘':'gajah','🦊':'rubah','🐸':'katak','🐼':'panda','🐨':'koala','🐺':'serigala','🦄':'unicorn'};
 function emoAnimalSrc(a){ try{ if(window.UISprites){ var s=UISprites.path('emo',EMO_ANIMAL[a]); if(s) return s; } }catch(e){} return ''; }
@@ -525,32 +521,6 @@ const ACHIEVEMENTS = {
   all_games:       {icon:'🌈', name:'Petualang Sejati!', desc:'Mainkan semua 12 game'},
   streak3:         {icon:'🔥', name:'3 Hari Berturut!',  desc:'Main 3 hari berturut-turut'},
   hard_mode:       {icon:'💪', name:'Berani Sulit!',     desc:'Selesaikan mode Sulit'}
-}
-
-// Asset fallback system
-const ASSET_FALLBACK = {
-  'leo-happy.webp':'🦁','leo-excited.webp':'🦁','leo-sad.webp':'🦁',
-  'leo-surprised.webp':'🦁','leo-proud.webp':'🦁','leo-thinking.webp':'🦁',
-  'car-red.webp':'🚗','car-blue.webp':'🚙','rocket.png':'🚀','submarine.webp':'🤿',
-  'bg-city.webp':null,'bg-forest.webp':null,'bg-space.webp':null,'bg-body.webp':null,'bg-menu.webp':null,
-  'obstacle-cone.png':'🚧','obstacle-rock.png':'🪨','obstacle-asteroid.png':'☄️','obstacle-bacteria.png':'🦠',
-  'img-ayam.webp':'🐓','img-bebek.webp':'🦆','img-cicak.png':'🦎','img-domba.png':'🐑','img-elang.png':'🦅',
-  'img-gajah.png':'🐘','img-harimau.png':'🐯','img-ikan.png':'🐟','img-jerapah.png':'🦒','img-kuda.png':'🐴',
-  'img-monyet.png':'🐒','img-panda.png':'🐼','img-rusa.png':'🦌','img-singa.png':'🦁','img-tikus.png':'🐭',
-  'img-apel.png':'🍎','img-bola.png':'⚽','img-buku.png':'📚','img-daun.png':'🍃','img-meja.png':'🪑'
-}
-// webp aliases for word images
-Object.entries(ASSET_FALLBACK).forEach(([k,v])=>{ if(k.startsWith('img-')&&k.endsWith('.png')) ASSET_FALLBACK[k.replace('.png','.webp')]=v })
-function getAssetEmoji(filename) { return ASSET_FALLBACK[filename] || ASSET_FALLBACK[filename.replace('.webp','.png')] || '❓' }
-function renderAsset(filename, size=80) {
-  const emoji = getAssetEmoji(filename)
-  const stem = filename.replace(/\.(png|webp|jpg|jpeg)$/i,'')
-  const webpSrc = `assets/${stem}.webp`
-  const pngSrc  = `assets/${stem}.png`
-  // Use data-* attributes for fallback values to avoid inline quote-escaping fragility
-  const ePng   = pngSrc.replace(/"/g,'&quot;')
-  const eEmoji = emoji.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')
-  return `<img src="${webpSrc}" alt="" data-png="${ePng}" data-emoji="${eEmoji}" data-sz="${size}" style="width:${size}px;height:${size}px;object-fit:contain;" onerror="if(this.src!==this.dataset.png){this.src=this.dataset.png}else{this.outerHTML='<span style=\\'font-size:'+(this.dataset.sz*0.7)+'px\\'>'+this.dataset.emoji+'</span>'}">`
 }
 
 // Game 6 word banks
@@ -1114,7 +1084,6 @@ function drawBag(key, arr, n){ const out=[]; const seen=[]; let guard=0
   while(out.length<n && guard++<n*6){ const it=pickBag(key,arr); if(seen.indexOf(it)===-1){ seen.push(it); out.push(it) } }
   return out
 }
-function resetBag(key){ if(key) delete _qbags[key]; else { for(const k in _qbags) delete _qbags[k] } }
 function getAgeMaxCount(tier) {
   if (tier==='cilik')  return 5
   if (tier==='tumbuh') return 10
@@ -1884,12 +1853,6 @@ function startGameWithLevel(levelNum) {
   // saved progress for games 3, 4, 6.. is not silently re-pointed at a neighbour.
   const inits = [null,null,null,initGame3,initGame4,null,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,null,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
   if (inits[state.currentGame]) inits[state.currentGame]()
-}
-
-// Legacy compat — old 3-level buttons still work via level mapping
-function startGameWithDiff(diff) {
-  const lvlMap = { easy: 3, medium: 10, hard: 17 }
-  startGameWithLevel(lvlMap[diff] || 1)
 }
 
 // ================================================================
@@ -2980,8 +2943,6 @@ if (typeof window !== 'undefined') {
   window.addTrackedListener = addTrackedListener
   window.clearTrackedListeners = clearTrackedListeners
 }
-function playBreathIn(){playTone(392,4.0,'sine',0.06)}
-function playBreathOut(){playTone(330,4.0,'sine',0.06)}
 // Compatibility adapter for legacy playSound() calls
 function playSound(kind){if(kind==='correct')return playCorrect();if(kind==='wrong')return playWrong();return playClick()}
 // Share game via Web Share API
@@ -3352,42 +3313,6 @@ const G6_CARS = [
 ]
 const G6_COLORS = ['#DC2626','#16A34A','#1D4ED8','#D97706','#7C3AED','#F43F5E','#0891B2','#F97316','#FFFFFF','#111827']
 let g6CarState = {selectedCar: G6_CARS[0], selectedColor: '#DC2626'}
-
-function g6BuildCarSelector() {
-  const grid = document.getElementById('g6-car-grid')
-  const picker = document.getElementById('g6-color-picker')
-  if(!grid || !picker) return
-  grid.innerHTML = ''
-  G6_CARS.forEach((car,i) => {
-    const tile = document.createElement('div')
-    tile.className = 'g6-car-tile' + (i===0?' selected':'')
-    tile.title = car.name
-    tile.textContent = car.e
-    tile.onclick = () => {
-      document.querySelectorAll('.g6-car-tile').forEach(t=>t.classList.remove('selected'))
-      tile.classList.add('selected')
-      g6CarState.selectedCar = car
-      document.getElementById('g6-vehicle-icon').textContent = car.e
-      // Auto-switch map based on vehicle type
-      const autoMap = G6_VEHICLE_MAP[car.id] || 'city'
-      const mapBtn = document.querySelector(`.g6-map-btn[data-map="${autoMap}"]`)
-      if(mapBtn) { selectDriveMap(autoMap, mapBtn) }
-    }
-    grid.appendChild(tile)
-  })
-  picker.innerHTML = ''
-  G6_COLORS.forEach((col,i) => {
-    const dot = document.createElement('div')
-    dot.className = 'g6-color-dot' + (i===0?' selected':'')
-    dot.style.background = col
-    dot.onclick = () => {
-      document.querySelectorAll('.g6-color-dot').forEach(d=>d.classList.remove('selected'))
-      dot.classList.add('selected')
-      g6CarState.selectedColor = col
-    }
-    picker.appendChild(dot)
-  })
-}
 
 function initGame6() {
   const lv = state.selectedLevelNum || state.selectedLevel || 5
@@ -5848,15 +5773,11 @@ function spawnTypeAura(el, type, dur){
   setTimeout(function(){ r.remove() }, d)
 }
 
-function pokeSprite(slug){return pokeSpriteAlt2(slug) || `assets/Pokemon/others/pokeball.svg`}
-function pokeSpriteArtwork(slug){return `assets/Pokemon/others/pokeball.svg`}
 // Both legacy names map to identical pokemondb HD raster. Kept as separate
 // functions because many call-sites reference each name directly. Cascade
 // helpers de-dup URLs at runtime so duplicate calls cost nothing.
 function pokeSpriteOnline(slug){return `assets/Pokemon/others/pokeball.svg`}
 function pokeSpriteCDN(slug){return pokeSpriteOnline(slug)}
-function pokeSpriteBackup(id){return `assets/Pokemon/others/pokeball.svg`}
-function pokeSpriteBack(id){return `assets/Pokemon/others/pokeball.svg`}
 // SVG variant — 751 vector Pokemon sprites for visual variety
 function pokeSpriteSVG(slug){const id=POKE_IDS[slug];return id?`assets/Pokemon/svg/${id}.svg`:null}
 // Alt2 HD WebP variant — 1025 Pokemon 630×630 RGBA, covers full Gen 1-9.
@@ -6490,35 +6411,6 @@ function _g10LevelFallback(lv) {
   }
 }
 
-// Diagnostic distractors — jawaban salah berbasis miskonsepsi umum anak
-function getDiagnosticDistractors(a, b, op, ans){
-  const wrong = new Set()
-  if(op==='+'){
-    wrong.add(ans - 1)     // off-by-one rendah
-    wrong.add(ans + 1)     // off-by-one tinggi
-    wrong.add(Math.abs(a - b))  // salah operasi: kurang bukannya tambah
-    wrong.add(a)           // lupa tambah b
-    wrong.add(b)           // lupa tambah a
-    wrong.add(ans - 2)
-    wrong.add(ans + 2)
-  } else {
-    wrong.add(ans - 1)     // off-by-one rendah
-    wrong.add(ans + 1)     // off-by-one tinggi
-    wrong.add(a + b)       // tambah bukannya kurang
-    wrong.add(b)           // jawab dengan pengurang
-    wrong.add(a)           // jawab dengan yang dikurangi
-    wrong.add(ans - 2)
-    wrong.add(ans + 2)
-  }
-  wrong.delete(ans)
-  wrong.delete(0)
-  const arr = [...wrong].filter(x => x > 0 && x !== ans)
-  const result = arr.slice(0, 3)
-  let pad = ans + 10
-  while(result.length < 3){ if(!result.includes(pad) && pad !== ans) result.push(pad); pad++ }
-  return result.slice(0, 3)
-}
-
 let g10State={}
 
 function initGame10(){
@@ -7089,12 +6981,6 @@ function g10PlayerDefeated(){
   setTimeout(()=>{ fs.classList.remove('show'); endGame(s.stars) },1400)
 }
 
-function g10ShowAttack(type,target){
-  // Legacy alias kept for compatibility
-  const fromSide=target==='enemy'?'player':'enemy'
-  g10DoAttack(type,fromSide,target,()=>{})
-}
-
 // ================================================================
 // GAME 11 — KUIS SAINS
 // ================================================================
@@ -7591,23 +7477,6 @@ window.addEventListener('pageshow', function(e) {
 // ================================================================
 // AAA ENHANCEMENT JS — Visual upgrades
 // ================================================================
-
-// HP bar upgrade for Pokemon battle — add gradient HP bars
-function renderPokeHpBar(containerId, hp, maxHp) {
-  const el = document.getElementById(containerId)
-  if (!el) return
-  const pct = maxHp > 0 ? (hp / maxHp) * 100 : 0
-  const cls = pct > 50 ? '' : pct > 25 ? 'mid' : 'low'
-  el.innerHTML = `
-    <div style="display:flex;gap:3px;margin-bottom:4px;">
-      ${Array.from({length: maxHp}, (_,i) =>
-        `<span style="font-size:14px;opacity:${i<hp?1:0.2};filter:${i<hp?'none':'grayscale(1)'};transition:all 0.3s">${i<hp?'❤️':'🖤'}</span>`
-      ).join('')}
-    </div>
-    <div class="poke-hp-bar-track">
-      <div class="poke-hp-bar-fill ${cls}" style="width:${pct}%"></div>
-    </div>`
-}
 
 // Patch g10Answer for shake animation on infobox
 const _g10AnsOrig = window.g10Answer
@@ -14326,9 +14195,6 @@ function g18StartQuestionTimer() {
   _g18QuestionStartT = performance.now()
   // We could render a conic ring here — keeping logic-only MVP for now.
 }
-function g18QuestionElapsedSec() {
-  return (performance.now() - (_g18QuestionStartT || performance.now())) / 1000
-}
 
 // F13: conductor avatar narrator (Pak Masinis)
 function g18ConductorWave() {
@@ -14696,11 +14562,6 @@ function g14ZoneHover() {
 function g14ZoneTap() {
   // Touch devices: tap on zone header starts music
   if (!gZoneMusicPlaying) g14PlayZoneMusic()
-}
-
-// Stop zone music when entering a game
-function stopZoneKeretaMusic() {
-  g14StopZoneMusic()
 }
 
 // Patch showScreen to stop zone music when leaving home screen
