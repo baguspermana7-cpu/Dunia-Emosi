@@ -46,6 +46,9 @@ echo "== people sprites in use were reviewed (hijab rule), no random person pick
 node tools/qa-content-rules.mjs
 node tools/qa-white-outline.mjs
 
+echo "== no new emoji without a picture: unmapped emoji in source may only fall (audit A-17)"
+node tools/emoji-inventory.mjs --check
+
 echo "== shared mastery settles a child near 75 % right, per child (PRD-10)"
 node tools/qa-mastery.mjs
 node tools/qa-error-kinds.mjs

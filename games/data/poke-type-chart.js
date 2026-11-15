@@ -148,7 +148,17 @@
   };
   window.TYPE_LABEL_ID = TYPE_LABEL_ID;
 
-  function getTypeEmoji(t) { return TYPE_EMOJI[_norm(t)] || '⚪'; }
+  // A type emoji is drawn only when it has a sprite on this page (audit A-17): ghost, fighting, bug, fairy and normal have
+  // none (and the '⚪' fallback none either), so they used to stay emoji on screen.
+  //   typeIconOrNothing -> next to a name or a label, where the icon is decoration
+  //   typeIconOrWord    -> where the icon is the only thing saying which type, so the type's name stands in
+  const hasArt = e => !!(e && window.EmojiMap && window.EmojiMap.spec(e));
+  function typeIconOrNothing(t) { const e = TYPE_EMOJI[_norm(t)]; return hasArt(e) ? e : ''; }
+  function typeIconOrWord(t) { const k = _norm(t), e = TYPE_EMOJI[k]; return hasArt(e) ? e : (TYPE_LABEL_ID[k] || String(t || '')); }
+  window.typeIconOrNothing = typeIconOrNothing;
+  window.typeIconOrWord = typeIconOrWord;
+
+  function getTypeEmoji(t) { return typeIconOrNothing(t); }
   window.getTypeEmoji = getTypeEmoji;
 
   // ── UI helpers ────────────────────────────────────────────────────────
@@ -174,8 +184,12 @@
       return sticker;
     }
     sticker.style.display = '';
-    const icons = weak.map(t => `<span class="ws-icon" title="${TYPE_LABEL_ID[t]||t}">${TYPE_EMOJI[t]||'⚪'}</span>`).join('');
-    sticker.innerHTML = `<span class="ws-shield">🛡</span><span class="ws-label">Lemah:</span>${icons}`;
+    // A type with no sprite shows its name (typeIconOrWord); the shield before "Lemah:" was decoration and is gone
+    // (it is a lib: sprite, never used on a Pokémon page, so it stayed an emoji there).
+    const icons = weak.map(t => hasArt(TYPE_EMOJI[t])
+      ? `<span class="ws-icon" title="${TYPE_LABEL_ID[t]||t}">${TYPE_EMOJI[t]}</span>`
+      : `<span class="ws-label">${TYPE_LABEL_ID[t]||t}</span>`).join('');
+    sticker.innerHTML = `<span class="ws-label">Lemah:</span>${icons}`;
     return sticker;
   }
   window.renderWeaknessSticker = renderWeaknessSticker;
@@ -777,8 +791,8 @@
     _markLearned(a, d);
     const aLabel = TYPE_LABEL_ID[a] || a;
     const dLabel = TYPE_LABEL_ID[d] || d;
-    const aIcon = TYPE_EMOJI[a] || '⚪';
-    const dIcon = TYPE_EMOJI[d] || '⚪';
+    const aIcon = typeIconOrNothing(a);   // the labels beside them name both types
+    const dIcon = typeIconOrNothing(d);
     const hint = document.createElement('div');
     hint.className = 'eff-learn-hint';
     hint.innerHTML = `<span class="elh-bulb">💡</span><span class="elh-icon">${aIcon}</span> <span class="elh-label">${aLabel}</span> <span class="elh-vs">mengalahkan</span> <span class="elh-icon">${dIcon}</span> <span class="elh-label">${dLabel}</span><span class="elh-burst">!</span>`;
@@ -810,14 +824,14 @@
   function getCounterHintHTML(defType) {
     const weak = getWeaknesses(defType, 2);
     if (!weak.length) return '';
-    const icons = weak.map(t => `<span class="tch-icon">${TYPE_EMOJI[t]||'⚪'}</span>`).join('');
+    const icons = weak.map(t => `<span class="tch-icon">${typeIconOrWord(t)}</span>`).join('');
     return `<span class="tch-label">🎯 Counter:</span>${icons}`;
   }
   window.getCounterHintHTML = getCounterHintHTML;
 
   // Pokemon name with type emoji prefix — used in HP cards / bag labels
   function typeEmojiPrefix(type) {
-    return TYPE_EMOJI[_norm(type)] || '⚪';
+    return typeIconOrNothing(type);
   }
   window.typeEmojiPrefix = typeEmojiPrefix;
 

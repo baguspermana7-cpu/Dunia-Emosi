@@ -171,7 +171,7 @@
     // ── extra content emoji that DO have an existing DB sprite (accurate) ──
     '🐥': 'creatures/1', '🐤': 'creatures/1', '🐣': 'creatures/1', '🏐': 'objects/41', '⚾': 'objects/41',
     '🏀': 'objects/41', '🏈': 'objects/41', '🎾': 'objects/41', '💨': 'fx:dust', '💡': 'objects/47',
-    '🔨': 'objects/71', '🪨': 'fx:ground', '🌅': 'deco:sun', '🌄': 'deco:sun', '🏎': 'vehicles/41',
+    '🔨': 'objects/71', '🪨': 'fx:ground', '🌅': 'deco:sun', '🌄': 'deco:sun', '🌇': 'deco:sun-soft' /* sore: the low, soft sun (v64.56) */, '🏎': 'vehicles/41',
     '🛵': 'vehicles/30', '🚤': 'vehicles/55', '⛵': 'vehicles/54'
   }
 

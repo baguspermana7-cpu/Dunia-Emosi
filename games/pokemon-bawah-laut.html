@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Pokemon Bawah Laut 🌊</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.55-20261115a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.56-20261115a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,#0077B6 0%,#00B4D8 60%,#023E8A 100%);font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -93,7 +93,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 @keyframes starSpin{0%{rotate:0deg}100%{rotate:360deg}}
 .swim-starspin{animation:starSpin 4s linear infinite}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.55-20261115a">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.56-20261115a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
@@ -106,8 +106,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
     <div id="status-text">Bersiap...</div>
   </div>
   <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:6px 10px;font-size:15px;cursor:pointer;font-family:inherit;flex-shrink:0;min-width:44px;min-height:44px">⏸</button>
-  <div id="hud-lives">⭐ 0</div>
-  <div id="pipe-progress">🟢 0/0</div>
+  <div id="hud-lives"><span>⭐</span> <span id="hud-lives-n">0</span></div>
+  <div id="pipe-progress"><span>🟢</span> <span id="pipe-progress-n">0/0</span></div>
 </div>
 
 <div id="quiz-panel">
@@ -154,15 +154,15 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat... ⏳</div>
 </div>
 
-<script src="data/emoji-map.js?v=v64.55-20261115a"></script><script src="data/ui-sprites.js?v=v64.55-20261115a"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=v64.55-20261115a"></script>
+<script src="data/emoji-map.js?v=v64.56-20261115a"></script><script src="data/ui-sprites.js?v=v64.56-20261115a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=v64.56-20261115a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v64.55-20261115a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
-<script src="data/speak.js?v=v64.55-20261115a"></script>
-<script src="data/freeze-watchdog.js?v=v64.55-20261115a"></script>
-<script src="data/save-engine.js?v=v64.55-20261115a"></script>
-<script src="data/g23-question-engine.js?v=v64.55-20261115a"></script>
-<script src="game-modal.js?v=v64.55-20261115a"></script>
+<script src="vfx-engine.js?v=v64.56-20261115a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
+<script src="data/speak.js?v=v64.56-20261115a"></script>
+<script src="data/freeze-watchdog.js?v=v64.56-20261115a"></script>
+<script src="data/save-engine.js?v=v64.56-20261115a"></script>
+<script src="data/g23-question-engine.js?v=v64.56-20261115a"></script>
+<script src="game-modal.js?v=v64.56-20261115a"></script>
 <script>
 // ══════════════════════════════════════════════════════════════
 //  CONFIG
@@ -324,7 +324,7 @@ const QUESTIONS = {
     {q:'1+1=?',ans:'2',wrong:['3','4','1']},{q:'2+1=?',ans:'3',wrong:['2','4','5']},
     {q:'3+2=?',ans:'5',wrong:['4','6','7']},{q:'5-2=?',ans:'3',wrong:['2','4','1']},
     {q:'Warna 🔴?',ans:'MERAH',wrong:['BIRU','HIJAU','KUNING']},
-    {q:'Warna 🔵?',ans:'BIRU',wrong:['MERAH','HIJAU','UNGU']},
+    {q:'Warna 💧?',ans:'BIRU',wrong:['MERAH','HIJAU','UNGU']},
     {q:'Warna 🟡?',ans:'KUNING',wrong:['ORANYE','PUTIH','MERAH']},
     {q:'Warna 🟢?',ans:'HIJAU',wrong:['BIRU','KUNING','HITAM']},
     {q:'3-2=?',ans:'1',wrong:['2','3','4']},{q:'1+2=?',ans:'3',wrong:['2','4','5']},
@@ -1509,8 +1509,10 @@ function flashScreen(color) {
   setTimeout(()=>f.style.opacity='0',150)
 }
 function updateHUD() {
-  document.getElementById('hud-lives').textContent=`⭐ ${S.correctAnswers}`
-  document.getElementById('pipe-progress').textContent=`🟢 ${S.cliffsPassed}/${S.totalCliffs}`
+  // the icon sits in its own span (swapped for its sprite once); only the number is rewritten each update,
+  // so the resolver never has to re-swap a fresh emoji text node every frame (it flashed as an emoji)
+  document.getElementById('hud-lives-n').textContent=String(S.correctAnswers)
+  document.getElementById('pipe-progress-n').textContent=`${S.cliffsPassed}/${S.totalCliffs}`
   if (S.running&&!S.paused) {
     const evoName = G24_POKEMON[selectedPokemon]?.evo[S.evoStage||0]?.name||'Pokemon'
     document.getElementById('status-text').textContent = S.evolved ? evoName+' Berevolusi!' : 'Berenang!'
@@ -1804,10 +1806,10 @@ window.addEventListener('orientationchange', _g24Resize)
 // HUD level + start text
 document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
-<script src="dunia-icons.js?v=v64.55-20261115a"></script>
-<script src="dunia-home.js?v=v64.55-20261115a"></script>
+<script src="dunia-icons.js?v=v64.56-20261115a"></script>
+<script src="dunia-home.js?v=v64.56-20261115a"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.55-20261115a" defer></script>
+<script src="dunia-cinema.js?v=v64.56-20261115a" defer></script>
 </body>
 </html>
 <!-- g24-pixi v20260506e -->

@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.55-20261115a">
+<link rel="stylesheet" href="du-buttons.css?v=v64.56-20261115a">
 <title>Gym Pokémon ⚔️</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.55-20261115a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.56-20261115a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a0212;font-family:'Fredoka One',sans-serif;touch-action:none;user-select:none}
@@ -364,7 +364,6 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #trainer-grid{display:block}
 /* ── Type Effectiveness Visual Guide (2026-05-04) ── */
 .weakness-sticker{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#fcd34d;margin-top:4px;padding:3px 8px;background:rgba(0,0,0,0.4);border-radius:10px;border:1px solid rgba(252,211,77,0.35);line-height:1.2;white-space:nowrap}
-.weakness-sticker .ws-shield{font-size:14px}
 .weakness-sticker .ws-label{color:rgba(255,255,255,0.82);font-size:11px;font-weight:600}
 .weakness-sticker .ws-icon{font-size:16px;line-height:1;filter:drop-shadow(0 0 4px rgba(252,211,77,0.45))}
 .eff-text{position:fixed;z-index:9000;font-family:'Fredoka One',cursive,sans-serif;font-size:14px;font-weight:900;pointer-events:none;transform:translate(-50%,0) scale(0.8);white-space:nowrap;text-shadow:0 2px 4px rgba(0,0,0,0.6)}
@@ -596,25 +595,25 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
   <div id="badge-gym-text"></div>
 </div>
 
-<script src="data/poke-sprite-cdn.js?v=v64.55-20261115a"></script>
-<script src="data/poke-sprite-loader.js?v=v64.55-20261115a"></script>
-<script src="data/speak.js?v=v64.55-20261115a"></script>
-<script src="data/freeze-watchdog.js?v=v64.55-20261115a"></script>
-<script src="data/save-engine.js?v=v64.55-20261115a"></script>
-<script src="data/math-rules.js?v=v64.55-20261115a"></script>
-<script src="data/emoji-map.js?v=v64.55-20261115a"></script><script src="data/ui-sprites.js?v=v64.55-20261115a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/poke-sprite-cdn.js?v=v64.56-20261115a"></script>
+<script src="data/poke-sprite-loader.js?v=v64.56-20261115a"></script>
+<script src="data/speak.js?v=v64.56-20261115a"></script>
+<script src="data/freeze-watchdog.js?v=v64.56-20261115a"></script>
+<script src="data/save-engine.js?v=v64.56-20261115a"></script>
+<script src="data/math-rules.js?v=v64.56-20261115a"></script>
+<script src="data/emoji-map.js?v=v64.56-20261115a"></script><script src="data/ui-sprites.js?v=v64.56-20261115a"></script><!-- UIUX/gameplay sprite packs -->
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=v64.55-20261115a"></script>
+<script src="quiz-engine.js?v=v64.56-20261115a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=v64.55-20261115a"></script>
-<script src="vfx-engine.js?v=v64.55-20261115a"></script><script src="data/vfx-db.js?v=v64.55-20261115a"></script><script src="vfx-poke.js?v=v64.55-20261115a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/move-id-translations.js?v=v64.55-20261115a"></script>
-<script src="data/sfx-engine.js?v=v64.55-20261115a"></script>
-<script src="data/weather-fx.js?v=v64.55-20261115a"></script>
-<script src="data/poke-packages.js?v=v64.55-20261115a"></script>
-<script src="data/battle-modes.js?v=v64.55-20261115a"></script>
-<script src="data/poke-type-chart.js?v=v64.55-20261115a"></script>
+<script src="battle-arena.js?v=v64.56-20261115a"></script>
+<script src="vfx-engine.js?v=v64.56-20261115a"></script><script src="data/vfx-db.js?v=v64.56-20261115a"></script><script src="vfx-poke.js?v=v64.56-20261115a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/move-id-translations.js?v=v64.56-20261115a"></script>
+<script src="data/sfx-engine.js?v=v64.56-20261115a"></script>
+<script src="data/weather-fx.js?v=v64.56-20261115a"></script>
+<script src="data/poke-packages.js?v=v64.56-20261115a"></script>
+<script src="data/battle-modes.js?v=v64.56-20261115a"></script>
+<script src="data/poke-type-chart.js?v=v64.56-20261115a"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -688,8 +687,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
     };
   });
 </script>
-<script src="game-modal.js?v=v64.55-20261115a"></script>
-<script src="battle-sprite-engine.js?v=v64.55-20261115a"></script>
+<script src="game-modal.js?v=v64.56-20261115a"></script>
+<script src="battle-sprite-engine.js?v=v64.56-20261115a"></script>
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -1701,7 +1700,7 @@ function advSpawnWeather(group){
     p.style.left = left + '%';
     p.style.animationDelay = '-' + delay + 's';
     p.style.animationDuration = dur + 's';
-    if (kind === 'leaf')         p.textContent = (i % 2 ? '🍃' : '🍂');
+    if (kind === 'leaf')         p.textContent = '🍃';   // 🍂 has no sprite (it stayed an emoji); 🍃 resolves to fx:grass
     else if (kind === 'ember')   p.textContent = '🔥';
     else if (kind === 'sparkle') p.textContent = '✨';
     // rain uses ::before pseudo-element for the drop line — leave empty
@@ -2105,6 +2104,9 @@ const BADGE_IMG_SET = new Set([
 ])
 function hasBadgeImg(id){ return BADGE_IMG_SET.has(id) }
 function badgeImgUrl(id){ return `../assets/gym-badges/${id}.webp` }
+// A badge emoji is shown only when it has a sprite on this page; an unmapped one, or a lib: one (never used on a
+// Pokémon page), stayed an emoji on screen (audit A-17), so the trophy stands in for it.
+function badgeEmojiOrTrophy(e){ return (window.EmojiMap && EmojiMap.spec(e)) ? e : '🏆' }
 // Render a badge as inline HTML — image for canonical gym leaders, emoji otherwise.
 // `size` is the pixel size (width=height). `extraStyle` appended to the element style.
 function badgeHtml(trainer, size, extraStyle){
@@ -2114,10 +2116,10 @@ function badgeHtml(trainer, size, extraStyle){
     // onerror fallback: if the WebP 404s or fails to decode, swap the <img> for
     // the emoji span so the user never sees a broken-image icon. Matches the
     // onerror pattern used by other <img> tags in this file.
-    const onerr = `this.outerHTML=&quot;<span style=\\&quot;font-size:${Math.round(s*0.8)}px;line-height:${s}px;${es}\\&quot;>${trainer.badge}</span>&quot;`
+    const onerr = `this.outerHTML=&quot;<span style=\\&quot;font-size:${Math.round(s*0.8)}px;line-height:${s}px;${es}\\&quot;>${badgeEmojiOrTrophy(trainer.badge)}</span>&quot;`
     return `<img src="${badgeImgUrl(trainer.id)}" alt="${trainer.badge}" onerror="${onerr}" style="width:${s}px;height:${s}px;object-fit:contain;display:inline-block;vertical-align:middle;${es}">`
   }
-  return `<span style="font-size:${Math.round(s*0.8)}px;line-height:${s}px;${es}">${trainer.badge}</span>`
+  return `<span style="font-size:${Math.round(s*0.8)}px;line-height:${s}px;${es}">${badgeEmojiOrTrophy(trainer.badge)}</span>`
 }
 
 // Replace broken trainer img with badge-emoji avatar
@@ -2132,7 +2134,7 @@ function trainerFallback(img, badge) {
   }
   const d = document.createElement('div');
   d.className = 'trainer-avatar-fb';
-  d.textContent = badge;
+  d.textContent = badgeEmojiOrTrophy(badge);
   img.parentNode.replaceChild(d, img);
 }
 
@@ -2228,7 +2230,7 @@ function showGymWelcome(trainerId) {
   // Welcome banner badge — big image for real gym leaders, emoji otherwise (CSS font-size min(80px,20vw))
   document.getElementById('gw-badge').innerHTML = hasBadgeImg(trainer.id)
     ? `<img src="${badgeImgUrl(trainer.id)}" alt="${trainer.badge}" style="width:min(80px,20vw);height:min(80px,20vw);object-fit:contain;filter:drop-shadow(0 0 16px rgba(251,191,36,0.6))">`
-    : trainer.badge
+    : badgeEmojiOrTrophy(trainer.badge)
   document.getElementById('gw-gym').textContent = trainer.gym
   const grp = TRAINER_GROUPS.find(g => g.id === trainer.group)
   document.getElementById('gw-city').textContent = grp ? grp.label.replace(/^[^\s]+\s/, '') + ' Region' : ''
@@ -2335,7 +2337,7 @@ function showTeamConfirm(trainer, onConfirmed) {
 
   const badgeImg = (typeof hasBadgeImg === 'function' && hasBadgeImg(trainer.id))
     ? `<img class="tcf-badge-img" src="${badgeImgUrl(trainer.id)}" alt="${trainer.badge || ''}">`
-    : `<div style="font-size:48px;line-height:1">${trainer.badge || '🏆'}</div>`
+    : `<div style="font-size:48px;line-height:1">${badgeEmojiOrTrophy(trainer.badge || '🏆')}</div>`
   ov.innerHTML = `
     <button class="tcf-cancel" id="tcf-cancel" aria-label="Batal">✕</button>
     <div class="tcf-header">
@@ -2404,7 +2406,7 @@ function showBadgeZoom(trainerOrBadge, trainerName, gymName) {
       el.innerHTML = `<img src="${badgeImgUrl(trainerOrBadge.id)}" alt="${trainerOrBadge.badge}" style="width:min(120px,30vw);height:min(120px,30vw);object-fit:contain">`
     } else {
       const emoji = (trainerOrBadge && trainerOrBadge.badge) || trainerOrBadge
-      el.textContent = emoji
+      el.textContent = badgeEmojiOrTrophy(emoji)
     }
     document.getElementById('badge-text').textContent = `${trainerName} Badge diraih!`
     document.getElementById('badge-gym-text').textContent = gymName
@@ -2493,7 +2495,7 @@ function startBattle(trainerId){
     if (typeof window.getWeaknesses === 'function' && _firstEnemy && _firstEnemy.type) {
       const weak = window.getWeaknesses(_firstEnemy.type, 2);
       if (weak.length) {
-        const icons = weak.map(t => (window.TYPE_EMOJI && window.TYPE_EMOJI[t]) || '⚪').join(' ');
+        const icons = weak.map(t => window.typeIconOrWord ? window.typeIconOrWord(t) : '').join(' ');
         _counterMsg = ` (🎯 Counter: ${icons})`;
       }
     }
@@ -2522,8 +2524,8 @@ function updateHpUI(){
     if (typeof window.typeEmojiPrefix === 'function') {
       const eName = document.getElementById('hpf-enemy-name');
       const pName = document.getElementById('hpf-player-name');
-      if (eName && ep.type) eName.textContent = window.typeEmojiPrefix(ep.type) + ' ' + ep.name;
-      if (pName && pp.type) pName.textContent = window.typeEmojiPrefix(pp.type) + ' ' + pp.name;
+      if (eName && ep.type) eName.textContent = (window.typeEmojiPrefix(ep.type) + ' ' + ep.name).trim();
+      if (pName && pp.type) pName.textContent = (window.typeEmojiPrefix(pp.type) + ' ' + pp.name).trim();
     }
   } catch(_){}
   // Weakness sticker — show 2 strongest counter types vs current enemy.
@@ -2742,7 +2744,7 @@ function executeMove(moveIdx, mathCorrect){
             if (typeof window.getWeaknesses === 'function' && next.type) {
               const w = window.getWeaknesses(next.type, 2);
               if (w.length) {
-                const ic = w.map(t => (window.TYPE_EMOJI && window.TYPE_EMOJI[t]) || '⚪').join(' ');
+                const ic = w.map(t => window.typeIconOrWord ? window.typeIconOrWord(t) : '').join(' ');
                 _swapHint = ` (🎯 Counter: ${ic})`;
               }
             }
@@ -2943,13 +2945,15 @@ function endBattleWin(){
       stars >= 1 ? `Kamu bisa lebih baik lagi! ${info}` :
       'Jangan menyerah, ayo coba lagi!') + _statsLine
     GameModal.show({
-      emoji: stars >= 3 ? trainer.badge : (stars >= 1 ? '💪' : '😞'),
+      emoji: stars >= 3 ? badgeEmojiOrTrophy(trainer.badge) : (stars >= 1 ? '💪' : '😞'),
       title,
       stars,
       msg,
       onAgain: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; advStopWeather(); document.getElementById('gym-select').style.display='flex'; const pb=document.getElementById('btn-pkg'); if(pb)pb.style.display=''; startBattle(tid); },
       onBack: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; advStopWeather(); document.getElementById('gym-select').style.display='flex'; const pb=document.getElementById('btn-pkg'); if(pb)pb.style.display='' }
     });
+    // the earned gym badge: its own picture when the leader has one (assets/gym-badges); otherwise the emoji above
+    if (stars >= 3 && hasBadgeImg(trainer.id)) { const ge = document.getElementById('gm-emoji'); if (ge) ge.innerHTML = `<img src="${badgeImgUrl(trainer.id)}" alt="Medali" style="width:72px;height:72px;object-fit:contain">` }
   });
 }
 
@@ -3186,8 +3190,8 @@ window.__g13c = {
   endBattleLose: function () { return endBattleLose() }
 }
 </script>
-<script src="dunia-icons.js?v=v64.55-20261115a"></script>
-<script src="dunia-cinema.js?v=v64.55-20261115a" defer></script>
+<script src="dunia-icons.js?v=v64.56-20261115a"></script>
+<script src="dunia-cinema.js?v=v64.56-20261115a" defer></script>
 </body>
 </html>
 <!-- g13c-pixi v56.8-20260704b -->
