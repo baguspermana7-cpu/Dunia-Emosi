@@ -38,6 +38,12 @@ for (const pg of pages) {
   })
   try { await p.goto(BASE + pg, { waitUntil: 'load', timeout: 60000 }) } catch (e) { console.log('  ! ' + pg + ' ' + e.message) }
   await sleep(3500)
+  // let finite entrance animations end first (up to 4 s more): freezing one mid-fade measured a half-transparent text
+  // as low contrast on a loaded machine and on the CI runner (selamatkan-kereta, v64.56); infinite loops are ignored
+  await p.waitForFunction(() => document.getAnimations().every(a => {
+    const t = a.effect && a.effect.getComputedTiming ? a.effect.getComputedTiming() : null
+    return !t || !isFinite(t.endTime) || a.playState !== 'running'
+  }), { timeout: 4000, polling: 100 }).catch(() => {})
   // freeze motion so both screenshots see the same frame
   await p.addStyleTag({ content: '*,*::before,*::after{animation-play-state:paused!important;transition:none!important}' })
   if (process.env.QA_PLANT && pg === '/index.html') {
