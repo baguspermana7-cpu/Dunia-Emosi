@@ -46,7 +46,13 @@ jobs:
       - name: Gates
         env:
           CI_SMOKE: '1'
-        run: bash tools/ci-verify.sh
+        # The failing lines go out as annotations too: they are readable through the public API without a login.
+        run: |
+          set -o pipefail
+          bash tools/ci-verify.sh 2>&1 | tee ci-verify.log || {
+            grep -E '^== |✗|FAIL|Error|rror:' ci-verify.log | grep -B1 -E '✗|FAIL|Error|rror:' | tail -n 20 | while IFS= read -r l; do echo "::error::$l"; done
+            exit 1
+          }
 
   deploy:
     needs: verify
