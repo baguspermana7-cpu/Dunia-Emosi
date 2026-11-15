@@ -137,7 +137,7 @@
 
   /* ── the card ───────────────────────────────────────────────────────────────────────────────────── */
   var cur = null
-  function soundOn () { try { if (W.localStorage.getItem('dunia-emosi-sound') === 'off') return false } catch (e) {} return true }
+  function soundOn () { try { if (!W.DuniaSpeak.soundOn()) return false } catch (e) {} return true }
   function cue (k) { if (!soundOn()) return; try { if (W.SFXEngine && W.SFXEngine.cue) W.SFXEngine.cue(k) } catch (e) {} }
   function el (tag, cls, html) { var e = D.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
   function pics (g) {

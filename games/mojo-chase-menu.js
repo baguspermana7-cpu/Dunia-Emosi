@@ -33,7 +33,7 @@
     return !!s.st[stages[i].id] || i <= maxDone + OPEN_AHEAD
   }
   function soundOn () {
-    try { if (localStorage.getItem('dunia-emosi-sound') === 'off') return false } catch (e) {}
+    try { if (!W.DuniaSpeak.soundOn()) return false } catch (e) {}
     var sv = API && API.save ? API.save() : null
     return !sv || !sv.set || sv.set.sound !== false
   }

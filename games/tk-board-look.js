@@ -291,7 +291,7 @@
   /* ── voices (WebAudio synth, quiet, rate limited) ── */
   var AC = null, lastVoice = {}, touched = false
   function soundOn () {
-    try { if (localStorage.getItem('dunia-emosi-sound') === 'off') return false } catch (e) {}
+    try { if (!W.DuniaSpeak.soundOn()) return false } catch (e) {}
     var b = D.getElementById('sndfab') || D.getElementById('btn-sound')
     return b ? b.getAttribute('aria-pressed') !== 'false' : true
   }

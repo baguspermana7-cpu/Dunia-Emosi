@@ -385,7 +385,7 @@
   /* ── voices (WebAudio synth, quiet, rate limited) ── */
   var AC = null, lastVoice = {}
   function soundOn () {
-    try { if (localStorage.getItem('dunia-emosi-sound') === 'off') return false } catch (e) {}
+    try { if (!W.DuniaSpeak.soundOn()) return false } catch (e) {}
     var b = $('btn-sound2'); return b ? b.getAttribute('aria-pressed') === 'true' : true
   }
   function ctx () {

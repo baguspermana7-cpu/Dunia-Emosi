@@ -915,7 +915,9 @@
         if (opts.muted && opts.muted() && typeof opts.onUnmute === 'function') { try { opts.onUnmute() } catch (e) {} }
         paint()
         var v = arVoice(); if (!v) return
-        try { var u = new W.SpeechSynthesisUtterance(text); u.lang = v.lang || 'ar-SA'; u.voice = v; u.rate = 0.8; W.speechSynthesis.cancel(); W.speechSynthesis.speak(u) } catch (e) {}
+        // `always`: this tap is the child's explicit play action and has just unmuted the game (onUnmute above), which in
+        // Timmy also lifts the parent's setting for the session, so the line is not checked against that setting again
+        try { W.DuniaSpeak.say(text, { lang: v.lang || 'ar-SA', voice: v, rate: 0.8, always: true }) } catch (e) {}
         b.classList.remove('on'); void b.offsetWidth; b.classList.add('on')
       })
     }
@@ -925,8 +927,7 @@
         if (!W.speechSynthesis) return
         var v = (W.speechSynthesis.getVoices() || []).filter(function (x) { return /^ar/i.test(x.lang) })[0]
         if (!v) { help('Suara bahasa Arab belum tersedia. Baca tulisannya, ya.'); return }
-        var u = new W.SpeechSynthesisUtterance(text); u.lang = v.lang; u.voice = v; u.rate = 0.8
-        W.speechSynthesis.cancel(); W.speechSynthesis.speak(u)
+        W.DuniaSpeak.say(text, { lang: v.lang, voice: v, rate: 0.8, always: true })   // as before: not tied to the sound setting
       } catch (e) {}
     }
 

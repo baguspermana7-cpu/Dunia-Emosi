@@ -46,7 +46,7 @@
   load()
 
   /* ── sound + voice ──────────────────────────────────────────────────── */
-  var GLOBAL_MUTE = false; try { GLOBAL_MUTE = localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) {}
+  var GLOBAL_MUTE = false; try { GLOBAL_MUTE = !W.DuniaSpeak.soundOn() } catch (e) {}
   function soundOn () { return S.set.sound && !GLOBAL_MUTE }
   function cue (k) {
     if (!soundOn()) return
@@ -83,23 +83,14 @@
   }
   SND.on = soundOn   // a pack may ask whether sound is on before it plays its own cues (inert without ?pack=)
   var VOICE = null
-  function pickVoice (lang) {
-    try { var vs = W.speechSynthesis.getVoices() || [], re = lang === 'en' ? /^en([-_]|$)/i : /^id([-_]|$)/i; return vs.filter(function (v) { return re.test(v.lang) })[0] || null } catch (e) { return null }
-  }
+  // spoken through the one speech path (games/data/speak.js picks the en / id voice)
   function say (text, lang, force) {
     if (!text || !soundOn() || (!S.set.narr && !force)) return
-    try {
-      if (!W.speechSynthesis || !W.SpeechSynthesisUtterance) return
-      W.speechSynthesis.cancel()
-      var u = new SpeechSynthesisUtterance(String(text).replace(/\s+/g, ' '))
-      u.lang = lang === 'en' ? 'en-US' : 'id-ID'; u.rate = 0.95; u.pitch = 1.1
-      var v = pickVoice(lang); if (v) u.voice = v
-      W.speechSynthesis.speak(u)
-    } catch (e) {}
+    try { W.DuniaSpeak.say(String(text).replace(/\s+/g, ' '), { lang: lang === 'en' ? 'en-US' : 'id-ID', rate: 0.95, pitch: 1.1 }) } catch (e) {}
   }
   function hush () { try { W.speechSynthesis && W.speechSynthesis.cancel() } catch (e) {} }
   function syncSound () {
-    try { GLOBAL_MUTE = localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) {}
+    try { GLOBAL_MUTE = !W.DuniaSpeak.soundOn() } catch (e) {}
     var muted = !soundOn()
     if (W.SFXEngine && SFXEngine.setMute) SFXEngine.setMute(muted)
     if (muted) {

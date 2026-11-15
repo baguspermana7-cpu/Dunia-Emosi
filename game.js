@@ -2141,7 +2141,7 @@ function exitToPauseMenu() {
 function openSettingsFromPause() {
   const name=state.players[state.currentPlayer]?.name||'—'
   document.getElementById('settings-player-name').textContent=name
-  const sv=localStorage.getItem('dunia-emosi-sound')
+  const sv=isSoundOn()?'on':'off'
   const vv=localStorage.getItem('dunia-emosi-vibrate')
   const sb=document.getElementById('settings-sound-btn')
   const vb=document.getElementById('settings-vibrate-btn')
@@ -2804,7 +2804,7 @@ function quizStreakHit(btn) {
 // AUDIO
 // ================================================================
 let audioCtx=null
-function isSoundOn(){return localStorage.getItem('dunia-emosi-sound')!=='off'}
+function isSoundOn(){return window.DuniaSpeak.soundOn()}
 function isVibrateOn(){return localStorage.getItem('dunia-emosi-vibrate')!=='off'}
 function vibrate(pattern){if(isVibrateOn()&&navigator.vibrate)navigator.vibrate(pattern)}
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
@@ -13873,13 +13873,8 @@ function g18SpeakCurrent() {
 
 // E15: id-ID speech for text content. Tied to global isSoundOn() gate.
 function g18Speak(text) {
-  if (!isSoundOn() || !window.speechSynthesis || !text) return
-  try {
-    window.speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(String(text).slice(0, 220))
-    u.lang = 'id-ID'; u.rate = 0.95; u.pitch = 1.05
-    window.speechSynthesis.speak(u)
-  } catch(_){}
+  if (!text) return
+  window.DuniaSpeak.say(String(text).slice(0, 220), { lang: 'id-ID', rate: 0.95, pitch: 1.05 })
 }
 
 // E11: ESC + backdrop + swipe-down close. Wired on DOMContentLoaded fallback.

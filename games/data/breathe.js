@@ -20,14 +20,8 @@
   var SELF = (document.currentScript && document.currentScript.src) || ''
   var PIC = SELF ? new URL('../../assets/db/breathe/001.webp', SELF).href : ''
 
-  function soundOn () { try { return localStorage.getItem('dunia-emosi-sound') !== 'off' } catch (e) { return true } }
-  function say (text) {
-    try {
-      if (!soundOn() || !W.speechSynthesis) return
-      var u = new SpeechSynthesisUtterance(text); u.lang = 'id-ID'; u.rate = 0.85
-      W.speechSynthesis.cancel(); W.speechSynthesis.speak(u)
-    } catch (e) {}
-  }
+  // spoken through the one speech path (games/data/speak.js): silent while the parent's sound setting is off
+  function say (text) { try { W.DuniaSpeak.say(text, { lang: 'id-ID', rate: 0.85 }) } catch (e) {} }
   function today () { var x = new Date(); return x.getFullYear() + '-' + ('0' + (x.getMonth() + 1)).slice(-2) + '-' + ('0' + x.getDate()).slice(-2) }
   function getS (k) { try { return W.avatarScopedGet ? W.avatarScopedGet(k) : localStorage.getItem(k) } catch (e) { return null } }
   function setS (k, v) { try { if (W.avatarScopedSet) W.avatarScopedSet(k, v); else localStorage.setItem(k, v) } catch (e) {} }

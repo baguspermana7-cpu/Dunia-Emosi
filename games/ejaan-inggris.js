@@ -51,7 +51,7 @@
   /* The Dunia app's Settings > Suara OFF ('dunia-emosi-sound') silences this game too:
      each sound starts the session off WITHOUT rewriting the child's saved choice, and
      switching one on here lifts the mute for that sound for the rest of the session. */
-  var GOFF = (function () { try { return localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return false } })()
+  var GOFF = (function () { try { return !window.DuniaSpeak.soundOn() } catch (e) { return false } })()
     ? { sfx: 1, music: 1, voice: 1 } : {}
   function opt (k) { if (GOFF[k]) return false; return (k in ST.opt) ? !!ST.opt[k] : DEFAULTS[k] }
   function setOpt (k, v) { delete GOFF[k]; ST.opt[k] = !!v; writeStore() }

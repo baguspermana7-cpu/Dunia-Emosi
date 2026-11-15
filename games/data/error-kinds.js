@@ -42,14 +42,8 @@
     if (h.kind === 'swapped-op') return 'Lihat tandanya: ' + SIGN[h.op] + ' artinya ' + WORD[h.op] + '.'
     return 'Lihat jawaban yang benar, ya.'
   }
-  function soundOn () { try { return localStorage.getItem('dunia-emosi-sound') !== 'off' } catch (e) { return true } }
-  function say (s) {
-    try {
-      if (!soundOn() || !W.speechSynthesis) return
-      var u = new SpeechSynthesisUtterance(s); u.lang = 'id-ID'; u.rate = 0.95
-      W.speechSynthesis.cancel(); W.speechSynthesis.speak(u)
-    } catch (e) {}
-  }
+  // spoken through the one speech path (games/data/speak.js): silent while the parent's sound setting is off
+  function say (s) { try { W.DuniaSpeak.say(s, { lang: 'id-ID', rate: 0.95 }) } catch (e) {} }
   var CSS = '.dek{position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;align-items:center;gap:6px;' +
     'background:#fffaf0;border:3px solid #f59e0b;border-radius:18px;padding:8px 14px;box-shadow:0 6px 16px rgba(0,0,0,.25);pointer-events:none;max-width:min(92vw,420px);' +
     'animation:dek-in .2s cubic-bezier(.23,1,.32,1)}' +

@@ -989,7 +989,7 @@
      game too: the session starts muted WITHOUT overwriting the child's saved
      choice, and the in-game button still turns sound back on for the session. */
   var SOUND_ON = true
-  function globalSoundOff () { try { return localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return false } }
+  function globalSoundOff () { try { return !window.DuniaSpeak.soundOn() } catch (e) { return false } }
   function setSound (on, sessionOnly) {
     SOUND_ON = !!on; FX.mute(!SOUND_ON)
     if (!sessionOnly) { P.sound = SOUND_ON; save() }

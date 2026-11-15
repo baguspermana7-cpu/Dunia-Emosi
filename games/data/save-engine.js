@@ -196,6 +196,9 @@
   // game pages buzzed through it until 2026-11-14 (docs/prd/PRD-32). One guard here instead of one check per call site,
   // so a future call cannot forget it.
   DuniaProfile.vibrateOn = function () { try { return localStorage.getItem('dunia-emosi-vibrate') !== 'off' } catch (_) { return true } };
+  // The parent's "Suara" setting ('dunia-emosi-sound' = 'off'), same shape. Games read it through DuniaSpeak.soundOn()
+  // (games/data/speak.js), which defers here; it was read directly in 17 files until v64.54 (audit A-13).
+  DuniaProfile.soundOn = function () { try { return localStorage.getItem('dunia-emosi-sound') !== 'off' } catch (_) { return true } };
   try {
     const nav = typeof navigator !== 'undefined' ? navigator : null;
     if (nav && typeof nav.vibrate === 'function' && !nav.vibrate.__duniaGuard) {

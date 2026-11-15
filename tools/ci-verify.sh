@@ -33,6 +33,9 @@ node tools/qa-mojo-award.mjs
 node tools/qa-mojo-sound.mjs
 node tools/qa-mojo-integration.mjs
 
+echo "== one sound check, one speech path: no direct reads of the sound setting, no speech outside speak.js (audit A-13)"
+node tools/qa-sound-one-path.mjs
+
 echo "== sprites fill their box (people pack trimmed, PRD-26)"
 node tools/qa-sprite-fill.mjs
 

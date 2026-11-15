@@ -38,7 +38,7 @@
   // The Dunia app's Settings > Suara OFF ('dunia-emosi-sound') silences this game too:
   // the session starts quiet WITHOUT rewriting the saved choices, and turning a sound
   // on here (speaker button / parent toggle) lifts it for the rest of the session.
-  var GOFF = (function () { try { return localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return false } })()
+  var GOFF = (function () { try { return !window.DuniaSpeak.soundOn() } catch (e) { return false } })()
   function reduced () { return SET.rm || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) }
   function applyRM () { document.documentElement.classList.toggle('rm', !!SET.rm) }
   applyRM()

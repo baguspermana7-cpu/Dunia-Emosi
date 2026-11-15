@@ -109,12 +109,14 @@
     if (VO.el) try { VO.el.onended = VO.el.onerror = null; VO.el.pause() } catch (e) {}
     try { W.speechSynthesis && W.speechSynthesis.cancel() } catch (e) {}
   }
+  // through the one speech path (games/data/speak.js). `always`: Timmy keeps its own override of the parent's sound
+  // setting (a child's tap on the speaker unmutes this game, timmy-kapal.js toggleSound), and narrOn() above already
+  // carries it, so the line is not checked against the setting a second time.
   function synth (text) {
     try {
-      if (!W.speechSynthesis || !W.SpeechSynthesisUtterance) return false
-      var u = new SpeechSynthesisUtterance(String(text)); u.lang = 'id-ID'; u.rate = 0.95; u.pitch = 1.05; u.volume = clamp(CFG.voiceVol / 100, 0, 1)
-      if (!VOICE) pickVoice(); if (VOICE) u.voice = VOICE
-      W.speechSynthesis.speak(u); VO.last = 'tts'; return true
+      if (!VOICE) pickVoice()
+      if (!W.DuniaSpeak.say(text, { lang: 'id-ID', rate: 0.95, pitch: 1.05, volume: clamp(CFG.voiceVol / 100, 0, 1), voice: VOICE, always: true })) return false
+      VO.last = 'tts'; return true
     } catch (e) { return false }
   }
   function playClips (urls, text) {

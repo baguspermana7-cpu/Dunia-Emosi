@@ -43,14 +43,8 @@
   function write (d) {
     try { var s = JSON.stringify(d); if (W.avatarScopedSet) W.avatarScopedSet(KEY, s); else localStorage.setItem(KEY, s) } catch (e) {}
   }
-  function soundOn () { try { return localStorage.getItem('dunia-emosi-sound') !== 'off' } catch (e) { return true } }
-  function say (text) {
-    try {
-      if (!soundOn() || !W.speechSynthesis) return
-      var u = new SpeechSynthesisUtterance(text); u.lang = 'id-ID'; u.rate = 0.95
-      W.speechSynthesis.cancel(); W.speechSynthesis.speak(u)
-    } catch (e) {}
-  }
+  // spoken through the one speech path (games/data/speak.js): silent while the parent's sound setting is off
+  function say (text) { try { W.DuniaSpeak.say(text, { lang: 'id-ID', rate: 0.95 }) } catch (e) {} }
   function hasChild () {
     try { var p = JSON.parse(localStorage.getItem('dunia-players') || '[]'); return Array.isArray(p) && p.length > 0 } catch (e) { return false }
   }

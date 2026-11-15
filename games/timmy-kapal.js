@@ -177,7 +177,7 @@
   try { if (W.DuniaMastery && !S.migrated.mastery1) { TK_DOMAINS.forEach(function (d) { if (S.mastery[d]) W.DuniaMastery.seed(d, S.mastery[d]) }); S.migrated.mastery1 = true; save() } } catch (e) {}
   function masteryNow () { if (!W.DuniaMastery) return S.mastery; var o = {}; TK_DOMAINS.forEach(function (d) { o[d] = W.DuniaMastery.scoreNow ? W.DuniaMastery.scoreNow(d) : W.DuniaMastery.score(d) }); return o }
   // the main app's Settings > Suara OFF mutes this session without overwriting the child's own choice
-  var GLOBAL_MUTE = false; try { GLOBAL_MUTE = localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) {}
+  var GLOBAL_MUTE = false; try { GLOBAL_MUTE = !W.DuniaSpeak.soundOn() } catch (e) {}
   function soundOn () { return S.settings.sound && !GLOBAL_MUTE }
 
   /* ── sound: shared cues + a small original synth (waves, horn, splash, chime) ─ */
@@ -1287,7 +1287,7 @@
   }
   function globalSoundChanged (event) {
     if (event.key !== 'dunia-emosi-sound' && event.key !== null) return
-    try { GLOBAL_MUTE = localStorage.getItem('dunia-emosi-sound') === 'off' } catch (e) { return }
+    try { GLOBAL_MUTE = !W.DuniaSpeak.soundOn() } catch (e) { return }
     paintSound()
   }
   W.addEventListener('storage', globalSoundChanged)

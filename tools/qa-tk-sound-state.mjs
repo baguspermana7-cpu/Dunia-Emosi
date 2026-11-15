@@ -11,7 +11,8 @@ check('grid dynamic mute option permits sound and updates live',()=>{
   assert.equal(c.muted(),false);off=true;assert.equal(c.muted(),true)
 })
 check('global sound storage event updates immediately without changing child preference',()=>{
-  let paints=0;const c={GLOBAL_MUTE:false,localStorage:{getItem:()=> 'off'},paintSound:()=>paints++};vm.createContext(c)
+  let paints=0;const c={GLOBAL_MUTE:false,localStorage:{getItem:()=> 'off'},paintSound:()=>paints++};c.W=c;vm.createContext(c)
+  vm.runInContext(fs.readFileSync(new URL('../games/data/speak.js',import.meta.url),'utf8'),c)   // the one sound check (audit A-13)
   const fn=host.match(/^  function globalSoundChanged \([^\n]*\) \{\n[\s\S]*?^  \}/m)
   vm.runInContext(fn?fn[0]:'function globalSoundChanged(){}',c)
   c.globalSoundChanged({key:'dunia-emosi-sound'});assert.equal(c.GLOBAL_MUTE,true);assert.equal(paints,1)

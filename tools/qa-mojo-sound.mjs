@@ -2,6 +2,8 @@
 import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';
 const source=fs.readFileSync('games/mojo-swoptops.js','utf8'),listeners={},tracks=[];let global='on',cancelled=0,closed=0,cues=0,muted=false;
 const c={S:{set:{sound:true,narr:true}},localStorage:{getItem:()=>global},console,soundBtns:()=>{},speechSynthesis:{cancel:()=>cancelled++},SFXEngine:{cue:()=>{cues++;const a={muted:false};tracks.push(a);return a},setMute:m=>muted=m},addEventListener:(k,fn)=>listeners[k]=fn,setInterval:()=>0,clearInterval:()=>{},setTimeout:()=>0,clearTimeout:()=>{}};c.W=c;vm.createContext(c);
+// the hub setting is read through the one sound check (games/data/speak.js, audit A-13); it reads this mock storage
+vm.runInContext(fs.readFileSync('games/data/speak.js','utf8'),c);
 vm.runInContext(source.slice(source.indexOf('  var GLOBAL_MUTE'),source.indexOf('  function ac ('))+'\n'+source.slice(source.indexOf('  function hush ('),source.indexOf('  /* ── words')),c);
 c.cue('click');assert.equal(cues,1);c.AC={close:()=>{closed++;return Promise.resolve()}};global='off';assert.ok(listeners.storage,'Host listens for hub mute changes');listeners.storage({key:'dunia-emosi-sound'});
 assert.equal(c.soundOn(),false);assert.equal(muted,true);assert.equal(tracks[0].muted,true);assert.equal(closed,1);assert.equal(cancelled,1);c.cue('click');assert.equal(cues,1);assert.equal(c.S.set.sound,true);console.log('PASS External mute hushes current cue, tone and narration; future cues stop without overwriting local preference');

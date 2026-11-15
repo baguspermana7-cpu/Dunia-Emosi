@@ -189,12 +189,9 @@
   window.addEventListener('load', watchInnerFrame);
 
   // one spoken line in Indonesian, unless the app's sound setting is off; silent where speech is unavailable
+  // (games/data/speak.js, loaded right after this file on every page)
   function say(text) {
-    try {
-      if (localStorage.getItem('dunia-emosi-sound') === 'off' || !window.speechSynthesis) return;
-      var u = new SpeechSynthesisUtterance(text); u.lang = 'id-ID'; u.rate = 0.95;
-      window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
-    } catch (_) {}
+    try { window.DuniaSpeak.say(text, { lang: 'id-ID', rate: 0.95 }); } catch (_) {}
   }
 
   function showRecovery(kind, gap) {

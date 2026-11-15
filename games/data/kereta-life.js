@@ -94,7 +94,7 @@
   // sound: own tiny voices (the engine's SND is private); only when the sound toggle is on, never before a user gesture
   var AC = null
   function soundOn () {
-    try { if (W.localStorage.getItem('dunia-emosi-sound') === 'off') return false } catch (e) {}
+    try { if (!W.DuniaSpeak.soundOn()) return false } catch (e) {}
     return ['btn-sound', 'btn-sound2'].every(function (id) { var b = $(id); return !b || b.getAttribute('aria-pressed') !== 'false' })
   }
   function ac (gesture) {

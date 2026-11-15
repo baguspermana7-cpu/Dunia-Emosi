@@ -168,7 +168,7 @@
   var STORY = (/[?&]story=([a-z0-9-]+)/.exec(W.location.search) || [])[1] || 'brave'
   var ctx = null, master = null, scene = null, key = '', cache = {}, last = 0, ducked = false
   function soundOn () {
-    try { if (localStorage.getItem('dunia-emosi-sound') === 'off') return false } catch (e) {}
+    try { if (!W.DuniaSpeak.soundOn()) return false } catch (e) {}
     var b = D.getElementById('btn-sound2') || D.getElementById('btn-sound'), a = b && b.getAttribute('aria-pressed')
     return a !== 'false'
   }

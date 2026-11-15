@@ -357,14 +357,9 @@
       const lang = getSettings().lang || 'id'
       const lines = VOICE_LINES[trainKey] || {}
       const text = lines[event + '_' + lang] || lines[event + '_id'] || ''
-      if (!text || !window.speechSynthesis) return
+      if (!text) return
       try {
-        window.speechSynthesis.cancel()
-        const u = new SpeechSynthesisUtterance(text)
-        u.lang = lang === 'en' ? 'en-US' : 'id-ID'
-        u.rate = 0.95; u.pitch = 1.15
-        u.volume = (getSettings().voice || 0.85)
-        window.speechSynthesis.speak(u)
+        window.DuniaSpeak.say(text, { lang: lang === 'en' ? 'en-US' : 'id-ID', rate: 0.95, pitch: 1.15, volume: (getSettings().voice || 0.85), always: true })
       } catch(_){}
     },
     line(trainKey, event) {
