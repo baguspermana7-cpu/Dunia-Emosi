@@ -83,6 +83,25 @@ const ARM = {
   'games/kuis-matematika.html': () => { try { if (!window.__g25.inProgress()) window.__g25.startLevel(1) } catch (_) {} },
   'games/ejaan-inggris.html': () => { try { const s = window.__g27.state(); if (!s.word || s.solved) window.__g27.startWord('blue') } catch (_) {} },
 }
+// content picked by date: render every variant at once so a fact that shows only on some days is walked every run
+// (v64.57: CI failed on the day its museum trivia card carried an unmapped emoji; local runs that day passed)
+const ALL_DAYS = {
+  'games/museum-kereta.html': () => {
+    if (typeof G18_TRAINS === 'undefined' || typeof g18ShowDailyTrivia !== 'function') return 'no-trivia'
+    const real = Date.prototype.toDateString, hash = d => { let h = 0; for (let i = 0; i < d.length; i++) h = (h * 31 + d.charCodeAt(i)) >>> 0; return h }
+    const day = {}
+    for (let k = 0; Object.keys(day).length < G18_TRAINS.length && k < 1e6; k++) { const d = 'd' + k, i = hash(d) % G18_TRAINS.length; if (!(i in day)) day[i] = d }
+    let n = 0
+    try {
+      for (const i of Object.keys(day)) {
+        Date.prototype.toDateString = () => day[i]
+        g18ShowDailyTrivia()
+        const c = document.getElementById('g18-daily-trivia'); if (c) { c.id = 'g18-daily-trivia-' + i; n++ }
+      }
+    } finally { Date.prototype.toDateString = real }
+    return n
+  },
+}
 const END = {
   'games/balapan-kereta.html': [['endRace', []]],
   'games/balapan-kereta-side.html': [['endRace', ['Menang!', 'win']], ['endRace', ['Kalah', 'lose']]],
@@ -273,6 +292,10 @@ for (const rel of PAGES.filter(r => !ONLY || ONLY.test(r))) {
         await sleep(1500)
         if (!sameDoc()) { reach.push('left-page'); break }
         await walk('start:' + t.label)
+      }
+      if (sameDoc() && ALL_DAYS[rel]) {
+        const n = await page.evaluate(ALL_DAYS[rel]).catch(e => '!' + String(e.message).slice(0, 60))
+        reach.push('all-days:' + n); await sleep(800); await walk('all-days')
       }
       // end: the result card of every game with an end routine
       if (sameDoc()) {
