@@ -23,7 +23,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR = os.path.join(ROOT, "assets/Pokemon/pokemondb_hd_alt2")
 DB = os.path.join(ROOT, "assets/Pokemon/pokemon-db.json")
 CDN_JS = os.path.join(ROOT, "games/data/poke-sprite-cdn.js")
-GAME_JS = os.path.join(ROOT, "game.js")
+
+
+def hub_source() -> str:
+    """game.js + games/hub/*.js in index.html <script> order (A-18 split; same rule as tools/lib/hub-src.mjs)."""
+    html = re.sub(r"<!--[\s\S]*?-->", "", open(os.path.join(ROOT, "index.html"), encoding="utf-8").read())
+    files = [f for f in re.findall(r'<script\b[^>]*\bsrc="([^"?#]+)[^"]*"', html)
+             if f == "game.js" or re.fullmatch(r"games/hub/[^/]+\.js", f)]
+    return "".join(open(os.path.join(ROOT, f), encoding="utf-8").read() for f in files)
 
 
 def underscored(slug: str) -> str:
@@ -41,7 +48,7 @@ def load_poke_ids() -> dict:
 
 
 def load_game_db() -> dict:
-    src = open(GAME_JS, encoding="utf-8").read()
+    src = hub_source()
     out = {}
     for m in re.finditer(r"\{id:(\d+),name:'[^']*',slug:'([a-z0-9-]+)'", src):
         out.setdefault(m.group(2), int(m.group(1)))

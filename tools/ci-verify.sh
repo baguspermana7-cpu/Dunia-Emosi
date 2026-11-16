@@ -13,11 +13,14 @@ node tools/normalize-cache-tokens.mjs --check
 
 echo "== syntax: every own script parses"
 n=0
-for f in *.js games/*.js games/data/*.js; do node --check "$f"; n=$((n+1)); done
+for f in *.js games/*.js games/data/*.js games/hub/*.js; do node --check "$f"; n=$((n+1)); done
 echo "$n scripts parse"
 
 echo "== local references: scripts, stylesheets, precache entries exist"
 node tools/qa-local-refs.mjs
+
+echo "== game.js split: every games/hub/*.js part loaded after game.js, same token, precached; game.js only shrinks (audit A-18)"
+node tools/qa-hub-split.mjs
 
 echo "== every game page loads the freeze watchdog"
 node tools/qa-watchdog-wired.mjs

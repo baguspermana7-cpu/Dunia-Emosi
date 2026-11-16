@@ -3,8 +3,9 @@
 // screen (level select, dashboard) shows, taken from GAME_META in game.js. Static, no browser.
 // Usage: node tools/qa-game-names.mjs
 import fs from 'fs'
+import { hubSource } from './lib/hub-src.mjs'
 const html = fs.readFileSync('index.html', 'utf8').replace(/<!--[\s\S]*?-->/g, '')
-const js = fs.readFileSync('game.js', 'utf8')
+const js = hubSource()   // game.js + games/hub/*.js (A-18 split)
 const metaSrc = js.slice(js.indexOf('const GAME_META'), js.indexOf('}', js.indexOf("'13c'", js.indexOf('const GAME_META'))) + 2)
 const meta = {}
 for (const m of metaSrc.matchAll(/(?:^|[\s,{])'?(\w+)'?\s*:\s*\{[^}]*?name\s*:\s*'([^']+)'/g)) meta[m[1]] = m[2]

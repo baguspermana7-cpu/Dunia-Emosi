@@ -5,6 +5,7 @@
 // Usage: node tools/qa-local-refs.mjs
 import fs from 'fs'
 import path from 'path'
+import { HUB_FILES } from './lib/hub-src.mjs'
 const pages = ['index.html'].concat(fs.readdirSync('games').filter(f => f.endsWith('.html')).map(f => 'games/' + f))
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else { fail++; console.log('  ✗', m) } }
@@ -21,10 +22,11 @@ for (const u of shell) ok(fs.existsSync(file('sw.js', u)), `sw.js precache: ${u}
 // Hub code and hub CSS: every literal asset path (audit A-7: a missing level icon and a missing game-7 background
 // shipped because only <script>/<link> were checked). Paths built from variables are not literals and are skipped.
 let lit = 0
-for (const f of ['game.js', 'style.css']) {
+for (const f of [...HUB_FILES, 'style.css']) {   // game.js + games/hub/*.js (A-18 split)
   const src = fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
   for (const m of src.matchAll(/['"(](assets\/[^'"()`$]+?\.(?:webp|png|jpe?g|gif|svg|mp3|ogg|wav|json))['")]/gi)) {
-    lit++; ok(fs.existsSync(file(f, m[1])), `${f}: ${m[1]} does not exist`)
+    // hub scripts run in index.html, so their asset paths resolve from the page, not from the script's folder
+    lit++; ok(fs.existsSync(file(f.endsWith('.js') ? 'index.html' : f, m[1])), `${f}: ${m[1]} does not exist`)
   }
 }
 console.log(`qa-local-refs: ${pass}/${pass + fail} checks passed (${pages.length} pages, ${shell.length} precache entries, ${lit} hub asset literals)`)

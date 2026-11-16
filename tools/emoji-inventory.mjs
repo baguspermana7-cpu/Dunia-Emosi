@@ -12,6 +12,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import vm from 'node:vm'
+import { HUB_FILES } from './lib/hub-src.mjs'
 
 const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..')
 const BASELINE = path.join(ROOT, 'tools/emoji-unmapped-baseline.json')
@@ -28,7 +29,7 @@ const EmojiMap = mapCtx.EmojiMap
 const EMOJI_RE = /(?:\p{Extended_Pictographic})/gu
 
 const FILES = [
-  'index.html', 'game.js',
+  'index.html', ...HUB_FILES,   // game.js + games/hub/*.js (A-18 split)
   ...fs.readdirSync(path.join(ROOT, 'games'))
     .filter(f => f.endsWith('.html'))
     .map(f => 'games/' + f),

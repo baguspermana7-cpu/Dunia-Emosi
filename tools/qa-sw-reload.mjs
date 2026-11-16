@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import vm from 'node:vm'
+import { hubSource } from './lib/hub-src.mjs'
 
 const source = fs.readFileSync(new URL('../games/sw-reload.js', import.meta.url), 'utf8')
 let passes = 0
@@ -57,7 +58,7 @@ check('a deploy while the child is playing waits until the app is hidden', () =>
 
 // the hub (game.js) has its own SW_UPDATED handler: same rules (2026-10-10, a Blippi tile tap was lost to it)
 check('hub: first visit never reloads, a deploy waits until hidden', () => {
-  const src = fs.readFileSync(new URL('../game.js', import.meta.url), 'utf8')
+  const src = hubSource()   // game.js + games/hub/*.js (A-18 split)
   const i = src.indexOf('const swCtlAtLoad'), j = src.indexOf("window.addEventListener('load'", i)
   assert.ok(i > 0 && j > i, 'hub SW_UPDATED handler found')
   for (const [controlled, visible, want] of [[false, true, 0], [false, false, 0], [true, true, 0], [true, false, 1]]) {

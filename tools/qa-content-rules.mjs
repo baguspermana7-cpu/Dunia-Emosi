@@ -8,11 +8,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { HUB_FILES } from './lib/hub-src.mjs'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const rd = f => fs.readFileSync(path.join(ROOT, f), 'utf8')
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) { pass++; console.log('  ok', m) } else { fail++; console.log('  ✗', m) } }
-const files = ['game.js', 'index.html', ...fs.readdirSync(path.join(ROOT, 'games')).filter(f => /\.(js|html)$/.test(f)).map(f => 'games/' + f),
+const files = [...HUB_FILES, 'index.html', ...fs.readdirSync(path.join(ROOT, 'games')).filter(f => /\.(js|html)$/.test(f)).map(f => 'games/' + f),
   ...fs.readdirSync(path.join(ROOT, 'games/data')).filter(f => f.endsWith('.js')).map(f => 'games/data/' + f)]
 const rev = JSON.parse(rd('tools/people-reviewed.json'))
 const used = new Map(), randomPicks = []

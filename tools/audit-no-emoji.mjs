@@ -20,6 +20,7 @@ import puppeteer from 'puppeteer'
 import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
+import { hubSource } from './lib/hub-src.mjs'
 
 const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..')
 const PAGES = [
@@ -184,7 +185,7 @@ const CALL_END = async (fn, args) => {
 // hub: the result card (showResult) through endGame() and every all-literal showResult(...) call in game.js
 // (template ${...} parts become a number). Each call redraws the same card, so each is walked on its own.
 const HUB_CALLS = (() => {
-  const src = fs.readFileSync(path.join(ROOT, 'game.js'), 'utf8')
+  const src = hubSource()   // game.js + games/hub/*.js (A-18 split)
   const STR = "'(?:[^'\\\\]|\\\\.)*'|`[^`]*`"
   const re = new RegExp('showResult\\(\\s*((?:' + STR + ')\\s*,\\s*(?:' + STR + ')\\s*,\\s*(?:' + STR + '))\\s*\\)', 'g')
   const out = ['endGame(5)', 'endGame(2)', 'endGame(0)']

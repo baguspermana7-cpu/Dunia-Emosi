@@ -19,6 +19,7 @@
 import puppeteer from 'puppeteer'
 import fs from 'node:fs'
 import path from 'node:path'
+import { hubSource } from './lib/hub-src.mjs'
 
 const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..')
 const BASE = process.env.QA_BASE || 'http://localhost:8081'
@@ -31,7 +32,7 @@ const gym = fs.readFileSync(path.join(ROOT, 'games/gym-pokemon.html'), 'utf8')
 const roster = {}
 for (const m of gym.matchAll(/\{id:'([a-z_0-9]+)',[^}]*?group:'([a-z]+)'/g)) (roster[m[2]] = roster[m[2]] || []).push(m[1])
 const total = Object.values(roster).reduce((t, v) => t + v.length, 0)
-const gj = fs.readFileSync(path.join(ROOT, 'game.js'), 'utf8')
+const gj = hubSource()   // game.js + games/hub/*.js (A-18 split)
 const blk = gj.slice(gj.indexOf('const TRAINERS_BY_REGION'), gj.indexOf('const badgesKey'))
 const preset = {}
 for (const m of blk.matchAll(/^\s*([a-z]+):\s*\[([^\]]*)\]/gm)) preset[m[1]] = [...m[2].matchAll(/'([a-z_0-9]+)'/g)].map(x => x[1])

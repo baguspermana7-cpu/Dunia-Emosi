@@ -4,13 +4,14 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import vm from 'node:vm'
+import { hubSource } from './lib/hub-src.mjs'
 const root = path.resolve(import.meta.dirname, '..')
 const read = file => fs.readFileSync(path.join(root, file), 'utf8')
 const failures = []
 function check(name, fn) {
   try { fn(); console.log('PASS ' + name) } catch (e) { failures.push(name); console.error('FAIL ' + name + ': ' + e.message) }
 }
-const index = read('index.html'), game = read('game.js'), page = read('games/mojo-swoptops.html'), sw = read('sw.js')
+const index = read('index.html'), game = hubSource(), page = read('games/mojo-swoptops.html'), sw = read('sw.js')
 check('G31 is reachable from its own map node and has a star label', () => {
   const tile = index.match(/<div[^>]+id="gtile-31"[\s\S]*?id="gstars-31-lbl"/)
   assert.ok(tile, 'missing G31 map tile')
