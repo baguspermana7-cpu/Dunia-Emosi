@@ -102,6 +102,17 @@ const ALL_DAYS = {
     return n
   },
 }
+// every item of a list the child can open one at a time: [setup(i) in the page -> count, label]; each is walked
+// (v64.58: a train's detail card and the day's quiz question were reached only on some calendar days)
+const EACH = {
+  'games/museum-kereta.html': [
+    ['detail', () => typeof G18_TRAINS === 'undefined' ? 0 : G18_TRAINS.length,
+      i => { try { g18CloseModal() } catch (_) {} g18ShowDetail(i) }],
+    ['quiz', () => typeof G18_QUESTIONS_BANK === 'undefined' ? 0 : G18_QUESTIONS_BANK.length,
+      i => { try { g18CloseModal() } catch (_) {} if (typeof g18StartQuiz === 'function' && document.getElementById('g18-quiz-view').style.display !== 'flex') g18StartQuiz()
+        G18_QUIZ_SESSION = [G18_QUESTIONS_BANK[i]]; g18State.quizIdx = 0; g18RenderQuestion() }],
+  ],
+}
 const END = {
   'games/balapan-kereta.html': [['endRace', []]],
   'games/balapan-kereta-side.html': [['endRace', ['Menang!', 'win']], ['endRace', ['Kalah', 'lose']]],
@@ -296,6 +307,16 @@ for (const rel of PAGES.filter(r => !ONLY || ONLY.test(r))) {
       if (sameDoc() && ALL_DAYS[rel]) {
         const n = await page.evaluate(ALL_DAYS[rel]).catch(e => '!' + String(e.message).slice(0, 60))
         reach.push('all-days:' + n); await sleep(800); await walk('all-days')
+      }
+      for (const [label, count, open] of (sameDoc() && EACH[rel]) || []) {
+        const n = await page.evaluate(count).catch(() => 0)
+        let bad = 0
+        for (let i = 0; i < n; i++) {
+          const threw = await page.evaluate(open, i).catch(e => String(e.message).slice(0, 60))
+          if (threw) { bad++; continue }
+          await sleep(300); await walk(label + ':' + i)
+        }
+        reach.push(label + ':' + n + (bad ? ' (' + bad + ' threw)' : ''))
       }
       // end: the result card of every game with an end routine
       if (sameDoc()) {

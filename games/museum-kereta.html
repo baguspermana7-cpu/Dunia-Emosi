@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.58-20261117a">
+<link rel="stylesheet" href="du-buttons.css?v=v64.59-20261117a">
 <title>Museum Kereta Ambarawa</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.58-20261117a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.59-20261117a">
 <style>
 /* B-272 standalone museum page. Extracted from index.html in-SPA overlay so the
    museum has its own URL like every other game. Self-contained: no game.js. */
@@ -194,18 +194,18 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </head>
 <body>
 <div id="du-build-stamp">v58.7</div>
-<script src="data/emoji-map.js?v=v64.58-20261117a"></script><script src="data/ui-sprites.js?v=v64.58-20261117a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=v64.59-20261117a"></script><script src="data/ui-sprites.js?v=v64.59-20261117a"></script><!-- zero-emoji engine -->
 <!-- Freeze recovery net: detects a dead frame chain and offers a way out. -->
-<script src="data/speak.js?v=v64.58-20261117a"></script>
-<script src="data/freeze-watchdog.js?v=v64.58-20261117a"></script>
+<script src="data/speak.js?v=v64.59-20261117a"></script>
+<script src="data/freeze-watchdog.js?v=v64.59-20261117a"></script>
 <!-- v61.5 — the museum keeps per-child collectibles but never loaded the save
      engine, so avatar scoping was unavailable to it and every child shared one
      passport. Must load BEFORE the page script that reads them. -->
-<script src="data/save-engine.js?v=v64.58-20261117a"></script>
-<script src="sw-reload.js?v=v64.58-20261117a"></script>
+<script src="data/save-engine.js?v=v64.59-20261117a"></script>
+<script src="sw-reload.js?v=v64.59-20261117a"></script>
 <!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
-<script src="data/train-world.js?v=v64.58-20261117a"></script>
-<script src="data/museum-lore.js?v=v64.58-20261117a"></script>
+<script src="data/train-world.js?v=v64.59-20261117a"></script>
+<script src="data/museum-lore.js?v=v64.59-20261117a"></script>
 
 <div id="museum-root">
   <div class="game-header">
@@ -661,7 +661,7 @@ const G18_TRAINS = [
     fact:'Bintang utama Museum Ambarawa! B2507 dibuat di Swiss oleh SLM tahun 1902. Punya roda BERGERIGI (cogwheel) khusus untuk mendaki gunung terjal — salah satu dari sedikit kereta rack yang masih ada di dunia! ⛰️',
     funFact:'Jalur B2507 punya tanjakan 65‰ — artinya naik 65 meter setiap 1 km! Sangat curam!',
     history:'B2507 dibuat pabrik SLM Winterthur di Swiss tahun 1902 🇨🇭. Memakai sistem gigi ABT — rel tengah bergerigi yang dicengkeram roda gigi lokomotif agar tidak tergelincir di tanjakan ekstrem. Jalur Ambarawa–Bedono resmi dibuka tahun 1905 untuk menghubungkan perkebunan kopi di lereng Gunung Merbabu. Kini B2507 jadi simbol Museum Ambarawa dan kebanggaan Indonesia 🚂🌄🇮🇩',
-    route:'Ambarawa ↔ Bedono via Jambu',
+    route:'Ambarawa – Bedono via Jambu',
     quizHint:'kereta bergerigi pendaki gunung di Ambarawa'
   },
   {
@@ -670,7 +670,7 @@ const G18_TRAINS = [
     isSteam:true, rack:true, tender:false, bodyColor:'#0d2a0d', wheelColor:'#061606',
     fact:'B2521 melayani jalur Ambarawa–Bedono yang sangat terjal! Melewati perkebunan kopi dan teh di kaki Gunung Merbabu. Kemiringan jalurnya 65‰ — salah satu yang terextrim di dunia! 🌋',
     funFact:'Jalur ini dulu dipakai untuk mengangkut hasil perkebunan kopi & teh ke kota!',
-    route:'Ambarawa ↔ Bedono (tanjakan curam)',
+    route:'Ambarawa – Bedono (tanjakan curam)',
     quizHint:'kereta rack jalur Ambarawa-Bedono gunung'
   },
   {
@@ -679,7 +679,7 @@ const G18_TRAINS = [
     isSteam:true, rack:false, tender:true, bodyColor:'#0f0f0f', wheelColor:'#050505',
     fact:'C5107 buatan pabrik Hartmann, Jerman (1921). Di era Hindia Belanda, mengangkut penumpang & hasil bumi. Kini jadi bintang Kereta Wisata Ambarawa–Tuntang yang masih beroperasi! ☕🚂',
     funFact:'Kamu bisa naiki kereta wisata ini! Rute Ambarawa–Tuntang sejauh ±5 km!',
-    route:'Ambarawa ↔ Tuntang (kereta wisata)',
+    route:'Ambarawa – Tuntang (kereta wisata)',
     quizHint:'kereta wisata uap Ambarawa-Tuntang'
   },
   {
@@ -707,7 +707,7 @@ const G18_TRAINS = [
     isSteam:true, rack:true, tender:false, bodyColor:'#0a1f0a', wheelColor:'#051005',
     fact:'B2801 buatan Swiss Locomotive Works 1907. Mesin uap + roda gigi bergabung menaklukkan tanjakan 65‰ — naik 65 meter setiap 1 km! Satu-satunya di dunia yang masih beroperasi tourist! 😱⛰️',
     funFact:'🇨🇭 SLM (Swiss Locomotive Works) juga membuat kereta gunung terkenal di Alpen Swiss!',
-    route:'Ambarawa ↔ Bedono (wisata gunung)',
+    route:'Ambarawa – Bedono (wisata gunung)',
     quizHint:'kereta rack Swiss tanjakan paling curam'
   },
   {
@@ -716,7 +716,7 @@ const G18_TRAINS = [
     isSteam:true, rack:true, tender:false, bodyColor:'#1a0f00', wheelColor:'#0d0700',
     fact:'B2503 adalah lokomotif rack tertua di koleksi Ambarawa! Dibuat SLM Swiss 1898, sudah 125+ tahun! Generasi pertama kereta bergigi di Indonesia yang membuka jalur gunung! 🎖️',
     funFact:'Tanpa B2503 dan kawan-kawannya, kawasan Bedono & Jambu sulit dijangkau di era kolonial!',
-    route:'Ambarawa ↔ Bedono (jalur historis)',
+    route:'Ambarawa – Bedono (jalur historis)',
     quizHint:'lokomotif rack tertua Ambarawa 1898'
   },
   {
@@ -735,7 +735,7 @@ const G18_TRAINS = [
     fact:'CC200 adalah lokomotif diesel PERTAMA Indonesia! General Electric, Amerika 1953. Masinis menjuluki "Setan Ijo" karena cat hijau dan tenaganya dahsyat! Revolusi kereta Indonesia! 🇺🇸',
     funFact:'"Setan Ijo" artinya Setan Hijau — para masinis takjub dengan kekuatan mesin GE yang luar biasa!',
     history:'Di era Presiden Sukarno, pemerintah Indonesia memesan 27 unit CC200 dari General Electric Amerika tahun 1953 🇺🇸. Ini adalah langkah BESAR memodernisasi perkeretaapian RI — dari lokomotif uap berasap ke diesel bersih dan bertenaga. CC200 menjadi tulang punggung kereta ekspres Jakarta–Surabaya dan membuka era baru transportasi Indonesia. Satu unit masih terawat di Museum Ambarawa 🚆🎖️',
-    route:'Jakarta ↔ Surabaya (ekspres awal)',
+    route:'Jakarta – Surabaya (ekspres awal)',
     quizHint:'diesel pertama Indonesia Setan Ijo GE'
   },
   {
@@ -762,7 +762,7 @@ const G18_TRAINS = [
     isSteam:true, rack:false, tender:true, bodyColor:'#5D3A1A', wheelColor:'#3a2010',
     fact:'Kereta Wisata Ambarawa masih beroperasi menggunakan lokomotif uap tua! Rute Ambarawa–Tuntang ±5 km melewati sawah dan danau. Kamu bisa naiki dan rasakan serunya! ☁️🎉🚂',
     funFact:'Inilah satu-satunya jalur kereta bergigi yang masih aktif untuk wisata di Asia Tenggara!',
-    route:'Ambarawa ↔ Tuntang (wisata aktif)',
+    route:'Ambarawa – Tuntang (wisata aktif)',
     quizHint:'kereta wisata uap yang bisa dinaiki'
   },
   {
@@ -771,7 +771,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#1A1A6B', accentColor:'#0077cc',
     fact:'Shinkansen dijuluki "Peluru" karena hidungnya seperti peluru! Tepat waktu hingga detik — keterlambatan rata-rata hanya 36 detik per tahun! Dibanding B2507 Ambarawa, 10× lebih cepat! ⚡🇯🇵',
     funFact:'Jika keterlambatan >1 menit, perusahaan minta MAAF resmi dan memberi surat keterlambatan!',
-    route:'Tokyo ↔ Osaka (515 km, 2,5 jam)',
+    route:'Tokyo – Osaka (515 km, 2,5 jam)',
     quizHint:'kereta peluru Jepang 320 km/jam'
   },
   {
@@ -780,7 +780,7 @@ const G18_TRAINS = [
     isDiesel:true, bodyColor:'#0a1a3a', accentColor:'#f59e0b',
     fact:'Kereta ekspress terbaik Indonesia! Jakarta–Surabaya ±9 jam. Dinamai Gunung Bromo. CC204 sebagai lokomotifnya — 4× lebih cepat dari B2507 Ambarawa! 🌋🏆',
     funFact:'🇮🇩 Gerbong keretanya buatan INKA di Madiun, Jawa Timur! Bangga produk lokal!',
-    route:'Jakarta Gambir ↔ Surabaya Gubeng',
+    route:'Jakarta Gambir – Surabaya Gubeng',
     quizHint:'kereta ekspress Jakarta-Surabaya Argo Bromo'
   },
   {
@@ -790,7 +790,7 @@ const G18_TRAINS = [
     fact:'KRL mengangkut lebih dari 1 JUTA penumpang SETIAP HARI! Tanpa asap dan ramah lingkungan. Beda sekali dengan B2507 Ambarawa yang butuh batubara berkeranjang-keranjang! 🌿💙',
     funFact:'KRL yang beroperasi di Jakarta dulunya adalah kereta bekas Jepang yang direkondisi ulang!',
     history:'Modernisasi KRL Jabodetabek dimulai serius sejak 2013 ⚡. PT KAI Commuter mengimpor kereta bekas dari Jepang (seri JR 203, 205, 8000, dan Tokyu) lalu merekondisinya di Balai Yasa Manggarai. Jalur Jabodetabek dielektrifikasi penuh dengan listrik aliran atas 1500 VDC. Kini KRL jadi transportasi massal andalan ibu kota — ramah lingkungan dan bebas macet 🚆🌿🇮🇩',
-    route:'Bogor/Bekasi/Tangerang ↔ Jakarta',
+    route:'Bogor/Bekasi/Tangerang – Jakarta',
     quizHint:'kereta listrik 1 juta penumpang sehari Jabodetabek'
   },
   {
@@ -799,7 +799,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#003189', accentColor:'#e63946',
     fact:'TGV rekor dunia kereta konvensional — 574 km/jam! Hampir secepat pesawat! Ambarawa ke Jakarta ±350 km: TGV 37 menit, kereta uap Ambarawa 4+ jam! 🚀🇫🇷',
     funFact:'Listrik TGV berasal dari energi nuklir Prancis — hijau dan sangat bertenaga!',
-    route:'Paris ↔ Lyon (400 km, 2 jam)',
+    route:'Paris – Lyon (400 km, 2 jam)',
     quizHint:'kereta tercepat konvensional Perancis 574 km/jam'
   },
   {
@@ -809,7 +809,7 @@ const G18_TRAINS = [
     fact:'MRT Jakarta adalah kereta bawah tanah PERTAMA Indonesia! 16 stasiun, dibangun 10+ tahun. Beda dengan B2507 mendaki gunung, MRT justru menyelam ke bawah tanah kota! 🏙️🚇',
     funFact:'Stasiun MRT terdalam di Jakarta sampai 26 meter di bawah tanah — sedalam gedung 8 lantai!',
     history:'Ide MRT Jakarta sudah ada sejak awal 1990-an, tapi terus tertunda karena krisis ekonomi 1998 dan banyaknya pergantian pemerintahan 🏙️. Konstruksi akhirnya dimulai 2013 dengan pendanaan dari JICA (Japan International Cooperation Agency) dan teknologi kereta Sumitomo-Nippon Sharyo Jepang 🇯🇵. Setelah 20+ tahun menunggu, MRT Fase 1 resmi beroperasi Maret 2019 — jadi lompatan besar transportasi ibu kota 🚇🇮🇩',
-    route:'Lebak Bulus ↔ Bundaran HI (16 km)',
+    route:'Lebak Bulus – Bundaran HI (16 km)',
     quizHint:'kereta bawah tanah pertama Indonesia MRT'
   },
   {
@@ -818,7 +818,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#1a1a2e', accentColor:'#00f5ff',
     fact:'SCMaglev L0 tidak menyentuh rel sama sekali — melayang di atas magnet! 603 km/jam, rekor dunia! Kebalikan B2507 yang bergigi agar tidak tergelincir. Teknologi masa depan! 🧲🚀',
     funFact:'Magnet superkonduktor butuh didinginkan hingga −269°C — lebih dingin dari luar angkasa!',
-    route:'Tokyo ↔ Nagoya (target 2027, 40 menit)',
+    route:'Tokyo – Nagoya (target 2027, 40 menit)',
     quizHint:'kereta magnet melayang tercepat dunia 603 km/jam'
   },
   {
@@ -827,7 +827,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#b71c1c', accentColor:'#ffc107',
     fact:'CR400 Fuxing adalah kereta penumpang TERCEPAT yang beroperasi reguler di dunia! 350 km/h setiap hari. China kini punya >40.000 km jalur HSR — lebih panjang dari keliling bumi! 🇨🇳🏆',
     funFact:'Nama "Fuxing" artinya "Kebangkitan" — simbol kemajuan teknologi China modern!',
-    route:'Beijing ↔ Shanghai (1318 km, 4,5 jam)',
+    route:'Beijing – Shanghai (1318 km, 4,5 jam)',
     quizHint:'kereta terkencang beroperasi Fuxing China 350 km/jam'
   },
   {
@@ -836,7 +836,7 @@ const G18_TRAINS = [
     isSteam:true, rack:false, tender:false, bodyColor:'#14532D', wheelColor:'#052e16',
     fact:'Lori Tebu adalah kereta KECIL khusus pabrik gula! Rel sempit hanya 60cm, bertugas mengangkut batang tebu dari kebun ke pabrik gula. Masih beroperasi di pabrik Sragi, Tasikmadu, dan Colomadu! 🍬',
     funFact:'Gula Indonesia dulu terkenal di Eropa — 1 kereta lori bisa mengangkut 4 ton tebu per perjalanan!',
-    route:'Kebun tebu ↔ Pabrik gula (rel sempit 600mm)',
+    route:'Kebun tebu – Pabrik gula (rel sempit 600mm)',
     quizHint:'kereta kecil pengangkut tebu pabrik gula'
   },
   {
@@ -855,7 +855,7 @@ const G18_TRAINS = [
     fact:'Whoosh adalah kereta cepat PERTAMA di Asia Tenggara! 🎉 Dari Jakarta ke Bandung cuma 45 menit (biasanya 3 jam naik mobil). Diresmikan Presiden Jokowi Oktober 2023! 🇮🇩⚡',
     funFact:'Nama "Whoosh" dipilih dari sayembara nasional — singkatan Waktu Hemat Operasi Optimal Sistem Hebat!',
     history:'Proyek kereta cepat ini hasil kerjasama Indonesia–China (KCIC) senilai Rp 108 triliun. Awalnya bersaing dengan Shinkansen Jepang, pemerintah memilih teknologi CRH400 China karena skema pembiayaan lebih fleksibel 🇨🇳🇮🇩. Sempat terkendala pandemi COVID-19 dan pembebasan lahan, akhirnya Whoosh beroperasi Oktober 2023. Jadi simbol kemajuan teknologi Indonesia — tercepat di Asia Tenggara 🚄🏆',
-    route:'Halim (Jakarta) ↔ Tegalluar (Bandung) • 142 km',
+    route:'Halim (Jakarta) – Tegalluar (Bandung) • 142 km',
     quizHint:'kereta cepat pertama Asia Tenggara Jakarta Bandung'
   },
   {
@@ -864,7 +864,7 @@ const G18_TRAINS = [
     isDiesel:true, bodyColor:'#1E40AF', accentColor:'#FCD34D',
     fact:'Argo Parahyangan adalah kereta EKSEKUTIF paling favorit di Pulau Jawa! Dibuat oleh INKA Madiun — industri kereta kebanggaan Indonesia. Melintasi terowongan Sasaksaat dan Jembatan Cisomang!',
     funFact:'🇮🇩 INKA Madiun juga ekspor kereta ke Bangladesh, Filipina, dan Selandia Baru!',
-    route:'Gambir (Jakarta) ↔ Bandung • 173 km, 3 jam',
+    route:'Gambir (Jakarta) – Bandung • 173 km, 3 jam',
     quizHint:'kereta eksekutif Jakarta Bandung Argo Parahyangan INKA'
   },
   {
@@ -873,7 +873,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#FF0000', accentColor:'#FFFFFF',
     fact:'LRT Jabodebek adalah kereta TANPA MASINIS (driverless) pertama di Indonesia! 🤖 Dikendalikan komputer sepenuhnya — GoA Level 3. Juga kereta LRT pertama buatan INKA Madiun',
     funFact:'Meski tanpa masinis, ada petugas di stasiun yang memantau via komputer pusat!',
-    route:'Dukuh Atas ↔ Harjamukti / Jatimulya • 44 km',
+    route:'Dukuh Atas – Harjamukti / Jatimulya • 44 km',
     quizHint:'kereta tanpa masinis otomatis Jakarta LRT Jabodebek'
   },
   {
@@ -883,7 +883,7 @@ const G18_TRAINS = [
     fact:'Inilah kereta PERTAMA yang pernah berjalan di tanah Indonesia! 🎖️ Tanggal 10 Agustus 1867, lokomotif buatan Beyer Peacock Inggris melintas di rute Semarang–Tanggung sejauh 25 km. Penduduk takjub melihat "kuda besi" berasap untuk pertama kalinya! 🚂💨',
     funFact:'Peresmiannya dihadiri Gubernur Jenderal Pieter Mijer dan disambut ribuan warga yang belum pernah melihat kereta!',
     history:'Di era Hindia Belanda, perusahaan swasta Nederlandsch-Indische Spoorweg Maatschappij (NISM) membangun jalur kereta pertama Indonesia 🇳🇱. Rute Semarang–Tanggung dibuka 10 Agustus 1867 memakai lebar rel 1435mm (standar Eropa). Tujuan awal: mengangkut hasil bumi dan gula dari pedalaman Jawa ke pelabuhan Semarang. Jadi titik awal sejarah panjang perkeretaapian Indonesia 🚂🌏',
-    route:'Semarang ↔ Tanggung (25 km, rute pertama RI)',
+    route:'Semarang – Tanggung (25 km, rute pertama RI)',
     quizHint:'kereta pertama Indonesia 1867 Semarang Tanggung'
   },
   {
@@ -953,7 +953,7 @@ const G18_TRAINS = [
     fact:'CC202 dijuluki "Rajawali" karena kekuatannya yang luar biasa! 🦅 Dibuat GE Amerika 1986, khusus menarik kereta barang BERAT di Sumatera dan Jawa. Satu CC202 bisa tarik 40+ gerbong batubara sekaligus! 💪',
     funFact:'CC202 adalah penarik utama kereta batubara Babaranjang Sumatera — 60 gerbong sepanjang 1 km!',
     history:'CC202 diimpor dari General Electric Amerika 🇺🇸 mulai tahun 1986 untuk memperkuat armada kereta barang Indonesia. Keunggulannya: traksi sangat besar, cocok untuk jalur pegunungan dan muatan super berat. CC202 menjadi andalan PT KAI mengangkut batubara Bukit Asam di Sumatera Selatan dan kargo industri di Jawa. Jasanya menopang ekonomi energi dan logistik nasional 🚆⛏️',
-    route:'Tanjung Enim ↔ Tarahan (batubara Sumatera)',
+    route:'Tanjung Enim – Tarahan (batubara Sumatera)',
     quizHint:'kereta barang berat CC202 Rajawali GE biru'
   },
   {
@@ -963,7 +963,7 @@ const G18_TRAINS = [
     fact:'Argo Bromo 1997 adalah kereta EKSEKUTIF perdana yang memulai era "Argo" di Indonesia! 🏆 Nama diambil dari Gunung Bromo. Gerbongnya buatan INKA Madiun — produk kebanggaan Indonesia! 🌋',
     funFact:'Gerbong kelas eksekutif ini punya AC, kursi reclining, dan TV — mewah di zamannya!',
     history:'Argo Bromo diluncurkan 31 Juli 1997 di era Presiden Soeharto sebagai kereta eksekutif pertama kelas "Argo" 🇮🇩. Nama "Argo" jadi simbol prestise — setiap kereta Argo dinamai gunung di Indonesia (Bromo, Lawu, Muria, dll). Gerbongnya dirancang dan dibuat INKA Madiun, menandai kemandirian industri kereta nasional. Argo Bromo menjadi pionir rute premium Jakarta–Surabaya sebelum digantikan Argo Bromo Anggrek 🚄',
-    route:'Jakarta Gambir ↔ Surabaya Pasar Turi',
+    route:'Jakarta Gambir – Surabaya Pasar Turi',
     quizHint:'kereta argo pertama Indonesia Argo Bromo 1997'
   },
   {
@@ -973,7 +973,7 @@ const G18_TRAINS = [
     fact:'Taksaka adalah kereta eksekutif favorit rute Jakarta–Yogyakarta! Nama "Taksaka" diambil dari senjata Arjuna dalam kisah Mahabharata — senjata ampuh sang pahlawan! Warna hijau-kuningnya khas! 🟢🟡',
     funFact:'Dalam Mahabharata, Nagatatha/Taksaka adalah panah sakti Arjuna yang tidak pernah meleset!',
     history:'Taksaka diluncurkan PT KAI tahun 1999 untuk melayani penumpang eksekutif rute Jakarta Gambir – Yogyakarta Tugu. Gerbongnya diproduksi INKA di Madiun dengan desain elegan dan nyaman untuk perjalanan malam. Nama "Taksaka" dipilih dari khazanah wayang Jawa — merujuk senjata panah Arjuna — mencerminkan identitas budaya kota tujuan Yogyakarta sebagai pusat budaya Jawa 🇮🇩🎭',
-    route:'Jakarta Gambir ↔ Yogyakarta Tugu',
+    route:'Jakarta Gambir – Yogyakarta Tugu',
     quizHint:'kereta eksekutif Taksaka Jakarta Yogyakarta'
   },
   {
@@ -983,7 +983,7 @@ const G18_TRAINS = [
     fact:'KRL JR 205 adalah kereta BEKAS dari Jepang yang jadi tulang punggung KRL Jabodetabek! ⚡ Awalnya beroperasi di jalur Yamanote Tokyo, kini setelah direkondisi jadi andalan pulang-pergi kerja warga Jakarta! 🇯🇵➡️🇮🇩',
     funFact:'Dulu keretanya bertuliskan huruf Kanji Jepang — setelah direkondisi diganti huruf Latin Indonesia!',
     history:'Sejak 2013, PT KAI Commuter mengimpor seri JR 205 bekas dari JR East Jepang 🇯🇵. Kereta ini sudah dipensiunkan di Tokyo, lalu direkondisi di Balai Yasa Manggarai — cat ulang, AC baru, sistem pintu diperbaiki. Hasilnya: armada KRL bertambah banyak dengan biaya jauh lebih murah dari beli baru. JR 205 jadi tulang punggung KRL Jabodetabek yang mengangkut 1 juta+ penumpang per hari 🚆⚡',
-    route:'Bogor/Bekasi/Tangerang ↔ Jakarta',
+    route:'Bogor/Bekasi/Tangerang – Jakarta',
     quizHint:'kereta bekas Jepang JR205 KRL Jabodetabek'
   },
   {
@@ -993,7 +993,7 @@ const G18_TRAINS = [
     fact:'LRT Palembang adalah kereta LRT pertama di Sumatera! 🏆 Dibangun khusus untuk Asian Games 2018. Seluruh keretanya buatan anak bangsa — INKA Madiun dan LEN Bandung! 🇮🇩',
     funFact:'Di Asian Games 2018, LRT ini mengangkut ribuan atlet dan penonton ke Stadion Jakabaring!',
     history:'LRT Palembang dibangun khusus menyambut Asian Games 2018 yang diselenggarakan di Jakarta dan Palembang 🏅. Proyek ini membanggakan karena dikerjakan sepenuhnya oleh BUMN Indonesia: gerbong dari PT INKA Madiun, sistem sinyal dari PT LEN Bandung, dan konstruksi oleh PT Waskita Karya. Diresmikan Presiden Jokowi Juli 2018, LRT ini jadi LRT pertama di Sumatera dan simbol kemandirian teknologi transportasi Indonesia 🇮🇩🚆',
-    route:'Bandara SMB II ↔ DJKA Jakabaring (23 km)',
+    route:'Bandara SMB II – DJKA Jakabaring (23 km)',
     quizHint:'LRT pertama Sumatera Palembang Asian Games'
   }
 ]
@@ -1630,7 +1630,7 @@ function g18ShowDetail(idx) {
   if (!histEl && train.history) {
     histEl = document.createElement('div')
     histEl.id = 'g18-modal-history'
-    histEl.innerHTML = '<span id="g18-modal-history-title">📜 SEJARAH & MAKNA</span><div id="g18-modal-history-text"></div>'
+    histEl.innerHTML = '<span id="g18-modal-history-title">SEJARAH & MAKNA</span><div id="g18-modal-history-text"></div>'
     factEl.parentNode.insertBefore(histEl, factEl)
   }
   if (histEl) {
@@ -2131,8 +2131,13 @@ function g18RenderQuestion() {
   const imgEl = document.getElementById('g18-q-image')
   if (q.subjectTrainId != null && typeof g18TrainSVG === 'function' && G18_TRAINS[q.subjectTrainId]) {
     imgEl.innerHTML = g18TrainSVG(G18_TRAINS[q.subjectTrainId], 120, 56)
+    imgEl.style.display = ''
   } else {
-    imgEl.textContent = q.emoji
+    // a picture only when the emoji has art (EmojiMap); an unmapped emoji is never shown (no-emoji rule, v64.58)
+    // and the question text carries the meaning on its own
+    const hasArt = !!(q.emoji && window.EmojiMap && window.EmojiMap.has(q.emoji))
+    imgEl.textContent = hasArt ? q.emoji : ''
+    imgEl.style.display = hasArt ? '' : 'none'
   }
   document.getElementById('g18-q-text').textContent = q.q
   try { g18TintQuizBar() } catch(_){}
@@ -2251,7 +2256,7 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 window.addEventListener('pagehide', () => { try { g18Cleanup() } catch(_){} })
 </script>
-<script src="vfx-engine.js?v=v64.58-20261117a"></script><script src="data/vfx-db.js?v=v64.58-20261117a"></script><script src="vfx-moments.js?v=v64.58-20261117a"></script>
-<script src="dunia-cinema.js?v=v64.58-20261117a" defer></script>
+<script src="vfx-engine.js?v=v64.59-20261117a"></script><script src="data/vfx-db.js?v=v64.59-20261117a"></script><script src="vfx-moments.js?v=v64.59-20261117a"></script>
+<script src="dunia-cinema.js?v=v64.59-20261117a" defer></script>
 </body>
 </html>
