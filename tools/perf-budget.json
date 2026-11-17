@@ -1,0 +1,163 @@
+{
+ "note": "PRD-33 budget baseline. A number may fall, a rise of more than 5 % fails (tools/qa-perf-budget.mjs). Rewrite with QA_UPDATE=1.",
+ "measured": "2026-11-17",
+ "tolerance": 0.05,
+ "pages": {
+  "games/ayo-berhitung.html": {
+   "bytes": 136481,
+   "req": 20,
+   "audio": 0,
+   "dom": 236
+  },
+  "games/balapan-kereta-side.html": {
+   "bytes": 647948,
+   "req": 62,
+   "audio": 0,
+   "dom": 255
+  },
+  "games/balapan-kereta.html": {
+   "bytes": 1615297,
+   "req": 83,
+   "audio": 664930,
+   "dom": 315
+  },
+  "games/blippi.html": {
+   "bytes": 2291,
+   "req": 3,
+   "audio": 0,
+   "dom": 17
+  },
+  "games/ducky-volley.html": {
+   "bytes": 2374920,
+   "req": 36,
+   "audio": 1927930,
+   "dom": 130
+  },
+  "games/ejaan-inggris.html": {
+   "bytes": 13826209,
+   "req": 1377,
+   "audio": 0,
+   "dom": 470
+  },
+  "games/film-anak.html": {
+   "bytes": 327075,
+   "req": 27,
+   "audio": 0,
+   "dom": 279
+  },
+  "games/film-play.html": {
+   "bytes": 3921856,
+   "req": 59,
+   "audio": 19166,
+   "dom": 88
+  },
+  "games/garasi-tempur.html": {
+   "bytes": 17884099,
+   "req": 524,
+   "audio": 479508,
+   "dom": 755
+  },
+  "games/gym-pokemon.html": {
+   "bytes": 10477604,
+   "req": 375,
+   "audio": 0,
+   "dom": 1927
+  },
+  "games/kereta-maze.html": {
+   "bytes": 1134988,
+   "req": 42,
+   "audio": 0,
+   "dom": 358
+  },
+  "games/kuis-matematika.html": {
+   "bytes": 876712,
+   "req": 55,
+   "audio": 0,
+   "dom": 418
+  },
+  "games/lokomotif-pemberani.html": {
+   "bytes": 5071372,
+   "req": 438,
+   "audio": 664930,
+   "dom": 2114
+  },
+  "games/mario-pokemon.html": {
+   "bytes": 642413,
+   "req": 38,
+   "audio": 98164,
+   "dom": 129
+  },
+  "games/mobil.html": {
+   "bytes": 2369353,
+   "req": 49,
+   "audio": 1771490,
+   "dom": 185
+  },
+  "games/mojo-chase-embed.html": {
+   "bytes": 276054,
+   "req": 29,
+   "audio": 0,
+   "dom": 35
+  },
+  "games/mojo-swoptops.html": {
+   "bytes": 29407505,
+   "req": 912,
+   "audio": 9767054,
+   "dom": 380
+  },
+  "games/monster-candy.html": {
+   "bytes": 763721,
+   "req": 35,
+   "audio": 303213,
+   "dom": 111
+  },
+  "games/museum-kereta.html": {
+   "bytes": 599161,
+   "req": 63,
+   "audio": 0,
+   "dom": 602
+  },
+  "games/pokemon-bawah-laut.html": {
+   "bytes": 493289,
+   "req": 33,
+   "audio": 0,
+   "dom": 132
+  },
+  "games/pokemon-birds.html": {
+   "bytes": 861071,
+   "req": 36,
+   "audio": 248895,
+   "dom": 125
+  },
+  "games/pokemon-run.html": {
+   "bytes": 829489,
+   "req": 52,
+   "audio": 0,
+   "dom": 199
+  },
+  "games/selamatkan-kereta.html": {
+   "bytes": 1743204,
+   "req": 109,
+   "audio": 697499,
+   "dom": 1840
+  },
+  "games/stinky-dirty.html": {
+   "bytes": 9884480,
+   "req": 561,
+   "audio": 0,
+   "dom": 278
+  },
+  "games/timmy-kapal.html": {
+   "bytes": 19214214,
+   "req": 689,
+   "audio": 0,
+   "dom": 668
+  },
+  "index.html": {
+   "bytes": 6674757,
+   "req": 157,
+   "audio": 4923490,
+   "dom": 1972
+  }
+ }
+}
