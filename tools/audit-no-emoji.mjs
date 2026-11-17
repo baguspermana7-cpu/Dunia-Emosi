@@ -112,6 +112,14 @@ const EACH = {
       i => { try { g18CloseModal() } catch (_) {} if (typeof g18StartQuiz === 'function' && document.getElementById('g18-quiz-view').style.display !== 'flex') g18StartQuiz()
         G18_QUIZ_SESSION = [G18_QUESTIONS_BANK[i]]; g18State.quizIdx = 0; g18RenderQuestion() }],
   ],
+  // the attack orb and hit sparks show the attacker's TYPE emoji; which type a run meets is random, so the CI
+  // runner met a ghost/fighting/bug/flying one on 2026-11-17 (v64.60 red) that this machine never drew: fire every type
+  'games/pokemon-run.html': [
+    ['projectile', () => typeof TYPE_PROJ === 'undefined' ? 0 : Object.keys(TYPE_PROJ).length,
+      i => { const t = Object.keys(TYPE_PROJ)[i], a = document.body; spawnProjectile(a, a, t, () => {}) }],
+    ['hit-sparks', () => typeof TYPE_HIT_FX === 'undefined' ? 0 : Object.keys(TYPE_HIT_FX).length,
+      i => { spawnTypeHitFX(document.body, Object.keys(TYPE_HIT_FX)[i]) }],
+  ],
 }
 const END = {
   'games/balapan-kereta.html': [['endRace', []]],
@@ -272,6 +280,15 @@ for (const rel of PAGES.filter(r => !ONLY || ONLY.test(r))) {
   const walk = async (where) => {
     let r
     try { r = await page.evaluate(WALK, view === 'dashboard' ? '#screen-dashboard' : null) } catch (e) { r = { mapped: {}, unmapped: {}, text: 0 } }
+    // a mapped emoji can sit in the one-frame gap before ui-sprites swaps it (a HUD rewritten every frame on a loaded
+    // machine: full UTC run, pokemon-run, v64.61). Look again two frames later: only a mapped emoji still there counts;
+    // an unmapped one counts from either look. QA_PLANT=nores (resolver never loads) still fails: nothing swaps it.
+    if (Object.keys(r.mapped || {}).length) {
+      await sleep(300); await page.evaluate(() => new Promise(f => requestAnimationFrame(() => requestAnimationFrame(f)))).catch(() => {})
+      let r2
+      try { r2 = await page.evaluate(WALK, view === 'dashboard' ? '#screen-dashboard' : null) } catch (e) { r2 = null }
+      if (r2) r = { ...r, mapped: r2.mapped || {}, unmapped: { ...(r2.unmapped || {}), ...(r.unmapped || {}) } }
+    }
     for (const [kind, set] of [['mapped', r.mapped], ['unmapped', r.unmapped]]) {
       for (const [ch, c] of Object.entries(set || {})) {
         if (!seen[ch]) seen[ch] = { n: 0, mapped: kind === 'mapped', where: new Set() }
@@ -314,7 +331,10 @@ for (const rel of PAGES.filter(r => !ONLY || ONLY.test(r))) {
         for (let i = 0; i < n; i++) {
           const threw = await page.evaluate(open, i).catch(e => String(e.message).slice(0, 60))
           if (threw) { bad++; continue }
-          await sleep(300); await walk(label + ':' + i)
+          // ui-sprites swaps a mapped emoji on the next animation frame (ui-sprites.js schedule): let two frames pass so a
+          // HUD rewritten in this instant is judged as the child sees it, not in the gap before the swap
+          await sleep(300); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))).catch(() => {})
+          await walk(label + ':' + i)
         }
         reach.push(label + ':' + n + (bad ? ' (' + bad + ' threw)' : ''))
       }
