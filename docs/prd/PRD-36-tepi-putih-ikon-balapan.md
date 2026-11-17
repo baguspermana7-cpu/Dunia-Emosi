@@ -1,7 +1,7 @@
 # PRD-36 Hapus tepi putih ikon rintangan Balapan Kereta
 
 - **Gelombang:** Gelombang 4B — tampilan lebih detail
-- **Status:** belum mulai
+- **Status:** live v64.60
 - **Sumber:** `docs/audit/gameplay-variety-2026-11-17.md` (baca kode per game) + cek kode 2026-11-17
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -12,3 +12,11 @@
   - (L2) halaman lain yang ditemukan menggambar tepi putih masuk gate yang sama;
   - (L3) screenshot rintangan di 3 ukuran dilihat: ikon tetap terbaca.
 - **Usaha:** S.
+
+## Hasil (2026-11-17)
+- `_oaInk` (`games/balapan-kereta.html`) tidak lagi menggambar stroke putih 5 px; mata kepiting yang menonjol diberi kontur gelap.
+- Ditemukan juga: `games/battle-arena.js` `.ba-outline` memberi 4 drop-shadow putih ke petarung Gym Pokemon dan arena battle-modes. Diganti satu bayangan tepi gelap + bayangan tanah (2 filter, bukan 5).
+- Gate `tools/qa-drawn-outline.mjs` (run-gates, tag `content`): uji diri piring dengan cincin putih 2 px = 335 px, tanpa cincin = 0. Ikon balapan kode lama 16.189 px hampir-putih di cincin luar 18 jenis ikon, kode baru 0. `.ba-outline` lama 306, baru 0.
+- Screenshot 390x844, 844x390, 800x1280 sebelum/sesudah dilihat: ikon tetap terbaca, tanpa tepi putih. Petarung Gym dilihat di `qa-battle-arena`.
+- Regresi: ci-verify lulus; run-gates qa-drawn-outline, qa-white-outline, qa-endgame-hang, qa-g14-realrace, qa-battle-arena, qa-battle-feel, qa-vfx-poke lulus.
+- **Sisa (bukan kode):** sprite DB di `assets/db/elements` (sapi, ayam, kaktus, semak, taksi, api) masih membawa tepi putih yang dipanggang di berkas; tercatat di `tools/white-outline-baseline.json` (PRD-27). Garis putih tipis 1,5-1,8 px di badan kereta pemain (`balapan-kereta.html` sekitar 3070, 3132, 3199) belum diubah: menunggu keputusan owner.

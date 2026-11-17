@@ -28,8 +28,8 @@
  *
  * Replicates the owner's concept video:
  *   - fighters stand ON the arena field at ground level, player LEFT (large,
- *     ~35% viewport height), enemy RIGHT (~28%), thin white sticker OUTLINE
- *     (4 offset white drop-shadows) + slow idle bob.
+ *     ~35% viewport height), enemy RIGHT (~28%), no white outline
+ *     (dark edge shadow only, PRD-36) + slow idle bob.
  *   - corner HP CARDS: rounded white card w/ name, type chip, Lv chip, green
  *     HP bar + "95/95" text + pokeball team dots. Player top-left, enemy
  *     top-right.
@@ -76,12 +76,11 @@
     '@keyframes baBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}',
     '.ba-sprite{display:block;object-fit:contain;height:min(34svh,44vw);max-width:46vw;transition:opacity .25s}',
     '.ba-fighter-enemy .ba-sprite{height:min(27svh,36vw);max-width:38vw}',
-    /* thin white sticker outline — 4 offset white drop-shadows + soft ground shadow.
+    /* no white sticker outline (owner rule, PRD-36): a thin dark edge shadow + soft ground shadow.
        Doubled class = specificity (0,2,0) so it also wins over battle-modes'
        .bm-arena-*-img filter rules without !important (keeps .bm-sprite-danger
        animation able to override during low-HP pulse). */
-    '.ba-outline.ba-outline{filter:drop-shadow(1.5px 0 0 rgba(255,255,255,.95)) drop-shadow(-1.5px 0 0 rgba(255,255,255,.95)) ',
-    'drop-shadow(0 1.5px 0 rgba(255,255,255,.95)) drop-shadow(0 -1.5px 0 rgba(255,255,255,.95)) drop-shadow(0 10px 16px rgba(0,0,0,.45))}',
+    '.ba-outline.ba-outline{filter:drop-shadow(0 1.5px 1px rgba(0,0,0,.45)) drop-shadow(0 10px 16px rgba(0,0,0,.45))}',
     '.ba-fighter.ba-faint{transition:transform .55s cubic-bezier(.5,0,.8,.4),opacity .55s ease;transform:translateY(52px);opacity:0}',
     '.ba-faint .ba-bob{animation:none}',
     '.ba-knock-l{animation:baKnockL .38s ease-out}',

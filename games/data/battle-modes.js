@@ -2545,8 +2545,8 @@
 
     function renderArena (p1, p2) {
       // v56.1 A-317 — SHARED BattleArena skin classes (games/battle-arena.js):
-      // .ba-cardskin = white rounded HP card, .ba-outline = white sticker
-      // outline on the field sprites. Skin-only: layout, P2 180° rotation,
+      // .ba-cardskin = white rounded HP card, .ba-outline = dark edge shadow
+      // (no white outline, PRD-36) on the field sprites. Skin-only: layout, P2 180° rotation,
       // selectors (.bm-*) and the cdnSlug/spritePath/_bmSpriteOnError sprite
       // resolution (v56.0 B-289) are all preserved exactly.
       return `
