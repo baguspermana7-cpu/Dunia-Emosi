@@ -78,6 +78,20 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-06](PRD-06-jalur-uji-perangkat-asli.md) | Jalur uji perangkat asli — **TERBLOKIR: owner menyalakan USB debugging + colok tablet** | Gelombang 3 | terblokir |
 | [PRD-29](PRD-29-shell-game-bersama-adopsi.md) | Shell game bersama (adopsi bertahap) | Gelombang 3 | belum mulai |
 | [PRD-31](PRD-31-lampu-dipanggang-pilot.md) | Lampu dipanggang (pilot) | Gelombang 3 | belum mulai |
+| [PRD-33](PRD-33-gate-anggaran-performa.md) | Gate anggaran performa per halaman | Gelombang 4A | belum mulai |
+| [PRD-34](PRD-34-diet-unduhan.md) | Diet unduhan: gambar malas, audio saat perlu | Gelombang 4A | belum mulai |
+| [PRD-35](PRD-35-dom-ringan-saat-main.md) | DOM ringan dan frame stabil saat main | Gelombang 4A | belum mulai |
+| [PRD-36](PRD-36-tepi-putih-ikon-balapan.md) | Hapus tepi putih ikon rintangan Balapan Kereta | Gelombang 4B | belum mulai |
+| [PRD-37](PRD-37-juice-bersama.md) | Juice bersama: hit-stop, combo, perayaan | Gelombang 4B | belum mulai |
+| [PRD-38](PRD-38-kedalaman-animasi-tokoh.md) | Kedalaman latar dan tokoh beranimasi (Birds, Bawah Laut) | Gelombang 4B | belum mulai |
+| [PRD-39](PRD-39-bank-soal-game-tipis.md) | Bank soal besar untuk game tipis [ANAK] | Gelombang 4C | belum mulai |
+| [PRD-08c](PRD-08c-bus-di-game-arkade.md) | Bus jawaban di game arkade dan kereta | Gelombang 4C | belum mulai |
+| [PRD-40](PRD-40-bos-tiap-sepuluh-level.md) | Bos tiap 10 level (Birds, G23, Bawah Laut) [ANAK] | Gelombang 4C | belum mulai |
+| [PRD-41](PRD-41-power-up-cuaca-ducky.md) | Power-up dan cuaca untuk Ducky Volley [ANAK] | Gelombang 4C | belum mulai |
+| [PRD-42](PRD-42-ronde-dengar-huruf.md) | Ronde "dengar" untuk game huruf + bank G11 besar [ANAK] | Gelombang 4C | belum mulai |
+| [PRD-43](PRD-43-gym-huruf-dari-kamus-ejaan.md) | Gym Huruf dari kamus ejaan | Gelombang 4C | belum mulai |
+| [PRD-44](PRD-44-g10-cuaca-dan-tipe.md) | G10: cuaca nyata dan keunggulan tipe [ANAK] | Gelombang 4C | belum mulai |
+| [PRD-45](PRD-45-mobil-bantuan-dan-streak.md) | Mobil: bantuan, streak lambat, kata lebih banyak [ANAK] | Gelombang 4C | belum mulai |
 
 ## Urutan & perkiraan
 | Gelombang | Isi | Perkiraan |
@@ -86,6 +100,15 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | 1 | 08b, 10, 19b, 11, 13, 20, 17b | ~4 minggu |
 | 2 | 18, 14, 21, 23, 22, 16C | ~5 minggu (14 paling lama; render suara berjalan paralel semalaman) |
 | 3 | 07, 06 (begitu tablet ada), 29 bertahap, 31 pilot | berjalan |
+| 4A | 33, 34, 35 (performa: gate anggaran dulu, lalu diet unduhan, lalu DOM/frame) | ~1,5 minggu |
+| 4B | 36 (aturan owner: tepi putih), 37, 38 (detail tampilan) | ~2 minggu |
+| 4C | 39, 08c, 40, 41, 42, 43, 44, 45 (gameplay lebih seru & beragam) | ~4 minggu |
+
+**Gelombang 4 (2026-11-17).** Sumber: `docs/audit/perf-survey-2026-11-17.md` (angka terukur, dua run, kebisingan
+dicatat) dan `docs/audit/gameplay-variety-2026-11-17.md` (baca kode per game, top 15, game tertipis, duplikat).
+Urutan: 33 → 36 → 34 → 35 → 39 → 37 → 08c → 38 → 40 → 41 → 42 → 43 → 44 → 45. PRD-22 (buku koleksi lintas game,
+Gelombang 2) adalah butir #3 audit gameplay dan dikerjakan di sela 4C. Hanya angka stabil (byte, request, node DOM)
+yang menjadi gate; frame dan long task tetap laporan survey per gelombang karena kebisingannya sebesar perubahannya.
 
 Langkah pertama setelah disetujui: tulis `docs/prd/` (25 berkas + README) — selesai, commit `docs: PRD semua perbaikan tersisa`, lalu mulai PRD-19a.
 
