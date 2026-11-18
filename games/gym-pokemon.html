@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.61-20261118a">
+<link rel="stylesheet" href="du-buttons.css?v=v64.62-20261118a">
 <title>Gym Pokémon ⚔️</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.61-20261118a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.62-20261118a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a0212;font-family:'Fredoka One',sans-serif;touch-action:none;user-select:none}
@@ -595,25 +595,25 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
   <div id="badge-gym-text"></div>
 </div>
 
-<script src="data/poke-sprite-cdn.js?v=v64.61-20261118a"></script>
-<script src="data/poke-sprite-loader.js?v=v64.61-20261118a"></script>
-<script src="data/speak.js?v=v64.61-20261118a"></script>
-<script src="data/freeze-watchdog.js?v=v64.61-20261118a"></script>
-<script src="data/save-engine.js?v=v64.61-20261118a"></script>
-<script src="data/math-rules.js?v=v64.61-20261118a"></script>
-<script src="data/emoji-map.js?v=v64.61-20261118a"></script><script src="data/ui-sprites.js?v=v64.61-20261118a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/poke-sprite-cdn.js?v=v64.62-20261118a"></script>
+<script src="data/poke-sprite-loader.js?v=v64.62-20261118a"></script>
+<script src="data/speak.js?v=v64.62-20261118a"></script>
+<script src="data/freeze-watchdog.js?v=v64.62-20261118a"></script>
+<script src="data/save-engine.js?v=v64.62-20261118a"></script>
+<script src="data/math-rules.js?v=v64.62-20261118a"></script>
+<script src="data/emoji-map.js?v=v64.62-20261118a"></script><script src="data/ui-sprites.js?v=v64.62-20261118a"></script><!-- UIUX/gameplay sprite packs -->
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=v64.61-20261118a"></script>
+<script src="quiz-engine.js?v=v64.62-20261118a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=v64.61-20261118a"></script>
-<script src="vfx-engine.js?v=v64.61-20261118a"></script><script src="data/vfx-db.js?v=v64.61-20261118a"></script><script src="vfx-poke.js?v=v64.61-20261118a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/move-id-translations.js?v=v64.61-20261118a"></script>
-<script src="data/sfx-engine.js?v=v64.61-20261118a"></script>
-<script src="data/weather-fx.js?v=v64.61-20261118a"></script>
-<script src="data/poke-packages.js?v=v64.61-20261118a"></script>
-<script src="data/battle-modes.js?v=v64.61-20261118a"></script>
-<script src="data/poke-type-chart.js?v=v64.61-20261118a"></script>
+<script src="battle-arena.js?v=v64.62-20261118a"></script>
+<script src="vfx-engine.js?v=v64.62-20261118a"></script><script src="data/vfx-db.js?v=v64.62-20261118a"></script><script src="vfx-poke.js?v=v64.62-20261118a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/move-id-translations.js?v=v64.62-20261118a"></script>
+<script src="data/sfx-engine.js?v=v64.62-20261118a"></script>
+<script src="data/weather-fx.js?v=v64.62-20261118a"></script>
+<script src="data/poke-packages.js?v=v64.62-20261118a"></script>
+<script src="data/battle-modes.js?v=v64.62-20261118a"></script>
+<script src="data/poke-type-chart.js?v=v64.62-20261118a"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -687,8 +687,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
     };
   });
 </script>
-<script src="game-modal.js?v=v64.61-20261118a"></script>
-<script src="battle-sprite-engine.js?v=v64.61-20261118a"></script>
+<script src="game-modal.js?v=v64.62-20261118a"></script>
+<script src="battle-sprite-engine.js?v=v64.62-20261118a"></script>
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -1457,6 +1457,8 @@ const BG_BASE      = '../assets/background/Gym pokemon/';
 // Hotfix #101-J: SPRITE_HD now returns true HD WebP (was 96px CDN — non-HD complaint)
 const SPRITE_HD_REMOTE = s => `../assets/Pokemon/others/pokeball.svg`; // 96px CDN, last resort
 const SPRITE_HD        = s => (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null) || SPRITE_HD_REMOTE(s); // true HD WebP
+// PRD-34: 96 px twin of the 630 px HD sprite (tools/make-poke-thumbs.py) for 36 px chips; null when the slug has no HD file.
+const SPRITE_THUMB     = s => { const u = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null); return u ? u.replace('/pokemondb_hd_alt2/', '/pokemondb_hd_alt2/thumb/') : null }
 const TRAINER_SPRITE_LOCAL = s => `../assets/Pokemon/trainer/${s}.webp`;
 const TRAINER_SPRITE_REMOTE = s => `../assets/Pokemon/trainer/${s}.webp`; // vendored 2026-11-14: no other host
 // 2026-11-14 — every trainer sprite ships locally (assets/Pokemon/trainer/, 94 files), so the game
@@ -1469,8 +1471,9 @@ const NO_TRAINER_FILE = new Set(['cissy','danny','drake','luana','rudy']);
 const HIJAB_SWAP = new Set(['acerola','agatha','akari','bea','candice','cissy','clair','cynthia','dawn','diantha','elesa','erika',
   'flannery','gardenia','iono','irida','iris','jasmine','jessie','karen','katy','korrina','lana','lenora','lorelei','luana','mallow',
   'may','maylene','misty','nessa','olivia','roxanne','ryme','sabrina','serena','skyla','tulip','valerie','viola','whitney','winona']);
-function trainerFaceSrc(t){
-  if (NO_TRAINER_FILE.has(t.sprite) || HIJAB_SWAP.has(t.sprite)) { const lead = t.team && t.team[0]; return (lead && pokeSpriteVariant(lead.slug)) || SPRITE_HD_REMOTE(); }
+function trainerFaceSrc(t, small){
+  // `small` (PRD-34): the 48 px roster card takes the 96 px thumb of the lead Pokemon, not the 630 px HD file
+  if (NO_TRAINER_FILE.has(t.sprite) || HIJAB_SWAP.has(t.sprite)) { const lead = t.team && t.team[0]; return (lead && small && SPRITE_THUMB(lead.slug)) || (lead && pokeSpriteVariant(lead.slug)) || SPRITE_HD_REMOTE(); }
   return TRAINER_SPRITE(t.sprite);
 }
 
@@ -2166,7 +2169,7 @@ function buildGymSelect(){
       html += `<div class="trainer-card ${beaten?'beaten':''} ${!unlocked?'locked':''} ${isCurrent?'current':''}"
         ${unlocked ? `onclick="showGymWelcome('${t.id}')"` : ''}>
         <div class="tc-order" style="color:${grp.color}">${idx+1}</div>
-        <img src="${trainerFaceSrc(t)}" data-sprite="${t.sprite}"
+        <img src="${trainerFaceSrc(t, true)}" data-sprite="${t.sprite}" width="48" height="48" decoding="async"
           onerror="trainerFallback(this,'${t.badge}')" alt="${t.name}">
         <div class="tc-info">
           <div class="tc-name">${t.name}</div>
@@ -3004,7 +3007,8 @@ function openPackageSelector() {
     const thumbs = pkg.team.map(p => {
       const base = baseSpeciesSlug(p.slug);
       const fallback = base !== p.slug ? `this.src='${SPRITE_HD(base)}';this.onerror=null;` : 'this.onerror=null';
-      return `<img src="${SPRITE_HD(p.slug)}" onerror="this.src='${SPRITE_HD_REMOTE(p.slug)}';this.onerror=()=>{${fallback}}" alt="${p.name}">`;
+      // PRD-34: 96 px thumb, lazy; a missing thumb falls back to the full HD sprite, then the old chain
+      return `<img src="${SPRITE_THUMB(p.slug) || SPRITE_HD(p.slug)}" width="36" height="36" loading="lazy" decoding="async" onerror="this.src='${SPRITE_HD(p.slug)}';this.onerror=function(){this.src='${SPRITE_HD_REMOTE(p.slug)}';this.onerror=()=>{${fallback}}}" alt="${p.name}">`;
     }).join('');
     const tierLabel = pkg.tier === 'base' ? 'EVO 1' : pkg.tier === 'final' ? 'FINAL' : 'MEGA';
     const selCls = pkg.id === current.id ? ' selected' : '';
@@ -3190,8 +3194,8 @@ window.__g13c = {
   endBattleLose: function () { return endBattleLose() }
 }
 </script>
-<script src="dunia-icons.js?v=v64.61-20261118a"></script>
-<script src="dunia-cinema.js?v=v64.61-20261118a" defer></script>
+<script src="dunia-icons.js?v=v64.62-20261118a"></script>
+<script src="dunia-cinema.js?v=v64.62-20261118a" defer></script>
 </body>
 </html>
 <!-- g13c-pixi v56.8-20260704b -->

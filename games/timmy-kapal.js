@@ -365,8 +365,19 @@
   function wIndex (w) { return WD.WORLDS.indexOf(w) }
   function lockBadge () { return '<span class="lockb">' + IC('lock', '', 'terkunci') + '</span>' }
   // a ship standing on its own painted scene (Art.scene is a CSS background; esc() keeps it safe inside style="")
+  // PRD-34: the carousel / ship list hold ~15 cards of 150-550 KB backdrops + vessel art, 1-3 on screen. Cards paint their backdrop
+  // when they come within ~1 card of the viewport (lazyScenes) and their vessel <img> is lazy; the open detail panel stays eager.
   function shipScene (w, cls) {
-    return '<span class="' + cls + '" style="background:' + esc(Art.scene(w.scene)) + '"><img src="' + esc(Art.vessel(w)) + '" alt="" draggable="false"></span>'
+    var eager = cls === 'dimg'
+    return '<span class="' + cls + '"' + (eager ? ' style="background:' + esc(Art.scene(w.scene)) + '"' : ' data-scene="' + esc(w.scene) + '"') + '><img src="' + esc(Art.vessel(w)) + '" alt="" draggable="false"' + (eager ? '' : ' loading="lazy" decoding="async"') + '></span>'
+  }
+  var sceneIO = null
+  function paintScene (el) { var k = el.getAttribute('data-scene'); if (k != null) { el.style.background = Art.scene(k); el.removeAttribute('data-scene') } }
+  function lazyScenes (root) {
+    var els = root.querySelectorAll('[data-scene]'), i
+    if (!W.IntersectionObserver) { for (i = 0; i < els.length; i++) paintScene(els[i]); return }
+    if (!sceneIO) sceneIO = new IntersectionObserver(function (ents) { ents.forEach(function (e) { if (e.isIntersecting) { paintScene(e.target); sceneIO.unobserve(e.target) } }) }, { rootMargin: '300px 300px 300px 300px' })
+    for (i = 0; i < els.length; i++) sceneIO.observe(els[i])
   }
   function home () {
     show('scr-home')
@@ -390,6 +401,7 @@
       return '<button class="sc' + (open ? '' : ' locked') + '" type="button" data-w="' + w.id + '" aria-label="' + esc(w.name + (open ? '' : ' (terkunci)')) + '">' + shipScene(w, 'sc-img') + (open ? '' : lockBadge()) +
         '<span class="sc-t"><b>' + esc(w.name) + '</b><small>' + esc(w.value) + '</small></span></button>'
     }).join('')
+    lazyScenes($('carousel'))
     $('car-dots').innerHTML = [0].concat(list).map(function (w, i) { return '<i' + (i ? '' : ' class="on"') + '></i>' }).join('')
     $('cats').innerHTML = CATS.filter(function (c) { return c[0] !== 'islam' || S.settings.islam }).map(function (c) {
       return '<button class="cat" type="button" data-d="' + c[0] + '"><i style="background:' + c[3] + '"><img src="' + esc(Art.lib(c[2])) + '" alt=""></i><span>' + c[1].replace('Matematika', 'Mate\u00ADmatika').replace('Pengetahuan', 'Penge\u00ADtahuan') + '</span></button>'
@@ -448,6 +460,7 @@
         '<button class="fav' + (fav ? ' on' : '') + '" type="button" data-fav="' + w.id + '" aria-label="Favorit" aria-pressed="' + fav + '">' + IC('star') + '</button>' +
         (got ? IC('compass', 'frag', 'kepingan') : '') + '</div>'
     }).join('') || '<p class="paper-note">Belum ada kapal favorit. Ketuk bintang di kartu kapal!</p>'
+    lazyScenes($('ship-list'))
     detail(SEL_SHIP)
     skel($('ship-list')); skel($('ships-bg'))
     bnav('', 'bnav-ships')

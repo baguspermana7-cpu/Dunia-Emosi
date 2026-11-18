@@ -1,7 +1,7 @@
 # PRD-34 Diet unduhan: gambar malas, audio saat perlu
 
 - **Gelombang:** Gelombang 4A — performa & kelancaran
-- **Status:** belum mulai
+- **Status:** live v64.62
 - **Sumber:** `docs/audit/perf-survey-2026-11-17.md` (alat `tools/qa-perf-survey.mjs`, CPU 4x, 390x844, dua run)
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -23,3 +23,17 @@
   - (L4) gate offline game itu tetap lulus (aset baru masuk precache);
   - (L5) bila sprite berubah, token game1 ikut naik.
 - **Usaha:** M.
+
+## Hasil (2026-11-18, v64.62)
+- First-screen MB (qa-perf-survey, 390x844, CPU 4x): gym 9.99 -> 1.03, lokomotif 4.84 -> 1.68, ducky 2.27 -> 0.49,
+  mobil 2.26 -> 0.57, hub 2.30 -> 1.67, timmy 3.10 -> 1.30.
+- How: 1024 Pokemon thumbs at 96 px (`assets/Pokemon/pokemondb_hd_alt2/thumb/`, `tools/make-poke-thumbs.py`) for 36-48 px
+  chips, falling back to the HD sprite; lazy train-card images in Lokomotif; `preload="none"` on game music (bytes move on
+  `play()`); the G14 hub audio objects are created on first use; Timmy carousel / ship list / story-strip backdrops paint
+  when within reach of the viewport (IntersectionObserver, disconnected on story finish/destroy).
+- Gates: `qa-music-on-start` (4 games call `play()` within 500 ms of the start tap; red with the call removed: 4 x
+  "NEVER CALLED"), `qa-prd34-thumbs` (0 broken thumbs), `qa-perf-budget` (6 pages, all at or below the PRD-33 baseline).
+- A/B against HEAD on the same loaded machine: board-look, cinema, steer, ui-audit and games-pwa fail on HEAD too
+  (perf medians, timeouts, the known `mojo-highway.mp3` miss). `qa-tk-story-art` hung only on the new tree: it waited
+  for every `<img>` load and the strip thumbs are lazy now; the gate waits for eager images (stage sprites) only.
+- Frame A/B (gym, timmy): no regression shown; gym runs reached different screens (old tapper stuck on the menu).

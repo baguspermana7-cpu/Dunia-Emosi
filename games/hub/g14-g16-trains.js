@@ -610,20 +610,26 @@ const G14_AI_POOL = Object.values(TRAIN_TYPES_14)
 let g14State = {}
 
 // G14 Audio — train station ambient + race BG loop + horn
-const g14StationAudio = new Audio('assets/sfx-train-station.mp3')
-g14StationAudio.loop = true; g14StationAudio.volume = 0.3
-const g14BgAudio = new Audio('assets/sfx-train-bg.mp3')
-g14BgAudio.loop = true; g14BgAudio.volume = 0.35
-const g14HornAudio = new Audio('assets/sfx-train-horn.mp3')
-g14HornAudio.volume = 0.7
+// PRD-34: created on first use (g14EnsureAudio), never at hub load — these three mp3s (~650 KB) were
+// fetched by every hub visit for a game most visits never open. preload='none': bytes move on play().
+let g14StationAudio = null, g14BgAudio = null, g14HornAudio = null
+function g14EnsureAudio() {
+  if (g14HornAudio) return
+  const mk = (src, loop, vol) => { const a = new Audio(); a.preload = 'none'; a.src = src; a.loop = loop; a.volume = vol; return a }
+  g14StationAudio = mk('assets/sfx-train-station.mp3', true, 0.3)
+  g14BgAudio = mk('assets/sfx-train-bg.mp3', true, 0.35)
+  g14HornAudio = mk('assets/sfx-train-horn.mp3', false, 0.7)
+}
 
 function g14StopAllAudio() {
+  g14EnsureAudio()
   g14StationAudio.pause(); g14StationAudio.currentTime = 0
   g14BgAudio.pause(); g14BgAudio.currentTime = 0
   g14HornAudio.pause(); g14HornAudio.currentTime = 0
 }
 function g14ScheduleHorn() {
   if (!g14State.running) return
+  g14EnsureAudio()
   g14HornAudio.currentTime = 0
   g14HornAudio.play().catch(()=>{})
   setTimeout(g14ScheduleHorn, 18000 + Math.random() * 12000)
@@ -697,7 +703,7 @@ function g14ShowTrainsForCategory(cat) {
 function g14StartRace() {
   if (!g14State.trainCfg) return
   // Switch from station ambient to race BG audio
-  g14StopAllAudio()
+  g14StopAllAudio()   // also creates the audio objects
   g14BgAudio.currentTime = 0
   g14BgAudio.play().catch(()=>{})
   setTimeout(g14ScheduleHorn, 8000)
@@ -1121,6 +1127,7 @@ function g14EmitSmoke() {
 
 function g14Finish(won) {
   g14State.running = false
+  g14EnsureAudio()
   g14BgAudio.pause(); g14BgAudio.currentTime = 0
   g14HornAudio.pause(); g14HornAudio.currentTime = 0
   cancelAnimationFrame(g14State.animFrame)

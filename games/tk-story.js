@@ -103,9 +103,19 @@
       // a thumbnail names its panel with a WHOLE phrase, never a cut line with an ellipsis (owner audit 2026-10-04):
       // the full caption if short, else its first sentence, else its first clause, else just the panel number
       var txt = thumbText(p.caption)
-      return '<div class="tks-t" data-i="' + k + '"><span class="tks-tbg" style="background:' + Art.scene(p.scene) + '"></span>' +
-        (main ? '<img src="' + Art.src(main.k) + '" alt="">' : '') + '<span class="tks-tc"><b>' + (k + 1) + '</b>' + esc(txt) + '</span></div>'
+      return '<div class="tks-t" data-i="' + k + '"><span class="tks-tbg" data-scene="' + esc(p.scene) + '"></span>' +
+        (main ? '<img src="' + Art.src(main.k) + '" alt="" loading="lazy" decoding="async">' : '') + '<span class="tks-tc"><b>' + (k + 1) + '</b>' + esc(txt) + '</span></div>'
     }).join('')
+    // PRD-34: a thumbnail paints its scene backdrop (a 150-550 KB webp) only when it is on, or one card from, the strip.
+    // The scene url is the same one the stage uses, so the panel on screen costs nothing extra.
+    var thumbIO = null
+    ;(function () {
+      var strip = root.querySelector('.tks-thumbs'), bgs = strip.querySelectorAll('.tks-tbg')
+      function paint (el) { if (el.getAttribute('data-scene') != null) { el.style.background = Art.scene(el.getAttribute('data-scene')); el.removeAttribute('data-scene') } }
+      if (!W.IntersectionObserver) { for (var q = 0; q < bgs.length; q++) paint(bgs[q]); return }
+      var io = thumbIO = new IntersectionObserver(function (ents) { ents.forEach(function (e) { if (e.isIntersecting) { paint(e.target); io.unobserve(e.target) } }) }, { root: strip, rootMargin: '0px 120px 0px 120px' })
+      for (var q2 = 0; q2 < bgs.length; q2++) io.observe(bgs[q2])
+    })()
     root.querySelector('.tks-dots').innerHTML = panels.map(function () { return '<i></i>' }).join('')
     function sfx (k) { try { if (opts.sfx && opts.sfx[k]) opts.sfx[k]() } catch (e) {} }
     function listenIco () { try { return opts.listen || (W.TKIcon ? W.TKIcon('listen') : '') } catch (e) { return '' } }
@@ -181,7 +191,7 @@
       }
       raf = requestAnimationFrame(loop)
     }
-    function finish () { if (dead) return; dead = true; W.removeEventListener('resize', onResize); try { if (sro) sro.disconnect() } catch (e) {} cancelAnimationFrame(raf); clearTimeout(talkT); try { opts.say && opts.say('') } catch (e) {} sfx('go'); if (opts.onDone) opts.onDone() }
+    function finish () { if (dead) return; dead = true; W.removeEventListener('resize', onResize); try { if (sro) sro.disconnect() } catch (e) {} try { if (thumbIO) thumbIO.disconnect() } catch (e) {} cancelAnimationFrame(raf); clearTimeout(talkT); try { opts.say && opts.say('') } catch (e) {} sfx('go'); if (opts.onDone) opts.onDone() }
     function advance () { sfx('page'); if (i >= panels.length - 1) finish(); else show(i + 1, 1) }
     root.querySelector('.tks-next').addEventListener('click', advance)
     cap.addEventListener('click', function (e) { if (e.target.closest('.tks-say')) { e.stopPropagation(); speak() } })
@@ -199,7 +209,7 @@
     root.querySelector('.tks-stage').addEventListener('pointercancel', function () { sx = null })
     show(0, 1)
     raf = requestAnimationFrame(loop)
-    return { destroy: function () { dead = true; W.removeEventListener('resize', onResize); try { if (sro) sro.disconnect() } catch (e) {} cancelAnimationFrame(raf); clearTimeout(talkT); host.innerHTML = '' }, index: function () { return i }, next: function () { root.querySelector('.tks-next').click() } }
+    return { destroy: function () { dead = true; W.removeEventListener('resize', onResize); try { if (sro) sro.disconnect() } catch (e) {} try { if (thumbIO) thumbIO.disconnect() } catch (e) {} cancelAnimationFrame(raf); clearTimeout(talkT); host.innerHTML = '' }, index: function () { return i }, next: function () { root.querySelector('.tks-next').click() } }
   }
   W.TKStory = { play: play }
 })()

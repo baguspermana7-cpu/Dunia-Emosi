@@ -34,7 +34,8 @@ try {
       let firstBad = null
       for (const { panel, path } of panels) {
         const handle = TKStory.play(host, [panel], {})
-        await Promise.all([...host.querySelectorAll('img')].map(image => image.complete ? Promise.resolve() :
+        // lazy strip thumbnails (PRD-34) load only when scrolled to: waiting on them would hang; stage sprites are eager
+        await Promise.all([...host.querySelectorAll('img:not([loading=lazy])')].map(image => image.complete ? Promise.resolve() :
           new Promise(resolve => { image.onload = resolve; image.onerror = resolve })))
         dispatchEvent(new Event('resize'))
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))

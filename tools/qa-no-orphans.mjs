@@ -35,6 +35,7 @@ const KEEP = [
   /^assets\/banner-game[^/]*$/i,                         // game.js `assets/banner-game${n}.webp`
   /(^|\/)bg-arena-[^/]*$/i,                              // game.js bg-arena-* per arena and tier
   /\/pokemondb_hd_alt2\/\d+_[^/]+\.webp$/i,              // game.js `pokemondb_hd_alt2/${id}_${slug}.webp`
+  /\/pokemondb_hd_alt2\/thumb\/\d+_[^/]+\.webp$/i,        // 96 px twins (tools/make-poke-thumbs.py); gym-pokemon SPRITE_THUMB inserts '/thumb/' into the HD path
   /^assets\/Pokemon\/trainer\//i,                        // trainer sprites picked from data
   /\/showdown-ani\//i,                                   // animated Pokemon sprites picked by name
   /^assets\/fonts\//i,                                   // fonts.css and the files it loads
