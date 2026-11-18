@@ -1,7 +1,7 @@
 # PRD-46 VFX sakuga di tombol semua game
 
 - **Gelombang:** Gelombang 4B — tampilan lebih detail (permintaan owner 2026-11-17)
-- **Status:** belum mulai
+- **Status:** live v64.63
 - **Sumber:** owner: "Adding vfx ini di button2 semua game dunia emosi biar bagus, pastikan semua. Tapi tetap keren dan proper" — https://github.com/finktheartist/sakuga-vfx (MIT, Justin Finkelman, commit `c3dabb17`, 2026-11-15)
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -31,3 +31,19 @@
 
 ## Usaha
 M.
+
+## Hasil (2026-11-18, v64.63)
+- Core: `games/vendor/sakuga/core.js` = upstream `core.js` at commit c3dabb17 byte for byte under a 1457-byte MIT header
+  (checked against raw.githubusercontent); `THIRD_PARTY.md` records source, author, licence and how to update.
+  Not used: `<sakuga-button>` and the katakana lettering (`sfx`, `hollow`, `dotted`).
+- Ours: `games/data/dunia-sakuga.js`, loaded on all 26 pages (hub + 25 games) and precached. Classes, first match wins:
+  off (canvas, svg, fields, full-screen hit areas, disabled) / tap (full-screen "tap to start", burst only) / answer /
+  fast (arrows, jump, lanes; a button pressed 4x in 1.6 s is demoted to fast) / primary / secondary.
+  Override `data-sakuga=...` (one use: ayo-berhitung "Soal Baru"). Colour comes from the button; neutral buttons get
+  warm gold. Reduced motion honoured (media query + `du-reduced-motion`). `?nosakuga=1` turns it off for A/B.
+- Gates: `qa-sakuga-wired` (in ci-verify, 115/115; red: one tag removed from mobil.html), `qa-sakuga-buttons`
+  (`--tag vfx`; 495 checks at 390x844; red with the module off and with planted wrong classes), L6: no effect pixel over
+  the text of another visible control (red on the first version: 41 spills - smoke puffs over neighbouring map tiles, chips
+  on "PILIH GAME"; fixed by removing the puffs and emitting chips only from free edges).
+- Known limits: canvas games get no squash (scaling a canvas moves every coordinate); games without a DuniaBus answer
+  event get squash and wedges only; in a tight answer grid the wrong-answer wobble may be hidden.

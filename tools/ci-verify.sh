@@ -19,6 +19,9 @@ echo "$n scripts parse"
 echo "== local references: scripts, stylesheets, precache entries exist"
 node tools/qa-local-refs.mjs
 
+echo "== every page loads the Sakuga core + button module, both precached (PRD-46)"
+node tools/qa-sakuga-wired.mjs
+
 echo "== game.js split: every games/hub/*.js part loaded after game.js, same token, precached; game.js only shrinks (audit A-18)"
 node tools/qa-hub-split.mjs
 
