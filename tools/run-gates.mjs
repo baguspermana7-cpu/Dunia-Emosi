@@ -34,6 +34,7 @@ TAGS.vfx = /^qa-sakuga-buttons\.mjs$/   // PRD-46: press effects on the buttons 
 TAGS.dom = /^qa-prd35-dom\.mjs$/   // PRD-35: the picker leaves the tree in play, the museum list draws as it scrolls, birds writes its HUD on change only
 TAGS.juice = /^qa-prd37-juice\.mjs$/   // PRD-37: a landed hit holds, the combo counts from 3, reduced motion keeps only the numbers
 TAGS.bus = /^qa-(prd08c-bus|bus-coverage)\.mjs$/   // PRD-08b/08c: every question game reports its answers to the learning log
+TAGS.depth = /^qa-prd38-depth\.mjs$/   // PRD-38: Birds and Bawah Laut layers move at different speeds, species with a GIF show it
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 
 const args = process.argv.slice(2)

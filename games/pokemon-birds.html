@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Pokemon Birds 🐦</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.67-20261120c">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.68-20261120d">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,#87CEEB 0%,#c8e8f8 40%,#22c55e 80%,#15803d 100%);font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -59,7 +59,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 #start-hint{font-size:16px;color:#86efac;animation:hintPulse 1.5s ease-in-out infinite}
 @keyframes hintPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.96)}}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.67-20261120c">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.68-20261120d">
 </head>
 <body>
 
@@ -127,15 +127,15 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat game... ⏳</div>
 </div>
 
-<script src="data/emoji-map.js?v=v64.67-20261120c"></script><script src="data/ui-sprites.js?v=v64.67-20261120c"></script><!-- zero-emoji engine -->
-<script src="data/soal-arcade-boot.js?v=v64.67-20261120c"></script><!-- PRD-39: the shared SoalEngine stack (tier from DuniaMastery) loads on the first tap; the page bank answers until then -->
-<script src="../shared/rz-responsive.js?v=v64.67-20261120c"></script>
+<script src="data/emoji-map.js?v=v64.68-20261120d"></script><script src="data/ui-sprites.js?v=v64.68-20261120d"></script><!-- zero-emoji engine -->
+<script src="data/soal-arcade-boot.js?v=v64.68-20261120d"></script><!-- PRD-39: the shared SoalEngine stack (tier from DuniaMastery) loads on the first tap; the page bank answers until then -->
+<script src="../shared/rz-responsive.js?v=v64.68-20261120d"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v64.67-20261120c"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
-<script src="data/speak.js?v=v64.67-20261120c"></script>
-<script src="data/freeze-watchdog.js?v=v64.67-20261120c"></script>
-<script src="data/save-engine.js?v=v64.67-20261120c"></script>
-<script src="game-modal.js?v=v64.67-20261120c"></script>
+<script src="vfx-engine.js?v=v64.68-20261120d"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
+<script src="data/speak.js?v=v64.68-20261120d"></script>
+<script src="data/freeze-watchdog.js?v=v64.68-20261120d"></script>
+<script src="data/save-engine.js?v=v64.68-20261120d"></script>
+<script src="game-modal.js?v=v64.68-20261120d"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -182,7 +182,7 @@ const G19_POKEMON = [
   { name:'Venomoth', evo:[{name:'Venomoth',src:'../assets/Pokemon/g19/venomoth.webp',mirror:false,scale:0.9}]},
   { name:'Articuno', evo:[{name:'Articuno',src:'../assets/Pokemon/g19/articuno.webp',mirror:false,scale:1.2}]},
   { name:'Zapdos', evo:[{name:'Zapdos',src:'../assets/Pokemon/g19/zapdos.webp',mirror:false,scale:1.2}]},
-  { name:'Lugia', evo:[{name:'Lugia',src:'../assets/Pokemon/g19/lugia.webp',mirror:false,scale:1.3}]},
+  { name:'Lugia', evo:[{name:'Lugia',src:'../assets/Pokemon/showdown-ani/lugia.gif',mirror:true,scale:1.3}]},
   { name:'Ho-Oh', evo:[{name:'Ho-Oh',src:'../assets/Pokemon/g19/ho-oh.webp',mirror:false,scale:1.2}]},
   { name:'Beautifly', evo:[{name:'Beautifly',src:'../assets/Pokemon/g19/beautifly.webp',mirror:false,scale:0.9}]},
   { name:'Dustox', evo:[{name:'Dustox',src:'../assets/Pokemon/g19/dustox.webp',mirror:false,scale:0.9}]},
@@ -211,7 +211,7 @@ const G19_POKEMON = [
   { name:'Charizard', evo:[{name:'Charizard',src:'../assets/Pokemon/g19/charizard-flying.webp',mirror:false,scale:1.3}]},
   { name:'Dragonite', evo:[{name:'Dragonite',src:'../assets/Pokemon/g19/dragonite.webp',mirror:false,scale:1.0}]},
   { name:'Flygon', evo:[{name:'Flygon',src:'../assets/Pokemon/g19/flygon-pokemon.webp',mirror:false,scale:1.1}]},
-  { name:'Gyarados', evo:[{name:'Gyarados',src:'../assets/Pokemon/g19/gyarados.webp',mirror:false,scale:1.2}]},
+  { name:'Gyarados', evo:[{name:'Gyarados',src:'../assets/Pokemon/showdown-ani/gyarados.gif',mirror:true,scale:1.2}]},
   { name:'Noivern', evo:[{name:'Noivern',src:'../assets/Pokemon/g19/noivern-flying.webp',mirror:false,scale:1.1}]},
   { name:'Hawlucha', evo:[{name:'Hawlucha',src:'../assets/Pokemon/g19/hawlucha.webp',mirror:false,scale:1.0}]},
   { name:'Butterfree', evo:[{name:'Butterfree',src:'../assets/Pokemon/g19/butterfree-cute.webp',mirror:false,scale:0.9}]},
@@ -1543,12 +1543,12 @@ window.addEventListener('resize', () => {
   _resizeT = setTimeout(_birdsResize, 150)
 })
 </script>
-<script src="dunia-icons.js?v=v64.67-20261120c"></script>
-<script src="dunia-home.js?v=v64.67-20261120c"></script>
+<script src="dunia-icons.js?v=v64.68-20261120d"></script>
+<script src="dunia-home.js?v=v64.68-20261120d"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.67-20261120c" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.67-20261120c" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.67-20261120c" defer></script>
+<script src="dunia-cinema.js?v=v64.68-20261120d" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.68-20261120d" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.68-20261120d" defer></script>
 </body>
 </html>
 <!-- v20260418d -->
