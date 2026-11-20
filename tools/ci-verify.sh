@@ -31,6 +31,9 @@ node tools/qa-watchdog-wired.mjs
 echo "== every Timmy board, kereta maze and Mojo pattern can be finished"
 node tools/qa-levels-solvable.mjs
 
+echo "== arcade questions (Ducky, Birds, Side Race): shared SoalEngine, 100+ distinct, tiers, correct, wired (PRD-39)"
+node tools/qa-soal-arcade.mjs
+
 echo "== one name per game: hub tile = GAME_META (audit A-8)"
 node tools/qa-game-names.mjs
 

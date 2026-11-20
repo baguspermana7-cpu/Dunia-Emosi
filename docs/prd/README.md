@@ -84,7 +84,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-36](PRD-36-tepi-putih-ikon-balapan.md) | Hapus tepi putih ikon rintangan Balapan Kereta | Gelombang 4B | live v64.60 |
 | [PRD-37](PRD-37-juice-bersama.md) | Juice bersama: hit-stop, combo, perayaan | Gelombang 4B | belum mulai |
 | [PRD-38](PRD-38-kedalaman-animasi-tokoh.md) | Kedalaman latar dan tokoh beranimasi (Birds, Bawah Laut) | Gelombang 4B | belum mulai |
-| [PRD-39](PRD-39-bank-soal-game-tipis.md) | Bank soal besar untuk game tipis [ANAK] | Gelombang 4C | belum mulai |
+| [PRD-39](PRD-39-bank-soal-game-tipis.md) | Bank soal besar untuk game tipis [ANAK] | Gelombang 4C | live v64.65 |
 | [PRD-08c](PRD-08c-bus-di-game-arkade.md) | Bus jawaban di game arkade dan kereta | Gelombang 4C | belum mulai |
 | [PRD-40](PRD-40-bos-tiap-sepuluh-level.md) | Bos tiap 10 level (Birds, G23, Bawah Laut) [ANAK] | Gelombang 4C | belum mulai |
 | [PRD-41](PRD-41-power-up-cuaca-ducky.md) | Power-up dan cuaca untuk Ducky Volley [ANAK] | Gelombang 4C | belum mulai |

@@ -11,10 +11,10 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.64-20261119a">
-<link rel="stylesheet" href="du-hud.css?v=v64.64-20261119a">
+<link rel="stylesheet" href="du-buttons.css?v=v64.65-20261120a">
+<link rel="stylesheet" href="du-hud.css?v=v64.65-20261120a">
 <title>🏁 Balapan Kereta — Side Race (Beta)</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.64-20261119a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.65-20261120a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEEB;font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -146,45 +146,46 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 /* v55.0 — Pause tip */
 .pause-tip{margin:18px auto 0;padding:12px 14px;background:rgba(255,255,255,0.85);border:2px dashed #312e81;border-radius:14px;color:#312e81;font-size:13px;font-weight:900;text-align:left;line-height:1.45;max-width:340px}
 </style>
-<script src="speedlines-fx.js?v=v64.64-20261119a"></script><!-- shared turbo speed lines (2026-10-17) -->
+<script src="speedlines-fx.js?v=v64.65-20261120a"></script><!-- shared turbo speed lines (2026-10-17) -->
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
 
 <!-- Pixi + shared modules (same versions as balapan-kereta.html for cache reuse) -->
-<script src="data/emoji-map.js?v=v64.64-20261119a"></script><script src="data/ui-sprites.js?v=v64.64-20261119a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=v64.65-20261120a"></script><script src="data/ui-sprites.js?v=v64.65-20261120a"></script><!-- zero-emoji engine -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="data/speak.js?v=v64.64-20261119a"></script>
-<script src="data/save-engine.js?v=v64.64-20261119a"></script><!-- A-14 per-child side-race choice + tutorial flag -->
-<script src="train-shared.js?v=v64.64-20261119a"></script>
-<script src="train-vfx.js?v=v64.64-20261119a"></script>
-<script src="motion.js?v=v64.64-20261119a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v64.64-20261119a"></script>
-<script src="data/bg-themes.js?v=v64.64-20261119a"></script>
-<script src="data/bg-renderers.js?v=v64.64-20261119a"></script>
-<script src="data/bg-npcs.js?v=v64.64-20261119a"></script>
-<script src="data/bg-audio.js?v=v64.64-20261119a"></script>
+<script src="data/speak.js?v=v64.65-20261120a"></script>
+<script src="data/save-engine.js?v=v64.65-20261120a"></script><!-- A-14 per-child side-race choice + tutorial flag -->
+<script src="train-shared.js?v=v64.65-20261120a"></script>
+<script src="train-vfx.js?v=v64.65-20261120a"></script>
+<script src="motion.js?v=v64.65-20261120a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v64.65-20261120a"></script>
+<script src="data/bg-themes.js?v=v64.65-20261120a"></script>
+<script src="data/bg-renderers.js?v=v64.65-20261120a"></script>
+<script src="data/bg-npcs.js?v=v64.65-20261120a"></script>
+<script src="data/bg-audio.js?v=v64.65-20261120a"></script>
 <!-- v55.27 — Thomas BGM (silent by default; only fires for aeg_* chars) -->
 <audio id="game-bgm" loop preload="none" style="display:none"></audio>
-<script src="train-bgm.js?v=v64.64-20261119a"></script>
-<script src="data/bg-events.js?v=v64.64-20261119a"></script>
-<script src="obstacle-engine.js?v=v64.64-20261119a"></script>
-<script src="data/kids-questions.js?v=v64.64-20261119a"></script>
-<script src="data/obstacles.js?v=v64.64-20261119a"></script>
-<script src="data/routes.js?v=v64.64-20261119a"></script>
-<script src="data/reward-catalog.js?v=v64.64-20261119a"></script>
-<script src="reward-gallery.js?v=v64.64-20261119a"></script>
-<script src="settings-modal.js?v=v64.64-20261119a"></script>
-<script src="trains-db.js?v=v64.64-20261119a"></script>
-<script src="data/sfx-engine.js?v=v64.64-20261119a"></script><!-- A-347 shared coin/crash cues (owner) -->
-<script src="vfx-engine.js?v=v64.64-20261119a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="game-modal.js?v=v64.64-20261119a"></script>
+<script src="train-bgm.js?v=v64.65-20261120a"></script>
+<script src="data/bg-events.js?v=v64.65-20261120a"></script>
+<script src="obstacle-engine.js?v=v64.65-20261120a"></script>
+<script src="data/kids-questions.js?v=v64.65-20261120a"></script>
+<script src="data/soal-arcade-boot.js?v=v64.65-20261120a" data-extra="../quiz-engine.js"></script><!-- PRD-39: the shared SoalEngine stack (tier from DuniaMastery) loads on the first tap; the page bank answers until then -->
+<script src="data/obstacles.js?v=v64.65-20261120a"></script>
+<script src="data/routes.js?v=v64.65-20261120a"></script>
+<script src="data/reward-catalog.js?v=v64.65-20261120a"></script>
+<script src="reward-gallery.js?v=v64.65-20261120a"></script>
+<script src="settings-modal.js?v=v64.65-20261120a"></script>
+<script src="trains-db.js?v=v64.65-20261120a"></script>
+<script src="data/sfx-engine.js?v=v64.65-20261120a"></script><!-- A-347 shared coin/crash cues (owner) -->
+<script src="vfx-engine.js?v=v64.65-20261120a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=v64.65-20261120a"></script>
 <!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
-<script src="scenery-engine.js?v=v64.64-20261119a"></script>
+<script src="scenery-engine.js?v=v64.65-20261120a"></script>
 <!-- v55.77 — shared painterly backdrop (scenery-only far layer) + speed overlay -->
-<script src="train-backdrop.js?v=v64.64-20261119a"></script>
-<script src="train-speedfx.js?v=v64.64-20261119a"></script>
-<script src="train-journey.js?v=v64.64-20261119a"></script>
+<script src="train-backdrop.js?v=v64.65-20261120a"></script>
+<script src="train-speedfx.js?v=v64.65-20261120a"></script>
+<script src="train-journey.js?v=v64.65-20261120a"></script>
 
 <div id="hud-top">
   <button id="btn-back" class="du-hud-pill" type="button" onclick="goBack()">← Kembali</button>
@@ -964,6 +965,7 @@ function g14sWireObstacleEngine() {
       ? (7000 + Math.random() * 4000)
       : (10000 + Math.random() * 5000)
     setTimeout(() => {
+      if (S.gateOpen) { _scheduleNext(false); return }   // PRD-39: never two cards at once
       if (!S.running || S.gameOver || S.finished) return
       const id = _pickObstacleId()
       try {
@@ -1008,7 +1010,7 @@ const G14S_PAUSE_TIPS = [
   '💡 Tips: Hewan menyeberang? Bunyikan bell dengan tap!',
 ]
 function g14sTogglePause() {
-  if (S.gameOver || S.finished) return
+  if (S.gameOver || S.finished || S.gateOpen) return   // PRD-39: the station card owns the pause while it is open
   if (S.paused) {
     S.paused = false
     S.running = true
@@ -1272,6 +1274,7 @@ function tick(tickerOrDelta) {
   if (S.milestonesPassed < S.milestones.length && S.distance >= S.milestones[S.milestonesPassed]) {
     spawnMilestone(S.milestonesPassed + 1)
     S.milestonesPassed++
+    { const stNum = S.milestonesPassed; setTimeout(() => g14sStationGate(stNum), 1800) }   // PRD-39: the train reaches the sign, then the question
     // v54.93 — Difficulty curve: speed +5% per milestone. v55.74 — cap lowered
     // +20%→+10% so the longer ≥1-minute race stays a calm, steady pace.
     if (S.speed < S.baseSpeed * 1.10) {
@@ -1892,6 +1895,42 @@ function spawnCoin() {
 }
 
 // v54.89 — Milestone signpost at 200/400/600/800m
+// PRD-39: a question at every station sign (4 per race). The race pauses like it does for an ObstacleEngine puzzle,
+// the card is the shared QuizEngine pill panel, the question comes from the shared SoalEngine (tier from the child's
+// DuniaMastery), a right answer pays 5 coins, a wrong one costs nothing and shows the right choice.
+function g14sStationGate(num) {
+  if (!window.SoalArcade || !window.QuizEngine || S.gameOver || S.finished) return
+  const oe = document.getElementById('obstacle-engine-overlay')
+  if (S.gateOpen || S.paused || (oe && oe.style.display !== 'none')) { setTimeout(() => g14sStationGate(num), 600); return }
+  const sq = SoalArcade.next('g14s')
+  if (!sq) return
+  if (!document.getElementById('g14s-gate-css')) {
+    const st = document.createElement('style'); st.id = 'g14s-gate-css'
+    st.textContent = '#g14s-gate{position:fixed;inset:0;z-index:2100;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(15,23,42,.55);font-family:inherit}' +
+      '#g14s-gate .g14s-card{width:min(92vw,420px);max-height:92vh;overflow:auto;box-sizing:border-box;padding:16px 14px 14px;border-radius:22px;background:rgba(26,22,48,.96);border:2px solid rgba(251,191,36,.45)}' +
+      '#g14s-gate .qz-label{text-align:center;color:#fde68a;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}' +
+      '#g14s-gate .qz-question{font-size:22px;margin-bottom:12px}'
+    document.head.appendChild(st)
+  }
+  const t0 = Date.now()
+  const gate = document.createElement('div'); gate.id = 'g14s-gate'
+  gate.setAttribute('role', 'dialog'); gate.setAttribute('aria-modal', 'true'); gate.setAttribute('aria-label', 'Pertanyaan stasiun')
+  const card = document.createElement('div'); card.className = 'g14s-card'
+  gate.appendChild(card); document.body.appendChild(gate)
+  S.gateOpen = true; S.running = false; S.paused = true
+  try { if (app && app.ticker) app.ticker.speed = 0 } catch {}
+  QuizEngine.ask(card, { question: sq.prompt, answer: sq.answer, options: sq.choices, variant: 'mini', label: 'Stasiun ' + num, revealMs: { correct: 700, wrong: 1200 } }, (res) => {
+    SoalArcade.answer(sq, res.correct, 1, Date.now() - t0)
+    if (res.correct) S.coinScore += 5
+    try { gate.remove() } catch {}
+    S.gateOpen = false
+    if (!S.gameOver && !S.finished) {
+      S.paused = false; S.running = true
+      try { if (app && app.ticker) app.ticker.speed = 1 } catch {}
+    }
+  })
+}
+
 function spawnMilestone(num) {
   // v59.95 — the sign used to read `num * 200`, a leftover from the 1000m race: the
   // first signpost said "200m" while the HUD counter said 1300m. Read the real
@@ -2248,10 +2287,10 @@ function g14sSyncHudOffset() {
 </script>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v56.7</div>
 <!-- Freeze recovery net: detects a dead frame chain and offers a way out. -->
-<script src="data/freeze-watchdog.js?v=v64.64-20261119a"></script>
-<script src="dunia-icons.js?v=v64.64-20261119a"></script>
-<script src="dunia-cinema.js?v=v64.64-20261119a" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.64-20261119a" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.64-20261119a" defer></script>
+<script src="data/freeze-watchdog.js?v=v64.65-20261120a"></script>
+<script src="dunia-icons.js?v=v64.65-20261120a"></script>
+<script src="dunia-cinema.js?v=v64.65-20261120a" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.65-20261120a" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.65-20261120a" defer></script>
 </body>
 </html>

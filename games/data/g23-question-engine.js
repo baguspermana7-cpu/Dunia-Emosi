@@ -308,7 +308,7 @@
     {q:'"Ku-cing" suku kata?',ans:'2',wrong:['1','3','4']},
     {q:'"Ka-ka-tu-a" suku kata?',ans:'4',wrong:['3','5','2']},
     {q:'"Pe-la-ngi" suku kata?',ans:'3',wrong:['2','4','5']},
-    {q:'"Ja-ka-rta" suku kata?',ans:'3',wrong:['2','4','5']},
+    {q:'"Ja-kar-ta" suku kata?',ans:'3',wrong:['2','4','5']},
     {q:'"Si-nga" suku kata?',ans:'2',wrong:['1','3','4']},
     {q:'"Ge-pas" suku kata?',ans:'2',wrong:['1','3','4']},
     {q:'"Ma-ta-ha-ri" suku kata?',ans:'4',wrong:['3','5','2']},
