@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Petualangan Mobil 🚗</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.72-20261120h">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.73-20261120i">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e2447;font-family:'Fredoka One',sans-serif;touch-action:none}
@@ -139,13 +139,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e244
   </div>
 </div>
 
-<script src="data/speak.js?v=v64.72-20261120h"></script>
-<script src="data/freeze-watchdog.js?v=v64.72-20261120h"></script>
-<script src="data/save-engine.js?v=v64.72-20261120h"></script>
-<script src="data/emoji-map.js?v=v64.72-20261120h"></script><script src="data/ui-sprites.js?v=v64.72-20261120h"></script><!-- eco HUD star -->
-<script src="game-modal.js?v=v64.72-20261120h"></script>
-<script src="data/sfx-engine.js?v=v64.72-20261120h"></script><!-- shared answer cues (owner) -->
-<script src="vfx-engine.js?v=v64.72-20261120h"></script><!-- shared VFX (crash boom + win burst) -->
+<script src="data/speak.js?v=v64.73-20261120i"></script>
+<script src="data/freeze-watchdog.js?v=v64.73-20261120i"></script>
+<script src="data/save-engine.js?v=v64.73-20261120i"></script>
+<script src="data/emoji-map.js?v=v64.73-20261120i"></script><script src="data/ui-sprites.js?v=v64.73-20261120i"></script><!-- eco HUD star -->
+<script src="game-modal.js?v=v64.73-20261120i"></script>
+<script src="data/sfx-engine.js?v=v64.73-20261120i"></script><!-- shared answer cues (owner) -->
+<script src="vfx-engine.js?v=v64.73-20261120i"></script><!-- shared VFX (crash boom + win burst) -->
 
 <div id="flash"></div>
 
@@ -192,7 +192,23 @@ try {
   const s = sessionStorage.getItem('g6Config')
   if (s) Object.assign(cfg, JSON.parse(s))
 } catch(_) {}
+const _g6CustomBank = !!cfg.wordBank
 if (!cfg.wordBank) cfg.wordBank = WORD_BANKS[cfg.mapTheme] || WORD_BANKS.city
+// PRD-45: each map also draws words from the spelling dictionary (games/data/spelling-data.js, its Indonesian `id`),
+// picked by category to fit the map, single words of 3-8 letters. A bank passed in by the config is kept as it is.
+const G6_THEME_CATS = {
+  city: ['vehicles', 'jobs', 'sports', 'toys'], forest: ['wild', 'nature', 'birdsbugs', 'farm'], space: ['weather', 'vehicles'],
+  body: ['body', 'clothes'], pantai: ['sea', 'vehicles'], sekolah: ['school', 'colors', 'shapes', 'numbers', 'music'],
+  dapur: ['food', 'house', 'athome'], kebun: ['fruits', 'veggies', 'nature']
+}
+function g6ExtendBank() {
+  try {
+    if (_g6CustomBank || !window.SpellingData || !Array.isArray(SpellingData.WORDS)) return
+    const cats = G6_THEME_CATS[cfg.mapTheme] || G6_THEME_CATS.city
+    const extra = SpellingData.WORDS.filter(w => cats.indexOf(w.cat) >= 0).map(w => String(w.id || '').trim().toUpperCase()).filter(id => /^[A-Z]{3,8}$/.test(id))
+    cfg.wordBank = [...new Set([...cfg.wordBank, ...extra])]
+  } catch (_) {}
+}
 
 const THEME = THEMES[cfg.mapTheme] || THEMES.city
 const LANES = 4
@@ -998,6 +1014,60 @@ function tickTiles(delta) {
   }
 }
 
+// PRD-45, ported from G15 Lokomotif (g15StreakAdd / g15MaybeOfferAssist / g15AcceptAssist):
+// every 5 right letters in a row -> 2 s of slow motion with a streak chip; after 3 wrong tiles in a row, or when one
+// life is left, the game pauses once per session and offers help: slow motion + magnet for 5 s, or one life back.
+const G6 = { streak: 0, wrongRun: 0, assistOffered: false, slowUntil: 0, magnetUntil: 0 }
+function g6Css() {
+  if (document.getElementById('g6-prd45-css')) return
+  const st = document.createElement('style'); st.id = 'g6-prd45-css'
+  st.textContent = '#g6-streak{position:fixed;top:max(130px,24vh);left:50%;transform:translateX(-50%) scale(.6);opacity:0;z-index:400;padding:6px 16px;border-radius:999px;background:linear-gradient(135deg,#fde047,#f59e0b);color:#422006;font-weight:900;font-size:clamp(16px,4vw,22px);box-shadow:0 4px 0 #b45309;transition:opacity .2s,transform .2s cubic-bezier(.2,.8,.2,1);pointer-events:none}' +
+    '#g6-streak.show{opacity:1;transform:translateX(-50%) scale(1)}' +
+    '.g6-assist{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,.55)}' +
+    '.g6-assist-card{background:#1e1b4b;color:#fff;border-radius:22px;padding:18px 18px 16px;max-width:min(92vw,420px);text-align:center;font-weight:900;font-size:clamp(17px,4.4vw,22px);box-shadow:0 12px 34px rgba(0,0,0,.4)}' +
+    '.g6-assist-row{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}' +
+    '.g6-assist-row button{min-height:56px;min-width:140px;border:0;border-radius:16px;font:inherit;font-size:clamp(15px,4vw,19px);color:#111827;cursor:pointer;touch-action:manipulation}' +
+    '.g6-assist-row .slow{background:#7dd3fc;box-shadow:0 4px 0 #0369a1}.g6-assist-row .heart{background:#fda4af;box-shadow:0 4px 0 #be123c}' +
+    '@media (prefers-reduced-motion: reduce){#g6-streak{transition:none}}'
+  document.head.appendChild(st)
+}
+function g6Slow(ms, speed) {
+  if (typeof app === 'undefined' || !app || !app.ticker) return
+  app.ticker.speed = speed
+  G6.slowUntil = performance.now() + ms
+  clearTimeout(G6._slowT); G6._slowT = setTimeout(() => { if (app && app.ticker) app.ticker.speed = 1 }, ms)
+}
+function g6StreakHit() {
+  G6.streak++; G6.wrongRun = 0
+  if (G6.streak % 5 !== 0) return
+  g6Css()
+  let el = document.getElementById('g6-streak')
+  if (!el) { el = document.createElement('div'); el.id = 'g6-streak'; document.body.appendChild(el) }
+  el.textContent = 'Beruntun ' + G6.streak + '!'
+  el.classList.add('show'); clearTimeout(G6._chipT); G6._chipT = setTimeout(() => el.classList.remove('show'), 2000)
+  g6Slow(2000, 0.5)
+}
+function g6WrongHit() {
+  G6.streak = 0; G6.wrongRun++
+  if (G6.assistOffered || S.lives <= 0) return
+  if (G6.wrongRun >= 3 || S.lives <= 1) g6OfferAssist()
+}
+function g6OfferAssist() {
+  G6.assistOffered = true; g6Css()
+  S.paused = true
+  const ov = document.createElement('div'); ov.className = 'g6-assist'
+  ov.innerHTML = '<div class="g6-assist-card"><div>Butuh bantuan? Pilih satu:</div><div class="g6-assist-row"><button type="button" class="slow" data-k="slow">Pelan + magnet</button><button type="button" class="heart" data-k="heart">+1 Nyawa</button></div></div>'
+  const done = k => { try { ov.remove() } catch (_) {} ; S.paused = false; if (k) g6AcceptAssist(k) }
+  ov.querySelectorAll('button').forEach(b => { b.onclick = () => done(b.dataset.k) })
+  document.body.appendChild(ov)
+  G6._assistT = setTimeout(() => { if (ov.isConnected) done(null) }, 8000)
+}
+function g6AcceptAssist(kind) {
+  clearTimeout(G6._assistT)
+  if (kind === 'slow') { g6Slow(5000, 0.55); G6.magnetUntil = performance.now() + 5000 }
+  else { S.lives = Math.min(LIVES_MAX, S.lives + 1); updateHUD() }
+}
+
 function hitTile(t) {
   t._alive = false
   // Re-verify at hit time. The _correct flag was captured at SPAWN time — by the time the
@@ -1011,6 +1081,7 @@ function hitTile(t) {
     if (window.SFXEngine && SFXEngine.correct) { SFXEngine.correct() }
     else { playTone(660 + S.letterIdx * 55, 0.12, 'sine'); playTone(880 + S.letterIdx * 55, 0.08, 'sine') }
     S.letterIdx++
+    g6StreakHit() // PRD-45
     S.score += 15
     screenFlash('rgba(139,92,246,0.22)')
     updateHUD()
@@ -1030,6 +1101,7 @@ function hitTile(t) {
     S.lives = Math.max(0, S.lives - dmg)
     updateHUD()
     if (S.lives <= 0) setTimeout(showGameOver, 500)
+    else g6WrongHit() // PRD-45
   }
 }
 
@@ -1047,6 +1119,12 @@ function loop(ticker) {
     lastSpawn = now
   }
 
+  // PRD-45 magnet: while it lasts, steer to the lane of the nearest right letter still above the car
+  if (G6.magnetUntil > now && carContainer) {
+    const want = S.currentWord && S.currentWord[S.letterIdx]
+    const t = S.tiles.filter(x => x._alive && x._letter === want && x.y < carContainer.y).sort((a, b) => b.y - a.y)[0]
+    if (t) S.carTargetLane = t._lane
+  }
   tickMarkings(delta)
   tickCar(delta)
   tickTiles(delta)
@@ -1386,6 +1464,9 @@ window.addEventListener('resize', () => {
   document.addEventListener('click', ensureAudio, {once:true})
 
   await initPixi()
+  // PRD-45: the dictionary is loaded before the first word list (precached; 1.5 s cap so a miss never blocks the game)
+  await new Promise(r => { if (!window.DuniaLoad) return r(); const t = setTimeout(r, 1500); DuniaLoad('spelling-data.js', () => { clearTimeout(t); r() }) })
+  g6ExtendBank()
 
   S.wordList = shuffle([...cfg.wordBank]).slice(0, cfg.totalWords)
   S.totalWords = S.wordList.length
@@ -1395,8 +1476,8 @@ window.addEventListener('resize', () => {
   // Vehicle selector overlay already shown (has 'show' class in HTML)
 })()
 </script>
-<script src="dunia-cinema.js?v=v64.72-20261120h" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.72-20261120h" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.72-20261120h" defer></script>
+<script src="dunia-cinema.js?v=v64.73-20261120i" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.73-20261120i" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.73-20261120i" defer></script>
 </body>
 </html>

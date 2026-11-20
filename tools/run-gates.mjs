@@ -39,6 +39,7 @@ TAGS.boss = /^qa-prd40-boss\.mjs$/   // PRD-40: every tenth level of Birds, Run 
 TAGS.ducky = /^qa-(prd41-ducky|ducky-parallax)\.mjs$/   // PRD-41: Ducky Volley weather per set + power-ups from right answers
 TAGS.listen = /^qa-prd42-listen\.mjs$/   // PRD-42: listen rounds in G3/G8 (Indonesian device voice only) + G11 joins the Timmy bank
 TAGS.g10 = /^qa-prd44-g10\.mjs$/   // PRD-44: G10 weather boosts types (announced), no impossible battle
+TAGS.mobil45 = /^qa-prd45-mobil\.mjs$/   // PRD-45: G6 help offer, streak slow motion, dictionary words
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 
 const args = process.argv.slice(2)
