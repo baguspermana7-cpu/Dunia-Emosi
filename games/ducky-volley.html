@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Ducky Volley 🏐</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.69-20261120e">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.70-20261120f">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf8;font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -45,6 +45,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
 .qbtn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);box-shadow:0 4px 0 #92400E}
 .qbtn.qc-col,.qbtn.qc-col:nth-child(n){background:var(--qc);border-color:var(--qc-edge);box-shadow:0 4px 0 var(--qc-edge);color:var(--qc-ink);text-shadow:none}
 .q-swatch{display:inline-block;width:1.05em;height:1.05em;border-radius:50%;vertical-align:-0.12em;margin:0 .12em;background:var(--qc);border:2px solid var(--qc-edge);box-shadow:0 0 12px var(--qc)}
+.pw-pop{position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);z-index:260;pointer-events:none;padding:10px 22px;border-radius:999px;background:linear-gradient(180deg,#fde047,#f59e0b);color:#422006;font-weight:900;font-size:clamp(20px,5vw,30px);box-shadow:0 6px 0 #b45309,0 10px 24px rgba(0,0,0,.3);animation:pwPop 1.6s ease forwards}
+@keyframes pwPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}25%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-80%)}}
+@media (prefers-reduced-motion: reduce){.pw-pop{animation:none}}
 .qbtn.correct{border-color:#4ade80;background:rgba(74,222,128,0.3);animation:pop .4s ease}
 .qbtn.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3);animation:shake .35s ease}
 @keyframes pop{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
@@ -65,7 +68,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
 .start-hint{font-size:15px;color:#86efac;animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.5;transform:scale(.96)}}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.69-20261120e">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.70-20261120f">
 </head>
 <body>
 
@@ -142,17 +145,17 @@ if(!('ontouchstart' in window)){
 </script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="game-modal.js?v=v64.69-20261120e"></script>
-<script src="../shared/rz-responsive.js?v=v64.69-20261120e"></script>
-<script src="data/poke-sprite-cdn.js?v=v64.69-20261120e"></script>
-<script src="data/poke-sprite-loader.js?v=v64.69-20261120e"></script>
-<script src="data/speak.js?v=v64.69-20261120e"></script>
-<script src="data/freeze-watchdog.js?v=v64.69-20261120e"></script>
-<script src="data/save-engine.js?v=v64.69-20261120e"></script>
-<script src="data/sfx-engine.js?v=v64.69-20261120e"></script><!-- shared answer cues (owner) -->
-<script src="data/emoji-map.js?v=v64.69-20261120e"></script><script src="data/ui-sprites.js?v=v64.69-20261120e"></script><!-- win-screen sprites -->
-<script src="data/soal-arcade-boot.js?v=v64.69-20261120e"></script><!-- PRD-39: the shared SoalEngine stack (tier from DuniaMastery) loads on the first tap; the page bank answers until then -->
-<script src="vfx-engine.js?v=v64.69-20261120e"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=v64.70-20261120f"></script>
+<script src="../shared/rz-responsive.js?v=v64.70-20261120f"></script>
+<script src="data/poke-sprite-cdn.js?v=v64.70-20261120f"></script>
+<script src="data/poke-sprite-loader.js?v=v64.70-20261120f"></script>
+<script src="data/speak.js?v=v64.70-20261120f"></script>
+<script src="data/freeze-watchdog.js?v=v64.70-20261120f"></script>
+<script src="data/save-engine.js?v=v64.70-20261120f"></script>
+<script src="data/sfx-engine.js?v=v64.70-20261120f"></script><!-- shared answer cues (owner) -->
+<script src="data/emoji-map.js?v=v64.70-20261120f"></script><script src="data/ui-sprites.js?v=v64.70-20261120f"></script><!-- win-screen sprites -->
+<script src="data/soal-arcade-boot.js?v=v64.70-20261120f"></script><!-- PRD-39: the shared SoalEngine stack (tier from DuniaMastery) loads on the first tap; the page bank answers until then -->
+<script src="vfx-engine.js?v=v64.70-20261120f"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -270,6 +273,10 @@ const MOVE_SPD = 4.2 // smoother, more controlled movement for kids
 // 2026-06-21 — owner: matches drag too long + bot too smart, "no chance".
 // Trim to 2 points/set + best-of-3 → ≤2 min per match.
 const POINTS_TO_WIN = 2
+// PRD-41: weather per set. Wind pushes the ball sideways a little (px per frame^2); the CPU's landing prediction and the
+// gate's bot both know it. Rain is only a look. A right answer between sets grants one of three power-ups in turn.
+const WIND_ACC = 0.005
+const PW_ORDER = ['big', 'jump', 'slow']
 const TOTAL_ROUNDS = 3
 
 const S = {
@@ -284,7 +291,8 @@ const S = {
   cx:0, cy:0, cvx:0, cvy:0, cGnd:true, cHasCrown:false,
   // Powerup
   crabX:-100, crabDir:1, crabActive:false, crabTimer:0,
-  powerup:null, powerupTimer:0,
+  powerup:null, powerupTimer:0, pwNext:0,
+  weather:'clear', wind:0,
   // FX
   shakeX:0, shakeY:0, shakeTimer:0, frame:0,
   // Physics variation
@@ -868,7 +876,8 @@ function resetRound(server){
   // Hotfix #112-I: ball drop higher (was -80, too low; user "buat agak tinggi sedikit").
   S.bx=server==='player'?W*0.3:W*0.7; S.by=GROUND_Y-160
   S.bvx=0; S.bvy=0; S.bSpin=0; S.lastHitter='none'
-  S.crabActive=false; S.crabTimer=0; S.powerup=null; S.powerupTimer=0
+  // PRD-41: a power-up runs out on its own timer; a point no longer wipes it (it used to vanish at the first point)
+  S.crabActive=false; S.crabTimer=0
   randomizePhysics()
 }
 
@@ -943,6 +952,7 @@ function gameLoop(ticker){
   // Ball physics — smoother arc w/ light air resistance
   const ballSpd=S.powerup==='slow'?0.6:1
   S.bvy+=GRAVITY*S.gravMod*0.50*dt*ballSpd // lighter gravity for more hang time (0.60 → 0.50 on 2026-04-24)
+  if(S.wind) S.bvx+=S.wind*WIND_ACC*dt*ballSpd // PRD-41: windy set
   // Air resistance (drag) — gentle, feels natural vs arcade-jank
   S.bvx*=Math.pow(0.995, dt)
   S.bvy*=Math.pow(0.998, dt)
@@ -1131,6 +1141,7 @@ function predictBallLandingX(){
   const br=BALL_R*(S.powerup==='big'?1.5:1)
   for(let i=0;i<maxSteps;i++){
     bvy+=gAccel*ballSpd
+    if(S.wind) bvx+=S.wind*WIND_ACC*ballSpd // PRD-41: the CPU reads the wind too
     bvx*=0.995; bvy*=0.998
     bx+=bvx*ballSpd; by+=bvy*ballSpd
     if(by>=GROUND_Y-br) return bx
@@ -1288,6 +1299,7 @@ function checkRoundEnd(){
     } else {
       // Next round + quiz
       S.round++; S.pScore=0; S.cScore=0
+      setWeather(S.round)
       showRoundBanner()
       showQuiz()
     }
@@ -1296,11 +1308,11 @@ function checkRoundEnd(){
 
 function showRoundBanner(){
   const rb=document.getElementById('round-banner')
-  rb.querySelector('.rb-title').textContent=`Round ${S.round}`
+  rb.querySelector('.rb-title').textContent=`Round ${S.round}` + (S.weather!=='clear' ? ' · ' + weatherName() : '')
   rb.querySelector('.rb-score').textContent=`${S.pRounds} — ${S.cRounds}`
   rb.classList.add('show')
   setTimeout(()=>rb.classList.remove('show'),2000)
-  document.getElementById('round-text').textContent=`Round ${S.round}/${TOTAL_ROUNDS}`
+  document.getElementById('round-text').textContent=`Round ${S.round}/${TOTAL_ROUNDS}` + (S.weather!=='clear' ? ' · ' + weatherName() : '')
 }
 
 function endMatch(){
@@ -1367,6 +1379,7 @@ function showQuiz(){
         S.quizActive=false
         // Reset round positions after quiz so ball doesn't score instantly
         resetRound(S.bx<NET_X?'player':'cpu')
+        if(c===q.ans) grantPowerup()
         updateHUD()
       },900)
     }
@@ -1378,12 +1391,37 @@ function showQuiz(){
 // ═══════════════════════════════════════════════════════════
 //  HUD
 // ═══════════════════════════════════════════════════════════
+const PW_NAME={big:'Bola Besar',speed:'Turbo',jump:'Super Lompat',slow:'Bola Lambat'}
+function weatherName(){ return S.weather==='windy' ? (S.wind>0 ? 'Angin \u2192' : '\u2190 Angin') : S.weather==='rain' ? 'Hujan' : 'Cerah' }
+// PRD-41: one weather per set, in turn, so a match always shows more than one; the level picks the order
+function setWeather(round){
+  const order = cfg.level % 2 ? ['clear','windy','rain'] : ['clear','rain','windy']
+  S.weather = order[(round - 1) % order.length]
+  S.wind = S.weather === 'windy' ? (round % 2 ? -1 : 1) : 0
+  const show = () => {
+    try {
+      if (!window.WeatherFX) return
+      // reduced motion: no moving rain or wind streaks, the label says the weather
+      if (S.weather === 'clear' || _reducedMotion) { WeatherFX.stop(); return }
+      WeatherFX.start({ container: document.body, kind: S.weather, badge: false })  // its badge carries an emoji; the HUD label names the weather
+    } catch (_) {}
+  }
+  if (S.weather !== 'clear' && !_reducedMotion && !window.WeatherFX && window.DuniaLoad) DuniaLoad('weather-fx.js', show); else show()
+  updateHUD()
+}
+// PRD-41: a right answer between sets gives a power-up for the next set (big ball, high jump, slow ball, in turn)
+function grantPowerup(){
+  S.powerup = PW_ORDER[S.pwNext++ % PW_ORDER.length]; S.powerupTimer = 15
+  sfxPowerup()
+  const pop = document.createElement('div'); pop.className = 'pw-pop'; pop.textContent = PW_NAME[S.powerup] + '!'
+  document.body.appendChild(pop); setTimeout(() => pop.remove(), 1600)
+  updateHUD()
+}
 function updateHUD(){
   document.getElementById('score-display').textContent=`${S.pScore} — ${S.cScore}`
-  const pwMap={big:'🔴 Bola Besar',speed:'🔵 Turbo',jump:'🟢 Super Lompat',slow:'🟡 Slow Ball'}
   const rt=document.getElementById('round-text')
-  if(S.powerup) rt.textContent=`${pwMap[S.powerup]} ${Math.ceil(S.powerupTimer)}s`
-  else rt.textContent=`Round ${S.round}/${TOTAL_ROUNDS}`
+  if(S.powerup) rt.textContent=`${PW_NAME[S.powerup]} ${Math.ceil(S.powerupTimer)}s`
+  else rt.textContent=`Round ${S.round}/${TOTAL_ROUNDS}` + (S.weather!=='clear' ? ' · ' + weatherName() : '')
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1408,6 +1446,7 @@ function loadPokeSprite(imgId, slug, mirror) {
   if (mirror) el.style.transform = 'scaleX(-1)'
 }
 
+window.__g20 = { state: () => ({ running: S.running, round: S.round, weather: S.weather, wind: S.wind, powerup: S.powerup, quiz: S.quizActive }), setWeather, grantPowerup, showQuiz }
 function startGame(){
   if(S.started)return; ea()
   S.started=true; S.running=true
@@ -1420,7 +1459,7 @@ function startGame(){
   const cEl = document.getElementById('cpu-sprite')
   if (pEl) { pEl.style.height = Math.round(80 * pPoke.scale) + 'px'; loadPokeSprite('player-sprite', pPoke.slug, false) }
   if (cEl) { cEl.style.height = Math.round(80 * cPoke.scale) + 'px'; loadPokeSprite('cpu-sprite', cPoke.slug, true) }
-  resetRound('player'); updateHUD()
+  resetRound('player'); setWeather(1); updateHUD()
   document.getElementById('round-text').textContent=`Round 1/${TOTAL_ROUNDS}`
 }
 
@@ -1600,12 +1639,12 @@ window.addEventListener('resize',()=>{
   _duckyResizeT = setTimeout(_duckyResize, 150)
 })
 </script>
-<script src="dunia-icons.js?v=v64.69-20261120e"></script>
-<script src="dunia-home.js?v=v64.69-20261120e"></script>
+<script src="dunia-icons.js?v=v64.70-20261120f"></script>
+<script src="dunia-home.js?v=v64.70-20261120f"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.69-20261120e" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.69-20261120e" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.69-20261120e" defer></script>
+<script src="dunia-cinema.js?v=v64.70-20261120f" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.70-20261120f" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.70-20261120f" defer></script>
 </body>
 </html>
 <!-- v20260418d -->
