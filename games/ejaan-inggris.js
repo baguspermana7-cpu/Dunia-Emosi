@@ -562,6 +562,8 @@
     if (S.solved) return
     S.solved = true
     var n = S.wrong === 0 ? 3 : S.wrong <= 2 ? 2 : 1
+    // PRD-08c: one answer per spelled word, right first time when no letter went wrong
+    try { if (window.DuniaAnswer) window.DuniaAnswer({ domain: 'inggris', skill: 'inggris', item: S.word.w, ok: S.wrong === 0, tries: S.wrong + 1, ms: null }) } catch (e) {}
     award(S.word.w, n)
     $('ok-title').textContent = n === 3 ? 'Amazing!' : n === 2 ? 'Good Job!' : 'Keep Trying!'
     $('ok-sub').textContent = n === 3 ? 'Well done!' : n === 2 ? 'Great spelling!' : 'You did it — try for 3 stars!'

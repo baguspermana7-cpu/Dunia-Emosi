@@ -247,8 +247,55 @@
   };
   try { DuniaProfile.applySettings() } catch (_) {}
 
+  // PRD-08c: every game that asks a question reports the answer, without paying for it on its first screen.
+  // DuniaAnswer({domain, skill, item, ok, tries, ms}) emits DuniaBus 'answer' (the learning log and the mastery score
+  // listen); on a page that has not loaded them, the three files load on the first answer (same folder and ?v= token
+  // as this script), and the answers given meanwhile are sent in order once they are there.
+  const _ansQ = [];
+  let _ansLoading = false;
+  const _myScript = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) || '';
+  function DuniaAnswer(payload) {
+    try {
+      if (window.DuniaBus && window.LearningLog) return window.DuniaBus.emit('answer', payload);
+      _ansQ.push(payload);
+      if (_ansLoading || !_myScript) return null;
+      _ansLoading = true;
+      const base = _myScript.replace(/[^/]*$/, ''), q = _myScript.indexOf('?') >= 0 ? _myScript.slice(_myScript.indexOf('?')) : '';
+      const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
+      (function next() {
+        const f = files.shift();
+        if (!f) { _ansLoading = false; if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit('answer', x) } catch (_) {} }); return }
+        const el = document.createElement('script'); el.src = base + f + q; el.onload = el.onerror = next; document.head.appendChild(el);
+      })();
+    } catch (_) {}
+    return null;
+  }
+
+  // A question that is only text ({q, ans, wrong} banks of the arcade games): its domain and skill read from the words,
+  // in the learning log's names (learning-log.js SKILL / DOMAIN), so a parent never sees "Lainnya".
+  const _OPS = { '+': 'tambah', '-': 'kurang', '\u2212': 'kurang', '\u00d7': 'kali', 'x': 'kali', '*': 'kali', '\u00f7': 'bagi', ':': 'bagi', '/': 'bagi' };
+  function answerKind(text) {
+    const t = String(text || '');
+    const m = t.match(/\d\s*([+\-\u2212\u00d7x*\u00f7:/])\s*\d/);
+    if (m) return { domain: 'matematika', skill: _OPS[m[1]] || 'tambah' };
+    if (/huruf awal|huruf depan|mana huruf/i.test(t)) return { domain: 'bahasa', skill: 'awal' };
+    if (/suku kata|lawan kata|sama arti|kata/i.test(t)) return { domain: 'bahasa', skill: 'bahasa' };
+    if (/pola|lanjutkan|berikutnya/i.test(t)) return { domain: 'logika', skill: 'pattern' };
+    if (/bentuk|segi|lingkaran|kotak/i.test(t)) return { domain: 'bentuk', skill: 'shape' };
+    if (/berapa|total|jumlah|hitung|sisa/i.test(t)) return { domain: 'matematika', skill: 'count' };
+    if (/sedih|senang|marah|takut|perasaan|merasa/i.test(t)) return { domain: 'emosi', skill: 'emosi' };
+    return { domain: 'umum', skill: 'umum' };
+  }
+  function DuniaAnswerQ(text, ok, ms, tries) {
+    const k = answerKind(text);
+    return DuniaAnswer({ domain: k.domain, skill: k.skill, item: String(text || '').slice(0, 80), ok: !!ok, tries: tries || 1, ms: ms == null ? null : ms });
+  }
+
   if (typeof window !== 'undefined') {
     window.DuniaProfile = DuniaProfile;
+    window.DuniaAnswerQ = DuniaAnswerQ;
+    window.DuniaAnswerKind = answerKind;
+    window.DuniaAnswer = DuniaAnswer;
     window.saveLevelProgress = saveLevelProgress;
     window.activeAvatarBadgeKey = activeAvatarBadgeKey;
     window.avatarScopedGet = avatarScopedGet;

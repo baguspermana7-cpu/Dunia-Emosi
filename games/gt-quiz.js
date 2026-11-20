@@ -71,6 +71,7 @@
     var two = opts.players[0].human && opts.players[1].human
     // COMBO: 3+ right in a row = every further right answer is worth double (and hits twice as hard)
     var res = { right: [0, 0], asked: [0, 0], points: [0, 0], best: [0, 0] }, streak = [0, 0]
+    var answered = []   // PRD-08c: player 1's answers, sent to the learning log when the round stops
     var reduced = FX ? FX.reduced() : !!(W.matchMedia && W.matchMedia('(prefers-reduced-motion: reduce)').matches)
     var trucks = (opts.trucks || []).filter(Boolean)
     var mon = opts.monster || { key: 'gt-monster/robo-gorilla', name: 'Monster' }
@@ -300,6 +301,9 @@
       if (!q) return
       var ok = +b.getAttribute('data-v') === q.answer
       b.classList.add(ok ? 'ok' : 'no')
+      // PRD-08c: the child at this device is player 1 (player 2 is a friend or the computer). Kept until the round is over:
+      // reporting during the 15 s rush cost taps (qa-gt-play 768x1024: 5 rush taps -> 1-2), so the log gets them at the end
+      if (pi === 0) answered.push({ domain: 'matematika', skill: q.op === '-' ? 'kurang' : q.op === '\u00d7' || q.op === 'x' || q.op === '*' ? 'kali' : 'tambah', item: q.a + q.op + q.b, ok: ok, tries: 1, ms: null })
       host.querySelectorAll('#rush-c' + pi + ' .rush-b').forEach(function (x) { x.disabled = true })
       cue(ok ? 'right' : 'wrong')
       score(pi, ok, b)
@@ -355,6 +359,7 @@
     function stop (raidKO) {
       if (ended) return
       ended = true; timers.forEach(clearTimeout); timers = []
+      if (W.DuniaAnswer) answered.splice(0).forEach(function (x) { try { W.DuniaAnswer(x) } catch (e) {} })
       loops.forEach(function (a) { try { a.cancel() } catch (e) {} }); loops = []
       host.querySelectorAll('.rush-b').forEach(function (x) { x.disabled = true })
       root.classList.add('over'); banner.classList.remove('show')

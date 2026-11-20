@@ -200,6 +200,9 @@
       var h = P.hist[card.id] || (P.hist[card.id] = { seen: 0, right: 0, helped: 0, last: 0 })
       h.seen++; h.last = Date.now()
       if (res.correct) { h.right++; SES.right++ }
+      // PRD-08c: the answer goes to the child's learning log, the world names the domain
+      try { var dm = { listening: 'bahasa', logic: 'logika', memory: 'logika', language: 'bahasa', math: 'matematika', observation: 'umum' }[(SES.world && SES.world.key) || ''] || 'umum'
+        if (window.DuniaAnswer) window.DuniaAnswer({ domain: dm, skill: dm, item: String(card.id || ''), ok: !!res.correct, tries: res.helped ? 2 : 1, ms: null }) } catch (e) {}
       if (res.helped) { h.helped++; SES.helped++ }
       save()
       SES.i++

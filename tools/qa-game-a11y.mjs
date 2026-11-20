@@ -29,7 +29,7 @@ const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? '  ok ' : ' 
 
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-audio-output'] })
 const now = {}, primaryBad = {}
-for (const pg of pages) {
+async function measure (pg) {
   const ctx = await b.createBrowserContext(), p = await ctx.newPage()
   await p.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true, deviceScaleFactor: 1 })
   await p.evaluateOnNewDocument(() => {
@@ -138,9 +138,15 @@ for (const pg of pages) {
     (res.small.length ? `\n        small: ${res.small.slice(0, 4).join(' | ')}` : ''))
   await ctx.close()
 }
+const rose = pg => base[pg] && (now[pg].small > base[pg].small || now[pg].lowContrast > base[pg].lowContrast)
+for (const pg of pages) await measure(pg)
+// a rise seen once can be one frame caught mid-change on a loaded runner (selamatkan-kereta low contrast 1 on CI v64.64
+// and v64.66, 0 locally in 3 of 3 runs): such a page is measured once more in a fresh tab and the second number counts.
+// A real regression rises again (QA_PLANT still fails).
+for (const pg of pages.filter(rose)) { console.log(`     re-measure ${pg} (rose on the first pass)`); await measure(pg) }
 await b.close()
 
-const up = pages.filter(pg => base[pg] && (now[pg].small > base[pg].small || now[pg].lowContrast > base[pg].lowContrast))
+const up = pages.filter(rose)
 for (const pg of up) ok(false, `L2 ${pg} rose above the baseline: ${JSON.stringify(now[pg])} vs ${JSON.stringify(base[pg])}`)
 ok(!up.length, `L2 no page has more small targets or low-contrast texts than ${path.relative(ROOT, BASELINE)}`)
 ok(pages.every(pg => pg in base) || !!process.env.QA_UPDATE, `L2 every page has a baseline (${pages.filter(pg => !(pg in base)).join(' ') || 'all'})`)

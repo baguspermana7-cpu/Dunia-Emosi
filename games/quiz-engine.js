@@ -132,8 +132,8 @@
   }
 
   // Wire a built choices element: tap → lock → reveal → callback after delay.
-  function wireChoices (choicesEl, answer, reveal, onResult) {
-    var locked = false
+  function wireChoices (choicesEl, answer, reveal, onResult, bus) {
+    var locked = false, shownAt = Date.now()
     Array.prototype.forEach.call(choicesEl.children, function (btn) {
       btn.addEventListener('click', function () {
         if (locked) return
@@ -150,6 +150,11 @@
           else if (b === btn && !correct) b.classList.add('qz-wrong')
           b.style.pointerEvents = 'none'
         })
+        // PRD-08c: the answer goes to the child's learning log (DuniaAnswer, save-engine.js); a caller that reports
+        // the answer itself passes opts.bus = false
+        if (bus && typeof global.DuniaAnswer === 'function') {
+          try { global.DuniaAnswer({ domain: bus.domain, skill: bus.skill, item: bus.item, ok: correct, tries: 1, ms: Date.now() - shownAt }) } catch (e) {}
+        }
         var delay = correct ? (reveal.correct || 420) : (reveal.wrong || 720)
         setTimeout(function () {
           if (typeof onResult === 'function') onResult({ correct: correct, chosen: chosen, answer: answer })
@@ -169,6 +174,14 @@
     })
   }
 
+  // what an engine-made arithmetic question trains, in the learning log's words (games/data/learning-log.js)
+  var OPS = { '+': 'tambah', '-': 'kurang', '−': 'kurang', '×': 'kali', 'x': 'kali', '*': 'kali', '÷': 'bagi', ':': 'bagi', '/': 'bagi' }
+  function busOf (question) {
+    var m = String(question).match(/\d\s*([+\-−×x*÷:/])\s*\d/)
+    if (!m && typeof global.DuniaAnswerKind === 'function') { var k = global.DuniaAnswerKind(question); return { domain: k.domain, skill: k.skill, item: String(question).slice(0, 80) } }
+    return { domain: 'matematika', skill: (m && OPS[m[1]]) || 'tambah', item: String(question).slice(0, 80) }
+  }
+
   // Least-invasive adoption: fill EXISTING question + choices elements.
   function fill (questionEl, choicesEl, opts, onResult) {
     injectCSS()
@@ -182,7 +195,8 @@
     choicesEl.classList.add('qz-choices')
     if (opts.variant === 'mini' || opts.grid) choicesEl.classList.add('qz-grid')
     buildPills(choicesEl, data.options)
-    wireChoices(choicesEl, data.answer, opts.revealMs || {}, onResult)
+    var bus = opts.bus === false ? null : opts.bus || busOf(data.question)   // a caller that reports itself passes bus:false
+    wireChoices(choicesEl, data.answer, opts.revealMs || {}, onResult, bus)
     return { data: data }
   }
 
