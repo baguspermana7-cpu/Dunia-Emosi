@@ -34,6 +34,9 @@ node tools/qa-levels-solvable.mjs
 echo "== arcade questions (Ducky, Birds, Side Race): shared SoalEngine, 100+ distinct, tiers, correct, wired (PRD-39)"
 node tools/qa-soal-arcade.mjs
 
+echo "== shared hit-stop + combo meter are wired in G10, G13, G21, Kuis and Ayo Berhitung (PRD-37, static part)"
+node tools/qa-prd37-juice.mjs
+
 echo "== one name per game: hub tile = GAME_META (audit A-8)"
 node tools/qa-game-names.mjs
 

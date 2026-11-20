@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <meta name="theme-color" content="#2f6bd8">
 <title>⚔️ Matematika Petualangan</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.65-20261120a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.66-20261120b">
 <style>
 /* ═══════════════════════════════════════════════════════════════
    MATEMATIKA PETUALANGAN — kids math adventure (A-344, 2026-07-12)
@@ -315,10 +315,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .shake-lg{animation:shakeLg .42s ease}
 @keyframes shakeSm{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(3px,-2px)}75%{transform:translate(-2px,1px)}}
 @keyframes shakeLg{0%,100%{transform:translate(0,0)}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
-.combo-pop{position:fixed;left:50%;top:30%;transform:translateX(-50%);z-index:40;font-family:var(--disp);
-  font-weight:800;font-size:clamp(28px,9vw,54px);color:#ffe884;-webkit-text-stroke:2px #e2661a;
-  text-shadow:0 4px 10px rgba(0,0,0,.45);pointer-events:none;animation:comboPop .75s cubic-bezier(.34,1.56,.64,1)}
-@keyframes comboPop{0%{opacity:0;transform:translateX(-50%) scale(.4)}40%{opacity:1;transform:translateX(-50%) scale(1.15)}100%{opacity:0;transform:translateX(-50%) scale(1) translateY(-22px)}}
 .wrong-vig{position:fixed;inset:0;z-index:38;pointer-events:none;box-shadow:inset 0 0 90px 24px rgba(232,80,63,.55);opacity:0;animation:wrongVig .5s ease}
 @keyframes wrongVig{0%,100%{opacity:0}30%{opacity:1}}
 /* R2 super meter */
@@ -330,6 +326,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .super-lbl{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:9.5px;font-family:var(--disp);font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);letter-spacing:.5px}
 .super-flash{position:fixed;inset:0;z-index:42;pointer-events:none;background:radial-gradient(circle,rgba(255,244,180,.9),rgba(255,180,60,.25) 55%,transparent);opacity:0;animation:superFlash .6s ease}
 @keyframes superFlash{0%,100%{opacity:0}22%{opacity:1}}
+@keyframes comboPop{0%{opacity:0;transform:translateX(-50%) scale(.4)}40%{opacity:1;transform:translateX(-50%) scale(1.15)}100%{opacity:0;transform:translateX(-50%) scale(1) translateY(-22px)}}
 .super-txt{position:fixed;left:50%;top:24%;transform:translateX(-50%);z-index:43;font-family:var(--disp);font-weight:800;font-size:clamp(40px,12vw,82px);color:#fff;-webkit-text-stroke:3px #e2661a;text-shadow:0 6px 16px rgba(0,0,0,.5);pointer-events:none;animation:comboPop .85s cubic-bezier(.34,1.56,.64,1)}
 /* R3 screen transition + unlock banner */
 .scr.active{animation:scrIn .34s cubic-bezier(.22,.61,.36,1)}
@@ -762,26 +759,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/speak.js?v=v64.65-20261120a"></script>
-<script src="data/freeze-watchdog.js?v=v64.65-20261120a"></script>
-<script src="data/math-rules.js?v=v64.65-20261120a"></script>
-<script src="data/save-engine.js?v=v64.65-20261120a"></script>
-<script src="data/dunia-bus.js?v=v64.65-20261120a"></script>
-<script src="data/learning-log.js?v=v64.65-20261120a"></script>
-<script src="data/mastery.js?v=v64.65-20261120a"></script>
-<script src="data/review-queue.js?v=v64.65-20261120a"></script>
-<script src="data/error-kinds.js?v=v64.65-20261120a"></script>
-<script src="data/sfx-engine.js?v=v64.65-20261120a"></script>
-<script src="vfx-engine.js?v=v64.65-20261120a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=v64.65-20261120a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v64.65-20261120a"></script><script src="data/ui-sprites.js?v=v64.65-20261120a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v64.65-20261120a"></script><script src="data/gt-monster-sheets.js?v=v64.65-20261120a"></script><script src="gt-monster-anim.js?v=v64.65-20261120a"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/speak.js?v=v64.66-20261120b"></script>
+<script src="data/freeze-watchdog.js?v=v64.66-20261120b"></script>
+<script src="data/math-rules.js?v=v64.66-20261120b"></script>
+<script src="data/save-engine.js?v=v64.66-20261120b"></script>
+<script src="data/dunia-bus.js?v=v64.66-20261120b"></script>
+<script src="data/learning-log.js?v=v64.66-20261120b"></script>
+<script src="data/mastery.js?v=v64.66-20261120b"></script>
+<script src="data/review-queue.js?v=v64.66-20261120b"></script>
+<script src="data/error-kinds.js?v=v64.66-20261120b"></script>
+<script src="data/sfx-engine.js?v=v64.66-20261120b"></script>
+<script src="vfx-engine.js?v=v64.66-20261120b"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="vfx-moments.js?v=v64.66-20261120b"></script><script src="data/hit-feel.js?v=v64.66-20261120b"></script><script src="data/combo-meter.js?v=v64.66-20261120b"></script><!-- PRD-37: hit-stop on a landed attack, shared combo meter, win celebration -->
+<script src="data/math-heroes.js?v=v64.66-20261120b"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v64.66-20261120b"></script><script src="data/ui-sprites.js?v=v64.66-20261120b"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v64.66-20261120b"></script><script src="data/gt-monster-sheets.js?v=v64.66-20261120b"></script><script src="gt-monster-anim.js?v=v64.66-20261120b"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v64.65-20261120a"></script>
+<script src="data/math-cloud.js?v=v64.66-20261120b"></script>
 <script>
 (function(){
 'use strict';
@@ -1313,7 +1311,7 @@ function heroAttack(){ var h=byId('fh-hero'); h.classList.remove('attack-hero');
   // thrown flame from hero→monster, then a boom bursting ON the monster.
   try{ if(window.VFX){
     var hi=h.querySelector('img')||h; VFX.domAura(hi,{fx:'fire-sparks',duration:340,scale:1.25});
-    VFX.domProjectile(elCenter(h),elCenter(f),{fx:'flamethrower',size:70,duration:200,onHit:function(){ fxFoe('boom',1.2); }});
+    VFX.domProjectile(elCenter(h),elCenter(f),{fx:'flamethrower',size:70,duration:200,onHit:function(){ fxFoe('boom',1.2); try{ if(window.HitFeel) HitFeel.hit(f.querySelector('img')||f); }catch(_){} }});
   } }catch(e){}
   setTimeout(function(){ f.classList.remove('hurt'); void f.offsetWidth; f.classList.add('hurt'); },180); }
 function foeAttack(){ var f=byId('fh-foe'); f.classList.remove('attack-foe'); void f.offsetWidth; f.classList.add('attack-foe');
@@ -1342,7 +1340,8 @@ function superStrike(){
 function juiceHit(good,streak){
   var g=byId('scr-game'); if(g){ g.classList.remove('shake-sm','shake-lg'); void g.offsetWidth; g.classList.add(good?'shake-sm':'shake-lg'); }
   if(!good){ var v=document.createElement('div'); v.className='wrong-vig'; document.body.appendChild(v); setTimeout(function(){ try{v.remove();}catch(e){} },520); }
-  if(good&&streak>=3){ var c=document.createElement('div'); c.className='combo-pop'; c.textContent='COMBO ×'+streak+'!'; document.body.appendChild(c); setTimeout(function(){ try{c.remove();}catch(e){} },780); }
+  // PRD-37: the shared combo meter (counts from 3 in a row, a wrong answer resets it)
+  try{ if(window.ComboMeter){ if(!window._kmCombo) window._kmCombo=ComboMeter.create('kuis-matematika',{anchor:'#qcard'}); if(good) _kmCombo.ok(); else _kmCombo.miss(); } }catch(_){}
 }
 function coinBurst(){ /* small coin sparkle */ }
 function useBomb(){
@@ -1374,6 +1373,7 @@ function finish(failed){
   var total=game.pool.length, ratio=game.correct/total;
   var stars=failed?(ratio>=0.3?1:0):(ratio>=0.85?3:(ratio>=0.6?2:(ratio>=0.3?1:0)));
   persist(game.g,stars);
+  try{ if(window._kmCombo) _kmCombo.miss(); if(!failed&&stars>=1&&window.VFX&&VFX.Moment) VFX.Moment.celebrate({x:innerWidth/2,y:innerHeight*0.42},{size:Math.min(innerWidth,innerHeight)*0.32}); }catch(_){}   // PRD-37: a won level celebrates
   // economy rewards
   var coinReward=game.correct*3+(stars===3?30:stars===2?15:0);
   var gemReward=(stars===3&&starsOf(game.g)<3?1:0)+(game.g%10===0&&stars>=2?1:0);
@@ -1876,9 +1876,9 @@ document.addEventListener('keydown',function(e){
 });
 })();
 </script>
-<script src="dunia-icons.js?v=v64.65-20261120a"></script>
-<script src="dunia-cinema.js?v=v64.65-20261120a" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.65-20261120a" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.65-20261120a" defer></script>
+<script src="dunia-icons.js?v=v64.66-20261120b"></script>
+<script src="dunia-cinema.js?v=v64.66-20261120b" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.66-20261120b" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.66-20261120b" defer></script>
 </body>
 </html>

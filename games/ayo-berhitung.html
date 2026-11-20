@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <meta name="theme-color" content="#4c6ef5">
 <title>Ayo Berhitung!</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.65-20261120a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.66-20261120b">
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
    AYO BERHITUNG! — laid out to match the reference the owner supplied, screen
@@ -306,15 +306,16 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   </div>
 </div>
 
-<script src="data/emoji-map.js?v=v64.65-20261120a"></script><script src="data/ui-sprites.js?v=v64.65-20261120a"></script><!-- zero-emoji engine: toolbar + badges draw as the shared sprites -->
-<script src="data/berhitung-engine.js?v=v64.65-20261120a"></script>
-<script src="data/speak.js?v=v64.65-20261120a"></script>
-<script src="data/freeze-watchdog.js?v=v64.65-20261120a"></script>
-<script src="data/save-engine.js?v=v64.65-20261120a"></script>
-<script src="data/dunia-bus.js?v=v64.65-20261120a"></script>
-<script src="data/learning-log.js?v=v64.65-20261120a"></script>
-<script src="data/mastery.js?v=v64.65-20261120a"></script>
-<script src="sw-reload.js?v=v64.65-20261120a"></script>
+<script src="data/emoji-map.js?v=v64.66-20261120b"></script><script src="data/ui-sprites.js?v=v64.66-20261120b"></script><!-- zero-emoji engine: toolbar + badges draw as the shared sprites -->
+<script src="data/berhitung-engine.js?v=v64.66-20261120b"></script>
+<script src="data/speak.js?v=v64.66-20261120b"></script>
+<script src="data/freeze-watchdog.js?v=v64.66-20261120b"></script>
+<script src="data/save-engine.js?v=v64.66-20261120b"></script>
+<script src="data/dunia-bus.js?v=v64.66-20261120b"></script>
+<script src="data/learning-log.js?v=v64.66-20261120b"></script>
+<script src="data/mastery.js?v=v64.66-20261120b"></script>
+<script src="data/combo-meter.js?v=v64.66-20261120b"></script><!-- PRD-37: shared combo meter -->
+<script src="sw-reload.js?v=v64.66-20261120b"></script>
 <script>
 (function () {
   'use strict'
@@ -653,6 +654,11 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
       logged[q.id] = text
       window.DuniaBus.emit('answer', { domain: 'matematika', skill: op + '-' + level + '-d' + digitsMode, item: q.id, ok: correct, tries: 1, ms: null })
     }
+    // PRD-37: three finished answers right in a row show the shared combo meter; a finished wrong one resets it
+    if (complete && comboSeen[q.id] !== text) {
+      comboSeen[q.id] = text
+      try { if (window.ComboMeter) { combo = combo || ComboMeter.create('ayo-berhitung'); if (correct) combo.ok(); else combo.miss() } } catch (_) {}
+    }
     save()                                          // saved on every keystroke, not just page turns
     updateMeter()
     if (newlySolved) {
@@ -696,6 +702,27 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   function pageComplete () {
     toast('Halaman ' + page + ' selesai! 🎉')
     fanfare()
+    celebrate()
+  }
+
+  // PRD-37: a finished page celebrates with the shared VFX.Moment. The VFX files load only now (the worksheet itself
+  // never needs them), so the first screen stays as light as before.
+  var comboSeen = {}, combo = null
+  function loadScript (src) {
+    return new Promise(function (res) { var s = document.createElement('script'); s.src = src; s.onload = s.onerror = res; document.head.appendChild(s) })
+  }
+  function celebrate () {
+    var v = '?v=' + (((document.querySelector('script[src*="combo-meter.js"]') || {}).src || '').split('?v=')[1] || '')
+    var go = function () {
+      var t0 = Date.now()
+      ;(function wait () {
+        var M = window.VFX && VFX.Moment
+        if (M && M.ready()) { try { M.celebrate({ x: innerWidth / 2, y: innerHeight * 0.4 }, { size: Math.min(innerWidth, innerHeight) * 0.3 }) } catch (_) {} return }
+        if (Date.now() - t0 < 3000) setTimeout(wait, 100)
+      })()
+    }
+    if (window.VFX && VFX.Moment) return go()
+    ;(window.VFX ? Promise.resolve() : loadScript('vfx-engine.js' + v)).then(function () { return loadScript('vfx-moments.js' + v) }).then(go)
   }
 
   // ── progress across the whole 1000 ───────────────────────────────────────
@@ -927,11 +954,11 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   buildPage()
 })()
 </script>
-<script src="dunia-icons.js?v=v64.65-20261120a"></script>
-<script src="dunia-home.js?v=v64.65-20261120a"></script>
+<script src="dunia-icons.js?v=v64.66-20261120b"></script>
+<script src="dunia-home.js?v=v64.66-20261120b"></script>
 <script>DuniaHome.mount({ into: '.panel', abs: true, top: '12px', right: '12px', visible: function () { return true } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.65-20261120a" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.65-20261120a" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.65-20261120a" defer></script>
+<script src="dunia-cinema.js?v=v64.66-20261120b" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.66-20261120b" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.66-20261120b" defer></script>
 </body>
 </html>

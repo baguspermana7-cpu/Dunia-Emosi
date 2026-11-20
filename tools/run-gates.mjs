@@ -32,6 +32,7 @@ const LOCK = '/tmp/claude-1000/kereta-browser.lock'
 const TAGS = { perf: /^qa-perf-budget\.mjs$/, timmy: /^qa-tk-/, mojo: /^qa-mojo-/, dunia: /^qa-dunia-/, calm: /^qa-(breathe|feeling-checkin|freeze-card)\.mjs$/, content: /^qa-(instruction-companion|content-rules|sprite-fill|white-outline|drawn-outline|no-emoji|game-a11y|no-third-party|name-escape|gym-hijab|no-orphans)\.mjs$/ }
 TAGS.vfx = /^qa-sakuga-buttons\.mjs$/   // PRD-46: press effects on the buttons really draw, and stay quiet where they must
 TAGS.dom = /^qa-prd35-dom\.mjs$/   // PRD-35: the picker leaves the tree in play, the museum list draws as it scrolls, birds writes its HUD on change only
+TAGS.juice = /^qa-prd37-juice\.mjs$/   // PRD-37: a landed hit holds, the combo counts from 3, reduced motion keeps only the numbers
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 
 const args = process.argv.slice(2)

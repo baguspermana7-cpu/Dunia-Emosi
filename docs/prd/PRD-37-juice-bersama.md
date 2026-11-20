@@ -1,7 +1,7 @@
 # PRD-37 Juice bersama: hit-stop, combo, perayaan
 
 - **Gelombang:** Gelombang 4B — tampilan lebih detail
-- **Status:** belum mulai
+- **Status:** live v64.66
 - **Sumber:** `docs/audit/gameplay-variety-2026-11-17.md` (baca kode per game)
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -16,3 +16,20 @@
   - (L3) gerak-dikurangi on → 0 shake/squash, combo tetap angka;
   - (L4) `qa-action-latency` tidak memburuk; screenshot momen kena dan combo di 3 ukuran dilihat.
 - **Usaha:** M.
+
+## Hasil (2026-11-20, v64.66)
+- `games/data/hit-feel.js` (`HitFeel.stop/flash/squash/hit/frozen`), lifted from the gt-fx impact step: white flash
+  frame, then every running animation on the page holds 80-120 ms, then a squash. `frozen()` lets a rAF loop hold too.
+- `games/data/combo-meter.js` (`ComboMeter.create(id, {anchor})`), from `g13bShowCombo`: "COMBO xN" from 3 right in a
+  row, a wrong answer hides it, best streak kept per child (avatarScopedSet). No emoji. With an anchor the pill sits
+  above that element (Kuis: above the question card; first placed top centre, it covered the monster's story line).
+- Wired: G10 and G13 hits (game.js, hub loads hit-feel.js), G21 Mario Pokemon stomp (the loop holds 80/110 ms),
+  Kuis Matematika (attack hold, combo meter replaces its own "COMBO x" text, a won level runs
+  `VFX.Moment.celebrate`), Ayo Berhitung (combo on finished answers; a finished page celebrates, the VFX files load
+  only then).
+- Gate `tools/qa-prd37-juice.mjs` (static part in ci-verify; browser part run-gates tag `juice`), Kuis at 3 sizes +
+  reduced motion. Red on v64.65 (static 0/5, browser 4 fails: modules absent). Green 17/17:
+  - L1 the hit holds 92-105 ms, 0 running animations inside the hold, animations play on after it;
+  - L2 3 right -> "COMBO x3" on screen; a wrong answer hides it;
+  - L3 reduced motion: 0 holds, the combo still shows x3, no bump;
+  - L4 0 page errors; screenshots of the hit + combo at 390x844, 844x390, 800x1280 looked at.

@@ -6896,7 +6896,7 @@ function g10DoAttack(type, fromSide, toSide, onDone){
       const defSpr = document.getElementById(defSprId)
       if (defSpr) {
         defSpr.classList.remove('spr-hit','spr-flash'); void defSpr.offsetWidth
-        defSpr.classList.add('spr-hit','spr-flash')
+        defSpr.classList.add('spr-hit','spr-flash'); try { if (window.HitFeel) HitFeel.hit(defSpr) } catch(_){}   // PRD-37: the hit lands (flash, hold, squash)
         // Hotfix #104 (2026-04-28): port g13c-style type-themed hit
         // particles directly on the defender sprite bbox. User: "samakan
         // aja dg g13c". Existing g10TypeFX renders at field-edge corners;
@@ -9543,7 +9543,7 @@ function g13Answer(val, btn) {
         if (wspr) {
           wspr.classList.remove('spr-hit','spr-flash'); void wspr.offsetWidth
           wspr.classList.add('spr-hit','spr-flash')
-          setTimeout(()=>wspr.classList.remove('spr-hit','spr-flash'),450)
+          setTimeout(()=>wspr.classList.remove('spr-hit','spr-flash'),450); try { if (window.HitFeel) HitFeel.hit(wspr) } catch(_){}   // PRD-37
         }
         g13TypeHitFX(atkType, true)
       }, 300)
@@ -9635,7 +9635,7 @@ function g13WildCounterPhase() {
         if (pspr) {
           pspr.classList.remove('spr-hit','spr-flash'); void pspr.offsetWidth
           pspr.classList.add('spr-hit','spr-flash')
-          setTimeout(()=>pspr.classList.remove('spr-hit','spr-flash'),450)
+          setTimeout(()=>pspr.classList.remove('spr-hit','spr-flash'),450); try { if (window.HitFeel) HitFeel.hit(pspr) } catch(_){}   // PRD-37
         }
         g13TypeHitFX(s.chain.wild.type, false)
         // Type effectiveness + STAB on wild→player attack
