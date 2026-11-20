@@ -6714,7 +6714,7 @@ function g10Answer(val, btn){
     // Player attacks enemy — apply type effectiveness + STAB (auto for auto-attack games)
     g10DoAttack(s.playerPoke.type,'player','enemy',()=>{
       const _mult = (typeof calcFullMult === 'function')
-        ? calcFullMult(s.playerPoke.type, s.playerPoke.type, s.enemyPoke.type)
+        ? calcFullMult(s.playerPoke.type, s.playerPoke.type, s.enemyPoke.type) * g10WeatherMult(s.playerPoke.type) // PRD-44 weather
         : 1
       // Max HP is 3-4 per level — base 1 keeps 3-4 hit KO baseline.
       // Super-effective rounds up to 2 (one hit faster), resist stays at
@@ -6760,7 +6760,7 @@ function g10Answer(val, btn){
         const _mult = (typeof calcFullMult === 'function')
           ? calcFullMult(s.enemyPoke.type, s.enemyPoke.type, s.playerPoke.type)
           : 1
-        const _dmg  = Math.max(1, Math.round(_mult))
+        const _dmg  = 1 // PRD-44: an enemy hit always costs the child 1 HP (its type still shows in the hit text/FX); see g10EnemyDefeated
         s.playerHp=Math.max(0,s.playerHp-_dmg)
         g10RenderHp('g10-phpfill','g10-phpnums',s.playerHp,s.playerMaxHp)
         try { if (typeof applyHitFeedback === 'function') {
@@ -7009,7 +7009,7 @@ function g10EnemyDefeated(){
       if(fb.length) next = fb[Math.floor(Math.random()*fb.length)]
     }
     s.enemyPoke=next
-    s.enemyHp=s.enemyMaxHp
+    s.enemyHp=s.enemyMaxHp; s.playerHp=s.playerMaxHp; g10RenderHp('g10-phpfill','g10-phpnums',s.playerHp,s.playerMaxHp) // PRD-44: the child heals between enemies (an 80 % child could not finish level 16+)
     setTimeout(()=>g10NewBattle(),300)
   },1300)
 }
@@ -7490,58 +7490,7 @@ window.g10NewBattle = function() {
   applyG10Weather()
 }
 
-// ── Battle Arena Weather FX ──
-const G10_WEATHERS = ['clear','clear','clear','snow','snow','rain','rain','wind','night','leaves']
-function applyG10Weather() {
-  const type = G10_WEATHERS[Math.floor(Math.random() * G10_WEATHERS.length)]
-  // Pixi weather primary
-  const pixiApp = PixiManager.get('g10-pixi-canvas')
-  if (pixiApp) {
-    pixiWeather(pixiApp, type)
-    return
-  }
-  // DOM weather fallback
-  const field = document.getElementById('g10-field')
-  if (!field) return
-  const old = field.querySelector('.g10-weather')
-  if (old) old.remove()
-  if (type === 'clear') return
-  const layer = document.createElement('div')
-  layer.className = `g10-weather g10-wx-${type}`
-  if (type === 'snow') {
-    for (let i = 0; i < 18; i++) {
-      const s = document.createElement('span'); s.className = 'g10-snow-flake'
-      s.style.cssText = `left:${Math.random()*100}%;animation-delay:${(Math.random()*5).toFixed(1)}s;animation-duration:${(2.5+Math.random()*3).toFixed(1)}s;font-size:${7+Math.floor(Math.random()*9)}px;opacity:${(0.35+Math.random()*0.5).toFixed(2)}`
-      s.textContent = '❄'; layer.appendChild(s)
-    }
-  } else if (type === 'rain') {
-    for (let i = 0; i < 22; i++) {
-      const r = document.createElement('span'); r.className = 'g10-rain-drop'
-      r.style.cssText = `left:${(Math.random()*110-5).toFixed(1)}%;animation-delay:${(Math.random()*1.5).toFixed(2)}s;animation-duration:${(0.55+Math.random()*0.45).toFixed(2)}s;height:${12+Math.floor(Math.random()*18)}px;opacity:${(0.25+Math.random()*0.3).toFixed(2)}`
-      layer.appendChild(r)
-    }
-  } else if (type === 'wind') {
-    for (let i = 0; i < 10; i++) {
-      const w = document.createElement('span'); w.className = 'g10-wind-streak'
-      w.style.cssText = `top:${(Math.random()*90).toFixed(1)}%;animation-delay:${(Math.random()*2).toFixed(1)}s;animation-duration:${(0.9+Math.random()*0.9).toFixed(1)}s;width:${18+Math.floor(Math.random()*40)}px`
-      layer.appendChild(w)
-    }
-  } else if (type === 'night') {
-    for (let i = 0; i < 14; i++) {
-      const star = document.createElement('span'); star.className = 'g10-night-star'
-      star.style.cssText = `left:${(Math.random()*95).toFixed(1)}%;top:${(Math.random()*55).toFixed(1)}%;animation-delay:${(Math.random()*2.5).toFixed(1)}s;animation-duration:${(1.5+Math.random()*2).toFixed(1)}s;font-size:${5+Math.floor(Math.random()*8)}px`
-      star.textContent = '✦'; layer.appendChild(star)
-    }
-  } else if (type === 'leaves') {
-    const leafSet = ['🍂','🍃','🍁']
-    for (let i = 0; i < 14; i++) {
-      const l = document.createElement('span'); l.className = 'g10-leaf-fx'
-      l.style.cssText = `left:${(Math.random()*95).toFixed(1)}%;animation-delay:${(Math.random()*6).toFixed(1)}s;animation-duration:${(3.5+Math.random()*3.5).toFixed(1)}s;font-size:${9+Math.floor(Math.random()*9)}px;opacity:${(0.45+Math.random()*0.45).toFixed(2)}`
-      l.textContent = leafSet[Math.floor(Math.random()*3)]; layer.appendChild(l)
-    }
-  }
-  field.appendChild(layer)
-}
+// G10 battle weather: games/hub/g10-weather.js (cut v64.72)
 
 // ================================================================
 // GAME 13 — EVOLUSI MATH ADVENTURE

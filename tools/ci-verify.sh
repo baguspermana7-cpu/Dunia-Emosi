@@ -37,6 +37,7 @@ node tools/qa-soal-arcade.mjs
 echo "== shared hit-stop + combo meter are wired in G10, G13, G21, Kuis and Ayo Berhitung (PRD-37, static part)"
 node tools/qa-prd37-juice.mjs
 node tools/qa-prd08c-bus.mjs
+node tools/qa-prd44-g10.mjs        # PRD-44 static: the 18x18 type table + the no-impossible-battle model over G10_LEVELS
 
 echo "== one name per game: hub tile = GAME_META (audit A-8)"
 node tools/qa-game-names.mjs
