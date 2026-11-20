@@ -86,7 +86,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-38](PRD-38-kedalaman-animasi-tokoh.md) | Kedalaman latar dan tokoh beranimasi (Birds, Bawah Laut) | Gelombang 4B | live v64.68 |
 | [PRD-39](PRD-39-bank-soal-game-tipis.md) | Bank soal besar untuk game tipis [ANAK] | Gelombang 4C | live v64.65 |
 | [PRD-08c](PRD-08c-bus-di-game-arkade.md) | Bus jawaban di game arkade dan kereta | Gelombang 4C | live v64.67 |
-| [PRD-40](PRD-40-bos-tiap-sepuluh-level.md) | Bos tiap 10 level (Birds, G23, Bawah Laut) [ANAK] | Gelombang 4C | belum mulai |
+| [PRD-40](PRD-40-bos-tiap-sepuluh-level.md) | Bos tiap 10 level (Birds, G23, Bawah Laut) [ANAK] | Gelombang 4C | live v64.69 |
 | [PRD-41](PRD-41-power-up-cuaca-ducky.md) | Power-up dan cuaca untuk Ducky Volley [ANAK] | Gelombang 4C | belum mulai |
 | [PRD-42](PRD-42-ronde-dengar-huruf.md) | Ronde "dengar" untuk game huruf + bank G11 besar [ANAK] | Gelombang 4C | belum mulai |
 | [PRD-43](PRD-43-gym-huruf-dari-kamus-ejaan.md) | Gym Huruf dari kamus ejaan | Gelombang 4C | belum mulai |

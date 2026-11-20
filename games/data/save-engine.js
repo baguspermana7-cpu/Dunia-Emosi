@@ -271,6 +271,17 @@
     return null;
   }
 
+  // DuniaLoad('boss-round.js', cb): a data/ module loaded only when it is needed (same folder and ?v= token as this
+  // script); cb runs once it ran or failed to load (offline: the caller goes on without it). Used by PRD-40 bosses.
+  function DuniaLoad(file, cb) {
+    try {
+      if (!_myScript) { if (cb) cb(); return }
+      const base = _myScript.replace(/[^/]*$/, ''), q = _myScript.indexOf('?') >= 0 ? _myScript.slice(_myScript.indexOf('?')) : '';
+      const el = document.createElement('script'); el.src = base + file + q;
+      el.onload = el.onerror = function () { if (cb) cb() }; document.head.appendChild(el);
+    } catch (_) { if (cb) cb() }
+  }
+
   // A question that is only text ({q, ans, wrong} banks of the arcade games): its domain and skill read from the words,
   // in the learning log's names (learning-log.js SKILL / DOMAIN), so a parent never sees "Lainnya".
   const _OPS = { '+': 'tambah', '-': 'kurang', '\u2212': 'kurang', '\u00d7': 'kali', 'x': 'kali', '*': 'kali', '\u00f7': 'bagi', ':': 'bagi', '/': 'bagi' };
@@ -296,6 +307,7 @@
     window.DuniaAnswerQ = DuniaAnswerQ;
     window.DuniaAnswerKind = answerKind;
     window.DuniaAnswer = DuniaAnswer;
+    window.DuniaLoad = DuniaLoad;
     window.saveLevelProgress = saveLevelProgress;
     window.activeAvatarBadgeKey = activeAvatarBadgeKey;
     window.avatarScopedGet = avatarScopedGet;
