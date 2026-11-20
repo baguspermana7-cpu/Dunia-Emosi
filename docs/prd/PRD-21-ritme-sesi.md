@@ -14,3 +14,16 @@
   - (L2) default mati = 0 perubahan perilaku;
   - (L3) layar istirahat bisa dibuka lagi hanya lewat gerbang orang tua.
 - **Usaha:** M.
+
+## Revisi 2026-11-21 (Gelombang 5, berlaku di atas desain di atas)
+
+- **Prasyarat:** PRD-49.
+- **Desain:**
+  - Setelan di balik gerbang orang tua: 15/20/30 menit atau mati (default mati).
+  - Setelah batas, pada `level:end` berikutnya: kartu "Hari ini kamu belajar…" (`LearningLog.summary` hari ini, gambar skill), lalu layar istirahat.
+  - Tidak pernah memotong level.
+- **Laws:**
+  - L1: dengan jam tiruan, kartu muncul tepat setelah `level:end`.
+  - L2: setelan mati = 0 perubahan.
+  - L3: layar istirahat hanya bisa dibuka lewat gerbang.
+  - L4: 3 ukuran dilihat.

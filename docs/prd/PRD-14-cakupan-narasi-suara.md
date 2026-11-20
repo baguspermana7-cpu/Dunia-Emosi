@@ -16,3 +16,20 @@
   - (L3) offline gate memutar klip tanpa jaringan;
   - (L4) saya dengarkan sampel acak 10 klip (transkrip Whisper-lokal cocok dengan teks).
 - **Usaha:** L.
+
+## Revisi 2026-11-21 (Gelombang 5, berlaku di atas desain di atas)
+
+- **Fase 1:**
+  - `narasi` masuk `SETTING_KEYS` per avatar. Ini menutup gap PRD-18; migrasinya dari setelan Timmy.
+  - Rujukan `TKAudio` yang mati dibereskan: buat ulang `tk-audio.js` yang memetakan klip yang ada, atau hapus rujukannya. Diukur dulu klip mana yang benar-benar ada.
+- **Fase 2:**
+  - `games/data/narration-map.json` diisi dari daftar instruksi PRD-15, layar mulai dulu.
+  - Klip id-ID dirender lokal dengan VoiceStudio OmniVoice (gratis, batch semalaman), opus 24 kbps.
+  - Dimuat lazy, lalu di-cache setelah diputar pertama kali dan lewat "unduh semua" (PRD-23).
+  - Pemutar bersama `games/data/narrate.js`: klip lebih dulu, TTS sebagai cadangan, mengikuti setelan.
+- **Laws:**
+  - L1: setiap instruksi layar mulai punya klip.
+  - L2: tambahan ukuran tercatat dan tidak masuk precache.
+  - L3: klip yang sudah di-cache diputar offline.
+  - L4: 10 klip acak cocok dengan transkrip Whisper lokal.
+  - L5: setelan mati = senyap.

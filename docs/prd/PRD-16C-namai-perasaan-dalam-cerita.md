@@ -16,3 +16,18 @@
   - (L3) penjelasan suara untuk tiap pilihan;
   - (L4) ringkasan muncul di dasbor perasaan.
 - **Usaha:** M.
+
+## Revisi 2026-11-21 (Gelombang 5, berlaku di atas desain di atas)
+
+- **Prasyarat:** PRD-49.
+- **Desain:**
+  - Momen = `level:end` kalah di Timmy, Kereta dan Mojo. Bukan "kapal menabrak" seperti di PRD lama, karena momen itu tidak ada di kode.
+  - Kartu "Timmy merasa apa?" dengan 3 wajah dari `DuniaFeeling.FEELINGS` (`feeling-checkin.js:24-28`) dan kalimat suara.
+  - Dicatat lewat `DuniaFeeling`, sehingga dasbor perasaan yang sudah ada (`game.js:4032`) langsung membacanya.
+  - Paling banyak sekali per hari per game. Tanpa skor.
+- **Laws:**
+  - L1: kalah → kartu → 1 catatan.
+  - L2: hanya saat jeda/akhir level.
+  - L3: tiap pilihan bersuara.
+  - L4: muncul di dasbor.
+  - L5: kali kedua di hari yang sama tidak muncul.

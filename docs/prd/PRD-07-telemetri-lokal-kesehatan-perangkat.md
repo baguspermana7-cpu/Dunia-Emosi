@@ -16,3 +16,17 @@
   - (L3) buffer tidak melebihi 200 entri / 30 KB;
   - (L4) jank buatan 60 ms terlihat di halaman.
 - **Usaha:** M.
+
+## Revisi 2026-11-21 (Gelombang 5, berlaku di atas desain di atas)
+
+- **Desain:** `games/data/telemetry.js`, ring buffer ≤200 entri / 30 KB, berisi:
+  - stall watchdog (`freeze-watchdog.js` ikut memancarkan ke bus);
+  - galat;
+  - jumlah long task per game.
+
+  Bukan gate p95, karena PRD-33 menunjukkan angka frame terlalu bising. Hasilnya tampil di dasbor (di balik gerbang), dengan ekspor teks.
+- **Laws:**
+  - L1: jank buatan 300 ms tercatat.
+  - L2: galat buatan tercatat.
+  - L3: buffer ≤200 / 30 KB.
+  - L4: overhead per ketukan <2 ms (A/B `qa-action-latency`).

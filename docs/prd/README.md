@@ -66,18 +66,18 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-19b](PRD-19b-usia-menyetel-tingkat-awal.md) | Usia menyetel tingkat awal | Gelombang 1 | live v64.44 |
 | [PRD-11](PRD-11-antrean-pengulangan-lintas-game.md) | Antrean pengulangan lintas game **[ANAK]** | Gelombang 1 | live v64.49 |
 | [PRD-13](PRD-13-petunjuk-sesuai-jenis-kesalahan.md) | Petunjuk sesuai jenis kesalahan **[ANAK]** | Gelombang 1 | live v64.50 (matematika) |
-| [PRD-20](PRD-20-kartu-main-berikutnya-di.md) | Kartu "main berikutnya" di hub **[ANAK — hal baru di menu]** | Gelombang 1 | belum mulai |
+| [PRD-20](PRD-20-kartu-main-berikutnya-di.md) | Kartu "main berikutnya" di hub **[ANAK — hal baru di menu]** | Gelombang 1 | belum mulai (revisi 2026-11-21, Gelombang 5) |
 | [PRD-17b](PRD-17b-momen-tenang-versi-lebih.md) | Momen tenang → versi lebih mudah **[ANAK]** | Gelombang 1 | live v64.48 |
 | [PRD-18](PRD-18-setelan-profil-dipakai-semua.md) | Setelan profil dipakai semua game | Gelombang 2 | live v64.51 |
-| [PRD-14](PRD-14-cakupan-narasi-suara.md) | Cakupan narasi suara **[ANAK — suara baru]** | Gelombang 2 | belum mulai |
-| [PRD-21](PRD-21-ritme-sesi.md) | Ritme sesi **[ANAK]** | Gelombang 2 | belum mulai |
-| [PRD-23](PRD-23-indikator-siap-luring-per.md) | Indikator siap luring per game | Gelombang 2 | belum mulai |
-| [PRD-22](PRD-22-satu-buku-koleksi-lintas.md) | Satu buku koleksi lintas game **[ANAK — hal baru di menu]** | Gelombang 2 | belum mulai |
-| [PRD-16C](PRD-16C-namai-perasaan-dalam-cerita.md) | Namai perasaan dalam cerita **[ANAK — mekanik emosi baru]** | Gelombang 2 | belum mulai |
-| [PRD-07](PRD-07-telemetri-lokal-kesehatan-perangkat.md) | Telemetri lokal + "Kesehatan perangkat" | Gelombang 3 | belum mulai |
+| [PRD-14](PRD-14-cakupan-narasi-suara.md) | Cakupan narasi suara **[ANAK — suara baru]** | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-21](PRD-21-ritme-sesi.md) | Ritme sesi **[ANAK]** | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-23](PRD-23-indikator-siap-luring-per.md) | Indikator siap luring per game | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-22](PRD-22-satu-buku-koleksi-lintas.md) | Satu buku koleksi lintas game **[ANAK — hal baru di menu]** | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-16C](PRD-16C-namai-perasaan-dalam-cerita.md) | Namai perasaan dalam cerita **[ANAK — mekanik emosi baru]** | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-07](PRD-07-telemetri-lokal-kesehatan-perangkat.md) | Telemetri lokal + "Kesehatan perangkat" | Gelombang 3 | belum mulai (revisi 2026-11-21, Gelombang 5) |
 | [PRD-06](PRD-06-jalur-uji-perangkat-asli.md) | Jalur uji perangkat asli — **TERBLOKIR: owner menyalakan USB debugging + colok tablet** | Gelombang 3 | terblokir |
-| [PRD-29](PRD-29-shell-game-bersama-adopsi.md) | Shell game bersama (adopsi bertahap) | Gelombang 3 | belum mulai |
-| [PRD-31](PRD-31-lampu-dipanggang-pilot.md) | Lampu dipanggang (pilot) | Gelombang 3 | belum mulai |
+| [PRD-29](PRD-29-shell-game-bersama-adopsi.md) | Shell game bersama (adopsi bertahap) | Gelombang 3 | ditutup 2026-11-21 (K3) |
+| [PRD-31](PRD-31-lampu-dipanggang-pilot.md) | Lampu dipanggang (pilot) | Gelombang 3 | ditutup 2026-11-21 (K3) |
 | [PRD-33](PRD-33-gate-anggaran-performa.md) | Gate anggaran performa per halaman | Gelombang 4A | live (tools) 2026-11-18 |
 | [PRD-34](PRD-34-diet-unduhan.md) | Diet unduhan: gambar malas, audio saat perlu | Gelombang 4A | live v64.62 |
 | [PRD-35](PRD-35-dom-ringan-saat-main.md) | DOM ringan dan frame stabil saat main | Gelombang 4A | live v64.64 |
@@ -93,6 +93,12 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-44](PRD-44-g10-cuaca-dan-tipe.md) | G10: cuaca nyata dan keunggulan tipe [ANAK] | Gelombang 4C | live v64.72 |
 | [PRD-45](PRD-45-mobil-bantuan-dan-streak.md) | Mobil: bantuan, streak lambat, kata lebih banyak [ANAK] | Gelombang 4C | live v64.73 |
 | [PRD-46](PRD-46-vfx-sakuga-tombol.md) | VFX sakuga di tombol semua game (permintaan owner) | Gelombang 4B | live v64.63 |
+| [PRD-47](PRD-47-bug-bash.md) | Bug bash: Ducky, toast, MEM-06, gate GT, kode mati G13c | Gelombang 5 | belum mulai |
+| [PRD-48](PRD-48-bus-tujuh-game-buta.md) | Bus jawaban di 7 game yang belum melapor | Gelombang 5 | belum mulai |
+| [PRD-49](PRD-49-event-level-dan-gerbang-orang-tua.md) | Event level/hadiah di bus + gerbang orang tua | Gelombang 5 | belum mulai |
+| [PRD-50](PRD-50-g7-tebak-gambar.md) | G7 Tebak Gambar: sprite, pengecoh satu grup, ronde dengar [ANAK] | Gelombang 5 | belum mulai |
+| [PRD-51](PRD-51-g4-hitung-binatang.md) | G4 Hitung Binatang: sprite, 3 ragam ronde, petunjuk hitung [ANAK] | Gelombang 5 | belum mulai |
+| [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: suara, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | belum mulai |
 
 ## Urutan & perkiraan
 | Gelombang | Isi | Perkiraan |
@@ -116,3 +122,19 @@ Langkah pertama setelah disetujui: tulis `docs/prd/` (25 berkas + README) — se
 ## Verifikasi keseluruhan
 - **Per PRD:** gate baru merah→hijau (angka dikutip), runner lulus untuk game yang disentuh, `ci-verify.sh` lulus, screenshot 3 ukuran dilihat, live di github.io + Vercel (token + string fitur dicek dengan curl).
 - **Per gelombang:** `node tools/run-gates.mjs --tag timmy` + tag baru (`content`, `learn`) lulus tanpa retry. Baris register di dokumen asesmen diperbarui.
+
+
+**Gelombang 5 (2026-11-21), "sempurnakan".** Disetujui owner bersama default keputusan:
+- **K1:** kode mati G13c dihapus.
+- **K2:** dasbor di balik gerbang orang tua.
+- **K3:** PRD-29 dan PRD-31 ditutup.
+
+Urutan: 47 → 48 → 49 → 20 → 50 → 51 → 52 → 22 → 21 → 16C → 14 (fase 1, lalu 2) → 23 → 07.
+
+Hal baru di menu (disebut ke owner):
+- kartu "Main berikutnya";
+- "Buku Koleksi";
+- "Gerbang orang tua";
+- "Kesehatan perangkat";
+- lencana "siap luring";
+- setelan "Waktu main".

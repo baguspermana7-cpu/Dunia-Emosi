@@ -1,7 +1,7 @@
 # PRD-29 Shell game bersama (adopsi bertahap)
 
 - **Gelombang:** Gelombang 3 — keandalan & arsitektur
-- **Status:** belum mulai
+- **Status:** ditutup 2026-11-21 (K3, rencana Gelombang 5 disetujui owner)
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #29
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -13,3 +13,9 @@
   - (L2) semua gate game itu lulus;
   - (L3) `qa-action-latency` tidak memburuk.
 - **Usaha:** XL, berjalan lama.
+
+## Ditutup 2026-11-21
+
+- **PRD-29:** nama `GameShell` bentrok dengan HUD kayu yang tidak diadopsi. Kontrol rumah sudah seragam lewat `DuniaHome`. Nilainya kecil dan biayanya XL.
+- **PRD-31:** nilai terendah di register. Pilot baru dikerjakan kalau owner memintanya.
+- **PRD-06** tetap terblokir menunggu tablet.
