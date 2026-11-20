@@ -37,6 +37,7 @@ TAGS.bus = /^qa-(prd08c-bus|bus-coverage)\.mjs$/   // PRD-08b/08c: every questio
 TAGS.depth = /^qa-prd38-depth\.mjs$/   // PRD-38: Birds and Bawah Laut layers move at different speeds, species with a GIF show it
 TAGS.boss = /^qa-prd40-boss\.mjs$/   // PRD-40: every tenth level of Birds, Run and Bawah Laut ends in a boss that can always be beaten
 TAGS.ducky = /^qa-(prd41-ducky|ducky-parallax)\.mjs$/   // PRD-41: Ducky Volley weather per set + power-ups from right answers
+TAGS.listen = /^qa-prd42-listen\.mjs$/   // PRD-42: listen rounds in G3/G8 (Indonesian device voice only) + G11 joins the Timmy bank
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 
 const args = process.argv.slice(2)

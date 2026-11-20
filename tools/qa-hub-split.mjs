@@ -12,9 +12,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const rd = f => fs.readFileSync(path.join(ROOT, f), 'utf8')
 
 // The cut order. A new part is appended here when it is moved out of game.js.
-const ORDER = ['games/hub/g14-g16-trains.js']
+const ORDER = ['games/hub/g14-g16-trains.js', 'games/hub/g11-kuis-sains.js']
 // Ratchet: game.js line count after the last cut. It may fall; lower this number when it does. It may never rise.
-const GAME_JS_MAX_LINES = 11067
+const GAME_JS_MAX_LINES = 10880
 
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else { fail++; console.log('  ✗', m) } }
