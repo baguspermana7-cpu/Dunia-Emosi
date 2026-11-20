@@ -80,7 +80,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-31](PRD-31-lampu-dipanggang-pilot.md) | Lampu dipanggang (pilot) | Gelombang 3 | belum mulai |
 | [PRD-33](PRD-33-gate-anggaran-performa.md) | Gate anggaran performa per halaman | Gelombang 4A | live (tools) 2026-11-18 |
 | [PRD-34](PRD-34-diet-unduhan.md) | Diet unduhan: gambar malas, audio saat perlu | Gelombang 4A | live v64.62 |
-| [PRD-35](PRD-35-dom-ringan-saat-main.md) | DOM ringan dan frame stabil saat main | Gelombang 4A | belum mulai |
+| [PRD-35](PRD-35-dom-ringan-saat-main.md) | DOM ringan dan frame stabil saat main | Gelombang 4A | live v64.64 |
 | [PRD-36](PRD-36-tepi-putih-ikon-balapan.md) | Hapus tepi putih ikon rintangan Balapan Kereta | Gelombang 4B | live v64.60 |
 | [PRD-37](PRD-37-juice-bersama.md) | Juice bersama: hit-stop, combo, perayaan | Gelombang 4B | belum mulai |
 | [PRD-38](PRD-38-kedalaman-animasi-tokoh.md) | Kedalaman latar dan tokoh beranimasi (Birds, Bawah Laut) | Gelombang 4B | belum mulai |

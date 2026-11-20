@@ -125,7 +125,7 @@
   },
   "games/pokemon-birds.html": {
    "bytes": 861071,
-   "req": 36,
+   "req": 38,
    "audio": 248895,
    "dom": 125
   },
@@ -139,7 +139,7 @@
    "bytes": 1743204,
    "req": 109,
    "audio": 697499,
-   "dom": 1840
+   "dom": 232
   },
   "games/stinky-dirty.html": {
    "bytes": 9884480,

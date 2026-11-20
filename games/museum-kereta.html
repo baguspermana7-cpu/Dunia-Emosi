@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.63-20261118a">
+<link rel="stylesheet" href="du-buttons.css?v=v64.64-20261119a">
 <title>Museum Kereta Ambarawa</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.63-20261118a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.64-20261119a">
 <style>
 /* B-272 standalone museum page. Extracted from index.html in-SPA overlay so the
    museum has its own URL like every other game. Self-contained: no game.js. */
@@ -194,18 +194,18 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </head>
 <body>
 <div id="du-build-stamp">v58.7</div>
-<script src="data/emoji-map.js?v=v64.63-20261118a"></script><script src="data/ui-sprites.js?v=v64.63-20261118a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=v64.64-20261119a"></script><script src="data/ui-sprites.js?v=v64.64-20261119a"></script><!-- zero-emoji engine -->
 <!-- Freeze recovery net: detects a dead frame chain and offers a way out. -->
-<script src="data/speak.js?v=v64.63-20261118a"></script>
-<script src="data/freeze-watchdog.js?v=v64.63-20261118a"></script>
+<script src="data/speak.js?v=v64.64-20261119a"></script>
+<script src="data/freeze-watchdog.js?v=v64.64-20261119a"></script>
 <!-- v61.5 — the museum keeps per-child collectibles but never loaded the save
      engine, so avatar scoping was unavailable to it and every child shared one
      passport. Must load BEFORE the page script that reads them. -->
-<script src="data/save-engine.js?v=v64.63-20261118a"></script>
-<script src="sw-reload.js?v=v64.63-20261118a"></script>
+<script src="data/save-engine.js?v=v64.64-20261119a"></script>
+<script src="sw-reload.js?v=v64.64-20261119a"></script>
 <!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
-<script src="data/train-world.js?v=v64.63-20261118a"></script>
-<script src="data/museum-lore.js?v=v64.63-20261118a"></script>
+<script src="data/train-world.js?v=v64.64-20261119a"></script>
+<script src="data/museum-lore.js?v=v64.64-20261119a"></script>
 
 <div id="museum-root">
   <div class="game-header">
@@ -1565,6 +1565,28 @@ function g18UpdateCollectStat() {
   if (bar) bar.style.width = Math.min(100, Math.round((n / total) * 100)) + '%'
 }
 
+const G18_CHUNK = 60
+let _g18MoreIO = null
+function g18MakeCard(item, visited) {
+  const card = document.createElement('div')
+  card.className = 'g18-card g18-cat-accent'
+  card.style.setProperty('--cat', item.catColor)
+  const star = item.featuredIdx >= 0 ? '<div class="g18-star-badge" title="Koleksi unggulan">⭐</div>' : ''
+  const tick = visited.has(item.idx) ? '<div class="g18-visited-tick" title="Sudah dikunjungi">🛂</div>' : ''
+  card.innerHTML =
+    star + tick +
+    `<div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;overflow:hidden;">${item.proc ? g18TrainSVG(G18_TRAINS[item.featuredIdx], 108, 50, false) : g18WorldImg(item.idx, 108, 50)}</div>` +
+    `<div class="g18-card-name" style="font-size:12px;">${item.name}</div>` +
+    // v59.x — the chip's catEmoji rendered as the SAME generic train sprite on all
+    // 275 cards (right under the card's own real train picture). The chip already
+    // encodes its category by colour + label, so the duplicate glyph is dropped
+    // rather than replaced — a 1em loco thumbnail here would be illegible anyway.
+    `<span class="g18-cat-chip" style="background:${item.catColor};">${item.catLabel}</span>` +
+    `<div style="color:rgba(255,255,255,0.55);font-size:9px;font-weight:700;margin-top:2px;">${item.year || ''}</div>`
+  card.onclick = () => g18OpenCard(item.idx)
+  return card
+}
+
 function g18RenderGallery() {
   const grid = document.getElementById('g18-card-grid')
   if (!grid) return
@@ -1575,27 +1597,29 @@ function g18RenderGallery() {
   else if (g18Filter !== 'all') items = items.filter(x => x.catKey === g18Filter)
   if (g18Query) items = items.filter(x => (x.name || '').toLowerCase().includes(g18Query))
   grid.innerHTML = ''
+  if (_g18MoreIO) { _g18MoreIO.disconnect(); _g18MoreIO = null }
+  const oldMore = document.getElementById('g18-more'); if (oldMore) oldMore.remove()
   const empty = document.getElementById('g18-empty-note')
   if (empty) empty.style.display = items.length ? 'none' : 'block'
-  items.forEach(item => {
-    const card = document.createElement('div')
-    card.className = 'g18-card g18-cat-accent'
-    card.style.setProperty('--cat', item.catColor)
-    const star = item.featuredIdx >= 0 ? '<div class="g18-star-badge" title="Koleksi unggulan">⭐</div>' : ''
-    const tick = visited.has(item.idx) ? '<div class="g18-visited-tick" title="Sudah dikunjungi">🛂</div>' : ''
-    card.innerHTML =
-      star + tick +
-      `<div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;overflow:hidden;">${item.proc ? g18TrainSVG(G18_TRAINS[item.featuredIdx], 108, 50, false) : g18WorldImg(item.idx, 108, 50)}</div>` +
-      `<div class="g18-card-name" style="font-size:12px;">${item.name}</div>` +
-      // v59.x — the chip's catEmoji rendered as the SAME generic train sprite on all
-      // 275 cards (right under the card's own real train picture). The chip already
-      // encodes its category by colour + label, so the duplicate glyph is dropped
-      // rather than replaced — a 1em loco thumbnail here would be illegible anyway.
-      `<span class="g18-cat-chip" style="background:${item.catColor};">${item.catLabel}</span>` +
-      `<div style="color:rgba(255,255,255,0.55);font-size:9px;font-weight:700;margin-top:2px;">${item.year || ''}</div>`
-    card.onclick = () => g18OpenCard(item.idx)
-    grid.appendChild(card)
-  })
+  // PRD-35: the whole catalogue is 305 cards (~2,500 nodes). Draw G18_CHUNK at a time; a sentinel under the grid asks for
+  // the next chunk before the child's scroll reaches it, so the list looks and scrolls as one list. No IntersectionObserver: draw all.
+  let shown = 0
+  const sentinel = document.createElement('div'); sentinel.id = 'g18-more'; sentinel.style.height = '1px'
+  const more = () => {
+    const end = typeof IntersectionObserver === 'undefined' ? items.length : Math.min(items.length, shown + G18_CHUNK)
+    for (; shown < end; shown++) grid.appendChild(g18MakeCard(items[shown], visited))
+    if (shown >= items.length) { sentinel.remove(); if (_g18MoreIO) { _g18MoreIO.disconnect(); _g18MoreIO = null } }
+    else if (_g18MoreIO) { _g18MoreIO.unobserve(sentinel); _g18MoreIO.observe(sentinel) }   // re-observe: asks again if the new chunk still leaves the sentinel in range
+  }
+  if (items.length > G18_CHUNK && typeof IntersectionObserver !== 'undefined') {
+    grid.after(sentinel)
+    // the scroller is the page itself when #g18-gallery grows with its content (root null), the gallery when it is a bounded box
+    const gal = document.getElementById('g18-gallery')
+    _g18MoreIO = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) more() },
+      { root: gal && gal.scrollHeight > gal.clientHeight + 2 ? gal : null, rootMargin: '0px 0px 900px 0px' })
+    _g18MoreIO.observe(sentinel)
+  }
+  more()
 }
 
 let _g18CurrentTrainIdx = -1
@@ -2256,9 +2280,9 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 window.addEventListener('pagehide', () => { try { g18Cleanup() } catch(_){} })
 </script>
-<script src="vfx-engine.js?v=v64.63-20261118a"></script><script src="data/vfx-db.js?v=v64.63-20261118a"></script><script src="vfx-moments.js?v=v64.63-20261118a"></script>
-<script src="dunia-cinema.js?v=v64.63-20261118a" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.63-20261118a" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.63-20261118a" defer></script>
+<script src="vfx-engine.js?v=v64.64-20261119a"></script><script src="data/vfx-db.js?v=v64.64-20261119a"></script><script src="vfx-moments.js?v=v64.64-20261119a"></script>
+<script src="dunia-cinema.js?v=v64.64-20261119a" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.64-20261119a" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.64-20261119a" defer></script>
 </body>
 </html>

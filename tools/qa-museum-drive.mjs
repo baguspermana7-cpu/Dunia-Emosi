@@ -15,6 +15,9 @@ for (const [w, h, tag] of [[844, 390, 'land'], [390, 844, 'port']]) {
   p.on('pageerror', e => errs.push('PE:' + e.message))
   await p.goto('http://localhost:8081/games/museum-kereta.html', { waitUntil: 'domcontentloaded' })
   await sleep(1800)
+  // PRD-35: the list draws 60 cards at a time while the child scrolls; the baseline is the list scrolled to its end (every card reachable)
+  for (let i = 0; i < 60; i++) { await p.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight)); await sleep(100) }
+  await p.evaluate(() => window.scrollTo(0, 0)); await sleep(300)
 
   // baseline gallery state
   const base = await p.evaluate(() => ({
@@ -40,6 +43,11 @@ for (const [w, h, tag] of [[844, 390, 'land'], [390, 844, 'port']]) {
   // back to All
   await p.evaluate(() => { const t = document.querySelector('#g18-tabs .g18-tab'); if (t) t.click() })
   await sleep(300)
+  // PRD-35: the tab redraws the first 60 cards; scroll like a child until a featured card is drawn
+  for (let i = 0; i < 60; i++) {
+    if (await p.evaluate(() => !!document.querySelector('#g18-card-grid .g18-card .g18-star-badge'))) break
+    await p.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight)); await sleep(100)
+  }
 
   // open a FEATURED card → rich modal (history/fact)
   const feat = await p.evaluate(() => {
