@@ -42,6 +42,7 @@ TAGS.g10 = /^qa-prd44-g10\.mjs$/   // PRD-44: G10 weather boosts types (announce
 TAGS.mobil45 = /^qa-prd45-mobil\.mjs$/   // PRD-45: G6 help offer, streak slow motion, dictionary words
 TAGS.bugs47 = /^qa-(prd47-bugs|sd-play|gt-raid)\.mjs$/   // PRD-47: Ducky sky line, toast over answers, dead G13c, SD fit, GT waits
 TAGS.bus48 = /^qa-(prd48-bus|bus-coverage|learning-log)\.mjs$/   // PRD-48: G4, G7, G9, G10, G13, G13b, G6 report every answer; hub records name their game
+TAGS.cek53 = /^qa-prd53-cek\.mjs$/   // PRD-53: Cek Kemampuan 6 islands, Perkiraan IQ, board (unit: test-cek-items.mjs in ci-verify)
 TAGS.events49 = /^qa-prd49-events\.mjs$/   // PRD-49: level:start/end + reward events; parent gate before the dashboard
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 

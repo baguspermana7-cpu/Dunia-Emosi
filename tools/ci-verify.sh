@@ -38,6 +38,7 @@ echo "== shared hit-stop + combo meter are wired in G10, G13, G21, Kuis and Ayo 
 node tools/qa-prd37-juice.mjs
 node tools/qa-prd08c-bus.mjs
 node tools/qa-prd44-g10.mjs        # PRD-44 static: the 18x18 type table + the no-impossible-battle model over G10_LEVELS
+node tools/test-cek-items.mjs     # PRD-53: Cek Kemampuan items have one right answer, session rules, Perkiraan IQ, board order
 node tools/qa-prd47-bugs.mjs      # PRD-47 static: the unreachable Gym Huruf (G13c) code stays gone
 
 echo "== one name per game: hub tile = GAME_META (audit A-8)"
@@ -81,6 +82,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-learning-log.mjs
   echo "== the parent dashboard shows this child's learning"
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-dash-learning.mjs
+  echo "== Cek Kemampuan: 6 islands by real taps, Perkiraan IQ, Papan Juara Otak (PRD-53)"
+  QA_BASE="http://127.0.0.1:$port/" QA_SIZES=390x844 QA_CEPAT=0 node tools/qa-prd53-cek.mjs
   echo "== the freeze card speaks to a child who cannot read"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"

@@ -1868,7 +1868,7 @@ function renderWorldMapStars() {
       const txt = s.best > 0 ? '⭐'.repeat(s.best) : ''
       lbl.textContent = txt
       const legacy = document.getElementById('gstars-' + id); if (legacy) legacy.textContent = txt
-      lbl.dataset.total = String(s.total)
+      lbl.dataset.total = String(s.total); if (id === 'cek') { const v = Object.values((JSON.parse(avatarScopedGet('cek-kemampuan') || '{}') || {}).stars || {}).map(Number); lbl.textContent = v.length ? '⭐'.repeat(Math.max(...v)) : ''; lbl.dataset.total = String(v.reduce((a, b) => a + b, 0)) }   // PRD-53: Cek Kemampuan keeps its own stars
     })
     document.querySelectorAll('[id^="gstars-zone-"]').forEach(z => {
       const zone = z.closest('.wmap-zone')

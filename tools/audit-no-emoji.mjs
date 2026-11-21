@@ -36,6 +36,7 @@ const PAGES = [
   // PRD-27 part 2 (2026-11-14): the pages this list never walked
   'games/ayo-berhitung.html', 'games/kereta-maze.html', 'games/mojo-swoptops.html', 'games/mojo-chase-embed.html',
   'games/film-anak.html', 'games/film-play.html', 'games/blippi.html',
+  'games/cek-kemampuan.html',   // PRD-53
   // the parent dashboard (index.html, drawn by showDashboard()): strict, only its own subtree is walked
   'index.html#dashboard',
 ]
@@ -58,6 +59,7 @@ const START = {
   'games/mojo-swoptops.html': ['#btn-play'],
   'games/film-play.html': ['#pgo:not([disabled])'],
   'games/mobil.html': ['#ovl-start button', '#ovl-start'],
+  'games/cek-kemampuan.html': ['.isle', '#btn-iq', '#btn-board'],
   'games/monster-candy.html': ['#start-overlay'],
   'games/pokemon-run.html': ['#start-overlay'],
   'games/pokemon-birds.html': ['#start-overlay'],
