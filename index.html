@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dunia Emosi 🐾</title>
-<link rel="stylesheet" href="assets/fonts/fonts.css?v=v64.73-20261120i">
+<link rel="stylesheet" href="assets/fonts/fonts.css?v=v64.74-20261121a">
 
-<link rel="stylesheet" href="style.css?v=v64.73-20261120i">
+<link rel="stylesheet" href="style.css?v=v64.74-20261121a">
 
 <!-- PWA: install-as-app + offline support -->
 <link rel="manifest" href="manifest.json">
@@ -1407,47 +1407,6 @@
   </div>
 </div>
 
-<!-- GAME 13c — Gym Huruf & Suara -->
-<div id="screen-game13c" class="screen">
-  <div id="g13c-gym-bg" style="position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;"></div>
-  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:1;"></div>
-  <!-- Header -->
-  <div class="game-header" style="position:relative;z-index:10;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:8px 12px;">
-    <button class="gh-back" onclick="playClick();exitGame()" style="background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer;">⌂</button>
-    <button class="gh-back" onclick="playClick();g13cBuildLetterSelect()" title="Pilih gym" style="background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);border-radius:50%;width:36px;height:36px;font-size:15px;cursor:pointer;">←</button>
-    <span style="flex:1;font-size:16px;font-weight:900;font-family:'Fredoka One',cursive;color:white;">🏅 Gym Huruf & Suara</span>
-    <span id="g13c-badge-count" style="font-size:13px;font-weight:900;color:#FCD34D;">🏅 0</span>
-  </div>
-
-  <!-- Letter Select overlay -->
-  <div id="g13c-letter-select" style="position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;overflow-y:auto;">
-    <div style="background:rgba(10,4,30,0.92);border:2px solid rgba(167,139,250,0.4);border-radius:24px;padding:20px 16px;width:100%;max-width:360px;max-height:82vh;overflow-y:auto;">
-      <div style="text-align:center;font-size:22px;font-weight:900;font-family:'Fredoka One',cursive;color:white;margin-bottom:4px;">🏅 Pilih Gym Huruf</div>
-      <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:14px;">Latihan fonik — bunyi awal kata</div>
-      <div id="g13c-letter-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;"></div>
-    </div>
-  </div>
-
-  <!-- Game area -->
-  <div id="g13c-game-area" style="position:relative;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:flex-start;flex:1;padding:10px 12px;gap:8px;">
-    <!-- Letter + Progress -->
-    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:380px;">
-      <div style="font-size:52px;font-weight:900;font-family:'Fredoka One',cursive;color:#FCD34D;text-shadow:0 0 20px rgba(252,211,77,0.8);" id="g13c-target-letter">A</div>
-      <div id="g13c-progress-dots" style="display:flex;gap:6px;align-items:center;"></div>
-    </div>
-    <!-- Question label -->
-    <div style="font-size:14px;font-weight:900;color:rgba(255,255,255,0.7);text-align:center;" id="g13c-question-lbl">Pilih benda yang mulai dengan huruf ini!</div>
-    <!-- Pokemon mascot -->
-    <img width="80" height="80" loading="lazy" decoding="async" id="g13c-pokemon-img" src="" alt="" style="width:80px;height:80px;object-fit:contain;image-rendering:auto;animation:g13cBounce 1.2s ease-in-out infinite;" onerror="this.style.display='none'">
-    <!-- Choices grid -->
-    <div id="g13c-choices" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%;max-width:380px;margin-top:4px;"></div>
-    <!-- Feedback -->
-    <div id="g13c-feedback" style="height:28px;font-size:15px;font-weight:900;text-align:center;"></div>
-  </div>
-
-  <!-- G13C uses shared #game-result-overlay -->
-</div>
-
 <!-- GAME 14 — Balapan Kereta -->
 <div id="screen-game14" class="screen">
   <!-- Header -->
@@ -2411,52 +2370,52 @@ function loadPixiJS(cb) {
 </div>
 
 <!-- Task #73 (P0-2): defer data scripts — unblock HTML parsing by ~51KB -->
-<script src="games/data/region-meta.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/city-progression.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/city-pokemon-pack.js?v=v64.73-20261120i" defer></script>
+<script src="games/data/region-meta.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/city-progression.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/city-pokemon-pack.js?v=v64.74-20261121a" defer></script>
 <!-- Hotfix 2026-04-28 — sprite cascade + freeze watchdog (must load before game.js).
      poke-sprite-cdn.js is NOT loaded here — game.js declares its own POKE_IDS
      and would collide. Standalone /games/*.html pages still load it.
      Bump 20260428b: picker overhaul, legacy cascade audit, G10 hit FX. -->
-<script src="games/data/poke-sprite-loader.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/speak.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/freeze-watchdog.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/save-engine.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/dunia-bus.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/learning-log.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/mastery.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/feeling-checkin.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/breathe.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/cloud-sync.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/math-rules.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/sfx-engine.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/weather-fx.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/poke-packages.js?v=v64.73-20261120i" defer></script>
-<script src="games/vfx-engine.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/vfx-db.js?v=v64.73-20261120i" defer></script>
-<script src="games/vfx-poke.js?v=v64.73-20261120i" defer></script>
-<script src="games/battle-arena.js?v=v64.73-20261120i" defer></script>
+<script src="games/data/poke-sprite-loader.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/speak.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/freeze-watchdog.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/save-engine.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/dunia-bus.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/learning-log.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/mastery.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/feeling-checkin.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/breathe.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/cloud-sync.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/math-rules.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/sfx-engine.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/weather-fx.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/poke-packages.js?v=v64.74-20261121a" defer></script>
+<script src="games/vfx-engine.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/vfx-db.js?v=v64.74-20261121a" defer></script>
+<script src="games/vfx-poke.js?v=v64.74-20261121a" defer></script>
+<script src="games/battle-arena.js?v=v64.74-20261121a" defer></script>
 <!-- v56.5 A-318 — 48-leg journey names for the g14 claymorphism station-map level select -->
-<script src="games/train-journey.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/battle-modes.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/poke-type-chart.js?v=v64.73-20261120i" defer></script>
-<script src="games/train-shared.js?v=v64.73-20261120i" defer></script>
-<script src="games/train-vfx.js?v=v64.73-20261120i" defer></script>
-<script src="games/train-bg-engine.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/bg-themes.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/bg-renderers.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/bg-npcs.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/bg-audio.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/bg-events.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/db-sprites.js?v=v64.73-20261120i" defer></script><!-- A-356 shared asset DB accessor -->
-<script src="games/data/db-labeled.js?v=v64.73-20261120i" defer></script><!-- labeled DB subset for Tebak game -->
-<script src="games/data/mascot-sprites.js?v=v64.73-20261120i" defer></script><!-- 12-char mascot/hero sheet -->
-<script src="games/data/emoji-map.js?v=v64.73-20261120i" defer></script><script src="games/data/ui-sprites.js?v=v64.73-20261120i" defer></script><!-- 6 UIUX/gameplay sprite packs -->
-<script src="games/data/hit-feel.js?v=v64.73-20261120i" defer></script><!-- PRD-37: hit-stop for G10/G13 attacks -->
-<script src="game.js?v=v64.73-20261120i" defer></script>
-<script src="games/hub/g14-g16-trains.js?v=v64.73-20261120i" defer></script>
-<script src="games/hub/g11-kuis-sains.js?v=v64.73-20261120i" defer></script>
-<script src="games/hub/g10-weather.js?v=v64.73-20261120i" defer></script>
+<script src="games/train-journey.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/battle-modes.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/poke-type-chart.js?v=v64.74-20261121a" defer></script>
+<script src="games/train-shared.js?v=v64.74-20261121a" defer></script>
+<script src="games/train-vfx.js?v=v64.74-20261121a" defer></script>
+<script src="games/train-bg-engine.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/bg-themes.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/bg-renderers.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/bg-npcs.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/bg-audio.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/bg-events.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/db-sprites.js?v=v64.74-20261121a" defer></script><!-- A-356 shared asset DB accessor -->
+<script src="games/data/db-labeled.js?v=v64.74-20261121a" defer></script><!-- labeled DB subset for Tebak game -->
+<script src="games/data/mascot-sprites.js?v=v64.74-20261121a" defer></script><!-- 12-char mascot/hero sheet -->
+<script src="games/data/emoji-map.js?v=v64.74-20261121a" defer></script><script src="games/data/ui-sprites.js?v=v64.74-20261121a" defer></script><!-- 6 UIUX/gameplay sprite packs -->
+<script src="games/data/hit-feel.js?v=v64.74-20261121a" defer></script><!-- PRD-37: hit-stop for G10/G13 attacks -->
+<script src="game.js?v=v64.74-20261121a" defer></script>
+<script src="games/hub/g14-g16-trains.js?v=v64.74-20261121a" defer></script>
+<script src="games/hub/g11-kuis-sains.js?v=v64.74-20261121a" defer></script>
+<script src="games/hub/g10-weather.js?v=v64.74-20261121a" defer></script>
 <script>
   // Boot SFXEngine + WeatherFX after page loads — both lazy, never block the game.
   document.addEventListener('DOMContentLoaded', function () {
@@ -2518,8 +2477,8 @@ function loadPixiJS(cb) {
   } catch (e) {}
 })()
 </script>
-<script src="games/dunia-cinema.js?v=v64.73-20261120i" defer></script>
-<script src="games/vendor/sakuga/core.js?v=v64.73-20261120i" defer></script>
-<script src="games/data/dunia-sakuga.js?v=v64.73-20261120i" defer></script>
+<script src="games/dunia-cinema.js?v=v64.74-20261121a" defer></script>
+<script src="games/vendor/sakuga/core.js?v=v64.74-20261121a" defer></script>
+<script src="games/data/dunia-sakuga.js?v=v64.74-20261121a" defer></script>
 </body>
 </html>

@@ -407,6 +407,8 @@ async function battle (ctx, o = {}) {
   // Monster Rush
   await p.waitForFunction(() => __gt.state().screen === 'scr-rush', { timeout: 15000 }).catch(() => {})
   check((await st(p)).screen === 'scr-rush', `${ctx.tag}: the battle ends in Monster Rush`)
+  // PRD-47: slow the rush's 15 s wall clock to 1/4 (continuous) so >= 3 taps fit on a loaded machine; its length is not under test
+  await p.evaluate(() => { const real = Date.now.bind(Date), s0 = real(); Date.now = () => s0 + (real() - s0) / 4 })
   await p.waitForFunction(() => document.querySelector('#rush-host .rush-b:not([disabled])'), { timeout: 12000 }).catch(() => {})
   let rushTaps = 0, rushShot = false
   const r0 = Date.now()
@@ -423,7 +425,8 @@ async function battle (ctx, o = {}) {
   check(rushTaps >= 3, `${ctx.tag}: Monster Rush answers can be tapped (${rushTaps} taps)`)
   if (o.pvp) check((stats.switches || 0) >= 3, `${ctx.tag}: the 2-player run saw >= 3 turn switches with nothing moving (${stats.switches || 0})`)
   await p.waitForFunction(() => __gt.state().screen === 'scr-result', { timeout: 15000 }).catch(() => {})
-  await sleep(1500)                                 // count-up
+  // PRD-47: wait for the count-up to land instead of a fixed 1.5 s (on a slow machine it was still counting -> flake)
+  await p.waitForFunction(pv => { const b = [...document.querySelectorAll((pv ? '#res-pv' : '#res-table') + ' .res-total b')]; return b.length && b.every(x => x.textContent === x.getAttribute('data-n')) }, { timeout: 10000 }, !!o.pvp).catch(() => {})
   // (2 players: the result is split too — #res-half-p1 on top turned to face P2, #res-half-p0
   // upright at the bottom, each with its own outcome and its own Main Lagi / Kembali)
   const res = await p.evaluate(pv => { const R = pv ? '#res-pv' : '#res-table'; return { scr: __gt.state().screen, cols: document.querySelectorAll(R + ' .res-col').length,
