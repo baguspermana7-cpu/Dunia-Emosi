@@ -77,6 +77,7 @@ if (process.env.QA_BASE) {
       await p.waitForFunction(() => document.querySelectorAll('#choices button:not([disabled])').length > 1, { timeout: 15000 }).catch(() => {})
       await sleep(300)
       const cur = await p.evaluate(() => window.__g25.current())
+      if (!cur) { await sleep(800); continue }   // a loaded CI runner: the question is not up yet (CI 2026-11-22 read null.ans)
       const btns = await p.$$('#choices button'), labels = await Promise.all(btns.map(x => x.evaluate(e => e.textContent.trim())))
       let i = labels.findIndex(l => Math.abs(Number(l) - Number(cur.ans)) === 1)
       if (i < 0) i = labels.findIndex(l => l !== cur.ans)
