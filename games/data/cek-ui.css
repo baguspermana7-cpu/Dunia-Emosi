@@ -93,8 +93,7 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
 /* cards: result, IQ, board */
 .card{ background:var(--du-cream,#fefdf7); border-radius:28px; padding:18px 20px; box-shadow:0 6px 0 rgba(59,42,74,.16),0 18px 40px rgba(3,40,80,.25); width:min(560px,100%) }
 .big-stars{ display:flex; justify-content:center; gap:6px; margin:4px 0 }
-.big-stars img{ width:64px; height:64px; object-fit:contain; animation:pop .5s cubic-bezier(.2,.9,.3,1.5) both }
-.big-stars img:nth-child(2){ animation-delay:.25s } .big-stars img:nth-child(3){ animation-delay:.5s }
+.big-stars img{ width:64px; height:64px; object-fit:contain }   /* PRD-54: CekMotion.stars lands them one by one */
 @keyframes pop{ from{ transform:scale(0) rotate(-30deg); opacity:0 } }
 .points{ font-family:'Fredoka One',sans-serif; font-size:28px; margin:2px 0; color:#7c3aed }
 .card p{ margin:4px 0; font-size:17px }
@@ -104,7 +103,7 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
 .bars .b{ display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:8px; font-weight:800 }
 .bars img{ width:44px; height:38px; object-fit:contain }
 .bars .track{ height:16px; border-radius:999px; background:#ede9fe; overflow:hidden; position:relative }
-.bars .fill{ position:absolute; inset:0 auto 0 0; border-radius:999px; background:linear-gradient(90deg,#a78bfa,#7c3aed); transition:width .9s cubic-bezier(.2,.8,.2,1) }
+.bars .fill{ position:absolute; inset:0 auto 0 0; border-radius:999px; background:linear-gradient(90deg,#a78bfa,#7c3aed); transform-origin:left center }
 .bars .nm{ grid-column:2; font-size:15px; margin-bottom:-4px }
 .unsure{ background:#fde68a; color:#78350f; border-radius:999px; padding:1px 8px; font-size:12px; font-weight:800 }
 .tip{ background:#ecfccb; border-radius:14px; padding:8px 12px; font-weight:700 }
@@ -169,3 +168,36 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
   .bars img{ width:36px; height:30px } .bars .b{ grid-template-columns:36px 1fr auto } .tip{ padding:6px 10px; font-size:15px !important }
 }
 @media (prefers-reduced-motion:reduce){ .isle.next .art, .big-stars img, .isle .flag, .fx-layer img{ animation:none } .cheer{ transition:none } }
+
+/* ---------- PRD-54 M: living sea, gauge, reveal, glints ---------- */
+.cek-sea{ position:fixed; inset:0; width:100vw; height:100vh; height:100lvh; display:block; pointer-events:none }
+.panel{ z-index:1 }
+.gauge{ position:relative; width:clamp(150px,34vw,188px); aspect-ratio:1; margin:2px auto 0; display:grid; place-items:center }
+.gauge svg{ position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg) }
+.gauge circle{ fill:none; stroke-width:9; stroke-linecap:round }
+.gauge .g-bg{ stroke:#ede9fe }
+.gauge .g-fg{ stroke:#7c3aed; stroke-dasharray:100 100; stroke-dashoffset:100; filter:drop-shadow(0 0 4px rgba(124,58,237,.45)) }
+.gauge .iq-num{ position:relative; font-size:clamp(52px,12vw,72px) }
+.curtain{ position:fixed; inset:0; background:rgba(12,74,110,.5); opacity:0; pointer-events:none; z-index:5 }
+.isle.next::before{ content:''; position:absolute; left:50%; top:46%; width:78%; aspect-ratio:1; border-radius:50%; transform:translate(-50%,-50%); border:3px solid rgba(254,253,247,.9); animation:ring 2.4s ease-out infinite; pointer-events:none }
+@keyframes ring{ from{ transform:translate(-50%,-50%) scale(.6); opacity:.9 } to{ transform:translate(-50%,-50%) scale(1.35); opacity:0 } }
+.guide .owl{ animation:owl-tilt 5s ease-in-out infinite; transform-origin:50% 90% }
+@keyframes owl-tilt{ 0%,82%,100%{ transform:none } 88%{ transform:rotate(-6deg) } 94%{ transform:rotate(4deg) } }
+.rows li{ position:relative; overflow:hidden }
+.rows li.me::after{ content:''; position:absolute; inset:0; background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.75) 50%,transparent 65%); transform:translateX(-100%); animation:shine 2.6s ease-in-out 0.6s infinite; pointer-events:none }
+@keyframes shine{ 0%{ transform:translateX(-100%) } 45%,100%{ transform:translateX(100%) } }
+.rows .pl img{ animation:glint 3s ease-in-out infinite }
+@keyframes glint{ 0%,80%,100%{ transform:none } 88%{ transform:scale(1.18) rotate(-8deg) } }
+@media (orientation:portrait) and (max-height:900px){ .gauge{ width:128px } .gauge .iq-num{ font-size:48px } }
+@media (prefers-reduced-motion:reduce){ .isle.next::before, .guide .owl, .rows li.me::after, .rows .pl img{ animation:none } }
+/* PRD-54: on a wide landscape screen the IQ card (now with its ring gauge) sits in two columns so its buttons stay on screen */
+@media (orientation:landscape) and (min-width:900px){
+  .card.iq{ display:grid; grid-template-columns:minmax(240px,300px) minmax(0,1fr); column-gap:28px; align-items:center; max-width:880px; width:100% }
+  .card.iq > #iq-trophy{ grid-area:1 / 1; justify-self:center; width:72px; height:72px }
+  .card.iq > h1{ grid-area:2 / 1 }
+  .card.iq > .gauge{ grid-area:3 / 1 }
+  .card.iq > .iq-range{ grid-area:4 / 1 }
+  .card.iq > .bars{ grid-area:1 / 2 / 3 / 3; margin:0 }
+  .card.iq > .tip{ grid-area:3 / 2 }
+  .card.iq > .note{ grid-area:4 / 2 }
+}

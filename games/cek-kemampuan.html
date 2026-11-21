@@ -9,9 +9,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <meta name="theme-color" content="#38bdf8">
 <title>Cek Kemampuan</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.78-20261121e">
-<link rel="stylesheet" href="du-buttons.css?v=v64.78-20261121e">
-<link rel="stylesheet" href="data/cek-ui.css?v=v64.78-20261121e">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.79-20261122a">
+<link rel="stylesheet" href="du-buttons.css?v=v64.79-20261122a">
+<link rel="stylesheet" href="data/cek-ui.css?v=v64.79-20261122a">
 </head>
 <body>
 <div class="sky" aria-hidden="true"></div>
@@ -71,11 +71,13 @@
   </section>
 
   <section class="scr" id="s-iq" aria-labelledby="t-iq">
+    <div class="curtain" id="iq-curtain" aria-hidden="true"></div>
     <div class="center">
       <div class="card iq">
         <img id="iq-trophy" alt="" width="96" height="96">
         <h1 id="t-iq">Perkiraan IQ</h1>
-        <div class="iq-num" id="iq-num">-</div>
+        <div class="gauge" id="iq-gauge"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="g-bg" cx="60" cy="60" r="52"/><circle class="g-fg" id="iq-ring" cx="60" cy="60" r="52" pathLength="100"/></svg>
+          <div class="iq-num" id="iq-num">-</div></div>
         <p class="iq-range" id="iq-range"></p>
         <div class="bars" id="iq-bars"></div>
         <p class="tip" id="iq-tip"></p>
@@ -99,35 +101,38 @@
 </div>
 <div class="fx-layer" id="fx" aria-hidden="true"></div>
 
-<script src="data/ui-sprites.js?v=v64.78-20261121e"></script>
-<script src="data/speak.js?v=v64.78-20261121e"></script>
-<script src="data/freeze-watchdog.js?v=v64.78-20261121e"></script>
-<script src="data/save-engine.js?v=v64.78-20261121e"></script>
-<script src="data/sfx-engine.js?v=v64.78-20261121e"></script>
-<script src="data/db-labeled.js?v=v64.78-20261121e"></script>
-<script src="data/cek-core.js?v=v64.78-20261121e"></script>
-<script src="data/cek-targets.js?v=v64.78-20261121e"></script>
-<script src="data/cek-irt.js?v=v64.78-20261121e"></script>
-<script src="data/cek-profile.js?v=v64.78-20261121e"></script>
-<script src="data/cek-pola.js?v=v64.78-20261121e"></script>
-<script src="data/cek-bentuk.js?v=v64.78-20261121e"></script>
-<script src="data/cek-ingat.js?v=v64.78-20261121e"></script>
-<script src="data/cek-kata.js?v=v64.78-20261121e"></script>
-<script src="data/cek-cepat.js?v=v64.78-20261121e"></script>
-<script src="data/cek-angka.js?v=v64.78-20261121e"></script>
-<script src="data/cek-board.js?v=v64.78-20261121e"></script>
-<script src="data/cek-ui.js?v=v64.78-20261121e"></script>
-<script src="data/cek-play.js?v=v64.78-20261121e"></script>
-<script src="data/cek-page.js?v=v64.78-20261121e"></script>
-<script src="sw-reload.js?v=v64.78-20261121e"></script>
-<script src="dunia-icons.js?v=v64.78-20261121e"></script>
-<script src="dunia-home.js?v=v64.78-20261121e"></script>
+<script src="data/ui-sprites.js?v=v64.79-20261122a"></script>
+<script src="data/speak.js?v=v64.79-20261122a"></script>
+<script src="data/freeze-watchdog.js?v=v64.79-20261122a"></script>
+<script src="data/save-engine.js?v=v64.79-20261122a"></script>
+<script src="data/sfx-engine.js?v=v64.79-20261122a"></script>
+<script src="data/db-labeled.js?v=v64.79-20261122a"></script>
+<script src="data/cek-core.js?v=v64.79-20261122a"></script>
+<script src="data/cek-targets.js?v=v64.79-20261122a"></script>
+<script src="data/cek-irt.js?v=v64.79-20261122a"></script>
+<script src="data/cek-profile.js?v=v64.79-20261122a"></script>
+<script src="data/cek-pola.js?v=v64.79-20261122a"></script>
+<script src="data/cek-bentuk.js?v=v64.79-20261122a"></script>
+<script src="data/cek-ingat.js?v=v64.79-20261122a"></script>
+<script src="data/cek-kata.js?v=v64.79-20261122a"></script>
+<script src="data/cek-cepat.js?v=v64.79-20261122a"></script>
+<script src="data/cek-angka.js?v=v64.79-20261122a"></script>
+<script src="data/cek-board.js?v=v64.79-20261122a"></script>
+<script src="data/cek-ui.js?v=v64.79-20261122a"></script>
+<script src="data/cek-play.js?v=v64.79-20261122a"></script>
+<script src="dunia-glfx.js?v=v64.79-20261122a"></script>
+<script src="data/cek-sea.js?v=v64.79-20261122a"></script>
+<script src="data/cek-motion.js?v=v64.79-20261122a"></script>
+<script src="data/cek-page.js?v=v64.79-20261122a"></script>
+<script src="sw-reload.js?v=v64.79-20261122a"></script>
+<script src="dunia-icons.js?v=v64.79-20261122a"></script>
+<script src="dunia-home.js?v=v64.79-20261122a"></script>
 <script>DuniaHome.mount({ into: '.panel', abs: true, top: '6px', right: '6px', visible: function () { return true } })</script>
-<script src="vfx-engine.js?v=v64.78-20261121e" defer></script>
-<script src="data/vfx-db.js?v=v64.78-20261121e" defer></script>
-<script src="vfx-moments.js?v=v64.78-20261121e" defer></script>
-<script src="dunia-cinema.js?v=v64.78-20261121e" data-theme="sea" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.78-20261121e" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.78-20261121e" defer></script>
+<script src="vfx-engine.js?v=v64.79-20261122a" defer></script>
+<script src="data/vfx-db.js?v=v64.79-20261122a" defer></script>
+<script src="vfx-moments.js?v=v64.79-20261122a" defer></script>
+<script src="dunia-cinema.js?v=v64.79-20261122a" data-theme="sea" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.79-20261122a" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.79-20261122a" defer></script>
 </body>
 </html>

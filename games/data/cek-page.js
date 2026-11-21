@@ -32,7 +32,15 @@
 
   // ---------- helpers ----------
   var SCREENS = ['s-name', 's-map', 's-intro', 's-play', 's-done', 's-iq', 's-board']
-  function show (id) { SCREENS.forEach(function (s) { $(s).classList.toggle('on', s === id) }); W.scrollTo(0, 0) }
+  var shown = ''
+  function show (id) {
+    var back = shown && SCREENS.indexOf(id) < SCREENS.indexOf(shown)
+    SCREENS.forEach(function (s) { $(s).classList.toggle('on', s === id) }); W.scrollTo(0, 0)
+    if (id !== shown && W.CekMotion) W.CekMotion.screen($(id), back)   // PRD-54 A3
+    shown = id
+  }
+  // PRD-54 A2: a tapped island pulls the map toward it before its intro opens
+  function pick (id) { if (W.CekMotion) W.CekMotion.zoomTo(D.querySelector('#map [data-isle="' + id + '"]'), function () { intro(id) }); else intro(id) }
   function later (fn, ms) { timers.push(setTimeout(fn, ms)) }
   function clearTimers () { timers.forEach(clearTimeout); timers = [] }
   function hint (t) { $('hint').textContent = t || '' }
@@ -57,7 +65,7 @@
     clearTimers(); st = null; item = null
     var d = load(), who = U.me(), done = U.ORDER.filter(function (id) { return last(d, id) })
     var best = {}; done.forEach(function (id) { best[id] = { stars: (d.stars && d.stars[id]) || 1 } })
-    U.topBar(who, starTotal(d)); U.map(best, intro)
+    U.topBar(who, starTotal(d)); U.map(best, pick)
     var nm = who ? who.name : 'Kawan', next = U.ORDER.filter(function (id) { return !best[id] })[0]
     var rest = sitting >= 2 && next && !rested
     U.guide(!done.length ? 'Halo, ' + nm + '! Aku Profesor Owi. Ayo jelajahi 6 pulau otak. Ketuk pulau yang bergoyang!'
@@ -66,7 +74,7 @@
           : done.length + ' pulau selesai. Ayo ke ' + U.ISLES[next].name + '!', !spoke || rest)
     spoke = true; if (rest) rested = true
     $('btn-iq').innerHTML = '<img alt="" src="' + U.sprite('badge', 'trophy') + '">Perkiraan IQ'
-    show('s-map')
+    show('s-map'); if (W.CekMotion) W.CekMotion.mapIn()
   }
   function intro (id) {
     var d = load(), p0 = d.pause && d.pause[id], p = p0 && Date.now() - p0.at < DAY ? p0 : null
@@ -93,6 +101,7 @@
     st.seg = Date.now()
     try { if (W.DuniaLevel) W.DuniaLevel.start('cek-' + id, 1) } catch (_) {}
     $('play-tag').textContent = U.ISLES[id].name
+    if (W.CekSea) W.CekSea.tide(0)
     show('s-play'); next()
   }
   function pause () {
@@ -151,6 +160,7 @@
   }
   function tapped () {   // every scored answer: neutral sound, trail, owl cheer every 5 (never depends on the answer)
     U.sfx('click'); st.n++
+    if (W.CekSea) W.CekSea.tide(Math.min(1, st.n / 16))   // PRD-54 A4: the tide rises with answers given, never with right ones
     if (st.n % 5 === 0) U.cheer()
   }
   function scored (right, btn) {
@@ -228,5 +238,12 @@
   $('btn-say').onclick = function () { U.say(U.lastSay()) }; $('board-home').onclick = home
   D.querySelectorAll('.tab').forEach(function (t) { t.onclick = function () { board(t.getAttribute('data-tab')) } })
   W.__cek = { since: function () { return Date.now() - shownAt }, counted: counted, state: function () { return st }, item: function () { return item }, load: load, months: months, board: board, home: home }
+  // PRD-54 A1/A4: the living sea behind the page; a new item card rises in (never for Ingat, Cepat or the dots: their
+  // showing time is part of the measure)
+  if (W.CekSea) W.CekSea.mount()
+  if (W.CekMotion && W.MutationObserver) new W.MutationObserver(function () {
+    if (!st || !$('stage').firstElementChild) return
+    W.CekMotion.stage($('stage'), st.isle === 'angka' ? (['banyak', 'garis', 'hitung'][st.part] || '') : st.isle)
+  }).observe($('stage'), { childList: true })
   start()
 })(window)

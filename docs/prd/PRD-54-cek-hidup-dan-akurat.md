@@ -41,9 +41,37 @@ What the simulation proves: the arithmetic is unbiased and its range is honest *
 It does not prove the bands; most stay "design" and the card keeps "Perkiraan dari permainan, bukan tes resmi psikolog."
 
 ## M — motion, shader, effects (v64.79)
-Reuse only: `dunia-glfx.js` (bloom, grade, haze over a canvas2D sea), `dunia-cinema.js`, `vfx-moments.js`,
-`dunia-sakuga.js`, `sfx-engine.js`. Living sea map behind the DOM islands; islands rise with a stagger, the next one bobs
-with a ring; screen transitions 280 ms; item cards slide in, choices stagger; practice-only reward/kira; Ingat cards flip;
-Corsi glow; Cepat draining ring; island end light burst + stars flying in; IQ reveal in steps (curtain, trophy drop, ring
-gauge with count-up, range, bars, celebrate). Transform/opacity only; reduced motion = fades, still sea; no effect during
-scored items. Laws M1-M5 in the plan: canvas frames differ, transitions <= 320 ms, honest effects, frame budget, screenshots.
+Reuse only. New code lives in two files; nothing in the shared engines changed.
+
+| What | How | Where |
+|---|---|---|
+| Living sea | canvas2D at 0.6 x resolution, <= 30 fps: sky, sun glow, 5 swaying light shafts, 3 parallax wave bands, 26 twinkling glints, 2 drifting clouds, a tide band that rises with answers given; `DuniaGLFX.attach` adds bloom, warm grade, haze | `games/data/cek-sea.js` |
+| Screens | one 280 ms slide + fade; back slides from the left; a new screen cancels the old animation | `cek-motion.js screen()`, `cek-page.js show()` |
+| Map | islands rise one after another (60 ms apart, 420 ms, overshoot), stars pop, route fades in; next island has a pulsing ring; the owl tilts; a tapped island pulls the map toward it (380 ms) before the intro | `mapIn()`, `zoomTo()`, CSS `ring`, `owl-tilt` |
+| Items | card rises 220 ms, choices follow 40 ms apart, only for Pola, Bentuk, Kata, number line and stories | `stage()` + a MutationObserver on `#stage` |
+| Island end | stars land one at a time with a star sound; the sea blooms (GL spike); celebrate as before | `stars()`, `CekSea.flash()` |
+| IQ reveal | curtain lifts -> trophy drops (+ puff) -> ring gauge fills while the number counts -> range -> bars grow one by one (scaleX) -> celebrate + bloom | `cek-ui.js iqCard()`, `reveal()` |
+| Board | rows slide in 50 ms apart; own row shimmers; medals glint | `rows()`, CSS `shine`, `glint` |
+
+**Rule added (accuracy beats flair):** no motion on an item whose showing time is part of the measure: Ingat
+sequences, Cepat pairs and the dots (covered after 1.5 s) appear exactly as before. Nothing reacts to right or wrong
+on a scored item; the tide rises with answers given.
+
+Reduced motion (OS or `du-reduced-motion=1`), `?nocine=1` or DuniaCinema quality 0: one still sea frame, no GL,
+screens fade only, no bounces, no shimmer.
+
+### Laws M (`tools/qa-prd53-cek.mjs`)
+- **M1** the sea canvas changes > 1 % of its pixels in 500 ms; GL present when WebGL is; reduced motion: identical frames, no GL.
+- **M2** a double tap on an island leaves exactly one screen; the back slide is one animation <= 320 ms on transform/opacity.
+- **M3** island end: stars land, sea bloom spikes, item cards animated; IQ reveal steps fire in order.
+- **M4** frame budget, measured locally (headless timing is not a CI gate), 390x844 @2x, 5 s of rAF on the map:
+  | variant | median | p95 | long tasks > 50 ms |
+  |---|---|---|---|
+  | 2D sea only (`?nogl=1`) | 16.7 ms | 16.7 ms | 0 |
+  | sea + software GL (headless SwiftShader), before the budget check | 16.7 ms | 33-50 ms | 0-19 |
+  | default with the budget check (GL dropped itself) | 16.7 ms | 33.4 ms | 0-2 |
+  | `?nocine=1` | 16.7 ms | 16.7 ms | 0 |
+  The GL layer is the costly part, so `CekSea` measures the first ~90 frames and drops GL when the median gap is over
+  22 ms or 4+ gaps exceed 50 ms; the 2D sea stays. On a phone or tablet with a real GPU the bloom stays on.
+- **M5** screenshots of every screen at 390x844, 1280x800, 800x1280; button size read from layout (a press squash is a
+  transform for 120 ms, not the target size).

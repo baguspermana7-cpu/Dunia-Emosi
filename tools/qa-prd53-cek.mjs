@@ -66,7 +66,8 @@ const on = (p, id) => p.evaluate(id => document.getElementById(id).classList.con
 const measure = p => p.evaluate(() => {
   const vis = e => { const r = e.getBoundingClientRect(), s = getComputedStyle(e); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none' }
   const btn = [...document.querySelectorAll('.panel button')].filter(vis).filter(e => !e.closest('.dh-home') && !e.disabled)
-  const small = btn.filter(e => { const r = e.getBoundingClientRect(); return Math.min(r.width, r.height) < 47.5 }).map(e => { const r = e.getBoundingClientRect(); return (e.id || e.className || e.textContent.trim().slice(0, 12)) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) + '@' + (document.querySelector('.scr.on') || {}).id })
+  // layout size (offsetWidth/Height): a press squash or an entrance scale is a transform for a moment, not the target size
+  const small = btn.filter(e => Math.min(e.offsetWidth, e.offsetHeight) < 47.5).map(e => (e.id || e.className || e.textContent.trim().slice(0, 12)) + ' ' + e.offsetWidth + 'x' + e.offsetHeight + '@' + (document.querySelector('.scr.on') || {}).id)
   const off = btn.filter(e => { const r = e.getBoundingClientRect(); return r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1 }).map(e => e.id || e.className || e.getAttribute('aria-label'))
   const rgb = s => (s.match(/[\d.]+/g) || []).map(Number), L = c => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]) }
   const bg = e => { for (let n = e; n; n = n.parentElement) { const s = getComputedStyle(n), c = rgb(s.backgroundColor); if (s.backgroundImage !== 'none' && n.tagName === 'BUTTON') return null; if (c.length >= 3 && (c[3] === undefined || c[3] > 0.9)) return c } return [125, 211, 252] }
@@ -194,9 +195,32 @@ for (const size of SIZES) {
   await check(p, tag, 'map', worst)
   const top = await p.evaluate(() => ({ name: document.getElementById('me-name').textContent, av: document.getElementById('me-av').getAttribute('src'), n: document.querySelectorAll('.isle').length }))
   ok(top.n === 6 && top.name === 'Ana' && /assets\/db\/emo\/011\.webp/.test(top.av), `L9 ${tag}: 6 islands; top bar shows ${top.name} with ${top.av}`)
+  // PRD-54 M1: the sea lives (two canvas frames 500 ms apart differ), GL bloom on top when WebGL exists
+  const sea = await p.evaluate(async () => {
+    const c = document.querySelector('canvas.cek-sea:not(.cek-sea-gl)'); if (!c) return null
+    const px = () => { const g = c.getContext('2d'), d = g.getImageData(0, 0, c.width, c.height).data; return d }
+    const a = px(), f0 = window.CekSea.state().frames; await new Promise(r => setTimeout(r, 500)); const b = px()
+    let diff = 0; for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 6) diff++
+    return { diff: diff / (a.length / 4), frames: window.CekSea.state().frames - f0, gl: window.CekSea.state().gl, glSlow: window.CekSea.state().glSlow, glEl: !!document.querySelector('canvas.cek-sea-gl'), still: window.CekSea.state().still }
+  })
+  ok(sea && sea.diff > 0.01 && sea.frames >= 2 && !sea.still && (sea.gl || sea.glSlow) === sea.glEl, `M1 ${tag}: sea canvas changes ${sea && (sea.diff * 100).toFixed(1)} % of pixels in 500 ms (${sea && sea.frames} frames), GL ${sea && sea.gl}${sea && sea.glSlow ? ' (dropped: frames too slow)' : ''}`)
+  // M2: a screen change runs one short slide; a fast double tap on an island still leaves exactly one screen
+  const tr = await p.evaluate(async () => {
+    const b = document.querySelector('#map .isle'); b.click(); b.click()
+    await new Promise(r => setTimeout(r, 700))
+    const on = [...document.querySelectorAll('.scr.on')].map(x => x.id), intro = document.getElementById('s-intro')
+    const log = window.CekMotion.log.map(x => x.k)
+    document.getElementById('btn-back').click(); await new Promise(r => setTimeout(r, 60))
+    const an = document.getElementById('s-map').getAnimations().map(a => ({ d: a.effect.getTiming().duration, props: Object.keys(a.effect.getKeyframes()[0]).filter(k => !['offset', 'easing', 'composite', 'computedOffset'].includes(k)) }))
+    await new Promise(r => setTimeout(r, 500))
+    return { on, zoom: log.includes('zoom'), an, intro: !!intro }
+  })
+  ok(tr.on.length === 1 && tr.on[0] === 's-intro' && tr.zoom && tr.an.length >= 1 && tr.an.every(a => a.d <= 320 && a.props.every(k => k === 'opacity' || k === 'transform')), `M2 ${tag}: double tap -> screens on ${JSON.stringify(tr.on)}, zoom ${tr.zoom}; back -> ${JSON.stringify(tr.an)}`)
   const polaN = await ladder(p, 'pola', 8, tag, worst)
   await check(p, tag, 'done', worst)
   let f = await fx(p), s = await store(p), pr = lastRec(s, 'pola')
+  const m3 = await p.evaluate(() => ({ stars: window.CekMotion.log.some(x => x.k === 'stars'), bloom: window.CekSea.state().bloom, items: window.CekMotion.log.filter(x => x.k === 'item').length }))
+  ok(m3.stars && m3.items >= 8, `M3 ${tag}: island end -> stars land (${m3.stars}), sea bloom ${m3.bloom.toFixed(2)}; Pola item cards animated ${m3.items}`)
   ok(pr.raw === 8 && pr.reached === 11 && polaN === 11, `L2 ${tag} Pola: 8 right then 3 wrong -> raw ${pr.raw}, tried ${pr.reached}; practice not counted`)
   ok(f.levelup === 1 && (!vfxOn || f.celebrate >= 1), `L12 ${tag}: island end -> levelup ${f.levelup}, celebrate ${f.celebrate} (VFX loaded ${vfxOn})`)
   await toMap(p)
@@ -228,9 +252,15 @@ for (const size of SIZES) {
   ok(ar.banyak === 2 && ar.titik >= 4 && ar.titik <= 8 && Math.abs(ar.garis - 12) <= 1.5 && ar.hitung === 5, `L2 ${tag} Angka: dots level ${ar.banyak}, dots right ${ar.titik} of 8, line error ${ar.garis} %, stories ${ar.hitung}`)
   ok(!leak.length && pracRight >= 2, `L12 ${tag}: scored answers with a right/wrong cue [${leak}]; practice right answers with the correct cue ${pracRight}`)
   await toMap(p); await tap(p, '#btn-iq'); await p.waitForSelector('#s-iq.on', { timeout: 8000 }).catch(() => {}); await sleep(1500)
+  // PRD-54: the number counts up inside a staged reveal; give a loaded machine up to 5 s for it to land
+  await p.waitForFunction(() => { const e = window.CekProfile.iq(window.__cek.load().res, window.__cek.months()); return !e || document.getElementById('iq-num').textContent === String(e.iq) }, { timeout: 5000 }).catch(() => {})
   const iq = await p.evaluate(() => { const d = window.__cek.load(), e = window.CekProfile.iq(d.res, window.__cek.months()); return { shown: document.getElementById('iq-num').textContent, range: document.getElementById('iq-range').textContent, e, bars: document.querySelectorAll('#iq-bars .b').length, unsure: [...document.querySelectorAll('#iq-bars .unsure')].length, best: d.best } })
   await check(p, tag, 'iq', worst)
   ok(iq.e && String(iq.e.iq) === iq.shown && iq.bars === iq.e.islands + iq.unsure && iq.unsure === (full ? 1 : 0) && iq.best && iq.best.iq === iq.e.iq, `L10/L3 ${tag}: Perkiraan IQ shown ${iq.shown} = computed ${iq.e && iq.e.iq} from ${iq.e && iq.e.islands} reliable islands, ${iq.bars} bars, ${iq.unsure} "kurang pasti" (Cepat flagged), best ${iq.best && iq.best.iq}`)
+  await sleep(2600)
+  const rv = await p.evaluate(() => window.CekMotion.log.filter(x => /^reveal-/.test(x.k)).slice(-6))
+  const order = ['reveal-curtain', 'reveal-trophy', 'reveal-gauge', 'reveal-range', 'reveal-bars', 'reveal-celebrate']
+  ok(rv.map(x => x.k).join() === order.join() && rv.every((x, i) => !i || x.t >= rv[i - 1].t), `M3 ${tag}: IQ reveal steps in order ${rv.map(x => x.k.slice(7) + '@' + (x.t - rv[0].t)).join(' ')}`)
   ok(iq.e && iq.range.indexOf(iq.e.lo + '-' + iq.e.hi + ' (90 %') >= 0 && iq.e.hi - iq.e.lo < 30, `Q6 ${tag}: the card range "${iq.range}" = computed ${iq.e && iq.e.lo}-${iq.e && iq.e.hi} (90 %, from reliability ${iq.e && iq.e.rel})`)
   // L11 board: Bima seeded higher
   await p.evaluate(() => localStorage.setItem('dunia-avatar-tiger-cek-kemampuan', JSON.stringify({ best: { iq: 141, islands: 3, at: 1 } })))
@@ -282,6 +312,21 @@ for (const size of SIZES) {
   await p.setViewport({ width: 390, height: 844 }); await sleep(300)
   const up = await p.evaluate(() => getComputedStyle(document.getElementById('rotate')).display)
   ok(side && up === 'none' && !errs.length, `L13 844x390: phone on its side shows "${side}", upright the cover is ${up}, errors ${errs.length}`)
+  await c.close()
+}
+// PRD-54 M1/A6: reduced motion -> the sea is one still frame and screens only fade
+{
+  const { c, p, errs } = await open([390, 844], true)
+  await p.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+  await p.reload({ waitUntil: 'load' }); await p.waitForFunction(() => window.CekSea && document.querySelectorAll('.isle').length === 6, { timeout: 60000 })
+  const r = await p.evaluate(async () => {
+    const c = document.querySelector('canvas.cek-sea'), a = c.toDataURL(), f0 = window.CekSea.state().frames
+    await new Promise(r => setTimeout(r, 600))
+    document.querySelector('#map .isle').click(); await new Promise(r => setTimeout(r, 40))
+    const an = document.getElementById('s-intro').getAnimations().map(x => Object.keys(x.effect.getKeyframes()[0]).filter(k => k === 'transform').length)
+    return { same: a === c.toDataURL(), frames: window.CekSea.state().frames - f0, still: window.CekSea.state().still, gl: !!document.querySelector('canvas.cek-sea-gl'), moves: an.reduce((x, y) => x + y, 0) }
+  })
+  ok(r.still && r.same && r.frames === 0 && !r.gl && r.moves === 0 && !errs.length, `M1/A6 reduced motion: still sea ${r.still}, frames unchanged ${r.same} (+${r.frames}), no GL ${!r.gl}, screen moves ${r.moves}, errors ${errs.length}`)
   await c.close()
 }
 await b.close()

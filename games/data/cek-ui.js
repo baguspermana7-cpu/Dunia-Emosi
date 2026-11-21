@@ -40,7 +40,8 @@
   function celebrate (el) {
     sfx('levelup')
     try { if (W.DuniaCinema) W.DuniaCinema.pulse('win') } catch (_) {}
-    try { if (W.VFX && W.VFX.Moment) W.VFX.Moment.celebrate(el || centre(D.body)) } catch (_) {}
+    // size 150: the burst sizes itself from the element otherwise (a 358 px card -> a 650 px sprite, pixelated; PRD-54)
+    try { if (W.VFX && W.VFX.Moment) W.VFX.Moment.celebrate(el || centre(D.body), { size: 150 }) } catch (_) {}
     confetti(20)
   }
 
@@ -85,30 +86,57 @@
     $('done-text').textContent = text
     var el = $('done-points'), t0 = performance.now()
     ;(function tick (t) { var k = Math.min(1, (t - t0) / 900); el.textContent = Math.round(points * k); if (k < 1) requestAnimationFrame(tick) })(t0)
+    if (W.CekMotion) W.CekMotion.stars($('done-stars'))   // PRD-54 A5: stars land one at a time
+    try { if (W.CekSea) W.CekSea.flash() } catch (_) {}     // a bloom spike on the sea behind the card
     setTimeout(function () { celebrate($('result-card')) }, 60)
   }
 
   // ---------- Perkiraan IQ ----------
+  // PRD-54 A5: the reveal runs in steps: curtain lifts, trophy drops, the ring fills while the number counts up, the
+  // range shows, the island bars grow one by one, then the celebration. Text is set at once (screen readers, gates);
+  // only the look is staged. Reduced motion: all steps within 200 ms, fades only.
+  var stopReveal = null
   function iqCard (est, zs, unsure) {
     unsure = unsure || []
+    if (stopReveal) stopReveal()
+    var M = W.CekMotion, ring = $('iq-ring'), num = $('iq-num')
     $('iq-trophy').src = sprite('badge', 'trophy')
+    ring.style.strokeDashoffset = '100'
     if (!est) {
-      $('iq-num').textContent = '?'; $('iq-range').textContent = 'Selesaikan 3 pulau untuk melihat perkiraan IQ.'
+      num.textContent = '?'; $('iq-range').textContent = 'Selesaikan 3 pulau untuk melihat perkiraan IQ.'
     } else {
       $('iq-range').textContent = 'kisaran ' + est.lo + '-' + est.hi + ' (90 %, dari ' + est.islands + ' pulau)'
-      var el = $('iq-num'), t0 = performance.now()
-      ;(function tick (t) { var k = Math.min(1, (t - t0) / 1100); el.textContent = Math.round(est.iq * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick) })(t0)
-      setTimeout(function () { el.textContent = est.iq }, 1200)   // rAF can stall (hidden tab, slow phone): land on the real number
+      num.textContent = '0'
     }
     var done = ORDER.filter(function (id) { return (zs[id] !== null && zs[id] !== undefined) || unsure.indexOf(id) >= 0 })
     $('iq-bars').innerHTML = done.map(function (id) {
       var no = unsure.indexOf(id) >= 0, w = no ? 0 : Math.round(Math.max(6, Math.min(100, (zs[id] + 2) / 4 * 100)))
-      return '<div class="b"><img alt="" src="' + isleArt(id) + '"><div><div class="nm">' + ISLES[id].name + (no ? ' <small class="unsure">kurang pasti</small>' : '') + '</div><div class="track"><div class="fill" style="width:0" data-w="' + w + '"></div></div></div></div>'
+      return '<div class="b"><img alt="" src="' + isleArt(id) + '"><div><div class="nm">' + ISLES[id].name + (no ? ' <small class="unsure">kurang pasti</small>' : '') + '</div><div class="track"><div class="fill" style="width:' + w + '%"></div></div></div></div>'
     }).join('')
-    setTimeout(function () { D.querySelectorAll('#iq-bars .fill').forEach(function (f) { f.style.width = f.getAttribute('data-w') + '%' }) }, 80)
     var low = done.filter(function (id) { return unsure.indexOf(id) < 0 }).sort(function (a, b) { return zs[a] - zs[b] })[0]
     $('iq-tip').hidden = !low; if (low) $('iq-tip').textContent = 'Latihan di rumah: ' + ISLES[low].tip
-    if (est) setTimeout(function () { celebrate($('iq-num')) }, 300)
+    var fills = D.querySelectorAll('#iq-bars .fill'), bars = 1450, party = bars + fills.length * 150 + 250
+    function grow () { fills.forEach(function (f, i) { if (M) M.run(f, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 520, delay: i * 150, easing: M.EASE, fill: 'backwards' }) }) }
+    function count (fast) {
+      var pct = Math.max(0.04, Math.min(1, (est.iq - 55) / 90)), t0 = performance.now(), dur = fast ? 1 : 1000
+      if (M) M.run(ring, [{ strokeDashoffset: 100 }, { strokeDashoffset: 100 - pct * 100 }], { duration: dur, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' })
+      ring.style.strokeDashoffset = String(100 - pct * 100)
+      ;(function tick (t) { var k = Math.min(1, (t - t0) / dur); num.textContent = Math.round(est.iq * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick) })(t0)
+      setTimeout(function () { num.textContent = est.iq }, dur + 50)   // rAF can stall (hidden tab, slow phone): land on the real number
+    }
+    if (!est) { grow(); return }
+    if (!M) { count(true); grow(); setTimeout(function () { celebrate($('iq-trophy')) }, 300); return }
+    stopReveal = M.reveal([
+      [0, function () { if (!M.reduced()) M.run($('iq-curtain'), [{ opacity: 1 }, { opacity: 0 }], { duration: 600, easing: 'ease-out', fill: 'forwards' }) }, 'curtain'],
+      [120, function () {
+        M.run($('iq-trophy'), [{ opacity: 0, transform: 'translateY(-90px) scale(.7)' }, { opacity: 1, transform: 'translateY(6px) scale(1.06)', offset: 0.75 }, { opacity: 1, transform: 'none' }], { duration: 520, easing: M.POP, fill: 'backwards' })
+        setTimeout(function () { try { if (W.VFX && W.VFX.Moment) W.VFX.Moment.puff($('iq-trophy')) } catch (_) {} }, 420)
+      }, 'trophy'],
+      [250, function (fast) { count(fast) }, 'gauge'],
+      [1300, function () { M.run($('iq-range'), [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: M.EASE, fill: 'backwards' }) }, 'range'],
+      [bars, grow, 'bars'],
+      [party, function () { celebrate($('iq-trophy')); try { if (W.CekSea) W.CekSea.flash() } catch (_) {} }, 'celebrate']
+    ])
   }
 
   // ---------- Papan Juara Otak ----------
@@ -127,12 +155,12 @@
     var tok = ++boardTok
     D.querySelectorAll('.tab').forEach(function (t) { var on = t.getAttribute('data-tab') === tab; t.classList.toggle('on', on); t.setAttribute('aria-selected', on ? 'true' : 'false') })
     var dev = getDevice()
-    if (tab === 'device') { $('board-note').textContent = 'Anak-anak di perangkat ini.'; $('board-rows').innerHTML = rows(dev); return Promise.resolve('device') }
+    if (tab === 'device') { $('board-note').textContent = 'Anak-anak di perangkat ini.'; $('board-rows').innerHTML = rows(dev); if (W.CekMotion) W.CekMotion.rows($('board-rows')); return Promise.resolve('device') }
     $('board-note').textContent = 'Memuat papan semua pemain...'; $('board-rows').innerHTML = rows(dev)
     return W.CekBoard.online(50).then(function (list) {
       if (tok !== boardTok) return 'stale'
       if (!list) { $('board-note').textContent = 'Sedang offline. Ini papan di perangkat ini.'; return 'offline' }
-      $('board-note').textContent = 'Semua pemain. Hanya nama depan yang ditampilkan.'; $('board-rows').innerHTML = rows(list, mine); return 'online'
+      $('board-note').textContent = 'Semua pemain. Hanya nama depan yang ditampilkan.'; $('board-rows').innerHTML = rows(list, mine); if (W.CekMotion) W.CekMotion.rows($('board-rows')); return 'online'
     })
   }
 
