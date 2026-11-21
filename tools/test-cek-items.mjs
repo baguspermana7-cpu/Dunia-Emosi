@@ -15,8 +15,8 @@
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 globalThis.window = globalThis
-for (const m of ['cek-core', 'cek-targets', 'cek-profile', 'cek-pola', 'cek-bentuk', 'cek-ingat']) require(`../games/data/${m}.js`)
-const { CekCore, CekTargets, CekProfile, CekPola, CekBentuk, CekIngat } = globalThis
+for (const m of ['cek-core', 'cek-targets', 'cek-irt', 'cek-profile', 'cek-pola', 'cek-bentuk', 'cek-ingat']) require(`../games/data/${m}.js`)
+const { CekCore, CekTargets, CekIRT, CekProfile, CekPola, CekBentuk, CekIngat } = globalThis
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else { fail++; console.log('  ✗ ' + m) } }
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
@@ -104,14 +104,17 @@ function solve (grid, rows, cols) {
   ok(full.phase === 'done' && full.raw === 5, 'L2 ladder ends at max')
 }
 {
-  // span: start 2; length 2 right; length 3 wrong then right -> up; length 4 wrong, wrong -> stop; best 3
+  // span (PRD-54): both tries at every length. 2: right, right -> up; 3: wrong, right -> up; 4: wrong, wrong -> stop
   const s = CekCore.span({ start: 2, tries: 2, max: 9 })
   ok(s.len === 2, `L8 span starts at 2 (${s.len})`)
-  CekCore.spanAnswer(s, true); ok(s.len === 3, `L2 one right moves up (len ${s.len})`)
+  CekCore.spanAnswer(s, true); ok(s.len === 2 && s.phase === 'test', `Q3 a right first try still gives the second try at the same length (len ${s.len})`)
+  CekCore.spanAnswer(s, true); ok(s.len === 3, `L2 after both tries with one right or more, up a length (len ${s.len})`)
   CekCore.spanAnswer(s, false); ok(s.len === 3 && s.phase === 'test', 'L2 first wrong at a length retries the length')
   CekCore.spanAnswer(s, true); ok(s.len === 4, 'L2 right on the second try moves up')
   CekCore.spanAnswer(s, false); CekCore.spanAnswer(s, false)
-  ok(s.phase === 'done' && s.best === 3, `L2 two wrong at one length stops, best ${s.best}`)
+  ok(s.phase === 'done' && s.best === 3 && s.score === 2.5, `Q3 two wrong at one length stops; longest ${s.best}, partial-credit score 1 + 3/2 = 2.5 (${s.score})`)
+  const t = CekCore.span({ start: 2, tries: 2, max: 9 }); [1, 1, 1, 1, 1, 0, 0, 0].forEach(x => CekCore.spanAnswer(t, !!x))
+  ok(t.best === 4 && t.score === 3.5 && t.score > s.score, `Q3 one more right try raises the score by half a length (${s.score} -> ${t.score})`)
   ok(CekCore.SPAN.start === 2 && CekCore.SPAN.tries === 2, 'L8 span rule constants = PRD (start 2, two tries)')
 }
 ok(CekCore.SPEED_MS === 85000, `L8 speed island lasts 85 s (${CekCore.SPEED_MS})`)
@@ -127,7 +130,7 @@ ok(same(CekCore.RATIOS, [[1, 2], [2, 3], [3, 4], [5, 6]]), `L8 ratios 1:2 -> 5:6
   const fine = CekProfile.flags({ ms: Array(10).fill(2000), durMs: 300000, planMs: 360000 })
   ok(fast.includes('cepat') && slow.includes('lama') && !fine.length, `L3 flags fast ${fast} slow ${slow} fine ${fine}`)
   ok(CekProfile.ageMonths('2019-05', new Date(2026, 10, 21)) === 90, `L7 age in months from the birth month (${CekProfile.ageMonths('2019-05', new Date(2026, 10, 21))})`)
-  ok(CekTargets.get('ingat-maju', 140) === null, 'L7 no target outside the grade-1 age band')
+  ok(same(CekTargets.get('ingat-maju', 140), CekTargets.get('ingat-maju', 95)), 'L7 an age past grade 1 reads the last grade-1 band')
 }
 // ---------- L7 every target has a source ----------
 {
@@ -208,14 +211,49 @@ const { CekKata, CekCepat, CekAngka, CekBoard, DBLabeled } = globalThis
   const m = 78, T = id => CekTargets.get(id, m), mid = id => (T(id).lo + T(id).hi) / 2
   const rec = f => ({ pola: [{ raw: f('pola') }], bentuk: [{ raw: f('bentuk') }], ingat: [{ maju: f('ingat-maju'), mundur: f('ingat-mundur'), corsi: f('ingat-corsi') }] })
   const atMid = CekProfile.iq(rec(mid), m), atHi = CekProfile.iq(rec(id => T(id).hi), m), far = CekProfile.iq(rec(() => 99), m), low = CekProfile.iq(rec(() => 0), m)
-  ok(atMid && atMid.iq === 100, `L10 every island at the band middle -> 100 (${atMid && atMid.iq})`)
-  ok(atHi && atHi.iq === 110, `L10 every island at the band top (75th percentile) -> 110 (${atHi && atHi.iq})`)
+  ok(atMid && Math.abs(atMid.iq - 100) <= 1, `L10 every island at the band middle -> 100 +-1 (${atMid && atMid.iq})`)
+  ok(atHi && atHi.obs > 110 && atHi.iq > 100 && atHi.iq < atHi.obs, `Q1 every island at the band top: composite above 110, the Kelley estimate between 100 and it (obs ${atHi && atHi.obs}, shown ${atHi && atHi.iq})`)
   ok(far.iq === 145 && low.iq === 55, `L10 clamped to 55-145 (${far.iq}, ${low.iq})`)
   ok(CekProfile.iq({ pola: [{ raw: 12 }], bentuk: [{ raw: 10 }] }, m) === null, 'L10 fewer than 3 islands -> no estimate')
   ok(CekProfile.z('angka', { garis: T('angka-garis').lo }, m) > 0 && CekProfile.z('angka', { garis: 24 }, m) < 0, 'L10 number-line error: lower is better (error at lo raises the estimate, 24 % lowers it)')
-  ok(atMid.lo === 85 && atMid.hi === 115, `L10 the range shown is +-15 (${atMid.lo}-${atMid.hi})`)
+  // Q1 composite (Tellegen & Briggs): six islands at z = 1, r = .45 -> zc = 6 / sqrt(6 + 30 x .45) = 1.359 -> 120; perfect reliability keeps it
+  const six = n => Array.from({ length: n }, () => ({ z: 1, rel: 1 })), c6 = CekProfile.composite(six(6)), c3 = CekProfile.composite(six(3))
+  ok(c6.obs === 120 && c6.iq === 120, `Q1 six islands at z = 1 with r = .45 -> 120, the mean-z formula gave 115 (${c6.obs}, ${c6.iq})`)
+  const k6 = CekProfile.composite(Array.from({ length: 6 }, () => ({ z: 1, rel: 0.8 })))
+  ok(k6.iq < k6.obs && k6.iq > 100 && Math.abs(k6.iq - (100 + 15 * k6.rel * (k6.obs - 100) / 15)) <= 1, `Q1 Kelley pulls toward 100 by the composite reliability (obs ${k6.obs}, rel ${k6.rel}, shown ${k6.iq})`)
+  // Q6 honest range: 3 islands is wider than 6; the range comes from the reliability, not a fixed 15
+  const w = r => r.hi - r.lo, r3 = CekProfile.composite(Array.from({ length: 3 }, () => ({ z: 0.5, rel: 0.75 }))), r6 = CekProfile.composite(Array.from({ length: 6 }, () => ({ z: 0.5, rel: 0.75 })))
+  ok(w(r3) > w(r6) && r3.rel < r6.rel, `Q6 range with 3 islands (${r3.lo}-${r3.hi}, rel ${r3.rel}) wider than with 6 (${r6.lo}-${r6.hi}, rel ${r6.rel})`)
   ok(CekProfile.months('5-6') === 78 && CekProfile.months('7-8') === 90 && CekTargets.near(114) === 95, 'L10 age band -> months; an age past grade 1 uses the nearest band')
+  // Q4 age by month: band values at the band centres, strictly between them in between
+  const g = mm => CekTargets.get('pola', mm), a0 = g(78), a1 = g(90), ah = g(84)
+  const pb = CekTargets.all().find(x => x.id === 'pola').bands
+  ok(a0.lo === pb[0].lo && a1.lo === pb[1].lo && ah.lo > a0.lo && ah.lo < a1.lo && g(72).lo === pb[0].lo && g(95).lo === pb[1].lo, `Q4 targets follow the month: 78 -> ${a0.lo}, 84 -> ${ah.lo.toFixed(2)}, 90 -> ${a1.lo}`)
   ok(CekProfile.stars(-1) === 1 && CekProfile.stars(0) === 2 && CekProfile.stars(1) === 3, 'L10 stars 1-3 from the island standing')
+}
+// ---------- Q5 sources ----------
+{
+  const all = CekTargets.all(), bad = all.filter(t => !t.kind || !t.src || !t.unit || !t.bands.length || (t.kind === 'published' && !t.quote))
+  ok(!bad.length && all.some(t => t.id === 'angka-titik' && t.quote), `Q5 every target names its kind, source and unit; a published one quotes its number (${all.length} targets; bad ${bad.map(t => t.id)})`)
+}
+// ---------- Q3 Rasch scoring (CekIRT) ----------
+{
+  let bad = []
+  for (let seed = 1; seed <= N; seed++) {
+    const r = CekCore.rng(seed), max = 24, ok1 = []
+    for (let i = 0; i < 14; i++) ok1.push(r() < 0.6 ? 1 : 0)
+    const j = ok1.indexOf(0); if (j < 0) continue
+    const ok2 = ok1.slice(); ok2[j] = 1
+    if (!(CekIRT.theta(ok2, max) > CekIRT.theta(ok1, max))) bad.push(seed)
+  }
+  ok(!bad.length, `Q3 one more right answer on the same items always raises the Rasch estimate (${N} seeds; bad ${bad.slice(0, 3)})`)
+  const z0 = CekIRT.theta([0, 0, 0], 24), z1 = CekIRT.theta(Array(24).fill(1), 24)
+  ok(isFinite(z0) && isFinite(z1) && z0 > -8 && z1 < 8 && z0 < z1, `Q3 Warm estimate stays finite at none right (${z0.toFixed(2)}) and all right (${z1.toFixed(2)})`)
+  ok(Math.abs(CekIRT.tcc(CekIRT.thetaOfRaw(12, 24), 24) - 12) < 1e-6, 'Q3 the test curve inverse returns the raw score it was given')
+  const late = CekIRT.theta([1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], 24), early = CekIRT.theta([1, 1, 1, 0, 0, 0], 24)
+  ok(late > early, `Q3 a child who climbs further scores higher (${early.toFixed(2)} < ${late.toFixed(2)})`)
+  const lad = CekProfile.rel('pola', { raw: 10, max: 24, ok: [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0] }, 78)
+  ok(lad > 0 && lad < 1, `Q3 a ladder island's reliability comes from its Rasch information (${lad.toFixed(2)})`)
 }
 // ---------- L3 reliability ----------
 {

@@ -39,6 +39,7 @@ node tools/qa-prd37-juice.mjs
 node tools/qa-prd08c-bus.mjs
 node tools/qa-prd44-g10.mjs        # PRD-44 static: the 18x18 type table + the no-impossible-battle model over G10_LEVELS
 node tools/test-cek-items.mjs     # PRD-53: Cek Kemampuan items have one right answer, session rules, Perkiraan IQ, board order
+node tools/sim-cek-iq.mjs 600 12 # PRD-54: simulated children through the real island rules; Perkiraan IQ composite SD 15, bias, r, honest 90 % range
 node tools/qa-prd47-bugs.mjs      # PRD-47 static: the unreachable Gym Huruf (G13c) code stays gone
 
 echo "== one name per game: hub tile = GAME_META (audit A-8)"

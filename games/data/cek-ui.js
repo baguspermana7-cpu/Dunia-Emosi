@@ -95,7 +95,7 @@
     if (!est) {
       $('iq-num').textContent = '?'; $('iq-range').textContent = 'Selesaikan 3 pulau untuk melihat perkiraan IQ.'
     } else {
-      $('iq-range').textContent = 'kisaran ' + est.lo + '-' + est.hi + ' (dari ' + est.islands + ' pulau)'
+      $('iq-range').textContent = 'kisaran ' + est.lo + '-' + est.hi + ' (90 %, dari ' + est.islands + ' pulau)'
       var el = $('iq-num'), t0 = performance.now()
       ;(function tick (t) { var k = Math.min(1, (t - t0) / 1100); el.textContent = Math.round(est.iq * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick) })(t0)
       setTimeout(function () { el.textContent = est.iq }, 1200)   // rAF can stall (hidden tab, slow phone): land on the real number

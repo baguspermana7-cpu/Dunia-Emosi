@@ -114,7 +114,9 @@
     var cur = d.count[id], all6 = U.ORDER.every(function (k) { return d.count[k] })
     if (!cur || !W.CekProfile.reliable(cur) || (all6 && rec.at - cur.at >= 7 * DAY)) d.count[id] = rec
     var est = W.CekProfile.iq(d.res, months()), bEst = W.CekProfile.iq(counted(d), months()), who = U.me(), newBest = false
-    if (bEst && (!d.best || W.CekBoard.encode(bEst.iq, bEst.islands) > W.CekBoard.encode(d.best.iq, d.best.islands))) { d.best = { iq: bEst.iq, islands: bEst.islands, at: Date.now() }; newBest = true }
+    // PRD-54: the board shows the estimate of the counted set as it stands, never the highest one seen: the maximum of
+    // several noisy estimates is biased upward (a fourth island can lower a lucky three-island number)
+    if (bEst && (!d.best || bEst.iq !== d.best.iq || bEst.islands !== d.best.islands)) { d.best = { iq: bEst.iq, islands: bEst.islands, at: Date.now() }; newBest = true }
     save(d); sitting++
     try { if (W.DuniaLevel) W.DuniaLevel.end('cek-' + id, 1, true, stars) } catch (_) {}
     if (newBest && who) W.CekBoard.submit(who.name, who.avatar, d.best.iq, d.best.islands)
@@ -130,7 +132,7 @@
     lock = false; hint(''); $('stage').innerHTML = ''
     if (W.CekPlay.has(st.isle)) return W.CekPlay.next(st.isle, api)
     var s = st.sess
-    if (s.phase === 'done') return finish({ raw: s.raw, max: s.max, reached: s.idx })
+    if (s.phase === 'done') return finish({ raw: s.raw, max: s.max, reached: s.idx, ok: s.log.map(function (x) { return x.ok ? 1 : 0 }) })
     var prac = s.phase === 'practice', k = s.done, sd = prac ? st.seed + 1000 + k : st.seed + s.idx
     if (st.isle === 'pola') item = W.CekPola.make(prac ? 1 : 1 + Math.floor(s.idx / W.CekPola.PER_LEVEL), sd)
     else if (st.isle === 'bentuk') item = W.CekBentuk.make(prac ? (k ? 3 : 1) : 1 + Math.floor(s.idx / W.CekBentuk.PER_LEVEL), sd)

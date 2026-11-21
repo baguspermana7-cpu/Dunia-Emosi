@@ -30,10 +30,10 @@
   // ---------- Ingat ----------
   function ingatNext (a) {
     var st = a.st()
-    if (st.part >= ING.length) return a.finish({ maju: st.best.maju || 0, mundur: st.best.mundur || 0, corsi: st.best.corsi || 0 })
+    if (st.part >= ING.length) return a.finish({ maju: st.best.maju || 0, mundur: st.best.mundur || 0, corsi: st.best.corsi || 0, longest: st.longest || {} })
     var P = ING[st.part]
     if (!st.introDone) return partIntro(P.say, function () { st.introDone = true; ingatNext(a) })
-    if (st.span.phase === 'done') { st.best[P.id] = st.span.best; st.part++; st.span = C.span(); st.practiced = false; st.introDone = false; return ingatNext(a) }
+    if (st.span.phase === 'done') { st.best[P.id] = st.span.score; st.longest = st.longest || {}; st.longest[P.id] = st.span.best; st.part++; st.span = C.span(); st.practiced = false; st.introDone = false; return ingatNext(a) }
     a.trail(st.n, 18)
     var len = st.practiced ? st.span.len : 2, sd = st.seed + st.part * 1000 + (st.trial++)
     var seq = P.id === 'corsi' ? W.CekIngat.corsi(len, sd) : W.CekIngat.sequence(len, sd, PICS.length)
@@ -135,7 +135,9 @@
     if (st.part >= ANG.length) {
       var pae = st.pae.length ? st.pae.reduce(function (x, y) { return x + y }, 0) / st.pae.length : null
       var lv = 0; for (var L = 1; L <= 4; L++) if ((st.bOK[L] || 0) >= 2) lv = L
-      return a.finish({ banyak: lv, garis: pae === null ? undefined : Math.round(pae * 10) / 10, hitung: st.hl.raw, pae: st.pae })
+      // PRD-54: 'titik' = right answers of the 8 scored dot trials (all ratios); the old 'banyak' level is kept for display
+      var titik = 0; for (var L2 = 1; L2 <= 4; L2++) titik += st.bOK[L2] || 0
+      return a.finish({ banyak: lv, titik: titik, garis: pae === null ? undefined : Math.round(pae * 10) / 10, hitung: st.hl.raw, pae: st.pae })
     }
     var P = ANG[st.part]
     if (!st.introDone) return partIntro(P.say, function () { st.introDone = true; angkaNext(a) })
