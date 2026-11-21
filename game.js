@@ -2858,7 +2858,7 @@ function duniaSayLine(text){ try{ return !!(window.DuniaSpeak&&DuniaSpeak.say(te
 function listenButtonHTML(id){
   return `<button type="button" class="dunia-listen-btn" id="${id}" aria-label="Dengar lagi" style="width:96px;height:96px;border-radius:50%;border:0;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#38bdf8,#0284c7);color:#fff;box-shadow:0 6px 0 #075985,0 10px 22px rgba(0,0,0,.25);cursor:pointer;touch-action:manipulation">${LISTEN_SVG}</button>`
 }
-function duniaReport(game,domain,skill,item,ok){ try{ if(window.DuniaAnswer) DuniaAnswer({game,domain,skill,item,ok:!!ok,tries:1}) }catch(e){} }
+function duniaReport(game,domain,skill,item,ok){ try{ if(window.DuniaAnswer) DuniaAnswer({game,domain,skill,item,ok:!!ok,tries:1}) }catch(e){} } function duniaReportOp(game,op,item,ok){ const k=op==='knowledge'; duniaReport(game,k?'umum':'matematika',k?'umum':({'+':'add','-':'sub','*':'multiply','×':'multiply','÷':'divide',':':'divide'})[op]||'hitung',item,ok) } // PRD-48
 
 // ================================================================
 // GAME 3: HURUF HUTAN
@@ -3064,7 +3064,7 @@ function renderG4Content(){
   g4State.currentChoices.forEach(ch=>{
     const btn=document.createElement('button'); btn.className='g4-choice-btn'; btn.textContent=ch
     if(numChoices>4)btn.style.fontSize='26px'
-    btn.onclick=()=>{if(g4State.answered)return;g4State.answered=true;clearInterval(state.g4Timer);const correct=ch===count;choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count){b.classList.add('correct');if(!correct)spawnCorrectCardJuice(b,{burst:false})}});if(!correct){btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')}else{playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g4State.correct++};setTimeout(nextG4Round,1300)}
+    btn.onclick=()=>{if(g4State.answered)return;g4State.answered=true;clearInterval(state.g4Timer);const correct=ch===count;duniaReport('g4','matematika','count',String(count),correct);choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count){b.classList.add('correct');if(!correct)spawnCorrectCardJuice(b,{burst:false})}});if(!correct){btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')}else{playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g4State.correct++};setTimeout(nextG4Round,1300)}
     choicesEl.appendChild(btn)
   })
 }
@@ -3077,7 +3077,7 @@ function startG4Timer(){
     timeLeft--;const pct=(timeLeft/g4State.timerSec)*100;fill.style.width=pct+'%'
     if(timeLeft<=Math.floor(g4State.timerSec*0.35))fill.style.background='linear-gradient(90deg,#F43F5E,#F59E0B)'
     document.getElementById('g4-timer-text').textContent=timeLeft+' detik'
-    if(timeLeft<=0){clearInterval(state.g4Timer);if(!g4State.answered){g4State.answered=true;const choicesEl=document.getElementById('g4-choices');choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count)b.classList.add('correct')});playWrong();flashScreen('red');setTimeout(nextG4Round,1300)}}
+    if(timeLeft<=0){clearInterval(state.g4Timer);if(!g4State.answered){g4State.answered=true;duniaReport('g4','matematika','count',String(count),false);const choicesEl=document.getElementById('g4-choices');choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count)b.classList.add('correct')});playWrong();flashScreen('red');setTimeout(nextG4Round,1300)}}
   },1000)
 }
 
@@ -3463,7 +3463,7 @@ function renderG7ImgChoices(choices,correct){
   })
 }
 function answerG7(isCorrect,btn,correct){
-  if(g7State.answered)return; g7State.answered=true
+  if(g7State.answered)return; g7State.answered=true; duniaReport('g7','bahasa','gambar',correct&&correct.word,isCorrect) // PRD-48
   document.querySelectorAll('.g7-choice-btn').forEach(b=>b.style.pointerEvents='none')
   const qEl=document.getElementById('g7-question')
   if(isCorrect){
@@ -3764,7 +3764,7 @@ function evaluateG9Trace(){
   let hits=0
   const _r=Math.min(W,H)*0.22
   guides.forEach(g=>{const gx=g.x*W,gy=g.y*H,nearest=pathPoints.reduce((best,p)=>Math.min(best,Math.hypot(p.x-gx,p.y-gy)),Infinity);if(nearest<_r)hits++})
-  const score=hits/guides.length
+  const score=hits/guides.length; duniaReport('g9','bahasa','jejak',g9State.currentLetter,score>=0.65) // PRD-48: 2+ stars = traced
   let stars=0,msg=''
   if(score>=0.85){stars=3;msg='Sempurna! Tulisanmu bagus sekali! 🌟'}
   else if(score>=0.65){stars=2;msg='Bagus! Terus berlatih ya! 👍'}
@@ -6414,8 +6414,8 @@ function g10GenQuestion(){
     lbl = `${s.playerPoke.name} menyerang!`
   }
   s.currentAnswer = ans
-  s.currentProblem = { ans }
-  s.attempts = 0
+  s.currentProblem = { ans, op: q && q.op, text: qText }
+  s.attempts = 0; s._rep = 0
   const hint=document.getElementById('g10-hint'); if(hint) hint.innerHTML=''
   const model=document.getElementById('g10-model'); if(model) model.innerHTML=''
   document.getElementById('g10-atk-lbl').textContent=lbl
@@ -6471,7 +6471,7 @@ function g10Answer(val, btn){
   if(g10State.locked) return
   const s=g10State
   // Hotfix #112-H: support both numeric (math) and string (knowledge) answers
-  const ok = String(val) === String(s.currentAnswer)
+  const ok = String(val) === String(s.currentAnswer); if(!s._rep){ s._rep=1; duniaReportOp('g10',s.currentProblem&&s.currentProblem.op,s.currentProblem&&s.currentProblem.text,ok) } // PRD-48: first tap counts
 
   if(ok){
     s.locked=true
@@ -8879,7 +8879,7 @@ function g13GenQuestion() {
   s.currentAnswer = q.ans
   // expr/wrongs format kept for backward compat with g13NextQuestion
   const wrongs = (q.choices || []).filter(c => String(c) !== String(q.ans))
-  return { expr: q.q, ans: q.ans, wrongs: wrongs.slice(0, 3), choices: q.choices }
+  return { expr: q.q, ans: q.ans, wrongs: wrongs.slice(0, 3), choices: q.choices, op: q.op }
 }
 
 function g13NextQuestion() {
@@ -8887,7 +8887,7 @@ function g13NextQuestion() {
   try { if (window.VFX && VFX.Poke && s.chain) VFX.Poke.prime([String(s.chain.player.type).toLowerCase(), String(s.chain.wild.type).toLowerCase()]) } catch(_) {}  // pre-decode effect sheets
   if (s.locked || s.phase === 'victory' || s.phase === 'defeat' || s.phase === 'evo_ready') return
   const q = g13GenQuestion()
-  s.currentAnswer = q.ans
+  s.currentAnswer = q.ans; s.currentOp = q.op; s.currentQ = q.expr
   s.locked = false
 
   const mathEl = document.getElementById('g13-math')
@@ -9032,7 +9032,7 @@ function g13Answer(val, btn) {
   s.locked = true
 
   // Hotfix #112-H: support both numeric (math) + string (knowledge) answers.
-  const correct = String(val) === String(s.currentAnswer)
+  const correct = String(val) === String(s.currentAnswer); duniaReportOp('g13', s.currentOp, s.currentQ, correct) // PRD-48
   btn.classList.add(correct ? 'correct' : 'wrong')
   const choicesEl = document.getElementById('g13-choices')
   if (choicesEl) choicesEl.querySelectorAll('.g13-choice-btn').forEach(b => b.disabled = true)
@@ -9933,7 +9933,7 @@ function g13bNextQuestion() {
     const a = Math.floor(Math.random() * 9) + 1, b = Math.floor(Math.random() * 9) + 1
     q = { q: `${a} + ${b} = ?`, ans: a + b, choices: [a+b, a+b+1, a+b-1, a+b+2].sort(()=>Math.random()-0.5) }
   }
-  s.currentAnswer = q.ans
+  s.currentAnswer = q.ans; s.currentOp = q.op; s.currentQ = q.q
   s.questionStartTime = Date.now()
   s._g13bChoices = q.choices
 
@@ -9965,7 +9965,7 @@ function g13bAnswer(val, btn) {
   s.locked = true
 
   // Hotfix #112-H: support both numeric (math) + string (knowledge) answers.
-  const correct = String(val) === String(s.currentAnswer)
+  const correct = String(val) === String(s.currentAnswer); duniaReportOp('g13b', s.currentOp, s.currentQ, correct) // PRD-48
   btn.classList.add(correct ? 'correct' : 'wrong')
   const container = document.getElementById('g13b-choices')
   if (container) container.querySelectorAll('.g13b-choice-btn').forEach(b => { b.disabled = true })

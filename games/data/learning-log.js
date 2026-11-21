@@ -91,7 +91,8 @@
     multiply: 'Perkalian', kali: 'Perkalian', groups: 'Perkalian', divide: 'Pembagian', bagi: 'Pembagian', share: 'Pembagian',
     count: 'Menghitung benda', clock: 'Membaca jam', diff: 'Selisih', twostep: 'Soal cerita dua langkah',
     plus: 'Penjumlahan', join: 'Penjumlahan', minus: 'Pengurangan', compare: 'Membandingkan', max: 'Membandingkan', min: 'Membandingkan',
-    pattern: 'Pola', series: 'Pola', shape: 'Bentuk', awal: 'Huruf awal', susun: 'Menyusun kata', gambar: 'Kata dan gambar', pasang: 'Kegunaan alat'
+    pattern: 'Pola', series: 'Pola', shape: 'Bentuk', awal: 'Huruf awal', susun: 'Menyusun kata', gambar: 'Kata dan gambar', pasang: 'Kegunaan alat',
+    jejak: 'Menulis huruf', eja: 'Mengeja kata', hitung: 'Berhitung' // PRD-48
   }
   var DOMAIN = {
     matematika: 'Matematika', islam: 'Pengetahuan Islam', arab: 'Huruf Arab', umum: 'Pengetahuan umum',

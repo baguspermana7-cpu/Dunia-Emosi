@@ -27,7 +27,8 @@
   }
 
   function emit (type, payload) {
-    var ev = { type: String(type), game: game, t: Date.now() }
+    // PRD-48: a hub game (index.html hosts G3, G4, G7...) names itself; otherwise the page name is the game
+    var ev = { type: String(type), game: (payload && typeof payload.game === 'string' && payload.game) || game, t: Date.now() }
     if (payload) for (var k in payload) if (Object.prototype.hasOwnProperty.call(payload, k) && !(k in ev)) ev[k] = payload[k]
     var list = (subs[type] || []).concat(subs['*'] || [])
     for (var i = 0; i < list.length; i++) {

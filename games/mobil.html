@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Petualangan Mobil 🚗</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.74-20261121a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.75-20261121b">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e2447;font-family:'Fredoka One',sans-serif;touch-action:none}
@@ -139,13 +139,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e244
   </div>
 </div>
 
-<script src="data/speak.js?v=v64.74-20261121a"></script>
-<script src="data/freeze-watchdog.js?v=v64.74-20261121a"></script>
-<script src="data/save-engine.js?v=v64.74-20261121a"></script>
-<script src="data/emoji-map.js?v=v64.74-20261121a"></script><script src="data/ui-sprites.js?v=v64.74-20261121a"></script><!-- eco HUD star -->
-<script src="game-modal.js?v=v64.74-20261121a"></script>
-<script src="data/sfx-engine.js?v=v64.74-20261121a"></script><!-- shared answer cues (owner) -->
-<script src="vfx-engine.js?v=v64.74-20261121a"></script><!-- shared VFX (crash boom + win burst) -->
+<script src="data/speak.js?v=v64.75-20261121b"></script>
+<script src="data/freeze-watchdog.js?v=v64.75-20261121b"></script>
+<script src="data/save-engine.js?v=v64.75-20261121b"></script>
+<script src="data/emoji-map.js?v=v64.75-20261121b"></script><script src="data/ui-sprites.js?v=v64.75-20261121b"></script><!-- eco HUD star -->
+<script src="game-modal.js?v=v64.75-20261121b"></script>
+<script src="data/sfx-engine.js?v=v64.75-20261121b"></script><!-- shared answer cues (owner) -->
+<script src="vfx-engine.js?v=v64.75-20261121b"></script><!-- shared VFX (crash boom + win burst) -->
 
 <div id="flash"></div>
 
@@ -1048,6 +1048,7 @@ function g6StreakHit() {
   g6Slow(2000, 0.5)
 }
 function g6WrongHit() {
+  S.wordWrongs = (S.wordWrongs || 0) + 1 // PRD-48
   G6.streak = 0; G6.wrongRun++
   if (G6.assistOffered || S.lives <= 0) return
   if (G6.wrongRun >= 3 || S.lives <= 1) g6OfferAssist()
@@ -1163,6 +1164,7 @@ function loop(ticker) {
 //  GAME FLOW
 // ═══════════════════════════════════════════════════════════════════
 function startWord() {
+  S.wordWrongs = 0 // PRD-48
   if (S.wordIdx >= S.wordList.length) { showFinish(); return }
   const word = S.wordList[S.wordIdx++]
   S.currentWord = word
@@ -1181,6 +1183,8 @@ function startWord() {
 function wordComplete() {
   S.running = false
   S.wordsDone++
+  // PRD-48: one learning-log record per word, ok when no wrong letter was hit
+  try { if (window.DuniaAnswer) DuniaAnswer({ domain: 'bahasa', skill: 'eja', item: S.currentWord, ok: !S.wordWrongs, tries: (S.wordWrongs || 0) + 1 }) } catch (_) {}
   if (window.SFXEngine && SFXEngine.levelup) { SFXEngine.levelup() }
   else { playTone(523, 0.1); playTone(659, 0.1); setTimeout(()=>playTone(784, 0.15), 80) }
   screenFlash('rgba(139,92,246,0.35)')
@@ -1476,8 +1480,8 @@ window.addEventListener('resize', () => {
   // Vehicle selector overlay already shown (has 'show' class in HTML)
 })()
 </script>
-<script src="dunia-cinema.js?v=v64.74-20261121a" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.74-20261121a" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.74-20261121a" defer></script>
+<script src="dunia-cinema.js?v=v64.75-20261121b" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.75-20261121b" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.75-20261121b" defer></script>
 </body>
 </html>
