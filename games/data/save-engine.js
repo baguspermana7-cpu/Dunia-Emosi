@@ -112,6 +112,7 @@
     try {
       sessionStorage.setItem(`${gameId}Result`, JSON.stringify({ stars, level }));
     } catch (_) {}
+    try { DuniaLevel.end(gameId, level, stars > 0, stars) } catch (_) {}   // PRD-49: a saved level closes as a win
     return stored;
   }
 
@@ -254,22 +255,43 @@
   const _ansQ = [];
   let _ansLoading = false;
   const _myScript = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) || '';
-  function DuniaAnswer(payload) {
+  // DuniaEmit(type, payload): put an event on DuniaBus, loading the bus + learning log + mastery first when the page
+  // does not have them (PRD-49: also level:start, level:end, reward). Events wait in order until the bus is there.
+  function DuniaEmit(type, payload) {
     try {
-      if (window.DuniaBus && window.LearningLog) return window.DuniaBus.emit('answer', payload);
-      _ansQ.push(payload);
+      if (window.DuniaBus && window.LearningLog) return window.DuniaBus.emit(type, payload);
+      _ansQ.push([type, payload]);
       if (_ansLoading || !_myScript) return null;
       _ansLoading = true;
       const base = _myScript.replace(/[^/]*$/, ''), q = _myScript.indexOf('?') >= 0 ? _myScript.slice(_myScript.indexOf('?')) : '';
       const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
       (function next() {
         const f = files.shift();
-        if (!f) { _ansLoading = false; if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit('answer', x) } catch (_) {} }); return }
+        if (!f) { _ansLoading = false; if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit(x[0], x[1]) } catch (_) {} }); return }
         const el = document.createElement('script'); el.src = base + f + q; el.onload = el.onerror = next; document.head.appendChild(el);
       })();
     } catch (_) {}
     return null;
   }
+
+  function DuniaAnswer(payload) { return DuniaEmit('answer', payload) }
+
+  // PRD-49 DuniaLevel: one level:start and one level:end per level. start() opens the level; end() closes it once
+  // (a second end, or an end with nothing open, says nothing). saveLevelProgress closes an open level as a win.
+  let _openLevel = null;
+  const DuniaLevel = {
+    start(game, level) {
+      _openLevel = { game: String(game), level: +level || 1, t: Date.now() };
+      DuniaEmit('level:start', { game: _openLevel.game, level: _openLevel.level });
+    },
+    end(game, level, win, stars) {
+      if (!_openLevel || _openLevel.game !== String(game)) return false;
+      const o = _openLevel; _openLevel = null;
+      DuniaEmit('level:end', { game: o.game, level: +level || o.level, win: !!win, stars: Math.max(0, +stars || 0), ms: Date.now() - o.t });
+      return true;
+    },
+    open() { return _openLevel ? { game: _openLevel.game, level: _openLevel.level } : null }
+  };
 
   // DuniaLoad('boss-round.js', cb): a data/ module loaded only when it is needed (same folder and ?v= token as this
   // script); cb runs once it ran or failed to load (offline: the caller goes on without it). Used by PRD-40 bosses.
@@ -307,6 +329,8 @@
     window.DuniaAnswerQ = DuniaAnswerQ;
     window.DuniaAnswerKind = answerKind;
     window.DuniaAnswer = DuniaAnswer;
+    window.DuniaEmit = DuniaEmit;
+    window.DuniaLevel = DuniaLevel;
     window.DuniaLoad = DuniaLoad;
     window.saveLevelProgress = saveLevelProgress;
     window.activeAvatarBadgeKey = activeAvatarBadgeKey;

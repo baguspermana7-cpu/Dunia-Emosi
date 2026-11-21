@@ -77,7 +77,7 @@ ok(await tap('#dfeel .dfeel-go'), 'tap "Ayo main"')
 await p.evaluate(() => goToMenu()); await sleep(1500)
 ok(!(await shown()), 'not asked twice the same day')
 // dashboard shows the week
-await p.evaluate(() => showDashboard()); await sleep(600)
+await p.evaluate(() => showDashboard(true)); await sleep(600)
 const dash = await p.evaluate(() => { const e = document.querySelector('#dash-learn .dash-feel'); return e ? e.textContent.replace(/\s+/g, ' ').trim() : null })
 ok(dash && /Perasaan minggu ini/.test(dash) && /Sedih 1/.test(dash), `dashboard shows the week's feelings (${dash})`)
 // sibling is asked separately, and skip works

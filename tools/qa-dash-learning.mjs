@@ -33,7 +33,7 @@ async function open (slot, w, h) {
     localStorage.setItem('dunia-players', pl); localStorage.setItem('dunia-active-slot', JSON.stringify([s, 1 - s]))
   }, PLAYERS, LOG, slot)
   await p.goto(BASE + 'index.html?nocine=1', { waitUntil: 'load' }); await sleep(2500)
-  await p.evaluate(s => { state.currentPlayer = s; showDashboard() }, slot); await sleep(800)
+  await p.evaluate(s => { state.currentPlayer = s; showDashboard(true) }, slot); await sleep(800)
 }
 const read = () => p.evaluate(() => {
   const lum = c => { const m = c.match(/[\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }; return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]) }

@@ -1389,7 +1389,7 @@ function getLevelProgress(gameNum) {
   const prog = loadProgress()
   return prog['g'+gameNum] || { completed: [], stars: {} }
 }
-function setLevelComplete(gameNum, levelNum, stars) {
+function setLevelComplete(gameNum, levelNum, stars) { try { if (window.DuniaLevel) DuniaLevel.end('g' + gameNum, levelNum, stars > 0, stars) } catch (_) {} // PRD-49
   const prog = loadProgress()
   const key = 'g'+gameNum
   if (!prog[key]) prog[key] = { completed: [], stars: {} }
@@ -1616,7 +1616,7 @@ function startGameWithLevel(levelNum) {
   // Standalone games navigate to separate HTML — skip showScreen (no screen-gameN div exists)
   const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25]
   if (!standaloneGames.includes(state.currentGame)) {
-    showScreen('screen-game' + state.currentGame)
+    showScreen('screen-game' + state.currentGame); try { if (window.DuniaLevel) DuniaLevel.start('g' + state.currentGame, levelNum) } catch (_) {} // PRD-49
   }
   // Games 1, 2, 5 and 12 were retired on 2026-09-20 (owner is building replacement
   // mechanics). Their slots stay null so every other game keeps its number, and so
@@ -2168,7 +2168,7 @@ function showResult(mascot, title, msg) {
 
   const totalStars = state.gameStars[0]+state.gameStars[1]
   const maxPossible = state.maxPossibleStars || 5
-  const earned = Math.min(5, Math.round(totalStars / maxPossible * 5)) || 0
+  const earned = Math.min(5, Math.round(totalStars / maxPossible * 5)) || 0; try { if (window.DuniaLevel) DuniaLevel.end('g' + state.currentGame, state.selectedLevelNum || 1, earned > 0, earned >= 4 ? 3 : earned >= 2 ? 2 : earned >= 1 ? 1 : 0) } catch (_) {} // PRD-49
   const maxStars = 5
   let finalTitle = title || 'Bagus sekali!'
   let finalMsg = msg || `Kamu dapat ${totalStars} bintang! 🌟`
@@ -3817,7 +3817,7 @@ function renderDashLearning() {
       <div class="dash-learn-num">${r.ok} dari ${r.n} benar pada percobaan pertama</div>
     </div>`).join('')
 }
-function showDashboard() {
+function showDashboard(_pg) { if (!_pg && window.DuniaParentGate) return void DuniaParentGate.open(() => showDashboard(true)) // PRD-49: K2, behind the parent gate
   const p=state.players[state.currentPlayer]
   const xp=getXP(), tier=getLevelTier(xp)
   // Player card
@@ -9584,7 +9584,7 @@ function startQuickFire() {
   if (lc) lc.style.display = 'none'
   const r = document.getElementById('g13b-result')
   if (r) r.style.display = 'none'
-  showScreen('screen-game13b')
+  showScreen('screen-game13b'); try { if (window.DuniaLevel) DuniaLevel.start('g13b', state.selectedLevelNum || 1) } catch (_) {} // PRD-49
   setTimeout(() => initGame13b(), 80)
 }
 window.startQuickFire = startQuickFire

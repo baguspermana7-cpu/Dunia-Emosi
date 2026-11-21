@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <meta name="theme-color" content="#2f6bd8">
 <title>⚔️ Matematika Petualangan</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.75-20261121b">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.76-20261121c">
 <style>
 /* ═══════════════════════════════════════════════════════════════
    MATEMATIKA PETUALANGAN — kids math adventure (A-344, 2026-07-12)
@@ -759,27 +759,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/speak.js?v=v64.75-20261121b"></script>
-<script src="data/freeze-watchdog.js?v=v64.75-20261121b"></script>
-<script src="data/math-rules.js?v=v64.75-20261121b"></script>
-<script src="data/save-engine.js?v=v64.75-20261121b"></script>
-<script src="data/dunia-bus.js?v=v64.75-20261121b"></script>
-<script src="data/learning-log.js?v=v64.75-20261121b"></script>
-<script src="data/mastery.js?v=v64.75-20261121b"></script>
-<script src="data/review-queue.js?v=v64.75-20261121b"></script>
-<script src="data/error-kinds.js?v=v64.75-20261121b"></script>
-<script src="data/sfx-engine.js?v=v64.75-20261121b"></script>
-<script src="vfx-engine.js?v=v64.75-20261121b"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="vfx-moments.js?v=v64.75-20261121b"></script><script src="data/hit-feel.js?v=v64.75-20261121b"></script><script src="data/combo-meter.js?v=v64.75-20261121b"></script><!-- PRD-37: hit-stop on a landed attack, shared combo meter, win celebration -->
-<script src="data/math-heroes.js?v=v64.75-20261121b"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v64.75-20261121b"></script><script src="data/ui-sprites.js?v=v64.75-20261121b"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v64.75-20261121b"></script><script src="data/gt-monster-sheets.js?v=v64.75-20261121b"></script><script src="gt-monster-anim.js?v=v64.75-20261121b"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/speak.js?v=v64.76-20261121c"></script>
+<script src="data/freeze-watchdog.js?v=v64.76-20261121c"></script>
+<script src="data/math-rules.js?v=v64.76-20261121c"></script>
+<script src="data/save-engine.js?v=v64.76-20261121c"></script>
+<script src="data/dunia-bus.js?v=v64.76-20261121c"></script>
+<script src="data/learning-log.js?v=v64.76-20261121c"></script>
+<script src="data/mastery.js?v=v64.76-20261121c"></script>
+<script src="data/review-queue.js?v=v64.76-20261121c"></script>
+<script src="data/error-kinds.js?v=v64.76-20261121c"></script>
+<script src="data/sfx-engine.js?v=v64.76-20261121c"></script>
+<script src="vfx-engine.js?v=v64.76-20261121c"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="vfx-moments.js?v=v64.76-20261121c"></script><script src="data/hit-feel.js?v=v64.76-20261121c"></script><script src="data/combo-meter.js?v=v64.76-20261121c"></script><!-- PRD-37: hit-stop on a landed attack, shared combo meter, win celebration -->
+<script src="data/math-heroes.js?v=v64.76-20261121c"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v64.76-20261121c"></script><script src="data/ui-sprites.js?v=v64.76-20261121c"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v64.76-20261121c"></script><script src="data/gt-monster-sheets.js?v=v64.76-20261121c"></script><script src="gt-monster-anim.js?v=v64.76-20261121c"></script><!-- animated mecha monsters --><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v64.75-20261121b"></script>
+<script src="data/math-cloud.js?v=v64.76-20261121c"></script>
 <script>
 (function(){
 'use strict';
@@ -1096,6 +1096,7 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   _startSafety=setTimeout(function(){ starting=false; },6000);
   econ.energy-=LEVEL_COST; econ.energyTs=(econ.energy===ENERGY_MAX-1)?Date.now():econ.energyTs; saveEcon(); refreshHUD();
   var g=(curWorld-1)*SUBS+curSub, tier=tierFor(g), n=qCountFor(g), mn=maxNumFor(g);
+  try{ if(window.DuniaLevel) DuniaLevel.start(GAME_ID,g); }catch(_){}   // PRD-49
   // PRD-10: numbers no bigger than the child's shared maths tier allows (tier 1: 10, tier 2: 15; higher tiers: the level's own)
   try{ if(window.DuniaMastery) mn=DuniaMastery.cap('matematika',mn,{1:10,2:15}); }catch(_){}
   var isBoss=(g%SUBS===0);          // every 10th level = world boss
@@ -1372,6 +1373,7 @@ function finish(failed){
   clearTimeout(_stuckT); _stuckT=null;
   var total=game.pool.length, ratio=game.correct/total;
   var stars=failed?(ratio>=0.3?1:0):(ratio>=0.85?3:(ratio>=0.6?2:(ratio>=0.3?1:0)));
+  try{ if(window.DuniaLevel) DuniaLevel.end(GAME_ID,game.g,!failed&&stars>0,stars); }catch(_){}   // PRD-49: before persist, so a failed run is not a win
   persist(game.g,stars);
   try{ if(window._kmCombo) _kmCombo.miss(); if(!failed&&stars>=1&&window.VFX&&VFX.Moment) VFX.Moment.celebrate({x:innerWidth/2,y:innerHeight*0.42},{size:Math.min(innerWidth,innerHeight)*0.32}); }catch(_){}   // PRD-37: a won level celebrates
   // economy rewards
@@ -1876,9 +1878,9 @@ document.addEventListener('keydown',function(e){
 });
 })();
 </script>
-<script src="dunia-icons.js?v=v64.75-20261121b"></script>
-<script src="dunia-cinema.js?v=v64.75-20261121b" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.75-20261121b" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.75-20261121b" defer></script>
+<script src="dunia-icons.js?v=v64.76-20261121c"></script>
+<script src="dunia-cinema.js?v=v64.76-20261121c" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.76-20261121c" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.76-20261121c" defer></script>
 </body>
 </html>

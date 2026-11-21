@@ -22,7 +22,7 @@ const r = await p.evaluate(async evil => {
   const out = {}
   state.players[0] = Object.assign({}, state.players[0], { name: evil })
   state.currentPlayer = 0
-  try { showDashboard() } catch (e) { out.dashErr = e.message }
+  try { showDashboard(true) } catch (e) { out.dashErr = e.message }
   await wait(300)
   const card = document.getElementById('dash-player-card')
   out.dash = { img: card.querySelectorAll('img[onerror], img[src="x"]').length, b: card.querySelectorAll('#pwn').length, text: card.textContent.includes(evil) }
@@ -34,7 +34,7 @@ const r = await p.evaluate(async evil => {
   const sc = document.getElementById('result-scores')
   out.res = { img: sc.querySelectorAll('img[onerror], img[src="x"]').length, b: sc.querySelectorAll('#pwn').length, n: sc.textContent.split(evil).length - 1 }
   state.players[0].name = 'Ana'; state.mode = 'solo'
-  try { showDashboard() } catch (e) {}
+  try { showDashboard(true) } catch (e) {}
   await wait(200)
   out.plain = document.getElementById('dash-player-card').textContent.includes('Ana')
   await wait(500)

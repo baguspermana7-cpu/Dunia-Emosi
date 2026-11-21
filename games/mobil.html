@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Petualangan Mobil 🚗</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.75-20261121b">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.76-20261121c">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e2447;font-family:'Fredoka One',sans-serif;touch-action:none}
@@ -139,13 +139,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e244
   </div>
 </div>
 
-<script src="data/speak.js?v=v64.75-20261121b"></script>
-<script src="data/freeze-watchdog.js?v=v64.75-20261121b"></script>
-<script src="data/save-engine.js?v=v64.75-20261121b"></script>
-<script src="data/emoji-map.js?v=v64.75-20261121b"></script><script src="data/ui-sprites.js?v=v64.75-20261121b"></script><!-- eco HUD star -->
-<script src="game-modal.js?v=v64.75-20261121b"></script>
-<script src="data/sfx-engine.js?v=v64.75-20261121b"></script><!-- shared answer cues (owner) -->
-<script src="vfx-engine.js?v=v64.75-20261121b"></script><!-- shared VFX (crash boom + win burst) -->
+<script src="data/speak.js?v=v64.76-20261121c"></script>
+<script src="data/freeze-watchdog.js?v=v64.76-20261121c"></script>
+<script src="data/save-engine.js?v=v64.76-20261121c"></script>
+<script src="data/emoji-map.js?v=v64.76-20261121c"></script><script src="data/ui-sprites.js?v=v64.76-20261121c"></script><!-- eco HUD star -->
+<script src="game-modal.js?v=v64.76-20261121c"></script>
+<script src="data/sfx-engine.js?v=v64.76-20261121c"></script><!-- shared answer cues (owner) -->
+<script src="vfx-engine.js?v=v64.76-20261121c"></script><!-- shared VFX (crash boom + win burst) -->
 
 <div id="flash"></div>
 
@@ -368,6 +368,7 @@ function setDiff(d) {
 }
 
 function startFromSelect() {
+  try { if (window.DuniaLevel) DuniaLevel.start('g6', cfg.level || 1) } catch (_) {}   // PRD-49
   cfg.playerIcon = selectedVehicle
   S.difficulty = selectedDiff
   // Rebuild the car sprite from scratch. Setting carSprite.text only works if carSprite is a
@@ -1208,6 +1209,7 @@ function nextWord() {
 
 function showGameOver() {
   S.running = false
+  try { if (window.DuniaLevel) DuniaLevel.end('g6', cfg.level || 1, false, 0) } catch (_) {}   // PRD-49
   GameModal.show({
     emoji: '😞',
     title: 'Gagal! Coba Lagi',
@@ -1480,8 +1482,8 @@ window.addEventListener('resize', () => {
   // Vehicle selector overlay already shown (has 'show' class in HTML)
 })()
 </script>
-<script src="dunia-cinema.js?v=v64.75-20261121b" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.75-20261121b" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.75-20261121b" defer></script>
+<script src="dunia-cinema.js?v=v64.76-20261121c" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.76-20261121c" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.76-20261121c" defer></script>
 </body>
 </html>

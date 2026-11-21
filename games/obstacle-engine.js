@@ -630,6 +630,8 @@
       if (!list.includes(item)) {
         list.push(item)
         localStorage.setItem(key, JSON.stringify(list))
+        // PRD-49: a new sticker / badge / horn goes on DuniaBus (the Buku Koleksi of PRD-22 reads it)
+        try { if (global.DuniaEmit) global.DuniaEmit('reward', { id: String(item), kind: key.replace(/^train-|s$|-unlocks$/g, ''), src: 'obstacle' }) } catch (_) {}
       }
     } catch (e) { console.warn('[OE] list write fail', key, e) }
   }

@@ -268,7 +268,7 @@ for (const rel of PAGES.filter(r => !ONLY || ONLY.test(r))) {
   try {
     await page.goto(`http://localhost:${port}/${file}`, { waitUntil: 'networkidle2', timeout: 30000 })
   } catch (_) {}
-  if (view === 'dashboard') await page.evaluate(() => { try { showDashboard() } catch (e) { console.error(e) } })
+  if (view === 'dashboard') await page.evaluate(() => { try { showDashboard(true) } catch (e) { console.error(e) } })
   // QA_PLANT=1: one emoji the resolver has no art for (U+1F9FF) is written into the page: the view must fail
   if (process.env.QA_PLANT && process.env.QA_PLANT !== 'nores' && rel === (process.env.QA_PLANT_PAGE || 'games/kuis-matematika.html')) {
     await page.evaluate(sel => { const d = document.createElement('div'); d.textContent = 'Hebat \u{1F9FF}'; (document.querySelector(sel) || document.body).appendChild(d) }, view === 'dashboard' ? '#screen-dashboard' : 'body')

@@ -95,7 +95,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-46](PRD-46-vfx-sakuga-tombol.md) | VFX sakuga di tombol semua game (permintaan owner) | Gelombang 4B | live v64.63 |
 | [PRD-47](PRD-47-bug-bash.md) | Bug bash: Ducky, toast, MEM-06, gate GT, kode mati G13c | Gelombang 5 | live v64.74 (B4 sebagian) |
 | [PRD-48](PRD-48-bus-tujuh-game-buta.md) | Bus jawaban di 7 game yang belum melapor | Gelombang 5 | live v64.75 |
-| [PRD-49](PRD-49-event-level-dan-gerbang-orang-tua.md) | Event level/hadiah di bus + gerbang orang tua | Gelombang 5 | belum mulai |
+| [PRD-49](PRD-49-event-level-dan-gerbang-orang-tua.md) | Event level/hadiah di bus + gerbang orang tua | Gelombang 5 | live v64.76 |
 | [PRD-50](PRD-50-g7-tebak-gambar.md) | G7 Tebak Gambar: sprite, pengecoh satu grup, ronde dengar [ANAK] | Gelombang 5 | belum mulai |
 | [PRD-51](PRD-51-g4-hitung-binatang.md) | G4 Hitung Binatang: sprite, 3 ragam ronde, petunjuk hitung [ANAK] | Gelombang 5 | belum mulai |
 | [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: suara, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | belum mulai |
