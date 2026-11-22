@@ -120,6 +120,32 @@
     }).sort(function (x, y) { return y.n - x.n })
   }
 
-  W.LearningLog = { record: record, summary: summary, recent: recent, bySkill: bySkill, label: label, KEY: KEY }
-  if (W.DuniaBus) W.DuniaBus.on('answer', record)
+  /* PRD-20: which games this child played today ('dunia-played-day', avatar-scoped: { day, games: [...] }), from
+     level:start (a level opened, even with no question in it) plus every game with an answer today in the log. */
+  var PLAYED = 'dunia-played-day'
+  function markPlayed (ev) {
+    var g = clean(ev && ev.game, 30)
+    if (!g) return false
+    try {
+      var today = dayOf(Date.now()), raw = W.avatarScopedGet ? W.avatarScopedGet(PLAYED) : localStorage.getItem(PLAYED)
+      var o = JSON.parse(raw || 'null')
+      if (!o || o.day !== today || !Array.isArray(o.games)) o = { day: today, games: [] }
+      if (o.games.indexOf(g) < 0) o.games.push(g)
+      var s = JSON.stringify(o)
+      if (W.avatarScopedSet) W.avatarScopedSet(PLAYED, s); else localStorage.setItem(PLAYED, s)
+      return true
+    } catch (e) { return false }
+  }
+  function playedToday () {
+    var out = {}, today = dayOf(Date.now())
+    try {
+      var o = JSON.parse((W.avatarScopedGet ? W.avatarScopedGet(PLAYED) : localStorage.getItem(PLAYED)) || 'null')
+      if (o && o.day === today && Array.isArray(o.games)) o.games.forEach(function (g) { out[g] = 1 })
+    } catch (e) {}
+    summary({ days: 1 }).forEach(function (r) { if (r.game) out[r.game] = 1 })
+    return Object.keys(out)
+  }
+
+  W.LearningLog = { record: record, summary: summary, recent: recent, bySkill: bySkill, label: label, KEY: KEY, markPlayed: markPlayed, playedToday: playedToday }
+  if (W.DuniaBus) { W.DuniaBus.on('answer', record); W.DuniaBus.on('level:start', markPlayed) }
 })()

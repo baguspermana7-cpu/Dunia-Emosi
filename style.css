@@ -8316,3 +8316,18 @@ button:disabled, [aria-disabled="true"] {
 #screen-game9 #g9-mode-tabs .g5-sub-tab.active{
   background:linear-gradient(180deg,#a4e07a,#4caf50 62%,#2f8f36) !important; color:#fff !important;
 }
+
+/* PRD-20: the "main berikutnya" card on the beranda (games/data/skill-games.js). The picture is the game's own hub
+   tile (sprites, no emoji); one name; a tap opens the game through that tile. */
+.next-card { display:flex; align-items:center; gap:14px; width:100%; max-width:500px; min-height:96px; margin:4px auto 12px;
+  padding:10px 16px 10px 10px; border:0; border-radius:24px; background:#ffffff; color:#3b0764; cursor:pointer;
+  box-shadow:0 6px 0 #c4b5fd, 0 10px 24px rgba(76,29,149,.18); font:inherit; text-align:left;
+  -webkit-tap-highlight-color:transparent; transition:transform .12s ease, box-shadow .12s ease; }
+.next-card[hidden] { display:none; }
+.next-card:active { transform:translateY(4px) scale(.98); box-shadow:0 2px 0 #c4b5fd, 0 4px 12px rgba(76,29,149,.18); }
+.next-card:focus-visible { outline:3px solid #7c3aed; outline-offset:3px; }
+.next-card .wmap-node-bldg { flex:0 0 auto; width:76px; height:76px; }
+.next-card .nc-word { flex:1 1 auto; font-size:22px; font-weight:900; line-height:1.15; color:#3b0764; }
+.next-card .nc-go { flex:0 0 auto; width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:#16a34a; color:#ffffff; box-shadow:0 4px 0 #166534; }
+@media (prefers-reduced-motion: reduce) { .next-card { transition:none; } }

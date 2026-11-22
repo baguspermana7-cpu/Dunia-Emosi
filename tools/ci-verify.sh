@@ -85,6 +85,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port/" node tools/qa-dash-learning.mjs
   echo "== Cek Kemampuan: 6 islands by real taps, Perkiraan IQ, Papan Juara Otak (PRD-53)"
   QA_BASE="http://127.0.0.1:$port/" QA_SIZES=390x844 QA_CEPAT=0 node tools/qa-prd53-cek.mjs
+  echo "== the beranda card points at a game for the weakest skill, not played today (PRD-20)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd20-next.mjs
   echo "== the freeze card speaks to a child who cannot read"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"

@@ -1,7 +1,7 @@
 # PRD-20 Kartu "main berikutnya" di hub **[ANAK — hal baru di menu]**
 
 - **Gelombang:** Gelombang 1 — lingkar belajar (inti produk)
-- **Status:** belum mulai
+- **Status:** live v64.80 (2026-11-22)
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #20
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -27,3 +27,15 @@
   - L3: avatar tanpa log → kartu yang aman.
   - L4: avatar A tidak memengaruhi B.
   - L5: ≥48 px, kontras lulus, 3 ukuran dilihat.
+
+## Hasil (v64.80, 2026-11-22)
+
+- `games/data/skill-games.js` (SkillGames): MAP nama skill (learning-log.js SKILL) -> game; GAMES id game -> tile hub.
+  Kartu `#next-card` di `#screen-menu`: gambar = salinan tile game itu sendiri (sprite, tanpa emoji), nama game,
+  tombol main; ketuk = klik tile itu (jalur buka yang sama). Suara "Ayo main <nama>!" sekali per anak dan game per
+  kunjungan halaman (DuniaSpeak; suara mati = diam).
+- Pilihan: skill terlemah (rasio benar terkecil, >= 5 jawaban, 14 hari) yang punya game belum dimainkan hari ini;
+  tidak ada -> game aman (SAFE), dipilih dari anak + tanggal (sama sepanjang hari).
+- `learning-log.js`: `dunia-played-day` (per avatar) dari `level:start`; `playedToday()` = itu + game dengan jawaban
+  hari ini di log (halaman game tanpa DuniaLevel tetap terhitung).
+- Gate `tools/qa-prd20-next.mjs` (CI smoke): merah 0/10 pada pohon lama, hijau 10/0.
