@@ -101,7 +101,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-50](PRD-50-g7-tebak-gambar.md) | G7 Tebak Gambar: sprite, pengecoh satu grup, ronde dengar [ANAK] | Gelombang 5 | live v64.81 |
 | [PRD-51](PRD-51-g4-hitung-binatang.md) | G4 Hitung Binatang: sprite, 3 ragam ronde, petunjuk hitung [ANAK] | Gelombang 5 | live v64.82 |
 | [PRD-55](PRD-55-tanpa-tts-tombol-bisu.md) | Tanpa suara bicara (TTS) + tombol bisu di layar game [ANAK] | Gelombang 5 | live v64.83 |
-| [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: bunyi goresan, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | belum mulai |
+| [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: bunyi goresan, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | live v64.84 |
 
 ## Urutan & perkiraan
 | Gelombang | Isi | Perkiraan |

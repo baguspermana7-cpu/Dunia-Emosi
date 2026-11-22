@@ -8379,3 +8379,35 @@ button:disabled, [aria-disabled="true"] {
   display:inline-flex; align-items:center; justify-content:center; background:rgba(139,92,246,0.15); color:#6d28d9; }
 #screen-menu .menu-mute[data-state="off"] { color:#b91c1c; }
 .game-header .gh-mute { min-width:44px !important; min-height:44px !important; flex:none; }
+
+/* PRD-52: G9 Jejak Huruf — a picture word beside the letter, stroke-order arrows between the guide dots */
+#screen-game9 .g9-head { display:flex; align-items:center; justify-content:center; gap:14px; }
+#screen-game9 .g9-pic { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; border-radius:16px;
+  background:rgba(255,255,255,.92); box-shadow:0 4px 12px rgba(0,0,0,.12); }
+#screen-game9 .g9-pic[hidden] { display:none; }
+#screen-game9 .g9-pic img { width:64px; height:64px; object-fit:contain; }
+#screen-game9 .g9-pic-word { font:800 16px/1.1 var(--font); color:#1f2937; }
+#screen-game9 .g9-pic-word b { color:#4d7c0f; font-size:19px; }
+#screen-game9 .g9-arrow { position:absolute; width:16px; height:16px; color:rgba(63,98,18,.75); pointer-events:none; }
+#screen-game9 .g9-arrow svg { display:block; }
+@media (orientation:landscape) and (max-height:500px){
+  #screen-game9 .g9-pic img { width:44px; height:44px; }
+  #screen-game9 .g9-pic { padding:3px 8px; }
+}
+/* PRD-52: a short landscape phone (844x390) had the canvas below the fold. Two columns: tabs, letter + picture and
+   the buttons left; the canvas right, as tall as the screen allows (square; the word canvas keeps its 0.42 ratio). */
+@media (orientation:landscape) and (max-height:500px){
+  #screen-game9.active{ display:grid !important; grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-rows:auto auto auto auto 1fr !important; column-gap:16px !important; align-content:start !important;
+    align-items:center !important; justify-items:center !important; padding:6px 12px !important; overflow:hidden !important; }
+  #screen-game9 > .game-header{ grid-column:1 / -1 !important; grid-row:1 !important; justify-self:stretch !important; }
+  #screen-game9 > .mascot-guide, #screen-game9 > .g9-instruction, #screen-game9 > .g9-progress{ display:none !important; }
+  #screen-game9 > #g9-mode-tabs{ grid-column:1 !important; grid-row:2 !important; margin:4px 0 !important; }
+  #screen-game9 > .g9-head{ grid-column:1 !important; grid-row:3 !important; }
+  #screen-game9 > .g9-result{ grid-column:1 !important; grid-row:4 !important; }
+  #screen-game9 > div[style*="gap:8px"]{ grid-column:1 !important; grid-row:5 !important; align-self:start !important; margin-top:8px !important; }
+  #screen-game9 > .g9-canvas-wrap{ grid-column:2 !important; grid-row:2 / span 4 !important; align-self:start !important; margin:6px 0 0 !important;
+    width:calc(100vh - 96px) !important; height:calc(100vh - 96px) !important; }
+  #screen-game9 > .g9-canvas-wrap.g9-word{ width:min(56vw, calc((100vh - 96px) / .42)) !important; height:calc(min(56vw, calc((100vh - 96px) / .42)) * .42) !important; }
+  #screen-game9 .g9-letter-display{ font-size:56px !important; }
+}

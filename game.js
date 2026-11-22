@@ -3532,7 +3532,32 @@ function setG9Mode(mode, btn) {
   if(btn) btn.classList.add('active')
   initGame9()
 }
+// PRD-52: a picture word for the letter (or the picture of the whole word above level 20), from the same sprite
+// library as G7 (DBLabeled + the Timmy names). Only single words of plain A-Z letters can be traced.
+function g9PicPool(){
+  if(g9PicPool.cache&&g9PicPool.cache.n===(window.TKQuestions?1:0)) return g9PicPool.cache.pool
+  const pool=g7BuildPool().filter(x=>/^[A-Z]{2,8}$/.test(x.word))
+  g9PicPool.cache={n:window.TKQuestions?1:0,pool}
+  return pool
+}
+function g9PicFor(letter){
+  const all=g9PicPool().filter(x=>x.word[0]===letter); if(!all.length) return null
+  g9State.picSeen=g9State.picSeen||{}; const k=g9State.picSeen[letter]||0; g9State.picSeen[letter]=k+1
+  return all[(k+Math.floor(Math.random()*all.length))%all.length]
+}
+function g9ShowPic(it,first){
+  const el=document.getElementById('g9-pic'); if(!el) return
+  g9State.pic=it||null
+  if(!it){ el.hidden=true; el.innerHTML=''; return }
+  el.hidden=false; el.innerHTML=''
+  const img=document.createElement('img'); img.src=it.src; img.alt=''; img.decoding='async'; el.appendChild(img)
+  const w=document.createElement('span'); w.className='g9-pic-word'
+  const word=it.word.charAt(0)+it.word.slice(1).toLowerCase()
+  if(first){ const b=document.createElement('b'); b.textContent=word.charAt(0); w.appendChild(b); w.appendChild(document.createTextNode(word.slice(1))) } else w.textContent=word
+  el.appendChild(w)
+}
 function initGame9(){
+  if(!window.TKQuestions&&!g9State.tkTried&&window.DuniaLoad){ g9State={tkTried:true}; DuniaLoad('tk-questions.js',initGame9); return }
   const diff=state.selectedLevel||'medium'
   const tier=state.players[state.currentPlayer].ageTier||'tumbuh'
   // A-339 P5 — WORD mode above level 20 (huruf only; angka stays single digits).
@@ -3542,11 +3567,13 @@ function initGame9(){
     seq=LETTER_SEQ_ANGKA
   } else if(wordMode){
     // no-repeat: draw a fresh shuffled set of words each level (cross-level bag)
-    seq=drawBag('g9w',WORD_LIST_G9,Math.min(DIFF[diff].rounds,WORD_LIST_G9.length))
+    // PRD-52: words with a picture (3-7 letters) join the old list: 60 -> the pool below
+    const _pw=g9PicPool().filter(x=>x.word.length>=3&&x.word.length<=7).map(x=>x.word), _all=[...new Set([...WORD_LIST_G9,..._pw])]
+    seq=drawBag('g9w',_all,Math.min(DIFF[diff].rounds,_all.length))
   } else {
     seq=tier==='cilik'?LETTER_SEQ_CILIK:tier==='tumbuh'?LETTER_SEQ_TUMBUH:LETTER_SEQ_PINTAR
   }
-  g9State={round:0,maxRound:Math.min(DIFF[diff].rounds,seq.length),sequence:seq,currentLetter:'A',mode:g9TraceMode,wordMode:wordMode,word:'',layout:null}
+  g9State={tkTried:true,round:0,maxRound:Math.min(DIFF[diff].rounds,seq.length),sequence:seq,currentLetter:'A',mode:g9TraceMode,wordMode:wordMode,word:'',layout:null,strokes:0}
   state.currentPlayer=0
   g9Canvas=document.getElementById('g9-canvas')
   g9Ctx=g9Canvas.getContext('2d')
@@ -3590,12 +3617,16 @@ function nextG9Round(){
   // A-339 P5 — word mode: build the per-letter slot layout for this word
   if(g9State.wordMode){ g9State.word=_item; g9State.layout=g9BuildWordLayout(_item) }
   document.getElementById('g9-letter-display').textContent=_item
+  // PRD-52: the picture — a word that starts with the letter, or the traced word itself
+  if(g9State.mode==='angka') g9ShowPic(null)
+  else if(g9State.wordMode) g9ShowPic(g9PicPool().find(x=>x.word===_item)||null,false)
+  else g9ShowPic(g9PicFor(_item),true)
   document.getElementById('g9-result').style.display='none'
   document.getElementById('g9-next-btn').style.display='none'
   // Re-show "Selesai" button when starting new letter
   const doneBtn=document.getElementById('g9-done-btn'); if(doneBtn) doneBtn.style.display='block'
   document.getElementById('g9-progress').textContent=`${g9State.round+1} / ${g9State.maxRound}`
-  g9Clear(); renderG9GuideDots(); g9State.round++
+  g9State.strokes=0; g9Clear(); renderG9GuideDots(); g9State.round++
 }
 function getG9Guides(letter) {
   if(g9State.wordMode && g9State.layout) return g9State.layout.guides   // A-339 P5 — whole-word dots
@@ -3604,6 +3635,19 @@ function getG9Guides(letter) {
 function renderG9GuideDots(){
   const guides=getG9Guides(g9State.currentLetter),container=document.getElementById('g9-guide-dots'); container.innerHTML=''
   guides.forEach((g,i)=>{const dot=document.createElement('div');dot.className='g9-dot';dot.id=`g9-dot-${i}`;dot.style.left=(g.x*100)+'%';dot.style.top=(g.y*100)+'%';dot.textContent=String(i+1);dot.style.cssText+=';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:rgba(255,255,255,0.9);';container.appendChild(dot)})
+  // PRD-52: the stroke order — a small arrow halfway along each step from one dot to the next, pointing the way to go
+  // (angles in screen pixels, so a wide word canvas still points right). Steps too short to hold an arrow get none.
+  // word mode: no arrows (the steps from one letter to the next cross the word and read as noise; the dots keep their numbers)
+  const W=g9Canvas&&g9Canvas.width||300, H=g9Canvas&&g9Canvas.height||300
+  if(!g9State.wordMode) for(let i=0;i<guides.length-1;i++){
+    const a=guides[i], b=guides[i+1], dx=(b.x-a.x)*W, dy=(b.y-a.y)*H
+    if(Math.hypot(dx,dy)<Math.min(W,H)*0.16) continue
+    const ar=document.createElement('div'); ar.className='g9-arrow'; ar.dataset.from=i
+    ar.style.left=((a.x+b.x)/2*100)+'%'; ar.style.top=((a.y+b.y)/2*100)+'%'
+    ar.style.transform=`translate(-50%,-50%) rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`
+    ar.innerHTML='<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 3l7 5-7 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    container.appendChild(ar)
+  }
 }
 function g9Clear(){
   if(!g9Ctx)return; const W=g9Canvas.width||300, H=g9Canvas.height||300; g9Ctx.clearRect(0,0,W,H); g9UserPath=[]
@@ -3649,6 +3693,9 @@ function g9EndDraw(){
   g9Drawing=false
   g9Ctx.beginPath()
   // NO MORE auto-eval — explicit "Selesai" button replaces this
+  // PRD-52: a soft rising note for every finished stroke (a tap or a dot is not a stroke); playTone is silent when sound is off
+  let n=0; for(let k=g9UserPath.length-1;k>=0&&!(g9UserPath[k]&&g9UserPath[k]._break);k--) n++
+  if(n>=4){ g9State.strokes=(g9State.strokes||0)+1; playTone(440*Math.pow(2,Math.min(g9State.strokes-1,7)/12),0.09,'sine',0.12) }
 }
 function checkGuideHits(pos){
   const W=g9Canvas.width||300, H=g9Canvas.height||300; const guides=getG9Guides(g9State.currentLetter)  // A-339 P5 — W/H aware (wide word canvas)

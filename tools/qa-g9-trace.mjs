@@ -6,7 +6,7 @@ const b=await puppeteer.launch({headless:'new',args:['--no-sandbox']})
 for(const [w,h,tag] of [[390,844,'port'],[900,600,'land']]){
   const p=await b.newPage(); await p.setViewport({width:w,height:h})
   const errs=[]; p.on('console',m=>{if(m.type()==='error')errs.push(m.text())}); p.on('pageerror',e=>errs.push('PE:'+e.message))
-  await p.goto('http://localhost:8081/index.html',{waitUntil:'domcontentloaded'})
+  await p.goto((process.env.QA_BASE || 'http://localhost:8081').replace(/\/$/, '') + '/index.html',{waitUntil:'domcontentloaded'})
   await sleep(1800)
   // Jump straight into Game 9 (Jejak Huruf) via its public entry.
   const started=await p.evaluate(()=>{
