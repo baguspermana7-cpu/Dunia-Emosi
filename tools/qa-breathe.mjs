@@ -48,11 +48,12 @@ await p.evaluate(() => {
 const motion = await p.evaluate(() => { const c = document.querySelector('#dbreath .dbr-card'); return c.getAnimations().some(a => a.effect.getKeyframes().some(k => k.transform && k.transform !== 'none')) })
 ok(motion, 'the card enters with a transform (scale/translate)')
 await sleep(300); const s0 = await st()
-ok(await p.evaluate(() => { const i = document.querySelector('#dbreath .dbr-pic'); return i.complete && i.naturalWidth > 0 }), 'the cloud picture loads')
 await sleep(3500); const s1 = await st()
 if (SHOTS) await p.screenshot({ path: `${SHOTS}/breathe-in.png` })
 await sleep(1600); const s2 = await st()
 await sleep(4000); const s3 = await st()
+// read after the timed rounds (the picture arrives over the network: > 0.3 s on the CI runner); never loads -> fails at 10 s
+ok(await p.waitForFunction(() => { const i = document.querySelector('#dbreath .dbr-pic'); return i && i.complete && i.naturalWidth > 0 }, { timeout: 10000 }).then(() => true, () => false), 'the cloud picture loads')
 const ph = await p.evaluate(() => window.__ph)
 const gaps = ph.slice(1).map((x, i) => x.t - ph[i].t)
 ok(ph.map(x => x.f).join() === 'in,out,in' && gaps.every(g => g >= 3700 && g <= 4400), `cues follow in / out every 4 s (${ph.map(x => x.f + '@' + x.t).join(' ')})`)
