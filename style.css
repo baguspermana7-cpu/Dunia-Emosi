@@ -8183,6 +8183,13 @@ button:disabled, [aria-disabled="true"] {
   #screen-game7 .g7-question{ font-size:clamp(20px,4.6vh,30px) !important; margin-bottom:8px !important; }
   #screen-game7 .g7-choices{ gap:10px !important; padding-bottom:12px !important; }
   #screen-game7 .g7-choice-btn{ min-height:46px !important; padding:10px 8px !important; }
+  /* PRD-50: the question box never shrinks away (a word->picture round showed no word); picture choices sit in one row */
+  #screen-game7 .g7-display{ flex-shrink:0 !important; height:min(28vh,50vw) !important; }
+  #screen-game7 .g7-display img{ height:min(22vh,120px) !important; }
+  #screen-game7 .g7-display.g7-word{ width:auto !important; min-width:min(40vh,60vw) !important; max-width:92vw !important; }
+  #screen-game7 .g7-choices{ grid-template-columns:repeat(4,1fr) !important; width:min(720px,96vw) !important; max-width:none !important; }
+  #screen-game7 .g7-choice-text{ font-size:clamp(13px,3.6vh,18px) !important; overflow-wrap:anywhere; }
+  #screen-game7 .g7-choices.g7-pics .g7-choice-img img{ height:min(14vh,72px) !important; }
 }
 @media (max-width:360px){
   #screen-game7 .g7-choices{ gap:10px !important; }

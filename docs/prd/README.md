@@ -98,7 +98,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-49](PRD-49-event-level-dan-gerbang-orang-tua.md) | Event level/hadiah di bus + gerbang orang tua | Gelombang 5 | live v64.76 |
 | [PRD-53](PRD-53-cek-kemampuan.md) | Cek Kemampuan: 6 pulau otak, Perkiraan IQ, Papan Juara Otak [ANAK] | Gelombang 5 | live v64.77 (papan online R3 belum) |
 | [PRD-54](PRD-54-cek-hidup-dan-akurat.md) | Cek Kemampuan v3: Perkiraan IQ lebih akurat (Q) + motion/shader (M) [ANAK] | Gelombang 5 | live: Q v64.78, M v64.79 |
-| [PRD-50](PRD-50-g7-tebak-gambar.md) | G7 Tebak Gambar: sprite, pengecoh satu grup, ronde dengar [ANAK] | Gelombang 5 | belum mulai |
+| [PRD-50](PRD-50-g7-tebak-gambar.md) | G7 Tebak Gambar: sprite, pengecoh satu grup, ronde dengar [ANAK] | Gelombang 5 | live v64.81 |
 | [PRD-51](PRD-51-g4-hitung-binatang.md) | G4 Hitung Binatang: sprite, 3 ragam ronde, petunjuk hitung [ANAK] | Gelombang 5 | belum mulai |
 | [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: suara, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | belum mulai |
 

@@ -537,178 +537,6 @@ const DRIVE_WORD_BANK = {
 const DRIVE_VEHICLES  = {city:'🚗',forest:'🚗',space:'🚀',body:'🤿',pantai:'⛵',sekolah:'🚌',dapur:'🛺',kebun:'🚜'}
 const DRIVE_OBSTACLES = {city:'⛔',forest:'🌵',space:'💥',body:'🦠',pantai:'🪨',sekolah:'🎒',dapur:'🥄',kebun:'🌿'}
 
-// Game 7 image data
-const WORD_IMAGES = [
-  // --- Animals with image files ---
-  {id:'ayam',   emoji:'🐓',word:'AYAM',   file:'img-ayam.webp',   suku:'A-YAM'},
-  {id:'bebek',  emoji:'🦆',word:'BEBEK',  file:'img-bebek.webp',  suku:'BE-BEK'},
-  {id:'gajah',  emoji:'🐘',word:'GAJAH',  file:'img-gajah.webp',  suku:'GA-JAH'},
-  {id:'harimau',emoji:'🐯',word:'HARIMAU',file:'img-harimau.webp',suku:'HA-RI-MAU'},
-  {id:'ikan',   emoji:'🐟',word:'IKAN',   file:'img-ikan.webp',   suku:'I-KAN'},
-  {id:'jerapah',emoji:'🦒',word:'JERAPAH',file:'img-jerapah.webp',suku:'JE-RA-PAH'},
-  {id:'kuda',   emoji:'🐴',word:'KUDA',   file:'img-kuda.webp',   suku:'KU-DA'},
-  {id:'monyet', emoji:'🐒',word:'MONYET', file:'img-monyet.webp', suku:'MON-YET'},
-  {id:'panda',  emoji:'🐼',word:'PANDA',  file:'img-panda.webp',  suku:'PAN-DA'},
-  {id:'singa',  emoji:'🦁',word:'SINGA',  file:'img-singa.webp',  suku:'SIN-GA'},
-  {id:'cicak',  emoji:'🦎',word:'CICAK',  file:'img-cicak.webp',  suku:'CI-CAK'},
-  {id:'domba',  emoji:'🐑',word:'DOMBA',  file:'img-domba.webp',  suku:'DOM-BA'},
-  {id:'elang',  emoji:'🦅',word:'ELANG',  file:'img-elang.webp',  suku:'E-LANG'},
-  {id:'rusa',   emoji:'🦌',word:'RUSA',   file:'img-rusa.webp',   suku:'RU-SA'},
-  {id:'tikus',  emoji:'🐭',word:'TIKUS',  file:'img-tikus.webp',  suku:'TI-KUS'},
-  // --- Objects with image files ---
-  {id:'apel',   emoji:'🍎',word:'APEL',   file:'img-apel.webp',   suku:'A-PEL'},
-  {id:'bola',   emoji:'⚽',word:'BOLA',   file:'img-bola.webp',   suku:'BO-LA'},
-  {id:'buku',   emoji:'📚',word:'BUKU',   file:'img-buku.webp',   suku:'BU-KU'},
-  {id:'daun',   emoji:'🍃',word:'DAUN',   file:'img-daun.webp',   suku:'DA-UN'},
-  // meja entry removed: 🪑 emoji is "Chair" — was causing image=chair but
-  // answer=meja confusion. Kept img-meja.webp file in case reused elsewhere.
-  // --- Animals emoji-only ---
-  {id:'kucing', emoji:'🐱',word:'KUCING', file:null,suku:'KU-CING'},
-  {id:'anjing', emoji:'🐶',word:'ANJING', file:null,suku:'AN-JING'},
-  {id:'kelinci',emoji:'🐰',word:'KELINCI',file:null,suku:'KE-LIN-CI'},
-  {id:'kura',   emoji:'🐢',word:'KURA',   file:null,suku:'KU-RA'},
-  {id:'burung', emoji:'🐦',word:'BURUNG', file:null,suku:'BU-RUNG'},
-  {id:'kupu',   emoji:'🦋',word:'KUPU',   file:null,suku:'KU-PU'},
-  {id:'lebah',  emoji:'🐝',word:'LEBAH',  file:null,suku:'LE-BAH'},
-  {id:'semut',  emoji:'🐜',word:'SEMUT',  file:null,suku:'SE-MUT'},
-  {id:'katak',  emoji:'🐸',word:'KATAK',  file:null,suku:'KA-TAK'},
-  {id:'ular',   emoji:'🐍',word:'ULAR',   file:null,suku:'U-LAR'},
-  {id:'beruang',emoji:'🐻',word:'BERUANG',file:null,suku:'BE-RU-ANG'},
-  {id:'lumba',  emoji:'🐬',word:'LUMBA',  file:null,suku:'LUM-BA'},
-  // --- Fruits emoji-only ---
-  {id:'pisang', emoji:'🍌',word:'PISANG', file:null,suku:'PI-SANG'},
-  {id:'jeruk',  emoji:'🍊',word:'JERUK',  file:null,suku:'JE-RUK'},
-  {id:'mangga', emoji:'🥭',word:'MANGGA', file:null,suku:'MANG-GA'},
-  {id:'anggur', emoji:'🍇',word:'ANGGUR', file:null,suku:'ANG-GUR'},
-  {id:'pepaya', emoji:'🍑',word:'PEPAYA', file:null,suku:'PE-PA-YA'},
-  {id:'semangka',emoji:'🍉',word:'SEMANGKA',file:null,suku:'SE-MANG-KA'},
-  // --- Transport emoji-only ---
-  {id:'sepeda', emoji:'🚲',word:'SEPEDA', file:null,suku:'SE-PE-DA'},
-  {id:'pesawat',emoji:'✈️',word:'PESAWAT',file:null,suku:'PE-SA-WAT'},
-  {id:'kapal',  emoji:'🚢',word:'KAPAL',  file:null,suku:'KA-PAL'},
-  {id:'kereta2',emoji:'🚂',word:'KERETA', file:null,suku:'KE-RE-TA'},
-  // --- Misc emoji-only ---
-  {id:'payung', emoji:'☂️',word:'PAYUNG', file:null,suku:'PA-YUNG'},
-  {id:'rumah',  emoji:'🏠',word:'RUMAH',  file:null,suku:'RU-MAH'},
-  {id:'bunga',  emoji:'🌸',word:'BUNGA',  file:null,suku:'BUNG-A'},
-  {id:'bintang2',emoji:'⭐',word:'BINTANG',file:null,suku:'BIN-TANG'},
-  {id:'lampu',  emoji:'💡',word:'LAMPU',  file:null,suku:'LAM-PU'},
-  {id:'pena',   emoji:'🖊️',word:'PENA',   file:null,suku:'PE-NA'},
-  {id:'gitar',  emoji:'🎸',word:'GITAR',  file:null,suku:'GI-TAR'},
-  {id:'nasi',   emoji:'🍚',word:'NASI',   file:null,suku:'NA-SI'},
-  {id:'wortel', emoji:'🥕',word:'WORTEL', file:null,suku:'WOR-TEL'},
-  {id:'jagung', emoji:'🌽',word:'JAGUNG', file:null,suku:'JA-GUNG'},
-  // --- More animals ---
-  {id:'sapi',   emoji:'🐄',word:'SAPI',   file:null,suku:'SA-PI'},
-  {id:'kambing',emoji:'🐐',word:'KAMBING',file:null,suku:'KAM-BING'},
-  {id:'tikus2', emoji:'🐀',word:'TIKUS',  file:null,suku:'TI-KUS'},
-  {id:'gorila', emoji:'🦍',word:'GORILA', file:null,suku:'GO-RI-LA'},
-  {id:'zebra',  emoji:'🦓',word:'ZEBRA',  file:null,suku:'ZEB-RA'},
-  {id:'kuda-nil',emoji:'🦛',word:'KUDA NIL', file:null,suku:'KU-DA NIL'},
-  {id:'pinguin',emoji:'🐧',word:'PINGUIN',file:null,suku:'PIN-GUIN'},
-  {id:'flamingo',emoji:'🦩',word:'FLAMINGO',file:null,suku:'FLA-MIN-GO'},
-  {id:'merak',  emoji:'🦚',word:'MERAK',  file:null,suku:'ME-RAK'},
-  {id:'buaya',  emoji:'🐊',word:'BUAYA',  file:null,suku:'BU-A-YA'},
-  {id:'kura2',  emoji:'🐢',word:'KURA-KURA',file:null,suku:'KU-RA KU-RA'},
-  {id:'landak', emoji:'🦔',word:'LANDAK', file:null,suku:'LAN-DAK'},
-  {id:'kepiting',emoji:'🦀',word:'KEPITING',file:null,suku:'KE-PI-TING'},
-  {id:'ubur',   emoji:'🪼',word:'UBUR',   file:null,suku:'U-BUR'},
-  {id:'udang',  emoji:'🦐',word:'UDANG',  file:null,suku:'U-DANG'},
-  {id:'cumi',   emoji:'🦑',word:'CUMI',   file:null,suku:'CU-MI'},
-  {id:'gurita', emoji:'🐙',word:'GURITA', file:null,suku:'GU-RI-TA'},
-  {id:'hiu',    emoji:'🦈',word:'HIU',    file:null,suku:'HI-U'},
-  {id:'paus',   emoji:'🐋',word:'PAUS',   file:null,suku:'PA-US'},
-  {id:'kuda-laut',emoji:'🐠',word:'IKAN HIAS',file:null,suku:'I-KAN HI-AS'},
-  {id:'babi',   emoji:'🐷',word:'BABI',   file:null,suku:'BA-BI'},
-  {id:'kerbau', emoji:'🐃',word:'KERBAU', file:null,suku:'KER-BAU'},
-  {id:'kijang', emoji:'🦌',word:'KIJANG', file:null,suku:'KI-JANG'},
-  {id:'serigala',emoji:'🐺',word:'SERIGALA',file:null,suku:'SE-RI-GA-LA'},
-  {id:'rubah',  emoji:'🦊',word:'RUBAH',  file:null,suku:'RU-BAH'},
-  {id:'berang', emoji:'🦦',word:'BERANG-BERANG',file:null,suku:'BE-RANG BE-RANG'},
-  {id:'musang', emoji:'🦨',word:'SIGUNG', file:null,suku:'SI-GUNG'},
-  // --- More foods ---
-  {id:'tomat',  emoji:'🍅',word:'TOMAT',  file:null,suku:'TO-MAT'},
-  {id:'terong', emoji:'🍆',word:'TERONG', file:null,suku:'TE-RONG'},
-  {id:'brokoli',emoji:'🥦',word:'BROKOLI',file:null,suku:'BRO-KO-LI'},
-  {id:'labu',   emoji:'🎃',word:'LABU',   file:null,suku:'LA-BU'},
-  {id:'cabe',   emoji:'🌶️',word:'CABE',   file:null,suku:'CA-BE'},
-  {id:'bawang', emoji:'🧅',word:'BAWANG', file:null,suku:'BA-WANG'},
-  {id:'kentang',emoji:'🥔',word:'KENTANG',file:null,suku:'KEN-TANG'},
-  {id:'timun',  emoji:'🥒',word:'TIMUN',  file:null,suku:'TI-MUN'},
-  {id:'nanas',  emoji:'🍍',word:'NANAS',  file:null,suku:'NA-NAS'},
-  {id:'stroberi',emoji:'🍓',word:'STROBERI',file:null,suku:'ST-RO-BE-RI'},
-  {id:'ceri',   emoji:'🍒',word:'CERI',   file:null,suku:'CE-RI'},
-  {id:'kiwi',   emoji:'🥝',word:'KIWI',   file:null,suku:'KI-WI'},
-  {id:'melon',  emoji:'🍈',word:'MELON',  file:null,suku:'ME-LON'},
-  {id:'leci',   emoji:'🍑',word:'PERSIK', file:null,suku:'PER-SIK'},
-  {id:'kelapa', emoji:'🥥',word:'KELAPA', file:null,suku:'KE-LA-PA'},
-  {id:'kurma',  emoji:'🌴',word:'POHON KELAPA',file:null,suku:'PO-HON KE-LA-PA'},
-  {id:'kacang', emoji:'🥜',word:'KACANG', file:null,suku:'KA-CANG'},
-  // --- Household & school objects ---
-  {id:'pensil', emoji:'✏️',word:'PENSIL', file:null,suku:'PEN-SIL'},
-  {id:'penggaris',emoji:'📏',word:'PENGGARIS',file:null,suku:'PENG-GA-RIS'},
-  {id:'gunting',emoji:'✂️',word:'GUNTING',file:null,suku:'GUN-TING'},
-  {id:'pulpen', emoji:'🖊️',word:'PULPEN', file:null,suku:'PUL-PEN'},
-  {id:'kertas', emoji:'📄',word:'KERTAS', file:null,suku:'KER-TAS'},
-  {id:'tas',    emoji:'🎒',word:'TAS',    file:null,suku:'TAS'},
-  {id:'kursi',  emoji:'🪑',word:'KURSI',  file:null,suku:'KUR-SI'},
-  {id:'pintu',  emoji:'🚪',word:'PINTU',  file:null,suku:'PIN-TU'},
-  {id:'jendela',emoji:'🪟',word:'JENDELA',file:null,suku:'JEN-DE-LA'},
-  {id:'cermin', emoji:'🪞',word:'CERMIN', file:null,suku:'CER-MIN'},
-  {id:'sikat',  emoji:'🪥',word:'SIKAT',  file:null,suku:'SI-KAT'},
-  {id:'sabun',  emoji:'🧼',word:'SABUN',  file:null,suku:'SA-BUN'},
-  {id:'handuk', emoji:'🧣',word:'SYAL', file:null,suku:'SYAL'},
-  {id:'sendok', emoji:'🥄',word:'SENDOK', file:null,suku:'SEN-DOK'},
-  {id:'garpu',  emoji:'🍴',word:'GARPU',  file:null,suku:'GAR-PU'},
-  {id:'gelas',  emoji:'🥛',word:'GELAS',  file:null,suku:'GE-LAS'},
-  {id:'mangkok',emoji:'🍜',word:'MANGKOK',file:null,suku:'MANG-KOK'},
-  {id:'sapu',   emoji:'🧹',word:'SAPU',   file:null,suku:'SA-PU'},
-  {id:'ember',  emoji:'🪣',word:'EMBER',  file:null,suku:'EM-BER'},
-  // --- Nature ---
-  {id:'gunung', emoji:'⛰️',word:'GUNUNG', file:null,suku:'GU-NUNG'},
-  {id:'sungai', emoji:'🌊',word:'SUNGAI', file:null,suku:'SU-NGAI'},
-  {id:'hutan',  emoji:'🌲',word:'HUTAN',  file:null,suku:'HU-TAN'},
-  {id:'danau',  emoji:'🏔️',word:'GUNUNG SALJU',file:null,suku:'GU-NUNG SAL-JU'},
-  {id:'pantai', emoji:'🏖️',word:'PANTAI', file:null,suku:'PAN-TAI'},
-  {id:'langit', emoji:'☁️',word:'LANGIT', file:null,suku:'LA-NGIT'},
-  {id:'angin',  emoji:'💨',word:'ANGIN',  file:null,suku:'A-NGIN'},
-  {id:'salju',  emoji:'❄️',word:'SALJU',  file:null,suku:'SAL-JU'},
-  {id:'pelangi2',emoji:'🌈',word:'PELANGI',file:null,suku:'PE-LA-NGI'},
-  {id:'api',    emoji:'🔥',word:'API',    file:null,suku:'A-PI'},
-  {id:'air',    emoji:'💧',word:'AIR',    file:null,suku:'A-IR'},
-  {id:'tanah',  emoji:'🪨',word:'BATU',   file:null,suku:'BA-TU'},
-  // --- Transport & places ---
-  {id:'mobil',  emoji:'🚗',word:'MOBIL',  file:null,suku:'MO-BIL'},
-  {id:'bus',    emoji:'🚌',word:'BUS',    file:null,suku:'BUS'},
-  {id:'motor',  emoji:'🏍️',word:'MOTOR',  file:null,suku:'MO-TOR'},
-  {id:'helikopter',emoji:'🚁',word:'HELIKOPTER',file:null,suku:'HE-LI-KOP-TER'},
-  {id:'kapal-selam',emoji:'🚀',word:'ROKET',file:null,suku:'RO-KET'},
-  {id:'ambulans',emoji:'🚑',word:'AMBULANS',file:null,suku:'AM-BU-LANS'},
-  {id:'pemadam',emoji:'🚒',word:'PEMADAM', file:null,suku:'PE-MA-DAM'},
-  {id:'polisi-car',emoji:'🚓',word:'POLISI',file:null,suku:'PO-LI-SI'},
-  {id:'sekolah2',emoji:'🏫',word:'SEKOLAH',file:null,suku:'SE-KO-LAH'},
-  {id:'pasar',  emoji:'🏪',word:'PASAR',  file:null,suku:'PA-SAR'},
-  {id:'masjid', emoji:'🕌',word:'MASJID', file:null,suku:'MAS-JID'},
-  {id:'bank',   emoji:'🏦',word:'BANK',   file:null,suku:'BANK'},
-  // --- Colors & shapes ---
-  {id:'merah',  emoji:'🔴',word:'MERAH',  file:null,suku:'ME-RAH'},
-  {id:'biru',   emoji:'🔵',word:'BIRU',   file:null,suku:'BI-RU'},
-  {id:'hijau',  emoji:'🟢',word:'HIJAU',  file:null,suku:'HI-JAU'},
-  {id:'kuning', emoji:'🟡',word:'KUNING', file:null,suku:'KU-NING'},
-  {id:'ungu',   emoji:'🟣',word:'UNGU',   file:null,suku:'U-NGU'},
-  {id:'putih',  emoji:'⬜',word:'PUTIH',  file:null,suku:'PU-TIH'},
-  {id:'hitam',  emoji:'⬛',word:'HITAM',  file:null,suku:'HI-TAM'},
-  {id:'oranye', emoji:'🟠',word:'ORANYE', file:null,suku:'O-RA-NYE'},
-  // --- Emotions & people ---
-  {id:'senang', emoji:'😊',word:'SENANG', file:null,suku:'SE-NANG'},
-  {id:'sedih',  emoji:'😢',word:'SEDIH',  file:null,suku:'SE-DIH'},
-  {id:'marah',  emoji:'😠',word:'MARAH',  file:null,suku:'MA-RAH'},
-  {id:'takut',  emoji:'😨',word:'TAKUT',  file:null,suku:'TA-KUT'},
-  {id:'kaget',  emoji:'😲',word:'KAGET',  file:null,suku:'KA-GET'},
-  {id:'malu',   emoji:'😳',word:'MALU',   file:null,suku:'MA-LU'},
-  {id:'sakit',  emoji:'🤒',word:'SAKIT',  file:null,suku:'SA-KIT'},
-  {id:'sehat',  emoji:'💪',word:'SEHAT',  file:null,suku:'SE-HAT'},
-]
 
 // Game 8 word bank (tiered: easy=3-4 letters, medium=5-6, hard=7+)
 const WORD_BUILD_BANK = [
@@ -3391,74 +3219,90 @@ function updateCarPosition(){const positions=['16.6%','50%','83.3%'];document.ge
 // GAME 7: TEBAK GAMBAR
 // ================================================================
 let g7State = {}
+// PRD-50: the bank is the shared sprite library only (no emoji): DBLabeled (assets/db/<cat>/NNN.webp, 224 labelled
+// items in 14 groups) plus the names the Timmy/G11 bank gives assets/db/lib/<key>.webp (TKQuestions.names), one item
+// per name. Decoys always come from the answer's group; every 3rd round is a listen round when an id-ID voice exists.
+const G7_LIB_GROUP={animals:'hewan',animal:'hewan','tk-world':'hewan',food:'makanan',vehicles:'kendaraan','tk-ship':'kendaraan',
+  nature:'alam',park:'alam',gt:'alam',things:'benda',real:'benda',school:'sekolah','tk-prop':'benda',game:'benda',toys:'mainan','tk-char':'profesi'}
+const G7_LIB_SKIP={'tk-key/timmy-sleeping':1}   // a story character, not a word
 function g7BuildPool(){
-  // base emoji pool + the labeled assets/db sprites (owner: 100 hewan/buah jadi
-  // question) as rich illustrated image→word items. Guarded: no DB → emoji only.
-  let pool=[...WORD_IMAGES]
-  try{ if(window.DBLabeled&&window.DBLabeled.all){ window.DBLabeled.all().forEach(it=>{
-    pool.push({id:it.id, word:String(it.name).toUpperCase(), dbsrc:it.src, group:it.group, emoji:''})
-  }); } }catch(e){}
+  const pool=[], seen=new Set()
+  const add=(id,word,src,group)=>{ const w=String(word||'').trim(); if(!w||!src||!group) return; const k=w.toUpperCase(); if(seen.has(k)) return; seen.add(k); pool.push({id,word:k,src,group}) }
+  try{ if(window.DBLabeled&&DBLabeled.all) DBLabeled.all().forEach(it=>add(it.id,it.name,it.src,it.group)) }catch(e){}
+  try{ const N=window.TKQuestions&&TKQuestions.names; if(N) Object.keys(N).forEach(k=>{ if(G7_LIB_SKIP[k]) return
+    const top=k.split('/')[0]==='real'?k.split('/')[1]:k.split('/')[0]
+    add('lib-'+k,N[k],'assets/db/lib/'+k+'.webp',G7_LIB_GROUP[top]) }) }catch(e){}
+  // a group too small for 3 decoys joins 'benda' (it never happens with today's data; kept so a new group cannot break a round)
+  const size={}; pool.forEach(x=>size[x.group]=(size[x.group]||0)+1); pool.forEach(x=>{ if(size[x.group]<4) x.group='benda' })
   return pool
 }
 function initGame7() {
+  if(!window.TKQuestions&&!g7State.tkTried&&window.DuniaLoad){ g7State={tkTried:true}; DuniaLoad('tk-questions.js',initGame7); return }
   const diff = state.selectedLevel||'medium'
-  g7State = {round:0,maxRound:DIFF[diff].rounds,mode:'img2word',answered:false,shuffled:g7BuildPool().sort(()=>Math.random()-0.5),usedIds:new Set()}
+  g7State = {tkTried:true,round:0,maxRound:DIFF[diff].rounds,mode:'img2word',answered:false,shuffled:g7BuildPool().sort(()=>Math.random()-0.5),usedIds:new Set()}
   state.currentPlayer = 0; updateGameStarDisplay(); nextG7Round()
 }
+function g7Pic(src,h){ return `<img src="${src}" alt="" decoding="async" style="height:${h};max-width:100%;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.22))">` }
 function nextG7Round() {
   const totalRounds = state.mode==='duo'?g7State.maxRound*2:g7State.maxRound
   if(g7State.round>=totalRounds){
-    if(state.mode==='duo'&&g7State.round===g7State.maxRound){state.currentPlayer=1;updateGameStarDisplay();showFeedback(true,0,`Giliran ${state.players[1].name}! 🎮`,nextG7Round);return}
-    showResult('🖼️','Tebak Gambar Selesai!','Kamu kenal banyak kata! 📚'); return
+    if(state.mode==='duo'&&g7State.round===g7State.maxRound){state.currentPlayer=1;updateGameStarDisplay();showFeedback(true,0,`Giliran ${state.players[1].name}!`,nextG7Round);return}
+    showResult('🖼️','Tebak Gambar Selesai!','Kamu kenal banyak kata!'); return
   }
   g7State.answered = false
   const roundInSet = g7State.round % g7State.maxRound
   const diff = state.selectedLevel||'medium'
   g7State.mode = diff==='easy'?'img2word':(roundInSet<Math.ceil(g7State.maxRound/2)?'img2word':'word2img')
-  // Pick unused item — reset pool if exhausted
+  if(roundInSet%3===2&&duniaCanListen()) g7State.mode='listen'   // PRD-50 L3: hear the word, pick the picture
+  // Pick an item not asked in this session (the bank is far larger than a session; reset only if it ran out)
   let pool = g7State.shuffled.filter(w => !g7State.usedIds.has(w.id))
   if (!pool.length) { g7State.usedIds = new Set(); pool = [...g7State.shuffled] }
   const correct = pool[0]; g7State.usedIds.add(correct.id)
-  // DB-sprite items only work as image→word (we have the picture, not word→picture
-  // choices), and their decoys come from the SAME group so the words stay related.
-  let decoyPool
-  if(correct.dbsrc){ g7State.mode='img2word'; decoyPool=g7State.shuffled.filter(w=>w.group===correct.group&&w.id!==correct.id); if(decoyPool.length<3) decoyPool=g7State.shuffled.filter(w=>w.id!==correct.id) }
-  else decoyPool=[...WORD_IMAGES].filter(w=>w.id!==correct.id)
+  const head=w=>w.split(' ')[0]
+  let decoyPool=g7State.shuffled.filter(w=>w.group===correct.group&&w.id!==correct.id&&head(w.word)!==head(correct.word))
+  if(decoyPool.length<3) decoyPool=g7State.shuffled.filter(w=>w.group===correct.group&&w.id!==correct.id)
   const decoys = decoyPool.sort(()=>Math.random()-0.5).slice(0,3)
   const choices = [correct,...decoys].sort(()=>Math.random()-0.5)
-  document.getElementById('g7-mode-badge').textContent = g7State.mode==='img2word'?'Mode: Gambar → Kata 🔤':'Mode: Kata → Gambar 🖼️'
+  g7State.cur=correct; g7State.choiceGroups=choices.map(c=>c.group)
+  document.getElementById('g7-mode-badge').textContent = g7State.mode==='img2word'?'Gambar ke Kata':g7State.mode==='listen'?'Dengar lalu pilih':'Kata ke Gambar'
   document.getElementById('g7-progress-bar').style.width = ((roundInSet/g7State.maxRound)*100)+'%'
   const displayEl=document.getElementById('g7-display'),questionEl=document.getElementById('g7-question')
-  displayEl.classList.remove('anim-correct')
+  displayEl.classList.remove('anim-correct'); displayEl.classList.toggle('g7-word',g7State.mode==='word2img')
   if(g7State.mode==='img2word'){
-    if(correct.dbsrc){
-      displayEl.innerHTML=`<img src="${correct.dbsrc}" alt="" decoding="async" style="height:min(30vh,180px);max-width:80%;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(0,0,0,.25))" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🖼️',style:'font-size:120px'}))">`
-    } else {
-      displayEl.innerHTML=`<span style="font-size:min(28vw,min(28vh,140px));line-height:1.1;display:flex;align-items:center;justify-content:center;padding:8%">${correct.emoji}</span>`
-    }
-    questionEl.textContent='Ayo tebak, ini apa ya? 🤔'
+    displayEl.innerHTML=g7Pic(correct.src,'min(30vh,180px)')
+    questionEl.textContent='Ayo tebak, ini apa ya?'
     renderG7WordChoices(choices,correct)
+  } else if(g7State.mode==='listen'){
+    displayEl.innerHTML=listenButtonHTML('g7-listen')
+    questionEl.textContent='Dengar, lalu ketuk gambarnya'
+    const say=()=>duniaSayLine(correct.word.toLowerCase())
+    document.getElementById('g7-listen').onclick=say; setTimeout(say,250)
+    renderG7ImgChoices(choices,correct,false)
   } else {
-    displayEl.innerHTML=`<span style="font-size:min(12vw,56px);font-weight:900;color:#14B8A6;font-family:var(--font-display),var(--font);letter-spacing:2px">${correct.word}</span>`
+    // the size follows the word's length, so BUNGA MATAHARI fits a 390 px phone and the box may widen (landscape)
+    const fs=Math.max(22,Math.min(48,Math.floor(300/(correct.word.length*0.68))))
+    displayEl.innerHTML=`<span style="font-size:min(10vw,${fs}px);font-weight:900;color:#0F766E;font-family:var(--font-display),var(--font);letter-spacing:2px;text-align:center;line-height:1.1;padding:0 12px">${correct.word}</span>`
     questionEl.textContent='Pilih gambar yang benar!'
-    renderG7ImgChoices(choices,correct)
+    renderG7ImgChoices(choices,correct,true)
   }
   document.getElementById('g7-progress').textContent=state.mode==='duo'?`${state.players[state.currentPlayer].name} — ${roundInSet+1}/${g7State.maxRound}`:`${roundInSet+1} / ${g7State.maxRound}`
   g7State.round++
 }
 function renderG7WordChoices(choices,correct){
-  const el=document.getElementById('g7-choices'); el.style.gridTemplateColumns='1fr 1fr'; el.innerHTML=''
+  const el=document.getElementById('g7-choices'); el.style.gridTemplateColumns='1fr 1fr'; el.innerHTML=''; el.classList.remove('g7-pics')
   choices.forEach(ch=>{
-    const btn=document.createElement('button'); btn.className='g7-choice-btn'
+    const btn=document.createElement('button'); btn.className='g7-choice-btn'; btn.dataset.id=ch.id
     btn.innerHTML=`<span class="g7-choice-text">${ch.word}</span>`
     btn.onclick=()=>answerG7(ch.id===correct.id,btn,correct); el.appendChild(btn)
   })
 }
+// word->picture: the picture only (the word above is the question; a name under each picture would give it away)
 function renderG7ImgChoices(choices,correct){
-  const el=document.getElementById('g7-choices'); el.style.gridTemplateColumns='1fr 1fr'; el.innerHTML=''
+  const el=document.getElementById('g7-choices'); el.style.gridTemplateColumns='1fr 1fr'; el.innerHTML=''; el.classList.add('g7-pics')
   choices.forEach(ch=>{
-    const btn=document.createElement('button'); btn.className='g7-choice-btn'; btn.style.padding='12px 8px'
-    btn.innerHTML=`<span class="g7-choice-img">${ch.emoji}</span><span class="g7-choice-text" style="font-size:14px">${ch.word}</span>`
+    const btn=document.createElement('button'); btn.className='g7-choice-btn'; btn.dataset.id=ch.id; btn.style.padding='10px 8px'
+    btn.setAttribute('aria-label','Gambar '+(choices.indexOf(ch)+1))
+    btn.innerHTML=`<span class="g7-choice-img">${g7Pic(ch.src,'min(16vh,96px)')}</span>`
     btn.onclick=()=>answerG7(ch.id===correct.id,btn,correct); el.appendChild(btn)
   })
 }
@@ -3484,8 +3328,7 @@ function answerG7(isCorrect,btn,correct){
   } else {
     btn.classList.add('wrong'); spawnWrongShake(btn); quizStreakReset()
     document.querySelectorAll('.g7-choice-btn').forEach(b=>{
-      const txt=b.querySelector('.g7-choice-text')
-      if(txt&&(txt.textContent===correct.word)){b.classList.add('correct');spawnCorrectCardJuice(b,{burst:false})}
+      if(b.dataset.id===String(correct.id)){b.classList.add('correct');spawnCorrectCardJuice(b,{burst:false})}   // PRD-50: picture buttons carry no word
     })
     playWrong(); flashScreen('red')
     // Shake the display frame
@@ -3495,7 +3338,7 @@ function answerG7(isCorrect,btn,correct){
     if(qEl){
       const firstLetter=correct.word[0]
       const suku=correct.suku||correct.word
-      qEl.innerHTML=`<span style="font-size:13px;opacity:0.8">💡 Mulai dengan huruf </span><b style="font-size:18px;color:#FBBF24">${firstLetter}</b><span style="font-size:13px;opacity:0.8"> — kata: ${suku}</span>`
+      qEl.innerHTML=`<span style="font-size:13px;opacity:0.8">Mulai dengan huruf </span><b style="font-size:18px;color:#FBBF24">${firstLetter}</b><span style="font-size:13px;opacity:0.8"> — kata: ${suku}</span>`
     }
     setTimeout(nextG7Round,2000)
   }
