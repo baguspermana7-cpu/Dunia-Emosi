@@ -99,6 +99,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd22-book.mjs
   echo "== play-time limit: card after level:end, rest screen only the parent gate opens (PRD-21)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd21-rhythm.mjs
+  echo "== after a level not won: three faces, once a day per game, own Dasbor row (PRD-16C)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd16c-feel.mjs
   echo "== the freeze card shows a child who cannot read a picture and one replay button"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"

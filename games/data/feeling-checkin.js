@@ -12,6 +12,13 @@
  * An automated browser (navigator.webdriver) is not asked unless the page URL carries ?feel=1, so the gates that
  * drive the map are not blocked by a card; tools/qa-feeling-checkin.mjs uses ?feel=1.
  * Mechanic A of docs/SPEC-EMOSI-REPLACEMENT-2026-11-11.md (owner: "kamu putuskan yang terbaik", 2026-11-11).
+ *
+ * PRD-16C (docs/prd/PRD-16C-namai-perasaan-dalam-cerita.md): after a level the child did NOT win (DuniaBus
+ * 'level:end' with win false: the train race with no lives left, Petualangan Mobil, Ducky Volley, Kuis Matematika),
+ * a smaller card asks "Belum berhasil. Kamu merasa apa?" with three faces. At most once a day per game, only once
+ * the level is over, no score. The pick is kept apart from the morning check-in, in the same record:
+ * 'dunia-feelings'.after = { 'YYYY-MM-DD': { <game>: <feeling> } }; DuniaFeeling.afterWeek() counts it for the
+ * Dasbor. The line under the chosen face is written, not spoken (PRD-55).
  */
 (function () {
   'use strict'
@@ -167,11 +174,72 @@
     } catch (e) { return false }
   }
 
+  // PRD-16C: the card after a level not won
+  var AFTER = ['senang', 'sedih', 'marah']
+  var AFTER_LINE = { senang: 'Kamu tetap senang. Hebat, ayo coba lagi!', sedih: 'Kamu sedih. Tidak apa-apa, semua orang pernah belum berhasil.', marah: 'Kamu marah. Tarik napas pelan-pelan, lalu coba lagi.' }
+  function askedAfter (game) { var a = read().after; return !!(a && a[today()] && a[today()][game]) }
+  function storeAfter (game, id) {
+    var d = read(), cut = today(Date.now() - KEEP * 864e5)
+    d.after = d.after || {}; d.after[today()] = d.after[today()] || {}; d.after[today()][game] = id
+    Object.keys(d.after).forEach(function (k) { if (k < cut) delete d.after[k] })
+    write(d)
+  }
+  function askAfter (game) {
+    if (document.getElementById('dfeel') || askedAfter(game)) return false
+    css()
+    var o = document.createElement('div'); o.id = 'dfeel'; o.dataset.after = game; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Belum berhasil. Kamu merasa apa?')
+    var card = document.createElement('div'); card.className = 'dfeel-card'
+    var skip = document.createElement('button'); skip.className = 'dfeel-skip'; skip.setAttribute('aria-label', 'Lewati')
+    skip.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="#3A2B12" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+    skip.addEventListener('click', function () { storeAfter(game, 'lewat'); close() })
+    var h = document.createElement('h2'); h.textContent = 'Belum berhasil. Kamu merasa apa?'
+    var row = document.createElement('div'); row.className = 'dfeel-row'
+    FEELINGS.filter(function (f) { return AFTER.indexOf(f.id) >= 0 }).forEach(function (f) {
+      var b = document.createElement('button'); b.className = 'dfeel-face'; b.dataset.feel = f.id; b.setAttribute('aria-label', f.name)
+      var img = document.createElement('img'); img.alt = ''; img.src = ASSET(f.img)
+      var t = document.createElement('span'); t.textContent = f.name
+      b.appendChild(img); b.appendChild(t)
+      b.addEventListener('click', function () {
+        storeAfter(game, f.id)
+        if (W.DuniaBus) W.DuniaBus.emit('feeling', { feeling: f.id, after: game })
+        card.innerHTML = ''
+        var big = document.createElement('img'); big.className = 'dfeel-big'; big.alt = ''; big.src = ASSET(f.img)
+        var p = document.createElement('p'); p.className = 'dfeel-line'; p.textContent = AFTER_LINE[f.id]
+        var go = document.createElement('button'); go.className = 'dfeel-go'; go.textContent = 'Oke'
+        go.addEventListener('click', close)
+        card.appendChild(big); card.appendChild(p)
+        if (f.calm && W.DuniaBreath) { var br = document.createElement('button'); br.className = 'dfeel-go dfeel-calm'; br.textContent = 'Tarik napas bareng'; br.addEventListener('click', function () { close(); W.DuniaBreath.open() }); card.appendChild(br) }
+        card.appendChild(go)
+      })
+      row.appendChild(b)
+    })
+    card.appendChild(skip); card.appendChild(h); card.appendChild(row)
+    o.appendChild(card); document.body.appendChild(o)
+    enter(o, card, [h].concat([].slice.call(row.children)))
+    return true
+  }
+  function afterWeek () {
+    var a = read().after || {}, out = {}, cut = today(Date.now() - 6 * 864e5)
+    Object.keys(a).forEach(function (k) { if (k < cut) return; Object.keys(a[k]).forEach(function (g) { var v = a[k][g]; if (v !== 'lewat') out[v] = (out[v] || 0) + 1 }) })
+    return out
+  }
+  var attached = false
+  function attach () {
+    if (attached || !W.DuniaBus) return
+    attached = true
+    W.DuniaBus.on('level:end', function (ev) {
+      if (!ev || ev.win !== false || !ev.game || !hasChild()) return
+      if (navigator.webdriver && !forced()) return   // the gates that lose levels on purpose are not blocked by a card
+      setTimeout(function () { askAfter(String(ev.game)) }, 900)   // after the game's own result screen
+    })
+  }
+
   function week () {
     var d = read().days, out = {}, cut = today(Date.now() - 6 * 864e5)
     Object.keys(d).forEach(function (k) { if (k >= cut && d[k] !== 'lewat') out[d[k]] = (out[d[k]] || 0) + 1 })
     return out
   }
 
-  W.DuniaFeeling = { maybeAsk: maybeAsk, ask: ask, week: week, FEELINGS: FEELINGS, KEY: KEY }
+  W.DuniaFeeling = { maybeAsk: maybeAsk, ask: ask, week: week, FEELINGS: FEELINGS, KEY: KEY, askAfter: askAfter, afterWeek: afterWeek, attach: attach }
+  attach()
 })()

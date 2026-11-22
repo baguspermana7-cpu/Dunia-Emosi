@@ -3758,7 +3758,11 @@ function renderDashLearning() {
   // the daily feeling check-in: which faces this child picked over the week
   const F=(window.DuniaFeeling&&window.DuniaFeeling.FEELINGS)||[]
   const feelHtml=F.filter(f=>feel[f.id]).map(f=>`<span class="dash-feel-item"><img src="assets/db/${f.img}" alt="">${esc(f.name)} ${feel[f.id]}</span>`).join('')
-  const feelRow=feelHtml?`<div class="dash-learn-row dash-feel"><div class="dash-learn-skill">Perasaan minggu ini</div><div class="dash-feel-list">${feelHtml}</div></div>`:''
+  const feelRow0=feelHtml?`<div class="dash-learn-row dash-feel"><div class="dash-learn-skill">Perasaan minggu ini</div><div class="dash-feel-list">${feelHtml}</div></div>`:''
+  // PRD-16C: the faces picked after a level not won, in their own row
+  let aft={}; try { aft=window.DuniaFeeling&&window.DuniaFeeling.afterWeek ? window.DuniaFeeling.afterWeek() : {} } catch(e) { aft={} }
+  const aftHtml=F.filter(f=>aft[f.id]).map(f=>`<span class="dash-feel-item"><img src="assets/db/${f.img}" alt="">${esc(f.name)} ${aft[f.id]}</span>`).join('')
+  const feelRow=feelRow0+(aftHtml?`<div class="dash-learn-row dash-feel dash-feel-after"><div class="dash-learn-skill">Setelah belum berhasil</div><div class="dash-feel-list">${aftHtml}</div></div>`:'')
   if(!rows.length){
     box.innerHTML=feelRow+'<div class="dash-learn-empty">Belum ada jawaban tercatat minggu ini. Jawaban dari Kuis Matematika, Ayo Berhitung dan soal di Timmy Kapal akan muncul di sini.</div>'
     return

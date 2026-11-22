@@ -259,15 +259,17 @@
   // does not have them (PRD-49: also level:start, level:end, reward). Events wait in order until the bus is there.
   function DuniaEmit(type, payload) {
     try {
-      if (window.DuniaBus && window.LearningLog) return window.DuniaBus.emit(type, payload);
+      // while the loader is still bringing modules in, queue: an event sent before the last one arrives would reach
+      // nobody (PRD-16C: level:end passed the feeling card by) and overtake the queued level:start
+      if (window.DuniaBus && window.LearningLog && !_ansLoading) return window.DuniaBus.emit(type, payload);
       _ansQ.push([type, payload]);
       if (_ansLoading || !_myScript) return null;
       _ansLoading = true;
       const base = _myScript.replace(/[^/]*$/, ''), q = _myScript.indexOf('?') >= 0 ? _myScript.slice(_myScript.indexOf('?')) : '';
-      const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js', 'reward-book.js', 'session-rhythm.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
+      const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js', 'reward-book.js', 'session-rhythm.js', 'feeling-checkin.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
       (function next() {
         const f = files.shift();
-        if (!f) { _ansLoading = false; if (window.RewardBook) window.RewardBook.attach(); /* PRD-22: a book loaded before the bus */ if (window.DuniaRhythm) window.DuniaRhythm.attach(); /* PRD-21 */ if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit(x[0], x[1]) } catch (_) {} }); return }
+        if (!f) { _ansLoading = false; if (window.RewardBook) window.RewardBook.attach(); /* PRD-22: a book loaded before the bus */ if (window.DuniaRhythm) window.DuniaRhythm.attach(); /* PRD-21 */ if (window.DuniaFeeling && window.DuniaFeeling.attach) window.DuniaFeeling.attach(); /* PRD-16C */ if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit(x[0], x[1]) } catch (_) {} }); return }
         const el = document.createElement('script'); el.src = base + f + q; el.onload = el.onerror = next; document.head.appendChild(el);
       })();
     } catch (_) {}
