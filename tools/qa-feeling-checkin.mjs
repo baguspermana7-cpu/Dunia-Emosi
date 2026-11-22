@@ -31,16 +31,22 @@ async function menu (q, w = 390, h = 844) {
   await p.goto(BASE + 'index.html?nocine=1' + q, { waitUntil: 'load' }); await sleep(2200)
   await p.evaluate(() => goToMenu()); await sleep(1500)
 }
-const shown = () => p.evaluate(() => !!document.getElementById('dfeel'))
+// the card is built after the map settles and its pictures arrive over the network: under CI load that took > 1.5 s,
+// so a check reads them once they had their chance (a picture that never loads still fails at 10 s)
+const shown = () => p.waitForFunction(() => !!document.getElementById('dfeel'), { timeout: 8000 }).then(() => true, () => false)
+// 'not shown' waits out the same delay, so a card that would arrive late is still seen
+const absent = async () => { await sleep(4000); return !(await p.evaluate(() => !!document.getElementById('dfeel'))) }
+const facesLoaded = () => p.waitForFunction(() => [...document.querySelectorAll('#dfeel .dfeel-face img')].every(i => i.complete && i.naturalWidth > 0), { timeout: 10000 }).catch(() => {})
 const tap = async sel => { const h = await p.$(sel); if (!h) return false; const r = await h.boundingBox(); await p.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2); return true }
 
 // automated browser, no ?feel=1: never blocked
 await seed(0, true); await menu('')
-ok(!(await shown()), 'an automated browser without ?feel=1 is not shown the card')
+ok((await absent()), 'an automated browser without ?feel=1 is not shown the card')
 
 for (const [w, h] of [[390, 844], [1280, 800]]) {
   await seed(0, true); await menu('&feel=1', w, h)
   ok(await shown(), `${w}: the card opens on the map`)
+  await facesLoaded()
   // measure the card at rest: its entrance scales 0.95 -> 1, and a sample taken mid-way reads 46 px for a 48 px button
   await p.evaluate(() => Promise.all(document.getAnimations().filter(a => { const t = a.effect && a.effect.getComputedTiming(); return t && isFinite(t.endTime) }).map(a => a.finished.catch(() => {}))))
   const c = await p.evaluate(() => {
@@ -75,7 +81,7 @@ ok(await tap('#dfeel .dfeel-go'), 'tap "Ayo main"')
   ok((pe === 'none' || pe === 'gone') && gone, `"Ayo main" closes the card: taps pass at once (${pe}), gone within 700 ms (${gone})`)
 }
 await p.evaluate(() => goToMenu()); await sleep(1500)
-ok(!(await shown()), 'not asked twice the same day')
+ok((await absent()), 'not asked twice the same day')
 // dashboard shows the week
 await p.evaluate(() => showDashboard(true)); await sleep(600)
 const dash = await p.evaluate(() => { const e = document.querySelector('#dash-learn .dash-feel'); return e ? e.textContent.replace(/\s+/g, ' ').trim() : null })
@@ -83,11 +89,12 @@ ok(dash && /Perasaan minggu ini/.test(dash) && /Sedih 1/.test(dash), `dashboard 
 // sibling is asked separately, and skip works
 await seed(1, false); await menu('&feel=1')
 ok(await shown(), 'the sibling is asked separately')
+await p.evaluate(() => Promise.all(document.getAnimations().filter(a => { const t = a.effect && a.effect.getComputedTiming(); return t && isFinite(t.endTime) }).map(a => a.finished.catch(() => {}))))   // tap the card at rest
 ok(await tap('#dfeel .dfeel-skip'), 'tap skip'); await sleep(400)
 r = await p.evaluate(() => JSON.parse(localStorage.getItem('dunia-avatar-rabbit-feelings') || 'null'))
-ok(!(await shown()) && r && Object.values(r.days)[0] === 'lewat', `skip closes and counts as answered (${JSON.stringify(r)})`)
+ok((await absent()) && r && Object.values(r.days)[0] === 'lewat', `skip closes and counts as answered (${JSON.stringify(r)})`)
 await p.evaluate(() => goToMenu()); await sleep(1500)
-ok(!(await shown()), 'a skipped day is not asked again')
+ok((await absent()), 'a skipped day is not asked again')
 ok(!errs.length, `page errors: ${errs.slice(0, 3).join(' | ')}`)
 await b.close()
 console.log(`qa-feeling-checkin: ${pass}/${pass + fail} checks passed`)
