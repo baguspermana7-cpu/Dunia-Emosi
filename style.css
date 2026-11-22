@@ -8411,3 +8411,7 @@ button:disabled, [aria-disabled="true"] {
   #screen-game9 > .g9-canvas-wrap.g9-word{ width:min(56vw, calc((100vh - 96px) / .42)) !important; height:calc(min(56vw, calc((100vh - 96px) / .42)) * .42) !important; }
   #screen-game9 .g9-letter-display{ font-size:56px !important; }
 }
+
+/* PRD-22: the Buku Koleksi button on the beranda, beside the mute button (games/data/reward-book.js) */
+#screen-menu .menu-book { width:48px; height:48px; margin-right:8px; border:none; border-radius:14px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.92); color:#b45309; box-shadow:0 3px 0 rgba(0,0,0,.12); flex:none; }

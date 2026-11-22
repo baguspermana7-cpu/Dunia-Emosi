@@ -1185,6 +1185,8 @@
     var home2 = chap && nextK < 0 && !!w.chapters
     var fact = (w.cards || [])[Math.min((w.cards || []).length - 1, Math.floor(k / Math.max(1, (w.levels || []).length / 3)))]
     if (HUB) { try { HUB.destroy() } catch (e) {} }
+    // PRD-22: a new compass badge goes into the child's Buku Koleksi
+    if (newFrag && W.DuniaEmit) { try { W.DuniaEmit('reward', { id: 'lencana-' + w.id, kind: 'badge', src: 'timmy', title: 'Lencana ' + w.name }) } catch (e) {} }
     HUB = TKHub.reward($('scr-reward'), {
       world: w, k: k, stars: stars, scene: lv.scene || w.scene,
       chapter: chap ? w.name + ' · Bab ' + lv.no + ' · ' + lv.title : w.name,

@@ -95,6 +95,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd55-mute.mjs
   echo "== G9 Jejak Huruf: picture word, a note per stroke, stroke-order arrows, landscape fit (PRD-52)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd52-g9.mjs
+  echo "== one Buku Koleksi per child across games: hub, train, Timmy; old train lists moved (PRD-22)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd22-book.mjs
   echo "== the freeze card shows a child who cannot read a picture and one replay button"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"

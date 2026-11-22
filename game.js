@@ -1858,6 +1858,8 @@ function checkAchievement(key) {
   if(!state.unlockedAchievements[key]){
     state.unlockedAchievements[key]=true
     try{localStorage.setItem(pkey('achievements'),JSON.stringify(state.unlockedAchievements))}catch(e){}
+    // PRD-22: the achievement goes into the child's Buku Koleksi (games/data/reward-book.js)
+    try{ if(window.DuniaEmit&&ACHIEVEMENTS[key]) DuniaEmit('reward',{id:key,kind:'badge',src:'hub',title:ACHIEVEMENTS[key].name.replace(/!.*$/,'').trim()}) }catch(e){}
     showAchievement(key)
   }
 }

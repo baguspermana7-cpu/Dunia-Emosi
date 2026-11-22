@@ -264,10 +264,10 @@
       if (_ansLoading || !_myScript) return null;
       _ansLoading = true;
       const base = _myScript.replace(/[^/]*$/, ''), q = _myScript.indexOf('?') >= 0 ? _myScript.slice(_myScript.indexOf('?')) : '';
-      const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
+      const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js', 'reward-book.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
       (function next() {
         const f = files.shift();
-        if (!f) { _ansLoading = false; if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit(x[0], x[1]) } catch (_) {} }); return }
+        if (!f) { _ansLoading = false; if (window.RewardBook) window.RewardBook.attach(); /* PRD-22: a book loaded before the bus */ if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit(x[0], x[1]) } catch (_) {} }); return }
         const el = document.createElement('script'); el.src = base + f + q; el.onload = el.onerror = next; document.head.appendChild(el);
       })();
     } catch (_) {}

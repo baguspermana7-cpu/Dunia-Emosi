@@ -48,6 +48,7 @@ TAGS.g7prd50 = /^qa-prd50-g7\.mjs$/   // PRD-50: G7 sprite bank >= 150, decoys o
 TAGS.g4prd51 = /^qa-prd51-g4\.mjs$/   // PRD-51: G4 sprites, 3 round kinds, number hint, landscape two columns
 TAGS.mute55 = /^qa-prd55-mute\.mjs$/   // PRD-55: no TTS, mute button on the hub headers
 TAGS.g9prd52 = /^qa-prd52-g9\.mjs$/   // PRD-52: G9 picture word, stroke notes, arrows
+TAGS.book22 = /^qa-prd22-book\.mjs$/   // PRD-22: Buku Koleksi across games, per child
 TAGS.events49 = /^qa-prd49-events\.mjs$/   // PRD-49: level:start/end + reward events; parent gate before the dashboard
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 
