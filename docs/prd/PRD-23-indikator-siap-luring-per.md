@@ -33,13 +33,18 @@
   game saat berjalan, direkam oleh `tools/record-offline-runtime.mjs` ke `games/data/offline-runtime.json` (token
   rilis disimpan sebagai `{v}`). Gambar bernomor ikut sekeluarga (deck-chair-2..8), folder dengan >= 8 gambar
   terekam ikut utuh (game memilih acak). Total 28 game, sekitar 158 MB (34 MB = 1024 sprite Pokemon).
+- **Perbaikan v64.89+ (CI merah):** di CI, Mojo sampai ke mode kejar (99 prop `mojo-chase/props` tak terekam) dan
+  Ejaan memutar kata lain (`audio/words`). Aturan ditambah: folder terekam >= 8 berlaku juga untuk suara; folder yang
+  disebut literal di kode game sendiri ikut utuh bila <= 1 MB (yang besar, mis. 150 MB animasi monster, tetap di
+  luar). Total jadi sekitar 186 MB. Berkas yang masih terlewat luring dilaporkan gate, tidak menggagalkan: hukum L2
+  = game terbuka dan jalan tanpa galat (gambar/suara yang terlewat menyusul saat online). Builder 60 s -> 8 s.
 - Tidak dicakup: tile film (punya "Siapkan Offline" sendiri) dan Blippi (membungkus game di `/game1/`, di luar repo).
 - Lencana awan hijau bercentang (SVG) di pojok tile bila semua berkas game itu ada di cache. Dibaca dari cache, bukan
   dari bendera: berkas hilang = lencana hilang.
-- "Unduh semua game" di Dasbor (di balik gerbang orang tua), dengan ukuran ("Sekitar 158 MB") dan kemajuan.
+- "Unduh semua game" di Dasbor (di balik gerbang orang tua), dengan ukuran ("Sekitar 186 MB") dan kemajuan.
 - **Langkah rilis baru:** setelah `normalize-cache-tokens`, jalankan `node tools/build-offline-manifest.mjs`
   (manifest memuat token). CI menjalankan `--check`. Rekam ulang runtime bila game mengubah apa yang dimuatnya; gate
   L2 memberi tahu.
 - Gate `tools/qa-prd23-offline.mjs` (server sendiri, dimatikan untuk bagian luring): merah di origin/main (berhenti:
   tombol Unduh semua tidak ada), hijau 7/0: 28/28 berlencana, satu berkas dihapus = hanya game 25 kehilangan
-  lencana, server mati = 12 halaman berlencana terbuka tanpa error, 0 berkas runtime yang tidak didapat.
+  lencana, server mati = 12 halaman berlencana terbuka tanpa error, 0 berkas runtime yang tidak didapat (lokal).

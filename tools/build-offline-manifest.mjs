@@ -46,6 +46,19 @@ function refs (page) {
   return [...out].sort()
 }
 
+// media bytes in a folder (-1: not a folder), measured once
+const FOLDER = new Map()
+function folderSize (d) {
+  if (FOLDER.has(d)) return FOLDER.get(d)
+  let sz = -1
+  const abs = path.join(ROOT, d)
+  if (!d.startsWith('..') && fs.existsSync(abs) && fs.statSync(abs).isDirectory()) {
+    sz = 0
+    for (const e of fs.readdirSync(abs, { withFileTypes: true })) if (e.isFile() && /\.(webp|png|jpg|svg|webm|mp3|ogg|m4a)$/.test(e.name)) sz += fs.statSync(path.join(abs, e.name)).size
+  }
+  FOLDER.set(d, sz)
+  return sz
+}
 const games = {}
 const tileRe = /<div class="wmap-node"[^>]*\bid="gtile-([^"]+)"[^>]*onclick="([^"]*)"/g
 let t
@@ -61,27 +74,50 @@ while ((t = tileRe.exec(index))) {
   if (!fs.existsSync(path.join(ROOT, file))) continue
   if (/<iframe\b[^>]*\ssrc=/i.test(read(file))) continue   // a wrapper around a game served elsewhere (blippi -> /game1/): cannot be offline from here
   const files = refs(file)
+  // exact URLs (the worker caches by URL, query included) and bare paths (a folder taken whole skips a file already
+  // listed under any query)
+  const seen = new Set(files), bare = new Set(files.map(f => f.split('?')[0]))
+  const put = (g, byPath) => { if (seen.has(g) || seen.has(decodeURI(g)) || (byPath && bare.has(g))) return; seen.add(g); bare.add(g.split('?')[0]); files.push(g) }
   if (page !== file) files.splice(files.indexOf(file), 1, page)   // the page as the tile opens it (its query kept)
   // the files the game asks for while it runs, recorded by tools/record-offline-runtime.mjs ({v} = the release token)
   ;(RUNTIME[id] || []).forEach(u => {
     const f = u.split('{v}').join(TOKEN), disk = path.join(ROOT, decodeURIComponent(f.split('?')[0]))
     if (!fs.existsSync(disk) || fs.statSync(disk).isDirectory()) return   // asked for but not in the tree (favicon.ico 404)
-    if (!files.includes(f) && !files.includes(decodeURI(f))) files.push(f)
+    put(f)
     // a game that picks one of a numbered family at random (deck-chair-3.webp, creatures/033.webp) may pick another
     // next time: the whole family comes along (same folder, same stem, same query)
     const [fp, fq] = f.split('?'), m = fp.match(/^(.*\/)([^/]*?)(-?\d+)?(\.(?:webp|png|jpg|svg))$/)
     if (m) {
       const stem = m[3] ? m[2] : /^\d+$/.test(m[2]) ? '' : m[2], re = stem ? new RegExp('^' + stem.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(-?\\d+)?' + m[4].replace('.', '\\.') + '$') : new RegExp('^\\d+' + m[4].replace('.', '\\.') + '$')
-      fs.readdirSync(path.join(ROOT, decodeURIComponent(m[1]))).filter(n => re.test(n)).forEach(n => { const g = m[1] + n + (fq ? '?' + fq : ''); if (!files.includes(g)) files.push(g) })
+      fs.readdirSync(path.join(ROOT, decodeURIComponent(m[1]))).filter(n => re.test(n)).forEach(n => put(m[1] + n + (fq ? '?' + fq : '')))
     }
   })
   // a game that draws many pictures from one folder (Timmy's props: 24 of 277 in one run) picks others next time:
   // a folder with 8 or more recorded pictures comes along whole
-  const per = {}
-  ;(RUNTIME[id] || []).forEach(u => { const m = u.split('?')[0].match(/^(.*\/)[^/]+\.(?:webp|png|jpg|svg)$/); if (m) per[m[1]] = (per[m[1]] || 0) + 1 })
-  Object.keys(per).filter(d => per[d] >= 8).forEach(d => {
+  // (pictures and sounds: ejaan-inggris says one of 330 words)
+  const MEDIA = /\.(webp|png|jpg|svg|webm|mp3|ogg|m4a)$/
+  const take = d => {
     const dir = path.join(ROOT, decodeURIComponent(d)); if (!fs.existsSync(dir)) return
-    fs.readdirSync(dir).filter(n => /\.(webp|png|jpg|svg)$/.test(n)).forEach(n => { const g = d + n; if (!files.includes(g) && !files.some(f => f.split('?')[0] === g)) files.push(g) })
+    fs.readdirSync(dir).filter(n => MEDIA.test(n) && fs.statSync(path.join(dir, n)).isFile()).forEach(n => put(d + n, true))
+  }
+  const per = {}
+  ;(RUNTIME[id] || []).forEach(u => { const m = u.split('?')[0].match(/^(.*\/)[^/]+\.(?:webp|png|jpg|svg|webm|mp3|ogg|m4a)$/); if (m) per[m[1]] = (per[m[1]] || 0) + 1 })
+  Object.keys(per).filter(d => per[d] >= 8).forEach(take)
+  // a folder the game's own code names ('assets/db/lib/mojo-chase/props/' + name) is where it builds file names:
+  // small ones (<= 1 MB) come along whole, so a part of the game the recorder did not reach still has its art
+  // (bigger folders - 25 MB of train backdrops, 150 MB of monster animation - stay out; the gate lists what was missed)
+  files.filter(f => /\.(js|html)$/.test(f.split('?')[0])).forEach(f => {
+    const src = path.join(ROOT, decodeURIComponent(f.split('?')[0])); if (!fs.existsSync(src)) return
+    const txt = fs.readFileSync(src, 'utf8'), re = /['"`]((?:\.\.\/|\.\/)*assets\/[\w./-]+\/)/g
+    let m
+    while ((m = re.exec(txt))) {
+      for (const b of [path.posix.dirname(f.split('?')[0]), path.posix.dirname(file), '.']) {
+        const d = path.posix.normalize(path.posix.join(b, m[1])), sz = folderSize(d)
+        if (sz < 0) continue
+        if (sz <= 1e6) take(d.endsWith('/') ? d : d + '/')
+        break
+      }
+    }
   })
   games[id] = { page, files: files.sort() }
 }
