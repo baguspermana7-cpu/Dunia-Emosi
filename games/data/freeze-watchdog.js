@@ -16,6 +16,11 @@
   if (typeof window === 'undefined') return;
   if (window.__freezeWatchdogInstalled) return;
   window.__freezeWatchdogInstalled = true;
+  // PRD-07: device health (games/data/telemetry.js), same folder and ?v= token as this file
+  try {
+    var me = document.currentScript && document.currentScript.src;
+    if (me && !window.DuniaTelemetry) { var ts = document.createElement('script'); ts.src = me.replace('freeze-watchdog.js', 'telemetry.js'); (document.head || document.documentElement).appendChild(ts); }
+  } catch (_) {}
 
   const KEY = '__freezeLog';
   const MAX = 20;
@@ -27,6 +32,8 @@
       while (arr.length > MAX) arr.shift();
       localStorage.setItem(KEY, JSON.stringify(arr));
     } catch (_) { /* localStorage may be full or disabled */ }
+    // PRD-07: the device-health buffer (telemetry.js) keeps its own copy, with the game it happened in
+    try { window.dispatchEvent(new CustomEvent('dunia-freeze', { detail: Object.assign({ t: Date.now() }, entry) })); } catch (_) {}
   }
 
   window.addEventListener('error', function (e) {

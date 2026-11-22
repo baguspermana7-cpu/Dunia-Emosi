@@ -3780,6 +3780,7 @@ function showDashboard(_pg) { if (!_pg && window.DuniaParentGate) return void Du
   const xp=getXP(), tier=getLevelTier(xp)
   try{ if(window.DuniaRhythm) DuniaRhythm.mountSetting(document.getElementById('dash-rhythm')) }catch(e){} // PRD-21: Waktu main
   try{ if(window.DuniaOffline) DuniaOffline.mountSetting(document.getElementById('dash-offline')) }catch(e){} // PRD-23: Unduh semua
+  try{ if(window.DuniaTelemetry) DuniaTelemetry.mountHealth(document.getElementById('dash-health')) }catch(e){} // PRD-07: Kesehatan perangkat
   // Player card
   document.getElementById('dash-player-card').innerHTML=`
     <div style="display:flex;align-items:center;gap:16px;background:white;border-radius:24px;padding:20px;box-shadow:0 8px 24px rgba(139,92,246,0.12);width:100%;max-width:500px;">

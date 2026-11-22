@@ -40,6 +40,9 @@ function refs (page) {
     const q = se.includes('?') ? se.slice(se.indexOf('?')) : ''
     lazy.forEach(f => { const n = f.slice(1, -1); if (fs.existsSync(path.join(ROOT, 'games/data', n))) out.add('games/data/' + n + q) })
   }
+  // freeze-watchdog.js loads telemetry.js beside itself (PRD-07)
+  const wd = [...out].find(u => /games\/data\/freeze-watchdog\.js/.test(u))
+  if (wd) out.add(wd.replace('freeze-watchdog.js', 'telemetry.js'))
   return [...out].sort()
 }
 

@@ -74,7 +74,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-23](PRD-23-indikator-siap-luring-per.md) | Indikator siap luring per game | Gelombang 2 | live v64.88 |
 | [PRD-22](PRD-22-satu-buku-koleksi-lintas.md) | Satu buku koleksi lintas game **[ANAK — hal baru di menu]** | Gelombang 2 | live v64.85 |
 | [PRD-16C](PRD-16C-namai-perasaan-dalam-cerita.md) | Namai perasaan dalam cerita **[ANAK — mekanik emosi baru]** | Gelombang 2 | live v64.87 |
-| [PRD-07](PRD-07-telemetri-lokal-kesehatan-perangkat.md) | Telemetri lokal + "Kesehatan perangkat" | Gelombang 3 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-07](PRD-07-telemetri-lokal-kesehatan-perangkat.md) | Telemetri lokal + "Kesehatan perangkat" | Gelombang 3 | live v64.89 |
 | [PRD-06](PRD-06-jalur-uji-perangkat-asli.md) | Jalur uji perangkat asli — **TERBLOKIR: owner menyalakan USB debugging + colok tablet** | Gelombang 3 | terblokir |
 | [PRD-29](PRD-29-shell-game-bersama-adopsi.md) | Shell game bersama (adopsi bertahap) | Gelombang 3 | ditutup 2026-11-21 (K3) |
 | [PRD-31](PRD-31-lampu-dipanggang-pilot.md) | Lampu dipanggang (pilot) | Gelombang 3 | ditutup 2026-11-21 (K3) |

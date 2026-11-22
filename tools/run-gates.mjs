@@ -51,6 +51,7 @@ TAGS.g9prd52 = /^qa-prd52-g9\.mjs$/   // PRD-52: G9 picture word, stroke notes, 
 TAGS.book22 = /^qa-prd22-book\.mjs$/   // PRD-22: Buku Koleksi across games, per child
 TAGS.rhythm21 = /^qa-prd21-rhythm\.mjs$/   // PRD-21: play-time limit, card, rest screen
 TAGS.feel16c = /^qa-prd16c-feel\.mjs$/   // PRD-16C: feeling card after a level not won
+TAGS.telemetry07 = /^qa-prd07-telemetry\.mjs$/   // PRD-07: device health buffer + Dasbor panel
 TAGS.offline23 = /^qa-prd23-offline\.mjs$/   // PRD-23: per-game offline badge, Unduh semua
 TAGS.events49 = /^qa-prd49-events\.mjs$/   // PRD-49: level:start/end + reward events; parent gate before the dashboard
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
