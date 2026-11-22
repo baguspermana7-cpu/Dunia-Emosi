@@ -8415,3 +8415,9 @@ button:disabled, [aria-disabled="true"] {
 /* PRD-22: the Buku Koleksi button on the beranda, beside the mute button (games/data/reward-book.js) */
 #screen-menu .menu-book { width:48px; height:48px; margin-right:8px; border:none; border-radius:14px; cursor:pointer;
   display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.92); color:#b45309; box-shadow:0 3px 0 rgba(0,0,0,.12); flex:none; }
+
+/* PRD-21: "Waktu main" in the Dasbor (games/data/session-rhythm.js) */
+#dash-rhythm .rh-opts { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+#dash-rhythm .rh-opts button { min-height:52px; border:2px solid #d6d3d1; border-radius:14px; background:#fff; color:#1f2937; font:inherit; font-size:16px; font-weight:800; cursor:pointer; }
+#dash-rhythm .rh-opts button[aria-checked="true"] { background:#65a30d; border-color:#4d7c0f; color:#fff; }
+#dash-rhythm .rh-note { margin:8px 0 0; font-size:14px; color:#57534e; }

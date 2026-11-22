@@ -3774,6 +3774,7 @@ function renderDashLearning() {
 function showDashboard(_pg) { if (!_pg && window.DuniaParentGate) return void DuniaParentGate.open(() => showDashboard(true)) // PRD-49: K2, behind the parent gate
   const p=state.players[state.currentPlayer]
   const xp=getXP(), tier=getLevelTier(xp)
+  try{ if(window.DuniaRhythm) DuniaRhythm.mountSetting(document.getElementById('dash-rhythm')) }catch(e){} // PRD-21: Waktu main
   // Player card
   document.getElementById('dash-player-card').innerHTML=`
     <div style="display:flex;align-items:center;gap:16px;background:white;border-radius:24px;padding:20px;box-shadow:0 8px 24px rgba(139,92,246,0.12);width:100%;max-width:500px;">

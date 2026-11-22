@@ -97,6 +97,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd52-g9.mjs
   echo "== one Buku Koleksi per child across games: hub, train, Timmy; old train lists moved (PRD-22)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd22-book.mjs
+  echo "== play-time limit: card after level:end, rest screen only the parent gate opens (PRD-21)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd21-rhythm.mjs
   echo "== the freeze card shows a child who cannot read a picture and one replay button"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"

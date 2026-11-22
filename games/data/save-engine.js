@@ -264,10 +264,10 @@
       if (_ansLoading || !_myScript) return null;
       _ansLoading = true;
       const base = _myScript.replace(/[^/]*$/, ''), q = _myScript.indexOf('?') >= 0 ? _myScript.slice(_myScript.indexOf('?')) : '';
-      const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js', 'reward-book.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
+      const files = ['dunia-bus.js', 'learning-log.js', 'mastery.js', 'reward-book.js', 'session-rhythm.js'].filter(f => ![...document.scripts].some(s => (s.getAttribute('src') || '').split('?')[0].split('/').pop() === f));
       (function next() {
         const f = files.shift();
-        if (!f) { _ansLoading = false; if (window.RewardBook) window.RewardBook.attach(); /* PRD-22: a book loaded before the bus */ if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit(x[0], x[1]) } catch (_) {} }); return }
+        if (!f) { _ansLoading = false; if (window.RewardBook) window.RewardBook.attach(); /* PRD-22: a book loaded before the bus */ if (window.DuniaRhythm) window.DuniaRhythm.attach(); /* PRD-21 */ if (window.DuniaBus) _ansQ.splice(0).forEach(x => { try { window.DuniaBus.emit(x[0], x[1]) } catch (_) {} }); return }
         const el = document.createElement('script'); el.src = base + f + q; el.onload = el.onerror = next; document.head.appendChild(el);
       })();
     } catch (_) {}
@@ -323,6 +323,9 @@
     const k = answerKind(text);
     return DuniaAnswer({ domain: k.domain, skill: k.skill, item: String(text || '').slice(0, 80), ok: !!ok, tries: tries || 1, ms: ms == null ? null : ms });
   }
+
+  // PRD-21: a rest screen the parent's time limit put up stays up on every page until the parent gate opens it
+  try { if (typeof window !== 'undefined' && localStorage.getItem('dunia-rest') && !window.DuniaRhythm) DuniaLoad('session-rhythm.js') } catch (_) {}
 
   if (typeof window !== 'undefined') {
     window.DuniaProfile = DuniaProfile;
