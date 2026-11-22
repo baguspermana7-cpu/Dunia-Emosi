@@ -25,7 +25,7 @@
   var OPS = ['kuis-matematika', 'ayo-berhitung', 'g13', 'g13b', 'g10']
   var MAP = {
     'Penjumlahan': OPS, 'Pengurangan': OPS, 'Perkalian': OPS, 'Pembagian': OPS,
-    'Menghitung benda': ['g4'], 'Berhitung': ['g4', 'ayo-berhitung'],
+    'Menghitung benda': ['g4'], 'Berhitung': ['g4', 'ayo-berhitung'], 'Membandingkan': ['g4'],   // PRD-51: G4 compare rounds
     'Huruf awal': ['g3'], 'Menyusun kata': ['g8'], 'Kata dan gambar': ['g7'], 'Menulis huruf': ['g9']
   }
   var SAFE = ['g4', 'kuis-matematika', 'g3', 'g7', 'ayo-berhitung', 'g8', 'g9']

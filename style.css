@@ -8338,3 +8338,36 @@ button:disabled, [aria-disabled="true"] {
 .next-card .nc-go { flex:0 0 auto; width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
   background:#16a34a; color:#ffffff; box-shadow:0 4px 0 #166534; }
 @media (prefers-reduced-motion: reduce) { .next-card { transition:none; } }
+
+/* PRD-51: G4 Hitung Binatang — flash rounds hide the pictures (they keep their place), compare rounds show two groups,
+   the number hint puts a badge on each tapped picture */
+#g4-animals .g4-cell { position:relative; display:inline-flex; }
+#g4-animals.g4-hidden .g4-animal-item { visibility:hidden; }
+#g4-animals.g4-hidden { background-image:radial-gradient(circle at 50% 50%, rgba(255,255,255,.18), transparent 70%) !important; }
+#g4-animals.g4-pair { flex-wrap:nowrap !important; align-items:stretch; gap:10px !important; }
+#g4-animals .g4-group { flex:1 1 0; display:flex; flex-wrap:wrap; align-content:center; justify-content:center; gap:4px;
+  padding:6px; border-radius:16px; background:rgba(255,255,255,.12); border:2px dashed rgba(255,255,255,.45); }
+#g4-animals.g4-hinting .g4-tap { cursor:pointer; }
+#g4-animals .g4-num { position:absolute; top:-6px; right:-6px; min-width:24px; height:24px; padding:0 5px; border-radius:12px;
+  background:#1d4ed8; color:#fff; font:900 15px/24px var(--font); text-align:center; box-shadow:0 2px 0 #1e3a8a; pointer-events:none; }
+.g4-choices.g4-pics .g4-choice-btn { display:flex; align-items:center; justify-content:center; min-height:72px; }
+.g4-choices.g4-pics .g4-pic { width:min(56px,12vh); height:min(56px,12vh); object-fit:contain; animation:none; }
+.g4-choice-btn:disabled { opacity:.45; }
+/* PRD-51: a short landscape phone (844x390) had the question, the mode pills and the picture grid stacked, and the
+   number choices below the fold. Two columns: pictures left; question, mode, choices and timer right. */
+@media (orientation:landscape) and (max-height:500px){
+  #screen-game4.active{ display:grid !important; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) !important;
+    grid-auto-rows:auto !important; column-gap:12px !important; align-content:start !important; align-items:start !important;
+    padding:6px 12px 6px !important; overflow:hidden !important; }
+  #screen-game4 > .game-header, #screen-game4 > .progress-bar-wrap{ grid-column:1 / -1 !important; }
+  #screen-game4 > .round-dots, #screen-game4 > .mascot-guide, #screen-game4 > .g4-progress{ display:none !important; }
+  #screen-game4 #g4-animals{ grid-column:1 !important; grid-row:3 / span 5 !important; align-self:stretch !important;
+    max-height:calc(100vh - 92px) !important; margin:0 !important; overflow:hidden !important; max-width:none !important; width:100% !important; }
+  #screen-game4 .g4-question{ grid-column:2 !important; grid-row:3 !important; font-size:16px !important; padding:6px 10px !important; }
+  #screen-game4 .g4-mode-toggle{ grid-column:2 !important; grid-row:4 !important; margin:4px 0 !important; }
+  #screen-game4 .g4-choices{ grid-column:2 !important; grid-row:5 !important; width:100% !important; margin:4px 0 !important; gap:6px !important; }
+  #screen-game4 .g4-choices .g4-choice-btn{ flex:1 1 60px !important; min-width:56px !important; min-height:48px !important; padding:6px 8px !important; }
+  #screen-game4 .g4-timer-track{ grid-column:2 !important; grid-row:6 !important; width:100% !important; }
+  #screen-game4 .g4-timer-text{ grid-column:2 !important; grid-row:7 !important; }
+  #screen-game4 #g4-animals .g4-animal-item{ width:clamp(32px,9vh,52px) !important; height:clamp(32px,9vh,52px) !important; }
+}

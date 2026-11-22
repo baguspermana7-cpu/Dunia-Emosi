@@ -89,6 +89,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd20-next.mjs
   echo "== G7 Tebak Gambar: sprite bank, decoys from one group, listen rounds only with an id-ID voice (PRD-50)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd50-g7.mjs
+  echo "== G4 Hitung Binatang: count / flash / compare rounds, number hint after 2 wrong (PRD-51)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd51-g4.mjs
   echo "== the freeze card speaks to a child who cannot read"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"

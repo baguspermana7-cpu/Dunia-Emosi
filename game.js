@@ -283,14 +283,6 @@ const MATCH_PAIRS_SEKOLAH = [
   {id:'sk12',emoji:'📓',label:'Buku Tulis'},
 ]
 const ANIMALS_PICKER = ['🦁','🐰','🐘','🦊','🐸','🐯','🐼','🐨']
-const ANIMALS_G4 = [
-  '🐘','🦁','🐯','🐸','🐰','🦊','🐼','🐨','🐧','🦆','🐓','🐑','🦒','🐴','🦋',
-  '🦀','🐢','🐊','🦅','🦭','🦧','🦚','🦜','🦩','🐙','🦑','🐬','🦈','🐳','🦦',
-  '🦥','🐝','🐞','🐛','🐿️','🦔','🦎','🦘','🦙','🐐','🦌','🐻','🐺','🦝','🐗',
-  '🐪','🦏','🦛','🐆','🦓'
-]
-const FRUITS_G4 = ['🍎','🍌','🍇','🍓','🍊','🍉','🥭','🍍','🥝','🍑','🍒','🍐','🫐','🍋','🥥','🍈','🍏','🥑','🍅','🍆']
-const OBJECTS_G4 = ['📚','⚽','🎈','🎨','✏️','🪑','🛏️','🚗','✈️','🚂','🎸','🥁','🎭','🔭','🎮']
 const POKEMON_G4 = [
   // Gen 1 starters & popular
   {id:25,name:'Pikachu'},{id:133,name:'Eevee'},{id:4,name:'Charmander'},{id:7,name:'Squirtle'},
@@ -2796,51 +2788,86 @@ function setG4Mode(isPoke){
   g4State.pokemonMode=isPoke
   document.getElementById('g4-btn-normal').classList.toggle('active',!isPoke)
   document.getElementById('g4-btn-poke').classList.toggle('active',isPoke)
-  document.getElementById('g4-mg').textContent=isPoke?'Hitung semua Pokémon-nya ya! 🎮':'Hitung semua binatangnya ya! 🔢'
+  document.getElementById('g4-mg').textContent=isPoke?'Hitung semua Pokémon-nya ya!':'Hitung semua ya! Jangan sampai ada yang terlewat'
   if(g4State.currentCount>0){
     clearInterval(state.g4Timer); g4State.answered=false
     renderG4Content(); startG4Timer()
   }
 }
+// PRD-51: three kinds of round, rotating count -> flash -> compare (Pokémon mode keeps plain counting):
+//   count    count the sprites, up to 10 or 20 (age band, capped by DuniaMastery 'matematika' tier 1-2 to 10)
+//   flash    1..5 sprites shown 1.5 s, then hidden: say how many without counting one by one (subitizing)
+//   compare  two groups of two sprites: "mana yang lebih banyak?", answered by tapping a picture
+// Sprites come from DBLabeled (hewan / buah / benda, the same art as G7), never emoji. After the 2nd wrong tap on a
+// count or flash round the number hint starts: each sprite gets its number when tapped (1, 2, 3 in tap order), the timer
+// stops and the round still takes the right answer. Only the first tap is reported (DuniaBus 'answer').
+const G4_GROUPS=['hewan','buah','benda'], G4_LABEL={hewan:'binatang',buah:'buah',benda:'benda'}
+function g4Pick(group,not){
+  try{ if(window.DBLabeled&&DBLabeled.all){ const all=DBLabeled.all().filter(x=>x.group===group&&x.src&&x.id!==not); if(all.length) return all[Math.floor(Math.random()*all.length)] } }catch(e){}
+  return null
+}
+function g4MaxCount(){
+  const tier=(state.players[state.currentPlayer]||{}).ageTier||'tumbuh'
+  let mx=tier==='cilik'?10:20
+  try{ if(window.DuniaMastery) mx=DuniaMastery.cap('matematika',mx,{1:10,2:10}) }catch(e){}
+  return mx
+}
 function nextG4Round(){
-  clearInterval(state.g4Timer)
+  clearInterval(state.g4Timer); clearTimeout(state.g4FlashTO)
   const totalRounds=state.mode==='duo'?g4State.maxRound*2:g4State.maxRound
-  if(g4State.round>=totalRounds){const perfect=g4State.correct>=g4State.maxRound;if(perfect)checkAchievements('perfect_g4');showResult('🔢','Hitung Selesai!','Kamu jago menghitung! 🔢✨');return}
-  if(state.mode==='duo'&&g4State.round===g4State.maxRound){state.currentPlayer=1;g4State.correct=0;updateGameStarDisplay();showFeedback(true,0,`Giliran ${state.players[1].name}! 🎮`,nextG4Round);return}
-  g4State.answered=false; g4State.round++
+  if(g4State.round>=totalRounds){const perfect=g4State.correct>=g4State.maxRound;if(perfect)checkAchievements('perfect_g4');showResult('🔢','Hitung Selesai!','Kamu jago menghitung!');return}
+  if(state.mode==='duo'&&g4State.round===g4State.maxRound){state.currentPlayer=1;g4State.correct=0;updateGameStarDisplay();showFeedback(true,0,`Giliran ${state.players[1].name}!`,nextG4Round);return}
+  g4State.answered=false; g4State.round++; g4State.wrongs=0; g4State.hint=false; g4State.reported=false; g4State.tapNo=0
   const roundInSet=(g4State.round-1)%g4State.maxRound; buildDots('g4-dots',g4State.maxRound,roundInSet)
   document.getElementById('g4-progress-bar').style.width=((roundInSet/g4State.maxRound)*100)+'%'
   document.getElementById('g4-progress').textContent=state.mode==='duo'?`${state.players[state.currentPlayer].name} — ${roundInSet+1}/${g4State.maxRound}`:`${roundInSet+1} / ${g4State.maxRound}`
-  const maxCount=g4State.maxCount
-  g4State.currentCount=1+Math.floor(Math.random()*maxCount)
-  // Rotate category every 3 rounds for variety: hewan → buah → benda → ...
-  const catIdx=Math.floor((g4State.round-1)/3)%3
-  g4State.catIdx=catIdx
-  const catPool=[ANIMALS_G4,FRUITS_G4,OBJECTS_G4][catIdx]
-  g4State.currentAnimal=catPool[Math.floor(Math.random()*catPool.length)]
-  // DB sprites (A-356) — richer illustrated art to count: hewan→creatures,
-  // benda→objects. Fruits keep emoji (no fruit category). Count logic unchanged.
-  g4State.currentDbSprite=null
-  try{ if(window.DBSprites){ if(catIdx===0) g4State.currentDbSprite=DBSprites.pick('creatures'); else if(catIdx===2) g4State.currentDbSprite=DBSprites.pick('objects') } }catch(e){}
+  g4State.maxCount=g4MaxCount()
+  const kind=g4State.forceKind||(g4State.pokemonMode?'count':['count','flash','compare'][roundInSet%3])
+  g4State.kind=kind
+  const group=G4_GROUPS[Math.floor((g4State.round-1)/3)%3]; g4State.group=group
+  g4State.item=g4Pick(group); g4State.item2=null; g4State.groupCounts=null
+  if(kind==='compare'){
+    g4State.item2=g4Pick(group,g4State.item&&g4State.item.id)
+    const top=Math.min(10,g4State.maxCount), gap=state.selectedLevel==='easy'?3:state.selectedLevel==='hard'?1:2
+    let n1,n2; do{ n1=1+Math.floor(Math.random()*top); n2=1+Math.floor(Math.random()*top) }while(Math.abs(n1-n2)<gap)
+    g4State.groupCounts=[n1,n2]; g4State.currentCount=Math.max(n1,n2); g4State.answer=n1>n2?'a':'b'
+    g4State.currentChoices=['a','b']
+  } else {
+    const top=kind==='flash'?5:g4State.maxCount
+    g4State.currentCount=g4State.forceCount?Math.min(g4State.forceCount,top):1+Math.floor(Math.random()*top); g4State.forceCount=0
+    g4State.answer=g4State.currentCount
+    // decoys: the nearest numbers in 1..top (a little shuffled). The old +-3 draw never ended when the answer sat at
+    // an edge and 6 choices were asked (hard level, answer 1: only 2 and 3 can be drawn)
+    const c0=g4State.currentCount, want=Math.min(g4State.choices-1,top-1)
+    const wrongs=[];for(let r=1;r<=top;r++) if(r!==c0) wrongs.push(r)
+    wrongs.sort((x,y)=>(Math.abs(x-c0)+Math.random()*1.5)-(Math.abs(y-c0)+Math.random()*1.5))
+    g4State.currentChoices=[c0,...wrongs.slice(0,want)].sort(()=>Math.random()-0.5)
+  }
   // Pokemon mode: pick target + 2 distractor types, each 1-2 copies
   const pokeIdx=Math.floor(Math.random()*POKEMON_G4.length)
   g4State.currentPoke=POKEMON_G4[pokeIdx]
   const otherPokes=POKEMON_G4.filter((_,i)=>i!==pokeIdx).sort(()=>Math.random()-0.5)
   g4State.distractors=otherPokes.slice(0,2).map(p=>({poke:p,count:1+Math.floor(Math.random()*2)}))
-  const wrongs=new Set()
-  while(wrongs.size<g4State.choices-1){const r=Math.max(1,Math.min(maxCount,g4State.currentCount+Math.floor(Math.random()*6)-3));if(r!==g4State.currentCount)wrongs.add(r)}
-  g4State.currentChoices=[g4State.currentCount,...[...wrongs]].sort(()=>Math.random()-0.5)
-  // Fairness: items animate in staggered (i*55ms). Start the timer only AFTER the
-  // last item has appeared so the kid isn't losing time counting invisible items.
+  // Fairness: items animate in staggered (i*55ms). The timer starts only AFTER the last item has appeared
+  // (a flash round: after the pictures are hidden again).
   renderG4Content()
   const enterMs=Math.min(1000,(g4State.currentCount||1)*55+220)
-  document.getElementById('g4-timer-text').textContent='Siap… 👀'
-  clearTimeout(state.g4StartTO); state.g4StartTO=setTimeout(startG4Timer,enterMs)
+  document.getElementById('g4-timer-text').textContent='Siap…'
+  clearTimeout(state.g4StartTO)
+  if(kind==='flash'&&!g4State.pokemonMode){
+    state.g4FlashTO=setTimeout(()=>{ const g=document.getElementById('g4-animals'); if(g&&!g4State.hint) g.classList.add('g4-hidden') },enterMs+1500)
+    state.g4StartTO=setTimeout(startG4Timer,enterMs+1500)
+  } else state.g4StartTO=setTimeout(startG4Timer,enterMs)
+}
+function g4Img(src,sz,i){
+  const img=document.createElement('img'); img.className='g4-animal-item'; img.src=src; img.alt=''; img.decoding='async'
+  img.style.width=sz; img.style.height=sz; img.style.objectFit='contain'; img.style.animationDelay=(i*55)+'ms'
+  return img
 }
 function renderG4Content(){
-  const {currentCount:count,currentAnimal,currentPoke,pokemonMode,choices:numChoices}=g4State
-  // Render grid
-  const grid=document.getElementById('g4-animals'); grid.innerHTML=''
+  const {currentCount:count,currentPoke,pokemonMode,choices:numChoices}=g4State
+  const grid=document.getElementById('g4-animals'); grid.innerHTML=''; grid.classList.remove('g4-hidden','g4-pair','g4-hinting')
+  const q=document.getElementById('g4-question'), mg=document.getElementById('g4-mg')
   if(pokemonMode&&currentPoke){
     // Build mixed grid: count copies of target + distractor copies, then shuffle
     const items=[]
@@ -2848,7 +2875,6 @@ function renderG4Content(){
     const distractors=g4State.distractors||[]
     distractors.forEach(d=>{ for(let i=0;i<d.count;i++) items.push(d.poke) })
     items.sort(()=>Math.random()-0.5)
-    // Dynamic size: shrink sprites when many items
     const totalItems = items.length
     const sprSize = totalItems > 12 ? 'clamp(30px,8vw,44px)' : totalItems > 8 ? 'clamp(36px,10vw,52px)' : 'clamp(40px,12vw,64px)'
     items.forEach((poke,i)=>{
@@ -2858,7 +2884,7 @@ function renderG4Content(){
       // Hotfix #104 (2026-04-28): shared cascade.
       const slug = _pokeSlug(poke)
       if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
-        attachSpriteCascade(img, buildPokeSources(slug, poke.id), '🐾')
+        attachSpriteCascade(img, buildPokeSources(slug, poke.id), '')
       } else {
         img.src = pokeSpriteAlt2(slug) || `assets/Pokemon/others/pokeball.svg`
       }
@@ -2867,37 +2893,78 @@ function renderG4Content(){
       if(poke.id!==currentPoke.id) img.style.opacity='0.75'
       grid.appendChild(img)
     })
-    document.getElementById('g4-question').textContent=`Ada berapa "${currentPoke.name}"? ⚡`
+    q.textContent=`Ada berapa "${currentPoke.name}"?`
+  } else if(g4State.kind==='compare'){
+    grid.classList.add('g4-pair')
+    const [n1,n2]=g4State.groupCounts, its=[g4State.item,g4State.item2]
+    const sz=Math.max(n1,n2)>6?'clamp(30px,8vw,46px)':'clamp(40px,11vw,60px)'
+    ;[n1,n2].forEach((n,k)=>{
+      const box=document.createElement('div'); box.className='g4-group'; box.dataset.side=k?'b':'a'
+      for(let i=0;i<n;i++) box.appendChild(g4Cell(g4Img(its[k].src,sz,i)))
+      grid.appendChild(box)
+    })
+    q.textContent='Mana yang lebih banyak?'
   } else {
-    const dbSpr=g4State.currentDbSprite
-    // dynamic size: shrink when many items so the grid stays tidy
-    const _sz = count>12?'clamp(30px,8vw,46px)':count>8?'clamp(38px,10vw,56px)':'clamp(46px,13vw,68px)'
-    for(let i=0;i<count;i++){
-      if(dbSpr){
-        const img=document.createElement('img'); img.className='g4-animal-item'; img.src=dbSpr; img.alt=''
-        img.style.width=_sz; img.style.height=_sz; img.style.objectFit='contain'; img.style.animationDelay=(i*55)+'ms'
-        img.onerror=function(){ this.replaceWith(Object.assign(document.createElement('span'),{className:'g4-animal-item',textContent:currentAnimal})) }
-        grid.appendChild(img)
-      } else {
-        const s=document.createElement('span');s.className='g4-animal-item';s.textContent=currentAnimal;s.style.animationDelay=(i*55)+'ms';grid.appendChild(s)
-      }
-    }
-    // Category-aware label matches the rotating catPool (hewan → buah → benda)
-    const _g4CatLabels=['binatang','buah','benda']
-    const _g4CatLabel=_g4CatLabels[g4State.catIdx]||'barang'
-    document.getElementById('g4-question').textContent=`Ada berapa ${_g4CatLabel}? 🤔`
+    const it=g4State.item
+    const sz=count>12?'clamp(30px,8vw,46px)':count>8?'clamp(38px,10vw,56px)':'clamp(46px,13vw,68px)'
+    for(let i=0;i<count;i++) grid.appendChild(g4Cell(g4Img(it.src,sz,i)))
+    const nm=String(it.name||G4_LABEL[g4State.group]).toLowerCase()
+    q.textContent=g4State.kind==='flash'?`Lihat sekilas! Ada berapa ${nm}?`:`Ada berapa ${nm}?`
   }
+  if(mg) mg.textContent=pokemonMode?'Hitung semua Pokémon-nya ya!':g4State.kind==='flash'?'Lihat cepat, gambarnya akan bersembunyi!':g4State.kind==='compare'?'Bandingkan dua kelompok, mana yang lebih banyak?':'Hitung semua ya! Jangan sampai ada yang terlewat'
   // Render choices
-  const choicesEl=document.getElementById('g4-choices'); choicesEl.innerHTML=''
+  const choicesEl=document.getElementById('g4-choices'); choicesEl.innerHTML=''; choicesEl.classList.toggle('g4-pics',g4State.kind==='compare'&&!pokemonMode)
   g4State.currentChoices.forEach(ch=>{
-    const btn=document.createElement('button'); btn.className='g4-choice-btn'; btn.textContent=ch
-    if(numChoices>4)btn.style.fontSize='26px'
-    btn.onclick=()=>{if(g4State.answered)return;g4State.answered=true;clearInterval(state.g4Timer);const correct=ch===count;duniaReport('g4','matematika','count',String(count),correct);choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count){b.classList.add('correct');if(!correct)spawnCorrectCardJuice(b,{burst:false})}});if(!correct){btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')}else{playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g4State.correct++};setTimeout(nextG4Round,1300)}
+    const btn=document.createElement('button'); btn.className='g4-choice-btn'; btn.dataset.v=ch
+    if(g4State.kind==='compare'&&!pokemonMode){ const it=ch==='a'?g4State.item:g4State.item2; btn.appendChild(g4Img(it.src,'min(56px,12vh)',0)); btn.firstChild.className='g4-pic'; btn.setAttribute('aria-label','Kelompok '+(ch==='a'?'kiri':'kanan')) }
+    else { btn.textContent=ch; if(numChoices>4)btn.style.fontSize='26px' }
+    btn.onclick=()=>g4Answer(ch,btn)
     choicesEl.appendChild(btn)
+  })
+}
+function g4Cell(img){ const c=document.createElement('span'); c.className='g4-cell'; c.appendChild(img); return c }
+function g4Answer(ch,btn){
+  if(g4State.answered||btn.disabled) return
+  const right=String(ch)===String(g4State.answer), choicesEl=document.getElementById('g4-choices')
+  if(!g4State.reported){ g4State.reported=true; duniaReport('g4','matematika',g4State.kind==='compare'?'compare':'count',g4State.kind+' '+(g4State.groupCounts?g4State.groupCounts.join('-'):g4State.currentCount),right) }
+  if(right){
+    g4State.answered=true; clearInterval(state.g4Timer); clearTimeout(state.g4FlashTO)
+    choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>b.style.pointerEvents='none')
+    btn.classList.add('correct'); playCorrect(); spawnCorrectCardJuice(btn); flashScreen('green')
+    if(!g4State.wrongs){ quizStreakHit(btn); addStars(1,btn); g4State.correct++ }
+    document.getElementById('g4-animals').classList.remove('g4-hidden')
+    setTimeout(nextG4Round,1300); return
+  }
+  g4State.wrongs++; btn.disabled=true; btn.classList.add('wrong'); spawnWrongShake(btn); quizStreakReset(); playWrong()
+  const left=[...choicesEl.querySelectorAll('.g4-choice-btn')].filter(b=>!b.disabled)
+  if(g4State.wrongs>=2&&g4State.kind!=='compare') g4StartHint()
+  if(left.length<=1||(g4State.kind==='compare')){   // nothing left to try: show the answer and go on
+    g4State.answered=true; clearInterval(state.g4Timer); flashScreen('red')
+    choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(String(b.dataset.v)===String(g4State.answer)){b.classList.add('correct');spawnCorrectCardJuice(b,{burst:false})}})
+    document.getElementById('g4-animals').classList.remove('g4-hidden')
+    setTimeout(nextG4Round,1600)
+  }
+}
+// the number hint (PRD-51 L2): the pictures come back, each tap on one gives it the next number
+function g4StartHint(){
+  if(g4State.hint) return
+  g4State.hint=true; g4State.tapNo=0; clearInterval(state.g4Timer); clearTimeout(state.g4FlashTO)
+  const grid=document.getElementById('g4-animals'); grid.classList.remove('g4-hidden'); grid.classList.add('g4-hinting')
+  document.getElementById('g4-timer-text').textContent='Ketuk satu per satu, Kakak beri nomor'
+  const mg=document.getElementById('g4-mg'); if(mg) mg.textContent='Ketuk tiap gambar, nanti muncul nomornya'
+  grid.querySelectorAll('.g4-animal-item').forEach(img=>{
+    img.classList.add('g4-tap')
+    img.addEventListener('click',()=>{
+      const cell=img.closest('.g4-cell')||img.parentElement
+      if(!cell||cell.querySelector('.g4-num')) return
+      const n=document.createElement('span'); n.className='g4-num'; n.textContent=String(++g4State.tapNo); cell.appendChild(n)
+      try{ playClick() }catch(e){}
+    })
   })
 }
 function startG4Timer(){
   const fill=document.getElementById('g4-fill'),count=g4State.currentCount
+  if(g4State.hint||g4State.answered) return
   fill.style.width='100%'; fill.style.background='linear-gradient(90deg,#F59E0B,#FCD34D)'
   let timeLeft=g4State.timerSec
   document.getElementById('g4-timer-text').textContent=timeLeft+' detik'
@@ -2905,7 +2972,7 @@ function startG4Timer(){
     timeLeft--;const pct=(timeLeft/g4State.timerSec)*100;fill.style.width=pct+'%'
     if(timeLeft<=Math.floor(g4State.timerSec*0.35))fill.style.background='linear-gradient(90deg,#F43F5E,#F59E0B)'
     document.getElementById('g4-timer-text').textContent=timeLeft+' detik'
-    if(timeLeft<=0){clearInterval(state.g4Timer);if(!g4State.answered){g4State.answered=true;duniaReport('g4','matematika','count',String(count),false);const choicesEl=document.getElementById('g4-choices');choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count)b.classList.add('correct')});playWrong();flashScreen('red');setTimeout(nextG4Round,1300)}}
+    if(timeLeft<=0){clearInterval(state.g4Timer);if(!g4State.answered){g4State.answered=true;if(!g4State.reported){g4State.reported=true;duniaReport('g4','matematika',g4State.kind==='compare'?'compare':'count',String(count),false)};const choicesEl=document.getElementById('g4-choices');choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(String(b.dataset.v)===String(g4State.answer))b.classList.add('correct')});document.getElementById('g4-animals').classList.remove('g4-hidden');playWrong();flashScreen('red');setTimeout(nextG4Round,1300)}}
   },1000)
 }
 
