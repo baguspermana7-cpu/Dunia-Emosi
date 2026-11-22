@@ -1,7 +1,7 @@
 # PRD-23 Indikator siap luring per game
 
 - **Gelombang:** Gelombang 2 — pengalaman anak & orang tua
-- **Status:** belum mulai
+- **Status:** live v64.88 (2026-11-22)
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #23
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -24,3 +24,22 @@
   - L1: satu aset dihapus dari cache → hanya lencana game itu yang hilang.
   - L2: setelah "unduh semua" + offline → setiap game berlencana bisa dimulai (gate offline yang sudah ada).
   - L3: manifest segar: dibangun ulang = tidak berubah, dicek di CI.
+
+## Hasil (v64.88, 2026-11-22)
+
+- `tools/build-offline-manifest.mjs` menulis `games/data/offline-manifest.json`: per tile peta beranda, berkas yang
+  dibutuhkan game itu untuk dibuka tanpa internet, persis seperti diminta peramban (`?v=` ikut, karena service worker
+  menyimpan per URL). Isinya: halaman + rujukan statisnya, modul pemuat `save-engine.js`, dan berkas yang diminta
+  game saat berjalan, direkam oleh `tools/record-offline-runtime.mjs` ke `games/data/offline-runtime.json` (token
+  rilis disimpan sebagai `{v}`). Gambar bernomor ikut sekeluarga (deck-chair-2..8), folder dengan >= 8 gambar
+  terekam ikut utuh (game memilih acak). Total 28 game, sekitar 158 MB (34 MB = 1024 sprite Pokemon).
+- Tidak dicakup: tile film (punya "Siapkan Offline" sendiri) dan Blippi (membungkus game di `/game1/`, di luar repo).
+- Lencana awan hijau bercentang (SVG) di pojok tile bila semua berkas game itu ada di cache. Dibaca dari cache, bukan
+  dari bendera: berkas hilang = lencana hilang.
+- "Unduh semua game" di Dasbor (di balik gerbang orang tua), dengan ukuran ("Sekitar 158 MB") dan kemajuan.
+- **Langkah rilis baru:** setelah `normalize-cache-tokens`, jalankan `node tools/build-offline-manifest.mjs`
+  (manifest memuat token). CI menjalankan `--check`. Rekam ulang runtime bila game mengubah apa yang dimuatnya; gate
+  L2 memberi tahu.
+- Gate `tools/qa-prd23-offline.mjs` (server sendiri, dimatikan untuk bagian luring): merah di origin/main (berhenti:
+  tombol Unduh semua tidak ada), hijau 7/0: 28/28 berlencana, satu berkas dihapus = hanya game 25 kehilangan
+  lencana, server mati = 12 halaman berlencana terbuka tanpa error, 0 berkas runtime yang tidak didapat.

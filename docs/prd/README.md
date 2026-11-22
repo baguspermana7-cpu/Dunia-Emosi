@@ -71,7 +71,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-18](PRD-18-setelan-profil-dipakai-semua.md) | Setelan profil dipakai semua game | Gelombang 2 | live v64.51 |
 | [PRD-14](PRD-14-cakupan-narasi-suara.md) | Cakupan narasi suara **[ANAK — suara baru]** | Gelombang 2 | dibatalkan (owner 2026-11-22: tanpa suara bicara, PRD-55) |
 | [PRD-21](PRD-21-ritme-sesi.md) | Ritme sesi **[ANAK]** | Gelombang 2 | live v64.86 |
-| [PRD-23](PRD-23-indikator-siap-luring-per.md) | Indikator siap luring per game | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-23](PRD-23-indikator-siap-luring-per.md) | Indikator siap luring per game | Gelombang 2 | live v64.88 |
 | [PRD-22](PRD-22-satu-buku-koleksi-lintas.md) | Satu buku koleksi lintas game **[ANAK — hal baru di menu]** | Gelombang 2 | live v64.85 |
 | [PRD-16C](PRD-16C-namai-perasaan-dalam-cerita.md) | Namai perasaan dalam cerita **[ANAK — mekanik emosi baru]** | Gelombang 2 | live v64.87 |
 | [PRD-07](PRD-07-telemetri-lokal-kesehatan-perangkat.md) | Telemetri lokal + "Kesehatan perangkat" | Gelombang 3 | belum mulai (revisi 2026-11-21, Gelombang 5) |

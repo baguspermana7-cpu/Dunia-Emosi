@@ -101,6 +101,9 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd21-rhythm.mjs
   echo "== after a level not won: three faces, once a day per game, own Dasbor row (PRD-16C)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd16c-feel.mjs
+  echo "== offline: per-game manifest fresh; badge per game; Unduh semua; badged games open offline (PRD-23)"
+  node tools/build-offline-manifest.mjs --check
+  node tools/qa-prd23-offline.mjs
   echo "== the freeze card shows a child who cannot read a picture and one replay button"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-freeze-card.mjs
   echo "== daily feeling check-in, once a day per child"
