@@ -326,7 +326,7 @@ if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n
   await sleep(900)
   const tut = await p.evaluate(() => ({ s: __h.state().tutorial, l: document.querySelector('.tkl-left').classList.contains('is-demo'), r: document.querySelector('.tkl-right').classList.contains('is-demo'),
     anim: getComputedStyle(document.querySelector('.tkl-left')).animationName, hint: document.querySelector('.tkl-hint.is-on') ? document.querySelector('.tkl-hint').textContent : '', said: window.__said.join(' | ') }))
-  check(tut.s === 1 && tut.l && tut.r && tut.anim === 'tkl-pulse' && /kiri atau kanan/.test(tut.hint) && /kiri atau kanan/.test(tut.said), `first seconds: LEFT/RIGHT pulse (${tut.anim}), ghost arrows (tutorial ${tut.s}), hint + narration ("${tut.said}")`)
+  check(tut.s === 1 && tut.l && tut.r && tut.anim === 'tkl-pulse' && /kiri atau kanan/.test(tut.hint) && !tut.said /* PRD-55: shown, not read aloud */, `first seconds: LEFT/RIGHT pulse (${tut.anim}), ghost arrows (tutorial ${tut.s}), hint + narration ("${tut.said}")`)
   await p.screenshot({ path: `${SHOTS}tutorial-390x844.png` })
   await tapEl(p, '.tkl-left')
   await sleep(470)
@@ -337,7 +337,7 @@ if (process.env.QA_ONLY === 'action') { await b.close(); console.log(fails ? `\n
   check(s.lane === 2 && Math.abs(s.x - 100) < 0.5, `two RIGHT taps: lane 2 (lane ${s.lane}, x ${s.x.toFixed(1)})`)
   await p.waitForFunction(() => window.__tut2, { timeout: 3000 }).catch(() => {})
   const tut2 = await p.evaluate(() => ({ s: window.__tut2 ? 2 : __h.state().tutorial, b: !!(window.__tut2 && window.__tut2.b), l: !!(window.__tut2 && window.__tut2.l), said: window.__said.join(' | ') }))
-  check(tut2.s === 2 && tut2.b && !tut2.l && /roda kemudi/.test(tut2.said), `after the first lane change the wheel (Cepat) is taught once (tutorial ${tut2.s}, boost pulse ${tut2.b})`)
+  check(tut2.s === 2 && tut2.b && !tut2.l && !tut2.said /* PRD-55 */, `after the first lane change the wheel (Cepat) is taught once (tutorial ${tut2.s}, boost pulse ${tut2.b})`)
   await tapEl(p, '.tkl-right'); await sleep(300)
   s = await st(p)
   check(s.lane === 2, 'RIGHT at the edge lane keeps lane 2 (a small nudge, no move)')

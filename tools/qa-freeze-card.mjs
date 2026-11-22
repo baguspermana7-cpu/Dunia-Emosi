@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // qa-freeze-card — the freeze recovery card speaks to a child who cannot read: a picture, one big round replay
-// button with its own icon, and a spoken line (id-ID) unless the app's sound is off. On a game page and on index.
+// button with its own icon; nothing read aloud (PRD-55, owner 2026-11-22). On a game page and on index.
 // Kills the frame chain the way tools/qa-freeze-recovery.mjs does, then reads the card.
 // Built 2026-11-11 (docs/PRODUCT-ASSESSMENT-2026-11-10.md idea #2). QA_SHOTS=dir saves a screenshot per page.
 // Usage: QA_BASE=http://127.0.0.1:8097 node tools/qa-freeze-card.mjs
@@ -44,7 +44,7 @@ for (const [path, w, h] of [['games/pokemon-birds.html', 390, 844], ['index.html
   ok(r.pic, `${path}: the card has a picture that loaded`)
   ok(r.go && r.svg && r.label === 'Main Lagi', `${path}: one round replay button with its own icon (${r.label})`)
   ok(r.size >= 96 && r.inView, `${path}: the button is big (>= 96 px, ${Math.round(r.size)}) and fully on screen`)
-  ok(r.said.length === 1 && r.said[0].lang === 'id-ID' && /main lagi/i.test(r.said[0].text), `${path}: the card speaks once in Indonesian (${JSON.stringify(r.said)})`)
+  ok(r.said.length === 0, `${path}: PRD-55: the card is not read aloud (${JSON.stringify(r.said)})`)
 }
 const q = await card('games/pokemon-birds.html', true, 390, 844)
 ok(q && q.said.length === 0, `sound off: the card stays silent (${q && JSON.stringify(q.said)})`)

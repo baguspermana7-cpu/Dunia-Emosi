@@ -220,6 +220,7 @@
   function narrator (opts) {
     return function (text, force) {
       if (opts.narrate === false && !force) return false
+      if (W.DuniaSpeak && W.DuniaSpeak.off) return false   // PRD-55: nothing is read aloud
       try { if (W.TKHub && typeof W.TKHub.say === 'function') { W.TKHub.say(spoken(text)); return true } } catch (e) {}
       return false
     }
@@ -761,7 +762,7 @@
     var grade = (set && !Array.isArray(set) && set.grade) || opts.grade
     // Sulit (generated or Kelas 3–4 bank items) keeps its own choices: easyify's 0..10 numbers are for Kelas 1–2
     qs = qs.map(function (q) { return !q.hard && !(+q.grade >= 3) && isEasy(grade, masteryOf(opts.mastery, q.domain), opts.easy) ? easyify(q) : q })
-    var lib = libFn(opts), sfx = sfxFn(opts), reduced = isReduced(opts), narrate = narrator(opts), twoTap = opts.readAloud === true
+    var lib = libFn(opts), sfx = sfxFn(opts), reduced = isReduced(opts), narrate = narrator(opts), twoTap = opts.readAloud === true && !(W.DuniaSpeak && W.DuniaSpeak.off)   // PRD-55: no voice, so one tap chooses
     var timers = [], alive = true
     function later (fn, ms) { var t = setTimeout(function () { if (alive) fn() }, reduced ? Math.min(ms, 120) : ms); timers.push(t); return t }
     var ms0 = {}, ms = {}

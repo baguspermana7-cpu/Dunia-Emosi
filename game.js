@@ -2668,12 +2668,7 @@ function startAmbient(type){
 // normal one and no child is left in front of a silent speaker.
 // ================================================================
 const LISTEN_SVG='<svg viewBox="0 0 24 24" width="52" height="52" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>'
-function duniaCanListen(){
-  try{
-    if(!window.DuniaSpeak||!DuniaSpeak.soundOn()||!window.speechSynthesis) return false
-    return (speechSynthesis.getVoices()||[]).some(v=>/^id([-_]|$)/i.test(v.lang)||/indonesia/i.test(v.name))
-  }catch(e){return false}
-}
+function duniaCanListen(){ return false }   // PRD-55: nothing is spoken, so no listen rounds or listen buttons
 function duniaSayLine(text){ try{ return !!(window.DuniaSpeak&&DuniaSpeak.say(text,{lang:'id-ID',rate:0.8})) }catch(e){return false} }
 function listenButtonHTML(id){
   return `<button type="button" class="dunia-listen-btn" id="${id}" aria-label="Dengar lagi" style="width:96px;height:96px;border-radius:50%;border:0;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#38bdf8,#0284c7);color:#fff;box-shadow:0 6px 0 #075985,0 10px 22px rgba(0,0,0,.25);cursor:pointer;touch-action:manipulation">${LISTEN_SVG}</button>`

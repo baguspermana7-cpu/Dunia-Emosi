@@ -56,7 +56,8 @@ async function hub (n, size) {
   return r
 }
 
-// G4 / G7 / G10 / G13 / G13b: two questions each, a real tap on the first live choice
+// G4 / G7 / G10 / G13 / G13b: two questions each, a real tap on the first live choice (G4 and G10: the right one —
+// since PRD-51 a wrong G4 tap leaves the round open for another try, and only the first tap of a round is reported)
 for (const [tag, n, sel, ready] of [
   ['G4', 4, '#g4-choices .g4-choice-btn', () => !g4State.answered],
   ['G7', 7, '.g7-choice-btn', () => !g7State.answered],
@@ -69,7 +70,7 @@ for (const [tag, n, sel, ready] of [
     const live = await p.waitForFunction(ready, { timeout: 25000 }).then(() => true).catch(() => false)
     if (!live) break
     const before = await p.evaluate(() => (window.__ans || []).length)
-    if (await tapFirst(p, tag === 'G10' ? await p.evaluate(() => { const b = [...document.querySelectorAll('.g10-cbtn:not([disabled])')].find(x => x.textContent.trim() === String(g10State.currentAnswer)); if (b) b.setAttribute('data-qa-right', '1'); return b ? '.g10-cbtn[data-qa-right]' : '.g10-cbtn:not([disabled])' }) : sel)) { taps++; await p.waitForFunction(b => window.__ans.length > b, { timeout: 4000 }, before).catch(() => {}) }
+    if (await tapFirst(p, tag === 'G10' ? await p.evaluate(() => { const b = [...document.querySelectorAll('.g10-cbtn:not([disabled])')].find(x => x.textContent.trim() === String(g10State.currentAnswer)); if (b) b.setAttribute('data-qa-right', '1'); return b ? '.g10-cbtn[data-qa-right]' : '.g10-cbtn:not([disabled])' }) : tag === 'G4' ? await p.evaluate(() => `#g4-choices .g4-choice-btn[data-v="${g4State.answer}"]`) : sel)) { taps++; await p.waitForFunction(b => window.__ans.length > b, { timeout: 4000 }, before).catch(() => {}) }
     await p.evaluate(() => document.querySelectorAll('[data-qa-right]').forEach(e => e.removeAttribute('data-qa-right')))
     await sleep(2500)  // feedback, then the next question
   }

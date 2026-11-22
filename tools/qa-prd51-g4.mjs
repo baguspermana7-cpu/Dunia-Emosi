@@ -85,7 +85,7 @@ async function session (size) {
   for (let k = 0; k < 12 && !found; k++) {
     if (!await live(p)) { await sleep(400); continue }
     const r = await look(p)
-    if (r.kind !== 'count' || r.btns.length < 3) { await tapSel(p, `#g4-choices .g4-choice-btn[data-v="${r.answer}"]`); await sleep(1700); continue }
+    if (r.kind !== 'count' || r.btns.length < 3 || r.items < 3) { /* 3 sprites to number: CI drew a count of 1 and read "1,1,1" */ await tapSel(p, `#g4-choices .g4-choice-btn[data-v="${r.answer}"]`); await sleep(1700); continue }
     found = true
     const wrong = r.btns.filter(x => String(x.v) !== String(r.answer)).map(x => x.v)
     await tapSel(p, `#g4-choices .g4-choice-btn[data-v="${wrong[0]}"]`); await sleep(500)

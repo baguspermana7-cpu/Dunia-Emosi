@@ -4,8 +4,8 @@
 //   L1 the bank has >= 150 items, each with a sprite and a name, none an emoji; a whole session renders 0 emoji and every
 //      picture on screen loaded (naturalWidth > 0)
 //   L2 every decoy comes from the answer's own group
-//   L3 a listen round (every 3rd round: the word is spoken, the choices are pictures without words) happens only when
-//      sound is on and an id-ID voice exists; with no such voice there is none
+//   L3 no listen round at all, with or without an id-ID voice (PRD-55, owner 2026-11-22: nothing read aloud; it was
+//      every 3rd round when a voice existed)
 //   L4 one session (real taps on the right answer) never asks the same item twice; both picture->word and
 //      word->picture rounds are asked; each answer is reported once (DuniaBus 'answer', game g7, skill gambar)
 //   L5 390x844, 844x390, 800x1280: choices >= 48 px, on screen; screenshots (QA_SHOTS=dir) of each round kind looked at
@@ -96,7 +96,8 @@ const badDecoy = A.rounds.filter(r => r.groups.length !== 4 || r.groups.some(g =
 ok(A.rounds.length && !badDecoy.length, `L2 decoys from the answer's group: ${badDecoy.length} bad of ${A.rounds.length} (e.g. ${JSON.stringify(badDecoy[0] && { group: badDecoy[0].group, groups: badDecoy[0].groups })})`)
 const lis = A.rounds.map((r, i) => r.mode === 'listen' ? i + 1 : 0).filter(Boolean)
 const lisOk = A.rounds.filter(r => r.mode === 'listen').every(r => r.listen && r.btns.every(x => x.img && !x.words))
-ok(lis.length >= 1 && lis.every(i => i % 3 === 0) && lisOk && A.said.length >= lis.length, `L3 with an id-ID voice: listen rounds ${JSON.stringify(lis)}, pictures without words ${lisOk}, spoken ${JSON.stringify(A.said.slice(0, 4))}`)
+// PRD-55 (owner 2026-11-22): nothing is read aloud, so even with an id-ID voice there is no listen round
+ok(!lis.length && lisOk && !A.said.length, `L3 with an id-ID voice (PRD-55): listen rounds ${JSON.stringify(lis)}, pictures without words ${lisOk}, spoken ${JSON.stringify(A.said.slice(0, 4))}`)
 const ids = A.rounds.map(r => r.id), modes = new Set(A.rounds.map(r => r.mode))
 ok(new Set(ids).size === ids.length && modes.has('img2word') && modes.has('word2img') && A.ans.length === A.rounds.length && A.ans.every(a => a.skill === 'gambar') && !A.errs.length,
   `L4 one session: ${ids.length} rounds, ${new Set(ids).size} different items, modes ${[...modes]}, answers reported ${A.ans.length}, errors ${A.errs.slice(0, 2).join(' | ') || 0}`)

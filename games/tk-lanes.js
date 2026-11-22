@@ -1145,7 +1145,7 @@
       else if (S.tut === -1 && S.firstMove && !S.boosted && (S.tutGap -= dt) <= 0) tutorOn(2, 'Ketuk roda kemudi untuk melaju cepat', [bB])
       else if (S.tut === 2 && (S.boosted || (S.hintT -= dt) <= 0)) tutorOff()
     }
-    function narrate (text) { try { if (opts.narrate !== false && W.TKHub && typeof W.TKHub.say === 'function') W.TKHub.say(text) } catch (e) {} }
+    function narrate (text) { try { if (opts.narrate !== false && !(W.DuniaSpeak && W.DuniaSpeak.off) && W.TKHub && typeof W.TKHub.say === 'function') W.TKHub.say(text) } catch (e) {} }
     function currentSection () {
       for (var i = w.sections.length - 1; i >= 0; i--) if (S.d + 80 >= w.sections[i].z0) return i
       return 0

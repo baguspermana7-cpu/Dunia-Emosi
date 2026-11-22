@@ -2,6 +2,7 @@
 
 - **Gelombang:** Gelombang 2 — pengalaman anak & orang tua
 - **Status:** belum mulai
+- **Dibatalkan 2026-11-22:** owner tidak mau suara bicara (PRD-55).
 - **Sumber:** `docs/PRODUCT-ASSESSMENT-2026-11-10.md` ide #14
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 

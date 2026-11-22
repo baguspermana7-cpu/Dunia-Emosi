@@ -4,6 +4,8 @@
 //      Indonesian voice — a speaker button, the letter / word is spoken (id-ID), the right tap is the spoken one, and the
 //      speaker says it again on a tap. Without an Indonesian voice the same round stays a normal round (no silent
 //      speaker in front of a child)
+//      PRD-55 (owner 2026-11-22: no machine-read speech): even WITH an Indonesian voice, G3 and G8 now play only
+//      normal rounds and nothing is spoken
 //   L2 G11 Kuis Sains: >= 300 different questions (Timmy bank 'umum' + 'logika' joined), every picture they use exists
 //      on disk, 20 sessions over all levels have no question twice in a session, and every answer is a choice
 //   L3 answers reach DuniaBus ('answer' events from G3, G8, G11 taps); 0 page errors; screenshots (QA_SHOTS=dir) of the
@@ -111,14 +113,14 @@ for (const size of [[390, 844], [844, 390], [800, 1280]]) {
     await start(p, 3, 15)
     const g3 = await playG3(p)
     const l = g3[2]
-    ok(!g3[0].listen && !g3[1].listen && l.listen && l.letter && l.said.includes('Huruf ' + l.ans + '|id-ID') && l.replay,
-      `L1 G3 ${tag}: rounds 1-2 normal, round 3 listen=${l.listen}, spoken ${JSON.stringify(l.said.slice(-1))} answer ${l.ans}, speaker repeats ${l.replay} (rounds ${g3.map(r => r.rnd + (r.tapped ? '' : '!')).join(',')})`)
+    ok(g3.every(r => !r.listen) && !l.said.length,
+      `L1 G3 ${tag} (PRD-55): no listen round, spoken ${JSON.stringify(l.said.slice(-1))} (rounds ${g3.map(r => r.rnd + (r.tapped ? '' : '!')).join(',')})`)
     const a3 = await p.evaluate(() => window.__ans.filter(a => a.skill === 'awal'))
     await start(p, 8, 15)
     const g8 = await playG8(p)
     const l8 = g8[2]
-    ok(!g8[0].listen && !g8[1].listen && l8.listen && l8.said.includes(l8.word.toLowerCase() + '|id-ID'),
-      `L1 G8 ${tag}: round 3 listen=${l8.listen}, spoken ${JSON.stringify(l8.said.slice(-1))} word ${l8.word}`)
+    ok(g8.every(r => !r.listen) && !l8.said.length,
+      `L1 G8 ${tag} (PRD-55): round 3 listen=${l8.listen}, spoken ${JSON.stringify(l8.said.slice(-1))} word ${l8.word}`)
     const a8 = await p.evaluate(() => window.__ans.filter(a => a.skill === 'susun'))
     ok(a3.length === 3 && a3.every(a => a.ok && a.domain === 'bahasa') && a8.length === 3 && a8.every(a => a.ok) && !errs.length,
       `L3 ${tag}: bus answers G3 ${a3.length} (${a3.map(a => a.item).join(', ')}), G8 ${a8.length}, errors ${errs.slice(0, 2).join(' | ') || 0}`)

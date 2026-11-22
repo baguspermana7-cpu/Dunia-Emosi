@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // qa-feeling-checkin — "Hari ini kamu merasa apa?" once a day per child when the map opens, from real taps.
-//   card: 5 faces whose pictures load, big enough (>= 88 px), a skip button >= 48 px, the question spoken in id-ID
-//   a pick names the feeling back by voice, is stored for THIS child, goes out on DuniaBus, "Ayo main" closes it
+//   card: 5 faces whose pictures load, big enough (>= 88 px), a skip button >= 48 px, nothing read aloud (PRD-55)
+//   a pick names the feeling back on screen, is stored for THIS child, goes out on DuniaBus, "Ayo main" closes it
 //   not asked twice in a day; a sibling is asked separately; skip closes and counts as answered
 //   an automated browser without ?feel=1 is never blocked by the card (the other gates drive the map)
 //   the parent dashboard shows the week's feelings; no page errors; screenshots
@@ -56,7 +56,7 @@ for (const [w, h] of [[390, 844], [1280, 800]]) {
   ok(c.minW >= 88 && c.inView, `${w}: faces >= 88 px wide and all on screen (${Math.round(c.minW)})`)
   ok(c.skip >= 48, `${w}: skip button >= 48 px (${c.skip})`)
   ok(!c.clash, `${w}: the question text does not run under the skip button`)
-  ok(c.said.length === 1 && c.said[0].lang === 'id-ID' && /merasa apa/.test(c.said[0].text), `${w}: the question is spoken in Indonesian (${JSON.stringify(c.said)})`)
+  ok(c.said.length === 0, `${w}: PRD-55: the question is not read aloud (${JSON.stringify(c.said)})`)
   if (SHOTS) await p.screenshot({ path: `${SHOTS}/feel-ask-${w}.png` })
 }
 // pick "sedih" by a real tap (still at 1280 from the loop)
@@ -64,7 +64,7 @@ ok(await tap('#dfeel .dfeel-face[data-feel="sedih"]'), 'tap the sad face'); awai
 let r = await p.evaluate(() => ({ line: (document.querySelector('#dfeel .dfeel-line') || {}).textContent, said: window.__said.slice(-1)[0], bus: window.__bus.slice(),
   stored: JSON.parse(localStorage.getItem('dunia-avatar-lion-feelings') || 'null') }))
 const today = Object.keys((r.stored || {}).days || {})[0]
-ok(/Kamu sedih/.test(r.line) && r.said && /Kamu sedih/.test(r.said.text), `the pick is named back on screen and by voice (${r.line})`)
+ok(/Kamu sedih/.test(r.line) && !r.said, `the pick is named back on screen, not read aloud (${r.line})`)
 ok(r.stored && r.stored.days[today] === 'sedih', `stored for this child (${JSON.stringify(r.stored)})`)
 ok(r.bus.join() === 'sedih', `sent on DuniaBus (${r.bus})`)
 if (SHOTS) await p.screenshot({ path: `${SHOTS}/feel-picked-1280.png` })

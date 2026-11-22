@@ -1,6 +1,6 @@
 /* SkillGames — PRD-20 (docs/prd/PRD-20-kartu-main-berikutnya-di.md, revisi 2026-11-21): the "main berikutnya" card
- * on the beranda (#screen-menu of index.html). One big card: the picture of the game's own hub tile, its name, and a
- * spoken line ("Ayo main Hitung Binatang!"). A tap opens the game through that same tile.
+ * on the beranda (#screen-menu of index.html). One big card: the picture of the game's own hub tile and its name.
+ * A tap opens the game through that same tile. (The spoken line "Ayo main ...!" was removed with PRD-55: no TTS.)
  *
  * Which game: the weakest skill with >= 5 answers in the last 14 days (LearningLog.bySkill, parent-readable names),
  * that has a game here (MAP) not played today (LearningLog.playedToday: level:start + answers today). No such skill
@@ -81,7 +81,7 @@
     card.setAttribute('aria-label', 'Ayo main ' + name)
     // the spoken line, once per child and game per page visit (sound off -> DuniaSpeak stays quiet)
     var key = who + '|' + p.game
-    if (spokenFor !== key && W.DuniaSpeak) { spokenFor = key; speakLater(card, 'Ayo main ' + name + '!') }
+    if (spokenFor !== key && W.DuniaSpeak && !W.DuniaSpeak.off) { /* PRD-55: DuniaSpeak.off -> no line at all */ spokenFor = key; speakLater(card, 'Ayo main ' + name + '!') }
     return p
   }
   // game.js asks the daily feeling check-in (or offers a breath) 700 ms after the beranda shows; that question goes

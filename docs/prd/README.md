@@ -69,7 +69,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-20](PRD-20-kartu-main-berikutnya-di.md) | Kartu "main berikutnya" di hub **[ANAK — hal baru di menu]** | Gelombang 1 | live v64.80 |
 | [PRD-17b](PRD-17b-momen-tenang-versi-lebih.md) | Momen tenang → versi lebih mudah **[ANAK]** | Gelombang 1 | live v64.48 |
 | [PRD-18](PRD-18-setelan-profil-dipakai-semua.md) | Setelan profil dipakai semua game | Gelombang 2 | live v64.51 |
-| [PRD-14](PRD-14-cakupan-narasi-suara.md) | Cakupan narasi suara **[ANAK — suara baru]** | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
+| [PRD-14](PRD-14-cakupan-narasi-suara.md) | Cakupan narasi suara **[ANAK — suara baru]** | Gelombang 2 | dibatalkan (owner 2026-11-22: tanpa suara bicara, PRD-55) |
 | [PRD-21](PRD-21-ritme-sesi.md) | Ritme sesi **[ANAK]** | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
 | [PRD-23](PRD-23-indikator-siap-luring-per.md) | Indikator siap luring per game | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
 | [PRD-22](PRD-22-satu-buku-koleksi-lintas.md) | Satu buku koleksi lintas game **[ANAK — hal baru di menu]** | Gelombang 2 | belum mulai (revisi 2026-11-21, Gelombang 5) |
@@ -100,7 +100,8 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas �
 | [PRD-54](PRD-54-cek-hidup-dan-akurat.md) | Cek Kemampuan v3: Perkiraan IQ lebih akurat (Q) + motion/shader (M) [ANAK] | Gelombang 5 | live: Q v64.78, M v64.79 |
 | [PRD-50](PRD-50-g7-tebak-gambar.md) | G7 Tebak Gambar: sprite, pengecoh satu grup, ronde dengar [ANAK] | Gelombang 5 | live v64.81 |
 | [PRD-51](PRD-51-g4-hitung-binatang.md) | G4 Hitung Binatang: sprite, 3 ragam ronde, petunjuk hitung [ANAK] | Gelombang 5 | live v64.82 |
-| [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: suara, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | belum mulai |
+| [PRD-55](PRD-55-tanpa-tts-tombol-bisu.md) | Tanpa suara bicara (TTS) + tombol bisu di layar game [ANAK] | Gelombang 5 | live v64.83 |
+| [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: bunyi goresan, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | belum mulai |
 
 ## Urutan & perkiraan
 | Gelombang | Isi | Perkiraan |

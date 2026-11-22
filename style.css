@@ -8371,3 +8371,11 @@ button:disabled, [aria-disabled="true"] {
   #screen-game4 .g4-timer-text{ grid-column:2 !important; grid-row:7 !important; }
   #screen-game4 #g4-animals .g4-animal-item{ width:clamp(32px,9vh,52px) !important; height:clamp(32px,9vh,52px) !important; }
 }
+
+/* PRD-55: the mute button — a hub header button (same skin as pause, via .gh-pause) and one on the beranda bar */
+.game-header .gh-mute { color:#374151; }
+.game-header .gh-mute[data-state="off"] { color:#b91c1c; }
+#screen-menu .menu-mute { width:48px; height:48px; margin-right:8px; border:none; border-radius:14px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; background:rgba(139,92,246,0.15); color:#6d28d9; }
+#screen-menu .menu-mute[data-state="off"] { color:#b91c1c; }
+.game-header .gh-mute { min-width:44px !important; min-height:44px !important; flex:none; }

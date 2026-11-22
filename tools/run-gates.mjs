@@ -46,6 +46,7 @@ TAGS.cek53 = /^qa-prd53-cek\.mjs$/   // PRD-53: Cek Kemampuan 6 islands, Perkira
 TAGS.next20 = /^qa-prd20-next\.mjs$/   // PRD-20: "main berikutnya" card on the beranda (weakest skill, not played today)
 TAGS.g7prd50 = /^qa-prd50-g7\.mjs$/   // PRD-50: G7 sprite bank >= 150, decoys one group, listen rounds, no repeats
 TAGS.g4prd51 = /^qa-prd51-g4\.mjs$/   // PRD-51: G4 sprites, 3 round kinds, number hint, landscape two columns
+TAGS.mute55 = /^qa-prd55-mute\.mjs$/   // PRD-55: no TTS, mute button on the hub headers
 TAGS.events49 = /^qa-prd49-events\.mjs$/   // PRD-49: level:start/end + reward events; parent gate before the dashboard
 const ENV_DEFAULT = /process\.env\.([A-Z_]+)\s*\|\|\s*(['"`])(https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/Dunia-Emosi)?)([^'"`]*)\2/g
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // qa-breathe — "Napas bersama" (games/data/breathe.js), mechanic B of docs/SPEC-EMOSI-REPLACEMENT-2026-11-11.md.
 //   the run: in/out cue every 4 s, the cloud is visibly bigger at the top of a breath than at its start, 3 dots,
-//   the ending card after 24 s +- 1, spoken cues in id-ID; "Ayo main" closes it and sends DuniaBus calm done:true
+//   the ending card after 24 s +- 1, nothing read aloud (PRD-55); "Ayo main" closes it and sends DuniaBus calm done:true
 //   closing mid-run stops everything (no ending card appears later), calm done:false
 //   offered at calm moments only: after Sedih / Marah / Takut in the check-in ("Tarik napas bareng"), not after
 //   Senang; on the map after the child's last 3 answers were wrong, once a day; not when they were not all wrong
@@ -62,7 +62,7 @@ await sleep(16500)
 const end = await st()
 ok(end.done && Math.abs(+end.done - 24000) <= 1000, `the ending card arrives after 24 s +- 1 (${end.done} ms)`)
 const said = await p.evaluate(() => window.__said.map(x => x.lang + ':' + x.text))
-ok(said.filter(x => /id-ID:Tarik napas$/.test(x)).length === 3 && said.some(x => /Hebat/.test(x)), `cues spoken in Indonesian (${said.length} lines)`)
+ok(said.length === 0, `PRD-55: no cue is read aloud (${said.length} lines)`)
 if (SHOTS) await p.screenshot({ path: `${SHOTS}/breathe-done.png` })
 ok(await tap('#dbreath .dbr-go'), 'tap "Ayo main"')
 ok(await leaves() && (await p.evaluate(() => window.__calm.join())) === 'true', 'lets taps through at once, leaves within 700 ms, sends calm done:true')
@@ -116,7 +116,7 @@ await dbl('#dbreath .dbr-x'); await sleep(500)
 ok((await p.evaluate(() => window.__calm.join())) === 'false', `double tap on close: calm sent once (${await p.evaluate(() => window.__calm.join())})`)
 await p.evaluate(() => { window.__said = []; DuniaBreath.open(); DuniaBreath.open() }); await sleep(8600)
 const tn = await p.evaluate(() => window.__said.filter(x => x.text === 'Tarik napas').length)
-ok(tn === 2 && (await p.evaluate(() => document.querySelectorAll('#dbreath').length)) === 1, `open twice: one run, cues not doubled ("Tarik napas" x${tn} in 8.6 s, want 2)`)
+ok(tn === 0 && (await p.evaluate(() => document.querySelectorAll('#dbreath').length)) === 1, `open twice: one run, nothing read aloud ("Tarik napas" x${tn})`)
 await p.evaluate(() => { const x = document.querySelector('#dbreath .dbr-x'); x && x.click() }); await sleep(400)
 await seed(0); await page('&feel=1'); await p.evaluate(() => goToMenu()); await sleep(1500)
 const sk = await p.$('#dfeel .dfeel-skip'), sr = await sk.boundingBox()

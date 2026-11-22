@@ -682,7 +682,7 @@
       var s = get(), q = quality(), mute = SFX_ONLY ? !s.sound : (!s.sound && !s.music && !s.narration)
       grid.innerHTML =
         '<section class="tkh-card pa" id="tkh-s-audio" data-sec="audio"><h2 class="tkh-tab fk">' + ico('tk-prop/ships-bell') + 'Audio</h2>' +
-          (SFX_ONLY ? '' : slider('musicVol', 'music', 'Musik', 'tk-prop/violin')) + slider('sfxVol', 'sound', 'Efek suara', 'tk-prop/ships-bell') + (SFX_ONLY ? tog('narrate', 'Narasi (suara membaca)', 'tk-prop/ship-horn') : slider('voiceVol', 'narration', 'Narasi', 'tk-prop/ship-horn')) +
+          (SFX_ONLY ? '' : slider('musicVol', 'music', 'Musik', 'tk-prop/violin')) + slider('sfxVol', 'sound', 'Efek suara', 'tk-prop/ships-bell') + (W.DuniaSpeak && W.DuniaSpeak.off ? '' : SFX_ONLY ? tog('narrate', 'Narasi (suara membaca)', 'tk-prop/ship-horn') : slider('voiceVol', 'narration', 'Narasi', 'tk-prop/ship-horn'))   /* PRD-55: no narration row, nothing is read aloud */ +
           '<div class="srow"><i class="tkh-mute"></i><span>Bisukan semua</span><button type="button" class="tkh-tog' + (mute ? ' on' : '') + '" data-mute="1" role="switch" aria-checked="' + mute + '" aria-label="Bisukan semua"></button></div></section>' +
         '<section class="tkh-card pa" data-sec="tampilan"><h2 class="tkh-tab fk">' + ico('tk-prop/spyglass') + 'Tampilan</h2><div class="lbl">Kualitas grafis</div>' +
           '<div class="tkh-seg">' + [['rendah', 'Rendah'], ['sedang', 'Sedang'], ['tinggi', 'Tinggi']].map(function (o) { return '<button type="button" data-q="' + o[0] + '" class="' + (q === o[0] ? 'on' : '') + '" aria-pressed="' + (q === o[0]) + '">' + o[1] + '</button>' }).join('') + '</div>' +

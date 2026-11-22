@@ -63,7 +63,8 @@ for (const pg of PAGES) {
   const off = await said(pg, 'off'), on = await said(pg, 'on')
   ok(off.helper && on.helper, `${pg.name}: DuniaSpeak is on the page`)
   ok(off.key === 'off' && off.said.length === 0, `${pg.name}: sound 'off' -> ${off.said.length} speak calls (want 0) ${JSON.stringify(off.said).slice(0, 120)}`)
-  ok(on.key !== 'off' && on.said.length >= 1, `${pg.name}: sound 'on' -> ${on.said.length} speak calls (want >= 1) ${JSON.stringify(on.said).slice(0, 120)}`)
+  // PRD-55 (owner 2026-11-22): no machine-read speech at all, also with sound on
+  ok(on.key !== 'off' && on.said.length === 0, `${pg.name}: sound 'on' -> ${on.said.length} speak calls (want 0, PRD-55) ${JSON.stringify(on.said).slice(0, 120)}`)
   console.log(`  ${pg.name}: off ${off.said.length}, on ${on.said.length}`)
 }
 ok(!errs.length, 'no page errors: ' + errs.slice(0, 3).join(' | '))

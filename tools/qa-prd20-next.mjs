@@ -2,8 +2,8 @@
 // qa-prd20-next — PRD-20 (docs/prd/PRD-20-kartu-main-berikutnya-di.md, revisi 2026-11-21): the "main berikutnya" card
 // on the beranda (#screen-menu) points at a game for the child's weakest skill that was not played today.
 //   L1 a log weak in Pengurangan (3/10) beside a strong Menghitung benda (9/10) and a thin Huruf awal (0/4, < 5 answers)
-//      -> the card points at a Pengurangan game (Kuis Matematika first); the line "Ayo main ...!" is spoken once
-//      (after the feeling check-in, never over it: tools/qa-feeling-checkin.mjs);
+//      -> the card points at a Pengurangan game (Kuis Matematika first); nothing is read aloud (PRD-55, owner
+//      2026-11-22);
 //      a tap opens that game (games/kuis-matematika.html)
 //   L2 played today (an answer today in Kuis, then a level:start of Ayo Berhitung on the hub) -> neither is picked;
 //      with the clock one day later the first game comes back
@@ -73,9 +73,9 @@ const LION_WEAK = { lion: { 1: { 'kuis-matematika|matematika|kurang-standard': [
 // L1
 {
   const { c, p, errs } = await open({ logs: LION_WEAK, sound: true })
-  await p.waitForFunction(() => window.__said.length > 0, { timeout: 4000 }).catch(() => {}); await sleep(600)   // spoken ~1 s after the beranda shows
+  await sleep(2000)   // the old line came ~1 s after the beranda showed
   const k = await card(p), said = await p.evaluate(() => window.__said)
-  ok(k && k.game === 'kuis-matematika' && k.skill === 'Pengurangan' && said.filter(s => /^Ayo main /.test(s)).length === 1 && !errs.length,
+  ok(k && k.game === 'kuis-matematika' && k.skill === 'Pengurangan' && said.length === 0 && !errs.length,
     `L1 weak Pengurangan -> card ${k && k.game} (skill ${k && k.skill}, "${k && k.text}"), spoken ${JSON.stringify(said)}, errors ${errs.slice(0, 2).join(' | ') || 0}`)
   if (SH) await p.screenshot({ path: path.join(SH, 'next-card-390x844.png') })
   const nav = p.waitForNavigation({ timeout: 10000 }).catch(() => null)
