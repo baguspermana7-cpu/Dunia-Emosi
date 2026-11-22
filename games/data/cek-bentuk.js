@@ -44,7 +44,9 @@
   }
   function svgShape (cells, turn, px, fill) {
     var w = 1 + Math.max.apply(null, cells.map(function (c) { return c[0] })), h = 1 + Math.max.apply(null, cells.map(function (c) { return c[1] }))
-    var u = 16, ox = 50 - w * u / 2, oy = 50 - h * u / 2
+    // PRD-56 audit: a fixed 16-unit cell left a 4-cell piece at a third of its button; the piece now fills the box (turns
+    // are quarter turns, so the longer side is what has to fit)
+    var u = Math.min(24, 84 / Math.max(w, h)), ox = 50 - w * u / 2, oy = 50 - h * u / 2
     var sq = cells.map(function (c) { return '<rect x="' + (ox + c[0] * u) + '" y="' + (oy + c[1] * u) + '" width="' + u + '" height="' + u + '" rx="2"/>' }).join('')
     return '<svg viewBox="0 0 100 100" width="' + px + '" height="' + px + '" aria-hidden="true"><g transform="rotate(' + turn + ' 50 50)" fill="' + (fill || '#2563eb') + '" stroke="#0f172a" stroke-width="1.5">' + sq + '</g></svg>'
   }

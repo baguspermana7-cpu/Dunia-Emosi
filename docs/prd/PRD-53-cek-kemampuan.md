@@ -122,3 +122,5 @@ penalaran tidak bisa dibaca langsung. Satu-satunya target `published` (garis bil
   diulang). Screenshot setiap layar dilihat.
 - `audit-no-emoji`: 0 emoji di DOM. `qa-local-refs`: 1073/1073.
 - Belum: papan online (R3), proxy lokal menolak host Supabase (502); Pulau Cepat penuh hanya di run pertama v2.
+
+> **Lanjutan (PRD-56, v64.90):** Perkiraan IQ sekarang memperkirakan skor umum laten G (bukan Kelley per bentuk), Kata dan soal cerita tidak dihitung ke IQ, ada mode Cepat dan pilihan pemain di dalam halaman. Lihat [PRD-56](PRD-56-cek-mode-cepat.md).

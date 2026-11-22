@@ -254,16 +254,16 @@ for (const size of SIZES) {
   await toMap(p); await tap(p, '#btn-iq'); await p.waitForSelector('#s-iq.on', { timeout: 8000 }).catch(() => {}); await sleep(1500)
   // PRD-54: the number counts up inside a staged reveal; give a loaded machine up to 5 s for it to land
   await p.waitForFunction(() => { const e = window.CekProfile.iq(window.__cek.load().res, window.__cek.months()); return !e || document.getElementById('iq-num').textContent === String(e.iq) }, { timeout: 5000 }).catch(() => {})
-  const iq = await p.evaluate(() => { const d = window.__cek.load(), e = window.CekProfile.iq(d.res, window.__cek.months()); return { shown: document.getElementById('iq-num').textContent, range: document.getElementById('iq-range').textContent, e, bars: document.querySelectorAll('#iq-bars .b').length, unsure: [...document.querySelectorAll('#iq-bars .unsure')].length, best: d.best } })
+  const iq = await p.evaluate(() => { const d = window.__cek.load(), e = window.CekProfile.iq(d.res, window.__cek.months()); return { shown: document.getElementById('iq-num').textContent, range: document.getElementById('iq-range').textContent, e, bars: document.querySelectorAll('#iq-bars .b').length, unsure: [...document.querySelectorAll('#iq-bars .unsure')].filter(x => /kurang pasti/.test(x.textContent)).length, out: [...document.querySelectorAll('#iq-bars .unsure')].filter(x => /belum dihitung/.test(x.textContent)).length, best: d.best } })
   await check(p, tag, 'iq', worst)
-  ok(iq.e && String(iq.e.iq) === iq.shown && iq.bars === iq.e.islands + iq.unsure && iq.unsure === (full ? 1 : 0) && iq.best && iq.best.iq === iq.e.iq, `L10/L3 ${tag}: Perkiraan IQ shown ${iq.shown} = computed ${iq.e && iq.e.iq} from ${iq.e && iq.e.islands} reliable islands, ${iq.bars} bars, ${iq.unsure} "kurang pasti" (Cepat flagged), best ${iq.best && iq.best.iq}`)
+  ok(iq.e && String(iq.e.iq) === iq.shown && iq.bars === iq.e.islands + iq.unsure + iq.out && iq.out === 1 && iq.unsure === (full ? 1 : 0) && iq.best && iq.best.iq === iq.e.iq, `L10/L3 ${tag}: Perkiraan IQ shown ${iq.shown} = computed ${iq.e && iq.e.iq} from ${iq.e && iq.e.islands} reliable islands, ${iq.bars} bars, ${iq.unsure} "kurang pasti" (Cepat flagged), ${iq.out} "belum dihitung" (Kata, PRD-56), best ${iq.best && iq.best.iq}`)
   await sleep(2600)
   const rv = await p.evaluate(() => window.CekMotion.log.filter(x => /^reveal-/.test(x.k)).slice(-6))
   const order = ['reveal-curtain', 'reveal-trophy', 'reveal-gauge', 'reveal-range', 'reveal-bars', 'reveal-celebrate']
   ok(rv.map(x => x.k).join() === order.join() && rv.every((x, i) => !i || x.t >= rv[i - 1].t), `M3 ${tag}: IQ reveal steps in order ${rv.map(x => x.k.slice(7) + '@' + (x.t - rv[0].t)).join(' ')}`)
   ok(iq.e && iq.range.indexOf(iq.e.lo + '-' + iq.e.hi + ' (90 %') >= 0 && iq.e.hi - iq.e.lo < 30, `Q6 ${tag}: the card range "${iq.range}" = computed ${iq.e && iq.e.lo}-${iq.e && iq.e.hi} (90 %, from reliability ${iq.e && iq.e.rel})`)
-  // L11 board: Bima seeded higher
-  await p.evaluate(() => localStorage.setItem('dunia-avatar-tiger-cek-kemampuan', JSON.stringify({ best: { iq: 141, islands: 3, at: 1 } })))
+  // L11 board: Bima seeded higher (PRD-56: the board recomputes from the counted sittings, a stored best alone is not shown)
+  await p.evaluate(() => localStorage.setItem('dunia-avatar-tiger-cek-kemampuan', JSON.stringify({ count: { pola: { raw: 24, max: 24, at: 1 }, bentuk: { raw: 20, max: 20, at: 1 }, ingat: { maju: 7, mundur: 6, corsi: 7, at: 1 } }, best: { iq: 99, islands: 3, at: 1 } })))
   await tap(p, '#iq-board'); await p.waitForSelector('#s-board.on', { timeout: 8000 }).catch(() => {})
   await tap(p, '.tab[data-tab="online"]')
   await p.waitForFunction(() => /offline|Semua pemain\./.test(document.getElementById('board-note').textContent), { timeout: 12000 }).catch(() => {})
@@ -272,10 +272,10 @@ for (const size of SIZES) {
   await tap(p, '.tab[data-tab="device"]'); await sleep(300)
   const dev = await p.evaluate(() => [...document.querySelectorAll('#board-rows li')].map(li => (li.classList.contains('me') ? '*' : '') + li.innerText.replace(/\s+/g, ' ').trim()))
   ok(/offline/.test(onl.note) && onl.rows === 2, `L11 ${tag}: online tab without a cloud -> "${onl.note}", ${onl.rows} device rows`)
-  ok(dev.length === 2 && /Bima/.test(dev[0]) && /141/.test(dev[0]) && /^\*/.test(dev[1]) && /Ana/.test(dev[1]), `L11 ${tag}: device board ${JSON.stringify(dev)}`)
+  ok(dev.length === 2 && /Bima/.test(dev[0]) && /3 pulau/.test(dev[0]) && +dev[0].split(' ').pop() > 120 && /^\*/.test(dev[1]) && /Ana/.test(dev[1]), `L11 ${tag}: device board ${JSON.stringify(dev)} (Bima recomputed from the counted sittings, not the stored 99)`)
   // per child
   const bima = await p.evaluate(() => { localStorage.setItem('dunia-active-slot', '[1,1]'); const v = JSON.parse(window.avatarScopedGet('cek-kemampuan') || '{}'); localStorage.setItem('dunia-active-slot', '[0,1]'); return v })
-  ok(!bima.res && bima.best.iq === 141, `L11 ${tag}: per child (Bima has ${bima.res ? 'Ana\'s results' : 'no results'})`)
+  ok(!bima.res && bima.count && bima.count.pola.raw === 24, `L11 ${tag}: per child (Bima has ${bima.res ? 'Ana\'s results' : 'no results'})`)
   await toMap(p); await check(p, tag, 'map-done', worst)
   const flags = await p.$$eval('.isle .flag', e => e.length)
   ok(flags === (full ? 6 : 5), `L13 ${tag}: finished islands carry a flag (${flags})`)

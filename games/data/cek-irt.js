@@ -4,8 +4,10 @@
  * on answers already seen, so the likelihood of the given items is still valid (ignorable design; Mislevy & Wu 1996).
  *   b(i, max)            difficulty of item i: evenly spaced from -2.5 to +2.5 logits (design spacing, not calibrated
  *                        on children; PRD-54 says so)
- *   theta(ok, max)       Warm's (1989) weighted-likelihood estimate from the 0/1 answers in order; finite at 0 or all right
- *   info(theta, n, max)  test information of the first n items at theta (sum of p(1-p))
+ *   theta(ok, max, idx)  Warm's (1989) weighted-likelihood estimate from the 0/1 answers; finite at 0 or all right.
+ *                        idx = the item index of each answer (PRD-56: Cepat mode picks items adaptively); without idx
+ *                        answer k was item k (the ladder), exactly as before
+ *   info(theta, n, max, idx)  test information of the given items at theta (sum of p(1-p)); without idx the first n
  *   tcc(theta, max)      expected right answers over all max items (the test characteristic curve)
  *   thetaOfRaw(r, max)   the theta whose expected score is r (TCC inverse, bisection): turns a target band given in
  *                        right answers into the logit scale, and scores old records that kept only the raw count
@@ -16,13 +18,13 @@
   function b (i, max) { return max > 1 ? LO + (HI - LO) * i / (max - 1) : 0 }
   function p (t, bi) { return 1 / (1 + Math.exp(bi - t)) }
   function tcc (t, max) { var s = 0; for (var i = 0; i < max; i++) s += p(t, b(i, max)); return s }
-  function info (t, n, max) { var s = 0; for (var i = 0; i < n; i++) { var q = p(t, b(i, max)); s += q * (1 - q) } return s }
+  function info (t, n, max, idx) { var s = 0; for (var i = 0; i < n; i++) { var q = p(t, b(idx ? idx[i] : i, max)); s += q * (1 - q) } return s }
   // Warm WLE: solve sum(x - p) + J / (2 I) = 0, J = sum p(1-p)(1-2p); Newton from 0 with bisection safeguard
-  function theta (ok, max) {
+  function theta (ok, max, idx) {
     var n = ok.length; if (!n) return null
     function f (t) {
       var s = 0, I = 0, J = 0
-      for (var i = 0; i < n; i++) { var q = p(t, b(i, max)), v = q * (1 - q); s += (ok[i] ? 1 : 0) - q; I += v; J += v * (1 - 2 * q) }
+      for (var i = 0; i < n; i++) { var q = p(t, b(idx ? idx[i] : i, max)), v = q * (1 - q); s += (ok[i] ? 1 : 0) - q; I += v; J += v * (1 - 2 * q) }
       return s + J / (2 * I)
     }
     var lo = -8, hi = 8

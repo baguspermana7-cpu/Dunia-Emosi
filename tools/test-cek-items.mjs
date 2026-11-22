@@ -206,30 +206,85 @@ const { CekKata, CekCepat, CekAngka, CekBoard, DBLabeled } = globalThis
   for (let s = 1; s <= N; s++) for (let i = 0; i < CekAngka.N_LINES; i++) { const l = CekAngka.line(i, s); if (l.n <= 0 || l.n >= l.max) lb.push(`${s}/${i} ${l.n}/${l.max}`) }
   ok(!lb.length && CekAngka.pae(50, 62, 100) === 12, `L1 number line targets inside the line, error 50 vs 62 on 0-100 = 12 % (${lb.slice(0, 2)})`)
 }
-// ---------- L10 Perkiraan IQ ----------
+// ---------- PRD-56 item audit (contact sheets 2026-11-22) ----------
+{
+  let thin = 0, pairs = 0
+  for (let s2 = 1; s2 <= N; s2++) for (let i = 0; i < 20; i++) { const p = CekCepat.pair(i, s2); if (!p.same && p.a.size !== p.b.size) { pairs++; if (Math.abs(p.a.size - p.b.size) < 2) thin++ } }
+  ok(pairs > 0 && thin === 0, `A1 Cepat: a size difference is small against big, never 82 % against 100 % (${thin} thin of ${pairs} size pairs)`)
+  const BAD = ['Taksi', 'Ambulans', 'Mobil Polisi', 'Mobil Pemadam', 'Mobil', 'Sepeda Motor', 'Traktor', 'Sepeda', 'Helikopter', 'Roket', 'Sawi', 'Bulan']
+  let seen = new Set()
+  for (let s2 = 1; s2 <= N; s2++) for (let i = 0; i < CekKata.MAX; i++) { const it = CekKata.make(i, s2); it.choices.concat(it.show || []).forEach(x => { if (BAD.includes(x.name)) seen.add(x.name) }) }
+  ok(!seen.size, `A2 Kata: no picture drawn from above, cut from a sheet, or twin of another (${[...seen].join(', ') || 'none'} in ${N} x 24 items)`)
+  const svg = CekBentuk.svgShape([[0, 0], [0, 1], [0, 2], [0, 3]], 0, 76), hs = [...svg.matchAll(/height="([\d.]+)"/g)].slice(1).map(m => +m[1]), span = hs.reduce((x, y) => x + y, 0)
+  ok(span >= 70, `A3 Bentuk: a 4-cell piece spans ${span.toFixed(0)} of 100 units of its box (>= 70; 16 a cell gave 64)`)
+}
+// ---------- L10 Perkiraan IQ (PRD-56: latent G estimate) ----------
 {
   const m = 78, T = id => CekTargets.get(id, m), mid = id => (T(id).lo + T(id).hi) / 2
   const rec = f => ({ pola: [{ raw: f('pola') }], bentuk: [{ raw: f('bentuk') }], ingat: [{ maju: f('ingat-maju'), mundur: f('ingat-mundur'), corsi: f('ingat-corsi') }] })
   const atMid = CekProfile.iq(rec(mid), m), atHi = CekProfile.iq(rec(id => T(id).hi), m), far = CekProfile.iq(rec(() => 99), m), low = CekProfile.iq(rec(() => 0), m)
   ok(atMid && Math.abs(atMid.iq - 100) <= 1, `L10 every island at the band middle -> 100 +-1 (${atMid && atMid.iq})`)
-  ok(atHi && atHi.obs > 110 && atHi.iq > 100 && atHi.iq < atHi.obs, `Q1 every island at the band top: composite above 110, the Kelley estimate between 100 and it (obs ${atHi && atHi.obs}, shown ${atHi && atHi.iq})`)
+  ok(atHi && atHi.iq > 100 && atHi.lo < atHi.iq && atHi.hi > atHi.iq, `Q1 every island at the band top -> above 100 with a range around it (${atHi && atHi.lo}-${atHi && atHi.iq}-${atHi && atHi.hi})`)
   ok(far.iq === 145 && low.iq === 55, `L10 clamped to 55-145 (${far.iq}, ${low.iq})`)
   ok(CekProfile.iq({ pola: [{ raw: 12 }], bentuk: [{ raw: 10 }] }, m) === null, 'L10 fewer than 3 islands -> no estimate')
   ok(CekProfile.z('angka', { garis: T('angka-garis').lo }, m) > 0 && CekProfile.z('angka', { garis: 24 }, m) < 0, 'L10 number-line error: lower is better (error at lo raises the estimate, 24 % lowers it)')
-  // Q1 composite (Tellegen & Briggs): six islands at z = 1, r = .45 -> zc = 6 / sqrt(6 + 30 x .45) = 1.359 -> 120; perfect reliability keeps it
-  const six = n => Array.from({ length: n }, () => ({ z: 1, rel: 1 })), c6 = CekProfile.composite(six(6)), c3 = CekProfile.composite(six(3))
-  ok(c6.obs === 120 && c6.iq === 120, `Q1 six islands at z = 1 with r = .45 -> 120, the mean-z formula gave 115 (${c6.obs}, ${c6.iq})`)
-  const k6 = CekProfile.composite(Array.from({ length: 6 }, () => ({ z: 1, rel: 0.8 })))
-  ok(k6.iq < k6.obs && k6.iq > 100 && Math.abs(k6.iq - (100 + 15 * k6.rel * (k6.obs - 100) / 15)) <= 1, `Q1 Kelley pulls toward 100 by the composite reliability (obs ${k6.obs}, rel ${k6.rel}, shown ${k6.iq})`)
-  // Q6 honest range: 3 islands is wider than 6; the range comes from the reliability, not a fixed 15
-  const w = r => r.hi - r.lo, r3 = CekProfile.composite(Array.from({ length: 3 }, () => ({ z: 0.5, rel: 0.75 }))), r6 = CekProfile.composite(Array.from({ length: 6 }, () => ({ z: 0.5, rel: 0.75 })))
-  ok(w(r3) > w(r6) && r3.rel < r6.rel, `Q6 range with 3 islands (${r3.lo}-${r3.hi}, rel ${r3.rel}) wider than with 6 (${r6.lo}-${r6.hi}, rel ${r6.rel})`)
+  // Q1 the latent estimate: with no measurement error every true island is known, so G^ = sum T / sqrt(5 + 20 rt)
+  const rt = CekProfile.R_TRUE(m), exact = CekProfile.composite(Array.from({ length: 5 }, () => ({ x: 1, ev: 1e-9 })), rt), want = 100 + 15 * 5 / Math.sqrt(5 + 20 * rt)
+  ok(Math.abs(exact.g * 15 + 100 - want) < 1e-6 && exact.sd < 0.01, `Q1 five error-free islands at T = 1 -> G = 5 / sqrt(5 + 20 x ${rt.toFixed(3)}) = ${want.toFixed(2)} (${(exact.g * 15 + 100).toFixed(2)}, sd ${exact.sd.toFixed(4)})`)
+  const noisy = CekProfile.composite(Array.from({ length: 5 }, () => ({ x: 1, ev: 0.5 })), rt)
+  ok(noisy.g * 15 + 100 > 100 && noisy.g * 15 + 100 < want && noisy.sd > 0, `Q1 measurement error pulls toward 100 (${(noisy.g * 15 + 100).toFixed(1)} between 100 and ${want.toFixed(1)})`)
+  // Q6 honest range: 3 islands is wider than 5, a noisier sitting is wider than a clean one
+  const w = r => r.hi - r.lo, r3 = CekProfile.composite(Array.from({ length: 3 }, () => ({ x: 0.5, ev: 0.33 })), rt), r5 = CekProfile.composite(Array.from({ length: 5 }, () => ({ x: 0.5, ev: 0.33 })), rt)
+  ok(w(r3) > w(r5), `Q6 range with 3 islands (${r3.lo}-${r3.hi}) wider than with 5 (${r5.lo}-${r5.hi})`)
   ok(CekProfile.months('5-6') === 78 && CekProfile.months('7-8') === 90 && CekTargets.near(114) === 95, 'L10 age band -> months; an age past grade 1 uses the nearest band')
-  // Q4 age by month: band values at the band centres, strictly between them in between
   const g = mm => CekTargets.get('pola', mm), a0 = g(78), a1 = g(90), ah = g(84)
   const pb = CekTargets.all().find(x => x.id === 'pola').bands
   ok(a0.lo === pb[0].lo && a1.lo === pb[1].lo && ah.lo > a0.lo && ah.lo < a1.lo && g(72).lo === pb[0].lo && g(95).lo === pb[1].lo, `Q4 targets follow the month: 78 -> ${a0.lo}, 84 -> ${ah.lo.toFixed(2)}, 90 -> ${a1.lo}`)
   ok(CekProfile.stars(-1) === 1 && CekProfile.stars(0) === 2 && CekProfile.stars(1) === 3, 'L10 stars 1-3 from the island standing')
+  ok(CekProfile.R_TRUE(78) !== CekProfile.R_TRUE(90) || CekProfile.popRel('pola', 78) === CekProfile.popRel('pola', 90), 'L10 the true-island correlation is worked out per age, not cached from the first age asked')
+}
+// ---------- PRD-56 L4 reading leaves the IQ ----------
+{
+  const m = 84, T = id => CekTargets.get(id, m), mid = id => (T(id).lo + T(id).hi) / 2
+  const base = k => ({ pola: [{ raw: mid('pola') }], bentuk: [{ raw: mid('bentuk') }], ingat: [{ maju: 4, mundur: 3, corsi: 4 }], angka: [{ titik: 6, garis: 12, hitung: k.h }], kata: [{ raw: k.k }] })
+  const lo = CekProfile.iq(base({ h: 0, k: 0 }), m), hi = CekProfile.iq(base({ h: 8, k: 24 }), m)
+  ok(lo.iq === hi.iq && lo.lo === hi.lo && lo.islands === 4, `L4 Kata 0 -> 24 and story sums 0 -> 8 move the IQ by 0 (${lo.iq} vs ${hi.iq}, ${lo.islands} islands: Kata not counted)`)
+}
+// ---------- PRD-56 L3 adaptive items (Cepat) ----------
+{
+  let bad = []
+  for (let seed = 1; seed <= N; seed++) {
+    const r = CekCore.rng(seed), max = 24, s = CekCore.cat({ max, n: 10, start: (r() - 0.5) * 4 })
+    while (s.phase === 'practice') CekCore.answer(s, r() < 0.7, 2000)
+    const seen = new Set()
+    while (s.phase !== 'done') { if (seen.has(s.idx) || s.idx < 0 || s.idx >= max) { bad.push(`${seed}: item ${s.idx}`); break } seen.add(s.idx); CekCore.answer(s, r() < 0.6, 2000) }
+    if (s.log.length !== 10) bad.push(`${seed}: ${s.log.length} items`)
+  }
+  ok(!bad.length, `L3 Cepat: ${N} adaptive runs give 10 items, none repeated, all inside 0-23${bad.length ? ' - ' + bad.slice(0, 3).join('; ') : ''}`)
+  let eq = 0
+  for (let seed = 1; seed <= N; seed++) { const r = CekCore.rng(seed), ok1 = Array.from({ length: 12 }, () => r() < 0.6 ? 1 : 0); eq = Math.max(eq, Math.abs(CekIRT.theta(ok1, 24) - CekIRT.theta(ok1, 24, ok1.map((_, i) => i)))) }
+  ok(eq < 1e-9, `L3 the Rasch estimate with item numbers 0..n-1 equals the old position rule (max difference ${eq})`)
+  let mono = []
+  for (let seed = 1; seed <= N; seed++) { const r = CekCore.rng(seed + 7), idx = [], ok1 = []; const pool = Array.from({ length: 24 }, (_, i) => i).sort(() => r() - 0.5); for (let i = 0; i < 10; i++) { idx.push(pool[i]); ok1.push(r() < 0.5 ? 1 : 0) } const j = ok1.indexOf(0); if (j < 0) continue; const ok2 = ok1.slice(); ok2[j] = 1; if (!(CekIRT.theta(ok2, 24, idx) > CekIRT.theta(ok1, 24, idx))) mono.push(seed) }
+  ok(!mono.length, `L3 adaptive items: one more right answer always raises the estimate (bad ${mono.slice(0, 3)})`)
+  const all0 = CekIRT.theta(Array(10).fill(0), 24, [5, 3, 1, 0, 2, 4, 6, 7, 8, 9]), all1 = CekIRT.theta(Array(10).fill(1), 24, [12, 15, 18, 20, 22, 23, 21, 19, 17, 16])
+  ok(isFinite(all0) && isFinite(all1) && all0 < all1, `L3 adaptive estimate finite at none right (${all0.toFixed(2)}) and all right (${all1.toFixed(2)})`)
+  // the span reverse rule: Cepat starts at 3; both tries wrong at 3 drops to 2 and scores as a child who started at 2
+  const sp = CekCore.span({ start: 3, reverse: true }); CekCore.spanAnswer(sp, false, 1); CekCore.spanAnswer(sp, false, 1); const at2 = sp.len; CekCore.spanAnswer(sp, true, 1); CekCore.spanAnswer(sp, true, 1)
+  ok(at2 === 2 && sp.phase === 'done' && sp.score === 2, `L3 span starting at 3: both wrong at 3 -> length 2 (${at2}); both right there -> score 2, the same as a child who started at 2 (${sp.score}, ${sp.phase})`)
+}
+// ---------- PRD-56 L6 retest and mode ----------
+{
+  const m = 84, day = 864e5, T = id => CekTargets.get(id, m), mid = id => (T(id).lo + T(id).hi) / 2
+  const a = { titik: 8, garis: 6, mode: 'normal', at: 0 }, b = { titik: 4, garis: 20, mode: 'cepat', at: 8 * day }
+  const la = CekProfile.look('angka', a, m, false), lb = CekProfile.look('angka', b, m, true), isl = CekProfile.island('angka', [a, b], m)
+  const want = (la.x / la.ev + lb.x / lb.ev) / (1 / la.ev + 1 / lb.ev)
+  ok(Math.abs(isl.x - want) < 1e-12 && Math.abs(isl.ev - 1 / (1 / la.ev + 1 / lb.ev)) < 1e-12 && isl.n === 2, `L6 a redo 8 days later is the precision-weighted mean (${isl.x.toFixed(3)} = ${want.toFixed(3)}), not the plain mean ${((la.x + lb.x) / 2).toFixed(3)}`)
+  const near = CekProfile.island('angka', [a, Object.assign({}, b, { at: 2 * day })], m)
+  ok(near.n === 1, 'L6 a redo within 7 days replaces the sitting (practice)')
+  const same = mode => ({ pola: [{ raw: 12, max: 24, ok: Array(14).fill(1).map((v, i) => i < 12 ? 1 : 0), mode }], bentuk: [{ raw: mid('bentuk'), mode }], ingat: [mode === 'cepat' ? { mundur: 3, corsi: 4, mode } : { maju: 4, mundur: 3, corsi: 4, mode }], cepat: [{ rate: mid('cepat'), mode }], angka: [{ titik: 6, garis: 12, mode }] })
+  const n = CekProfile.iq(same('normal'), m), c = CekProfile.iq(same('cepat'), m)
+  ok(n.mode === 'normal' && c.mode === 'cepat' && (c.hi - c.lo) > (n.hi - n.lo), `L6 the same child in Cepat gets a wider range (${c.lo}-${c.hi}) than in Normal (${n.lo}-${n.hi}), modes ${n.mode}/${c.mode}`)
 }
 // ---------- Q5 sources ----------
 {
@@ -258,7 +313,7 @@ const { CekKata, CekCepat, CekAngka, CekBoard, DBLabeled } = globalThis
 // ---------- L3 reliability ----------
 {
   const m = 78, T = id => CekTargets.get(id, m), mid = id => (T(id).lo + T(id).hi) / 2
-  const base = { pola: [{ raw: 20 }], bentuk: [{ raw: mid('bentuk') }], ingat: [{ maju: mid('ingat-maju'), mundur: mid('ingat-mundur'), corsi: mid('ingat-corsi') }], kata: [{ raw: mid('kata') }] }
+  const base = { pola: [{ raw: 20 }], bentuk: [{ raw: mid('bentuk') }], ingat: [{ maju: mid('ingat-maju'), mundur: mid('ingat-mundur'), corsi: mid('ingat-corsi') }], angka: [{ titik: 6, garis: 12 }] }
   const a = CekProfile.iq(base, m), flagged = CekProfile.iq(Object.assign({}, base, { pola: [{ raw: 20, flags: ['cepat'] }] }), m)
   ok(a.islands === 4 && flagged.islands === 3 && flagged.iq < a.iq && !CekProfile.reliable({ flags: ['salah'] }) && CekProfile.reliable({ flags: ['lama'] }),
     `L3 a guessed island leaves the estimate (${a.iq} from ${a.islands} -> ${flagged.iq} from ${flagged.islands}); 'lama' alone keeps it`)

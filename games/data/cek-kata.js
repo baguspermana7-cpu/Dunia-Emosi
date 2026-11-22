@@ -15,7 +15,12 @@
   'use strict'
   var C = W.CekCore, MAX = 24
   var LADDER = [['hewan', 'buah', 'kendaraan'], ['makanan', 'benda'], ['sayur', 'kendaraan'], ['sains', 'sayur']]
-  var KEL = ['hewan', 'buah', 'kendaraan', 'makanan', 'sayur'], FOOD = { buah: 1, sayur: 1, makanan: 1 }, OUT = { Bulan: 1 }
+  var KEL = ['hewan', 'buah', 'kendaraan', 'makanan', 'sayur'], FOOD = { buah: 1, sayur: 1, makanan: 1 }
+  // PRD-56 picture audit (contact sheet 2026-11-22): Taksi, Ambulans, Mobil Polisi, Mobil Pemadam, Mobil and Sepeda Motor
+  // are drawn from above (the fire engine reads as a red cupboard); Traktor, Sepeda, Sepeda Motor, Helikopter and Roket
+  // carry a piece of the next sprite at their edge; Sawi and Bayam are both a bunch of green leaves (two right answers
+  // to a child). All leave Pulau Kata.
+  var OUT = { Bulan: 1, Taksi: 1, Ambulans: 1, 'Mobil Polisi': 1, 'Mobil Pemadam': 1, Mobil: 1, 'Sepeda Motor': 1, Traktor: 1, Sepeda: 1, Helikopter: 1, Roket: 1, Sawi: 1 }
   function data () { return W.DBLabeled._data }
   function items (g) { var d = data()[g]; return d.items.filter(function (it) { return !OUT[it[1]] }).map(function (it) { return { group: g, name: it[1], cat: d.cat, n: it[0] } }) }
   function dupNames () {

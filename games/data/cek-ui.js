@@ -46,8 +46,19 @@
   }
 
   // ---------- who is playing ----------
+  // PRD-56: someone else can play from this page (no trip to the beranda): a child of the family (the app's own active
+  // slot changes, so every avatar-scoped save follows) or a guest with a name and an age band ('cek-tamu' list,
+  // 'cek-aktif' = 'tamu:<name>' while a guest plays; the guest's results live under 'cek-kemampuan@<name>')
+  function family () { try { return (JSON.parse(localStorage.getItem('dunia-players') || '[]') || []).filter(function (p) { return p && p.name }) } catch (_) { return [] } }
+  function guests () { try { var g = JSON.parse(localStorage.getItem('cek-tamu') || '[]'); return Array.isArray(g) ? g.filter(function (x) { return x && x.name }) : [] } catch (_) { return [] } }
+  function guestNow () {
+    var a = ''; try { a = localStorage.getItem('cek-aktif') || '' } catch (_) {}
+    if (a.indexOf('tamu:') !== 0) return null
+    var nm = a.slice(5); return guests().filter(function (g) { return g.name === nm })[0] || null
+  }
   function me () {
     var players = [], act = 0
+    var g = guestNow(); if (g) return { name: g.name, avatar: '', guest: true, age: g.age || '7-8' }
     try { players = JSON.parse(localStorage.getItem('dunia-players') || '[]') || [] } catch (_) {}
     try { act = (JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]') || [0])[0] | 0 } catch (_) {}
     var p = players[act]
@@ -105,14 +116,15 @@
     if (!est) {
       num.textContent = '?'; $('iq-range').textContent = 'Selesaikan 3 pulau untuk melihat perkiraan IQ.'
     } else {
-      $('iq-range').textContent = 'kisaran ' + est.lo + '-' + est.hi + ' (90 %, dari ' + est.islands + ' pulau)'
+      $('iq-range').textContent = 'kisaran ' + est.lo + '-' + est.hi + ' (90 %, dari ' + est.islands + ' pulau, ' + (est.mode === 'cepat' ? 'mode Cepat' : est.mode === 'campuran' ? 'mode Normal dan Cepat' : 'mode Normal') + ')'
       num.textContent = '0'
     }
     var done = ORDER.filter(function (id) { return (zs[id] !== null && zs[id] !== undefined) || unsure.indexOf(id) >= 0 })
     $('iq-bars').innerHTML = done.map(function (id) {
-      var no = unsure.indexOf(id) >= 0, w = no ? 0 : Math.round(Math.max(6, Math.min(100, (zs[id] + 2) / 4 * 100)))
-      return '<div class="b"><img alt="" src="' + isleArt(id) + '"><div><div class="nm">' + ISLES[id].name + (no ? ' <small class="unsure">kurang pasti</small>' : '') + '</div><div class="track"><div class="fill" style="width:' + w + '%"></div></div></div></div>'
+      var no = unsure.indexOf(id) >= 0, w = no ? 0 : Math.round(Math.max(6, Math.min(100, (zs[id] + 2) / 4 * 100))), out = !W.CekProfile.IN_IQ[id]
+      return '<div class="b"><img alt="" src="' + isleArt(id) + '"><div><div class="nm">' + ISLES[id].name + (no ? ' <small class="unsure">kurang pasti</small>' : out ? ' <small class="unsure">belum dihitung</small>' : '') + '</div><div class="track"><div class="fill" style="width:' + w + '%"></div></div></div></div>'
     }).join('')
+    $('iq-note').textContent = 'Perkiraan dari permainan, bukan tes resmi psikolog. Kata dan soal cerita belum dihitung (soalnya dibaca).'
     var low = done.filter(function (id) { return unsure.indexOf(id) < 0 }).sort(function (a, b) { return zs[a] - zs[b] })[0]
     $('iq-tip').hidden = !low; if (low) $('iq-tip').textContent = 'Latihan di rumah: ' + ISLES[low].tip
     var fills = D.querySelectorAll('#iq-bars .fill'), bars = 1450, party = bars + fills.length * 150 + 250
@@ -147,7 +159,7 @@
       var pl = r.place && r.place <= 3 ? '<img alt="juara ' + r.place + '" src="' + sprite('badge', MEDAL[r.place - 1]) + '">' : (r.place || '-')
       var isMe = r.me || (mine && r.name === mine.name && (r.avatar || '') === (mine.avatar || ''))
       return '<li' + (isMe ? ' class="me"' : '') + '><span class="pl">' + pl + '</span><img class="av" alt="" src="' + avatarSrc(r.avatar) + '"><span>' + esc(r.name) +
-        '<small>' + ((r.islands | 0)) + ' pulau</small></span><span class="v">' + (r.iq == null ? '-' : Math.round(+r.iq) || '-') + '</span></li>'
+        '<small>' + ((r.islands | 0)) + ' pulau' + (r.mode === 'cepat' ? ', Cepat' : r.mode === 'campuran' ? ', campuran' : '') + '</small></span><span class="v">' + (r.iq == null ? '-' : Math.round(+r.iq) || '-') + '</span></li>'
     }).join('')
   }
   var boardTok = 0
@@ -173,5 +185,5 @@
   }
 
   W.CekUI = { ISLES: ISLES, ORDER: ORDER, isleArt: isleArt, asset: asset, sprite: sprite, esc: esc, sfx: sfx, say: say, sparkle: sparkle, celebrate: celebrate, confetti: confetti,
-    lastSay: function () { return lastSaid || $('hint').textContent }, me: me, topBar: topBar, map: map, guide: guide, result: result, iqCard: iqCard, board: board, cheer: cheer, avatarSrc: avatarSrc }
+    lastSay: function () { return lastSaid || $('hint').textContent }, me: me, family: family, guests: guests, topBar: topBar, map: map, guide: guide, result: result, iqCard: iqCard, board: board, cheer: cheer, avatarSrc: avatarSrc }
 })(window)

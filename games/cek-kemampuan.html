@@ -9,31 +9,36 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <meta name="theme-color" content="#38bdf8">
 <title>Cek Kemampuan</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.89-20261122k">
-<link rel="stylesheet" href="du-buttons.css?v=v64.89-20261122k">
-<link rel="stylesheet" href="data/cek-ui.css?v=v64.89-20261122k">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.90-20261122l">
+<link rel="stylesheet" href="du-buttons.css?v=v64.90-20261122l">
+<link rel="stylesheet" href="data/cek-ui.css?v=v64.90-20261122l">
 </head>
 <body>
 <div class="sky" aria-hidden="true"></div>
 <div class="panel">
   <header class="top" id="top" hidden>
-    <div class="me"><img id="me-av" class="av" alt="" width="44" height="44"><b id="me-name"></b></div>
+    <button type="button" class="me" id="me-btn" aria-label="Ganti pemain"><img id="me-av" class="av" alt="" width="44" height="44"><b id="me-name"></b><span class="swap">Ganti</span></button>
     <div class="stars-total"><img id="me-star" alt="" width="28" height="28"><b id="me-stars">0</b></div>
-    <button type="button" class="du-btn du-btn-warn du-btn-sm" id="btn-board"><img id="board-ico" alt="" width="26" height="26">Papan Juara</button>
+    <button type="button" class="du-btn du-btn-warn du-btn-sm" id="btn-board" aria-label="Papan Juara"><img id="board-ico" alt="" width="26" height="26"><span class="bl">Papan Juara</span></button>
   </header>
 
   <div class="rotate" id="rotate" role="status"><img src="../assets/db/mascots/006.webp" alt="" width="282" height="263"><p>Putar HP-mu jadi tegak, ya!</p></div>
   <section class="scr" id="s-name" aria-labelledby="t-name">
     <div class="center">
       <img class="owl big" src="../assets/db/mascots/006.webp" alt="Profesor Owi" width="282" height="263">
-      <div class="bubble"><h1 id="t-name">Halo! Siapa namamu?</h1>
-        <input id="name-in" maxlength="12" autocomplete="off" placeholder="Ketik namamu" aria-label="Nama">
-        <button type="button" class="du-btn du-btn-success du-btn-lg" id="name-go">Ayo main!</button></div>
+      <div class="bubble wide"><h1 id="t-name">Siapa yang main?</h1>
+        <div class="who" id="who-list" role="group" aria-label="Pemain"></div>
+        <p class="who-new" id="who-new-t">Pemain baru (tamu)</p>
+        <input id="name-in" maxlength="12" autocomplete="off" placeholder="Ketik nama" aria-label="Nama">
+        <div class="ages" role="group" aria-label="Umur"><button type="button" class="age" data-age="5-6">5-6 tahun</button><button type="button" class="age on" data-age="7-8">7-8 tahun</button><button type="button" class="age" data-age="9-10">9-10 tahun</button></div>
+        <button type="button" class="du-btn du-btn-success du-btn-lg" id="name-go">Ayo main!</button>
+        <button type="button" class="du-btn du-btn-ghost" id="who-back" hidden>Kembali ke peta</button></div>
     </div>
   </section>
 
   <section class="scr" id="s-map" aria-label="Peta pulau">
     <div class="guide"><img class="owl" src="../assets/db/mascots/006.webp" alt="" width="282" height="263"><p class="bubble" id="guide-say"></p></div>
+    <div class="modes" role="radiogroup" aria-label="Mode tes"><button type="button" class="mode" role="radio" data-mode="normal"><b>Normal</b><span>sekitar 30 menit, paling teliti</span></button><button type="button" class="mode" role="radio" data-mode="cepat"><b>Cepat</b><span>sekitar 15 menit, sedikit kurang teliti</span></button></div>
     <div class="map" id="map"></div>
     <div class="row"><button type="button" class="du-btn du-btn-primary du-btn-lg" id="btn-iq"></button></div>
   </section>
@@ -42,15 +47,14 @@
     <div class="center">
       <img class="isle-art" id="intro-art" alt="" width="240" height="200">
       <div class="bubble wide"><h1 id="t-intro"></h1><p id="intro-text"></p>
-        <div class="row"><button type="button" class="du-btn du-btn-secondary" id="btn-listen">Dengar</button>
-          <button type="button" class="du-btn du-btn-success du-btn-lg" id="btn-start">Mulai</button></div></div>
+        <p class="mode-tag" id="intro-mode"></p>
+        <div class="row"><button type="button" class="du-btn du-btn-success du-btn-lg" id="btn-start">Mulai</button></div></div>
       <button type="button" class="du-btn du-btn-ghost" id="btn-back">Kembali ke peta</button>
     </div>
   </section>
 
   <section class="scr" id="s-play" aria-label="Soal">
     <div class="bar"><b class="tag" id="play-tag"></b><div class="trail" id="trail" aria-hidden="true"></div>
-      <button type="button" class="du-btn du-btn-secondary du-btn-sm" id="btn-say">Dengar lagi</button>
       <button type="button" class="du-btn du-btn-ghost du-btn-sm" id="btn-pause">Istirahat</button></div>
     <p class="hint" id="hint" aria-live="polite"></p>
     <div class="stage" id="stage"></div>
@@ -81,7 +85,7 @@
         <p class="iq-range" id="iq-range"></p>
         <div class="bars" id="iq-bars"></div>
         <p class="tip" id="iq-tip"></p>
-        <p class="note">Perkiraan dari permainan, bukan tes resmi psikolog.</p>
+        <p class="note" id="iq-note">Perkiraan dari permainan, bukan tes resmi psikolog.</p>
       </div>
       <div class="row"><button type="button" class="du-btn du-btn-warn" id="iq-board">Papan Juara</button><button type="button" class="du-btn du-btn-success" id="iq-home">Kembali ke peta</button></div>
     </div>
@@ -101,38 +105,38 @@
 </div>
 <div class="fx-layer" id="fx" aria-hidden="true"></div>
 
-<script src="data/ui-sprites.js?v=v64.89-20261122k"></script>
-<script src="data/speak.js?v=v64.89-20261122k"></script>
-<script src="data/freeze-watchdog.js?v=v64.89-20261122k"></script>
-<script src="data/save-engine.js?v=v64.89-20261122k"></script>
-<script src="data/sfx-engine.js?v=v64.89-20261122k"></script>
-<script src="data/db-labeled.js?v=v64.89-20261122k"></script>
-<script src="data/cek-core.js?v=v64.89-20261122k"></script>
-<script src="data/cek-targets.js?v=v64.89-20261122k"></script>
-<script src="data/cek-irt.js?v=v64.89-20261122k"></script>
-<script src="data/cek-profile.js?v=v64.89-20261122k"></script>
-<script src="data/cek-pola.js?v=v64.89-20261122k"></script>
-<script src="data/cek-bentuk.js?v=v64.89-20261122k"></script>
-<script src="data/cek-ingat.js?v=v64.89-20261122k"></script>
-<script src="data/cek-kata.js?v=v64.89-20261122k"></script>
-<script src="data/cek-cepat.js?v=v64.89-20261122k"></script>
-<script src="data/cek-angka.js?v=v64.89-20261122k"></script>
-<script src="data/cek-board.js?v=v64.89-20261122k"></script>
-<script src="data/cek-ui.js?v=v64.89-20261122k"></script>
-<script src="data/cek-play.js?v=v64.89-20261122k"></script>
-<script src="dunia-glfx.js?v=v64.89-20261122k"></script>
-<script src="data/cek-sea.js?v=v64.89-20261122k"></script>
-<script src="data/cek-motion.js?v=v64.89-20261122k"></script>
-<script src="data/cek-page.js?v=v64.89-20261122k"></script>
-<script src="sw-reload.js?v=v64.89-20261122k"></script>
-<script src="dunia-icons.js?v=v64.89-20261122k"></script>
-<script src="dunia-home.js?v=v64.89-20261122k"></script>
+<script src="data/ui-sprites.js?v=v64.90-20261122l"></script>
+<script src="data/speak.js?v=v64.90-20261122l"></script>
+<script src="data/freeze-watchdog.js?v=v64.90-20261122l"></script>
+<script src="data/save-engine.js?v=v64.90-20261122l"></script>
+<script src="data/sfx-engine.js?v=v64.90-20261122l"></script>
+<script src="data/db-labeled.js?v=v64.90-20261122l"></script>
+<script src="data/cek-core.js?v=v64.90-20261122l"></script>
+<script src="data/cek-targets.js?v=v64.90-20261122l"></script>
+<script src="data/cek-irt.js?v=v64.90-20261122l"></script>
+<script src="data/cek-profile.js?v=v64.90-20261122l"></script>
+<script src="data/cek-pola.js?v=v64.90-20261122l"></script>
+<script src="data/cek-bentuk.js?v=v64.90-20261122l"></script>
+<script src="data/cek-ingat.js?v=v64.90-20261122l"></script>
+<script src="data/cek-kata.js?v=v64.90-20261122l"></script>
+<script src="data/cek-cepat.js?v=v64.90-20261122l"></script>
+<script src="data/cek-angka.js?v=v64.90-20261122l"></script>
+<script src="data/cek-board.js?v=v64.90-20261122l"></script>
+<script src="data/cek-ui.js?v=v64.90-20261122l"></script>
+<script src="data/cek-play.js?v=v64.90-20261122l"></script>
+<script src="dunia-glfx.js?v=v64.90-20261122l"></script>
+<script src="data/cek-sea.js?v=v64.90-20261122l"></script>
+<script src="data/cek-motion.js?v=v64.90-20261122l"></script>
+<script src="data/cek-page.js?v=v64.90-20261122l"></script>
+<script src="sw-reload.js?v=v64.90-20261122l"></script>
+<script src="dunia-icons.js?v=v64.90-20261122l"></script>
+<script src="dunia-home.js?v=v64.90-20261122l"></script>
 <script>DuniaHome.mount({ into: '.panel', abs: true, top: '6px', right: '6px', visible: function () { return true } })</script>
-<script src="vfx-engine.js?v=v64.89-20261122k" defer></script>
-<script src="data/vfx-db.js?v=v64.89-20261122k" defer></script>
-<script src="vfx-moments.js?v=v64.89-20261122k" defer></script>
-<script src="dunia-cinema.js?v=v64.89-20261122k" data-theme="sea" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.89-20261122k" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.89-20261122k" defer></script>
+<script src="vfx-engine.js?v=v64.90-20261122l" defer></script>
+<script src="data/vfx-db.js?v=v64.90-20261122l" defer></script>
+<script src="vfx-moments.js?v=v64.90-20261122l" defer></script>
+<script src="dunia-cinema.js?v=v64.90-20261122l" data-theme="sea" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.90-20261122l" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.90-20261122l" defer></script>
 </body>
 </html>

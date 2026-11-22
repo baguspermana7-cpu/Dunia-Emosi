@@ -75,3 +75,5 @@ screens fade only, no bounces, no shimmer.
   22 ms or 4+ gaps exceed 50 ms; the 2D sea stays. On a phone or tablet with a real GPU the bloom stays on.
 - **M5** screenshots of every screen at 390x844, 1280x800, 800x1280; button size read from layout (a press squash is a
   transform for 120 ms, not the target size).
+
+> **Lanjutan (PRD-56, v64.90):** Perkiraan IQ sekarang memperkirakan skor umum laten G (bukan Kelley per bentuk), Kata dan soal cerita tidak dihitung ke IQ, ada mode Cepat dan pilihan pemain di dalam halaman. Lihat [PRD-56](PRD-56-cek-mode-cepat.md).

@@ -16,7 +16,25 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
 /* top bar */
 .top{ display:flex; align-items:center; gap:10px; padding:6px 64px 6px 6px; flex-wrap:wrap }
 .top[hidden]{ display:none }
-.me{ display:flex; align-items:center; gap:8px; background:var(--du-cream,#fefdf7); border-radius:999px; padding:4px 14px 4px 4px; box-shadow:0 3px 0 rgba(59,42,74,.18) }
+.me{ display:flex; align-items:center; gap:8px; background:var(--du-cream,#fefdf7); border-radius:999px; padding:4px 14px 4px 4px; box-shadow:0 3px 0 rgba(59,42,74,.18); border:0; min-height:52px; font:inherit; color:inherit; cursor:pointer }
+.me .swap{ font-size:14px; font-weight:800; color:#6d28d9; background:#ede9fe; border-radius:999px; padding:4px 10px }
+/* PRD-56: who plays, Normal / Cepat */
+.who{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:6px 0 10px }
+.who .pl{ display:flex; align-items:center; gap:8px; min-height:56px; padding:4px 14px 4px 4px; border:3px solid #ddd6fe; border-bottom-width:5px; border-radius:999px; background:#fff; font:inherit; font-size:17px; font-weight:800; color:var(--du-ink,#3b2a4a); cursor:pointer }
+.who .pl img{ width:44px; height:44px; border-radius:50%; object-fit:contain; background:#f5f3ff }
+.who .pl small{ font-size:13px; color:#57534e; font-weight:700 }
+.who .pl.on{ border-color:#22c55e; box-shadow:0 0 0 4px #bbf7d0 }
+.who-new{ margin:8px 0 4px; font-weight:800 }
+.ages{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:8px 0 }
+.ages .age{ min-height:48px; padding:0 14px; border:3px solid #ddd6fe; border-radius:14px; background:#fff; font:inherit; font-size:16px; font-weight:800; color:var(--du-ink,#3b2a4a); cursor:pointer }
+.ages .age.on{ border-color:#7c3aed; background:#ede9fe }
+.modes{ display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:560px; margin:0 auto 6px }
+.modes .mode{ display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-height:60px; padding:8px 12px; border:3px solid #ddd6fe; border-bottom-width:5px; border-radius:16px; background:var(--du-cream,#fefdf7); font:inherit; color:var(--du-ink,#3b2a4a); text-align:left; cursor:pointer }
+.modes .mode b{ font-family:'Fredoka One',sans-serif; font-weight:400; font-size:19px }
+.modes .mode span{ font-size:14px; font-weight:700; color:#44403c }
+.modes .mode.on{ border-color:#7c3aed; background:#ede9fe; box-shadow:0 0 0 3px #c4b5fd }
+.mode-tag{ font-weight:800; color:#5b21b6; margin:4px 0 0 }
+
 .me b{ font-family:'Fredoka One',sans-serif; font-weight:400; font-size:19px }
 .av{ width:44px; height:44px; border-radius:50%; background:#fef3c7; object-fit:contain }
 .stars-total{ display:flex; align-items:center; gap:6px; background:var(--du-cream,#fefdf7); border-radius:999px; padding:6px 14px; font-family:'Fredoka One',sans-serif; font-size:19px; box-shadow:0 3px 0 rgba(59,42,74,.18) }
@@ -78,6 +96,9 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
 .tiles{ display:grid; gap:4px; background:#e0f2fe; padding:6px; border-radius:14px }
 .tiles button{ width:var(--ts); height:var(--ts); min-width:56px; min-height:56px; padding:0; border:0; background:none; cursor:pointer }
 .tiles.small div{ width:calc(var(--ts) * .7); height:calc(var(--ts) * .7) }
+.tiles.small div svg, .tiles button svg{ width:100%; height:100%; display:block }   /* PRD-56: the 60 px example tile spilled out of its .7 box onto "Contoh" */
+.ch.rot button{ width:var(--rs); height:var(--rs) }
+.ch button svg{ width:100%; height:100%; display:block }
 .show{ width:min(46vmin,240px); height:min(46vmin,240px); background:#fff; border-radius:24px; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 4px #bae6fd }
 .show img{ width:82%; height:82%; object-fit:contain }
 .pics{ display:grid; grid-template-columns:repeat(3,var(--ps)); gap:8px }
@@ -125,8 +146,8 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
 .yn{ display:flex; gap:14px }
 .yn .du-btn{ min-width:130px; min-height:64px; font-size:22px }
 .word{ font-family:'Fredoka One',sans-serif; font-size:clamp(30px,6vw,44px); color:#7c3aed; width:100%; text-align:center; margin:0 }
-.pics4{ display:grid; grid-template-columns:repeat(4,var(--ps)); gap:10px }
-.pics4 button{ width:var(--ps); height:var(--ps); padding:6px; border:3px solid #ddd6fe; border-bottom-width:6px; border-radius:18px; background:#fff; cursor:pointer }
+.pics4{ display:grid; grid-template-columns:repeat(2,var(--ks)); gap:12px }   /* PRD-56: 2 x 2, the pictures were ~60 px in a row of 4 */
+.pics4 button{ width:var(--ks); height:var(--ks); padding:6px; border:3px solid #ddd6fe; border-bottom-width:6px; border-radius:18px; background:#fff; cursor:pointer }
 .pics4 button.right{ border-color:#22c55e; box-shadow:0 0 0 5px #bbf7d0 }
 .pics4 img{ width:100%; height:100%; object-fit:contain }
 .dots{ display:flex; gap:16px }
@@ -146,10 +167,10 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
 .fx-layer{ position:fixed; inset:0; pointer-events:none; z-index:90; overflow:hidden }
 .fx-layer img{ position:absolute; width:34px; height:34px; animation:fall 1.6s cubic-bezier(.3,.6,.4,1) forwards }
 @keyframes fall{ from{ transform:translateY(-10vh) rotate(0) } to{ transform:translateY(105vh) rotate(540deg); opacity:.2 } }
-:root{ --cs:min(15vmin,76px); --chs:min(17vmin,88px); --ts:min(18vmin,88px); --ps:min(19vmin,96px); --bs:min(66vmin,400px) }
+:root{ --cs:min(15vmin,76px); --chs:min(17vmin,88px); --ts:min(18vmin,88px); --ps:min(19vmin,96px); --bs:min(66vmin,400px); --rs:min(26vmin,120px); --ks:min(30vmin,140px) }
 @media (orientation:landscape) and (max-height:500px){
-  .pics4{ grid-template-columns:repeat(4,var(--ps)) } .pair .c{ width:min(34vh,130px); height:min(34vh,130px) } .dots button{ width:min(52vh,170px); height:min(52vh,170px) } .guide .bubble{ margin-bottom:10px }
-  :root{ --cs:min(15vh,58px); --chs:min(23vh,80px); --ts:min(24vh,72px); --ps:min(21vh,76px); --bs:min(62vh,240px) }
+  .pics4{ grid-template-columns:repeat(4,var(--ks)) } .pair .c{ width:min(34vh,130px); height:min(34vh,130px) } .dots button{ width:min(52vh,170px); height:min(52vh,170px) } .guide .bubble{ margin-bottom:10px }
+  :root{ --cs:min(15vh,58px); --chs:min(23vh,80px); --ts:min(24vh,72px); --ps:min(21vh,76px); --bs:min(62vh,240px); --rs:min(24vh,84px); --ks:min(21vh,76px) }
   h1{ font-size:24px } .stage{ flex-wrap:nowrap; gap:12px; padding:8px } .hint{ margin:0 auto 4px }
   .owl{ width:72px } .owl.big{ width:120px } .guide .bubble{ font-size:15px; margin-bottom:20px }
   .isle{ width:clamp(92px,15vw,128px) } .map{ min-height:240px }
@@ -201,3 +222,7 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
   .card.iq > .tip{ grid-area:3 / 2 }
   .card.iq > .note{ grid-area:4 / 2 }
 }
+/* PRD-56: with "Ganti" the top bar no longer fit one row on a phone (the IQ card buttons fell off screen) */
+@media (max-width:440px){ #btn-board .bl{ display:none } #btn-board{ min-width:52px; justify-content:center; padding:0 10px } #btn-board img{ margin:0 }
+  .top{ gap:6px } .me{ gap:6px; padding:3px 8px 3px 3px } .me img{ width:40px; height:40px } .me b{ font-size:17px; max-width:6.5em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap } .me .swap{ font-size:13px; padding:3px 8px }
+  .stars-total{ display:none } }   /* the stars still show under every island on the map */

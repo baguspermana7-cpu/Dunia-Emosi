@@ -29,13 +29,23 @@
     var players = []
     try { players = JSON.parse(localStorage.getItem('dunia-players') || '[]') || [] } catch (_) {}
     var act = 0; try { act = (JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]') || [0])[0] | 0 } catch (_) {}
-    var rows = []
+    var rows = [], guest = ''
+    try { var a = localStorage.getItem('cek-aktif') || ''; if (a.indexOf('tamu:') === 0) guest = a.slice(5) } catch (_) {}
     players.forEach(function (p, i) {
       if (!p || !p.name) return
       var slug = slugOf(p.animal), rec = null
       try { rec = JSON.parse(localStorage.getItem(slug ? 'dunia-avatar-' + slug + '-cek-kemampuan' : 'cek-kemampuan') || 'null') } catch (_) {}
-      var b = rec ? bestOf(rec) : null
-      rows.push({ name: cleanName(p.name) || 'Pemain', avatar: slug, iq: b ? b.iq : null, islands: b ? b.islands : 0, at: b ? b.at : 0, me: i === act })
+      var m = W.CekProfile ? W.CekProfile.months({ cilik: '5-6', tumbuh: '7-8', pintar: '9-10' }[p.ageTier] || '7-8') : 90
+      var b = rec ? bestOf(rec, m) : null
+      rows.push({ name: cleanName(p.name) || 'Pemain', avatar: slug, iq: b ? b.iq : null, islands: b ? b.islands : 0, at: b ? b.at : 0, mode: b ? b.mode : '', me: i === act && !guest })
+    })
+    // PRD-56 guests who played on this page
+    var gs = []; try { gs = JSON.parse(localStorage.getItem('cek-tamu') || '[]') || [] } catch (_) {}
+    gs.forEach(function (g) {
+      if (!g || !g.name) return
+      var rec = null; try { rec = JSON.parse(localStorage.getItem('cek-kemampuan@' + g.name) || 'null') } catch (_) {}
+      var b = rec ? bestOf(rec, W.CekProfile ? W.CekProfile.months(g.age || '7-8') : 90) : null
+      rows.push({ name: cleanName(g.name) || 'Tamu', avatar: '', iq: b ? b.iq : null, islands: b ? b.islands : 0, at: b ? b.at : 0, mode: b ? b.mode : '', me: guest === g.name })
     })
     if (!rows.length) {   // no player on this device: the name typed on this page, with the unscoped record
       var n = ''; try { n = localStorage.getItem('cek-nama') || '' } catch (_) {}

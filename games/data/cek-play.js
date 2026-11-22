@@ -18,7 +18,7 @@
   var ANG = [
     { id: 'banyak', say: 'Lihat dua kotak titik. Ketuk kotak yang titiknya lebih banyak. Tidak usah dihitung!' },
     { id: 'garis', say: 'Ketuk garis di tempat angkanya.' },
-    { id: 'hitung', say: 'Dengarkan ceritanya, lalu pilih jawabannya.' }
+    { id: 'hitung', say: 'Baca ceritanya, lalu pilih jawabannya.' }
   ]
   function picSrc (n) { return U.asset('assets/db/creatures/' + ('000' + n).slice(-3) + '.webp') }
   function picName (n) { var it = (W.DBLabeled && W.DBLabeled._data.hewan.items || []).filter(function (x) { return x[0] === n })[0]; return it ? it[1] : 'gambar' }
@@ -28,13 +28,21 @@
   }
 
   // ---------- Ingat ----------
+  // PRD-56: Cepat mode plays backward + Corsi only, each starting at length 3 (a child of grade-1 age; both tries wrong
+  // at 3 go back to 2 once, CekCore.span reverse rule). A part not played is left out of the record, never saved as 0.
+  function ingParts (st) { return st.mode === 'cepat' ? ING.slice(1) : ING }
+  function newSpan (st) { return st.mode === 'cepat' && (st.months || 90) >= 78 ? C.span({ start: 3, reverse: true }) : C.span() }
   function ingatNext (a) {
-    var st = a.st()
-    if (st.part >= ING.length) return a.finish({ maju: st.best.maju || 0, mundur: st.best.mundur || 0, corsi: st.best.corsi || 0, longest: st.longest || {} })
-    var P = ING[st.part]
+    var st = a.st(), parts = ingParts(st)
+    if (st.part >= parts.length) {
+      var rec = { longest: st.longest || {} }
+      parts.forEach(function (P) { rec[P.id] = st.best[P.id] || 0 })
+      return a.finish(rec)
+    }
+    var P = parts[st.part]
     if (!st.introDone) return partIntro(P.say, function () { st.introDone = true; ingatNext(a) })
-    if (st.span.phase === 'done') { st.best[P.id] = st.span.score; st.longest = st.longest || {}; st.longest[P.id] = st.span.best; st.part++; st.span = C.span(); st.practiced = false; st.introDone = false; return ingatNext(a) }
-    a.trail(st.n, 18)
+    if (st.span.phase === 'done') { st.best[P.id] = st.span.score; st.longest = st.longest || {}; st.longest[P.id] = st.span.best; st.part++; st.span = newSpan(st); st.practiced = false; st.introDone = false; return ingatNext(a) }
+    a.trail(st.n, st.mode === 'cepat' ? 10 : 18)
     var len = st.practiced ? st.span.len : 2, sd = st.seed + st.part * 1000 + (st.trial++)
     var seq = P.id === 'corsi' ? W.CekIngat.corsi(len, sd) : W.CekIngat.sequence(len, sd, PICS.length)
     a.setItem({ seq: seq, want: P.id === 'mundur' ? seq.slice().reverse() : seq, practice: !st.practiced, part: P.id, got: [] })
@@ -91,10 +99,11 @@
   // ---------- Cepat ----------
   function cepatNext (a) {
     var st = a.st()
-    if (st.t0 && Date.now() - st.t0 >= C.SPEED_MS) return cepatEnd(a)
+    var T = st.speedMs || C.SPEED_MS
+    if (st.t0 && Date.now() - st.t0 >= T) return cepatEnd(a)
     if (st.prac >= 2 && !st.t0) {
       return partIntro('Bagus! Sekarang jawab sebanyak-banyaknya sampai waktunya habis.', function () {
-        st.t0 = Date.now(); a.later(function () { cepatEnd(a) }, C.SPEED_MS); tick(a); cepatNext(a)
+        st.t0 = Date.now(); a.later(function () { cepatEnd(a) }, T); tick(a); cepatNext(a)
       })
     }
     if (!st.t0) a.trail(st.prac, 2)
@@ -115,7 +124,7 @@
   }
   function tick (a) {
     var st = a.st(); if (!st || st.isle !== 'cepat' || !st.t0) return
-    var left = Math.max(0, 1 - (Date.now() - st.t0) / C.SPEED_MS), t = $('trail')
+    var left = Math.max(0, 1 - (Date.now() - st.t0) / (st.speedMs || C.SPEED_MS)), t = $('trail')
     t.className = 'trail timer'; t.innerHTML = '<b class="time" style="width:' + (left * 100).toFixed(1) + '%"></b>'
     if (left > 0) a.later(function () { tick(a) }, 250)
   }
@@ -123,25 +132,30 @@
     var st = a.st(); if (!st || st.isle !== 'cepat' || st.ended) return
     st.ended = true
     var n = st.right + st.wrong
-    a.finish({ rate: Math.round(st.right / (C.SPEED_MS / 6e4) * 10) / 10, right: st.right, wrong: st.wrong, errRate: n ? st.wrong / n : 0 })
+    a.finish({ rate: Math.round(st.right / ((st.speedMs || C.SPEED_MS) / 6e4) * 10) / 10, right: st.right, wrong: st.wrong, errRate: n ? st.wrong / n : 0 })
   }
 
   // ---------- Angka ----------
   function dotSvg (list) {
     return '<svg viewBox="0 0 100 100" aria-hidden="true">' + list.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + p.r.toFixed(1) + '" fill="#7c3aed"/>' }).join('') + '</svg>'
   }
+  // PRD-56: Cepat mode skips the three 0-20 lines (only the 0-100 lines are scored) and the story problems (read, not in
+  // the IQ); the dot trials stay whole (their reliability is the island's weak part)
+  function angParts (st) { return st.mode === 'cepat' ? ANG.slice(0, 2) : ANG }
   function angkaNext (a) {
-    var st = a.st()
-    if (st.part >= ANG.length) {
+    var st = a.st(), parts = angParts(st)
+    if (st.part >= parts.length) {
       var pae = st.pae.length ? st.pae.reduce(function (x, y) { return x + y }, 0) / st.pae.length : null
       var lv = 0; for (var L = 1; L <= 4; L++) if ((st.bOK[L] || 0) >= 2) lv = L
       // PRD-54: 'titik' = right answers of the 8 scored dot trials (all ratios); the old 'banyak' level is kept for display
       var titik = 0; for (var L2 = 1; L2 <= 4; L2++) titik += st.bOK[L2] || 0
-      return a.finish({ banyak: lv, titik: titik, garis: pae === null ? undefined : Math.round(pae * 10) / 10, hitung: st.hl.raw, pae: st.pae })
+      var rec = { banyak: lv, titik: titik, garis: pae === null ? undefined : Math.round(pae * 10) / 10, pae: st.pae }
+      if (parts.length === ANG.length) rec.hitung = st.hl.raw
+      return a.finish(rec)
     }
-    var P = ANG[st.part]
+    var P = parts[st.part]
     if (!st.introDone) return partIntro(P.say, function () { st.introDone = true; angkaNext(a) })
-    a.trail(st.n, 23)
+    a.trail(st.n, st.mode === 'cepat' ? 12 : 23)
     var prac = !st.practiced
     if (P.id === 'banyak') {
       if (!prac && st.k >= W.CekAngka.N_DOTS) return partDone(a)
@@ -154,7 +168,7 @@
     if (!prac && st.hl.phase === 'done') return partDone(a)
     drawStory(a, W.CekAngka.story(prac ? 0 : st.hl.idx, prac ? st.seed + 555 : st.seed), prac)
   }
-  function partDone (a) { var st = a.st(); st.part++; st.k = 0; st.practiced = false; st.introDone = false; angkaNext(a) }
+  function partDone (a) { var st = a.st(); st.part++; st.k = st.mode === 'cepat' && angParts(st)[st.part] && angParts(st)[st.part].id === 'garis' ? W.CekAngka.N_LINES - 4 : 0; st.practiced = false; st.introDone = false; angkaNext(a) }
   function after (a, right, btn) {   // one answer in Angka: practice gets feedback, scored only the neutral tap
     var st = a.st(), it = a.item()
     if (it.practice) { st.practiced = true; a.feedback(right, btn); return a.later(a.next, right ? 900 : 1900) }
@@ -225,7 +239,8 @@
     has: function (id) { return !!FLOWS[id] },
     init: function (id, st) {
       if (id === 'ingat') { st.part = 0; st.practiced = false; st.trial = 0; st.span = C.span(); st.best = {} }
-      if (id === 'cepat') { st.k = 0; st.prac = 0; st.right = 0; st.wrong = 0; st.t0 = 0 }
+      if (id === 'ingat') st.span = newSpan(st)
+      if (id === 'cepat') { st.k = 0; st.prac = 0; st.right = 0; st.wrong = 0; st.t0 = 0; st.speedMs = st.mode === 'cepat' ? 45000 : C.SPEED_MS }
       if (id === 'angka') { st.part = 0; st.k = 0; st.practiced = false; st.bOK = {}; st.pae = []; st.hl = C.ladder({ practice: 0, max: W.CekAngka.N_STORY, stopAfter: C.STOP_AFTER }) }
     },
     next: function (id, a) { FLOWS[id](a) },
