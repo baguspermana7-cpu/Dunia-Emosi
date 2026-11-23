@@ -199,11 +199,13 @@ for (const size of SIZES) {
   const sea = await p.evaluate(async () => {
     const c = document.querySelector('canvas.cek-sea:not(.cek-sea-gl)'); if (!c) return null
     const px = () => { const g = c.getContext('2d'), d = g.getImageData(0, 0, c.width, c.height).data; return d }
+    // headless starves frames for seconds after a load: wait for 8 steady frames (< 100 ms apart, max 15 s) before the 500 ms sample
+    await new Promise(res => { let n = 0, t = performance.now(); const end = t + 15000; const step = now => { n = now - t < 100 ? n + 1 : 0; t = now; if (n >= 8 || now > end) res(); else requestAnimationFrame(step) }; requestAnimationFrame(step) })
     const a = px(), f0 = window.CekSea.state().frames; await new Promise(r => setTimeout(r, 500)); const b = px()
     let diff = 0; for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 6) diff++
     return { diff: diff / (a.length / 4), frames: window.CekSea.state().frames - f0, gl: window.CekSea.state().gl, glSlow: window.CekSea.state().glSlow, glEl: !!document.querySelector('canvas.cek-sea-gl'), still: window.CekSea.state().still }
   })
-  ok(sea && sea.diff > 0.01 && sea.frames >= 2 && !sea.still && (sea.gl || sea.glSlow) === sea.glEl, `M1 ${tag}: sea canvas changes ${sea && (sea.diff * 100).toFixed(1)} % of pixels in 500 ms (${sea && sea.frames} frames), GL ${sea && sea.gl}${sea && sea.glSlow ? ' (dropped: frames too slow)' : ''}`)
+  ok(sea && sea.diff > 0.01 && sea.frames >= 2 && !sea.still && (sea.gl || sea.glSlow) === sea.glEl, `M1 ${tag}: sea canvas changes ${sea && (sea.diff * 100).toFixed(1)} % of pixels in 500 ms (${sea && sea.frames} frames), GL ${sea && sea.gl}${sea && sea.glSlow ? ' (dropped: frames too slow)' : ''}, GL canvas ${sea && sea.glEl}, still ${sea && sea.still}`)
   // M2: a screen change runs one short slide; a fast double tap on an island still leaves exactly one screen
   const tr = await p.evaluate(async () => {
     const b = document.querySelector('#map .isle'); b.click(); b.click()
