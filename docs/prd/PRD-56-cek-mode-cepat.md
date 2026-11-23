@@ -144,3 +144,5 @@ Cepat gagal hukum RMSE (1,22x). Dengan titik 4, gagal juga.
   dirilis, jadi tidak ada angka lama di cloud. Sampai v64.90 tab itu menulis "Sedang offline" walau perangkat online;
   sejak v64.91 tulisannya "Papan semua pemain belum dibuka. Ini papan di perangkat ini." (qa-prd53 L11, merah di
   v64.90 live). Kalau R3 dirilis nanti, `submit_score` menyimpan nilai terbesar per nama: kirim hanya IQ rumus PRD-56.
+  Keputusan pemilik 2026-11-24: R3 ditunda. Alasan: Supabase tidak terjangkau dari mesin uji (proxy 502), jadi
+  simpan/ambil skor tidak bisa dibuktikan. Papan tetap per perangkat sampai jalur itu bisa diuji.
