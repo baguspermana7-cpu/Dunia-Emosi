@@ -27,7 +27,13 @@ async function seed (slot, extra) {
   await p.goto(BASE + 'manifest.json')
   await p.evaluate((pl, s, ex) => { if (s === 0) localStorage.clear(); localStorage.setItem('dunia-players', pl); localStorage.setItem('dunia-active-slot', JSON.stringify([s, 1 - s])); for (const k in ex) localStorage.setItem(k, ex[k]) }, PLAYERS, slot, extra || {})
 }
-const page = async q => { await p.goto(BASE + 'index.html?nocine=1' + q, { waitUntil: 'load' }); await sleep(2200) }
+// then wait until the hub draws steady frames (8 in a row under 100 ms apart, up to 15 s): 2.2 s after load the
+// headless renderer was still painting the hub, so the first breath cue reached the screen 2-4.6 s late with no long
+// task over 93 ms (probe 2026-11-23); opened 8 s after load the cue showed at 0 ms
+const page = async q => {
+  await p.goto(BASE + 'index.html?nocine=1' + q, { waitUntil: 'load' }); await sleep(2200)
+  await p.evaluate(() => new Promise(res => { let n = 0, last = performance.now(); const end = last + 15000; const f = now => { n = now - last < 100 ? n + 1 : 0; last = now; if (n >= 8 || now > end) res(); else requestAnimationFrame(f) }; requestAnimationFrame(f) })).catch(() => {})
+}
 const tap = async sel => { const h = await p.$(sel); if (!h) return false; const r = await h.boundingBox(); await p.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2); return true }
 const has = () => p.evaluate(() => !!document.getElementById('dbreath'))
 // right after a close tap the overlay must already let taps through, and leave the DOM within 700 ms (the module's own
@@ -41,11 +47,16 @@ await page('&feel=1')
 // record every phase change against the page's own clock: sampling at fixed wall-clock sleeps read a phase 200 ms
 // before its boundary, so a busy machine turned a correct run red (2026-11-14: in,out,out,in twice under the runner)
 await p.evaluate(() => {
+  const t0 = performance.now()
   DuniaBreath.open(); window.__ph = []
-  const t0 = performance.now(), tick = () => { const c = document.querySelector('#dbreath .dbr-cue'), f = c && c.dataset.phase, l = window.__ph[window.__ph.length - 1]; if (f && (!l || l.f !== f)) window.__ph.push({ f, t: Math.round(performance.now() - t0) }); if (performance.now() - t0 < 10000) requestAnimationFrame(tick) }
+  // read the entrance in the same task as open(): a 700 ms stall on the CI runner (2026-11-23) let the 260 ms
+  // entrance finish before a separate evaluate could see it
+  const c = document.querySelector('#dbreath .dbr-card')
+  window.__motion = c.getAnimations().some(a => a.effect.getKeyframes().some(k => k.transform && k.transform !== 'none'))
+  const tick = () => { const c = document.querySelector('#dbreath .dbr-cue'), f = c && c.dataset.phase, l = window.__ph[window.__ph.length - 1]; if (f && (!l || l.f !== f)) window.__ph.push({ f, t: Math.round(performance.now() - t0) }); if (performance.now() - t0 < 10000) requestAnimationFrame(tick) }
   tick()
 })
-const motion = await p.evaluate(() => { const c = document.querySelector('#dbreath .dbr-card'); return c.getAnimations().some(a => a.effect.getKeyframes().some(k => k.transform && k.transform !== 'none')) })
+const motion = await p.evaluate(() => window.__motion)
 ok(motion, 'the card enters with a transform (scale/translate)')
 await sleep(300); const s0 = await st()
 await sleep(3500); const s1 = await st()
@@ -55,8 +66,12 @@ await sleep(4000); const s3 = await st()
 // read after the timed rounds (the picture arrives over the network: > 0.3 s on the CI runner); never loads -> fails at 10 s
 ok(await p.waitForFunction(() => { const i = document.querySelector('#dbreath .dbr-pic'); return i && i.complete && i.naturalWidth > 0 }, { timeout: 10000 }).then(() => true, () => false), 'the cloud picture loads')
 const ph = await p.evaluate(() => window.__ph)
-const gaps = ph.slice(1).map((x, i) => x.t - ph[i].t)
-ok(ph.map(x => x.f).join() === 'in,out,in' && gaps.every(g => g >= 3700 && g <= 4400), `cues follow in / out every 4 s (${ph.map(x => x.f + '@' + x.t).join(' ')})`)
+// against the schedule from open(): in at 0, out at 4 s, in at 8 s. The first cue may land late when the page stalls
+// right after open (701 ms on the CI runner, 2026-11-23: the timers stay on schedule, only the first paint waits),
+// (1625 ms on the laptop at load 13), so it gets 3 s; the later ones must hit their own time within -300/+400 ms
+// (a 7 s round puts them at 3.5 s and 7.1 s: red)
+const want = [0, 4000, 8000]
+ok(ph.map(x => x.f).join() === 'in,out,in' && ph[0].t <= 3000 && ph.slice(1).every((x, i) => x.t >= want[i + 1] - 300 && x.t <= want[i + 1] + 400), `cues follow in / out every 4 s (${ph.map(x => x.f + '@' + x.t).join(' ')})`)
 ok(s1.w > s0.w * 1.2, `the cloud grows on the in-breath (${Math.round(s0.w)} -> ${Math.round(s1.w)} px)`)
 ok(s0.on === 1 && s3.on === 2, `one dot per round (${s0.on}, ${s3.on})`)
 await sleep(16500)
@@ -97,6 +112,8 @@ await seed(0, { 'dunia-avatar-lion-feelings': JSON.stringify({ days: { [DAY]: 's
 await page(''); await p.evaluate(() => goToMenu()); await sleep(1500)
 ok(!(await has()), 'automated browser without ?feel=1: never offered')
 await page('&feel=1'); await p.evaluate(() => goToMenu()); await sleep(1500)
+// the offer waits for the map to settle; on a busy machine that is later than 1.5 s
+await p.waitForFunction(() => !!document.querySelector('#dbreath h2'), { timeout: 8000 }).catch(() => {})
 const offer = await p.evaluate(() => (document.querySelector('#dbreath h2') || {}).textContent)
 ok(offer === 'Mau tarik napas dulu?', `three wrong in a row: offered on the map (${offer})`)
 if (SHOTS) await p.screenshot({ path: `${SHOTS}/breathe-offer.png` })
@@ -133,14 +150,15 @@ ok(!(await p.evaluate(() => !!document.getElementById('dfeel'))), 'map left with
 for (const [w, h] of [[1024, 600], [844, 390]]) {
   await p.setViewport({ width: w, height: h, isMobile: true, hasTouch: true })
   await seed(0); await page('&feel=1'); await p.evaluate(() => goToMenu()); await sleep(1500)
-  const fit = async id => p.evaluate(id => {
+  // measure after the card's entrance (scale .96, children rise): mid-animation a 56 px button reads 46 px
+  const fit = async id => { await p.waitForFunction(id => { const o = document.getElementById(id); return !!o && o.getAnimations({ subtree: true }).every(a => a.playState !== 'running' || a.effect.getTiming().iterations === Infinity || a.effect.getComputedTiming().duration > 2000) }, { timeout: 8000 }, id).catch(() => {}); return p.evaluate(id => {
     const c = document.querySelector('#' + id + ' [class$="card"]'); if (!c) return 'no card'
     const r = c.getBoundingClientRect(); if (r.top < 0 || r.bottom > innerHeight + 0.5 || r.left < 0 || r.right > innerWidth + 0.5) return 'card off screen ' + JSON.stringify([r.top, r.bottom, innerHeight])
     const bs = [...c.querySelectorAll('button')].map(b => b.getBoundingClientRect())
     if (bs.some(b => b.width < 48 || b.height < 48)) return 'button under 48 px'
     for (let i = 0; i < bs.length; i++) for (let j = i + 1; j < bs.length; j++) { const a = bs[i], b = bs[j]; if (a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1) return 'buttons overlap' }
     return 'ok'
-  }, id)
+  }, id) }
   const f1 = await fit('dfeel'); ok(f1 === 'ok', `${w}x${h} check-in: ${f1}`)
   if (SHOTS) await p.screenshot({ path: `${SHOTS}/feel-${w}.png` })
   await tap('#dfeel .dfeel-face[data-feel="takut"]'); await sleep(700)
