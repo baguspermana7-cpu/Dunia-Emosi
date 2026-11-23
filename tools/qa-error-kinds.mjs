@@ -93,7 +93,8 @@ if (process.env.QA_BASE) {
       await sleep(2600)
     }
     const log = await p.evaluate(() => (window.LearningLog ? LearningLog.recent(10) : []).filter(r => r.hint).map(r => r.hint))
-    const gone = await p.evaluate(() => !document.querySelector('.dek'))
+    // the next question clears the card: wait for it (a loaded CI runner needed > 2.6 s, 2026-11-23); never -> red at 10 s
+    const gone = await p.waitForFunction(() => !document.querySelector('.dek'), { timeout: 10000 }).then(() => true, () => false)
     ok(got && got.seen && got.top >= 0 && got.left >= 0 && got.right <= w + 1 && got.bottom <= h, `browser ${w}x${h}: a wrong tap one away shows the whole off-by-one hint, nothing covering it (seen ${got && got.seen}, ${got ? got.text + ' @' + [got.left, got.top, got.right, got.bottom].map(Math.round) : 'none'})`)
     ok(log.includes('off-by-one') && gone, `browser ${w}x${h}: the kind is in the child's learning log (${log}) and the next question clears the card (${gone})`)
     await c.close()
