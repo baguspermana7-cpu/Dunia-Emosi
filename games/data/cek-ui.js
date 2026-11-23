@@ -171,7 +171,8 @@
     $('board-note').textContent = 'Memuat papan semua pemain...'; $('board-rows').innerHTML = rows(dev)
     return W.CekBoard.online(50).then(function (list) {
       if (tok !== boardTok) return 'stale'
-      if (!list) { $('board-note').textContent = 'Sedang offline. Ini papan di perangkat ini.'; return 'offline' }
+      // no cloud module on the page (PRD-53 R3 not released): say so, the device is not offline
+      if (!list) { $('board-note').textContent = W.CekCloud ? 'Sedang offline. Ini papan di perangkat ini.' : 'Papan semua pemain belum dibuka. Ini papan di perangkat ini.'; return W.CekCloud ? 'offline' : 'closed' }
       $('board-note').textContent = 'Semua pemain. Hanya nama depan yang ditampilkan.'; $('board-rows').innerHTML = rows(list, mine); if (W.CekMotion) W.CekMotion.rows($('board-rows')); return 'online'
     })
   }

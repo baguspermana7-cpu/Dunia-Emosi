@@ -140,5 +140,7 @@ Cepat gagal hukum RMSE (1,22x). Dengan titik 4, gagal juga.
   norma per mode bisa diperiksa nanti.
 - Kesulitan soal dirancang (-2,5..+2,5 logit), belum dikalibrasi pada anak. CAT memakai anggapan yang sama dengan
   penilaian Rasch yang sudah ada.
-- Papan **online** menyimpan nilai tertinggi per nama (`submit_score`). Angka lama yang dulu ikut menghitung Kata tetap
-  di sana sampai anak itu bermain lagi dan nilainya lebih tinggi. Papan perangkat sudah dihitung ulang.
+- Papan **online** ("Semua pemain") belum pernah aktif: modul `games/data/cek-cloud.js` (PRD-53 R3) tidak pernah
+  dirilis, jadi tidak ada angka lama di cloud. Sampai v64.90 tab itu menulis "Sedang offline" walau perangkat online;
+  sejak v64.91 tulisannya "Papan semua pemain belum dibuka. Ini papan di perangkat ini." (qa-prd53 L11, merah di
+  v64.90 live). Kalau R3 dirilis nanti, `submit_score` menyimpan nilai terbesar per nama: kirim hanya IQ rumus PRD-56.
