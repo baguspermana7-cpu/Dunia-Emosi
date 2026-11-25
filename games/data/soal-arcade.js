@@ -42,11 +42,19 @@
     var M = W.DuniaMastery
     try { return M && M.tierNow ? M.tierNow(topic) : 2 } catch (e) { return 2 }
   }
-  // the weighted mean of the child's tiers across the topics this game serves
+  // PRD-58 A6 (owner 2026-11-26): a 5-8 year old stays at grade 1-2 however strong; grade 3-4 (fractions, x, change
+  // in Rp) only for the 9-10 band or when a parent turned on "Perkalian & Pembagian" (dunia-emosi-mathadv) in Setelan
+  function gradeCap () {
+    try {
+      if (W.localStorage && W.localStorage.getItem('dunia-emosi-mathadv') === 'on') return 4
+      return (W.DuniaProfile && W.DuniaProfile.ageTier && W.DuniaProfile.ageTier() === 'pintar') ? 4 : 2
+    } catch (e) { return 2 }
+  }
+  // the weighted mean of the child's tiers across the topics this game serves, under the age cap
   function grade () {
     var sum = 0, tot = 0
     TOPICS.forEach(function (t) { sum += WEIGHTS[t] * tierOf(t); tot += WEIGHTS[t] })
-    return Math.max(1, Math.min(4, Math.round(sum / tot)))
+    return Math.max(1, Math.min(gradeCap(), Math.round(sum / tot)))
   }
 
   var EMOJI = /(?:[\uD83C-\uD83E][\uDC00-\uDFFF]|[☀-➿]|[⬀-⯿])️?/g

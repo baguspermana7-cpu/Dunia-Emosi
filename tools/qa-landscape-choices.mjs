@@ -64,7 +64,8 @@ const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox']
 }
 
 for (const g of GAMES) {
-  for (const vp of [...LANDSCAPES, { ...PORTRAIT, portrait: true }]) {
+  // PRD-58 A1: "hard" is reachable now (6 choices, 12 rounds) - every size is checked at easy AND hard
+  for (const vp of ['easy', 'hard'].flatMap(lvl => [...LANDSCAPES.map(v => ({ ...v, lvl })), { ...PORTRAIT, portrait: true, lvl }])) {
    try {
     // Open + navigate with a retry: an occasional first-goto after a page teardown
     // hangs the 'load' wait; recreating the page clears it. Try up to 3x.
@@ -98,9 +99,9 @@ for (const g of GAMES) {
     for (let i = 0; i < 40 && !ok; i++) { ok = await booted(); if (!ok) await new Promise(r => setTimeout(r, 500)); }
     await new Promise(r => setTimeout(r, 400));
 
-    const info = await page.evaluate((g) => {
+    const info = await page.evaluate((g, lvl) => {
       try {
-        window.state = { players: [{ animal: '🦊', name: 'A', ageTier: 'tumbuh' }], currentPlayer: 0, selectedLevel: 'easy', selectedLevelNum: 1, mode: 'solo' };
+        window.state = { players: [{ animal: '🦊', name: 'A', ageTier: 'tumbuh' }], currentPlayer: 0, selectedLevel: lvl, selectedLevelNum: lvl === 'hard' ? 18 : 1, mode: 'solo' };
         // reveal screen
         document.querySelectorAll('.screen.active').forEach(s => s.classList.remove('active'));
         const scr = document.getElementById(g.screen);
@@ -108,7 +109,7 @@ for (const g of GAMES) {
         window[g.init]();
       } catch (e) { return { err: String(e) }; }
       return { ok: true };
-    }, g);
+    }, g, vp.lvl);
 
     // wait for the choices to actually render (init may build async-ish via timers).
     // Retry the init up to 3x — the very first page load can race the choice build.
@@ -203,10 +204,10 @@ for (const g of GAMES) {
       };
     }, g);
 
-    const tag = vp.portrait ? 'portrait' : `${vp.w}x${vp.h}`;
+    const tag = (vp.portrait ? 'portrait' : `${vp.w}x${vp.h}`) + '-' + vp.lvl;
     const fname = vp.portrait
-      ? `ls-g${g.n}-portrait.png`
-      : `ls-g${g.n}-${PHASE}-${vp.w}x${vp.h}.png`;
+      ? `ls-g${g.n}-portrait-${vp.lvl}.png`
+      : `ls-g${g.n}-${PHASE}-${vp.w}x${vp.h}-${vp.lvl}.png`;
     await page.screenshot({ path: path.join(OUT, fname) });
 
     if (errs.length) bootErrors.push({ game: g.n, vp: tag, errs: errs.slice(0, 3) });

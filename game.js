@@ -9,7 +9,9 @@ window.onerror = function(msg, url, line, col, err) {
 const DIFF = {
   easy:   { rounds: 6,  timer: 20, choices: 3 },
   medium: { rounds: 10, timer: 15, choices: 4 },
-  hard:   { rounds: 15, timer: 10, choices: 6 }
+  // PRD-58 A1: reachable since v64.93 (levels 15-20); 12 rounds / 15 s keep one session short enough for a 6-7 year
+  // old (15 traced letters or a 10 s count was written when nobody could reach it)
+  hard:   { rounds: 12, timer: 15, choices: 6 }
 }
 
 // ================================================================
@@ -784,8 +786,6 @@ const LETTER_GUIDES = {
   'Y':[{x:0.1,y:0.05},{x:0.5,y:0.5},{x:0.9,y:0.05},{x:0.5,y:0.5},{x:0.5,y:0.95}],
   'Z':[{x:0.1,y:0.05},{x:0.9,y:0.05},{x:0.1,y:0.95},{x:0.9,y:0.95}]
 }
-const LETTER_SEQ_CILIK  = ['A','B','C','D','E','F']
-const LETTER_SEQ_TUMBUH = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N']
 const LETTER_SEQ_PINTAR = Object.keys(LETTER_GUIDES)
 
 // A-339 P5 — Jejak Huruf WORD mode (level > 20): trace whole simple Indonesian kid
@@ -1343,11 +1343,11 @@ function openLevelSelect(gameNum) {
   // Per-tier dot colors + star count
   // v56.5 B-291 — g14 (Balapan Kereta) claims "x/40 level selesai" but only rendered
   // 4 tiers (20 bubbles). It now shows all 8 tiers = 40 levels like the header says.
-  const numTiers = (state.currentGame === 13 || state.currentGame === 14 || state.currentGame === 16 || state.currentGame === 24) ? 8 : (state.currentGame === 19 || state.currentGame === 20) ? 6 : 4
+  const numTiers = levelCount(state.currentGame) / 5
   // Show/hide extended tiers
   for (let t = 5; t <= 8; t++) {
     const tc2 = document.getElementById('level-tier-'+t)
-    if (tc2) tc2.style.display = (state.currentGame === 13 || state.currentGame === 14 || state.currentGame === 16 || state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 24) ? '' : 'none'
+    if (tc2) tc2.style.display = t <= numTiers ? '' : 'none'
   }
   for (let tier = 1; tier <= numTiers; tier++) {
     const dotsEl = document.getElementById('level-dots-'+tier)
@@ -1411,12 +1411,17 @@ function openLevelSelect(gameNum) {
   showScreen('screen-level')
 }
 
+// PRD-58 A1: the levels a game's map shows, and its difficulty by thirds of THAT map (the old 1-13 / 14-26 / 27+
+// split left the 20-level games G3, G4, G7, G8, G9, G11 without "hard": their map ends at 20)
+function levelCount(g) { return (g === 13 || g === 14 || g === 16 || g === 24) ? 40 : (g === 19 || g === 20) ? 30 : 20 }
+function levelDiff(g, lv) { const n = levelCount(g), a = Math.ceil(n / 3), b = Math.ceil(2 * n / 3); return lv <= a ? 'easy' : lv <= b ? 'medium' : 'hard' }
+
 function startGameWithLevel(levelNum) {
   state.paused = false
   document.getElementById('pause-overlay').style.display='none'
   // Map level 1-20 to difficulty string for backward compat
   state.selectedLevelNum = levelNum
-  state.selectedLevel = levelNum <= 13 ? 'easy' : levelNum <= 26 ? 'medium' : 'hard'
+  state.selectedLevel = levelDiff(state.currentGame, levelNum)
   state.gameStars = [0,0]
   state.maxPossibleStars = null
   state.currentPlayer = 0
@@ -2028,7 +2033,7 @@ function showResult(mascot, title, msg) {
     const nextBtn = document.getElementById('result-next-btn')
     if (nextBtn) {
       const curLv = state.selectedLevelNum || 1
-      nextBtn.style.display = (curLv < 20 && state.mode !== 'duo' && earned >= 3) ? 'block' : 'none'
+      nextBtn.style.display = (curLv < levelCount(state.currentGame) && state.mode !== 'duo' && earned >= 3) ? 'block' : 'none'
     }
     const scoresEl = document.getElementById('result-scores')
     if (scoresEl) {
@@ -3563,7 +3568,8 @@ function initGame9(){
   const diff=state.selectedLevel||'medium'
   const tier=state.players[state.currentPlayer].ageTier||'tumbuh'
   // A-339 P5 — WORD mode above level 20 (huruf only; angka stays single digits).
-  const wordMode = (g9TraceMode==='huruf') && ((state.selectedLevelNum||1) > 20)
+  // PRD-58 A3: from level 15 (the "hard" third of the 20-level map); "> 20" was never reached
+  const wordMode = (g9TraceMode==='huruf') && ((state.selectedLevelNum||1) >= 15)
   let seq
   if(g9TraceMode==='angka'){
     seq=LETTER_SEQ_ANGKA
@@ -3573,7 +3579,9 @@ function initGame9(){
     const _pw=g9PicPool().filter(x=>x.word.length>=3&&x.word.length<=7).map(x=>x.word), _all=[...new Set([...WORD_LIST_G9,..._pw])]
     seq=drawBag('g9w',_all,Math.min(DIFF[diff].rounds,_all.length))
   } else {
-    seq=tier==='cilik'?LETTER_SEQ_CILIK:tier==='tumbuh'?LETTER_SEQ_TUMBUH:LETTER_SEQ_PINTAR
+    // PRD-58 A3: a shuffled bag over all 26 letters for every age (the fixed lists from index 0 only ever reached
+    // A-F / A-J); the level's difficulty sets how many letters one session traces (DIFF rounds)
+    seq=drawBag('g9h',LETTER_SEQ_PINTAR,Math.min(DIFF[diff].rounds,LETTER_SEQ_PINTAR.length))
   }
   g9State={tkTried:true,round:0,maxRound:Math.min(DIFF[diff].rounds,seq.length),sequence:seq,currentLetter:'A',mode:g9TraceMode,wordMode:wordMode,word:'',layout:null,strokes:0}
   state.currentPlayer=0
@@ -6353,6 +6361,24 @@ function g10RenderHp(fillId, numsId, hp, maxHp){
   document.getElementById(numsId).textContent=`${hp}/${maxHp}`
 }
 
+// PRD-58 A5: one G10 question inside its level's own number limit and operations (G10_LEVELS max/ops were stored
+// in g10State but the shared generator ignored them, so a level-1 child got subtraction and a level-20 child
+// got division)
+function g10LevelQuestion(maxNum, ops){
+  const ri=(lo,hi)=>lo+Math.floor(Math.random()*(hi-lo+1))
+  const op=ops[Math.floor(Math.random()*ops.length)]
+  let a,b,ans
+  if(op==='-'){ a=ri(2,maxNum); b=ri(1,a); ans=a-b }
+  else if(op==='×'){ a=ri(2,Math.min(9,maxNum)); b=ri(2,Math.max(2,Math.min(9,Math.floor(maxNum/a)))); ans=a*b }
+  else if(op==='÷'){ b=ri(2,Math.min(9,maxNum)); ans=ri(1,Math.max(1,Math.min(9,Math.floor(maxNum/b)))); a=ans*b }
+  else { a=ri(1,Math.max(1,maxNum-1)); b=ri(1,Math.max(1,maxNum-a)); ans=a+b }
+  const wrong=new Set()
+  for(let g=0; wrong.size<3 && g<40; g++){ const w=ans+(Math.random()<.5?-1:1)*ri(1,3); if(w>=0 && w!==ans) wrong.add(w) }
+  for(let w=ans+4; wrong.size<3; w++) wrong.add(w)
+  // a/b only for + and -: the counting-orbs scaffold draws those two and nothing else
+  return { q:`${a} ${op} ${b} = ?`, ans, op:op==='×'?'*':op, a:(op==='+'||op==='-')?a:null, b:(op==='+'||op==='-')?b:null, choices:[ans,...wrong].sort(()=>Math.random()-0.5) }
+}
+
 function g10GenQuestion(){
   const s=g10State
   try { if (window.VFX && VFX.Poke && s.playerPoke && s.enemyPoke) VFX.Poke.prime([String(s.playerPoke.type).toLowerCase(), String(s.enemyPoke.type).toLowerCase()]) } catch(_) {}  // pre-decode this fight's effect sheets
@@ -6361,7 +6387,13 @@ function g10GenQuestion(){
   const _diff = state.selectedLevel || 'easy'
   const _lv = state.selectedLevelNum || 1
   let q, qText, lbl, ans
-  if (typeof window.makeGameQuestion === 'function') {
+  if (s.maxNum && Array.isArray(s.ops) && s.ops.length) {
+    q = g10LevelQuestion(s.maxNum, s.ops)
+    ans = q.ans
+    qText = q.q
+    s._g10Choices = q.choices
+    lbl = `${s.playerPoke.name} menyerang!`
+  } else if (typeof window.makeGameQuestion === 'function') {
     q = window.makeGameQuestion(_lv, 20, _diff)
     ans = q.ans
     qText = q.q
@@ -6375,7 +6407,7 @@ function g10GenQuestion(){
     lbl = `${s.playerPoke.name} menyerang!`
   }
   s.currentAnswer = ans
-  s.currentProblem = { ans, op: q && q.op, text: qText }
+  s.currentProblem = { ans, op: q && q.op, text: qText, a: q && q.a, b: q && q.b }
   s.attempts = 0; s._rep = 0
   const hint=document.getElementById('g10-hint'); if(hint) hint.innerHTML=''
   const model=document.getElementById('g10-model'); if(model) model.innerHTML=''

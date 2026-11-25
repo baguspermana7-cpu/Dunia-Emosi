@@ -131,16 +131,22 @@ check(![...labels].includes('Lainnya'), 'L2 no skill label falls to Lainnya: ' +
 
 /* ── L3: strong vs weak child ─────────────────────────────────────────────────────────────────────────── */
 for (const g of Object.keys(GAMES)) {
-  const run = right => {
+  // PRD-58 A6: grade 3-4 needs the parent switch "Perkalian & Pembagian" (or the 9-10 band), so the climb is
+  // measured with the switch on, and the default child is checked to stay at grade <= 2
+  const run = (right, adv = true, n = 15, served = []) => {
     const P = page(), gr = []
-    for (let i = 0; i < 15; i++) {
+    if (adv) P.localStorage.setItem('dunia-emosi-mathadv', 'on')
+    for (let i = 0; i < n; i++) {
       const q = P.SoalArcade.next(g, { seed: 50 + i * 31, history: false })
       gr.push(P.SoalArcade.grade())
-      if (q) P.SoalArcade.answer(q, right, right ? 1 : 3, 800)
+      if (q) { served.push(q.grade); P.SoalArcade.answer(q, right, right ? 1 : 3, 800) }
     }
     return gr
   }
   const strong = run(true), weak = run(false)
+  const capServed = [], capped = run(true, false, 200, capServed)
+  check(Math.max(...capped) <= 2 && capServed.every(x => x == null || x <= 2),
+    `A6 ${g}: strong child without the switch, 200 questions -> highest grade ${Math.max(...capped)}, served grades ${[...new Set(capServed)].sort().join(',')} (need <= 2)`)
   const avg = a => a.reduce((x, y) => x + y, 0) / a.length
   console.log(`${g}: strong grades ${strong.join('')} weak grades ${weak.join('')}`)
   check(strong[14] >= 3 && weak[14] <= 2 && strong[14] - weak[14] >= 2 && avg(strong) > avg(weak) + 0.8,
