@@ -98,7 +98,6 @@ const GAMES = [
   ['selamatkan-kereta.html',   [['showWin', []], ['showLose', []]]],
   ['ducky-volley.html',        [['endMatch', [true]]]],
   ['monster-candy.html',       [['endGame', []]]],
-  ['mobil.html',               [['showGameOver', []], ['showFinish', []]]],
   ['pokemon-run.html',         [['showWin', []], ['showLose', []]]],
   ['pokemon-birds.html',       [['showWin', []]]],
   ['pokemon-bawah-laut.html',  [['showWin', []]]],

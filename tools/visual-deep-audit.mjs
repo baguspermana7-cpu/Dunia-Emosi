@@ -62,21 +62,6 @@ async function main() {
       },
       postSettle: 1500,
     },
-    {
-      id: 'D11', label: 'g6 word racer',
-      url: '/games/mobil.html', preSettle: 1800,
-      interact: async (page) => {
-        // Pick a vehicle + difficulty + tap Mulai!
-        return await page.evaluate(() => {
-          const v = document.querySelector('.veh-card') || document.querySelectorAll('.veh-card')[0]
-          if (v) v.click()
-          const start = Array.from(document.querySelectorAll('button')).find(b => /Mulai/i.test(b.textContent || ''))
-          if (start) { start.click(); return true }
-          return false
-        })
-      },
-      postSettle: 2500,
-    },
     // D12 g17 rope-swing (jembatan-goyang) retired in v55.67 (B-271): row removed 2026-10-25
     {
       id: 'D13', label: 'g20 duck volley',

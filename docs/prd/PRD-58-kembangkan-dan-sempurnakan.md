@@ -235,7 +235,7 @@ menyebut semua game yang melapor. Hukum: log tiruan → baris yang diharapkan ta
 | 58B | v64.94 | lihat 5.2 | B1, B4, B6 selesai; B2 terukur sudah lulus; B3, B5, B7, B8 pindah ke 58B-2 |
 | 58C | v64.95 | | belum |
 | 58D | v64.96 | lihat 5.4 | D4 sebagian (v64.94); sisanya belum |
-| 58E | v64.97 | | belum |
+| 58E | v64.97 | lihat 5.5 | E9 Mobil dipensiunkan (v64.95); sisanya belum |
 | 58F | v64.98 | lihat 5.3 | F1 dan F2 sebagian selesai lebih awal (v64.94); sisanya belum |
 
 ### 5.1 Hasil 58A (2026-11-26)
@@ -298,3 +298,17 @@ Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 
   `qa-prd53-cek`.
 - **F4 ditunda:** gate timer tersembunyi memalsukan `document.hidden` tanpa pelambatan asli browser, jadi loop rAF
   setiap game akan terhitung sebagai kerja. Perlu daftar berkas per halaman, tidak bisa dari `readdirSync` saja.
+
+### 5.5 58E-E9 Mobil (G6) dipensiunkan (v64.95)
+
+- Dihapus: `games/mobil.html`; kode G6 di `game.js` (306 baris: peta, mobil, jalur, kata); layar `#screen-game6` dan
+  CSS G6 di `index.html`; jeda/lanjut/keluar dan tombol panah G6; entri `mobil` di peta tema sinema.
+- `game.js` 10.596 -> 10.278 baris; ratchet `GAME_JS_MAX_LINES` 10.599 -> 10.299.
+- Gate: `qa-mobil-bounds`, `qa-prd45-mobil`, `qa-modal-truth`, `_qa-mobil-dup` dihapus (hanya menguji Mobil);
+  entri Mobil keluar dari `audit-no-emoji`, `qa-endgame-hang`, `qa-mobile-touch`, `qa-sakuga-look`, `enter-play`,
+  `qa-music-on-start`, audit perf/visual/sentuh, baseline a11y/instruksi/perf. `qa-prd16c-feel` L1/L5 kini memakai
+  Ducky Volley yang kalah 0-2 (hijau 10/0); blok G6 keluar dari `qa-prd48-bus` dan `qa-prd49-events`.
+- Lencana "Pembalap Handal!" tidak bisa didapat lagi: disembunyikan, kecuali untuk anak yang sudah memilikinya.
+- Tidak dihapus: 169 aturan CSS G6 di `style.css` (banyak di daftar selektor bersama; dibersihkan dengan ratchet F8),
+  gambar dan suara (dipakai game lain atau belum dipastikan tunggal), dokumen lama, `plb.html`/`secondbrain.html`
+  (halaman dev, F9).

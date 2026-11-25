@@ -14,7 +14,7 @@
  * Mechanic A of docs/SPEC-EMOSI-REPLACEMENT-2026-11-11.md (owner: "kamu putuskan yang terbaik", 2026-11-11).
  *
  * PRD-16C (docs/prd/PRD-16C-namai-perasaan-dalam-cerita.md): after a level the child did NOT win (DuniaBus
- * 'level:end' with win false: the train race with no lives left, Petualangan Mobil, Ducky Volley, Kuis Matematika),
+ * 'level:end' with win false: the train race with no lives left, Ducky Volley, Kuis Matematika),
  * a smaller card asks "Belum berhasil. Kamu merasa apa?" with three faces. At most once a day per game, only once
  * the level is over, no score. The pick is kept apart from the morning check-in, in the same record:
  * 'dunia-feelings'.after = { 'YYYY-MM-DD': { <game>: <feeling> } }; DuniaFeeling.afterWeek() counts it for the

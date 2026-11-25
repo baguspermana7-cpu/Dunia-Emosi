@@ -169,12 +169,6 @@ const RECIPES = {
     const ok = await waitFor(p, () => !!document.querySelector('canvas.weather-fx-canvas')?.getClientRects().length, null, 20000)
     return { ok, how: 'team -> gym -> TANTANG -> Adventure -> Maju -> arena' + (ok ? '' : ' (arena not up)') }
   },
-  // mobil: the vehicle picker -> Mulai! -> the lane run (not in the PRD's 10: the tapper ended on the picker)
-  async 'games/mobil.html' (p) {
-    if (!await tapEl(p, '.ovl-btn', { text: 'mulai' })) return { ok: false, how: 'no Mulai on the vehicle picker' }
-    const ok = await waitFor(p, () => typeof S !== 'undefined' && S.running === true && !S.paused, null, 15000)
-    return { ok, how: 'picker -> Mulai -> run ' + (ok ? 'running' : 'NOT running') }
-  },
   // kereta maze: Mulai Petualangan -> mission briefing -> Susun Langkah -> the board with the command tray (not in the PRD's 10: the tapper ended on its chapter map)
   async 'games/kereta-maze.html' (p) {
     if (!await tapEl(p, '#b-start')) return { ok: false, how: 'no Mulai Petualangan' }
@@ -207,7 +201,6 @@ const IN_PLAY = {
   'games/lokomotif-pemberani.html': () => typeof gameRunning !== 'undefined' && gameRunning === true,
   'games/mojo-swoptops.html': () => document.body.dataset.scr === 'scr-play',
   'games/timmy-kapal.html': () => __tk.state().screen === 'scr-play' && !document.querySelector('#pause.show'),
-  'games/mobil.html': () => typeof S !== 'undefined' && S.running === true,
   'games/gym-pokemon.html': () => !!document.querySelector('canvas.weather-fx-canvas')?.getClientRects().length,
   'games/kereta-maze.html': () => !!document.querySelector('canvas.kb-ground')?.getClientRects().length,
   'games/kuis-matematika.html': () => !!document.querySelector('.choice')?.getClientRects().length

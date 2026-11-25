@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dunia Emosi 🐾</title>
-<link rel="stylesheet" href="assets/fonts/fonts.css?v=v64.94-20261126b">
+<link rel="stylesheet" href="assets/fonts/fonts.css?v=v64.95-20261126c">
 
-<link rel="stylesheet" href="style.css?v=v64.94-20261126b">
+<link rel="stylesheet" href="style.css?v=v64.95-20261126c">
 
 <!-- PWA: install-as-app + offline support -->
 <link rel="manifest" href="manifest.json">
@@ -46,14 +46,14 @@
       Kept as a translucent overlay ON TOP of the existing bg image so the
       painterly art stays but reads darker/calmer like the math game. ── */
 #screen-game3::after,
-#screen-game4::after,#screen-game6::after,
+#screen-game4::after,
 #screen-game7::after,#screen-game8::after{
   content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
     radial-gradient(120% 90% at 50% 0%,rgba(58,116,216,.30),rgba(14,36,71,.62) 62%,rgba(9,22,50,.78));
 }
 /* keep real content above the wash */
-#screen-game3>*,#screen-game4>*,#screen-game6>*,#screen-game7>*,#screen-game8>*{
+#screen-game3>*,#screen-game4>*,#screen-game7>*,#screen-game8>*{
   position:relative;z-index:1;
 }
 
@@ -61,7 +61,6 @@
 
 #screen-game3 .game-header .gh-back,#screen-game3 .game-header .gh-pause,
 #screen-game4 .game-header .gh-back,#screen-game4 .game-header .gh-pause,
-#screen-game6 .game-header .gh-back,#screen-game6 .game-header .gh-pause,
 #screen-game7 .game-header .gh-back,#screen-game7 .game-header .gh-pause,
 #screen-game8 .game-header .gh-back,#screen-game8 .game-header .gh-pause{
   background:rgba(20,30,55,.60)!important;color:#fff!important;
@@ -69,19 +68,19 @@
   box-shadow:inset 0 2px 0 rgba(255,255,255,.2)!important;
 }
 #screen-game3 .gh-title,
-#screen-game4 .gh-title,#screen-game6 .gh-title,
+#screen-game4 .gh-title,
 #screen-game7 .gh-title,#screen-game8 .gh-title{
   font-family:var(--clay-disp)!important;color:#fff!important;
   text-shadow:0 2px 6px rgba(0,0,0,.45);
 }
 #screen-game3 .gh-level,
-#screen-game4 .gh-level,#screen-game6 .gh-level,
+#screen-game4 .gh-level,
 #screen-game7 .gh-level,#screen-game8 .gh-level{
   background:rgba(20,30,55,.60)!important;border:2px solid rgba(255,255,255,.30)!important;
   color:#fff!important;font-family:var(--clay-disp)!important;
 }
 #screen-game3 .gh-stars,
-#screen-game4 .gh-stars,#screen-game6 .gh-stars,
+#screen-game4 .gh-stars,
 #screen-game7 .gh-stars,#screen-game8 .gh-stars{
   background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
   color:#5a3d00!important;border:2px solid rgba(255,255,255,.5)!important;
@@ -91,7 +90,7 @@
 
 /* ── Mascot speech bubble → translucent dark chip, white text ── */
 #screen-game3 .mg-bubble,
-#screen-game4 .mg-bubble,#screen-game6 .mg-bubble,
+#screen-game4 .mg-bubble,
 #screen-game7 .mg-bubble,#screen-game8 .mg-bubble{
   background:rgba(20,30,55,.62)!important;color:#fff!important;
   border:2px solid rgba(255,255,255,.30)!important;
@@ -99,7 +98,7 @@
   font-family:var(--clay-body)!important;
 }
 
-#screen-game3 .mg-bubble::before,#screen-game4 .mg-bubble::before,#screen-game6 .mg-bubble::before,
+#screen-game3 .mg-bubble::before,#screen-game4 .mg-bubble::before,
 #screen-game7 .mg-bubble::before,#screen-game8 .mg-bubble::before{
   border-right-color:rgba(20,30,55,.62)!important;filter:none!important;
 }
@@ -192,17 +191,6 @@
   background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
   color:#5a3d00!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 4px 0 rgba(0,0,0,.20)!important;
   font-family:var(--clay-disp)!important;}
-
-/* ── G6 (legacy SPA screen — real g6 lives in games/mobil.html) ── */
-#screen-game6 .g6-map-btn.active{
-  background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
-  color:#5a3d00!important;border-color:rgba(255,255,255,.5)!important;font-family:var(--clay-disp)!important;}
-#screen-game6 .g6-target-word{color:#ffe884!important;font-family:var(--clay-disp)!important;}
-#screen-game6 .g6-score-mid,#screen-game6 .g6-ctrl-btn{font-family:var(--clay-disp)!important;}
-#screen-game6 .g6-ctrl-btn{
-  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
-  border:3px solid rgba(255,255,255,.5)!important;color:#fff!important;
-  box-shadow:0 6px 0 rgba(0,0,0,.22)!important;}
 
 /* ── G7 Tebak Gambar ── */
 #screen-game7 .g7-question{
@@ -2061,90 +2049,7 @@
 </div>
 
 <!-- GAME 6 -->
-<div id="screen-game6" class="screen map-city">
-  <div class="game-header">
-    <button class="gh-back" onclick="exitGame()">⌂</button>
-    <button class="gh-back gh-level-back" onclick="backToLevelSelect()" title="Pilih level">←</button>
-    <span class="gh-title">🚗 Petualangan Mobil</span>
-    <span class="gh-level" id="g6-level">Lv.1</span>
-    <span class="gh-player" id="g6-player-icon"></span>
-    <button class="gh-pause" onclick="pauseGame()">⏸</button>
-    <span class="gh-stars" id="g6-stars">⭐ 0</span>
-  </div>
-  <!-- HUD: map selector + target word outside road -->
-  <div class="g6-hud">
-    <div class="g6-map-row" id="g6-map-row">
-      <button class="g6-map-btn active" data-map="city" onclick="selectDriveMap('city',this)">🏙️ Kota</button>
-      <button class="g6-map-btn" data-map="forest" onclick="selectDriveMap('forest',this)">🌿 Hutan</button>
-      <button class="g6-map-btn" data-map="space" onclick="selectDriveMap('space',this)">🚀 Angkasa</button>
-      <button class="g6-map-btn" data-map="body" onclick="selectDriveMap('body',this)">🔬 Tubuh</button>
-      <button class="g6-map-btn" data-map="pantai" onclick="selectDriveMap('pantai',this)">🏖️ Pantai</button>
-      <button class="g6-map-btn" data-map="sekolah" onclick="selectDriveMap('sekolah',this)">🏫 Sekolah</button>
-      <button class="g6-map-btn" data-map="dapur" onclick="selectDriveMap('dapur',this)">🍳 Dapur</button>
-      <button class="g6-map-btn" data-map="kebun" onclick="selectDriveMap('kebun',this)">🌱 Kebun</button>
-    </div>
-    <div class="g6-target-row">
-      <span class="g6-target-label">🎯</span>
-      <span class="g6-target-word" id="g6-target-word">— — — —</span>
-      <span class="g6-lives-display" id="g6-lives">❤️❤️❤️</span>
-    </div>
-    <div class="g6-collected" id="g6-collected"></div>
-  </div>
-  <!-- Road: pure gameplay area -->
-  <div class="g6-road" id="g6-road">
-    <div class="g6-speed-lines" aria-hidden="true">
-      <div class="g6-speed-line" style="left:8%;height:18%;--dur:0.38s;--delay:0s"></div>
-      <div class="g6-speed-line" style="left:18%;height:22%;--dur:0.45s;--delay:0.12s"></div>
-      <div class="g6-speed-line" style="left:28%;height:16%;--dur:0.42s;--delay:0.24s"></div>
-      <div class="g6-speed-line" style="left:38%;height:20%;--dur:0.36s;--delay:0.05s"></div>
-      <div class="g6-speed-line" style="left:50%;height:15%;--dur:0.50s;--delay:0.18s"></div>
-      <div class="g6-speed-line" style="left:60%;height:24%;--dur:0.40s;--delay:0.30s"></div>
-      <div class="g6-speed-line" style="left:70%;height:18%;--dur:0.44s;--delay:0.08s"></div>
-      <div class="g6-speed-line" style="left:80%;height:21%;--dur:0.37s;--delay:0.22s"></div>
-      <div class="g6-speed-line" style="left:90%;height:17%;--dur:0.48s;--delay:0.15s"></div>
-    </div>
-    <div class="g6-divider" style="left:33.33%"></div>
-    <div class="g6-divider" style="left:66.66%"></div>
-    <div class="g6-car" id="g6-car">
-      <svg class="g6-car-svg" id="g6-car-svg" viewBox="0 0 50 82" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="27" cy="45" rx="17" ry="22" fill="rgba(0,0,0,0.3)"/>
-        <rect x="8" y="10" width="34" height="62" rx="10" fill="#DC2626"/>
-        <rect x="13" y="14" width="24" height="15" rx="5" fill="rgba(180,230,255,0.88)"/>
-        <rect x="13" y="51" width="24" height="13" rx="4" fill="rgba(140,210,255,0.65)"/>
-        <rect x="16" y="29" width="18" height="22" rx="4" fill="rgba(0,0,0,0.12)"/>
-        <path d="M14 29 Q25 32 36 29" stroke="rgba(0,0,0,0.2)" stroke-width="1.5" fill="none"/>
-        <rect x="1" y="16" width="10" height="16" rx="3" fill="#111" stroke="#333" stroke-width="1"/>
-        <rect x="39" y="16" width="10" height="16" rx="3" fill="#111" stroke="#333" stroke-width="1"/>
-        <rect x="1" y="50" width="10" height="16" rx="3" fill="#111" stroke="#333" stroke-width="1"/>
-        <rect x="39" y="50" width="10" height="16" rx="3" fill="#111" stroke="#333" stroke-width="1"/>
-        <rect x="12" y="10" width="10" height="5" rx="2" fill="#FEFB6E"/>
-        <rect x="28" y="10" width="10" height="5" rx="2" fill="#FEFB6E"/>
-        <rect x="12" y="67" width="10" height="5" rx="2" fill="#EF4444"/>
-        <rect x="28" y="67" width="10" height="5" rx="2" fill="#EF4444"/>
-      </svg>
-    </div>
-    <div class="g6-start-overlay" id="g6-start-overlay">
-      <div class="g6-start-card" style="max-height:90vh;overflow-y:auto;width:92%;max-width:400px;">
-        <!-- Car selector -->
-        <div id="g6-car-selector" style="width:100%;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:900;color:rgba(255,255,255,0.55);letter-spacing:2px;text-align:center;margin-bottom:8px;">PILIH KENDARAAN</div>
-          <div id="g6-car-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;"></div>
-          <div style="font-size:11px;font-weight:900;color:rgba(255,255,255,0.55);letter-spacing:2px;text-align:center;margin:10px 0 6px;">WARNA KENDARAAN</div>
-          <div id="g6-color-picker" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"></div>
-        </div>
-        <div style="font-size:36px;text-align:center;margin:6px 0" id="g6-vehicle-icon">🚗</div>
-        <div class="g6-start-word" id="g6-start-word"></div>
-        <p style="font-size:14px;color:rgba(255,255,255,0.6);margin:6px 0 16px;text-align:center;">Kumpulkan huruf-huruf ini!</p>
-        <button class="btn btn-lg" style="background:linear-gradient(135deg,#38BDF8,#0EA5E9);color:white;box-shadow:0 6px 0 #0369A1;width:100%;" onclick="beginDrive()">Mulai! 🚗</button>
-      </div>
-    </div>
-  </div>
-  <div class="g6-controls">
-    <button class="g6-ctrl-btn" id="g6-left" ontouchstart="driveLeft();event.preventDefault()" onclick="driveLeft()"><span class="g6-ctrl-icon">◀</span><span class="g6-ctrl-label">KIRI</span></button>
-    <div class="g6-score-mid" id="g6-score">⭐ 0</div>
-    <button class="g6-ctrl-btn" id="g6-right" ontouchstart="driveRight();event.preventDefault()" onclick="driveRight()"><span class="g6-ctrl-icon">▶</span><span class="g6-ctrl-label">KANAN</span></button>
-  </div>
-</div>
+<!-- G6 Petualangan Mobil retired 2026-11-26 (PRD-58 E9) -->
 
 <!-- GAME 7 -->
 <div id="screen-game7" class="screen">
@@ -2382,59 +2287,59 @@ function loadPixiJS(cb) {
 </div>
 
 <!-- Task #73 (P0-2): defer data scripts — unblock HTML parsing by ~51KB -->
-<script src="games/data/region-meta.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/city-progression.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/city-pokemon-pack.js?v=v64.94-20261126b" defer></script>
+<script src="games/data/region-meta.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/city-progression.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/city-pokemon-pack.js?v=v64.95-20261126c" defer></script>
 <!-- Hotfix 2026-04-28 — sprite cascade + freeze watchdog (must load before game.js).
      poke-sprite-cdn.js is NOT loaded here — game.js declares its own POKE_IDS
      and would collide. Standalone /games/*.html pages still load it.
      Bump 20260428b: picker overhaul, legacy cascade audit, G10 hit FX. -->
-<script src="games/data/poke-sprite-loader.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/speak.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/parent-gate.js?v=v64.94-20261126b" defer></script><!-- PRD-49 -->
-<script src="games/data/freeze-watchdog.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/save-engine.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/dunia-bus.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/learning-log.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/reward-book.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/session-rhythm.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/offline-ready.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/mastery.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/skill-games.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/mute-button.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/feeling-checkin.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/breathe.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/cloud-sync.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/math-rules.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/sfx-engine.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/weather-fx.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/poke-packages.js?v=v64.94-20261126b" defer></script>
-<script src="games/vfx-engine.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/vfx-db.js?v=v64.94-20261126b" defer></script>
-<script src="games/vfx-poke.js?v=v64.94-20261126b" defer></script>
-<script src="games/vfx-moments.js?v=v64.94-20261126b" defer></script><!-- PRD-58 B4: the level-win moment in showResult -->
-<script src="games/battle-arena.js?v=v64.94-20261126b" defer></script>
+<script src="games/data/poke-sprite-loader.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/speak.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/parent-gate.js?v=v64.95-20261126c" defer></script><!-- PRD-49 -->
+<script src="games/data/freeze-watchdog.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/save-engine.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/dunia-bus.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/learning-log.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/reward-book.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/session-rhythm.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/offline-ready.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/mastery.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/skill-games.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/mute-button.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/feeling-checkin.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/breathe.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/cloud-sync.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/math-rules.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/sfx-engine.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/weather-fx.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/poke-packages.js?v=v64.95-20261126c" defer></script>
+<script src="games/vfx-engine.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/vfx-db.js?v=v64.95-20261126c" defer></script>
+<script src="games/vfx-poke.js?v=v64.95-20261126c" defer></script>
+<script src="games/vfx-moments.js?v=v64.95-20261126c" defer></script><!-- PRD-58 B4: the level-win moment in showResult -->
+<script src="games/battle-arena.js?v=v64.95-20261126c" defer></script>
 <!-- v56.5 A-318 — 48-leg journey names for the g14 claymorphism station-map level select -->
-<script src="games/train-journey.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/battle-modes.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/poke-type-chart.js?v=v64.94-20261126b" defer></script>
-<script src="games/train-shared.js?v=v64.94-20261126b" defer></script>
-<script src="games/train-vfx.js?v=v64.94-20261126b" defer></script>
-<script src="games/train-bg-engine.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/bg-themes.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/bg-renderers.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/bg-npcs.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/bg-audio.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/bg-events.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/db-sprites.js?v=v64.94-20261126b" defer></script><!-- A-356 shared asset DB accessor -->
-<script src="games/data/db-labeled.js?v=v64.94-20261126b" defer></script><!-- labeled DB subset for Tebak game -->
-<script src="games/data/mascot-sprites.js?v=v64.94-20261126b" defer></script><!-- 12-char mascot/hero sheet -->
-<script src="games/data/emoji-map.js?v=v64.94-20261126b" defer></script><script src="games/data/ui-sprites.js?v=v64.94-20261126b" defer></script><!-- 6 UIUX/gameplay sprite packs -->
-<script src="games/data/hit-feel.js?v=v64.94-20261126b" defer></script><!-- PRD-37: hit-stop for G10/G13 attacks -->
-<script src="game.js?v=v64.94-20261126b" defer></script>
-<script src="games/hub/g14-g16-trains.js?v=v64.94-20261126b" defer></script>
-<script src="games/hub/g11-kuis-sains.js?v=v64.94-20261126b" defer></script>
-<script src="games/hub/g10-weather.js?v=v64.94-20261126b" defer></script>
+<script src="games/train-journey.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/battle-modes.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/poke-type-chart.js?v=v64.95-20261126c" defer></script>
+<script src="games/train-shared.js?v=v64.95-20261126c" defer></script>
+<script src="games/train-vfx.js?v=v64.95-20261126c" defer></script>
+<script src="games/train-bg-engine.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/bg-themes.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/bg-renderers.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/bg-npcs.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/bg-audio.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/bg-events.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/db-sprites.js?v=v64.95-20261126c" defer></script><!-- A-356 shared asset DB accessor -->
+<script src="games/data/db-labeled.js?v=v64.95-20261126c" defer></script><!-- labeled DB subset for Tebak game -->
+<script src="games/data/mascot-sprites.js?v=v64.95-20261126c" defer></script><!-- 12-char mascot/hero sheet -->
+<script src="games/data/emoji-map.js?v=v64.95-20261126c" defer></script><script src="games/data/ui-sprites.js?v=v64.95-20261126c" defer></script><!-- 6 UIUX/gameplay sprite packs -->
+<script src="games/data/hit-feel.js?v=v64.95-20261126c" defer></script><!-- PRD-37: hit-stop for G10/G13 attacks -->
+<script src="game.js?v=v64.95-20261126c" defer></script>
+<script src="games/hub/g14-g16-trains.js?v=v64.95-20261126c" defer></script>
+<script src="games/hub/g11-kuis-sains.js?v=v64.95-20261126c" defer></script>
+<script src="games/hub/g10-weather.js?v=v64.95-20261126c" defer></script>
 <script>
   // Boot SFXEngine + WeatherFX after page loads — both lazy, never block the game.
   document.addEventListener('DOMContentLoaded', function () {
@@ -2496,8 +2401,8 @@ function loadPixiJS(cb) {
   } catch (e) {}
 })()
 </script>
-<script src="games/dunia-cinema.js?v=v64.94-20261126b" defer></script>
-<script src="games/vendor/sakuga/core.js?v=v64.94-20261126b" defer></script>
-<script src="games/data/dunia-sakuga.js?v=v64.94-20261126b" defer></script>
+<script src="games/dunia-cinema.js?v=v64.95-20261126c" defer></script>
+<script src="games/vendor/sakuga/core.js?v=v64.95-20261126c" defer></script>
+<script src="games/data/dunia-sakuga.js?v=v64.95-20261126c" defer></script>
 </body>
 </html>

@@ -63,7 +63,7 @@ jobs:
     needs: verify
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment1.outputs.page_url || steps.deployment2.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -109,6 +109,19 @@ jobs:
         with:
           path: '.'
 
+      # 3 of 4 deploys on 2026-11-25/26 failed with "No artifacts named github-pages were found" / "Deployment failed,
+      # try again later" while the 780 MB artifact was listed as uploaded; a later re-run of the same artifact passed.
+      # One retry after a pause instead of a lost release (PRD-58).
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: deployment1
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Wait before the retry
+        if: steps.deployment1.outcome == 'failure'
+        run: sleep 90
+
+      - name: Deploy to GitHub Pages (retry)
+        id: deployment2
+        if: steps.deployment1.outcome == 'failure'
         uses: actions/deploy-pages@v4

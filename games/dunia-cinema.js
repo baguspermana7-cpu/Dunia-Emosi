@@ -48,7 +48,7 @@
   }
   var PAGES = {
     'balapan-kereta': 'rail', 'balapan-kereta-side': 'rail', 'lokomotif-pemberani': 'rail', 'selamatkan-kereta': 'rail',
-    'museum-kereta': 'rail', 'kereta-maze': 'rail', 'mobil': 'city', 'mojo-swoptops': 'city', 'stinky-dirty': 'city',
+    'museum-kereta': 'rail', 'kereta-maze': 'rail', 'mojo-swoptops': 'city', 'stinky-dirty': 'city',
     'ducky-volley': 'beach', 'pokemon-bawah-laut': 'sea', 'timmy-kapal': 'sea', 'pokemon-birds': 'sky',
     'pokemon-run': 'forest', 'ejaan-inggris': 'forest', 'monster-candy': 'sweet', 'garasi-tempur': 'garage',
     'gym-pokemon': 'arena', 'mario-pokemon': 'meadow', 'kuis-matematika': 'meadow', 'ayo-berhitung': 'meadow'

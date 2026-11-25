@@ -11,7 +11,7 @@ import fs from 'node:fs'
 import puppeteer from 'puppeteer'
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 const BASE = (process.env.QA_BASE || 'http://localhost:8081').replace(/\/$/, '')
-const PAGES = (process.env.QA_LOOK || 'index.html|games/timmy-kapal.html|games/kuis-matematika.html|games/gym-pokemon.html|games/stinky-dirty.html|games/mobil.html').split('|')
+const PAGES = (process.env.QA_LOOK || 'index.html|games/timmy-kapal.html|games/kuis-matematika.html|games/gym-pokemon.html|games/stinky-dirty.html').split('|')
 const ANSWER = new Set((process.env.QA_ANSWER || 'games/kuis-matematika.html').split('|'))
 const AT = +(process.env.QA_AT || 0.12)
 const VPS = [['390x844', 390, 844, 2], ['844x390', 844, 390, 2], ['800x1280', 800, 1280, 1]]

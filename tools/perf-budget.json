@@ -87,12 +87,6 @@
    "audio": 98164,
    "dom": 133
   },
-  "games/mobil.html": {
-   "bytes": 2369353,
-   "req": 49,
-   "audio": 1771490,
-   "dom": 185
-  },
   "games/mojo-chase-embed.html": {
    "bytes": 276054,
    "req": 29,

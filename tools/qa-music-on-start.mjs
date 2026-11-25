@@ -63,8 +63,6 @@ async function tapSel (page, sel) {
 const CASES = [
   { name: 'ducky-volley', url: 'games/ducky-volley.html', music: p => p.id === 'game-bgm',
     run: async page => { await page.waitForFunction(() => typeof startGame === 'function' && document.getElementById('game-bgm'), { timeout: 20000 }); await sleep(2500); await tapSel(page, '#start-overlay') } },
-  { name: 'mobil', url: 'games/mobil.html', music: p => p.id === 'game-bgm',
-    run: async page => { await page.waitForFunction(() => document.querySelectorAll('#v-grid *').length > 0 && typeof startFromSelect === 'function', { timeout: 20000 }); await sleep(3000); await tapSel(page, '#ovl-start .ovl-btn') } },
   { name: 'lokomotif-pemberani', url: 'games/lokomotif-pemberani.html', music: p => p.id === 'game-bgm',
     run: async page => { await page.waitForSelector('.tcard', { timeout: 20000 }); await sleep(800); await tapSel(page, '.tcard') } },
   { name: 'hub-g14', url: 'index.html', music: p => /sfx-train-bg/.test(p.src),

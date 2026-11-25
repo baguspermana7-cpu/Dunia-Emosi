@@ -2,7 +2,7 @@
 // qa-prd16c-feel — PRD-16C (docs/prd/PRD-16C-namai-perasaan-dalam-cerita.md): after a level the child did not win,
 // a card asks "Belum berhasil. Kamu merasa apa?" with three faces.
 //   L1 a lost level -> the card -> one record: the train race with no lives left (startRace, hp 0, endRace),
-//      Petualangan Mobil (showGameOver), a hub game with 0 stars (setLevelComplete) — each stored under its game
+//      Ducky Volley lost 0-2 (endMatch; Mobil retired in PRD-58 E9), a hub game with 0 stars (setLevelComplete) — each stored under its game
 //   L2 only once the level is over: nothing during the race; nothing after a level won
 //   L3 every face answers with its own written line; speechSynthesis.speak 0 times (PRD-55)
 //   L4 the Dasbor shows the picks in their own row "Setelah belum berhasil"
@@ -68,23 +68,24 @@ const spoken1 = await p.evaluate(() => window.__spoken)
 const r1 = await rec(p)
 ok(!during && kc && kc.after === 'g14' && kc.faces.join() === 'senang,sedih,marah' && r1.g14 === 'sedih', `L1 race lost: card during the race ${!!during}, after endRace ${kc && kc.after} faces ${kc && kc.faces}, stored ${JSON.stringify(r1)} ${kc ? '' : JSON.stringify(diag)}`)
 await p.close()
-// L1: Petualangan Mobil, then L5 a second loss
-p = await open('/games/mobil.html?nocine=1&feel=1')
-await p.evaluate(() => { try { startFromSelect() } catch (e) { window.__qaErr = String(e) } })
-await p.waitForFunction(() => window.DuniaLevel && DuniaLevel.open(), { timeout: 30000 }).catch(() => {})
-await p.evaluate(() => showGameOver())
+// L1: Ducky Volley lost 0-2 (Petualangan Mobil was retired, PRD-58 E9), then L5 a second loss
+const duckLose = async () => {
+  await p.evaluate(() => { try { startGame() } catch (e) { window.__qaErr = String(e) } })
+  await p.waitForFunction(() => window.DuniaLevel && DuniaLevel.open(), { timeout: 30000 }).catch(() => console.log('  (ducky level did not open)'))
+  await p.evaluate(() => { S.pRounds = 0; S.cRounds = 2; endMatch() })
+}
+p = await open('/games/ducky-volley.html?nocine=1&feel=1')
+await duckLose()
 await p.waitForSelector('#dfeel', { timeout: 6000 }).catch(() => {})
 const mc = await card(p)
 if (mc) lines.marah = await pick(p, 'marah')
 await p.reload({ waitUntil: 'load' })
-await p.evaluate(() => { try { startFromSelect() } catch (e) {} })
-await p.waitForFunction(() => window.DuniaLevel && DuniaLevel.open(), { timeout: 30000 }).catch(() => {})
-await p.evaluate(() => showGameOver()); await sleep(2500)
+await duckLose(); await sleep(2500)
 const again = await card(p)
 const spoken2 = await p.evaluate(() => window.__spoken)
 const r2 = await rec(p)
-ok(mc && mc.after === 'g6' && r2.g6 === 'marah', `L1 Mobil lost: card ${mc && mc.after}, stored ${r2.g6}`)
-ok(!again, `L5 second Mobil loss today: card ${!!again}`)
+ok(mc && mc.after === 'g20' && r2.g20 === 'marah', `L1 Ducky Volley lost: card ${mc && mc.after}, stored ${r2.g20}`)
+ok(!again, `L5 second Ducky Volley loss today: card ${!!again}`)
 await p.close()
 // L1 + L2: hub, a level won then a level with 0 stars; L4 the Dasbor
 p = await open('/index.html?nocine=1&feel=1')

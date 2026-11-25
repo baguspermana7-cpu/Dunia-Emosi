@@ -33,7 +33,6 @@ const PAGES = [
   'games/selamatkan-kereta.html',
   'games/kuis-matematika.html',
   'games/ducky-volley.html',
-  'games/mobil.html',
   'games/film-anak.html',
   // The nine below were never phone-tested: the gate shipped with the games the
   // owner had complained about, which is exactly the set least likely to still

@@ -190,7 +190,7 @@
     // never a whole-level container: a filter on Mario's level-wide `world` rendered an oversized texture and wiped the
     // bricks, coins and hills (2026-11-09, 31% of the frame's detail left); Mario and Run have no player-sized layer
     'pokemon-birds': 'birdContainer', 'pokemon-bawah-laut': 'swimContainer',
-    'ducky-volley': 'entityLayer', 'monster-candy': 'gameLayer', 'mobil': 'carContainer',
+    'ducky-volley': 'entityLayer', 'monster-candy': 'gameLayer',
     'balapan-kereta': 'L.player', 'balapan-kereta-side': 'trainContainer', 'lokomotif-pemberani': 'trainContainer',
     'selamatkan-kereta': 'trainContainer'
   }

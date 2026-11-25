@@ -3,7 +3,7 @@
 // now report every answer on DuniaBus, so the learning log, the parent page and mastery see them.
 //   L1 per game, N real taps on the game's own answer buttons -> N records with that game's id
 //      G4 Hitung Binatang, G7 Tebak Gambar, G9 Jejak Huruf (a real traced stroke + "Selesai"), G10 Cuaca,
-//      G13 Pokemon Battle, G13b Quick Fire (hub), G6 Mobil (one record per finished word)
+//      G13 Pokemon Battle, G13b Quick Fire (hub) (G6 Mobil retired, PRD-58 E9)
 //   L2 every record's skill has a parent-readable name (LearningLog.label never says "Lainnya")
 //   L3 0 page errors
 //   L4 a hub record carries the hub game's id (g4, g7...), not the page name 'index'
@@ -110,25 +110,7 @@ for (const [tag, n, sel, ready] of [
   judge('G9', taps, await records(p, 'g9'), errs)
   await c.close()
 }
-{ // G6 Mobil: two finished words (one clean, one with a wrong letter first)
-  const { c, p, errs } = await open('/games/mobil.html?nocine=1', { g6Config: JSON.stringify({ mapTheme: 'city', level: 1, totalWords: 5 }) })
-  await p.waitForFunction(() => typeof app !== 'undefined' && app && app.ticker && S.wordList.length > 0, { timeout: 60000 }).catch(() => {})
-  await sleep(600)
-  await p.evaluate(() => { selectedDiff = 'easy'; startFromSelect() })
-  await sleep(500)
-  // the car "taps" a letter by driving into it: hitTile is the game's own collision handler
-  const word = () => p.evaluate(() => { for (let i = S.letterIdx; i < S.currentWord.length; i++) hitTile({ _letter: S.currentWord[S.letterIdx], x: 100, y: 300, _alive: true }) })
-  await word()
-  await p.waitForFunction(() => document.getElementById('ovl-wc').classList.contains('show'), { timeout: 5000 }).catch(() => {}) // wordComplete runs 320 ms later
-  await p.evaluate(() => { document.getElementById('ovl-wc').classList.remove('show'); startWord() })
-  await p.evaluate(() => { S.invincible = 0; const w = S.currentWord[S.letterIdx]; hitTile({ _letter: w === 'Q' ? 'X' : 'Q', x: 100, y: 300, _alive: true }) })
-  await word()
-  await p.waitForFunction(() => document.getElementById('ovl-wc').classList.contains('show'), { timeout: 5000 }).catch(() => {})
-  const recs = await records(p, 'mobil')
-  judge('G6', 2, recs, errs)
-  ok(recs.length === 2 && recs[0].ok === true && recs[1].ok === false, `L1 G6: clean word ok ${recs[0] && recs[0].ok}, word with a wrong letter ok ${recs[1] && recs[1].ok}`)
-  await c.close()
-}
+// G6 Mobil retired (PRD-58 E9): its two-word check went with the page
 await b.close()
 console.log(`qa-prd48-bus: ${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)

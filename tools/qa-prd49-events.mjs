@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // qa-prd49-events — PRD-49 (docs/prd/PRD-49-event-level-dan-gerbang-orang-tua.md)
-//   L1 one level played to its end in 5 games (hub G4 + G7 with real taps on every round; pages Mobil, Ducky Volley,
+//   L1 one level played to its end in 4 games (hub G4 + G7 with real taps on every round; pages Ducky Volley,
 //      Kuis Matematika through the game's own end function) -> exactly 1 level:start and 1 level:end, the end's
-//      `win` agrees with the result (hub: filled result stars > 0; Ducky: the match won; Mobil game over: false)
+//      `win` agrees with the result (hub: filled result stars > 0; Ducky: the match won)
 //   L2 a new sticker on the 4 reward pages (balapan-kereta, balapan-kereta-side, selamatkan-kereta,
 //      lokomotif-pemberani; all grant through ObstacleEngine._addToStorageList) -> one `reward` event; a repeat -> none
 //   L3 the Dasbor button opens the parent gate, not the dashboard; letting go before 2 s keeps the hold step; lifting
@@ -77,25 +77,7 @@ for (const [tag, n, pick] of [
 }
 
 // L1 pages
-{ // Mobil: a won level (all words) and a lost one (game over)
-  for (const lose of [false, true]) {
-    const { c, p, errs } = await open('/games/mobil.html?nocine=1', [844, 390], { g6Config: JSON.stringify({ mapTheme: 'city', level: 2, totalWords: 2 }) })
-    await p.waitForFunction(() => typeof app !== 'undefined' && app && S.wordList.length > 0 && window.DuniaLevel, { timeout: 60000 }).catch(() => {})
-    await sleep(600)
-    await p.evaluate(() => { selectedDiff = 'normal'; startFromSelect() }); await sleep(400)
-    if (lose) {
-      for (let k = 0; k < 4; k++) await p.evaluate(() => { S.invincible = 0; const w = S.currentWord[S.letterIdx]; hitTile({ _letter: w === 'Q' ? 'X' : 'Q', x: 100, y: 300, _alive: true }) })
-    } else {
-      for (let w = 0; w < 2; w++) {
-        await p.evaluate(() => { for (let i = S.letterIdx; i < S.currentWord.length; i++) hitTile({ _letter: S.currentWord[S.letterIdx], x: 100, y: 300, _alive: true }) })
-        await p.waitForFunction(() => document.getElementById('ovl-wc').classList.contains('show'), { timeout: 5000 }).catch(() => {})
-        await p.evaluate(() => nextWord()); await sleep(400)
-      }
-    }
-    judgeLevel(`Mobil ${lose ? 'lost' : 'won'}`, await evs(p), 'g6', !lose, errs)
-    await c.close()
-  }
-}
+// Mobil (G6) retired in PRD-58 E9: its won / lost level check went with the page
 { // Ducky Volley: a match lost 0-2 still saves stars; the end says win false. Started by its own start overlay.
   for (const won of [true, false]) {
     const { c, p, errs } = await open('/games/ducky-volley.html?nocine=1')

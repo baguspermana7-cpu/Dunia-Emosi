@@ -508,7 +508,7 @@ const ACHIEVEMENTS = {
   hundred_stars:   {icon:'💎', name:'100 Bintang! Juara!', desc:'Kumpulkan 100 bintang'},
   letter_master:   {icon:'📚', name:'Master Huruf!',     desc:'Selesaikan Huruf Hutan'},
   count_master:    {icon:'🔢', name:'Master Hitung!',    desc:'Selesaikan Hitung Binatang'},
-  driver_master:   {icon:'🚗', name:'Pembalap Handal!',  desc:'Selesaikan Petualangan Mobil'},
+  driver_master:   {icon:'🚗', name:'Pembalap Handal!',  desc:'Selesaikan Petualangan Mobil', retired:true}, // PRD-58 E9: shown only to a child who already has it
   picture_master:  {icon:'🖼️', name:'Mata Elang!',       desc:'Selesaikan Tebak Gambar'},
   word_master:     {icon:'🔡', name:'Penulis Muda!',     desc:'Selesaikan Susun Kata'},
   trace_master:    {icon:'✍️', name:'Kaligrafer Cilik!', desc:'Selesaikan Jejak Huruf'},
@@ -1446,7 +1446,7 @@ function startGameWithLevel(levelNum) {
   // Games 1, 2, 5 and 12 were retired on 2026-09-20 (owner is building replacement
   // mechanics). Their slots stay null so every other game keeps its number, and so
   // saved progress for games 3, 4, 6.. is not silently re-pointed at a neighbour.
-  const inits = [null,null,null,initGame3,initGame4,null,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,null,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
+  const inits = [null,null,null,initGame3,initGame4,null,null,initGame7,initGame8,initGame9,initGame10,initGame11,null,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
   if (inits[state.currentGame]) inits[state.currentGame]()
 }
 
@@ -1710,7 +1710,6 @@ function renderWorldMapStars() {
 function pauseGame() {
   if(state.paused) return
   state.paused = true
-  if(g6State && g6State.running){cancelAnimationFrame(g6State.animFrame);g6State.running=false;g6State._wasPaused=true}
   if(state.g4Timer){clearInterval(state.g4Timer);state.g4Timer=null;state._g4TimerPaused=true}
   if(state.breatheInterval){clearInterval(state.breatheInterval);state.breatheInterval=null;state._breathePaused=true}
   document.getElementById('pause-overlay').style.display='flex'
@@ -1719,7 +1718,6 @@ function pauseGame() {
 function resumeGame() {
   state.paused = false
   document.getElementById('pause-overlay').style.display='none'
-  if(g6State && g6State._wasPaused){g6State._wasPaused=false;g6State.running=true;driveTick()}
   if(state._g4TimerPaused){state._g4TimerPaused=false;if(typeof startG4Countdown==='function')startG4Countdown()}
   if(state._breathePaused){state._breathePaused=false}
 }
@@ -1816,7 +1814,6 @@ function backToLevelSelect() {
   state.paused = false
   document.getElementById('pause-overlay').style.display='none'
   document.getElementById('settings-overlay').style.display='none'
-  if(g6State?.running){cancelAnimationFrame(g6State.animFrame);g6State.running=false}
   // v54.27 I9: drain G18 ambient + DOM before leaving so gamelan/Pak Masinis
   // don't linger on the level select.
   try { g18Cleanup() } catch(_){}
@@ -1826,7 +1823,6 @@ function backToLevelSelect() {
 function clearTimers() {
   if(state.breatheInterval){clearInterval(state.breatheInterval);state.breatheInterval=null}
   if(state.g4Timer){clearInterval(state.g4Timer);state.g4Timer=null}
-  if(g6State && g6State.animFrame){cancelAnimationFrame(g6State.animFrame);g6State.running=false}
   if(g13ResultTimeout){clearTimeout(g13ResultTimeout);g13ResultTimeout=null;hideGameResult()}
   if(g9Canvas){
     // A-339 P5 — unified Pointer Events (replaced dual mouse+touch listeners)
@@ -2081,7 +2077,7 @@ function showResult(mascot, title, msg) {
 
   // SECTION 5: deferred achievement checks
   try {
-    const gameAchMap = {3:'letter_master',4:'count_master',6:'driver_master',7:'picture_master',8:'word_master',9:'trace_master'}
+    const gameAchMap = {3:'letter_master',4:'count_master',7:'picture_master',8:'word_master',9:'trace_master'}
     setTimeout(() => {
       try {
         if (gameAchMap[state.currentGame]) checkAchievement(gameAchMap[state.currentGame])
@@ -2981,311 +2977,7 @@ function startG4Timer(){
   },1000)
 }
 
-// ================================================================
-// GAME 6: PETUALANGAN MOBIL
-// ================================================================
-let g6State = {lane:1,tiles:[],targetWord:'',collectedIdx:0,wordsCompleted:0,totalWords:5,stars:0,map:'city',speed:1.5,frameCount:0,running:false,animFrame:null,penaltyPause:false,wrongCount:0,lives:3}
-
-// G6 Car catalog (emoji + name + SVG color)
-const G6_VEHICLE_MAP = {
-  sedan:'city', sport:'city', jeep:'forest', truck:'city', van:'city',
-  police:'city', taxi:'city', bus:'city', firetruck:'city', ambulance:'city',
-  tractor:'forest', scooter:'forest', bike:'forest',
-  rocket:'space', heli:'space', sub:'space',
-  ship:'body', train:'city'
-}
-const G6_CARS = [
-  {id:'sedan',   e:'🚗',  name:'Sedan',    color:'#DC2626'},
-  {id:'sport',   e:'🏎️', name:'Sport',    color:'#E63946'},
-  {id:'jeep',    e:'🚙',  name:'Jeep',     color:'#16A34A'},
-  {id:'truck',   e:'🚚',  name:'Truk',     color:'#D97706'},
-  {id:'van',     e:'🚐',  name:'Van',      color:'#7C3AED'},
-  {id:'police',  e:'🚓',  name:'Polisi',   color:'#1D4ED8'},
-  {id:'taxi',    e:'🚕',  name:'Taksi',    color:'#CA8A04'},
-  {id:'bus',     e:'🚌',  name:'Bis',      color:'#0891B2'},
-  {id:'firetruck',e:'🚒', name:'Pemadam',  color:'#B91C1C'},
-  {id:'ambulance',e:'🚑', name:'Ambulan',  color:'#F8FAFC'},
-  {id:'tractor', e:'🚜',  name:'Traktor',  color:'#65A30D'},
-  {id:'rocket',  e:'🚀',  name:'Roket',    color:'#6D28D9'},
-  {id:'ship',    e:'🚢',  name:'Kapal',    color:'#0284C7'},
-  {id:'heli',    e:'🚁',  name:'Helikopter',color:'#D97706'},
-  {id:'scooter', e:'🛵',  name:'Skuter',   color:'#F43F5E'},
-  {id:'bike',    e:'🚲',  name:'Sepeda',   color:'#16A34A'},
-  {id:'sub',     e:'🛸',  name:'UFO',      color:'#7C3AED'},
-  {id:'train',   e:'🚂',  name:'Kereta',   color:'#4B5563'},
-]
-const G6_COLORS = ['#DC2626','#16A34A','#1D4ED8','#D97706','#7C3AED','#F43F5E','#0891B2','#F97316','#FFFFFF','#111827']
-let g6CarState = {selectedCar: G6_CARS[0], selectedColor: '#DC2626'}
-
-function initGame6() {
-  const lv = state.selectedLevelNum || state.selectedLevel || 5
-  const map = g6State?.map || 'city'
-  const words = Math.max(3, Math.min(10, Math.round(3 + lv * 0.35)))
-  const vehicle = DRIVE_VEHICLES[map] || '🚗'
-  const wordBank = DRIVE_WORD_BANK[map] || DRIVE_WORD_BANK.city
-  try {
-    sessionStorage.setItem('g6Config', JSON.stringify({
-      mapTheme: map, level: lv, playerIcon: vehicle,
-      totalWords: words, wordBank: wordBank
-    }))
-  } catch(_) {}
-  window.location.href = 'games/mobil.html'
-}
-function setupDriveMap(map) {
-  g6State.map = map
-  const vehicle = DRIVE_VEHICLES[map]
-  // Set road map theme class
-  const scr=document.getElementById('screen-game6');
-  ['map-city','map-forest','map-space','map-body'].forEach(c=>scr.classList.remove(c));
-  scr.classList.add('map-'+map);
-  // Set background-image directly on road + blurred sides on screen
-  const road = document.getElementById('g6-road')
-  const bgUrl = `url('assets/bg-${map}.webp')`
-  if (road) {
-    road.style.backgroundImage = bgUrl
-    road.style.backgroundSize = 'cover'
-    road.style.backgroundPosition = 'center'
-  }
-  document.getElementById('screen-game6').style.setProperty('--g6-bg-img', bgUrl)
-  // Car is now SVG - update color based on vehicle/map
-  const carSvg = document.getElementById('g6-car-svg');
-  if(carSvg) {
-    const chosenColor = g6CarState?.selectedColor || {city:'#DC2626',forest:'#DC2626',space:'#3B82F6',body:'#F59E0B'}[map] || '#DC2626';
-    const bodyRect = carSvg.querySelectorAll('rect')[0];
-    if(bodyRect) bodyRect.setAttribute('fill', chosenColor);
-  }
-  const vImgMap = {city:'car-red.webp',forest:'car-red.webp',space:'rocket.webp',body:'submarine.webp'}
-  const vIconEl = document.getElementById('g6-vehicle-icon')
-  if(vIconEl) {
-    const selectedCar = g6CarState?.selectedCar
-    if(selectedCar) vIconEl.textContent = selectedCar.e
-    else {
-      const vFile = vImgMap[map]
-      if(vFile) vIconEl.innerHTML = `<img src="assets/${vFile}" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5))" onerror="this.outerHTML='${vehicle}'">`
-      else vIconEl.textContent = vehicle
-    }
-  }
-  pickNextWord()
-  document.getElementById('g6-start-overlay').classList.add('visible')
-}
-function selectDriveMap(map, btn) {
-  document.querySelectorAll('.g6-map-btn').forEach(b=>b.classList.remove('active'))
-  btn.classList.add('active')
-  // Update road map theme class
-  const scr=document.getElementById('screen-game6');
-  ['map-city','map-forest','map-space','map-body'].forEach(c=>scr.classList.remove(c));
-  scr.classList.add('map-'+map);
-  const road2 = document.getElementById('g6-road')
-  const bgUrl2 = `url('assets/bg-${map}.webp')`
-  if (road2) {
-    road2.style.backgroundImage = bgUrl2
-    road2.style.backgroundSize = 'cover'
-    road2.style.backgroundPosition = 'center'
-  }
-  scr.style.setProperty('--g6-bg-img', bgUrl2)
-  if(g6State.running){cancelAnimationFrame(g6State.animFrame);g6State.running=false}
-  clearRoadTiles()
-  setupDriveMap(map)
-}
-function pickNextWord() {
-  const tier = state.players[state.currentPlayer].ageTier||'tumbuh'
-  const bank = getAgeWordBank(g6State.map, tier)
-  const validBank = bank.length > 0 ? bank : DRIVE_WORD_BANK[g6State.map]
-  const word = validBank[Math.floor(Math.random()*validBank.length)]
-  g6State.targetWord = word; g6State.collectedIdx = 0; g6State.wrongCount = 0; g6State.penaltyPause = false; g6State.lives = 3
-  document.getElementById('g6-start-word').textContent = word.split('').join(' ')
-  document.getElementById('g6-target-word').textContent = word.split('').join(' - ')
-  const livesEl = document.getElementById('g6-lives'); if(livesEl) livesEl.innerHTML = uiRepeat('heart','❤️',3)
-  renderCollectedSlots()
-}
-function renderCollectedSlots() {
-  const el = document.getElementById('g6-collected')
-  el.innerHTML = g6State.targetWord.split('').map((letter,i) => {
-    const filled = i < g6State.collectedIdx
-    const isNext = i === g6State.collectedIdx
-    return `<div class="g6-slot ${filled?'filled':''} ${isNext?'g6-slot-next':''}">${filled?letter:`<span class="g6-ghost">${letter}</span>`}</div>`
-  }).join('')
-}
-function beginDrive() {
-  document.getElementById('g6-start-overlay').classList.remove('visible')
-  document.getElementById('screen-game6').classList.add('racing')
-  // Replace SVG with selected emoji vehicle
-  const carDiv = document.getElementById('g6-car')
-  const car = g6CarState.selectedCar || G6_CARS[0]
-  carDiv.innerHTML = `<div class="g6-emoji-vehicle">${car.e}</div>`
-  g6State.running = true; g6State.frameCount = 0; g6State.tiles = []
-  startAmbient(g6State.map); updateCarPosition(); driveTick()
-}
-function driveTick() {
-  if(!g6State.running) return
-  g6State.frameCount++
-  if(g6State.frameCount % 90 === 0) spawnDriveTileRow()
-  const road = document.getElementById('g6-road')
-  const roadH = road.clientHeight
-  const toRemove = []
-  g6State.tiles.forEach(tile => {
-    tile.y += g6State.speed * 2
-    tile.el.style.top = tile.y + 'px'
-    const carY = roadH - 80, tileBottom = tile.y + 44
-    if(tileBottom >= carY && tileBottom <= carY + 60) {
-      const tileLaneCenter = [16.6,50,83.3][tile.lane]
-      const carLaneCenter  = [16.6,50,83.3][g6State.lane]
-      if(Math.abs(tileLaneCenter - carLaneCenter) < 15) {
-        handleDriveCollision(tile); toRemove.push(tile)
-      }
-    }
-    if(tile.y > roadH) toRemove.push(tile)
-  })
-  toRemove.forEach(t=>{if(t.el.parentNode)t.el.remove();g6State.tiles=g6State.tiles.filter(x=>x!==t)})
-  if(g6State.frameCount % 300 === 0) g6State.speed = Math.min(g6State.speed + 0.2, 4)
-  g6State.animFrame = requestAnimationFrame(driveTick)
-}
-function spawnDriveTileRow() {
-  const word = g6State.targetWord, nextLetter = word[g6State.collectedIdx]
-  const diff = state.selectedLevel||'medium'
-  const obstacleChance = diff==='easy'?0.08:diff==='medium'?0.15:0.22
-  const road = document.getElementById('g6-road')
-  const lanePositions = [16.6,50,83.3]
-  // Decide: target tile, obstacle, or decoy — one tile per spawn
-  const isTarget = Math.random() < 0.5  // 50% chance to spawn the target letter
-  const isObstacle = !isTarget && Math.random() < obstacleChance
-  const lane = Math.floor(Math.random()*3)
-  let type, content
-  if(isTarget){type='target';content=nextLetter}
-  else if(isObstacle){type='obstacle';content=DRIVE_OBSTACLES[g6State.map]}
-  else{const decoys='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(l=>l!==nextLetter);type='decoy';content=decoys[Math.floor(Math.random()*decoys.length)]}
-  const el=document.createElement('div'); el.className=`g6-tile ${type}`; el.textContent=content
-  el.style.left=lanePositions[lane]+'%'; el.style.top='-50px'
-  road.appendChild(el); g6State.tiles.push({el,lane,y:-50,type,content})
-  // For lv 1-10 (beginner/intermediate): glow the lane where target appears
-  if(type==='target' && (state.selectedLevelNum||10) <= 10){
-    const glow=document.createElement('div'); glow.className='g6-lane-glow'
-    glow.style.left=['0%','33.3%','66.6%'][lane]
-    road.appendChild(glow); setTimeout(()=>glow.remove(),700)
-  }
-}
-function handleDriveCollision(tile) {
-  if(g6State.penaltyPause) return
-  const word = g6State.targetWord
-  const neededLetter = word[g6State.collectedIdx]
-  if(tile.type==='target' && tile.content === neededLetter){
-    // Correct letter!
-    const tileRect=tile.el.getBoundingClientRect(), slotIdx=g6State.collectedIdx
-    tile.el.classList.add('collected'); g6State.collectedIdx++; g6State.wrongCount=0
-    playCorrect(); renderCollectedSlots(); addStars(1); spawnSparkles()
-    g6FlyLetterToSlot(tileRect,tile.content,slotIdx)
-    if(g6State.collectedIdx>=word.length){
-      g6State.wordsCompleted++; g6State.speed=Math.max(1.5,g6State.speed-0.3)
-      if(g6State.wordsCompleted>=g6State.totalWords){
-        cancelAnimationFrame(g6State.animFrame); g6State.running=false
-        showResult('🚗','Petualangan Selesai!',`Kamu berhasil mengeja ${g6State.wordsCompleted} kata! 🎉`)
-      } else {
-        showFeedback(true,0,`"${g6State.targetWord}" benar! Kata berikutnya... 🎯`,()=>{
-          g6State.running=false; cancelAnimationFrame(g6State.animFrame); clearRoadTiles()
-          pickNextWord()
-          const ov=document.getElementById('g6-start-overlay'); ov.classList.add('visible')
-          setTimeout(()=>{ if(ov.classList.contains('visible')) beginDrive() }, 1500)
-        })
-      }
-    }
-  } else if(tile.type==='obstacle'){
-    tile.el.classList.add('hit')
-    g6WrongLetterPenalty(true)   // obstacles → lose a life
-  } else {
-    // Decoy OR wrong letter — bounce/slow only, NO life loss
-    tile.el.classList.add('hit')
-    g6WrongLetterPenalty(false)
-  }
-}
-function updateG6Lives() {
-  const el = document.getElementById('g6-lives'); if(!el) return
-  const lives = g6State.lives || 0
-  el.innerHTML = uiRepeat('heart','❤️',Math.max(0,lives)) + uiRepeat('heart-empty','🤍',Math.max(0,3-lives))
-  el.classList.remove('hit-flash'); void el.offsetWidth; el.classList.add('hit-flash')
-}
-function g6WrongLetterPenalty(isWrongLetter) {
-  if(g6State.penaltyPause) return
-  g6State.penaltyPause = true
-  g6State.wrongCount = (g6State.wrongCount||0) + 1
-  // Decrement lives on wrong letter hit
-  if(isWrongLetter) {
-    g6State.lives = Math.max(0, (g6State.lives||3) - 1)
-    updateG6Lives()
-    // Game over if no lives left
-    if(g6State.lives <= 0) {
-      cancelAnimationFrame(g6State.animFrame); g6State.running = false
-      playWrong()
-      setTimeout(() => {
-        showResult('🚗','Game Over!',`Kesalahan terlalu banyak! Coba lagi! 💪`)
-      }, 400)
-      return
-    }
-  }
-  playWrong()
-  // Mobile vibration
-  if(navigator.vibrate) navigator.vibrate(250)
-  // Car shake animation
-  const car = document.getElementById('g6-car')
-  car.classList.add('car-shake')
-  setTimeout(() => car.classList.remove('car-shake'), 480)
-  const road = document.getElementById('g6-road')
-  // Shake + red tint
-  road.style.animation = 'screenShake 0.45s ease'
-  road.style.outline = '4px solid rgba(244,63,94,0.8)'
-  setTimeout(() => { road.style.animation = ''; road.style.outline = '' }, 500)
-
-  const lv = state.selectedLevelNum || 10
-  if(isWrongLetter) {
-    const el = document.getElementById('g6-collected')
-    if(lv <= 5) {
-      // Beginners: slowdown only — no letter reset, just forgive
-      g6State.speed = Math.max(0.8, g6State.speed - 0.8)
-      el.innerHTML = `<div style="color:#FBBF24;font-weight:900;font-size:14px;padding:4px 10px;background:rgba(251,191,36,0.2);border-radius:10px;animation:wrongShake 0.4s ease">⚠️ Hati-hati! Pelan dulu...</div>`
-      setTimeout(() => { renderCollectedSlots(); g6State.penaltyPause = false }, 700)
-    } else if(lv <= 10 && g6State.collectedIdx > 0) {
-      // Intermediate: remove last collected letter only
-      g6State.collectedIdx--
-      el.innerHTML = `<div style="color:#FB923C;font-weight:900;font-size:14px;padding:4px 10px;background:rgba(251,146,60,0.2);border-radius:10px;animation:wrongShake 0.4s ease">↩️ Huruf terakhir dihapus</div>`
-      setTimeout(() => { renderCollectedSlots(); g6State.penaltyPause = false }, 800)
-    } else if(g6State.collectedIdx > 0) {
-      // Advanced: full word reset
-      g6State.collectedIdx = 0
-      clearRoadTiles()
-      const wrongX = '❌'.repeat(Math.min(g6State.wrongCount,3))
-      el.innerHTML = `<div style="color:#F43F5E;font-weight:900;font-size:15px;padding:5px 12px;background:rgba(244,63,94,0.2);border-radius:10px;animation:wrongShake 0.4s ease">${wrongX} Huruf salah! Ulang dari awal 🔄</div>`
-      setTimeout(() => { renderCollectedSlots(); g6State.penaltyPause = false }, 950)
-    } else {
-      setTimeout(() => { g6State.penaltyPause = false }, 450)
-    }
-  } else {
-    setTimeout(() => { g6State.penaltyPause = false }, 450)
-  }
-}
-function g6FlyLetterToSlot(tileRect,letter,slotIdx){
-  const slots=document.getElementById('g6-collected')?.children
-  if(!slots||!slots[slotIdx])return
-  const slotRect=slots[slotIdx].getBoundingClientRect()
-  const fly=document.createElement('div')
-  fly.textContent=letter
-  fly.style.cssText=`position:fixed;z-index:9999;font-size:28px;font-weight:900;font-family:'Fredoka One',cursive;
-    color:#A78BFA;pointer-events:none;
-    left:${tileRect.left+tileRect.width/2}px;top:${tileRect.top+tileRect.height/2}px;
-    transform:translate(-50%,-50%);
-    text-shadow:0 0 16px rgba(167,139,250,0.9);
-    transition:left 0.32s cubic-bezier(0.34,1.56,0.64,1),top 0.32s cubic-bezier(0.34,1.56,0.64,1),font-size 0.32s,opacity 0.28s 0.1s;`
-  document.body.appendChild(fly)
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    fly.style.left=(slotRect.left+slotRect.width/2)+'px'
-    fly.style.top=(slotRect.top+slotRect.height/2)+'px'
-    fly.style.fontSize='13px'
-    fly.style.opacity='0'
-    setTimeout(()=>fly.remove(),420)
-  }))
-}
-function clearRoadTiles(){g6State.tiles.forEach(t=>{if(t.el.parentNode)t.el.remove()});g6State.tiles=[]}
-function driveLeft() {if(g6State.lane>0){g6State.lane--;updateCarPosition();playClick()}}
-function driveRight(){if(g6State.lane<2){g6State.lane++;updateCarPosition();playClick()}}
-function updateCarPosition(){const positions=['16.6%','50%','83.3%'];document.getElementById('g6-car').style.left=positions[g6State.lane]}
+// GAME 6 (Petualangan Mobil) retired 2026-11-26 by the owner (PRD-58 E9): no map tile, page removed
 
 // ================================================================
 // GAME 7: TEBAK GAMBAR
@@ -3746,16 +3438,6 @@ function evaluateG9Trace(){
 }
 
 // ================================================================
-// KEYBOARD SUPPORT
-// ================================================================
-document.addEventListener('keydown',(e)=>{
-  if(state.currentGame===6&&g6State.running){
-    if(e.key==='ArrowLeft')driveLeft()
-    if(e.key==='ArrowRight')driveRight()
-  }
-})
-
-// ================================================================
 // DASHBOARD
 // ================================================================
 // What this child has been learning (games/data/learning-log.js): one row per skill, last 7 days, from the
@@ -3821,7 +3503,7 @@ function showDashboard(_pg) { if (!_pg && window.DuniaParentGate) return void Du
   // Achievements
   const unlocked=JSON.parse(localStorage.getItem(pkey('achievements'))||'{}')
   const BADGE_MAP={first_star:'badge-first-win.webp',hard_mode:'badge-perfect.webp',letter_master:'badge-reader.webp',word_master:'badge-reader.webp',streak3:'badge-streak-7.webp'}
-  const achHtml=Object.entries(ACHIEVEMENTS).map(([key,ach])=>{
+  const achHtml=Object.entries(ACHIEVEMENTS).filter(([key,ach])=>!ach.retired||unlocked[key]).map(([key,ach])=>{
     const done=!!unlocked[key]
     const badgeFile=BADGE_MAP[key]
     const iconHtml=badgeFile

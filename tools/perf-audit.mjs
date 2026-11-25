@@ -31,8 +31,6 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms))
 const TARGETS = [
   { id: 'F01', label: 'index home',          url: '/index.html',
     ready: () => !!document.querySelector('#screen-home') || !!document.querySelector('.game-grid, .home-actions, [class*="home"]') },
-  { id: 'F02', label: 'g6 word racer',       url: '/games/mobil.html',
-    ready: () => !!document.querySelector('.veh-card') || !!document.querySelector('#btn-back') },
   { id: 'F03', label: 'g13c team picker',    url: '/games/gym-pokemon.html',
     ready: () => !!document.querySelector('#package-picker, [class*="package"], .pkg-card') || (typeof window._pokeDB !== 'undefined') },
   { id: 'F04', label: 'g14 category picker', url: '/games/balapan-kereta.html',

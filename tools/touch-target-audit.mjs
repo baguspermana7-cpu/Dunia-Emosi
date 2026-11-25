@@ -60,7 +60,6 @@ async function main() {
 
   const TARGETS = [
     { id: 'T01', label: 'index home',          url: '/index.html',          settle: 2200 },
-    { id: 'T02', label: 'g6 vehicle picker',   url: '/games/mobil.html',       settle: 1800 },
     { id: 'T03', label: 'g13c team picker',    url: '/games/gym-pokemon.html',settle: 2200 },
     { id: 'T04', label: 'g14 category picker', url: '/games/balapan-kereta.html',      settle: 1800, prep: async (page) => {
         await page.evaluate(() => {

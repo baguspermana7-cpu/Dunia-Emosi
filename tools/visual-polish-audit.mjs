@@ -262,7 +262,6 @@ async function main() {
 
     const EXTRA = [
       { id: 'P10', label: 'index home',        url: '/index.html',          settle: 2200 },
-      { id: 'P11', label: 'g6 word racer',     url: '/games/mobil.html',       settle: 1800 },
       { id: 'P12', label: 'g17 rope-swing',    url: '/games/jembatan-goyang.html', settle: 2200 },
       { id: 'P13', label: 'g20 duck volley',   url: '/games/ducky-volley.html', settle: 2200 },
       { id: 'P14', label: 'g21 Mario Pokemon', url: '/games/mario-pokemon.html', settle: 2500 },
