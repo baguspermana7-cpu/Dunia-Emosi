@@ -33,6 +33,10 @@ node tools/qa-levels-solvable.mjs
 
 echo "== arcade questions (Ducky, Birds, Side Race): shared SoalEngine, 100+ distinct, tiers, correct, wired (PRD-39)"
 node tools/qa-soal-arcade.mjs
+echo "== the service worker keeps only the current release in its asset cache; offline downloads stay (PRD-58 F1)"
+node tools/test-prd58f-sw-trim.mjs
+echo "== the next-game card knows Pola and Bentuk (arcade games) (PRD-58 D4)"
+node tools/test-prd58d-skills.mjs
 
 echo "== shared hit-stop + combo meter are wired in G10, G13, G21, Kuis and Ayo Berhitung (PRD-37, static part)"
 node tools/qa-prd37-juice.mjs
@@ -144,6 +148,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd57-toast.mjs
   echo "== levels: every 20-level game reaches hard, G9 all 26 letters + word mode at 15, G10 inside its level limits (PRD-58A)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd58a-levels.mjs
+  echo "== feel: a wrong answer shakes the screen, a won level gets the win moment (hub + 5 arcade pages), reduced motion stops shakes and particles (PRD-58B)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd58b-feel.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

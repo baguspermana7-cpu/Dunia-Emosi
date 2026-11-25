@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Mario Pokemon ⚡</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.93-20261126a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.94-20261126b">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,var(--g21-sky-top,#5C94FC) 0%,var(--g21-sky-mid,#6BB6FF) 60%,var(--g21-sky-bot,#8B6F47) 100%);font-family:'Fredoka One',sans-serif;touch-action:none;-webkit-user-select:none;user-select:none;transition:background 0.4s ease}
@@ -229,14 +229,15 @@ body.shake{animation:screenShake .35s ease}
 
 <!-- Pixi.js 8 -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v64.93-20261126a"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
+<script src="vfx-engine.js?v=v64.94-20261126b"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
+<script src="data/win-moment.js?v=v64.94-20261126b"></script><!-- PRD-58 B4: level-win moment (VFX.Moment) -->
 <!-- Shared modules -->
-<script src="data/speak.js?v=v64.93-20261126a"></script>
-<script src="data/freeze-watchdog.js?v=v64.93-20261126a"></script>
-<script src="data/math-rules.js?v=v64.93-20261126a"></script>
-<script src="data/save-engine.js?v=v64.93-20261126a"></script><script src="data/hit-feel.js?v=v64.93-20261126a"></script><!-- PRD-37: hit-stop on a stomp -->
-<script src="data/emoji-map.js?v=v64.93-20261126a"></script><script src="data/ui-sprites.js?v=v64.93-20261126a"></script><!-- eco HUD sprites -->
-<script src="game-modal.js?v=v64.93-20261126a"></script>
+<script src="data/speak.js?v=v64.94-20261126b"></script>
+<script src="data/freeze-watchdog.js?v=v64.94-20261126b"></script>
+<script src="data/math-rules.js?v=v64.94-20261126b"></script>
+<script src="data/save-engine.js?v=v64.94-20261126b"></script><script src="data/hit-feel.js?v=v64.94-20261126b"></script><!-- PRD-37: hit-stop on a stomp -->
+<script src="data/emoji-map.js?v=v64.94-20261126b"></script><script src="data/ui-sprites.js?v=v64.94-20261126b"></script><!-- eco HUD sprites -->
+<script src="game-modal.js?v=v64.94-20261126b"></script>
 <!-- Hotfix #120: sprite fix + picker fix (v=20260502b) -->
 
 <script>
@@ -2445,6 +2446,8 @@ function spawnParticles(x, y, kind, count) {
 let _shakeT = 0
 function screenShake() {
   if (_shakeT) return
+  // PRD-58 B6: no screen shake under reduced motion
+  try { if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return } catch (e) {}
   _shakeT = 1
   document.body.classList.add('shake')
   setTimeout(() => { document.body.classList.remove('shake'); _shakeT = 0 }, 360)
@@ -2525,6 +2528,7 @@ function tryFireBolt() {
 function onWin() {
   if (S.won) return
   S.won = true; S.running = false
+  try { if (window.DuniaWin) DuniaWin.celebrate() } catch (_) {}   // PRD-58 B4
   sfx('sfx-flag')
   setPikachuAnim('happy')
   spawnParticles(S.x, S.y - 50, 'lightning', 18)
@@ -2738,9 +2742,9 @@ Promise.race([
 })
 </script>
 
-<script src="dunia-icons.js?v=v64.93-20261126a"></script>
-<script src="dunia-cinema.js?v=v64.93-20261126a" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.93-20261126a" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.93-20261126a" defer></script>
+<script src="dunia-icons.js?v=v64.94-20261126b"></script>
+<script src="dunia-cinema.js?v=v64.94-20261126b" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.94-20261126b" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.94-20261126b" defer></script>
 </body>
 </html>

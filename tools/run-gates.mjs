@@ -44,6 +44,7 @@ TAGS.bugs47 = /^qa-(prd47-bugs|sd-play|gt-raid)\.mjs$/   // PRD-47: Ducky sky li
 TAGS.bus48 = /^qa-(prd48-bus|bus-coverage|learning-log)\.mjs$/   // PRD-48: G4, G7, G9, G10, G13, G13b, G6 report every answer; hub records name their game
 TAGS.fit57 = /^qa-(landscape-choices|prd57-toast)\.mjs$/   // PRD-57: landscape answers without scrolling, readable achievement toast
 TAGS.lvl58 = /^qa-(prd58a-levels|soal-arcade|landscape-choices)\.mjs$/   // PRD-58A: level map, G9 letters, G10 limits, arcade grade cap
+TAGS.feel58 = /^qa-prd58b-feel\.mjs$/   // PRD-58B: wrong-answer shake, win moment, reduced motion
 TAGS.cek53 = /^qa-prd53-cek\.mjs$/   // PRD-53: Cek Kemampuan 6 islands, Perkiraan IQ, board (unit: test-cek-items.mjs in ci-verify)
 TAGS.next20 = /^qa-prd20-next\.mjs$/   // PRD-20: "main berikutnya" card on the beranda (weakest skill, not played today)
 TAGS.g7prd50 = /^qa-prd50-g7\.mjs$/   // PRD-50: G7 sprite bank >= 150, decoys one group, listen rounds, no repeats

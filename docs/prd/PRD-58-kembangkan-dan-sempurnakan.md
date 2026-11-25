@@ -232,11 +232,11 @@ menyebut semua game yang melapor. Hukum: log tiruan → baris yang diharapkan ta
 | Gelombang | Rilis | Merah → hijau | Status |
 |---|---|---|---|
 | 58A | v64.93 | lihat 5.1 | A1, A3, A5, A6 selesai; A2, A4 pindah ke 58A-2 |
-| 58B | v64.94 | | belum |
+| 58B | v64.94 | lihat 5.2 | B1, B4, B6 selesai; B2 terukur sudah lulus; B3, B5, B7, B8 pindah ke 58B-2 |
 | 58C | v64.95 | | belum |
-| 58D | v64.96 | | belum |
+| 58D | v64.96 | lihat 5.4 | D4 sebagian (v64.94); sisanya belum |
 | 58E | v64.97 | | belum |
-| 58F | v64.98 | | belum |
+| 58F | v64.98 | lihat 5.3 | F1 dan F2 sebagian selesai lebih awal (v64.94); sisanya belum |
 
 ### 5.1 Hasil 58A (2026-11-26)
 
@@ -253,5 +253,48 @@ menyebut semua game yang melapor. Hukum: log tiruan → baris yang diharapkan ta
   (dulu tidak pernah dipakai, ditulis untuk anak yang lebih besar).
 - G10: skema bantuan hitung (bola) kini mendapat angka a/b untuk + dan - (dulu tidak pernah tampil karena a kosong).
 - `qa-landscape-choices` kini memeriksa tiap ukuran di mudah DAN sulit (G3/G4/G7: semua pilihan di layar tanpa gulir).
-- **A2 dan A4 belum:** A4 bukan ronde kosong (tanpa suara, slot dengar kembali ke ronde biasa), jadi ini soal variasi;
+- **A4/E2 G7 (v64.94):** tingkat mudah dulu hanya "gambar -> kata"; kini tiap ronde ke-3 (slot dengar lama) "kata -> gambar".
+  Mutasi baris lama: 6 ronde img2word (merah); sesudah: img2word x4 + word2img x2 (hijau), `qa-prd50-g7` 9/0.
+- **A2 dan A4 (G3, G8) belum:** A4 bukan ronde kosong (tanpa suara, slot dengar kembali ke ronde biasa), jadi ini soal variasi;
   A2 butuh tabel per level per game. Keduanya dikerjakan di 58A-2.
+
+### 5.2 Hasil 58B (2026-11-26)
+
+Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 gagal, sesudah perbaikan 19 / 0.
+
+| Butir | Merah | Hijau |
+|---|---|---|
+| B1 goyang salah | beranda, G3, G10: animasi `screenIn`, layar bergeser 0 px | `screenShake` 400 ms, bergeser 7,6-7,9 px; reduced motion 0 px |
+| B4 momen menang | hub: `VFX.Moment` tidak dimuat, 0 panggilan; 5 halaman arkade tanpa momen | hub memanggil `celebrate` saat menang >= 3 bintang; ducky, birds, mario, monster-candy, pokemon-run memuat `games/data/win-moment.js` dan efeknya tergambar (screenshot: dua ledakan kilau emas di judul, ±400 ms) |
+| B6 gerak dikurangi | hub 13 partikel, mario tetap goyang | hub 0 partikel, mario tidak goyang; ducky dan monster-candy goyang kamera dijaga flag reduced motion halaman itu |
+
+- Level bos (kelipatan 10) di birds dan pokemon-run tidak memanggil momen kedua: `boss-round.js` sudah merayakannya.
+- B2 (G4 layar miring): diukur di 760x360 dan 812x375 pada mudah dan sulit; semua pilihan di layar (paling bawah 279/294 px). Penimpaan `min-height:150px` tidak memotong pilihan, jadi tidak diubah.
+- B3 belum: lapisan sinema hub ada di belakang latar game yang buram; ganti tema harus dibuktikan terlihat dulu (screenshot), baru dikerjakan.
+- Statis: dua cek sumber (ducky, monster-candy) membaca pohon kerja, jadi lulus juga di run merah; bukti merahnya dari mario dan hub.
+
+### 5.3 58F-F1 cache service worker (dikerjakan lebih awal, v64.94)
+
+- Merah: `tools/test-prd58f-sw-trim.mjs` (sw.js di vm node, `caches` tiruan, picu `activate`): salinan `game.js` dan
+  `style.css` bertoken rilis lama tetap ada sesudah aktivasi.
+- Perubahan: `sw.js` punya `RELEASE` (token rilis, ikut naik dengan sed rilis); `activate` menghapus entri
+  `ASSET_CACHE` yang `?v=`-nya berformat token rilis tapi bukan `RELEASE`. Berkas tanpa versi (gambar, suara, unduhan
+  luring) dan ember `dunia-film-*` tidak disentuh.
+- Hijau 7/0 (termasuk `RELEASE` sama dengan token daftar precache). `qa-sw-reload` 9/0.
+- Aman karena semua halaman hanya memakai satu token rilis (`git grep`: 2.287 rujukan, satu token).
+
+### 5.4 58D-D4 kartu "main berikutnya" (sebagian, v64.94)
+
+- Diukur, bukan ditebak: 400 soal `SoalArcade` per game (g19, g20, g14s) melaporkan Matematika, Pengetahuan umum,
+  Bahasa, Pola, Bentuk. Jadi `Pola` dan `Bentuk` -> g19 (Pokemon Birds), g20 (Ducky Volley).
+- `Membaca jam`, `Mengeja kata` (hanya Mobil, yang dipensiunkan), `Mengenal perasaan`: belum ada game hub yang
+  melaporkannya, jadi tidak diberi kartu (lebih baik tanpa kartu daripada kartu yang salah). Masuk 58C/58D.
+- `tools/test-prd58d-skills.mjs`: berkas lama 0/4, baru 4/0.
+- Temuan untuk D1 (diukur, 400 soal g19): 219 soal matematika dilaporkan dengan `skill: 'matematika'` (tanpa jenis),
+  jadi dasbor menulis "Matematika", bukan Penjumlahan/Pengurangan. Hanya `pattern` (19) yang punya jenis.
+- **F2 sebagian (v64.94):** `qa-freeze-card` (tunggu gambar kartu sampai 8 s, ganti jeda 1,2 s; mutasi alamat gambar
+  -> 9/11 merah, hijau 11/11) dan `qa-prd07-telemetry` (tunggu entri jank sampai 8 s, ganti jeda 800 ms; hijau 6/0).
+  Timeout kini mencetak alasannya, bukan `.catch(() => {})` diam. Sisa: `qa-prd47-bugs` (tekstur latar ducky),
+  `qa-prd53-cek`.
+- **F4 ditunda:** gate timer tersembunyi memalsukan `document.hidden` tanpa pelambatan asli browser, jadi loop rAF
+  setiap game akan terhitung sebagai kerja. Perlu daftar berkas per halaman, tidak bisa dari `readdirSync` saja.

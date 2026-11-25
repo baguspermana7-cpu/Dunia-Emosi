@@ -40,7 +40,9 @@ await p.waitForFunction(() => typeof window.startGameWithLevel === 'function', {
 const loaded = await p.evaluate(() => !!window.DuniaTelemetry)
 await p.evaluate(() => { state.players = [{ name: 'Ana', animal: '🦁', ageTier: 'tumbuh', stars: 0 }, { name: 'Bima', animal: '🐯', ageTier: 'tumbuh', stars: 0 }]; state.mode = 'solo'; state.currentPlayer = 0; state.currentGame = 4; startGameWithLevel(1) })
 await sleep(1200)
-await block(p, 300); await sleep(800)
+await block(p, 300)
+// PRD-58 F2: the long-task entry arrives asynchronously; wait for it (8 s) instead of a fixed 800 ms
+await p.waitForFunction(() => { try { window.DuniaTelemetry && DuniaTelemetry.flush(); return (JSON.parse(localStorage.getItem('dunia-telemetry') || '{}').e || []).some(x => x.k === 'jank') } catch (e) { return false } }, { timeout: 8000, polling: 100 }).catch(() => console.log('  (no jank entry within 8 s)'))
 let e = await entries(p)
 const j = e.find(x => x.k === 'jank')
 ok(loaded && j && j.ms >= 300 && j.g === 'G4', `L1 hub G4: made jank 300 ms -> ${j ? JSON.stringify(j) : 'nothing'} (telemetry loaded ${loaded})`)

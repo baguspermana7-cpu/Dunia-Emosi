@@ -24,8 +24,9 @@ async function card (path, soundOff, w, h) {
   await p.goto(`${BASE}/${path}`, { waitUntil: 'domcontentloaded', timeout: 45000 })
   await sleep(11000)                                                   // armed 8 s after load
   await p.evaluate(() => { window.requestAnimationFrame = function () { return 0 } })
-  await p.waitForSelector('#__freezeRecover', { timeout: 25000 }).catch(() => {})
-  await sleep(1200)
+  await p.waitForSelector('#__freezeRecover', { timeout: 25000 }).catch(() => console.log(`  (no freeze card within 25 s: ${path} ${w})`))
+  // PRD-58 F2: the card's picture loads asynchronously; wait for it (8 s) instead of a fixed 1.2 s
+  await p.waitForFunction(() => { const i = document.getElementById('__freezePic'); return !i || (i.complete && i.naturalWidth > 0) }, { timeout: 8000, polling: 100 }).catch(() => console.log(`  (freeze picture not loaded within 8 s: ${path} ${w})`))
   const r = await p.evaluate(() => {
     const d = document.getElementById('__freezeRecover'); if (!d) return null
     const pic = document.getElementById('__freezePic'), go = d.querySelector('.__freezeGo')

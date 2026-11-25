@@ -17,7 +17,7 @@
   if (W.SkillGames) return
   var GAMES = {
     'kuis-matematika': 'gtile-25', 'ayo-berhitung': 'gtile-26', g13: 'gtile-13', g13b: 'gtile-13b', g10: 'gtile-10',
-    g4: 'gtile-4', g3: 'gtile-3', g8: 'gtile-8', g7: 'gtile-7', g9: 'gtile-9'
+    g4: 'gtile-4', g3: 'gtile-3', g8: 'gtile-8', g7: 'gtile-7', g9: 'gtile-9', g19: 'gtile-19', g20: 'gtile-20'
   }
   // learning-log.js SKILL names -> games that ask that skill (in order of preference), from each game's DuniaAnswer
   // calls: Kuis (tambah/kurang/kali/bagi), Ayo Berhitung (add/sub/multiply/divide), G13/G13b/G10 (duniaReportOp),
@@ -26,7 +26,11 @@
   var MAP = {
     'Penjumlahan': OPS, 'Pengurangan': OPS, 'Perkalian': OPS, 'Pembagian': OPS,
     'Menghitung benda': ['g4'], 'Berhitung': ['g4', 'ayo-berhitung'], 'Membandingkan': ['g4'],   // PRD-51: G4 compare rounds
-    'Huruf awal': ['g3'], 'Menyusun kata': ['g8'], 'Kata dan gambar': ['g7'], 'Menulis huruf': ['g9']
+    'Huruf awal': ['g3'], 'Menyusun kata': ['g8'], 'Kata dan gambar': ['g7'], 'Menulis huruf': ['g9'],
+    // PRD-58 D4: the arcade pages (SoalArcade, g19 Pokemon Birds, g20 Ducky Volley) are the games that ask Pola and
+    // Bentuk (measured: 400 draws each). Membaca jam, Mengeja kata, Mengenal perasaan have no hub game reporting them
+    // yet, so they get no card rather than a wrong one.
+    'Pola': ['g19', 'g20'], 'Bentuk': ['g19', 'g20']
   }
   var SAFE = ['g4', 'kuis-matematika', 'g3', 'g7', 'ayo-berhitung', 'g8', 'g9']
   var MIN_N = 5, DAYS = 14

@@ -92,6 +92,16 @@ try {
   })
   ok(g10[1] && !/[-−×÷*]/.test(g10[1].ops) && g10[1].over === 0, `A5 G10 level 1: ops seen "${g10[1] && g10[1].ops}" (level allows "${g10[1] && g10[1].want}", max ${g10[1] && g10[1].max}), over the limit ${g10[1] && g10[1].over}${g10.err ? ' ' + g10.err : ''}`)
   ok(g10[7] && /-/.test(g10[7].ops) && !/[×÷*]/.test(g10[7].ops) && g10[7].over === 0, `A5 G10 level 7: ops seen "${g10[7] && g10[7].ops}" (level allows "${g10[7] && g10[7].want}", max ${g10[7] && g10[7].max}), over the limit ${g10[7] && g10[7].over}`)
+  // A4/E2 G7: an easy session (level 1) mixes "picture -> word" with "word -> picture"
+  const g7 = await p.evaluate(() => {
+    state.currentGame = 7; state.mode = 'solo'; state.selectedLevelNum = 1; state.selectedLevel = window.levelDiff ? levelDiff(7, 1) : 'easy'
+    try { initGame7() } catch (e) { return { err: String(e) } }
+    const modes = []
+    for (let r = 0; r < g7State.maxRound; r++) { g7State.round = r; try { nextG7Round() } catch (e) { return { err: String(e) } } modes.push(g7State.mode) }
+    try { exitGame() } catch (e) {}
+    return { modes }
+  })
+  ok(g7.modes && g7.modes.includes('img2word') && g7.modes.includes('word2img'), `A4 G7 level 1 round kinds: ${g7.modes ? g7.modes.join(' ') : g7.err}`)
   ok(!errs.length, `A1 page errors ${errs.length} ${errs.slice(0, 2).join(' | ')}`)
 } finally { await b.close() }
 console.log(`qa-prd58a-levels: ${pass} passed, ${fail} failed`)

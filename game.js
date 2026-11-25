@@ -2034,6 +2034,7 @@ function showResult(mascot, title, msg) {
     if (nextBtn) {
       const curLv = state.selectedLevelNum || 1
       nextBtn.style.display = (curLv < levelCount(state.currentGame) && state.mode !== 'duo' && earned >= 3) ? 'block' : 'none'
+      if (earned >= 3 && window.VFX && VFX.Moment && VFX.Moment.ready()) setTimeout(() => { try { VFX.Moment.celebrate({ x: innerWidth / 2, y: innerHeight * 0.32 }, { size: Math.min(innerWidth, innerHeight) * 0.32 }) } catch (_) {} }, 250) // PRD-58 B4 win moment
     }
     const scoresEl = document.getElementById('result-scores')
     if (scoresEl) {
@@ -2317,7 +2318,9 @@ function launchConfetti(intensity) {
     document.body.appendChild(p);setTimeout(()=>p.remove(),3200)
   },i*(intensity===3?25:40))}
 }
-function spawnSparkles(btn,starCount) {
+// PRD-58 B6: OS reduced motion -> decorative particles are not spawned at all (the CSS only shortens them)
+function duniaReducedMotion(){ try { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) } catch(_) { return false } }
+function spawnSparkles(btn,starCount) { if(duniaReducedMotion()) return
   const sc=starCount||0
   const n=sc>=5?12:sc>=3?6:3
   const icons=sc>=5?['⭐','✨','💫','🌟','🏆','🎉']:sc>=3?['⭐','✨','💫','🌟']:['✨','💫']
@@ -2461,7 +2464,7 @@ function spawnMilestoneCelebration(level){
 
 // Small confetti burst on correct answer — universal helper for G1-G9.
 // Cap concurrent bursts to 1 so rapid streaks don't pile up.
-function spawnCorrectConfetti(){
+function spawnCorrectConfetti(){ if(duniaReducedMotion()) return
   const existing = document.querySelector('.g-confetti-burst')
   if (existing) { try { existing.remove() } catch(_){} }
   const wrap = document.createElement('div')
@@ -3321,7 +3324,8 @@ function nextG7Round() {
   g7State.answered = false
   const roundInSet = g7State.round % g7State.maxRound
   const diff = state.selectedLevel||'medium'
-  g7State.mode = diff==='easy'?'img2word':(roundInSet<Math.ceil(g7State.maxRound/2)?'img2word':'word2img')
+  // PRD-58 A4/E2: easy was img2word only; every third round (the old listen slot, silent since PRD-55) reads the word and picks the picture
+  g7State.mode = diff==='easy'?(roundInSet%3===2?'word2img':'img2word'):(roundInSet<Math.ceil(g7State.maxRound/2)?'img2word':'word2img')
   if(roundInSet%3===2&&duniaCanListen()) g7State.mode='listen'   // PRD-50 L3: hear the word, pick the picture
   // Pick an item not asked in this session (the bank is far larger than a session; reset only if it ran out)
   let pool = g7State.shuffled.filter(w => !g7State.usedIds.has(w.id))
@@ -7092,7 +7096,7 @@ document.addEventListener('touchstart', e => {
 }, { passive: true })
 
 // Particle burst on correct answer (overlay)
-function spawnParticleBurst(x, y) {
+function spawnParticleBurst(x, y) { if(duniaReducedMotion()) return
   const colors = ['#FCD34D', '#A78BFA', '#2DD4BF', '#F43F5E', '#38BDF8']
   for (let i = 0; i < 12; i++) {
     const p = document.createElement('div')

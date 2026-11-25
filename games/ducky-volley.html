@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Ducky Volley 🏐</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.93-20261126a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.94-20261126b">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf8;font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
@@ -68,7 +68,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
 .start-hint{font-size:15px;color:#86efac;animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.5;transform:scale(.96)}}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.93-20261126a">
+<link rel="stylesheet" href="dunia-splash.css?v=v64.94-20261126b">
 </head>
 <body>
 
@@ -145,17 +145,18 @@ if(!('ontouchstart' in window)){
 </script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="game-modal.js?v=v64.93-20261126a"></script>
-<script src="../shared/rz-responsive.js?v=v64.93-20261126a"></script>
-<script src="data/poke-sprite-cdn.js?v=v64.93-20261126a"></script>
-<script src="data/poke-sprite-loader.js?v=v64.93-20261126a"></script>
-<script src="data/speak.js?v=v64.93-20261126a"></script>
-<script src="data/freeze-watchdog.js?v=v64.93-20261126a"></script>
-<script src="data/save-engine.js?v=v64.93-20261126a"></script>
-<script src="data/sfx-engine.js?v=v64.93-20261126a"></script><!-- shared answer cues (owner) -->
-<script src="data/emoji-map.js?v=v64.93-20261126a"></script><script src="data/ui-sprites.js?v=v64.93-20261126a"></script><!-- win-screen sprites -->
-<script src="data/soal-arcade-boot.js?v=v64.93-20261126a"></script><!-- PRD-39: the shared SoalEngine stack (tier from DuniaMastery) loads on the first tap; the page bank answers until then -->
-<script src="vfx-engine.js?v=v64.93-20261126a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=v64.94-20261126b"></script>
+<script src="../shared/rz-responsive.js?v=v64.94-20261126b"></script>
+<script src="data/poke-sprite-cdn.js?v=v64.94-20261126b"></script>
+<script src="data/poke-sprite-loader.js?v=v64.94-20261126b"></script>
+<script src="data/speak.js?v=v64.94-20261126b"></script>
+<script src="data/freeze-watchdog.js?v=v64.94-20261126b"></script>
+<script src="data/save-engine.js?v=v64.94-20261126b"></script>
+<script src="data/sfx-engine.js?v=v64.94-20261126b"></script><!-- shared answer cues (owner) -->
+<script src="data/emoji-map.js?v=v64.94-20261126b"></script><script src="data/ui-sprites.js?v=v64.94-20261126b"></script><!-- win-screen sprites -->
+<script src="data/soal-arcade-boot.js?v=v64.94-20261126b"></script><!-- PRD-39: the shared SoalEngine stack (tier from DuniaMastery) loads on the first tap; the page bank answers until then -->
+<script src="vfx-engine.js?v=v64.94-20261126b"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/win-moment.js?v=v64.94-20261126b"></script><!-- PRD-58 B4: level-win moment (VFX.Moment) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -1079,7 +1080,7 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
     // SMASH: powerful spike after set — bumped 5 → 6.2
     power=6.2; hitType='smash'
     S.pSet=false
-    S.shakeTimer=10
+    if(!_reducedMotion) S.shakeTimer=10   // PRD-58 B6: no camera shake under reduced motion
     sfxSmash()
     sfxWhoosh(0.6)
   } else {
@@ -1334,6 +1335,7 @@ function endMatch(){
     bonus:   won ? 1 : 0
   })
   try{ if(won && window.SFXEngine && SFXEngine.levelup) SFXEngine.levelup() }catch(_){}
+  if (won) { try { if (window.DuniaWin) DuniaWin.celebrate() } catch (_) {} }   // PRD-58 B4
   try{sessionStorage.setItem('g20Result',JSON.stringify({stars,level:cfg.level}))}catch(_){}
   try{ if(window.DuniaLevel) DuniaLevel.end('g20', cfg.level || 1, won, stars) }catch(_){}   // PRD-49: a lost match saves stars too, so it closes here first
   saveG20Progress(stars)
@@ -1644,12 +1646,12 @@ window.addEventListener('resize',()=>{
   _duckyResizeT = setTimeout(_duckyResize, 150)
 })
 </script>
-<script src="dunia-icons.js?v=v64.93-20261126a"></script>
-<script src="dunia-home.js?v=v64.93-20261126a"></script>
+<script src="dunia-icons.js?v=v64.94-20261126b"></script>
+<script src="dunia-home.js?v=v64.94-20261126b"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.93-20261126a" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.93-20261126a" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.93-20261126a" defer></script>
+<script src="dunia-cinema.js?v=v64.94-20261126b" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.94-20261126b" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.94-20261126b" defer></script>
 </body>
 </html>
 <!-- v20260418d -->

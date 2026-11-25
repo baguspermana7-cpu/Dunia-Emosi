@@ -4654,6 +4654,9 @@ body { background: #0a0a1a !important; }
 /* Screen fade-in */
 .screen.active{animation:screenIn 0.25s cubic-bezier(0.25,0.46,0.45,0.94) both;}
 @keyframes screenIn{from{opacity:0;transform:scale(0.98)}to{opacity:1;transform:scale(1)}}
+/* PRD-58 B1: the wrong-answer shake on the ACTIVE screen (the rule above, same specificity and later, used to win over
+   `.shake`, so the shake never played). Reduced motion: the global block cuts its duration to 0.01ms. */
+.screen.active.shake{animation:screenShake 0.4s ease;}
 
 /* Global answer correct/wrong for ALL games */
 .choice-correct-global{
