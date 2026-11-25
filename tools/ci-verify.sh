@@ -138,6 +138,10 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-side-train-per-child.mjs
   echo "== always-on timers rest while the tab is hidden (audit A-15)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-hidden-timers.mjs
+  echo "== phone on its side: G3/G4/G7 answers and the G3 clue on screen without scrolling, G7 at its longest label (PRD-57)"
+  node tools/qa-landscape-choices.mjs after
+  echo "== the achievement toast is readable on its purple (PRD-57)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd57-toast.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

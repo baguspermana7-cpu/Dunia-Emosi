@@ -161,8 +161,8 @@ for (const size of [[390, 844], [844, 390], [800, 1280]]) {
       const ch = t.choices.slice(); g11State.pool[0] = { ...t, choices: ch, ans: ch.indexOf(t.answer) }; g11State.idx = 0; g11ShowQuestion()
       return { q: t.q, answer: t.answer, imgs: document.querySelectorAll('#g11-emoji img').length }
     })
-    await sleep(900)
-    const loaded = await p.evaluate(() => [...document.querySelectorAll('#g11-emoji img')].every(i => i.complete && i.naturalWidth > 0))
+    // wait for the pictures themselves (a fixed 900 ms failed on a busy machine with the files on disk and the code right)
+    const loaded = await p.waitForFunction(() => { const im = [...document.querySelectorAll('#g11-emoji img')]; return im.length >= 2 && im.every(i => i.complete && i.naturalWidth > 0) }, { timeout: 8000 }).then(() => true, () => false)
     if (SH) await p.screenshot({ path: path.join(SH, `g11-${tag}.png`) })
     await tapText(p, '#g11-choices .sci-choice', q.answer); await sleep(600)
     const a = await p.evaluate(() => window.__ans.filter(x => x.ok === true).length)

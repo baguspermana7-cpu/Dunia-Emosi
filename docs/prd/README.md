@@ -103,6 +103,7 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-55](PRD-55-tanpa-tts-tombol-bisu.md) | Tanpa suara bicara (TTS) + tombol bisu di layar game [ANAK] | Gelombang 5 | live v64.83 |
 | [PRD-52](PRD-52-g9-jejak-huruf.md) | G9 Jejak Huruf: bunyi goresan, kata bergambar, urutan goresan [ANAK] | Gelombang 5 | live v64.84 |
 | [PRD-56](PRD-56-cek-mode-cepat.md) | Cek Kemampuan: mode Normal / Cepat, ganti pemain di dalam game, soal aneh dibetulkan [ANAK] | owner 2026-11-22 | live v64.90 |
+| [PRD-57](PRD-57-sisa-catatan-bug-bash.md) | Sisa catatan bug bash: G3/G7 layar miring tanpa gulir, toast pencapaian terbaca | owner 2026-11-25 | live v64.92 |
 
 ## Urutan & perkiraan
 | Gelombang | Isi | Perkiraan |

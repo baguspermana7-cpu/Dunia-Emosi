@@ -4997,6 +4997,9 @@ body { background: #0a0a1a !important; }
   border: 1px solid rgba(252,211,77,0.5) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 40px rgba(252,211,77,0.2) !important;
 }
+/* PRD-57 L3: the text kept the dark brown of the old gold toast (contrast 1.05-1.57 on this purple) */
+.achievement-toast .at-title { color: #FCD34D; }
+.achievement-toast .at-name  { color: #FFF7E0; }
 
 /* Flash overlay — more vivid */
 .flash-overlay.correct { background: rgba(45,212,191,0.3) !important; }
@@ -7957,6 +7960,17 @@ button:disabled, [aria-disabled="true"] {
   display:flex !important; grid-template-columns:none !important;
   gap:14px !important; justify-content:center !important; flex-wrap:wrap !important; max-width:none !important;
 }
+/* phone on its side (PRD-57 L1): the mockup sizes above come later than the landscape block and won, so the
+   answer gems sat at 452 px on a 360-375 px screen. Smaller medallion, tiles and gems keep all of it in view. */
+@media (orientation:landscape) and (max-height:500px){
+  #screen-game3 .g3-animal{ width:56px !important; height:56px !important; line-height:56px !important; font-size:34px !important; margin:0 auto 4px !important; border-width:3px !important; flex-shrink:0 !important; }
+  #screen-game3 .g3-word{ gap:6px !important; margin-bottom:6px !important; flex-shrink:0 !important; }
+  #screen-game3 .g3-letter{ width:34px; height:38px; font-size:22px; border-radius:10px; }
+  /* the plaque shrank to a 1 px sliver inside the flex column: it keeps its line */
+  #screen-game3 .g3-hint{ padding:3px 14px !important; margin-bottom:6px !important; flex-shrink:0 !important; -webkit-line-clamp:1 !important; }
+  #screen-game3 .g3-choice-btn{ width:64px; height:64px; font-size:28px !important; }
+  #screen-game3 .g3-choices{ gap:12px !important; }
+}
 /* brighter, warmer jungle wash for g3 (mockup is bright, not the shared navy dusk) */
 #screen-game3::after{
   background:radial-gradient(120% 90% at 50% 0%, rgba(150,210,120,.18), rgba(60,120,60,.30) 55%, rgba(30,70,40,.42)) !important;
@@ -8190,6 +8204,9 @@ button:disabled, [aria-disabled="true"] {
   #screen-game7 .g7-choices{ grid-template-columns:repeat(4,1fr) !important; width:min(720px,96vw) !important; max-width:none !important; }
   #screen-game7 .g7-choice-text{ font-size:clamp(13px,3.6vh,18px) !important; overflow-wrap:anywhere; }
   #screen-game7 .g7-choices.g7-pics .g7-choice-img img{ height:min(14vh,72px) !important; }
+  /* PRD-57 L2: a two-word label wraps to two lines; tight lines + padding keep that button inside a 360 px screen */
+  #screen-game7 .g7-choice-btn{ padding:6px 6px !important; gap:2px !important; min-height:48px !important; }
+  #screen-game7 .g7-choice-text{ line-height:1.15 !important; letter-spacing:0 !important; }
 }
 @media (max-width:360px){
   #screen-game7 .g7-choices{ gap:10px !important; }

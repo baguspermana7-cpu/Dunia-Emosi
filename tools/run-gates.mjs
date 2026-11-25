@@ -42,6 +42,7 @@ TAGS.g10 = /^qa-prd44-g10\.mjs$/   // PRD-44: G10 weather boosts types (announce
 TAGS.mobil45 = /^qa-prd45-mobil\.mjs$/   // PRD-45: G6 help offer, streak slow motion, dictionary words
 TAGS.bugs47 = /^qa-(prd47-bugs|sd-play|gt-raid)\.mjs$/   // PRD-47: Ducky sky line, toast over answers, dead G13c, SD fit, GT waits
 TAGS.bus48 = /^qa-(prd48-bus|bus-coverage|learning-log)\.mjs$/   // PRD-48: G4, G7, G9, G10, G13, G13b, G6 report every answer; hub records name their game
+TAGS.fit57 = /^qa-(landscape-choices|prd57-toast)\.mjs$/   // PRD-57: landscape answers without scrolling, readable achievement toast
 TAGS.cek53 = /^qa-prd53-cek\.mjs$/   // PRD-53: Cek Kemampuan 6 islands, Perkiraan IQ, board (unit: test-cek-items.mjs in ci-verify)
 TAGS.next20 = /^qa-prd20-next\.mjs$/   // PRD-20: "main berikutnya" card on the beranda (weakest skill, not played today)
 TAGS.g7prd50 = /^qa-prd50-g7\.mjs$/   // PRD-50: G7 sprite bank >= 150, decoys one group, listen rounds, no repeats

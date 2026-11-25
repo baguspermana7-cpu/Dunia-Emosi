@@ -34,9 +34,9 @@ await mkdir(OUT, { recursive: true });
 
 // Games under test. selector = the choices container(s) whose children are the tappable choices.
 const GAMES = [
-  { n: 3, init: 'initGame3', screen: 'screen-game3', choiceSel: '#g3-choices .g3-choice-btn' },
+  { n: 3, init: 'initGame3', screen: 'screen-game3', choiceSel: '#g3-choices .g3-choice-btn', textSel: '#g3-hint' },
   { n: 4, init: 'initGame4', screen: 'screen-game4', choiceSel: '#g4-choices .g4-choice-btn' },
-  { n: 7, init: 'initGame7', screen: 'screen-game7', choiceSel: '#g7-choices .g7-choice-btn' },
+  { n: 7, init: 'initGame7', screen: 'screen-game7', choiceSel: '#g7-choices .g7-choice-btn', worst: { sel: '.g7-choice-text', text: 'BUNGA MATAHARI' } },
 ];
 
 const LANDSCAPES = [{ w: 760, h: 360 }, { w: 812, h: 375 }];
@@ -133,6 +133,12 @@ for (const g of GAMES) {
     }
     await new Promise(r => setTimeout(r, 450));
 
+    // worst case, not the round the dice gave: every label the longest word in the bank (PRD-57 L2: two-line
+    // labels pushed G7's buttons to 367 px on a 360 px screen in one run and 338 in the next)
+    if (g.worst) {
+      await page.evaluate((g) => { document.querySelectorAll('#' + g.screen + ' ' + g.worst.sel).forEach(el => { if (el.childElementCount === 0) el.textContent = g.worst.text }) }, g)
+      await new Promise(r => setTimeout(r, 150))
+    }
     const assert = await page.evaluate((g) => {
       const scr = document.getElementById(g.screen);
       const sr = scr.getBoundingClientRect();
@@ -172,13 +178,24 @@ for (const g of GAMES) {
       // pass if every choice is directly on-screen OR all live in an in-view scroll box
       const allInView = directlyInView || (host !== null && hostInView && rects.length > 0);
       const minTap = rects.reduce((m, r) => Math.min(m, Math.min(r.h, r.w)), Infinity);
+      // the clue text a child reads must show at least one whole line (PRD-57 L1: the plaque collapsed to a sliver)
+      const tx = g.textSel ? document.querySelector(g.textSel) : null
+      let textOk = true, textLine = null
+      if (tx && tx.textContent.trim() && getComputedStyle(tx).display !== 'none') {
+        const cs = getComputedStyle(tx), lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2
+        const inner = tx.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+        const r = tx.getBoundingClientRect()
+        textLine = { inner: Math.round(inner), lh: Math.round(lh), bottom: Math.round(r.bottom) }
+        textOk = inner >= lh * 0.95 && r.bottom <= fold + 1
+      }
       return {
         count: rects.length,
         fold: Math.round(fold),
         innerH: window.innerHeight,
         maxBottom,
         allInView,
-        directlyInView,
+        directlyInView: directlyInView && textOk,
+        textLine,
         scrollReachable: host !== null && hostInView,
         hostBottom: hostRect ? Math.round(hostRect.bottom) : null,
         minTap: rects.length ? Math.round(minTap) : 0,
@@ -218,9 +235,11 @@ for (const g of GAMES) {
 await browser.close();
 server.close();
 
-// PASS = every landscape row has all choices in view. Portrait is informational only.
+// PASS = every landscape row has all choices in view WITHOUT scrolling: a child does not know the answers sit
+// below the fold (PRD-57 L1; G3 passed on "scrollReachable" while its buttons were cut at 812x375).
+// Portrait is informational only.
 const landscapeRows = results.filter(r => !r.portrait);
-const failing = landscapeRows.filter(r => !r.allInView);
+const failing = landscapeRows.filter(r => !r.directlyInView);
 const pass = failing.length === 0 && bootErrors.length === 0;
 
 console.log(JSON.stringify({ phase: PHASE, results, bootErrors, failing: failing.map(f=>({game:f.game,vp:f.vp,overflowBy:f.overflowBy,maxBottom:f.maxBottom,fold:f.fold,count:f.count})), pass }, null, 2));
