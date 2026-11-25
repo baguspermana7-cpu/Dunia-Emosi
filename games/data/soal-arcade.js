@@ -107,10 +107,19 @@
     return q
   }
 
+  // PRD-58 D1: the curated g23 banks carry no kind, so 219 of 400 arcade maths answers reached the dashboard as
+  // "Matematika". A bare "a op b = ?" names its own skill.
+  var OPKIND = { '+': 'add', '-': 'sub', '\u2212': 'sub', '\u00d7': 'kali', 'x': 'kali', '*': 'kali', ':': 'bagi', '\u00f7': 'bagi' }
+  function kindOf (q) {
+    if (q.kind) return q.kind
+    if (q.topic !== 'matematika') return q.topic
+    var m = /^\s*\d+\s*([+\-\u2212\u00d7x*:\u00f7])\s*\d+\s*=/.exec(String(q.prompt || ''))
+    return (m && OPKIND[m[1]]) || q.topic
+  }
   function answer (q, ok, tries, ms) {
     try {
       if (!q || !W.DuniaBus) return null
-      return W.DuniaBus.emit('answer', { domain: q.topic, skill: q.kind || q.topic, item: q.id, ok: !!ok, tries: tries || 1, ms: ms == null ? null : ms })
+      return W.DuniaBus.emit('answer', { domain: q.topic, skill: kindOf(q), item: q.id, ok: !!ok, tries: tries || 1, ms: ms == null ? null : ms })
     } catch (e) { return null }
   }
 

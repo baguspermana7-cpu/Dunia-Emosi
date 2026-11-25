@@ -312,3 +312,19 @@ Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 
 - Tidak dihapus: 169 aturan CSS G6 di `style.css` (banyak di daftar selektor bersama; dibersihkan dengan ratchet F8),
   gambar dan suara (dipakai game lain atau belum dipastikan tunggal), dokumen lama, `plb.html`/`secondbrain.html`
   (halaman dev, F9).
+
+### 5.6 58D-D1 jenis soal matematika arkade (v64.96)
+
+- Merah: 219 dari 238 jawaban matematika arkade (g19/g20/g14s, 400 soal) berlabel hanya "Matematika": bank g23
+  tidak membawa `kind`.
+- Perubahan: `SoalArcade.answer` menurunkan jenis dari soal berbentuk `a op b = ?` (+ tambah, - kurang, x kali,
+  : bagi); soal lain tetap memakai topiknya.
+- Hijau: 0 dari 238 (`qa-soal-arcade` D1, 48/0).
+
+### 5.7 58E-E8 nampan huruf: temuan audit sebagian salah
+
+- G8 **sudah** punya huruf pengecoh: 2 / 4 / 6 untuk mudah / sedang / sulit (`game.js`, `numExtra`). Klaim audit
+  "hanya huruf kata itu" salah untuk G8; dicoret.
+- G27 (Ejaan Inggris) memang hanya huruf kata itu, tetapi game ini latihan lomba ejaan yang dirancang owner ("semua
+  kata di level 1 dan level 2, bisa diulang2, utk persiapan lomba") dan tata letak nampannya dihitung dari panjang
+  kata. Tidak diubah tanpa keputusan owner.

@@ -129,6 +129,18 @@ for (const g of Object.keys(GAMES)) {
 }
 check(![...labels].includes('Lainnya'), 'L2 no skill label falls to Lainnya: ' + [...labels].join(', '))
 
+/* ── PRD-58 D1: a maths answer names its skill (Penjumlahan, Pengurangan ...), not just "Matematika" ─────────── */
+for (const g of Object.keys(GAMES)) {
+  const P = page(); let math = 0, bare = 0
+  for (let i = 0; i < 400; i++) {
+    const q = P.SoalArcade.next(g, { seed: i * 7 + 1, history: false })
+    if (!q || q.topic !== 'matematika') continue
+    const e = P.SoalArcade.answer(q, true, 1, 900); math++
+    if (P.LearningLog.label(e.skill, e.domain) === 'Matematika') bare++
+  }
+  check(math > 50 && bare <= math * 0.05, `D1 ${g}: ${bare} of ${math} maths answers labelled only "Matematika" (need <= 5 %)`)
+}
+
 /* ── L3: strong vs weak child ─────────────────────────────────────────────────────────────────────────── */
 for (const g of Object.keys(GAMES)) {
   // PRD-58 A6: grade 3-4 needs the parent switch "Perkalian & Pembagian" (or the 9-10 band), so the climb is
