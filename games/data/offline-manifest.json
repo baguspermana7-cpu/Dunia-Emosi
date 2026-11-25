@@ -1,6 +1,6 @@
 {
  "about": "PRD-23: files each beranda game needs offline. Built by tools/build-offline-manifest.mjs; do not edit.",
- "bytes": 185920478,
+ "bytes": 185920506,
  "games": {
   "3": {
    "page": "index.html",
