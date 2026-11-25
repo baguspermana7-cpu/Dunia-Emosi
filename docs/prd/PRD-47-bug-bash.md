@@ -1,7 +1,7 @@
 # PRD-47 Bug bash: Ducky, toast, MEM-06, gate GT, kode mati G13c
 
 - **Gelombang:** Gelombang 5 — sempurnakan (2026-11-21)
-- **Status:** live v64.74-20261121a (B4 sebagian, lihat Hasil)
+- **Status:** live v64.74-20261121a; B4 terbukti 2026-11-25 (lihat Hasil)
 - **Sumber:** rencana Gelombang 5 (3 agen eksplorasi + cek ulang file:baris, 2026-11-21)
 - **Aturan selesai:** `docs/prd/README.md` (berlaku penuh; satu PRD = satu rilis)
 
@@ -31,7 +31,7 @@ Gate: `tools/qa-prd47-bugs.mjs` (tag `bugs47`, `ci-verify` menjalankan B5 statis
 | B1 | `moveTo` sebelum busur bola pantai (dua segmen) dan sebelum tepi payung, `games/ducky-volley.html` | baris langit berwarna merah: 173 (844x390), 454 (390x844) | 0 dan 4 (4 = manik merah ekor layang-layang, r 2,5) |
 | B2 | `style.css`: toast `pointer-events:none`; di `max-height:500px` toast turun dari atas (`top:max(8px, safe-area)`) | pusat pilihan G3 tertutup 2x di 844x390 (layar digulir ke bawah, seperti anak) | 0 di 844x390, 390x844, 800x1280 |
 | B3 | tidak ada perubahan | tidak bisa dibuat merah: `qa-sd-play` 390x844 72 kartu x 2 jalur ALL PASS (exit 0), MEM 3 ukuran ALL PASS | — |
-| B4 | `qa-gt-play`: tunggu count-up selesai (`data-n`), jam rush diperlambat 1/4. `qa-gt-raid`: tunggu modul, bandingkan frame penuh 2 s, tunggu tombol soal baru, pilih jawaban salah dari tombol aktif, cek hasil ketukan, efek `hurt`/`ouch` ditangkap MutationObserver, jam rush 1/4, jendela 4 s | raid 2/5 hijau, play 5/5 | play 5/5 hijau; raid 3/5 hijau di beban mesin load avg 15-28 (sesi lain). **Law 5/5 raid belum terbukti.** Kegagalan tersisa: efek hurt+ouch+bar tidak terjadi dalam 4 s (halaman kelaparan CPU), bukan logika gate |
+| B4 | `qa-gt-play`: tunggu count-up selesai (`data-n`), jam rush diperlambat 1/4. `qa-gt-raid`: tunggu modul, bandingkan frame penuh 2 s, tunggu tombol soal baru, pilih jawaban salah dari tombol aktif, cek hasil ketukan, efek `hurt`/`ouch` ditangkap MutationObserver, jam rush 1/4, jendela 4 s | raid 2/5 hijau, play 5/5 | play 5/5 hijau; raid 3/5 hijau di beban mesin load avg 15-28 (sesi lain). **Law 5/5 raid belum terbukti.** 2026-11-25 (PRD-57): `qa-gt-raid` 52/52 lima kali berturut-turut, load avg 14.0, 17.3, 14.1, 10.8, 7.3 → **terbukti**. Kegagalan tersisa: efek hurt+ouch+bar tidak terjadi dalam 4 s (halaman kelaparan CPU), bukan logika gate |
 | B5 | hapus G13c (232 baris `game.js`, 41 baris `index.html`), ratchet `GAME_JS_MAX_LINES` 10599 | 3 fungsi mati + `#screen-game13c` | 0; tile 13c tetap membuka Gym Pokemon; `qa-hub-boot` 13/0 |
 
 Regresi hijau: `qa-hub-boot`, `qa-endgame-hang`, `qa-ducky-parallax`, `qa-prd41-ducky` 11/0, `qa-landscape-choices`, `qa-hub-split` 19/0.

@@ -12,8 +12,8 @@
 | PRD-47 | teks toast pencapaian (coklat di ungu tua) kontras rendah | dikerjakan (L3) |
 | ditemukan saat L1 | G7 di layar miring: label dua baris mendorong tombol keluar layar pada soal tertentu | dikerjakan (L2) |
 | PRD-47 | `games/monster-candy.html:582-584` busur tanpa `moveTo` | tidak diubah: belum ada bug terlihat |
-| PRD-47 B4 | `qa-gt-raid` 5/5 berturut-turut belum terbukti (mesin sibuk) | dicoba ulang, lihat Hasil |
-| PRD-13 | petunjuk b/d, p/q, kiri/kanan | tetap belum: belum ada game yang mencatat pilihan salah dalam bentuk itu |
+| PRD-47 B4 | `qa-gt-raid` 5/5 berturut-turut belum terbukti (mesin sibuk) | terbukti: 52/52 lima kali berturut-turut (load 7-17) |
+| PRD-13 | petunjuk b/d, p/q, kiri/kanan | tidak dibuat: semua pilihan huruf (G3, G8 `WORD_BUILD_BANK`) huruf besar; b/d, p/q hanya tertukar di huruf kecil |
 | PRD-06 | uji di tablet asli | tetap terblokir: `adb devices` kosong (2026-11-25) |
 | PRD-53 R3 | papan online | ditunda owner 2026-11-24 |
 | owner 2026-10-17 | sprite monster Garasi Tempur, mobil 3 arah, pack mobil kertas | menunggu aset dari owner |
@@ -42,6 +42,14 @@
 Ditemukan saat regresi: `qa-prd42-listen` L3 G11 merah juga di kode lama (HEAD bersih, port lain): gate menunggu
 tetap 900 ms lalu mengecek gambar sudah termuat; berkas ada di disk dan kodenya benar. Gate kini menunggu gambar
 sampai 8 s: hijau 15/0; mutasi alamat gambar `.webpX` → merah di 3 ukuran. Gate ini tidak dijalankan CI.
+
+CI v64.92 pertama (`f4cbd8e9`) merah di menit 22 tanpa baris ✗ yang terbaca: sorotan CI hanya menangkap kata
+"error" dari gate lain. Dua perbaikan:
+- `ci-verify.sh` lokal penuh menemukan dua gate lain dengan jebakan yang sama (tunggu tetap lalu cek gambar):
+  `qa-prd52-g9` L4 (800 ms) dan `qa-prd50-g7` L1 (900 ms). Keduanya kini menunggu gambar sampai 8 s. Hijau 7/0 dan
+  9/0; mutasi alamat gambar → L4 dan L1 merah. Berkas gambar ada dan kode game benar.
+- `.github/workflows/pages.yml`: sorotan gagal kini mulai dari judul gate terakhir + 5 baris terakhir log, lalu
+  4 baris bertanda (✗, ❌, FAIL, Error, `"pass": false`). GitHub hanya menyimpan 10 sorotan per langkah.
 
 Penyebab L1: blok "mockup-match" G3 (`style.css`, medali 132 px, tombol 96 px) ditulis sesudah blok layar miring dan
 menimpanya; papan petunjuk menyusut di kolom flex. Perbaikan: blok layar miring baru sesudah blok mockup (medali

@@ -51,7 +51,11 @@ jobs:
         run: |
           set -o pipefail
           bash tools/ci-verify.sh 2>&1 | tee ci-verify.log || {
-            grep -E '^== |✗|FAIL|Error|rror:' ci-verify.log | grep -B1 -E '✗|FAIL|Error|rror:' | tail -n 20 | while IFS= read -r l; do echo "::error::$l"; done
+            # GitHub keeps 10 error annotations per step: the last gate header + the last 5 lines first (a gate that
+            # fails without a mark stays readable: f4cbd8e9 failed at minute 22 and the marks only caught harmless
+            # "error" words of an earlier gate), then the last 4 marked lines
+            { grep -E '^== ' ci-verify.log | tail -n 1; tail -n 5 ci-verify.log; } | while IFS= read -r l; do echo "::error::tail: $l"; done
+            grep -E '✗|❌|FAIL|Error|rror:|"pass": false' ci-verify.log | tail -n 4 | while IFS= read -r l; do echo "::error::$l"; done
             exit 1
           }
 

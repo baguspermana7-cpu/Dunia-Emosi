@@ -36,3 +36,5 @@
   kartu soal).
 - **Belum:** b/d dan p/q (game bahasa) dan kiri/kanan di papan Timmy — tidak ada konsumen yang sudah mencatat pilihan
   salahnya dalam bentuk yang bisa digolongkan; dicatat.
+  Dicek ulang 2026-11-25 (PRD-57): pilihan huruf di G3 dan G8 semuanya huruf besar (`item.word` "HARIMAU"), dan
+  b/d, p/q hanya tertukar di huruf kecil. Petunjuk cermin tidak dibuat: tidak akan pernah muncul.

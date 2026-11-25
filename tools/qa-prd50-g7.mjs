@@ -55,7 +55,9 @@ async function session (size, voice, level = 14) {   // level 14 = medium: both 
     if (done) break
     const live = await p.waitForFunction(() => typeof g7State !== 'undefined' && g7State.shuffled && !g7State.answered && document.querySelector('.g7-choice-btn'), { timeout: 8000 }).then(() => true).catch(() => false)
     if (!live) { await sleep(500); continue }
-    await sleep(900)   // pictures load
+    // pictures load: wait for them (a fixed 900 ms failed on a busy machine with the files on disk); a picture that
+    // truly fails stays complete with naturalWidth 0 and is still reported below after 8 s
+    await p.waitForFunction(() => [...document.querySelectorAll('#screen-game7 img')].filter(i => i.getClientRects().length).every(i => i.complete && i.naturalWidth > 0), { timeout: 8000 }).catch(() => {})
     const r = await p.evaluate(() => {
       const s = g7State, scr = document.getElementById('screen-game7'), emo = /\p{Extended_Pictographic}/u
       const vis = el => { const st = getComputedStyle(el); return st.display !== 'none' && st.visibility !== 'hidden' && el.getClientRects().length }
