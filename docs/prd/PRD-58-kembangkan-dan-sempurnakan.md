@@ -328,3 +328,15 @@ Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 
 - G27 (Ejaan Inggris) memang hanya huruf kata itu, tetapi game ini latihan lomba ejaan yang dirancang owner ("semua
   kata di level 1 dan level 2, bisa diulang2, utk persiapan lomba") dan tata letak nampannya dihitung dari panjang
   kata. Tidak diubah tanpa keputusan owner.
+
+### 5.8 58C-C9 huruf kecil di Jejak Huruf (v64.97)
+
+- 26 jalur huruf kecil di bagian hub baru `games/hub/g9-huruf-kecil.js` (`game.js` tetap di bawah ratchet: 10.283
+  baris). `LETTER_GUIDES` kini 52 kunci.
+- Peta 20 level G9: level 1-7 huruf besar, level 8-14 huruf kecil, level 15-20 kata.
+- Glyph bayangan huruf kecil dipas ke kotak tinta aslinya (tinggi dari ascent + descent, garis dasar naik sebesar
+  descent, tinta di tengah kotak jalur). Huruf kecil memakai gambar yang sama dengan huruf besarnya ("g" -> Gembok).
+- Bukti: `qa-prd58a-levels` C9 (52 jalur; level 1 huruf besar, level 8 huruf kecil; tinta tiap glyph di kotak
+  jalurnya) hijau 16/0. Merah pada mutasi (pengepas dimatikan): a, c, e, g, i ... meleset dari kotaknya.
+  Lembar kontak 26 huruf dan ronde "g" di 390x844 dilihat. `qa-prd52-g9` kini memeriksa 52 huruf (7/0).
+- Belum: ronde pasangan besar-kecil di G3 (bagian kedua C9).

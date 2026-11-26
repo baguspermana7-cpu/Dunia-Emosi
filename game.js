@@ -828,6 +828,8 @@ function g9FillGlyph (ctx, ch, guides, W, H) {
     guides.forEach(g => { minX = Math.min(minX, g.x); maxX = Math.max(maxX, g.x); minY = Math.min(minY, g.y); maxY = Math.max(maxY, g.y) })
   }
   const bboxW = Math.max(0.001, (maxX - minX)) * W, bboxH = Math.max(0.001, (maxY - minY)) * H
+  // PRD-58 C9: lowercase glyphs are fitted by their own ink box (games/hub/g9-huruf-kecil.js)
+  if (ch !== ch.toUpperCase() && typeof g9FillGlyphKecil === 'function') return g9FillGlyphKecil(ctx, ch, minX, maxX, maxY, bboxH, W, H)
   let fontSize = bboxH / 0.72
   ctx.font = `bold ${Math.round(fontSize)}px Nunito`
   const w = ctx.measureText(ch).width || bboxW
@@ -3244,6 +3246,7 @@ function g9PicPool(){
   return pool
 }
 function g9PicFor(letter){
+  letter=String(letter).toUpperCase()   // PRD-58 C9: a lowercase round shows the same pictures
   const all=g9PicPool().filter(x=>x.word[0]===letter); if(!all.length) return null
   g9State.picSeen=g9State.picSeen||{}; const k=g9State.picSeen[letter]||0; g9State.picSeen[letter]=k+1
   return all[(k+Math.floor(Math.random()*all.length))%all.length]
@@ -3277,7 +3280,9 @@ function initGame9(){
   } else {
     // PRD-58 A3: a shuffled bag over all 26 letters for every age (the fixed lists from index 0 only ever reached
     // A-F / A-J); the level's difficulty sets how many letters one session traces (DIFF rounds)
-    seq=drawBag('g9h',LETTER_SEQ_PINTAR,Math.min(DIFF[diff].rounds,LETTER_SEQ_PINTAR.length))
+    // PRD-58 C9: the medium third (levels 8-14) traces lowercase letters; Kelas 1 reads and writes them first
+    const _set=diff==='medium'&&typeof LETTER_SEQ_KECIL!=='undefined'?LETTER_SEQ_KECIL:LETTER_SEQ_PINTAR
+    seq=drawBag(_set===LETTER_SEQ_PINTAR?'g9h':'g9k',_set,Math.min(DIFF[diff].rounds,_set.length))
   }
   g9State={tkTried:true,round:0,maxRound:Math.min(DIFF[diff].rounds,seq.length),sequence:seq,currentLetter:'A',mode:g9TraceMode,wordMode:wordMode,word:'',layout:null,strokes:0}
   state.currentPlayer=0

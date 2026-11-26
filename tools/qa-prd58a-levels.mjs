@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // qa-prd58a-levels — PRD-58 gelombang 58A (docs/prd/PRD-58-kembangkan-dan-sempurnakan.md): levels and difficulty.
+//   C9 G9 lowercase letters on the medium third (52 paths, ghost glyph inside its box)
 //   A1 every hub game with a level map reaches all three difficulties inside the levels its map shows
 //      (G3/G4/G7/G8/G9/G11 show 20 levels; "hard" started at 27, so it was never reached), the map shows that many
 //      level bubbles and the "next level" button goes on to the last one.
@@ -71,6 +72,36 @@ try {
   })
   ok(g9.distinct >= 20 && !g9.dupSessions.length, `A3 G9: 10 sessions at level 8 -> ${g9.distinct} letters (${g9.letters}), sessions with a repeat ${g9.dupSessions.length}${g9.err ? ' ' + g9.err : ''}`)
   ok(g9.word15 === true, `A3 G9: level 15 opens word mode (${g9.word15})`)
+  // C9 G9 lowercase: 52 paths; level 8 (medium) traces lowercase only, level 1 uppercase only; each lowercase ghost
+  // glyph really paints ink inside its own path box; a lowercase round still finds a picture
+  const c9 = await p.evaluate(async () => {
+    try { await document.fonts.load('bold 100px Nunito') } catch (e) {}
+    const keys = Object.keys(LETTER_GUIDES).length, out = { keys }
+    state.currentGame = 9; state.mode = 'solo'; g9TraceMode = 'huruf'
+    for (const lv of [1, 8]) {
+      state.selectedLevelNum = lv; state.selectedLevel = levelDiff(9, lv)
+      try { initGame9() } catch (e) { return { err: String(e) } }
+      out['lv' + lv] = g9State.sequence.slice(0, g9State.maxRound).join('')
+    }
+    const thin = []
+    for (const ch of (typeof LETTER_SEQ_KECIL !== 'undefined' ? LETTER_SEQ_KECIL : [])) {
+      const c = document.createElement('canvas'); c.width = c.height = 200
+      const x = c.getContext('2d'); g9FillGlyph(x, ch, LETTER_GUIDES[ch], 200, 200)
+      const g = LETTER_GUIDES[ch], x0 = Math.min(...g.map(q => q.x)) * 200, x1 = Math.max(...g.map(q => q.x)) * 200
+      const y0 = Math.min(...g.map(q => q.y)) * 200, y1 = Math.max(...g.map(q => q.y)) * 200
+      // the ink box sits on the path box: top and bottom within 14 px, centred within 10 px (stroke width aside)
+      const d = x.getImageData(0, 0, 200, 200).data; let t = 999, bt = -1, l = 999, r = -1
+      for (let yy = 0; yy < 200; yy++) for (let xx = 0; xx < 200; xx++) if (d[(yy * 200 + xx) * 4 + 3] > 0) { t = Math.min(t, yy); bt = Math.max(bt, yy); l = Math.min(l, xx); r = Math.max(r, xx) }
+      if (bt < 0 || Math.abs(t - y0) > 14 || Math.abs(bt - y1) > 14 || Math.abs((l + r) / 2 - (x0 + x1) / 2) > 10) thin.push(ch + ':' + [t, bt, l, r].join(',') + ' vs ' + [y0, y1, x0, x1].map(Math.round).join(','))
+    }
+    out.thin = thin; out.n = (typeof LETTER_SEQ_KECIL !== 'undefined' ? LETTER_SEQ_KECIL : []).length
+    out.pic = !!g9PicFor('b')
+    try { exitGame() } catch (e) {}
+    return out
+  })
+  ok(c9.keys === 52 && c9.n === 26, `C9 G9: LETTER_GUIDES has ${c9.keys} paths (want 52), lowercase ${c9.n}${c9.err ? ' ' + c9.err : ''}`)
+  ok(/^[a-z]+$/.test(c9.lv8 || '') && /^[A-Z]+$/.test(c9.lv1 || ''), `C9 G9: level 1 traces "${c9.lv1}", level 8 traces "${c9.lv8}" (want uppercase, then lowercase)`)
+  ok(c9.thin && !c9.thin.length && c9.pic, `C9 G9: lowercase ghost glyphs sit on their path box (misses: ${c9.thin && c9.thin.join(' ') || 'none'}), picture for "b" ${c9.pic}`)
   // A5 G10: the question respects its level's number limit and operations (G10_LEVELS max/ops)
   const g10 = await p.evaluate(() => {
     const out = {}

@@ -12,9 +12,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const rd = f => fs.readFileSync(path.join(ROOT, f), 'utf8')
 
 // The cut order. A new part is appended here when it is moved out of game.js.
-const ORDER = ['games/hub/g14-g16-trains.js', 'games/hub/g11-kuis-sains.js', 'games/hub/g10-weather.js']
+const ORDER = ['games/hub/g14-g16-trains.js', 'games/hub/g11-kuis-sains.js', 'games/hub/g10-weather.js', 'games/hub/g9-huruf-kecil.js']
 // Ratchet: game.js line count after the last cut. It may fall; lower this number when it does. It may never rise.
-const GAME_JS_MAX_LINES = 10299   // PRD-58 E9: G6 (Mobil) removed, 10596 -> 10278 lines
+const GAME_JS_MAX_LINES = 10283   // PRD-58 C9: lowercase G9 cut out to games/hub/g9-huruf-kecil.js (E9 left 10278; C9 hooks +5)
 
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else { fail++; console.log('  ✗', m) } }

@@ -55,17 +55,17 @@ const pic = p => p.evaluate(() => {
 {
   const { c, p, errs } = await open([390, 844])
   await start(p, 14)
-  const lib = await p.evaluate(() => { const n = {}; Object.keys(LETTER_GUIDES).forEach(L => { n[L] = g9PicPool().filter(x => x.word[0] === L).length }); return n })
+  const lib = await p.evaluate(() => { const n = {}; Object.keys(LETTER_GUIDES).forEach(L => { n[L] = g9PicPool().filter(x => x.word[0] === L.toUpperCase()).length }); return n })
   const bad = []
   for (const L of Object.keys(lib)) {
     await p.evaluate(L => { g9State.sequence = [L]; g9State.round = 0; g9State.maxRound = 1; nextG9Round() }, L)
     await p.waitForFunction(() => { const i = document.querySelector('#g9-pic img'); return !i || (i.complete && i.naturalWidth > 0) }, { timeout: 5000 }).catch(() => {})
     const r = await pic(p)
-    if (lib[L] && !(r.shown && r.loaded && r.word[0] === L)) bad.push(L + ':' + JSON.stringify(r))
+    if (lib[L] && !(r.shown && r.loaded && r.word[0] === L.toUpperCase())) bad.push(L + ':' + JSON.stringify(r))
     if (!lib[L] && r.shown) bad.push(L + ': picture without a word in the library')
   }
   const thin = Object.entries(lib).filter(([, n]) => n < 3).map(([L, n]) => L + n)
-  ok(!bad.length && Object.values(lib).filter(Boolean).length >= 20 && !errs.length, `L1 26 letters: wrong/missing picture ${bad.length} ${bad.slice(0, 2).join(' ')}; letters with < 3 picture words (reported): ${thin.join(' ') || 'none'}`)
+  ok(!bad.length && Object.values(lib).filter(Boolean).length >= 40 && !errs.length, `L1 52 letters (A-Z, a-z): wrong/missing picture ${bad.length} ${bad.slice(0, 2).join(' ')}; letters with < 3 picture words (reported): ${thin.join(' ') || 'none'}`)
   // L3 arrows on 'A'
   await p.evaluate(() => { g9State.sequence = ['A']; g9State.round = 0; g9State.maxRound = 1; nextG9Round() }); await sleep(300)
   const ar = await p.evaluate(() => {
