@@ -97,6 +97,25 @@ if (process.env.QA_BASE) {
     const gone = await p.waitForFunction(() => !document.querySelector('.dek'), { timeout: 10000 }).then(() => true, () => false)
     ok(got && got.seen && got.top >= 0 && got.left >= 0 && got.right <= w + 1 && got.bottom <= h, `browser ${w}x${h}: a wrong tap one away shows the whole off-by-one hint, nothing covering it (seen ${got && got.seen}, ${got ? got.text + ' @' + [got.left, got.top, got.right, got.bottom].map(Math.round) : 'none'})`)
     ok(log.includes('off-by-one') && gone, `browser ${w}x${h}: the kind is in the child's learning log (${log}) and the next question clears the card (${gone})`)
+    // hearts out: three wrong in a row end the level; the last hint card must not stay on the end screen (CI
+    // 2026-11-28 drew general, general, off-by-one and the card never left)
+    if (w === 800) {
+      await p.evaluate(() => window.__g25.startLevel(1))
+      for (let k = 0; k < 8; k++) {   // wrong until the hearts run out (3 on a fresh level)
+        await p.waitForFunction(() => window.__g25.current() && document.querySelectorAll('#choices button:not([disabled])').length > 1, { timeout: 15000 }).catch(() => {})
+        await sleep(300)
+        const cur = await p.evaluate(() => window.__g25.current())
+        if (!cur) break
+        const bs = await p.$$('#choices button'), ls = await Promise.all(bs.map(x => x.evaluate(e => e.textContent.trim())))
+        const r = await bs[ls.findIndex(l => l !== cur.ans)].boundingBox()
+        await p.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2)
+        await sleep(2600)
+      }
+      const end = await p.waitForFunction(() => !window.__g25.current(), { timeout: 10000 }).then(() => true, () => false)
+      await sleep(600)
+      const left = await p.evaluate(() => !!document.querySelector('.dek'))
+      ok(end && !left, `browser ${w}x${h}: three wrong in a row end the level (${end}) and no hint card is left on the end screen (card ${left})`)
+    }
     await c.close()
   }
   ok(!errs.length, 'no page errors: ' + errs.slice(0, 3).join(' | '))

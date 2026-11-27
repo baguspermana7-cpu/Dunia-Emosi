@@ -374,3 +374,13 @@ Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 
 - Screenshot `tk-quiz` (Timmy Kapal) 390x844 dan 844x390: 9 ikat + 6 batang, pilihan 86 / 69 / 96, dilihat.
 - Ditemukan, bukan bug: dugaan "paling besar" bisa salah di jalur mudah keliru. Kode lama hanya memakai angka
   <= kunci (`top = max(10, a)`).
+
+### 5.11 Kartu petunjuk tertinggal di layar akhir Kuis Matematika (v64.99)
+
+- CI v64.98 merah di `qa-error-kinds`: urutan soal di CI membuat tiga jawaban salah beruntun. Hati habis, level
+  berakhir (`finish(true)` 900 ms kemudian), tetapi kartu petunjuk jawaban terakhir tetap di layar akhir.
+  Bug lama, bukan dari C1/C2: Kuis Matematika memakai `makeMathQuestionV2`, bukan SoalEngine.
+- Perbaikan: `finish()` membersihkan kartu (`DuniaErrorKinds.clear`).
+- Bukti: cek baru di `qa-error-kinds` (salah sampai hati habis -> level selesai, tidak ada kartu) merah tanpa
+  perbaikan (kartu tertinggal), hijau 10/0 dengan perbaikan. Probe 3 kali (salah, salah, kurang satu) memperlihatkan
+  kartu tertinggal di semua kasus sebelum perbaikan.
