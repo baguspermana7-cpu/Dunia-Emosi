@@ -292,12 +292,14 @@ const isSulit = o => +o.grade >= 3
   let over20 = 0, half12 = 0, multdiv = 0, longp = 0, n = 0, ex = null
   for (let lv = 1; lv <= 4; lv++) { const r = TK.rng(900 + lv); for (let i = 0; i < 3000; i++) {
     const q = TK.make('matematika', lv, r, {}); n++
-    if (q.choices.some(c => /^\d+$/.test(c) && +c > 20)) { over20++; ex = ex || q.id + ' ' + q.choices.join('/') }
+    // PRD-58 C1/C2: Kelas 1 counts to 100 — num100 / tensones (level 3+) may go to 99, every other kind stays <= 20
+    const lim = /^(num100|tensones)$/.test(q.kind) ? (lv >= 3 ? 99 : -1) : 20
+    if (q.choices.some(c => /^\d+$/.test(c) && +c > lim)) { over20++; ex = ex || q.id + ' ' + q.choices.join('/') }
     if (q.choices.some(c => /setengah/.test(c))) half12++
     if (/^(groups|groupsplus|share)$/.test(q.kind)) multdiv++
     if (words(q.prompt) > MAX_Q_WORDS) longp++
   } }
-  warn(over20 === 0, `math: generated choices <= 20 (${over20}/${n} items offer a number > 20, e.g. ${ex})`)
+  warn(over20 === 0, `math: generated choices <= 20 (21-99 only for num100/tensones from level 3) (${over20}/${n} items over, e.g. ${ex})`)
   warn(half12 === 0, `math: clocks use whole hours only (${half12}/${n} items show or offer "setengah")`)
   warn(multdiv === 0, `math: no multiplication / division kinds (groups/share) in fase A (${multdiv}/${n})`)
   warn(longp === 0, `math: prompts <= ${MAX_Q_WORDS} words (${longp}/${n} longer)`)

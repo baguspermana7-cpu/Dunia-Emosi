@@ -73,7 +73,7 @@ async function playG3 (p) {
   for (let r = 0; r < 3; r++) {
     await sleep(500)
     await p.waitForFunction(() => document.querySelectorAll('#g3-choices .g3-choice-btn:not(.correct):not(.wrong)').length >= 2, { timeout: 6000 }).catch(() => {})
-    const st = await p.evaluate(() => ({ rnd: g3State.round, listen: !!document.getElementById('g3-listen'), letter: g3State.isLetterMode, ans: g3State.isLetterMode ? g3State.currentItem.word[g3State.blankPos || 0] : String(Math.min(g3State.currentItem.num, 9)), said: window.__said.slice() }))
+    const st = await p.evaluate(() => ({ rnd: g3State.round, listen: !!document.getElementById('g3-listen'), letter: g3State.isLetterMode, ans: g3State.isPair ? g3State.pairAns : g3State.isLetterMode ? g3State.currentItem.word[g3State.blankPos || 0] : String(Math.min(g3State.currentItem.num, 9)), said: window.__said.slice() }))
     rounds.push(st)
     if (r === 2 && st.listen) {
       if (SH) await p.screenshot({ path: path.join(SH, `g3-listen-${p.viewport().width}x${p.viewport().height}.png`) })
@@ -115,7 +115,7 @@ for (const size of [[390, 844], [844, 390], [800, 1280]]) {
     const l = g3[2]
     ok(g3.every(r => !r.listen) && !l.said.length,
       `L1 G3 ${tag} (PRD-55): no listen round, spoken ${JSON.stringify(l.said.slice(-1))} (rounds ${g3.map(r => r.rnd + (r.tapped ? '' : '!')).join(',')})`)
-    const a3 = await p.evaluate(() => window.__ans.filter(a => a.skill === 'awal'))
+    const a3 = await p.evaluate(() => window.__ans.filter(a => a.skill === 'awal' || a.skill === 'besar-kecil'))   // PRD-58 C9: round 2 at medium/hard is a B <-> b pair
     await start(p, 8, 15)
     const g8 = await playG8(p)
     const l8 = g8[2]

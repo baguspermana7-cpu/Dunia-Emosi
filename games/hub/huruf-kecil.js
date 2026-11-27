@@ -1,4 +1,5 @@
-/* games/hub/g9-huruf-kecil.js — PRD-58 C9 (docs/prd/PRD-58-kembangkan-dan-sempurnakan.md): Jejak Huruf (G9) lowercase.
+/* games/hub/huruf-kecil.js — PRD-58 C9 (docs/prd/PRD-58-kembangkan-dan-sempurnakan.md): lowercase letters in the hub:
+ * Jejak Huruf (G9) traces them, Huruf Hutan (G3) pairs them with their capitals.
  * Cut out of game.js like the other hub parts (audit A-18): classic script, shares the hub's global scope, loads after
  * game.js. Adds 26 lowercase paths to LETTER_GUIDES (52 keys), the medium-third sequence LETTER_SEQ_KECIL, and the
  * ghost-glyph fit for lowercase letters.
@@ -52,4 +53,23 @@ function g9FillGlyphKecil (ctx, ch, minX, maxX, maxY, bboxH, W, H) {
   const l = (m.actualBoundingBoxLeft || 0) * fs / 100, r = (m.actualBoundingBoxRight || m.width || 50) * fs / 100
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'
   ctx.fillText(ch, (minX + maxX) / 2 * W - (r - l) / 2, maxY * H - desc * fs / 100)
+}
+
+// Huruf Hutan (G3) pair round: a capital and its lowercase are the same letter. Called by nextG3Round (game.js) on
+// rounds 2, 5, 8 ... of the letter part at medium and hard; the direction alternates (B -> b, then b -> B). The wrong
+// choices start with the letters a child mixes up (b d p q, m n u w), the rest are random.
+const G3_LOOKALIKE = { b: 'dpq', d: 'bpq', p: 'qbd', q: 'pdb', m: 'nwu', n: 'umh', u: 'nvy', w: 'mv', i: 'jl', j: 'ig', l: 'it' }
+function g3PairRound (item, numChoices, roundInSet) {
+  const up = item.word[0], lo = up.toLowerCase(), toLower = roundInSet % 2 === 1
+  const shown = toLower ? up : lo, ans = toLower ? lo : up
+  g3State.pairShown = shown; g3State.pairAns = ans
+  document.getElementById('g3-word').innerHTML = `<span class="g3-letter g3-pair" id="g3-ltr-0">${shown}</span>`
+  document.getElementById('g3-hint').textContent = `Mana huruf ${toLower ? 'kecil' : 'besar'} dari ${shown}?`
+  // the guide's reading line asks for a missing letter; this round asks for a pair (nextG3Round restores the line)
+  const mg = document.getElementById('g3-mg'); if (mg) mg.textContent = 'Huruf besar dan huruf kecil: cari pasangannya!'
+  const pool = (G3_LOOKALIKE[lo] || '').split('').concat('abcdefghijklmnopqrstuvwxyz'.split('').sort(() => Math.random() - 0.5))
+  const wrong = []
+  for (const c of pool) { if (c !== lo && wrong.indexOf(c) < 0) wrong.push(c); if (wrong.length >= numChoices - 1) break }
+  const opts = [lo].concat(wrong).map(c => toLower ? c : c.toUpperCase())
+  renderG3Choices(opts.sort(() => Math.random() - 0.5), ans, false, numChoices)
 }

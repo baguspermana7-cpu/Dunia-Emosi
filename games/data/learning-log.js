@@ -92,7 +92,9 @@
     count: 'Menghitung benda', clock: 'Membaca jam', diff: 'Selisih', twostep: 'Soal cerita dua langkah',
     plus: 'Penjumlahan', join: 'Penjumlahan', minus: 'Pengurangan', compare: 'Membandingkan', max: 'Membandingkan', min: 'Membandingkan',
     pattern: 'Pola', series: 'Pola', shape: 'Bentuk', awal: 'Huruf awal', susun: 'Menyusun kata', gambar: 'Kata dan gambar', pasang: 'Kegunaan alat',
-    jejak: 'Menulis huruf', eja: 'Mengeja kata', hitung: 'Berhitung' // PRD-48
+    jejak: 'Menulis huruf', eja: 'Mengeja kata', hitung: 'Berhitung', // PRD-48
+    besar: 'Huruf besar dan kecil', // PRD-58 C9: skill 'besar-kecil' (label() reads the part before '-')
+    num100: 'Bilangan sampai 100', tensones: 'Nilai tempat' // PRD-58 C1/C2
   }
   var DOMAIN = {
     matematika: 'Matematika', islam: 'Pengetahuan Islam', arab: 'Huruf Arab', umum: 'Pengetahuan umum',

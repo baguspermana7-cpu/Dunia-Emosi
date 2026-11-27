@@ -583,7 +583,9 @@
     var o = copy(q)
     var h = 0; String(q.id).split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) | 0 })
     var wrong = q.choices.filter(function (c) { return c !== q.answer })
-    if (/^\d+$/.test(q.answer) && !(q.calc && (q.calc.op === 'max' || q.calc.op === 'min')) && wrong.every(function (c) { return /^\d+$/.test(c) })) {
+    // PRD-58 C1/C2: max100 / next / tens keep their own wrong choices: the nearest numbers would put a bigger number
+    // than the answer into "paling besar" and drop the place-value mistakes (74 for 47) the question is about
+    if (/^\d+$/.test(q.answer) && !(q.calc && /^(max|min|max100|next|tens)$/.test(q.calc.op)) && wrong.every(function (c) { return /^\d+$/.test(c) })) {
       // numbers: the nearest values inside 0..10 (the easy range), one dropped (by the id) so the
       // answer is not always the middle value; order shuffled deterministically
       var a = +q.answer, top = Math.max(10, a), seen = {}, pool = []

@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.97-20261126e">
+<link rel="stylesheet" href="du-buttons.css?v=v64.98-20261128a">
 <title>Museum Kereta Ambarawa</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.97-20261126e">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.98-20261128a">
 <style>
 /* B-272 standalone museum page. Extracted from index.html in-SPA overlay so the
    museum has its own URL like every other game. Self-contained: no game.js. */
@@ -194,18 +194,18 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </head>
 <body>
 <div id="du-build-stamp">v58.7</div>
-<script src="data/emoji-map.js?v=v64.97-20261126e"></script><script src="data/ui-sprites.js?v=v64.97-20261126e"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=v64.98-20261128a"></script><script src="data/ui-sprites.js?v=v64.98-20261128a"></script><!-- zero-emoji engine -->
 <!-- Freeze recovery net: detects a dead frame chain and offers a way out. -->
-<script src="data/speak.js?v=v64.97-20261126e"></script>
-<script src="data/freeze-watchdog.js?v=v64.97-20261126e"></script>
+<script src="data/speak.js?v=v64.98-20261128a"></script>
+<script src="data/freeze-watchdog.js?v=v64.98-20261128a"></script>
 <!-- v61.5 — the museum keeps per-child collectibles but never loaded the save
      engine, so avatar scoping was unavailable to it and every child shared one
      passport. Must load BEFORE the page script that reads them. -->
-<script src="data/save-engine.js?v=v64.97-20261126e"></script>
-<script src="sw-reload.js?v=v64.97-20261126e"></script>
+<script src="data/save-engine.js?v=v64.98-20261128a"></script>
+<script src="sw-reload.js?v=v64.98-20261128a"></script>
 <!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
-<script src="data/train-world.js?v=v64.97-20261126e"></script>
-<script src="data/museum-lore.js?v=v64.97-20261126e"></script>
+<script src="data/train-world.js?v=v64.98-20261128a"></script>
+<script src="data/museum-lore.js?v=v64.98-20261128a"></script>
 
 <div id="museum-root">
   <div class="game-header">
@@ -2281,9 +2281,9 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 window.addEventListener('pagehide', () => { try { g18Cleanup() } catch(_){} })
 </script>
-<script src="vfx-engine.js?v=v64.97-20261126e"></script><script src="data/vfx-db.js?v=v64.97-20261126e"></script><script src="vfx-moments.js?v=v64.97-20261126e"></script>
-<script src="dunia-cinema.js?v=v64.97-20261126e" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.97-20261126e" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.97-20261126e" defer></script>
+<script src="vfx-engine.js?v=v64.98-20261128a"></script><script src="data/vfx-db.js?v=v64.98-20261128a"></script><script src="vfx-moments.js?v=v64.98-20261128a"></script>
+<script src="dunia-cinema.js?v=v64.98-20261128a" defer></script>
+<script src="vendor/sakuga/core.js?v=v64.98-20261128a" defer></script>
+<script src="data/dunia-sakuga.js?v=v64.98-20261128a" defer></script>
 </body>
 </html>

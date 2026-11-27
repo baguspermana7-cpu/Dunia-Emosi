@@ -284,13 +284,40 @@ function distribution (opts, N) {
     kinds[q.kind] = 1
     const p = SE.validate(q).concat(SE.validateItem(q))
     if (q.grade > 2 || q.hard) p.push('not fase A')
-    if (q.choices.some(c => /^\d+$/.test(c) && +c > 20)) p.push('number > 20')
+    // PRD-58 C1/C2: Kelas 1 counts to 100 — only num100 / tensones go above 20 (never above 99)
+    const big = q.kind === 'num100' || q.kind === 'tensones'
+    if (q.choices.some(c => /^\d+$/.test(c) && +c > (big ? 99 : 20))) p.push('number > ' + (big ? 99 : 20))
+    if (big && q.level < 3) p.push('21-100 before level 3')
     if (/setengah|×|:/.test(q.prompt + (q.eq || '')) && q.kind !== 'share') p.push('fase A rule')
     if (!q.explain || !q.hint1 || !q.hint2 || !q.step1) p.push('missing text')
     if (p.length && bad.length < 4) bad.push(`${q.kind} ${q.prompt} [${q.choices}] ${q.answer}: ${p.join(';')}`)
   }
   check(!bad.length, 'fase A: 10,000 generated, all correct and in range ' + bad.join(' | '))
-  check(['count', 'add', 'sub', 'biggest', 'smallest', 'bond', 'tomake', 'double', 'pattern', 'fewer', 'length', 'clock', 'diff', 'capacity', 'twostep'].every(k => kinds[k]), 'fase A covers every scheduled kind: ' + Object.keys(kinds).join())
+  check(['count', 'add', 'sub', 'biggest', 'smallest', 'bond', 'tomake', 'double', 'pattern', 'fewer', 'length', 'clock', 'diff', 'capacity', 'twostep', 'num100', 'tensones'].every(k => kinds[k]), 'fase A covers every scheduled kind: ' + Object.keys(kinds).join())
+  // PRD-58 C1/C2: level 4 asks about 21-100 in >= 15 % of questions; place value comes with its picture
+  {
+    const r4 = SE.rng(58), n = 1600; let big = 0, tens = 0, pic = 0, over = 0
+    for (let i = 0; i < n; i++) {
+      const q = SE.generate('matematika', { game: 'g30', grade: 2, level: 4, rng: r4 })
+      if (q.choices.some(c => /^\d+$/.test(c) && +c > 20 && +c <= 100)) big++
+      if (q.kind === 'tensones') { tens++; if (q.scene && q.scene.mode === 'tens' && q.scene.t * 10 + q.scene.o === +q.answer) pic++ }
+      if (q.choices.some(c => +c > 99)) over++
+    }
+    console.log(`  C1/C2 level 4: ${big}/${n} on 21-100, place value ${tens} (pictured ${pic})`)
+    check(big / n >= 0.15 && tens > 0 && pic === tens && !over, `C1/C2 level 4: ${big}/${n} questions on 21-100 (${Math.round(100 * big / n)} %, want >= 15), place value ${tens} with its picture ${pic}, over 99 ${over}`)
+  }
+  // the easy path (3 choices) keeps a 21-100 question right: "paling besar" never gains a bigger number
+  {
+    // ... and keeps a place-value mistake (digits swapped or a ten off) among a place-value question's choices
+    const wrongEasy = []; let tq = 0, pv = 0
+    for (let i = 0; i < 600; i++) {
+      const q = SE.reduceChoices(SE.generate('matematika', { game: 'g30', grade: 2, level: 4, seed: i, kind: ['num100', 'tensones'][i % 2] }), 3)
+      if (q.choices.length !== 3 || q.choices.indexOf(q.answer) < 0 || SE.validate(q).length) wrongEasy.push(q.prompt + ' [' + q.choices + '] ' + q.answer + ' ' + SE.validate(q).join(';'))
+      if (q.kind === 'tensones') { tq++; if (q.choices.some(c => c !== q.answer && Math.abs(+c - +q.answer) >= 9)) pv++ }
+    }
+    console.log(`  C1/C2 easy path: place value with a tens/swap mistake ${pv}/${tq}`)
+    check(!wrongEasy.length && pv >= tq * 0.9, `C1/C2 easy path (3 choices) stays correct (${wrongEasy.length} wrong ${wrongEasy.slice(0, 2).join(' | ')}) and keeps a place-value mistake in ${pv}/${tq}`)
+  }
   bad = []; kinds = {}
   const r2 = SE.rng(99)
   for (let i = 0; i < 10000; i++) {

@@ -828,7 +828,7 @@ function g9FillGlyph (ctx, ch, guides, W, H) {
     guides.forEach(g => { minX = Math.min(minX, g.x); maxX = Math.max(maxX, g.x); minY = Math.min(minY, g.y); maxY = Math.max(maxY, g.y) })
   }
   const bboxW = Math.max(0.001, (maxX - minX)) * W, bboxH = Math.max(0.001, (maxY - minY)) * H
-  // PRD-58 C9: lowercase glyphs are fitted by their own ink box (games/hub/g9-huruf-kecil.js)
+  // PRD-58 C9: lowercase glyphs are fitted by their own ink box (games/hub/huruf-kecil.js)
   if (ch !== ch.toUpperCase() && typeof g9FillGlyphKecil === 'function') return g9FillGlyphKecil(ctx, ch, minX, maxX, maxY, bboxH, W, H)
   let fontSize = bboxH / 0.72
   ctx.font = `bold ${Math.round(fontSize)}px Nunito`
@@ -2703,15 +2703,15 @@ function nextG3Round(){
   const isLetterMode=(roundInSet/g3State.maxRound)<0.6
   const item=pickBag('g3',g3State.shuffled)||g3State.shuffled[roundInSet%g3State.shuffled.length],numChoices=g3State.choices
   // PRD-42: every third round of the letter part is a listen round (only with an Indonesian voice, see duniaCanListen)
-  const isListen=isLetterMode&&roundInSet%3===2&&duniaCanListen()
-  g3State.currentItem=item; g3State.isLetterMode=isLetterMode; g3State.isListen=isListen
+  const isListen=isLetterMode&&roundInSet%3===2&&duniaCanListen(), isPair=isLetterMode&&roundInSet%3===1&&state.selectedLevel!=='easy'&&typeof g3PairRound==='function' // PRD-58 C9: B <-> b
+  g3State.currentItem=item; g3State.isLetterMode=isLetterMode; g3State.isListen=isListen; g3State.isPair=isPair
   document.getElementById('g3-mode-badge').textContent=isLetterMode?'Level: Huruf 🔤':'Level: Angka 🔢'
   document.getElementById('g3-animal').textContent=item.animal
   document.getElementById('g3-progress-bar').style.width=((roundInSet/g3State.maxRound)*100)+'%'
   // the guide's line and the animal plate belong to the reading rounds; a listen round hides the plate and says what to do
   const _mg=document.getElementById('g3-mg'); if(_mg){ if(_mg.dataset.read==null) _mg.dataset.read=_mg.textContent; _mg.textContent=isListen?'Dengar suaranya, lalu ketuk hurufnya':_mg.dataset.read }
   document.getElementById('g3-animal').style.display=isListen?'none':''
-  if(isListen){
+  if(isPair){ g3PairRound(item,numChoices,roundInSet) } else if(isListen){
     const _ans=item.word[0]; g3State.blankPos=0
     document.getElementById('g3-word').innerHTML=listenButtonHTML('g3-listen')
     document.getElementById('g3-hint').textContent='Dengar, lalu pilih hurufnya'
@@ -2750,20 +2750,20 @@ function renderG3Choices(choices,correctVal,isNum,numChoices){
     btn.onclick=()=>{
       if(g3State.answered)return;g3State.answered=true
       const correct=ch===correctVal
-      if(g3State.isLetterMode) duniaReport('g3','bahasa','awal',(g3State.isListen?'dengar ':'')+(g3State.currentItem&&g3State.currentItem.word),correct) // PRD-42
+      if(g3State.isLetterMode) duniaReport('g3','bahasa',g3State.isPair?'besar-kecil':'awal',g3State.isPair?g3State.pairShown+' '+g3State.pairAns:(g3State.isListen?'dengar ':'')+(g3State.currentItem&&g3State.currentItem.word),correct) // PRD-42
       el.querySelectorAll('.g3-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===correctVal){b.classList.add('correct');if(!correct)spawnCorrectCardJuice(b,{burst:false})}})
       const hintEl=document.getElementById('g3-hint')
       if(!correct){
         btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')
         const it=g3State.currentItem
         if(g3State.isLetterMode && it){
-          hintEl.innerHTML=`💡 <b>${correctVal}</b>... seperti <b>${it.animal} ${it.word}</b>. Kata ini mulai dengan huruf <b>${correctVal}</b>!`
+          hintEl.innerHTML=g3State.isPair?`<b>${g3State.pairShown}</b> dan <b>${correctVal}</b> huruf yang sama`:`💡 <b>${correctVal}</b>... seperti <b>${it.animal} ${it.word}</b>. Kata ini mulai dengan huruf <b>${correctVal}</b>!`
         } else if(it){
           hintEl.innerHTML=`💡 Coba hitung lagi: ada <b>${it.num}</b> ${it.animal} di atas!`
         }
         setTimeout(nextG3Round,2000)
       }else{
-        if(g3State.isLetterMode&&!g3State.isListen){const bp=g3State.blankPos||0;const ltr=document.getElementById('g3-ltr-'+bp);if(ltr){ltr.classList.remove('g3-blank');ltr.textContent=g3State.currentItem.word[bp];ltr.classList.add('highlight')}}
+        if(g3State.isLetterMode&&!g3State.isListen&&!g3State.isPair){const bp=g3State.blankPos||0;const ltr=document.getElementById('g3-ltr-'+bp);if(ltr){ltr.classList.remove('g3-blank');ltr.textContent=g3State.currentItem.word[bp];ltr.classList.add('highlight')}}
         playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g3State.correct++
         setTimeout(nextG3Round,1300)
       }

@@ -604,6 +604,7 @@
   // the clock / fraction cake scales down to its scene instead of spilling over the question above it (qa-tk-ui-audit V);
   // the clock numerals are drawn at 15 viewBox units so a 94 px face still reads 14 px, a 80 px face 12 px
   CSS += '\n.tkq-scene>svg.tkq-clock{max-height:100%;max-width:100%}'
+  CSS += '\n.tkq-scene>svg.tkq-tens{width:min(100%,560px);height:auto;max-height:100%}'   // PRD-58 C2
   // tablets: a clock face never below 94 px, even in the compact card (numerals are 15 viewBox units -> >= 14 px);
   // the compact fit shrinks the other scene parts and the gaps instead
   CSS += '\n.tkq:not(.tkq-short):not(.tkq-tall) .tkq-card svg.tkq-clock:not(.tkq-frac){min-width:94px;min-height:94px}'
@@ -662,6 +663,18 @@
     try { return !!(W.matchMedia && W.matchMedia('(prefers-reduced-motion: reduce)').matches) } catch (e) { return false }
   }
   // a round cake cut into den equal slices, num of them coloured (Sulit: fractions of a picture)
+  // PRD-58 C2: place value — t bundles of ten sticks (a band round each) and o single sticks, drawn to count
+  function tensSVG (t, o) {
+    var g = '', x = 4, i, j
+    for (i = 0; i < t; i++) {
+      for (j = 0; j < 10; j++) g += '<rect x="' + (x + j * 3.2) + '" y="6" width="2.6" height="70" rx="1.2" fill="#E8B04A" stroke="#8A5A1E" stroke-width=".6"/>'
+      g += '<rect x="' + (x - 1.5) + '" y="36" width="35" height="9" rx="3" fill="#D9534F" stroke="#7A2320" stroke-width=".8"/>'
+      x += 42
+    }
+    x += t ? 4 : 0
+    for (i = 0; i < o; i++) { g += '<rect x="' + x + '" y="6" width="5" height="70" rx="2" fill="#E8B04A" stroke="#8A5A1E" stroke-width=".8"/>'; x += 10 }
+    return '<svg class="tkq-tens" viewBox="0 0 ' + Math.max(40, x + 2) + ' 82" role="img" aria-label="' + t + ' ikat sepuluh dan ' + o + ' batang">' + g + '</svg>'
+  }
   function fracSVG (num, den) {
     var sl = ''
     for (var i = 0; i < den; i++) {
@@ -868,6 +881,7 @@
           case 'diff': h = grp(sc.groups[0], 'red', 'Merah') + grp(sc.groups[1], 'blue', 'Biru'); break
           case 'clock': h = clockSVG(sc.h, sc.m); break
           case 'frac': h = fracSVG(sc.num, sc.den); break
+          case 'tens': h = tensSVG(sc.t, sc.o); break   // PRD-58 C2
           default: h = ''
         }
         if (/^(count|add|sub|twostep|groups)$/.test(sc.mode)) h += '<span class="tkq-ship" aria-hidden="true">' + ICON.ship + '<span class="tkq-cargo"></span></span>'

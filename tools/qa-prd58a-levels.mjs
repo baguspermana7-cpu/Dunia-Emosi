@@ -102,6 +102,39 @@ try {
   ok(c9.keys === 52 && c9.n === 26, `C9 G9: LETTER_GUIDES has ${c9.keys} paths (want 52), lowercase ${c9.n}${c9.err ? ' ' + c9.err : ''}`)
   ok(/^[a-z]+$/.test(c9.lv8 || '') && /^[A-Z]+$/.test(c9.lv1 || ''), `C9 G9: level 1 traces "${c9.lv1}", level 8 traces "${c9.lv8}" (want uppercase, then lowercase)`)
   ok(c9.thin && !c9.thin.length && c9.pic, `C9 G9: lowercase ghost glyphs sit on their path box (misses: ${c9.thin && c9.thin.join(' ') || 'none'}), picture for "b" ${c9.pic}`)
+  // C9b G3 pair round: at medium, letter-part rounds 2, 5 ... show one letter and ask for its other case (both
+  // directions in a session); a right tap is logged as 'besar-kecil'; easy has no pair round
+  const c9b = await p.evaluate(async () => {
+    const out = { med: [], easy: 0, logged: null }
+    // the app always holds two player slots (solo uses slot 0); the A1 block above left one
+    state.players = [{ name: 'Ana', animal: '🦁', ageTier: 'tumbuh', stars: 0 }, { name: 'Pemain 2', animal: '🐰', ageTier: 'tumbuh', stars: 0 }]; state.currentPlayer = 0
+    state.currentGame = 3; state.mode = 'solo'
+    for (const [lvl, n] of [['medium', 8], ['easy', 2]]) {
+      state.selectedLevelNum = n; state.selectedLevel = lvl
+      try { initGame3() } catch (e) { return { err: String(e) } }
+      for (let r = 0; r < g3State.maxRound; r++) {
+        g3State.round = r; nextG3Round()
+        if (!g3State.isPair) continue
+        if (lvl === 'easy') { out.easy++; continue }
+        const shown = document.querySelector('#g3-word .g3-pair')?.textContent, btns = [...document.querySelectorAll('#g3-choices .g3-choice-btn')].map(b => b.textContent)
+        out.med.push({ shown, ans: g3State.pairAns, btns: btns.join(''), hint: document.getElementById('g3-hint').textContent, mg: document.getElementById('g3-mg').textContent })
+      }
+    }
+    // one real tap on the right answer of a pair round
+    state.selectedLevel = 'medium'; initGame3(); g3State.round = 1; nextG3Round()
+    const seen = []; const off = window.DuniaBus && DuniaBus.on ? DuniaBus.on('answer', e => seen.push(e)) : null
+    const right = [...document.querySelectorAll('#g3-choices .g3-choice-btn')].find(b => b.textContent === g3State.pairAns)
+    if (right) right.click()
+    await new Promise(r => setTimeout(r, 200)); try { off && off() } catch (e) {}
+    out.logged = seen.map(e => e.skill + ':' + e.ok).join(',')
+    out.label = window.LearningLog ? LearningLog.label('besar-kecil', 'bahasa') : null
+    try { exitGame() } catch (e) {}
+    return out
+  })
+  const pairs = c9b.med || [], up2lo = pairs.filter(x => /^[A-Z]$/.test(x.shown) && x.ans === x.shown.toLowerCase()), lo2up = pairs.filter(x => /^[a-z]$/.test(x.shown) && x.ans === x.shown.toUpperCase())
+  ok(pairs.length >= 2 && up2lo.length && lo2up.length && pairs.every(x => x.btns.includes(x.ans) && x.btns.length >= 3 && /pasangan/.test(x.mg) && !/hilang/.test(x.mg)) && c9b.easy === 0,
+    `C9b G3 pairs at medium: ${pairs.map(x => x.shown + '>' + x.ans + '[' + x.btns + ']').join(' ')}; easy pair rounds ${c9b.easy}${c9b.err ? ' ' + c9b.err : ''}`)
+  ok(/besar-kecil:true/.test(c9b.logged || '') && c9b.label === 'Huruf besar dan kecil', `C9b G3: a right tap on a pair round is logged as ${c9b.logged || 'nothing'} (want besar-kecil:true), dashboard label "${c9b.label}"`)
   // A5 G10: the question respects its level's number limit and operations (G10_LEVELS max/ops)
   const g10 = await p.evaluate(() => {
     const out = {}

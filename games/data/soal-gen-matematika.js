@@ -26,10 +26,12 @@
     // owner 2026-09-30 ("soalnya itu-itu saja"): many templates, none above ~20 %
     1: [['count', 18], ['add', 14], ['sub', 12], ['biggest', 8], ['smallest', 8], ['bond', 12], ['tomake', 10], ['pattern', 9], ['double', 9]],
     2: [['add', 13], ['sub', 13], ['count', 8], ['clock', 10], ['diff', 8], ['capacity', 8], ['bond', 10], ['tomake', 10], ['double', 8], ['pattern', 7], ['fewer', 5]],
-    3: [['add', 13], ['sub', 13], ['capacity', 9], ['clock', 10], ['diff', 11], ['bond', 9], ['tomake', 10], ['pattern', 10], ['length', 9], ['fewer', 6]],
-    4: [['twostep', 22], ['add', 10], ['sub', 10], ['diff', 9], ['clock', 8], ['capacity', 7], ['tomake', 10], ['pattern', 9], ['length', 9], ['bond', 6]]
+    3: [['add', 13], ['sub', 13], ['capacity', 9], ['clock', 10], ['diff', 11], ['bond', 9], ['tomake', 10], ['pattern', 10], ['length', 9], ['fewer', 6], ['num100', 12], ['tensones', 10]],
+    4: [['twostep', 22], ['add', 10], ['sub', 10], ['diff', 9], ['clock', 8], ['capacity', 7], ['tomake', 10], ['pattern', 9], ['length', 9], ['bond', 6], ['num100', 12], ['tensones', 10]]
   }
   var MAXN = 20
+  // PRD-58 C1/C2: Kelas 1 counts to 100 (fase A). These kinds alone may use 21-100; every other kind keeps MAXN
+  var BIG = { next: 1, max100: 1, tens: 1 }
   // easy (Kelas 1 / low mastery): picture-first — the objects of the story are on screen
   var EASY_KINDS = [['count', 22], ['add', 20], ['sub', 18], ['double', 18], ['tomake', 12], ['bond', 10]]
   function cap (level) { return level <= 2 ? 10 : 20 }
@@ -99,6 +101,35 @@
           near: [a2 + b2 <= M + 3 ? a2 + b2 : d2 + 3, b2, a2, d2 + 1, d2 - 1], scene: { mode: 'sub', groups: [G(key, d2), G(key, b2, 'leave')] },
           hint1: 'Yang ' + v.unload + ' tidak dihitung lagi.', hint2: 'Tutup ' + b2 + ' ' + noun + ' yang pergi, hitung sisanya.',
           step1: 'Mulai dari ' + a2 + ', hitung mundur ' + b2 + ': ' + seqStr(a2 - 1, Math.max(d2, a2 - 2), -1) + (b2 > 2 ? ', …' : ''), explain: a2 + ' − ' + b2 + ' = ' + d2 + '.', calc: { op: '-', a: a2, b: b2 } }
+        break
+      }
+      case 'num100': {   // PRD-58 C1: numbers 21-100 — after, before, the biggest of four
+        var v1 = ri(r, 0, 2)
+        if (v1 < 2) {
+          // the +11 / -11 / +1 wrong choices stay inside 20..99
+          var aa = v1 === 0 ? ri(r, 21, 88) : ri(r, 31, 98), dd = v1 === 0 ? 1 : -1, an = aa + dd
+          q = { prompt: 'Bilangan ' + (dd > 0 ? 'sesudah ' : 'sebelum ') + aa + ' adalah?', eq: null, ans: an,
+            fixed: shuffle([an, aa - dd, aa + 10 * dd, an + 10 * dd].map(String), r),
+            scene: { mode: 'none', groups: [] }, hint1: dd > 0 ? 'Sesudah artinya maju satu.' : 'Sebelum artinya mundur satu.',
+            hint2: 'Hitung ' + (dd > 0 ? 'maju' : 'mundur') + ' dari ' + aa + '.', step1: aa + ', lalu ' + (dd > 0 ? 'satu lagi' : 'mundur satu') + '.',
+            explain: 'Bilangan ' + (dd > 0 ? 'sesudah ' : 'sebelum ') + aa + ' adalah ' + an + '.', calc: { op: 'next', a: aa, d: dd } }
+        } else {
+          var tt = ri(r, 2, 9), vs = [], seenV = {}
+          while (vs.length < 4) { var vv = ri(r, 0, 1) ? tt * 10 + ri(r, 0, 9) : ri(r, 21, 99); if (!seenV[vv]) { seenV[vv] = 1; vs.push(vv) } }
+          var mx100 = Math.max.apply(null, vs)
+          q = { prompt: 'Bilangan mana yang paling besar?', eq: null, ans: mx100, fixed: vs.map(String),
+            scene: { mode: 'none', groups: [] }, hint1: 'Lihat angka puluhannya dulu.', hint2: 'Puluhannya sama? Lihat satuannya.',
+            step1: 'Bandingkan puluhan: angka depan yang lebih besar menang.', explain: mx100 + ' paling besar.', calc: { op: 'max100', list: vs } }
+        }
+        break
+      }
+      case 'tensones': {   // PRD-58 C2: place value with pictures — bundles of ten sticks and single sticks
+        var pt = ri(r, 2, 9), po = ri(r, 0, 9), pv = pt * 10 + po, alt = [pv, po * 10 + pt, pv + (pt < 9 ? 10 : -10), pv + (po < 9 ? 1 : -1), pv - (po > 0 ? 1 : -1), pv - 10, pv + 2, pv - 2], fx = []
+        alt.forEach(function (x) { if (fx.length < 4 && x >= 1 && x <= 99 && fx.indexOf(x) < 0) fx.push(x) })
+        q = { prompt: 'Ada ' + pt + ' ikat sepuluh dan ' + po + ' batang. Semuanya berapa?', eq: pt + ' puluhan + ' + po + ' satuan = ?', ans: pv,
+          fixed: shuffle(fx.map(String), r), scene: { mode: 'tens', t: pt, o: po, groups: [] },
+          hint1: 'Satu ikat isinya sepuluh batang.', hint2: 'Hitung ikatannya: ' + seqStr(10, Math.min(pt, 3) * 10, 10) + (pt > 3 ? ', …' : '') + ', lalu tambah batangnya.',
+          step1: pt + ' ikat = ' + pt * 10 + '.', explain: pt + ' puluhan dan ' + po + ' satuan = ' + pv + '.', calc: { op: 'tens', t: pt, o: po } }
         break
       }
       case 'biggest': {
@@ -225,13 +256,15 @@
       choices: choices, answer: String(q.ans), explain: q.explain, hint1: q.hint1, hint2: q.hint2, step1: q.step1, calc: q.calc, world: theme || null, noun: noun }
   }
   function validateA (q) {
-    var p = [], c = q.calc || {}, M = cap(q.level), truth
+    var p = [], c = q.calc || {}, M = BIG[c.op] ? 100 : cap(q.level), MX = BIG[c.op] ? 100 : MAXN, truth
     if (c.op !== 'clock') {
       q.choices.forEach(function (x) { if (!/^\d+$/.test(x)) p.push('non-integer/negative choice ' + x) })
       if (c.op === 'count') truth = c.n
       else if (c.op === '+') truth = c.a + c.b
       else if (c.op === '-') truth = c.a - c.b
-      else if (c.op === 'max') truth = Math.max.apply(null, c.list)
+      else if (c.op === 'max' || c.op === 'max100') truth = Math.max.apply(null, c.list)
+      else if (c.op === 'next') truth = c.a + c.d
+      else if (c.op === 'tens') { truth = c.t * 10 + c.o; if (c.o > 9 || c.t > 9) p.push('tens/ones digit above 9') }
       else if (c.op === 'min') truth = Math.min.apply(null, c.list)
       else if (c.op === 'bond') truth = c.t - c.a
       else if (c.op === 'seq') { truth = c.a + 3 * c.s; if (truth > MAXN) p.push('pattern above ' + MAXN) }
@@ -242,8 +275,11 @@
       if (!(truth >= 0)) p.push('negative/invalid truth')
       ;['a', 'b', 'c', 'n', 't'].forEach(function (k) { if (c[k] != null && (c[k] < 0 || c[k] > M)) p.push('operand ' + k + '=' + c[k] + ' outside 0..' + M) })
       if (truth > M) p.push('answer above ' + M)
-      q.choices.forEach(function (x) { if (+x > MAXN) p.push('choice ' + x + ' above ' + MAXN) })
-      if ((c.op === 'max' || c.op === 'min') && q.choices.filter(function (x) { return +x === truth }).length !== 1) p.push(c.op + ' not unique')
+      q.choices.forEach(function (x) { if (+x > MX) p.push('choice ' + x + ' above ' + MX) })
+      // the answer is the biggest (smallest) of the choices the child SEES, not only of the list it came from
+      if ((c.op === 'max' || c.op === 'max100') && Math.max.apply(null, q.choices.map(Number)) !== truth) p.push('a shown choice is bigger than the answer')
+      if (c.op === 'min' && Math.min.apply(null, q.choices.map(Number)) !== truth) p.push('a shown choice is smaller than the answer')
+      if ((c.op === 'max' || c.op === 'max100' || c.op === 'min') && q.choices.filter(function (x) { return +x === truth }).length !== 1) p.push(c.op + ' not unique')
       if (c.op === 'bond' && (c.t > M || c.a >= c.t)) p.push('bond outside 1..' + M)
     } else if (clockLabel(c.h, c.m) !== q.answer) p.push('clock label mismatch')
     return p

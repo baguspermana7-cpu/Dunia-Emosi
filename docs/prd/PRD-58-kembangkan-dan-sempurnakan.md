@@ -331,7 +331,7 @@ Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 
 
 ### 5.8 58C-C9 huruf kecil di Jejak Huruf (v64.97)
 
-- 26 jalur huruf kecil di bagian hub baru `games/hub/g9-huruf-kecil.js` (`game.js` tetap di bawah ratchet: 10.283
+- 26 jalur huruf kecil di bagian hub baru `games/hub/huruf-kecil.js` (semula `g9-huruf-kecil.js`) (`game.js` tetap di bawah ratchet: 10.283
   baris). `LETTER_GUIDES` kini 52 kunci.
 - Peta 20 level G9: level 1-7 huruf besar, level 8-14 huruf kecil, level 15-20 kata.
 - Glyph bayangan huruf kecil dipas ke kotak tinta aslinya (tinggi dari ascent + descent, garis dasar naik sebesar
@@ -339,4 +339,38 @@ Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 
 - Bukti: `qa-prd58a-levels` C9 (52 jalur; level 1 huruf besar, level 8 huruf kecil; tinta tiap glyph di kotak
   jalurnya) hijau 16/0. Merah pada mutasi (pengepas dimatikan): a, c, e, g, i ... meleset dari kotaknya.
   Lembar kontak 26 huruf dan ronde "g" di 390x844 dilihat. `qa-prd52-g9` kini memeriksa 52 huruf (7/0).
-- Belum: ronde pasangan besar-kecil di G3 (bagian kedua C9).
+- Bagian kedua: lihat 5.9.
+
+### 5.9 58C-C9b pasangan huruf besar-kecil di Huruf Hutan (v64.98)
+
+- Level sedang dan sulit: ronde ke-2, 5, 8 ... dari bagian huruf menampilkan satu huruf dan meminta pasangannya.
+  Arahnya bergantian (B -> b, lalu b -> B). Pengecoh dimulai dari huruf yang sering tertukar (b d p q, m n u w, i j l),
+  sisanya acak. Level mudah tidak berubah.
+- Kalimat pemandu khusus ("Huruf besar dan huruf kecil: cari pasangannya!"); petunjuk saat salah "B dan b huruf yang
+  sama". Jawaban tercatat sebagai keterampilan baru "Huruf besar dan kecil" di dasbor orang tua.
+- Kode di `games/hub/huruf-kecil.js` (`game.js` tetap 10.283 baris).
+- Bukti: `qa-prd58a-levels` C9b (2 ronde pasangan di level sedang, dua arah, jawaban ada di pilihan, kalimat
+  pemandu benar, ketukan benar tercatat `besar-kecil:true`, 0 ronde di level mudah) hijau 18/0; merah saat
+  `g3PairRound` dimatikan (0 ronde, tidak tercatat). Ronde "D" dan "A" di 390x844 dilihat.
+- Gate yang disesuaikan: `qa-prd42-listen` (helper membaca jawaban ronde pasangan; 15/0).
+- Bukan bug: galat `stars` saat uji pertama berasal dari gate yang mengisi 1 pemain; aplikasi selalu punya 2 slot.
+
+### 5.10 58C-C1/C2 bilangan 21-100 dan nilai tempat (v64.98)
+
+- Generator fase A (`soal-gen-matematika.js`) level 3-4 mendapat dua jenis baru:
+  - `num100`: bilangan sesudah / sebelum (21-99) dan bilangan paling besar dari empat.
+  - `tensones`: "Ada 4 ikat sepuluh dan 7 batang. Semuanya berapa?" dengan gambar ikatan sepuluh batang dan batang
+    satuan (`tensSVG` di `tk-quiz.js`, mode adegan `tens`). Pengecohnya angka terbalik (74), plus atau minus 10, dan
+    plus atau minus 1.
+- Hanya dua jenis ini yang boleh di atas 20 (validator `BIG`); semua pilihan <= 99; tidak pernah sebelum level 3.
+- Label dasbor: "Bilangan sampai 100", "Nilai tempat".
+- Bukti: `qa-soal-engine` hijau 80/0. Di level 4, 286 dari 1.600 soal (18 %) memakai 21-100. 128 soal nilai tempat,
+  semuanya bergambar. 10.000 soal fase A semua benar dan dalam rentang. Generator lama: 0 dari 1.600 (merah).
+- Jalur mudah (3 pilihan, penguasaan rendah): `SoalEngine.reduceChoices` dulu mengganti pengecoh dengan angka
+  terdekat (96 -> 94, 95), sehingga kesalahan nilai tempat (69 untuk 96, 86) hilang. Kini `max100` / `next` / `tens`
+  mempertahankan pengecohnya sendiri. Gate: 0 dari 300 (merah, kode lama) -> 286 dari 300 soal nilai tempat mudah
+  memuat kesalahan tukar digit atau selisih sepuluh. Validator fase A kini juga memastikan kunci "paling besar"
+  memang terbesar di antara pilihan yang tampil.
+- Screenshot `tk-quiz` (Timmy Kapal) 390x844 dan 844x390: 9 ikat + 6 batang, pilihan 86 / 69 / 96, dilihat.
+- Ditemukan, bukan bug: dugaan "paling besar" bisa salah di jalur mudah keliru. Kode lama hanya memakai angka
+  <= kunci (`top = max(10, a)`).
