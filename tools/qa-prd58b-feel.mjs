@@ -32,12 +32,17 @@ try {
       flashScreen('red')
       const cs = getComputedStyle(scr)
       const name = cs.animationName, dur = parseFloat(cs.animationDuration) * (cs.animationDuration.endsWith('ms') ? 1 : 1000)
-      // sample the transform a few frames in: a playing shake moves the screen sideways
+      // read the shake at fixed points of its own timeline (20 % and 40 % = the -8 / +8 px keyframes). Sampling a few
+      // animation frames was speed-dependent: on a slow CI runner 8 frames ran past the 400 ms shake and read 0 px.
       let moved = 0
-      for (let i = 0; i < 8; i++) {
-        await new Promise(r => requestAnimationFrame(r))
-        const m = new DOMMatrix(getComputedStyle(scr).transform)
-        moved = Math.max(moved, Math.abs(m.m41))
+      const an = scr.getAnimations().find(a => a.animationName === 'screenShake')
+      if (an) {
+        an.pause()
+        for (const f of [0.2, 0.4]) {
+          an.currentTime = dur * f
+          moved = Math.max(moved, Math.abs(new DOMMatrix(getComputedStyle(scr).transform).m41))
+        }
+        an.finish()
       }
       return { id: scr.id, name, dur, moved: Math.round(moved * 10) / 10 }
     }, target)
