@@ -202,7 +202,9 @@ await p.waitForSelector('#s-map.on', { timeout: 8000 }).catch(() => {})
 const rina = await who(p)
 const rinaRec = await p.evaluate(() => window.__cek.load())
 const lv = async () => { await p.evaluate(() => { window.__lv = 0; if (window.DuniaLevel && !window.DuniaLevel.__qa) { const o = window.DuniaLevel.start; window.DuniaLevel.start = function () { window.__lv++; return o.apply(this, arguments) }; window.DuniaLevel.__qa = 1 } })
-  await tap(p, '.isle[data-isle="pola"]'); await p.waitForSelector('#s-intro.on', { timeout: 8000 }).catch(() => {}); await tap(p, '#btn-start'); await sleep(500)
+  await tap(p, '.isle[data-isle="pola"]'); await p.waitForSelector('#s-intro.on', { timeout: 8000 }).catch(() => {}); await tap(p, '#btn-start')
+  // up to 3 s for the log call: a fixed 500 ms read 0 for Bima on a slow CI runner (v65.02 run); a guest waits the full 3 s and must still be 0
+  for (let i = 0; i < 30 && !(await p.evaluate(() => window.__lv)); i++) await sleep(100)
   const n = await p.evaluate(() => window.__lv); await tap(p, '#btn-pause'); await p.waitForSelector('#s-map.on', { timeout: 8000 }).catch(() => {}); return n }
 const lvGuest = await lv()
 await tap(p, '#me-btn'); await p.waitForSelector('#s-name.on', { timeout: 8000 }).catch(() => {})
