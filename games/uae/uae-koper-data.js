@@ -83,7 +83,7 @@
       i('bike', 'Sepeda, drone, mainan remote control', 'anak', 'jangan dibawa', 'jangan', 'Bea Cukai Abu Dhabi: boneka, sepeda dan pesawat remote control termasuk barang terbatas yang butuh izin. Beli di Abu Dhabi.', [AD_CUST], 'resmi')
     ] },
     { id: 'tech', title: 'Elektronik', items: [
-      i('adapter', 'Adaptor colokan tipe G (tiga kaki, model Inggris) dan satu terminal', 'ibu', '3 adaptor + 1 terminal', 'kabin', 'UAE memakai 230 V 50 Hz colokan tipe G (sumber sekunder). Pengisi daya 100-240 V cukup diberi adaptor.', [], 'sekunder'),
+      i('adapter', 'Adaptor colokan tipe G (tiga kaki, model Inggris) dan satu terminal', 'ibu', '3 adaptor + 1 terminal', 'kabin', 'UAE memakai 230 V 50 Hz colokan tipe G (sumber sekunder). Pengisi daya 100-240 V cukup diberi adaptor.', ['https://www.worldstandards.eu/electricity/plug-voltage-by-country/abu-dhabi/'], 'sekunder'),
       i('phones', 'HP, kabel dan pengisi daya', 'semua', '1 per orang', 'kabin', 'Semua perangkat berbaterai di kabin.', [IATA_BAT], 'resmi'),
       i('powerbank', 'Power bank berlabel Wh terbaca', 'ibu', '1 saja, maksimal 100 Wh', 'kabin', 'Etihad: satu power bank per penumpang, maks. 100 Wh, label Wh harus terbaca, tidak boleh dipakai di pesawat, tidak boleh di bagasi. 20.000 mAh x 3,7 V = 74 Wh.', [ETI_PROH], 'resmi'),
       i('laptop', 'Laptop atau tablet ibu', 'ibu', '1', 'kabin', 'Perangkat litium di kabin.', [IATA_BAT], 'resmi'),

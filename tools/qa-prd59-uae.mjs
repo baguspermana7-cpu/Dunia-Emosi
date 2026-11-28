@@ -358,6 +358,60 @@ try {
       await p.close()
     }
   }
+  // L20 + L22 (PRD-59D, 8.5 no. 3): packing ticks are saved and counted everywhere; every item explains itself with a
+  // sourced tooltip, also in English (a text that only exists after a tap).
+  {
+    const { p, errs } = await page(390, 844)
+    await p.goto(BASE + '/games/koper-uae.html', { waitUntil: 'load' }); await sleep(400)
+    await p.evaluate(() => { localStorage.removeItem('dunia-uae-koper-v1'); localStorage.removeItem('dunia-uae-lang-v1') })
+    await p.reload({ waitUntil: 'load' }); await sleep(400)
+    const k0 = await p.evaluate(() => ({ ...window.__uaeKoper, boxes: document.querySelectorAll('.u-kp input[type=checkbox]').length, tips: document.querySelectorAll('.u-kp .u-tip').length, rows: document.querySelectorAll('.u-kp').length, noBoxInBanned: [...document.querySelectorAll('.u-kp-no')].every(li => !li.querySelector('input')) }))
+    ok(k0.done === 0 && k0.boxes === k0.n && k0.rows === k0.items && k0.tips === k0.items && k0.no > 0 && k0.noBoxInBanned, `L20: ${k0.n} items to pack each with a tick box, ${k0.no} "do not bring" rows without one; L22: ${k0.tips} of ${k0.items} rows have a tooltip button`)
+    for (const i of [0, 3]) await p.evaluate(i => document.querySelectorAll('.u-kp input[type=checkbox]')[i].click(), i)   // each tick redraws the list
+    await sleep(200)
+    await p.reload({ waitUntil: 'load' }); await sleep(400)
+    const k1 = await p.evaluate(() => ({ done: window.__uaeKoper.done, checked: document.querySelectorAll('.u-kp input:checked').length, head: document.getElementById('kp-done').textContent }))
+    ok(k1.done === 2 && k1.checked === 2 && /^2 dari /.test(k1.head), `L20: 2 ticks survive a reload (done ${k1.done}, checked ${k1.checked}, "${k1.head}")`)
+    await p.evaluate(() => document.querySelector('[data-loc-f="jangan"]').click()); await sleep(150)
+    const kf = await p.evaluate(() => ({ rows: document.querySelectorAll('.u-kp').length, other: document.querySelectorAll('.u-kp:not([data-loc="jangan"])').length, no: window.__uaeKoper.no }))
+    ok(kf.rows === kf.no && kf.other === 0, `L20: filter "do not bring" shows its ${kf.rows} rows only`)
+    await p.evaluate(() => document.querySelector('[data-loc-f="all"]').click()); await sleep(150)
+    // every tooltip: explanation, grade + check date, at least one https source
+    const tips = await p.evaluate(async () => {
+      const bad = []; let n = 0
+      for (const b of document.querySelectorAll('.u-kp .u-tip')) {
+        b.click(); n++
+        const t = document.getElementById('u-tipbox-p').textContent.trim(), g = document.getElementById('u-tipbox-g').textContent, src = [...document.querySelectorAll('#u-tipbox-s a')].map(a => a.href)
+        // advice with no rule behind it says so and may cite nothing; a row graded official or secondary must cite a source
+        const advice = /^Saran, belum ada aturan/.test(g)
+        if (t.length < 20 || !/20\d\d-\d\d-\d\d/.test(g) || !src.every(u => /^https:\/\//.test(u)) || (!advice && !src.length)) bad.push(b.dataset.tip)
+        if (advice) window.__advice = (window.__advice || 0) + 1
+        document.getElementById('u-tipbox-x').click()
+      }
+      return { n, bad, advice: window.__advice || 0 }
+    })
+    ok(tips.n === k0.items && tips.bad.length === 0, `L22: ${tips.n} packing tooltips each carry an explanation and a grade with its check date; ${tips.n - tips.advice} graded rows cite https sources, ${tips.advice} are marked advice with no rule (bad: ${tips.bad.slice(0, 4).join(', ')})`)
+    await p.evaluate(() => document.querySelector('.u-lang button[data-lang="en"]').click()); await sleep(200)
+    const tipEn = await p.evaluate(async () => {
+      const left = []
+      for (const b of document.querySelectorAll('.u-kp .u-tip')) {
+        const idText = window.UAEKoper.groups.flatMap(g => g.items).find(x => x.id === b.dataset.tip)
+        b.click(); await new Promise(r => setTimeout(r, 0)); await new Promise(r => requestAnimationFrame(r))
+        const t = document.getElementById('u-tipbox-p').textContent.trim(), h = document.getElementById('u-tipbox-h').textContent.trim(), g = document.getElementById('u-tipbox-g').textContent
+        if (t === idText.tip || /dicek/.test(g)) left.push(b.dataset.tip)   // the title may be the same in both languages ("Hand sanitizer")
+        document.getElementById('u-tipbox-x').click()
+      }
+      return left
+    })
+    ok(tipEn.length === 0 && errs.length === 0, `L22/L23: in EN every packing tooltip (text made on tap) is English; left in Indonesian ${tipEn.length} ${tipEn.slice(0, 4).join(', ')}; errors ${errs.length}`)
+    await p.evaluate(() => { localStorage.removeItem('dunia-uae-lang-v1') })
+    // the landing counts the same ticks
+    await p.goto(BASE + '/games/relokasi-uae.html', { waitUntil: 'load' }); await sleep(400)
+    const ls = await p.evaluate(() => document.getElementById('stat-koper').textContent)
+    ok(/^2 dari \d+ siap/.test(ls), `L20: the landing shows the same count ("${ls}")`)
+    await p.evaluate(() => localStorage.removeItem('dunia-uae-koper-v1'))
+    await p.close()
+  }
 } finally { await b.close() }
 console.log(`qa-prd59-uae: ${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)

@@ -199,9 +199,9 @@ lengkap tanpa ada yang terlewat, terupdate.
 | L2-L14 | Dokumen kerja dan SIM (59A, 59B): data, simpan, cadangan, cetak, kuis, rambu | hijau, live v65.00 di repo mandiri | `test-uae-data`, `test-uae-engines`, `qa-prd59-uae` |
 | L15 | Tracker: hitungan, uang, tautan yang membuka langkah | hijau lokal | `qa-prd59-uae` |
 | L16-L18 | Visa keluarga: tiap langkah lengkap, per anak, jenjang sekolah, fakta lama ditandai | hijau | `test-uae-data` |
-| L19-L20 | Isi koper: aturan bersumber, centang tersimpan | L19 hijau; L20 belum punya blok browser sendiri | 8.5 no. 3 |
+| L19-L20 | Isi koper: aturan bersumber, centang tersimpan | hijau (v65.03): 50 butir bercentang, 6 baris "jangan dibawa" tanpa centang, 2 centang bertahan setelah reload dan terhitung di landing | `qa-prd59-uae` |
 | L21, L21b | Jadwal dari `needs`; langkah tersisa dihitung dari hari ini | hijau (6 uji merah dulu) | `test-uae-data` |
-| L22 | Tooltip di setiap parameter + glosarium | hijau di halaman dokumen dan keluarga; landing dan koper belum diukur | 8.5 no. 3 |
+| L22 | Tooltip di setiap parameter + glosarium | hijau di dokumen, keluarga, koper (56 tooltip: 38 bersumber https, 18 bertanda saran tanpa aturan; juga dalam EN). Landing tidak punya tooltip: isinya hitungan dan tautan | `qa-prd59-uae` |
 | L23 | Bahasa ID/EN tanpa reload | hijau (v65.02): 5 halaman, 1.1k teks + aturan berpola; merah dulu dengan kamus belum lengkap (17-121 teks tersisa per halaman) | `qa-prd59-uae` (30 cek L23), `test-uae-data` (6 cek L23) |
 | L24 | "Mulai dari sini" = langkah jalur terpanjang; tanggal tidak mundur | hijau lokal (merah pada mutasi) | `qa-prd59-uae` |
 | L25 | Repo mandiri `OUT_COUNTRY_RE` selalu sama dengan sumber | hijau: `qa-relocation-export` 16/0; versi live = ekspor (merah sebelum push: live `79a5d5e1070b`) | `tools/qa-relocation-export.mjs --live <url>` |
@@ -277,3 +277,5 @@ kolom "biaya yang dibayar" dan catatan.
 - Batas jujur: gate L23 memeriksa keadaan awal tiap halaman. Teks keadaan lain (hasil ujian, peringatan terlambat,
   toast) diterjemahkan dari daftar literal renderer, tetapi belum diuji di browser satu per satu. Teks baru di data
   tanpa padanan akan menggagalkan `test-uae-data`.
+- v65.03: gate koper menemukan satu butir berperingkat "sumber sekunder" tanpa sumber (adaptor colokan tipe G). Sumber
+  ditambahkan setelah dibaca: worldstandards.eu, Abu Dhabi = tipe G, 230 V, 50 Hz (sekunder).
