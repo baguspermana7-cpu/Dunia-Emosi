@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="du-buttons.css?v=v65.00-20261128a">
 <title>Gym Pokémon ⚔️</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a0212;font-family:'Fredoka One',sans-serif;touch-action:none;user-select:none}
@@ -96,7 +96,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 .hpf-dots{display:flex;gap:3px;flex-wrap:wrap}
 
 /* Pokéball dot symbols (CSS-only) */
-.hp-poke-dot{width:18px;height:18px;border-radius:50%;background:linear-gradient(180deg,#e3000b 50%,#fff 50%);border:2px solid #1a1a1a;position:relative;transition:all 0.3s;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.6)}
+.hp-poke-dot{width:18px;height:18px;border-radius:50%;background:linear-gradient(180deg,#e3000b 50%,#fff 50%);border:2px solid #1a1a1a;position:relative;transition:transform 0.3s, opacity 0.3s, box-shadow 0.3s, background-color 0.3s, border-color 0.3s, color 0.3s, filter 0.3s;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.6)}
 .hp-poke-dot::before{content:'';position:absolute;left:0;right:0;top:calc(50% - 1.5px);height:3px;background:#1a1a1a;pointer-events:none}
 .hp-poke-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;border:2px solid #1a1a1a;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 .hp-poke-dot.fainted{background:#6b7280!important;border-color:#4b5563!important;box-shadow:none}
@@ -185,19 +185,19 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 .tcf-cancel:active{background:rgba(0,0,0,0.65)}
 
 /* ── Type-specific hit FX keyframes ── */
-@keyframes fxRise{0%{transform:scale(0) translateY(0);opacity:0.9}50%{transform:scale(1.3) translateY(-45px);opacity:0.8}100%{transform:scale(0.4) translateY(-90px);opacity:0}}
+@keyframes fxRise{0%{transform:scale(.4) translateY(0);opacity:0.9}50%{transform:scale(1.3) translateY(-45px);opacity:0.8}100%{transform:scale(0.4) translateY(-90px);opacity:0}}
 @keyframes fxRain{0%{transform:scale(1.2) translateY(-15px);opacity:0.9}100%{transform:scale(0.7) translateY(70px);opacity:0}}
-@keyframes fxZap{0%{transform:scale(0) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(45deg);opacity:1}100%{transform:scale(0.1) rotate(200deg) translateX(70px);opacity:0}}
-@keyframes fxSwirl{0%{transform:scale(0) rotate(0deg);opacity:1}55%{transform:scale(1.3) rotate(200deg) translateX(35px);opacity:0.7}100%{transform:scale(0.2) rotate(400deg) translateX(70px);opacity:0}}
+@keyframes fxZap{0%{transform:scale(.4) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(45deg);opacity:1}100%{transform:scale(0.1) rotate(200deg) translateX(70px);opacity:0}}
+@keyframes fxSwirl{0%{transform:scale(.4) rotate(0deg);opacity:1}55%{transform:scale(1.3) rotate(200deg) translateX(35px);opacity:0.7}100%{transform:scale(0.2) rotate(400deg) translateX(70px);opacity:0}}
 @keyframes fxShadow{0%{transform:scale(0.3);opacity:0.95;filter:brightness(0.1)}40%{transform:scale(2.2);opacity:0.6}100%{transform:scale(4);opacity:0}}
-@keyframes fxSpiral{0%{transform:scale(0) rotate(0deg) translateY(0);opacity:1}100%{transform:scale(1.6) rotate(720deg) translateY(-55px);opacity:0}}
+@keyframes fxSpiral{0%{transform:scale(.4) rotate(0deg) translateY(0);opacity:1}100%{transform:scale(1.6) rotate(720deg) translateY(-55px);opacity:0}}
 @keyframes fxSnow{0%{transform:scale(1.1) translateY(0) rotate(0deg);opacity:0.9}100%{transform:scale(0.5) translateY(55px) rotate(360deg);opacity:0}}
 @keyframes fxFloat{0%{transform:scale(0.6) translateY(0);opacity:0.8}50%{transform:scale(1.1) translateY(-35px);opacity:0.5}100%{transform:scale(0) translateY(-65px);opacity:0}}
 @keyframes fxWind{0%{transform:scale(1) translateX(0);opacity:0.8}100%{transform:scale(1.6) translateX(-90px) translateY(-25px);opacity:0}}
-@keyframes fxSpin{0%{transform:scale(0) rotate(0deg);opacity:1}100%{transform:scale(2.2) rotate(720deg);opacity:0}}
-@keyframes fxBurst{0%{transform:scale(0);opacity:1}40%{transform:scale(1.6);opacity:0.9}100%{transform:scale(3.5);opacity:0}}
+@keyframes fxSpin{0%{transform:scale(.4) rotate(0deg);opacity:1}100%{transform:scale(2.2) rotate(720deg);opacity:0}}
+@keyframes fxBurst{0%{transform:scale(.4);opacity:1}40%{transform:scale(1.6);opacity:0.9}100%{transform:scale(3.5);opacity:0}}
 @keyframes fxDrop{0%{transform:scale(1.3) translateY(-25px);opacity:0.9}65%{transform:scale(1) translateY(35px);opacity:0.7}100%{transform:scale(0.7) translateY(55px);opacity:0}}
-@keyframes fxSpark{0%{transform:scale(0) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(-35deg);opacity:1}100%{transform:scale(0.1) rotate(70deg) translateX(60px);opacity:0}}
+@keyframes fxSpark{0%{transform:scale(.4) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(-35deg);opacity:1}100%{transform:scale(0.1) rotate(70deg) translateX(60px);opacity:0}}
 
 /* Type projectile */
 .type-proj{position:fixed;font-size:32px;pointer-events:none;z-index:400;filter:drop-shadow(0 0 10px rgba(255,255,255,0.8));transition:left .35s cubic-bezier(.35,0,.65,1.1),top .35s cubic-bezier(.35,0,.65,1.1),opacity .25s,transform .35s}
@@ -271,7 +271,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #gs-body{flex:1;overflow-y:auto;padding:6px 14px 24px;-webkit-overflow-scrolling:touch}
 #trainer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(min-width:480px){#trainer-grid{grid-template-columns:repeat(4,1fr)}}
-.trainer-card{display:flex;flex-direction:row;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;border:2px solid rgba(139,92,246,0.25);background:rgba(139,92,246,0.06);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .12s;position:relative}
+.trainer-card{display:flex;flex-direction:row;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;border:2px solid rgba(139,92,246,0.25);background:rgba(139,92,246,0.06);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s, opacity .12s, box-shadow .12s, background-color .12s, border-color .12s, color .12s, filter .12s;position:relative}
 .trainer-card:active{transform:scale(0.97);background:rgba(139,92,246,0.18)}
 .trainer-card.beaten{border-color:#fbbf24;background:rgba(251,191,36,0.08)}
 .trainer-card.locked{opacity:0.35;pointer-events:none;filter:grayscale(0.8)}
@@ -293,13 +293,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 /* Badge zoom animation on win */
 #badge-overlay{position:fixed;inset:0;z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,0);transition:background 0.8s}
 #badge-overlay.show{display:flex;background:rgba(0,0,0,0.85)}
-#badge-emoji{font-size:20px;transform:scale(0);transition:transform 1.2s cubic-bezier(0.34,1.56,0.64,1),filter 1.2s;filter:drop-shadow(0 0 0px transparent)}
-#badge-overlay.show #badge-emoji{transform:scale(1);font-size:min(120px,30vw);filter:drop-shadow(0 0 30px rgba(251,191,36,0.8))}
-#badge-text{font-size:0;opacity:0;color:#fbbf24;font-weight:900;font-family:'Fredoka One',sans-serif;text-align:center;transition:all 0.5s 1s}
+#badge-emoji{font-size:20px;transform:scale(.4);opacity:0;transition:transform 1.2s cubic-bezier(0.34,1.56,0.64,1),opacity .3s ease-out,filter 1.2s;filter:drop-shadow(0 0 0px transparent)}
+#badge-overlay.show #badge-emoji{transform:scale(1);opacity:1;font-size:min(120px,30vw);filter:drop-shadow(0 0 30px rgba(251,191,36,0.8))}
+#badge-text{font-size:0;opacity:0;color:#fbbf24;font-weight:900;font-family:'Fredoka One',sans-serif;text-align:center;transition:transform 0.5s 1s, opacity 0.5s 1s, box-shadow 0.5s 1s, background-color 0.5s 1s, border-color 0.5s 1s, color 0.5s 1s, filter 0.5s 1s}
 #badge-overlay.show #badge-text{font-size:clamp(18px,5vw,26px);opacity:1}
 #badge-gym-text{font-size:14px;color:#c4b5fd;opacity:0;transition:opacity 0.5s 1.3s}
 #badge-overlay.show #badge-gym-text{opacity:1}
-@keyframes badgeSparkle{0%{transform:scale(0) rotate(0)}50%{transform:scale(1.2) rotate(180deg)}100%{transform:scale(0) rotate(360deg);opacity:0}}
+@keyframes badgeSparkle{0%{transform:scale(.4) rotate(0)}50%{transform:scale(1.2) rotate(180deg)}100%{transform:scale(0) rotate(360deg);opacity:0}}
 .badge-sparkle{position:absolute;font-size:20px;animation:badgeSparkle 1s ease-out forwards;pointer-events:none}
 
 /* Gym welcome screen */
@@ -460,7 +460,7 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 @keyframes effMoveTitle{0%{transform:translate(-50%,0) translateX(-100vw) skewX(-12deg);opacity:0}18%{transform:translate(-50%,0) translateX(0) skewX(-6deg);opacity:1}28%{transform:translate(-50%,0) translateX(0) skewX(0);opacity:1}75%{transform:translate(-50%,0) translateX(0) skewX(0);opacity:1}100%{transform:translate(-50%,0) translateX(100vw) skewX(6deg);opacity:0}}
 .eff-sparkle-linger{position:fixed;z-index:8750;width:14px;height:14px;pointer-events:none;font-size:14px;text-align:center;line-height:14px;color:#fde047;text-shadow:0 0 6px #fde047,0 0 12px #f59e0b;transform:translate(-50%,-50%) scale(0);opacity:0;animation:effSparkleLinger 800ms ease-out forwards;will-change:transform,opacity}
 .eff-sparkle-linger::before{content:'✦'}
-@keyframes effSparkleLinger{0%{transform:translate(-50%,-50%) scale(0) rotate(0);opacity:0}20%{transform:translate(-50%,-50%) scale(1.3) rotate(45deg);opacity:1}60%{transform:translate(-50%,-60%) scale(1.0) rotate(90deg);opacity:0.9}100%{transform:translate(-50%,-90%) scale(0.4) rotate(180deg);opacity:0}}
+@keyframes effSparkleLinger{0%{transform:translate(-50%,-50%) scale(.4) rotate(0);opacity:0}20%{transform:translate(-50%,-50%) scale(1.3) rotate(45deg);opacity:1}60%{transform:translate(-50%,-60%) scale(1.0) rotate(90deg);opacity:0.9}100%{transform:translate(-50%,-90%) scale(0.4) rotate(180deg);opacity:0}}
 </style>
 </head>
 <body>
@@ -595,25 +595,25 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
   <div id="badge-gym-text"></div>
 </div>
 
-<script src="data/poke-sprite-cdn.js?v=v64.99-20261128b"></script>
-<script src="data/poke-sprite-loader.js?v=v64.99-20261128b"></script>
-<script src="data/speak.js?v=v64.99-20261128b"></script>
-<script src="data/freeze-watchdog.js?v=v64.99-20261128b"></script>
-<script src="data/save-engine.js?v=v64.99-20261128b"></script>
-<script src="data/math-rules.js?v=v64.99-20261128b"></script>
-<script src="data/emoji-map.js?v=v64.99-20261128b"></script><script src="data/ui-sprites.js?v=v64.99-20261128b"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/poke-sprite-cdn.js?v=v65.00-20261128a"></script>
+<script src="data/poke-sprite-loader.js?v=v65.00-20261128a"></script>
+<script src="data/speak.js?v=v65.00-20261128a"></script>
+<script src="data/freeze-watchdog.js?v=v65.00-20261128a"></script>
+<script src="data/save-engine.js?v=v65.00-20261128a"></script>
+<script src="data/math-rules.js?v=v65.00-20261128a"></script>
+<script src="data/emoji-map.js?v=v65.00-20261128a"></script><script src="data/ui-sprites.js?v=v65.00-20261128a"></script><!-- UIUX/gameplay sprite packs -->
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=v64.99-20261128b"></script>
+<script src="quiz-engine.js?v=v65.00-20261128a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=v64.99-20261128b"></script>
-<script src="vfx-engine.js?v=v64.99-20261128b"></script><script src="data/vfx-db.js?v=v64.99-20261128b"></script><script src="vfx-poke.js?v=v64.99-20261128b"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/move-id-translations.js?v=v64.99-20261128b"></script>
-<script src="data/sfx-engine.js?v=v64.99-20261128b"></script>
-<script src="data/weather-fx.js?v=v64.99-20261128b"></script>
-<script src="data/poke-packages.js?v=v64.99-20261128b"></script>
-<script src="data/battle-modes.js?v=v64.99-20261128b"></script>
-<script src="data/poke-type-chart.js?v=v64.99-20261128b"></script>
+<script src="battle-arena.js?v=v65.00-20261128a"></script>
+<script src="vfx-engine.js?v=v65.00-20261128a"></script><script src="data/vfx-db.js?v=v65.00-20261128a"></script><script src="vfx-poke.js?v=v65.00-20261128a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/move-id-translations.js?v=v65.00-20261128a"></script>
+<script src="data/sfx-engine.js?v=v65.00-20261128a"></script>
+<script src="data/weather-fx.js?v=v65.00-20261128a"></script>
+<script src="data/poke-packages.js?v=v65.00-20261128a"></script>
+<script src="data/battle-modes.js?v=v65.00-20261128a"></script>
+<script src="data/poke-type-chart.js?v=v65.00-20261128a"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -687,8 +687,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
     };
   });
 </script>
-<script src="game-modal.js?v=v64.99-20261128b"></script>
-<script src="battle-sprite-engine.js?v=v64.99-20261128b"></script>
+<script src="game-modal.js?v=v65.00-20261128a"></script>
+<script src="battle-sprite-engine.js?v=v65.00-20261128a"></script>
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -3194,10 +3194,10 @@ window.__g13c = {
   endBattleLose: function () { return endBattleLose() }
 }
 </script>
-<script src="dunia-icons.js?v=v64.99-20261128b"></script>
-<script src="dunia-cinema.js?v=v64.99-20261128b" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.99-20261128b" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.99-20261128b" defer></script>
+<script src="dunia-icons.js?v=v65.00-20261128a"></script>
+<script src="dunia-cinema.js?v=v65.00-20261128a" defer></script>
+<script src="vendor/sakuga/core.js?v=v65.00-20261128a" defer></script>
+<script src="data/dunia-sakuga.js?v=v65.00-20261128a" defer></script>
 </body>
 </html>
 <!-- g13c-pixi v56.8-20260704b -->

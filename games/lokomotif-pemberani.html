@@ -11,10 +11,10 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.99-20261128b">
-<link rel="stylesheet" href="du-hud.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="du-buttons.css?v=v65.00-20261128a">
+<link rel="stylesheet" href="du-hud.css?v=v65.00-20261128a">
 <title>Lokomotif Pemberani 🚂</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
 <style>
 /* v54.5 — WCAG 2.1 AAA reduced-motion respect. */
 @media (prefers-reduced-motion: reduce){
@@ -57,7 +57,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 @media(max-width:380px){ #train-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr))} }
 #word-emoji{font-size:24px;flex-shrink:0}
 #word-slots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
-.slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:10px;border:2px solid rgba(167,139,250,0.4);background:#fffdf6;color:#4a3a5e;font-size:15px;font-weight:900;transition:all .2s;position:relative;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+.slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:10px;border:2px solid rgba(167,139,250,0.4);background:#fffdf6;color:#4a3a5e;font-size:15px;font-weight:900;transition:transform .2s, opacity .2s, box-shadow .2s, background-color .2s, border-color .2s, color .2s, filter .2s;position:relative;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
 .slot.filled{border-color:#fbbf24;background:rgba(251,191,36,0.28);color:#fde68a;animation:slotFilledBounce .3s cubic-bezier(.34,1.56,.64,1)}
 .slot.done{border-color:#4ade80;background:rgba(74,222,128,0.28);color:#bbf7d0;animation:slotPop .3s cubic-bezier(.34,1.56,.64,1)}
 /* v54.13 — Slot polish: filled bounce (collect feedback) + next-slot pulse (visual cue for current target) */
@@ -66,7 +66,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 @keyframes slotPop{from{transform:scale(0.7)}to{transform:scale(1)}}
 @keyframes slotNextPulse{0%,100%{box-shadow:0 0 0 2px rgba(163,230,53,0.35),0 0 12px rgba(163,230,53,0.4)}50%{box-shadow:0 0 0 3px rgba(163,230,53,0.55),0 0 18px rgba(163,230,53,0.7)}}
 #lives-hud{display:flex;gap:3px;flex-shrink:0}
-.life-heart{font-size:20px;transition:all .3s;display:inline-block}
+.life-heart{font-size:20px;transition:transform .3s, opacity .3s, box-shadow .3s, background-color .3s, border-color .3s, color .3s, filter .3s;display:inline-block}
 .life-heart.lost{opacity:0.18;transform:scale(0.65);filter:grayscale(1)}
 
 /* ── Next letter hint ── */
@@ -99,7 +99,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #btn-dn:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #9A2A10}
 #lane-indicator{flex:1.2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 6px;border-radius:18px;border:3px solid #B8D4FF;background:linear-gradient(160deg,#E8F4FF,#C8E8FF);box-shadow:0 5px 0 #7AADDD}
 #lane-dots{display:flex;flex-direction:column;gap:6px;align-items:center}
-.lane-dot{width:12px;height:12px;border-radius:50%;background:rgba(100,160,220,0.3);border:2px solid rgba(100,160,220,0.4);transition:all .2s}
+.lane-dot{width:12px;height:12px;border-radius:50%;background:rgba(100,160,220,0.3);border:2px solid rgba(100,160,220,0.4);transition:transform .2s, opacity .2s, box-shadow .2s, background-color .2s, border-color .2s, color .2s, filter .2s}
 .lane-dot.active{background:#3B82F6;box-shadow:0 0 10px #3B82F6;border-color:#93C5FD;transform:scale(1.4)}
 #lane-label{font-size:10px;color:#1e40af;letter-spacing:1px;margin-top:2px;font-weight:700}
 
@@ -131,7 +131,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 /* ── v54.20 — G15 Word Adventure ── */
 
 /* C2: Combo streak HUD chip */
-#g15-streak{position:fixed;top:max(56px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:60;font-family:'Fredoka One',cursive;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;padding:5px 14px;border-radius:14px;font-size:13px;letter-spacing:1px;font-weight:900;box-shadow:0 4px 12px rgba(245,158,11,0.45);pointer-events:none;opacity:0;transform:translateX(-50%) scale(0.7);transition:all 250ms cubic-bezier(.34,1.56,.64,1)}
+#g15-streak{position:fixed;top:max(56px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:60;font-family:'Fredoka One',cursive;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;padding:5px 14px;border-radius:14px;font-size:13px;letter-spacing:1px;font-weight:900;box-shadow:0 4px 12px rgba(245,158,11,0.45);pointer-events:none;opacity:0;transform:translateX(-50%) scale(0.7);transition:transform 250ms cubic-bezier(.34,1.56,.64,1), opacity 250ms cubic-bezier(.34,1.56,.64,1), box-shadow 250ms cubic-bezier(.34,1.56,.64,1), background-color 250ms cubic-bezier(.34,1.56,.64,1), border-color 250ms cubic-bezier(.34,1.56,.64,1), color 250ms cubic-bezier(.34,1.56,.64,1), filter 250ms cubic-bezier(.34,1.56,.64,1)}
 #g15-streak.show{opacity:1;transform:translateX(-50%) scale(1)}
 #g15-streak.epic{background:linear-gradient(135deg,#fbbf24,#ef4444,#fbbf24);background-size:200% 100%;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.4);animation:g15StreakShimmer 1.4s linear infinite}
 @keyframes g15StreakShimmer{0%{background-position:0% 0}100%{background-position:200% 0}}
@@ -158,8 +158,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 /* C19: Math iris-wipe */
 #g15-iris{position:fixed;inset:0;z-index:380;pointer-events:none;background:radial-gradient(circle at center,transparent var(--g15iris,100%),rgba(15,23,42,0.96) calc(var(--g15iris,100%) + 1px));transition:background 500ms ease}
 #g15-iris.show{pointer-events:none}
-#g15-iris-station{position:fixed;left:50%;top:35%;transform:translate(-50%,-50%) scale(0);z-index:381;background:linear-gradient(135deg,#fde047,#f59e0b);border:3px solid #b45309;border-radius:18px;padding:14px 28px;font-family:'Fredoka One',cursive;font-size:22px;color:#451a03;text-shadow:0 1px 2px rgba(255,255,255,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.5);transition:transform 600ms cubic-bezier(.34,1.56,.64,1);pointer-events:none}
-#g15-iris-station.show{transform:translate(-50%,-50%) scale(1)}
+#g15-iris-station{position:fixed;left:50%;top:35%;transform:translate(-50%,-50%) scale(.4);opacity:0;z-index:381;background:linear-gradient(135deg,#fde047,#f59e0b);border:3px solid #b45309;border-radius:18px;padding:14px 28px;font-family:'Fredoka One',cursive;font-size:22px;color:#451a03;text-shadow:0 1px 2px rgba(255,255,255,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.5);transition:transform 600ms cubic-bezier(.34,1.56,.64,1),opacity 200ms ease-out;pointer-events:none}
+#g15-iris-station.show{transform:translate(-50%,-50%) scale(1);opacity:1}
 
 /* ── Train Select Screen ── */
 #train-select{position:fixed;inset:0;z-index:900;background:linear-gradient(180deg,#1a1028 0%,#2a1848 40%,#1e1230 70%,#140e22 100%);display:flex;flex-direction:column;overflow:hidden}
@@ -235,33 +235,33 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=v64.99-20261128b"></script><script src="data/ui-sprites.js?v=v64.99-20261128b"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v64.99-20261128b"></script>
-<script src="data/speak.js?v=v64.99-20261128b"></script>
-<script src="train-shared.js?v=v64.99-20261128b"></script>
-<script src="train-vfx.js?v=v64.99-20261128b"></script>
-<script src="motion.js?v=v64.99-20261128b"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v64.99-20261128b"></script>
-<script src="data/bg-themes.js?v=v64.99-20261128b"></script>
-<script src="data/bg-renderers.js?v=v64.99-20261128b"></script>
-<script src="data/bg-npcs.js?v=v64.99-20261128b"></script>
-<script src="data/bg-audio.js?v=v64.99-20261128b"></script>
-<script src="data/bg-events.js?v=v64.99-20261128b"></script>
+<script src="data/emoji-map.js?v=v65.00-20261128a"></script><script src="data/ui-sprites.js?v=v65.00-20261128a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v65.00-20261128a"></script>
+<script src="data/speak.js?v=v65.00-20261128a"></script>
+<script src="train-shared.js?v=v65.00-20261128a"></script>
+<script src="train-vfx.js?v=v65.00-20261128a"></script>
+<script src="motion.js?v=v65.00-20261128a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v65.00-20261128a"></script>
+<script src="data/bg-themes.js?v=v65.00-20261128a"></script>
+<script src="data/bg-renderers.js?v=v65.00-20261128a"></script>
+<script src="data/bg-npcs.js?v=v65.00-20261128a"></script>
+<script src="data/bg-audio.js?v=v65.00-20261128a"></script>
+<script src="data/bg-events.js?v=v65.00-20261128a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=v64.99-20261128b"></script>
-<script src="train-journey.js?v=v64.99-20261128b"></script>
-<script src="indo-scene.js?v=v64.99-20261128b"></script>
+<script src="obstacle-engine.js?v=v65.00-20261128a"></script>
+<script src="train-journey.js?v=v65.00-20261128a"></script>
+<script src="indo-scene.js?v=v65.00-20261128a"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=v64.99-20261128b"></script>
-<script src="train-speedfx.js?v=v64.99-20261128b"></script><script src="weather-alive.js?v=v64.99-20261128b"></script>
-<script src="data/kids-questions.js?v=v64.99-20261128b"></script>
-<script src="data/obstacles.js?v=v64.99-20261128b"></script>
-<script src="data/routes.js?v=v64.99-20261128b"></script>
-<script src="data/reward-catalog.js?v=v64.99-20261128b"></script>
-<script src="reward-gallery.js?v=v64.99-20261128b"></script>
-<script src="settings-modal.js?v=v64.99-20261128b"></script>
+<script src="train-backdrop.js?v=v65.00-20261128a"></script>
+<script src="train-speedfx.js?v=v65.00-20261128a"></script><script src="weather-alive.js?v=v65.00-20261128a"></script>
+<script src="data/kids-questions.js?v=v65.00-20261128a"></script>
+<script src="data/obstacles.js?v=v65.00-20261128a"></script>
+<script src="data/routes.js?v=v65.00-20261128a"></script>
+<script src="data/reward-catalog.js?v=v65.00-20261128a"></script>
+<script src="reward-gallery.js?v=v65.00-20261128a"></script>
+<script src="settings-modal.js?v=v65.00-20261128a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="none" style="display:none"></audio>
-<script src="train-bgm.js?v=v64.99-20261128b"></script>
+<script src="train-bgm.js?v=v65.00-20261128a"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="none" style="display:none"></audio>
 
@@ -329,9 +329,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=v64.99-20261128b"></script>
-<script src="data/save-engine.js?v=v64.99-20261128b"></script>
-<script src="game-modal.js?v=v64.99-20261128b"></script>
+<script src="data/freeze-watchdog.js?v=v65.00-20261128a"></script>
+<script src="data/save-engine.js?v=v65.00-20261128a"></script>
+<script src="game-modal.js?v=v65.00-20261128a"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -388,10 +388,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=v64.99-20261128b"></script>
-<script src="data/train-world.js?v=v64.99-20261128b"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=v64.99-20261128b"></script>
-<script src="../shared/rz-responsive.js?v=v64.99-20261128b"></script>
+<script src="trains-db.js?v=v65.00-20261128a"></script>
+<script src="data/train-world.js?v=v65.00-20261128a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=v65.00-20261128a"></script>
+<script src="../shared/rz-responsive.js?v=v65.00-20261128a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -4655,10 +4655,10 @@ if (window.RZ) window.RZ.onResize(applyRdeScaling);
 // v54.24 G13 + G8: word-of-the-day banner + greeting hook
 try { if (window.TrainShared) { TrainShared.wordOfDay.showBanner(); TrainShared.greeting.onEnterGame('g15') } } catch(_){}
 </script>
-<script src="vfx-engine.js?v=v64.99-20261128b"></script><script src="data/vfx-db.js?v=v64.99-20261128b"></script><script src="vfx-moments.js?v=v64.99-20261128b"></script>
-<script src="dunia-icons.js?v=v64.99-20261128b"></script>
-<script src="dunia-cinema.js?v=v64.99-20261128b" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.99-20261128b" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.99-20261128b" defer></script>
+<script src="vfx-engine.js?v=v65.00-20261128a"></script><script src="data/vfx-db.js?v=v65.00-20261128a"></script><script src="vfx-moments.js?v=v65.00-20261128a"></script>
+<script src="dunia-icons.js?v=v65.00-20261128a"></script>
+<script src="dunia-cinema.js?v=v65.00-20261128a" defer></script>
+<script src="vendor/sakuga/core.js?v=v65.00-20261128a" defer></script>
+<script src="data/dunia-sakuga.js?v=v65.00-20261128a" defer></script>
 </body>
 </html>

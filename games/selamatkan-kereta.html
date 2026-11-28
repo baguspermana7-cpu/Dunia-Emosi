@@ -11,9 +11,9 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="du-buttons.css?v=v65.00-20261128a">
 <title>Selamatkan Kereta 🚂</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
 <style>
 /* v54.5 — WCAG 2.1 AAA reduced-motion respect. */
 @media (prefers-reduced-motion: reduce){
@@ -67,7 +67,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d102
 @keyframes correctFlash{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 @keyframes wrongShake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{transform:translateX(0)}}
 #mercy-bar{margin-top:10px;display:flex;gap:5px;align-items:center}
-.mercy-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.2);transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.mercy-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.2);transition:transform .25s cubic-bezier(.34,1.56,.64,1), opacity .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s cubic-bezier(.34,1.56,.64,1), background-color .25s cubic-bezier(.34,1.56,.64,1), border-color .25s cubic-bezier(.34,1.56,.64,1), color .25s cubic-bezier(.34,1.56,.64,1), filter .25s cubic-bezier(.34,1.56,.64,1)}
 .mercy-dot.used{background:#ef4444;border-color:#ef4444;transform:scale(1.5);animation:g16MercyExplode 700ms cubic-bezier(.34,1.56,.64,1) forwards}
 @keyframes g16MercyExplode{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1);box-shadow:0 0 0 8px rgba(239,68,68,0)}}
 
@@ -86,7 +86,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d102
 @keyframes g16QuizSlide{0%{transform:translateY(100%)}60%{transform:translateY(-12px)}100%{transform:translateY(0)}}
 
 /* D3: Combo streak HUD badge */
-#g16-streak{position:fixed;top:max(60px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60;font-family:'Fredoka One',cursive;background:linear-gradient(135deg,#fb923c,#ef4444);color:#fff;padding:5px 12px;border-radius:14px;font-size:12px;letter-spacing:0.8px;font-weight:900;box-shadow:0 4px 12px rgba(239,68,68,0.45);text-shadow:0 1px 2px rgba(0,0,0,0.4);opacity:0;transform:scale(0.6);transition:all 250ms cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+#g16-streak{position:fixed;top:max(60px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60;font-family:'Fredoka One',cursive;background:linear-gradient(135deg,#fb923c,#ef4444);color:#fff;padding:5px 12px;border-radius:14px;font-size:12px;letter-spacing:0.8px;font-weight:900;box-shadow:0 4px 12px rgba(239,68,68,0.45);text-shadow:0 1px 2px rgba(0,0,0,0.4);opacity:0;transform:scale(0.6);transition:transform 250ms cubic-bezier(.34,1.56,.64,1), opacity 250ms cubic-bezier(.34,1.56,.64,1), box-shadow 250ms cubic-bezier(.34,1.56,.64,1), background-color 250ms cubic-bezier(.34,1.56,.64,1), border-color 250ms cubic-bezier(.34,1.56,.64,1), color 250ms cubic-bezier(.34,1.56,.64,1), filter 250ms cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 #g16-streak.show{opacity:1;transform:scale(1)}
 #g16-streak.bump{animation:g16StreakBump 280ms cubic-bezier(.34,1.56,.64,1)}
 @keyframes g16StreakBump{0%{transform:scale(1)}40%{transform:scale(1.4);box-shadow:0 0 20px rgba(251,146,60,0.7)}100%{transform:scale(1)}}
@@ -207,35 +207,35 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 
 /* Overlays handled by game-modal.js */
 </style>
-<script src="speedlines-fx.js?v=v64.99-20261128b"></script><!-- shared turbo speed lines (2026-10-17) -->
+<script src="speedlines-fx.js?v=v65.00-20261128a"></script><!-- shared turbo speed lines (2026-10-17) -->
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.6</div>
-<script src="data/emoji-map.js?v=v64.99-20261128b"></script><script src="data/ui-sprites.js?v=v64.99-20261128b"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v64.99-20261128b"></script>
-<script src="data/speak.js?v=v64.99-20261128b"></script>
-<script src="train-shared.js?v=v64.99-20261128b"></script>
-<script src="data/train-world.js?v=v64.99-20261128b"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-picker.js?v=v64.99-20261128b"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
-<script src="train-vfx.js?v=v64.99-20261128b"></script>
-<script src="motion.js?v=v64.99-20261128b"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v64.99-20261128b"></script>
-<script src="data/bg-themes.js?v=v64.99-20261128b"></script>
-<script src="data/bg-renderers.js?v=v64.99-20261128b"></script>
-<script src="data/bg-npcs.js?v=v64.99-20261128b"></script>
-<script src="data/bg-audio.js?v=v64.99-20261128b"></script>
-<script src="data/bg-events.js?v=v64.99-20261128b"></script>
+<script src="data/emoji-map.js?v=v65.00-20261128a"></script><script src="data/ui-sprites.js?v=v65.00-20261128a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v65.00-20261128a"></script>
+<script src="data/speak.js?v=v65.00-20261128a"></script>
+<script src="train-shared.js?v=v65.00-20261128a"></script>
+<script src="data/train-world.js?v=v65.00-20261128a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-picker.js?v=v65.00-20261128a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
+<script src="train-vfx.js?v=v65.00-20261128a"></script>
+<script src="motion.js?v=v65.00-20261128a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v65.00-20261128a"></script>
+<script src="data/bg-themes.js?v=v65.00-20261128a"></script>
+<script src="data/bg-renderers.js?v=v65.00-20261128a"></script>
+<script src="data/bg-npcs.js?v=v65.00-20261128a"></script>
+<script src="data/bg-audio.js?v=v65.00-20261128a"></script>
+<script src="data/bg-events.js?v=v65.00-20261128a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G16 (Practice Mode) -->
-<script src="obstacle-engine.js?v=v64.99-20261128b"></script>
-<script src="data/kids-questions.js?v=v64.99-20261128b"></script>
-<script src="data/obstacles.js?v=v64.99-20261128b"></script>
-<script src="data/routes.js?v=v64.99-20261128b"></script>
-<script src="data/reward-catalog.js?v=v64.99-20261128b"></script>
-<script src="reward-gallery.js?v=v64.99-20261128b"></script>
-<script src="settings-modal.js?v=v64.99-20261128b"></script>
+<script src="obstacle-engine.js?v=v65.00-20261128a"></script>
+<script src="data/kids-questions.js?v=v65.00-20261128a"></script>
+<script src="data/obstacles.js?v=v65.00-20261128a"></script>
+<script src="data/routes.js?v=v65.00-20261128a"></script>
+<script src="data/reward-catalog.js?v=v65.00-20261128a"></script>
+<script src="reward-gallery.js?v=v65.00-20261128a"></script>
+<script src="settings-modal.js?v=v65.00-20261128a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v64.99-20261128b"></script>
+<script src="train-bgm.js?v=v65.00-20261128a"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.21 D1: READY-SET-GO countdown -->
@@ -303,14 +303,14 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
-<script src="../shared/rz-responsive.js?v=v64.99-20261128b"></script>
-<script src="data/freeze-watchdog.js?v=v64.99-20261128b"></script>
-<script src="data/save-engine.js?v=v64.99-20261128b"></script>
-<script src="game-modal.js?v=v64.99-20261128b"></script>
-<script src="train-character-sprite.js?v=v64.99-20261128b"></script>
+<script src="../shared/rz-responsive.js?v=v65.00-20261128a"></script>
+<script src="data/freeze-watchdog.js?v=v65.00-20261128a"></script>
+<script src="data/save-engine.js?v=v65.00-20261128a"></script>
+<script src="game-modal.js?v=v65.00-20261128a"></script>
+<script src="train-character-sprite.js?v=v65.00-20261128a"></script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v64.99-20261128b"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
+<script src="vfx-engine.js?v=v65.00-20261128a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
 <script>
 'use strict'
 
@@ -3480,10 +3480,10 @@ window.addEventListener('resize',()=>{
   }, 120)
 })
 </script>
-<script src="data/vfx-db.js?v=v64.99-20261128b"></script><script src="vfx-moments.js?v=v64.99-20261128b"></script>
-<script src="dunia-icons.js?v=v64.99-20261128b"></script>
-<script src="dunia-cinema.js?v=v64.99-20261128b" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.99-20261128b" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.99-20261128b" defer></script>
+<script src="data/vfx-db.js?v=v65.00-20261128a"></script><script src="vfx-moments.js?v=v65.00-20261128a"></script>
+<script src="dunia-icons.js?v=v65.00-20261128a"></script>
+<script src="dunia-cinema.js?v=v65.00-20261128a" defer></script>
+<script src="vendor/sakuga/core.js?v=v65.00-20261128a" defer></script>
+<script src="data/dunia-sakuga.js?v=v65.00-20261128a" defer></script>
 </body>
 </html>

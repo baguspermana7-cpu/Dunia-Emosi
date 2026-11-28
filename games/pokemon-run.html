@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Pokemon Run 🏃</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
 <style>
 /* v54.5 — WCAG 2.1 AAA reduced-motion respect. Also kills parallax via JS guard. */
 @media (prefers-reduced-motion: reduce){
@@ -154,7 +154,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 @keyframes dangerPulse{50%{opacity:.4}}
 #quiz-question{color:#fff;font-size:clamp(22px,6.5vw,34px);font-weight:900;text-align:center;margin-bottom:clamp(10px,3vh,16px);text-shadow:0 0 20px rgba(251,191,36,.6)}
 #quiz-choices{display:flex;gap:clamp(6px,2vw,12px);justify-content:center;width:100%;flex-wrap:wrap}
-.choice-btn{flex:1;min-width:clamp(52px,15vw,80px);max-width:clamp(68px,24vw,120px);padding:clamp(10px,3.5vh,18px) 4px;border:2.5px solid rgba(255,255,255,.35);border-radius:16px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(16px,5.5vw,26px);font-weight:900;cursor:pointer;font-family:inherit;transition:all .12s;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #4C1D95}
+.choice-btn{flex:1;min-width:clamp(52px,15vw,80px);max-width:clamp(68px,24vw,120px);padding:clamp(10px,3.5vh,18px) 4px;border:2.5px solid rgba(255,255,255,.35);border-radius:16px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(16px,5.5vw,26px);font-weight:900;cursor:pointer;font-family:inherit;transition:transform .12s, opacity .12s, box-shadow .12s, background-color .12s, border-color .12s, color .12s, filter .12s;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #4C1D95}
 .choice-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);border-color:#F07050;box-shadow:0 5px 0 #9A2A10}
 .choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
 .choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
@@ -189,7 +189,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #jump-btn.in-air #jump-x2{display:block}
 @media (pointer:coarse){#jump-btn{display:flex}}
 </style>
-<link rel="stylesheet" href="dunia-splash.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="dunia-splash.css?v=v65.00-20261128a">
 </head>
 <body>
 
@@ -375,7 +375,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   @keyframes effAttackerAura{0%{transform:translate(-50%,-50%) scale(0.7);opacity:0}35%{transform:translate(-50%,-50%) scale(1.05);opacity:0.85}100%{transform:translate(-50%,-50%) scale(1.3);opacity:0}}
   .eff-sparkle-linger{position:fixed;z-index:8750;width:14px;height:14px;pointer-events:none;font-size:14px;text-align:center;line-height:14px;color:#fde047;text-shadow:0 0 6px #fde047,0 0 12px #f59e0b;transform:translate(-50%,-50%) scale(0);opacity:0;animation:effSparkleLinger 800ms ease-out forwards;will-change:transform,opacity}
   .eff-sparkle-linger::before{content:'✦'}
-  @keyframes effSparkleLinger{0%{transform:translate(-50%,-50%) scale(0) rotate(0);opacity:0}20%{transform:translate(-50%,-50%) scale(1.3) rotate(45deg);opacity:1}60%{transform:translate(-50%,-60%) scale(1.0) rotate(90deg);opacity:0.9}100%{transform:translate(-50%,-90%) scale(0.4) rotate(180deg);opacity:0}}
+  @keyframes effSparkleLinger{0%{transform:translate(-50%,-50%) scale(.4) rotate(0);opacity:0}20%{transform:translate(-50%,-50%) scale(1.3) rotate(45deg);opacity:1}60%{transform:translate(-50%,-60%) scale(1.0) rotate(90deg);opacity:0.9}100%{transform:translate(-50%,-90%) scale(0.4) rotate(180deg);opacity:0}}
 </style>
 
 <div id="pause-overlay">
@@ -408,15 +408,15 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='1'
   },600)
 </script>
-<script src="data/emoji-map.js?v=v64.99-20261128b"></script><script src="data/ui-sprites.js?v=v64.99-20261128b"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=v64.99-20261128b"></script>
+<script src="data/emoji-map.js?v=v65.00-20261128a"></script><script src="data/ui-sprites.js?v=v65.00-20261128a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=v65.00-20261128a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="data/poke-sprite-cdn.js?v=v64.99-20261128b"></script>
-<script src="data/sfx-engine.js?v=v64.99-20261128b"></script>
-<script src="vfx-engine.js?v=v64.99-20261128b"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/win-moment.js?v=v64.99-20261128b"></script><!-- PRD-58 B4: level-win moment (VFX.Moment) -->
-<script src="data/weather-fx.js?v=v64.99-20261128b"></script>
-<script src="data/poke-type-chart.js?v=v64.99-20261128b"></script>
+<script src="data/poke-sprite-cdn.js?v=v65.00-20261128a"></script>
+<script src="data/sfx-engine.js?v=v65.00-20261128a"></script>
+<script src="vfx-engine.js?v=v65.00-20261128a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/win-moment.js?v=v65.00-20261128a"></script><!-- PRD-58 B4: level-win moment (VFX.Moment) -->
+<script src="data/weather-fx.js?v=v65.00-20261128a"></script>
+<script src="data/poke-type-chart.js?v=v65.00-20261128a"></script>
 <script>
   // Licensed Pokemon SFX + weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -433,11 +433,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     } catch (e) {}
   });
 </script>
-<script src="data/speak.js?v=v64.99-20261128b"></script>
-<script src="data/freeze-watchdog.js?v=v64.99-20261128b"></script>
-<script src="data/save-engine.js?v=v64.99-20261128b"></script>
-<script src="data/g23-question-engine.js?v=v64.99-20261128b"></script>
-<script src="game-modal.js?v=v64.99-20261128b"></script>
+<script src="data/speak.js?v=v65.00-20261128a"></script>
+<script src="data/freeze-watchdog.js?v=v65.00-20261128a"></script>
+<script src="data/save-engine.js?v=v65.00-20261128a"></script>
+<script src="data/g23-question-engine.js?v=v65.00-20261128a"></script>
+<script src="game-modal.js?v=v65.00-20261128a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -2981,12 +2981,12 @@ function updateCoinTrail(dt){
   if (S.frame % 60 === 0) S.coins = S.coins.filter(c => !c.collected)
 }
 </script>
-<script src="dunia-icons.js?v=v64.99-20261128b"></script>
-<script src="dunia-home.js?v=v64.99-20261128b"></script>
+<script src="dunia-icons.js?v=v65.00-20261128a"></script>
+<script src="dunia-home.js?v=v65.00-20261128a"></script>
 <script>DuniaHome.mount({ visible: function () { return DuniaHome.shown('#start-overlay', '#pause-overlay') } })   /* Home to the Dunia Emosi landing page (2026-10-18 audit) */</script>
-<script src="dunia-cinema.js?v=v64.99-20261128b" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.99-20261128b" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.99-20261128b" defer></script>
+<script src="dunia-cinema.js?v=v65.00-20261128a" defer></script>
+<script src="vendor/sakuga/core.js?v=v65.00-20261128a" defer></script>
+<script src="data/dunia-sakuga.js?v=v65.00-20261128a" defer></script>
 </body>
 </html>
 <!-- g23-pixi v20260506h -->

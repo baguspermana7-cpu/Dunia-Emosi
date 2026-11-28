@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<meta name="description" content="Daftar periksa visa keluarga Abu Dhabi untuk istri dan anak: legalisasi buku nikah dan akta, paspor anak, entry permit, tes kesehatan, Emirates ID, sekolah. Tersimpan di perangkat.">
+<meta name="theme-color" content="#fef9e7">
+<title>Visa keluarga: istri dan anak ke Abu Dhabi</title>
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
+<link rel="stylesheet" href="du-buttons.css?v=v65.00-20261128a">
+<link rel="stylesheet" href="uae/uae.css?v=v65.00-20261128a">
+</head>
+<body>
+<header class="u-top">
+  <div class="u-top-in">
+    <a class="u-icon-btn" href="relokasi-uae.html" aria-label="Kembali ke menu relokasi"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <span class="u-top-title">Visa Keluarga</span>
+    <button type="button" class="u-icon-btn" id="btn-print" aria-label="Cetak atau simpan PDF"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button>
+  </div>
+</header>
+<main class="u-wrap">
+  <section class="u-hero">
+    <h1>Visa keluarga: istri dan anak</h1>
+    <p>Istri mengurus berkas di Indonesia, Anda mengajukan dari Abu Dhabi. Centang setiap berkas dan langkah yang selesai.</p>
+  </section>
+  <section class="u-summary" aria-label="Ringkasan">
+    <div class="u-panel"><span class="u-muted">Langkah selesai <button type="button" class="u-tip" data-act="tip" data-k="sumdone" aria-label="Penjelasan: Langkah selesai"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></span><b id="sum-done">0</b><span class="u-progress"><i id="sum-bar"></i></span><span class="u-muted u-small" id="sum-items"></span></div>
+    <div class="u-panel"><span class="u-muted">Uang yang disiapkan <button type="button" class="u-tip" data-act="tip" data-k="summoney" aria-label="Penjelasan: Uang yang disiapkan"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></span><b class="u-money" id="sum-money">-</b></div>
+    <div class="u-panel"><span class="u-muted">Sudah keluar (diisi sendiri) <button type="button" class="u-tip" data-act="tip" data-k="sumactual" aria-label="Penjelasan: Sudah keluar"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></span><b id="sum-actual">-</b></div>
+    <div class="u-panel"><span class="u-muted">Biasanya dibayar pemberi kerja <button type="button" class="u-tip" data-act="tip" data-k="sumemp" aria-label="Penjelasan: Dibayar pemberi kerja"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></span><b id="sum-emp">-</b></div>
+  </section>
+  <nav class="u-sec u-noprint" aria-labelledby="pmap-h"><h2 id="pmap-h">Peta fase <button type="button" class="u-tip" data-act="tip" data-k="pmap" aria-label="Penjelasan: Peta"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></h2><ol class="u-pmap" id="pmap"></ol></nav>
+  <section class="u-panel u-stack u-sec u-noprint u-next" id="next" aria-live="polite"></section>
+  <section class="u-panel u-stack u-sec u-noprint" aria-labelledby="kids-h" id="kids">
+    <h2 id="kids-h">Anak yang ikut</h2>
+    <p class="u-muted">Langkah anak diulang untuk setiap nama. Nama hanya tersimpan di perangkat ini.</p>
+    <ol class="u-kids" id="kid-list"></ol>
+    <div class="u-row"><button type="button" class="u-btn" id="kid-add">Tambah anak</button></div>
+  </section>
+  <section class="u-panel u-stack u-sec u-noprint" aria-labelledby="tl-h" id="timeline">
+    <div class="u-row u-between"><h2 id="tl-h">Perkiraan waktu</h2></div>
+    <label class="u-field">Mulai mengurus<input type="date" id="tl-start"></label>
+    <p class="u-tl-sum" id="tl-sum" aria-live="polite"></p>
+    <h3>Jalur terpanjang</h3>
+    <p class="u-muted u-small">Langkah yang menentukan kapan keluarga bisa berangkat. Langkah lain berjalan bersamaan.</p>
+    <ol class="u-tl" id="tl-list"></ol>
+    <h3>Selesai per bagian</h3>
+    <ul class="u-tl-lanes" id="tl-lanes"></ul>
+  </section>
+  <div class="u-row u-sec u-noprint" role="group" aria-label="Saring langkah">
+    <button type="button" class="u-chip" data-act="filter" data-v="all">Semua</button>
+    <button type="button" class="u-chip" data-act="filter" data-v="todo">Belum</button>
+    <button type="button" class="u-chip" data-act="filter" data-v="doing">Sedang</button>
+    <button type="button" class="u-chip" data-act="filter" data-v="done">Selesai</button>
+  </div>
+  <div class="u-row u-sec u-noprint">
+    <button type="button" class="u-btn" id="btn-open-all">Buka semua</button>
+    <button type="button" class="u-btn" id="btn-backup">Unduh cadangan</button>
+    <button type="button" class="u-btn" id="btn-restore">Pulihkan</button>
+    <input type="file" id="file-restore" accept="application/json,.json" hidden>
+  </div>
+  <div id="phases"></div>
+  <section class="u-sec u-panel u-stack u-noprint">
+    <h2>Kurs <button type="button" class="u-tip" data-act="tip" data-k="fx" aria-label="Penjelasan: Kurs"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></h2>
+    <label class="u-field">1 AED = Rp<input id="fx" inputmode="decimal"></label>
+    <p class="u-muted" id="fx-note"></p>
+  </section>
+  <section class="u-sec u-panel u-stack" aria-labelledby="conf-h">
+    <h2 id="conf-h">Perlu dikonfirmasi</h2>
+    <p class="u-muted">Sumber resmi tidak menjawab, atau sumber saling bertentangan. Tanyakan sebelum membayar.</p>
+    <ul class="u-conf" id="conf"></ul>
+  </section>
+  <p class="u-muted u-sec">Data dicek <span id="checked"></span>. Biaya dan aturan bisa berubah; cek tautan sumber sebelum berangkat ke kantor. Tersimpan otomatis di perangkat ini.</p>
+</main>
+<div class="u-toast" id="toast" role="status" aria-live="polite"></div>
+<script src="uae/uae-store.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-flow.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-family-data.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-family-setup.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-docs.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-family.js?v=v65.00-20261128a"></script>
+<script src="sw-reload.js?v=v65.00-20261128a"></script>
+</body>
+</html>

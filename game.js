@@ -2733,9 +2733,9 @@ function nextG3Round(){
     const maxNum=state.selectedLevel==='hard'?9:8,displayCount=Math.min(item.num,9)
     document.getElementById('g3-word').textContent=item.animal.repeat(displayCount)
     document.getElementById('g3-hint').textContent=`Ada berapa ${item.word.toLowerCase()} di atas?`
-    const correctNum=displayCount,wrongs=new Set()
-    while(wrongs.size<numChoices-1){const r=Math.max(1,Math.min(maxNum,correctNum+Math.floor(Math.random()*6)-3));if(r!==correctNum)wrongs.add(r)}
-    renderG3Choices([correctNum,...[...wrongs]].sort(()=>Math.random()-0.5).map(String),String(correctNum),true,numChoices)
+    // PRD-58 G1: nearest wrong numbers from all of 1..max, ties at random (the old answer-3..+2 loop froze the tab at an answer of 1 or 9)
+    const correctNum=displayCount,wrongs=[];for(let v=1;v<=Math.max(maxNum,correctNum);v++)if(v!==correctNum)wrongs.push([v,Math.abs(v-correctNum)+Math.random()*0.5]);wrongs.sort((a,b)=>a[1]-b[1])
+    renderG3Choices([correctNum,...wrongs.slice(0,numChoices-1).map(w=>w[0])].sort(()=>Math.random()-0.5).map(String),String(correctNum),true,numChoices)
   }
   const p=state.mode==='duo'?`${state.players[state.currentPlayer].name} — ${roundInSet+1}/${g3State.maxRound}`:`${roundInSet+1} / ${g3State.maxRound}`
   document.getElementById('g3-progress').textContent=p; g3State.round++
@@ -5195,19 +5195,19 @@ function g10EnsureHitFXStyles() {
   if (_g10HitFXStyleInjected) return
   _g10HitFXStyleInjected = true
   const css = `
-@keyframes g10fxRise{0%{transform:scale(0) translateY(0);opacity:0.9}50%{transform:scale(1.3) translateY(-45px);opacity:0.8}100%{transform:scale(0.4) translateY(-90px);opacity:0}}
+@keyframes g10fxRise{0%{transform:scale(.4) translateY(0);opacity:0.9}50%{transform:scale(1.3) translateY(-45px);opacity:0.8}100%{transform:scale(0.4) translateY(-90px);opacity:0}}
 @keyframes g10fxRain{0%{transform:scale(1.2) translateY(-15px);opacity:0.9}100%{transform:scale(0.7) translateY(70px);opacity:0}}
-@keyframes g10fxZap{0%{transform:scale(0) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(45deg);opacity:1}100%{transform:scale(0.1) rotate(200deg) translateX(70px);opacity:0}}
-@keyframes g10fxSwirl{0%{transform:scale(0) rotate(0deg);opacity:1}55%{transform:scale(1.3) rotate(200deg) translateX(35px);opacity:0.7}100%{transform:scale(0.2) rotate(400deg) translateX(70px);opacity:0}}
+@keyframes g10fxZap{0%{transform:scale(.4) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(45deg);opacity:1}100%{transform:scale(0.1) rotate(200deg) translateX(70px);opacity:0}}
+@keyframes g10fxSwirl{0%{transform:scale(.4) rotate(0deg);opacity:1}55%{transform:scale(1.3) rotate(200deg) translateX(35px);opacity:0.7}100%{transform:scale(0.2) rotate(400deg) translateX(70px);opacity:0}}
 @keyframes g10fxShadow{0%{transform:scale(0.3);opacity:0.95;filter:brightness(0.1)}40%{transform:scale(2.2);opacity:0.6}100%{transform:scale(4);opacity:0}}
-@keyframes g10fxSpiral{0%{transform:scale(0) rotate(0deg) translateY(0);opacity:1}100%{transform:scale(1.6) rotate(720deg) translateY(-55px);opacity:0}}
+@keyframes g10fxSpiral{0%{transform:scale(.4) rotate(0deg) translateY(0);opacity:1}100%{transform:scale(1.6) rotate(720deg) translateY(-55px);opacity:0}}
 @keyframes g10fxSnow{0%{transform:scale(1.1) translateY(0) rotate(0deg);opacity:0.9}100%{transform:scale(0.5) translateY(55px) rotate(360deg);opacity:0}}
 @keyframes g10fxFloat{0%{transform:scale(0.6) translateY(0);opacity:0.8}50%{transform:scale(1.1) translateY(-35px);opacity:0.5}100%{transform:scale(0) translateY(-65px);opacity:0}}
 @keyframes g10fxWind{0%{transform:scale(1) translateX(0);opacity:0.8}100%{transform:scale(1.6) translateX(-90px) translateY(-25px);opacity:0}}
-@keyframes g10fxSpin{0%{transform:scale(0) rotate(0deg);opacity:1}100%{transform:scale(2.2) rotate(720deg);opacity:0}}
-@keyframes g10fxBurst{0%{transform:scale(0);opacity:1}40%{transform:scale(1.6);opacity:0.9}100%{transform:scale(3.5);opacity:0}}
+@keyframes g10fxSpin{0%{transform:scale(.4) rotate(0deg);opacity:1}100%{transform:scale(2.2) rotate(720deg);opacity:0}}
+@keyframes g10fxBurst{0%{transform:scale(.4);opacity:1}40%{transform:scale(1.6);opacity:0.9}100%{transform:scale(3.5);opacity:0}}
 @keyframes g10fxDrop{0%{transform:scale(1.3) translateY(-25px);opacity:0.9}65%{transform:scale(1) translateY(35px);opacity:0.7}100%{transform:scale(0.7) translateY(55px);opacity:0}}
-@keyframes g10fxSpark{0%{transform:scale(0) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(-35deg);opacity:1}100%{transform:scale(0.1) rotate(70deg) translateX(60px);opacity:0}}
+@keyframes g10fxSpark{0%{transform:scale(.4) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(-35deg);opacity:1}100%{transform:scale(0.1) rotate(70deg) translateX(60px);opacity:0}}
 `
   const styleEl = document.createElement('style')
   styleEl.textContent = css

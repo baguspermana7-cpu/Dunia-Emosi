@@ -105,6 +105,10 @@ Owner minta PRD untuk SEMUA sisanya, supaya tiap ide dikerjakan sampai tuntas â€
 | [PRD-56](PRD-56-cek-mode-cepat.md) | Cek Kemampuan: mode Normal / Cepat, ganti pemain di dalam game, soal aneh dibetulkan [ANAK] | owner 2026-11-22 | live v64.90 |
 | [PRD-57](PRD-57-sisa-catatan-bug-bash.md) | Sisa catatan bug bash: G3/G7 layar miring tanpa gulir, toast pencapaian terbaca | owner 2026-11-25 | live v64.92 |
 | [PRD-58](PRD-58-kembangkan-dan-sempurnakan.md) | Kembangkan dan sempurnakan: level sulit tercapai, rasa main, kurikulum kelas 1, dasbor, isi, mesin (58A-58F) [ANAK] | owner 2026-11-26 | rancangan; 58A dikerjakan |
+| [PRD-59](PRD-59-orang-tua-abudhabi.md) | Relocation to UAE: Kelengkapan Dokumen (59A) + Persiapan SIM (59B) [ORANG TUA] | owner 2026-11-28 | dikerjakan |
+| [PRD-59C](PRD-59C-visa-keluarga.md) | Visa keluarga istri + anak, per orang, sponsor di UAE [ORANG TUA] | owner 2026-11-28 | riset |
+| [PRD-59D](PRD-59D-koper.md) | Kelengkapan relokasi: isi koper per orang [ORANG TUA] | owner 2026-11-28 | riset |
+| [PRD-60](PRD-60-english-adventure.md) | Learning Adventure jadi belajar bahasa Inggris: anak kelas 2-6 SD + mode dewasa (persiapan relokasi UAE) | owner 2026-11-28 | dicatat, belum dirancang |
 
 ## Urutan & perkiraan
 | Gelombang | Isi | Perkiraan |

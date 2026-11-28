@@ -70,6 +70,13 @@ node tools/qa-white-outline.mjs
 echo "== no new emoji without a picture: unmapped emoji in source may only fall (audit A-17)"
 node tools/emoji-inventory.mjs --check
 
+echo "== motion: no transition: all, nothing seen at scale(0) (PRD-58 G3)"
+node tools/qa-prd58g-motion.mjs
+
+echo "== Relocation to UAE: data complete + sourced, real sign art credited, workflow + quiz engines (PRD-59)"
+node tools/test-uae-data.mjs
+node tools/test-uae-engines.mjs
+
 echo "== shared mastery settles a child near 75 % right, per child (PRD-10)"
 node tools/qa-mastery.mjs
 node tools/qa-error-kinds.mjs
@@ -150,6 +157,8 @@ if [ "${CI_SMOKE:-}" = "1" ]; then
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd58a-levels.mjs
   echo "== feel: a wrong answer shakes the screen, a won level gets the win moment (hub + 5 arcade pages), reduced motion stops shakes and particles (PRD-58B)"
   QA_BASE="http://127.0.0.1:$port" node tools/qa-prd58b-feel.mjs
+  echo "== Relocation to UAE: home link, documents saved/backed up/printed, mock exam, signs, licence steps (PRD-59)"
+  QA_BASE="http://127.0.0.1:$port" node tools/qa-prd59-uae.mjs
   echo "== no emoji left on screen: hub, parent dashboard, every game page (strict pages none at all)"
   node tools/audit-no-emoji.mjs
 fi

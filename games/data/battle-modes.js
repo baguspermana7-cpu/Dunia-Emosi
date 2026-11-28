@@ -4451,12 +4451,12 @@
         100% { transform: scale(0.4) rotate(400deg) translate(var(--dx), var(--dy));        opacity: 0; }
       }
       @keyframes bmFxZap {
-        0%   { transform: scale(0) rotate(0deg);                                            opacity: 1; }
+        0%   { transform: scale(.4) rotate(0deg);                                            opacity: 1; }
         30%  { transform: scale(1.6) rotate(45deg);                                         opacity: 1; }
         100% { transform: scale(0.2) rotate(200deg) translate(var(--dx), var(--dy));        opacity: 0; }
       }
       @keyframes bmFxBurst {
-        0%   { transform: scale(0);                                                          opacity: 1; }
+        0%   { transform: scale(.4);                                                          opacity: 1; }
         40%  { transform: scale(1.4) translate(calc(var(--dx)*0.5), calc(var(--dy)*0.4));   opacity: 0.95; }
         100% { transform: scale(0.3) translate(var(--dx), var(--dy));                       opacity: 0; }
       }

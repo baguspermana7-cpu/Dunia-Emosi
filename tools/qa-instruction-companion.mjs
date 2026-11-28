@@ -23,7 +23,9 @@ const BASELINE = path.join(ROOT, 'tools/instruction-baseline.json')
 const PLANT = !!process.env.QA_PLANT
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 const ONLY = process.env.QA_PAGES ? new RegExp(process.env.QA_PAGES) : null
-const pages = ['/index.html', ...fs.readdirSync(path.join(ROOT, 'games')).filter(f => f.endsWith('.html') && !f.startsWith('_')).sort().map(f => '/games/' + f)].filter(pg => !ONLY || ONLY.test(pg))
+// the parent pages of "Relocation to UAE" (PRD-59) are read by an adult: text there is the content, not a child's instruction
+const ADULT = new Set(['relokasi-uae.html', 'pindah-abudhabi.html', 'ujian-sim-abudhabi.html', 'visa-keluarga-uae.html', 'koper-uae.html'])
+const pages = ['/index.html', ...fs.readdirSync(path.join(ROOT, 'games')).filter(f => f.endsWith('.html') && !f.startsWith('_') && !ADULT.has(f)).sort().map(f => '/games/' + f)].filter(pg => !ONLY || ONLY.test(pg))
 const base = fs.existsSync(BASELINE) ? JSON.parse(fs.readFileSync(BASELINE, 'utf8')) : {}
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? '  ok ' : '  ✗ ') + m) }

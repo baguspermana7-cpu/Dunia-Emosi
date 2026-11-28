@@ -8,7 +8,12 @@ import fs from 'fs'
 const EXEMPT = new Map([
   ['blippi.html', 'frame wrapper around the separate game1 repo'],
   ['mojo-chase-embed.html', 'iframe embed; the host page carries the watchdog'],
-  ['_shell-smoke.html', 'test fixture']
+  ['_shell-smoke.html', 'test fixture'],
+  ['relokasi-uae.html', 'PRD-59 adult page: no game loop to freeze'],
+  ['pindah-abudhabi.html', 'PRD-59 adult page: no game loop to freeze'],
+  ['ujian-sim-abudhabi.html', 'PRD-59 adult page: no game loop to freeze'],
+  ['visa-keluarga-uae.html', 'PRD-59C adult page: no game loop to freeze'],
+  ['koper-uae.html', 'PRD-59D adult page: no game loop to freeze']
 ])
 const pages = fs.readdirSync('games').filter(f => f.endsWith('.html') && !EXEMPT.has(f)).sort()
 let pass = 0, fail = 0

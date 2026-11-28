@@ -750,7 +750,7 @@ button:focus-visible{outline:4px solid #FFE27A;outline-offset:3px}
 .slot.active .chip::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 4px #FFE14D,inset 0 0 16px 6px rgba(255,236,120,.95);pointer-events:none;animation:chipGlow .5s var(--ease-io) infinite alternate}
 @keyframes chipGlow{from{opacity:.3}to{opacity:1}}
 .p-strip.locked .slot.done::after{animation:checkPop .32s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes checkPop{from{transform:scale(0) rotate(-30deg)}to{transform:scale(1) rotate(0)}}
+@keyframes checkPop{from{transform:scale(.4) rotate(-30deg)}to{transform:scale(1) rotate(0)}}
 /* Bo's bubble springs in from its tail with each new line */
 .bubble{transform-origin:0 85%}
 .bubble.say{animation:bubSpringA .38s cubic-bezier(.34,1.56,.64,1)}.bubble.say2{animation:bubSpringB .38s cubic-bezier(.34,1.56,.64,1)}

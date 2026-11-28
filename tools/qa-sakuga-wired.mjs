@@ -9,7 +9,9 @@
 // Exempt: `_*.html` test fixtures. blippi.html is only a wrapper but still loads them (the PRD counts it).
 // Usage: node tools/qa-sakuga-wired.mjs
 import fs from 'node:fs'
-const pages = ['index.html', ...fs.readdirSync('games').filter(f => f.endsWith('.html') && !f.startsWith('_')).sort().map(f => 'games/' + f)]
+// the parent pages of "Relocation to UAE" (PRD-59) are adult tools: no game, no child VFX, listed by name
+const ADULT = new Set(['relokasi-uae.html', 'pindah-abudhabi.html', 'ujian-sim-abudhabi.html', 'visa-keluarga-uae.html', 'koper-uae.html'])
+const pages = ['index.html', ...fs.readdirSync('games').filter(f => f.endsWith('.html') && !f.startsWith('_') && !ADULT.has(f)).sort().map(f => 'games/' + f)]
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else { fail++; console.log('  ✗', m) } }
 const sw = fs.readFileSync('sw.js', 'utf8')

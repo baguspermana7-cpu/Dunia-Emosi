@@ -115,7 +115,7 @@ h1{ font-family:'Fredoka One','Fredoka','Baloo 2',sans-serif; font-weight:400; f
 .card{ background:var(--du-cream,#fefdf7); border-radius:28px; padding:18px 20px; box-shadow:0 6px 0 rgba(59,42,74,.16),0 18px 40px rgba(3,40,80,.25); width:min(560px,100%) }
 .big-stars{ display:flex; justify-content:center; gap:6px; margin:4px 0 }
 .big-stars img{ width:64px; height:64px; object-fit:contain }   /* PRD-54: CekMotion.stars lands them one by one */
-@keyframes pop{ from{ transform:scale(0) rotate(-30deg); opacity:0 } }
+@keyframes pop{ from{ transform:scale(.4) rotate(-30deg); opacity:0 } }
 .points{ font-family:'Fredoka One',sans-serif; font-size:28px; margin:2px 0; color:#7c3aed }
 .card p{ margin:4px 0; font-size:17px }
 .iq-num{ font-family:'Fredoka One',sans-serif; font-size:clamp(64px,14vw,96px); line-height:1; color:#7c3aed; text-shadow:0 4px 0 #ddd6fe }

@@ -9,6 +9,7 @@ const BASE = (process.env.QA_BASE || 'http://localhost:8081').replace(/\/$/, '')
 let pass = 0, fail = 0
 const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? '  ok ' : '  ✗ ') + m) }
 const { default: puppeteer } = await import('puppeteer')
+const sleep = ms => new Promise(r => setTimeout(r, ms))
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-audio-output'] })
 const errs = []
 try {
@@ -167,6 +168,26 @@ try {
   })
   ok(g7.modes && g7.modes.includes('img2word') && g7.modes.includes('word2img'), `A4 G7 level 1 round kinds: ${g7.modes ? g7.modes.join(' ') : g7.err}`)
   ok(!errs.length, `A1 page errors ${errs.length} ${errs.slice(0, 2).join(' | ')}`)
+  // G1 (monkey 2026-11-28): the G3 counting round froze the tab on hard (6 choices) -- it drew wrong numbers from
+  // answer-3..answer+2 until it had 5, and that range holds fewer than 5 at an answer of 1 or 9 (medium too, at 1).
+  // Every answer 1..9 on medium and hard must build a full set of distinct choices, the answer among them. Kept LAST:
+  // a hang freezes the page, so the race below turns it into a red line instead of a stuck gate.
+  const g3n = await Promise.race([p.evaluate(() => {
+    const out = []
+    for (const diff of ['medium', 'hard']) for (let c = 1; c <= 9; c++) {
+      state.currentGame = 3; state.mode = 'solo'; state.currentPlayer = 0; state.selectedLevel = diff
+      try { initGame3() } catch (e) { return { err: String(e) } }
+      g3State.round = g3State.maxRound - 1; g3State.shuffled = [{ animal: 'x', word: 'KUCING', num: c, hint: '' }]
+      try { nextG3Round() } catch (e) { return { err: diff + ' ' + c + ': ' + e } }
+      const ch = [...document.querySelectorAll('#g3-choices .g3-choice-btn')].map(e => e.textContent)
+      const n = DIFF[diff].choices, max = diff === 'hard' ? 9 : 8
+      out.push({ diff, c, okSet: ch.length === n && new Set(ch).size === n && ch.includes(String(c)) && ch.every(v => +v >= 1 && +v <= Math.max(max, c)) })
+    }
+    try { exitGame() } catch (e) {}
+    return { out }
+  }), sleep(20000).then(() => ({ hang: true }))])
+  const bad = g3n.out ? g3n.out.filter(r => !r.okSet).map(r => r.diff + ':' + r.c) : []
+  ok(g3n.out && !bad.length, `G1 G3 counting round, answers 1-9 on medium and hard: full distinct choice set, no freeze (${g3n.hang ? 'FROZE' : g3n.err || (bad.join(' ') || 'all 18 ok')})`)
 } finally { await b.close() }
 console.log(`qa-prd58a-levels: ${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)

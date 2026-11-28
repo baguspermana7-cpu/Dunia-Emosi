@@ -35,7 +35,7 @@
     note('map')
     D.querySelectorAll('#map .isle').forEach(function (b, i) {
       run(b, [{ opacity: 0, transform: 'translate(-50%,-22%) scale(.62)' }, { opacity: 1, transform: 'translate(-50%,-50%) scale(1)' }], { duration: 420, delay: i * 60, easing: POP, fill: 'backwards' })
-      b.querySelectorAll('.st img').forEach(function (s, k) { run(s, [{ transform: 'scale(0)' }, { transform: 'scale(1)' }], { duration: 260, delay: 300 + i * 60 + k * 90, easing: POP, fill: 'backwards' }) })
+      b.querySelectorAll('.st img').forEach(function (s, k) { run(s, [{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1)' }], { duration: 260, delay: 300 + i * 60 + k * 90, easing: POP, fill: 'backwards' }) })
     })
     var r = D.querySelector('#map .route'); if (r) run(r, [{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: 200, easing: 'linear', fill: 'backwards' })
   }

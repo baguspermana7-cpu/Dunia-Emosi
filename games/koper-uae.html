@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<meta name="description" content="Daftar isi koper istri dan anak dari Jakarta ke Abu Dhabi: tas kabin, bagasi, obat, uang, pakaian, dan barang yang dilarang masuk UAE. Tersimpan di perangkat.">
+<meta name="theme-color" content="#fef9e7">
+<title>Isi Koper, pindah ke Abu Dhabi</title>
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
+<link rel="stylesheet" href="du-buttons.css?v=v65.00-20261128a">
+<link rel="stylesheet" href="uae/uae.css?v=v65.00-20261128a">
+</head>
+<body>
+<header class="u-top">
+  <div class="u-top-in">
+    <a class="u-icon-btn" href="relokasi-uae.html" aria-label="Kembali ke menu relokasi"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <span class="u-top-title">Isi Koper</span>
+    <button type="button" class="u-icon-btn" id="btn-print" aria-label="Cetak atau simpan PDF"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button>
+  </div>
+</header>
+<main class="u-wrap">
+  <section class="u-hero">
+    <h1>Isi koper istri dan anak</h1>
+    <p>Centang barang yang sudah masuk koper. Ketuk tombol info untuk aturan dan sumbernya.</p>
+  </section>
+  <section class="u-summary" aria-label="Ringkasan">
+    <div class="u-panel"><span class="u-muted">Barang siap</span><b id="kp-done">0</b><span class="u-progress"><i id="kp-bar"></i></span></div>
+    <div class="u-panel"><span class="u-muted">Anak yang ikut</span><b id="kp-kids">-</b><a class="u-small u-kp-kidlink" href="visa-keluarga-uae.html#kids">ubah di Visa Keluarga</a></div>
+  </section>
+  <section class="u-panel u-stack u-sec">
+    <h2>Lima hal yang paling sering salah</h2>
+    <ol class="u-conf">
+      <li>Obat terkontrol (kodein, tramadol, obat tidur, obat ADHD) wajib izin Kementerian Kesehatan UAE sebelum terbang.</li>
+      <li>Power bank hanya satu per orang, maksimal 100 Wh, di tas kabin.</li>
+      <li>Dokumen asli yang sudah disahkan tidak boleh masuk bagasi.</li>
+      <li>Tarif Etihad Basic tanpa bagasi terdaftar; lihat jatah di e-tiket tiap orang.</li>
+      <li>Uang di atas AED 60.000 wajib dilaporkan di UAE; Rp 100 juta ke atas wajib dilaporkan saat keluar Indonesia.</li>
+    </ol>
+  </section>
+  <div class="u-row u-sec u-noprint" role="group" aria-label="Saring menurut tempat">
+    <button type="button" class="u-chip" data-loc-f="all">Semua</button><button type="button" class="u-chip" data-loc-f="kabin">Tas kabin</button><button type="button" class="u-chip" data-loc-f="bagasi">Bagasi</button><button type="button" class="u-chip" data-loc-f="tugas">Tugas</button><button type="button" class="u-chip" data-loc-f="jangan">Jangan dibawa</button>
+  </div>
+  <div id="groups"></div>
+  <section class="u-sec u-panel u-stack" aria-labelledby="conf-h">
+    <h2 id="conf-h">Perlu dikonfirmasi</h2>
+    <ul class="u-conf" id="conf"></ul>
+  </section>
+  <div class="u-row u-sec u-noprint"><button type="button" class="u-btn" id="kp-reset">Kosongkan centang</button></div>
+  <p class="u-muted u-sec">Data dicek <span id="checked"></span>. Aturan bandara dan bea cukai bisa berubah; cek tautan sumber sebelum berangkat.</p>
+</main>
+<div class="u-tipbox" id="u-tipbox" popover role="dialog" aria-labelledby="u-tipbox-h"><strong id="u-tipbox-h"></strong><p id="u-tipbox-p"></p><p class="u-muted u-small"><span id="u-tipbox-g"></span>. <span id="u-tipbox-s"></span></p><button type="button" class="u-btn" id="u-tipbox-x">Tutup</button></div>
+<div class="u-toast" id="toast" role="status" aria-live="polite"></div>
+<script src="uae/uae-store.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-koper-data.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-koper.js?v=v65.00-20261128a"></script>
+<script src="sw-reload.js?v=v65.00-20261128a"></script>
+</body>
+</html>

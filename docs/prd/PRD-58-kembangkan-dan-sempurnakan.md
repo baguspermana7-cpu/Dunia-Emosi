@@ -384,3 +384,122 @@ Gate `tools/qa-prd58b-feel.mjs` (tag `feel58`): HEAD v64.93 bersih 8 lulus / 11 
 - Bukti: cek baru di `qa-error-kinds` (salah sampai hati habis -> level selesai, tidak ada kartu) merah tanpa
   perbaikan (kartu tertinggal), hijau 10/0 dengan perbaikan. Probe 3 kali (salah, salah, kurang satu) memperlihatkan
   kartu tertinggal di semua kasus sebelum perbaikan.
+
+## 6. 58G: semua game tanpa bug (owner 2026-11-28: "Continue improve more, ensure no bug, no mistake for all game")
+
+### 6.1 Masalah
+Gate yang ada memeriksa game satu per satu pada bagian yang pernah dikeluhkan (boot, level, akhir ronde lewat
+pemanggilan langsung). Belum ada gate yang benar-benar MEMAINKAN setiap game dari awal sampai layar hasil dengan
+input anak yang acak. Bug v64.99 (kartu petunjuk tertinggal saat hati habis) hanya ketemu karena CI kebetulan
+menjawab salah tiga kali beruntun: kelas bug "state tertinggal di jalur yang jarang" tidak dijaga.
+
+### 6.2 Hukum (setiap hukum dibuktikan merah lalu hijau)
+- G1a. Bot ketuk acak memainkan setiap game hub (G3, G4, G7, G8, G9, G10, G11, G13, G17, G18) pada level mudah
+  dan sulit sampai layar hasil: 0 error halaman/konsol, layar hasil tercapai, tidak ada macet > 20 s, dan di layar
+  hasil tidak ada sisa game di atas tombol utama (`tools/qa-prd58g-monkey.mjs`).
+- G1b. Setiap game halaman sendiri (`games/*.html`, dienumerasi dari folder; pengecualian bernama dengan alasan)
+  menerima satu menit input acak (ketuk, geser, panah, spasi): 0 error, halaman tetap menjawab; halaman kuis
+  (Kuis Matematika, Ejaan Inggris, Ayo Berhitung) mencapai kartu akhir, dan tombol kartu akhir tidak tertutup
+  (`tools/qa-prd58g-monkey-pages.mjs`).
+- G1c. Setiap temuan diperbaiki di sumbernya, dengan cek merah-lalu-hijau di gate milik game itu.
+- G1d. Kedua gate masuk `ci-verify.sh` setelah lulus 3 kali berturut-turut secara lokal (bukan gate yang
+  berkedip).
+
+### 6.3 Hasil
+- **Bug nyata, G3 Huruf Hutan membekukan tab (v65.00).** Ronde hitung (40 % ronde terakhir) mencari pilihan salah di
+  jawaban-3..jawaban+2 sampai cukup. Di level sedang (4 pilihan) jawaban 1 hanya punya 2 kandidat, di level sulit
+  (6 pilihan) jawaban 1 dan 9 juga kurang: loop tak berujung, tab beku. Hewan dengan num 1 (AYAM, BADAK, KOMODO)
+  ada di daftar, jadi anak di level sedang bisa kena. Ditemukan oleh bot ketuk acak (G3 sulit: `Runtime.callFunctionOn
+  timed out`). Perbaikan: pilihan salah = angka terdekat dari seluruh 1..maks, seri diacak. Bukti: `qa-prd58a-levels`
+  G1 (jawaban 1-9 x sedang/sulit) merah "FROZE" sebelum, hijau 18/18 sesudah (19/0). game.js tetap 10.283 baris.
+- Pola loop serupa di 27 tempat lain diperiksa satu per satu: semua punya kandidat cukup atau batas percobaan.
+- Sapuan halaman pertama (21 halaman, 1 menit input acak): 0 error halaman/konsol di semua halaman. 5 merah semuanya
+  kesalahan bot, diperbaiki di bot: dialog cetak Ayo Berhitung (`window.print`/`prompt` menahan browser headless;
+  fitur orang tua, bukan bug), kartu akhir diperiksa setelah bot menutupnya (ducky-volley), Ejaan Inggris dan Ayo
+  Berhitung bukan kuis yang bisa selesai dengan ketukan acak, Kuis Matematika memakai layar hasil sendiri
+  (`#scr-hasil`), bukan GameModal.
+
+### 6.4 58G2 polish semua game (owner 2026-11-28: "sempurnakan polish more, all game")
+- G2a. Setiap game (hub dan halaman sendiri) difoto pada 390x844, 844x390 dan 800x1280 di tiga keadaan: awal
+  ronde, sesudah jawaban salah, layar hasil. Semua foto DILIHAT; setiap cacat dicatat di 6.5 dengan foto.
+- G2b. Cacat yang dicari: teks terpotong atau keluar kotak, tombol < 48 px, elemen saling menutupi, kontras < 4.5,
+  emoji bawaan sebagai gambar, kalimat mesin, layar kosong atau gambar hilang, gerak yang patah.
+- G2c. Setiap perbaikan dibuktikan dengan foto sebelum/sesudah dan cek di gate yang ada (atau cek baru, merah dulu).
+
+### 6.6 58G3 efek, VFX dan motion (owner 2026-11-28: "polish effect2 sempurnakan, super sempurna, trik2 vfx, motion semuanya")
+
+Audit motion (aturan Emil Kowalski, skill `improve-animations`), setiap temuan dicek di file:baris.
+
+Sudah benar (tidak diubah): setiap tombol jawaban punya umpan tekan (`:active`, transform 0.15-0.18 s); semua halaman
+punya `prefers-reduced-motion` (style.css baris 6 mematikan semua animasi; konfeti, percikan dan ledakan partikel
+di game.js berhenti lewat `duniaReducedMotion()`); kartu akhir GameModal masuk dari `scale(0.88)` + fade.
+
+| # | Tingkat | Kategori | Lokasi | Temuan | Perbaikan |
+|---|---|---|---|---|---|
+| M1 | HIGH | performa | style.css 26 aturan (mis. `.sci-choice` 2764, 2587, 2666, 2695, 2951, 3106, 3218, 3347, 3510), halaman: gym-pokemon 3, lokomotif 4, mario 2, museum 2, bawah-laut 2, selamatkan 2, balapan 1, monster 1, birds 1, run 1 | `transition: all` pada tombol yang diketuk setiap ronde; ikut menganimasikan sifat tata letak di tablet murah | daftar sifat yang memang berubah (transform, box-shadow, background, border-color, opacity) |
+| M2 (ditarik, lihat 6.7) | MEDIUM | frekuensi | game.js 1850 `flashScreen('red')` | setiap jawaban salah mengguncang SELURUH layar 0.4 s + kilat merah layar penuh; kejadian paling sering di semua game, terasa menghukum untuk anak 5 tahun | guncang hanya tombol yang salah (`spawnWrongShake` sudah ada); kilat merah jadi lembut (opacity .12, 0.15 s) tanpa guncang layar |
+| M3 | MEDIUM | fisik | style.css 41 keyframe `scale(0)` (emojiSpin 475, starsWave 479, levelUpPop 497, levelUpSpin 498, sparkleFly 509, correctTickAnim 521, fxRise 2366, fxZap 2368 ...), gym-pokemon 13, pokemon-run 3 | muncul dari nol (benda nyata tidak muncul dari ketiadaan) | mulai `scale(.4)` + `opacity:0`, overshoot tetap (`cubic-bezier(.34,1.56,.64,1)`) |
+| M4 | LOW | kohesi | style.css 23 cubic-bezier berbeda; overshoot yang sama ditulis 3 cara | tanpa token | token `--ease-pop: cubic-bezier(.34,1.56,.64,1)`, `--ease-out: cubic-bezier(.23,1,.32,1)` |
+
+Hukum: M1 cek baru menghitung `transition-property: all` terhitung (computed) pada setiap tombol jawaban yang
+terlihat di setiap game: 0 (merah hari ini). M2: jawaban salah tidak menambah kelas `shake` pada `.screen.active`
+(merah hari ini), tombol salah tetap bergoyang. M3: 0 keyframe `scale(0)` di sumber (merah hari ini), foto
+frame-by-frame bintang/emoji dilihat. Semua: game tetap lolos gate main (qa-prd58g-monkey) dan reduced-motion.
+
+### 6.7 Hasil 58G3 (v65.00)
+- M1: 48 `transition: all` di 18 file diganti daftar sifat (transform, opacity, box-shadow, background-color,
+  border-color, color, filter) dengan durasi dan kurva yang sama. `games/film/` (ekspor Flash pihak ketiga) dikecualikan.
+- M3: 35 tempat di mana sesuatu terlihat di ukuran nol. Animasi masuk (stop `from`/`0%`) mulai dari `scale(.4)`;
+  tiga keadaan tersembunyi (papan stasiun Lokomotif, lencana Gym, bintang peta Cek Kemampuan) kini juga `opacity:0`
+  sampai tampil. Dikecualikan dengan alasan: `battle-arena.js` (petarung dipanggil kembali ke dan dilepas dari
+  bolanya). Animasi keluar yang mengecil ke nol sambil memudar ke `opacity:0` dibiarkan (tidak pernah terlihat di nol).
+- M2 DITARIK: guncangan layar saat salah adalah keputusan 58B-B1 (dibuat benar-benar main supaya jawaban salah
+  terlihat saat suara mati; `qa-prd58b-feel` menjaganya). Diubah sempat, dikembalikan; kilat merah tetap .22/.30.
+- Bukti: `tools/qa-prd58g-motion.mjs` (statis, tanpa browser). Merah 68/73 (sebelum pengecualian film) lalu 48/35,
+  hijau 0/0. Strip frame layar hasil G3 lama vs baru dilihat: tidak ada sisa elemen, keadaan akhir sama.
+
+### 6.8 Hasil 58G2 polish (v65.00)
+- **Toast pencapaian menutupi tombol Menu** di layar hasil (390x844, 3,5 s; foto bot G3). Toast tidak menangkap
+  ketukan (PRD-47), tetapi label tombol tertutup. Kini di layar hasil toast muncul di atas, dan bergerak dengan
+  `transform` + `opacity` (sebelumnya menganimasikan `bottom`/`top`, sifat tata letak). Bukti: `qa-prd57-toast` G2
+  merah di v64.99 ("⌂ Menu" tertutup, transisi `bottom`/`top`), hijau 8/0. Foto 390x844 dan 844x390 dilihat.
+- **Layar hasil di ponsel miring** (844x390): ketiga tombol (Lanjut, Coba Lagi, Menu) di bawah lipatan, hanya
+  terjangkau dengan menggulir. Kini dua kolom (momen kiri, XP + tombol kanan); pembungkus `display:contents` di luar
+  layar pendek, jadi tata letak tegak tidak berubah (foto dilihat). Bukti: bot `qa-prd58g-monkey` 844x390 G3/G4/G7
+  "tombol di atas" merah sebelum, hijau sesudah.
+- **G8 Susun Kata dan G11 Kuis Sains di ponsel miring**: ditumpuk butuh 710 / 730 px dalam 390 px; ubin huruf dan
+  pilihan di bawah lipatan. Kini dua kolom (gambar + petunjuk kiri, jawaban kanan); tinggi 390 / 390. Jebakan yang
+  ditemukan: `.game-header` ber-`overflow:hidden` sehingga minimum grid 0 dan baris header menyusut (header tergambar
+  di y -17); baris 1-2 dikunci `max-content`. Bukti: `qa-landscape-choices` kini juga G8 dan G11 (760x360, 812x375).
+- Pemeriksaan jangkauan seluruh game hub (390x844 dan 844x390): tidak ada tombol yang tak terjangkau sama sekali;
+  sebelum perbaikan G8 (7), G11 (4) dan layar hasil (3) perlu digulir.
+- Bot hub: G17 dikeluarkan (Jembatan Goyang dipensiunkan v55.67), G18 Museum diperiksa sebagai layar jelajah (tanpa
+  layar hasil), tab mode G9 tidak diketuk bot (memulai ulang permainan).
+- Bot hub, triase 2026-11-28 (monkey6/7):
+  - Perbaikan bot: G10/G13 berakhir di `#game-result-overlay`, jadi cek akhir kini membaca kartu itu (G10-easy hijau).
+    Lembar atau kartu info di atas game (G10 "Ganti Pokémon", G18 fakta museum) kini dikenali, dan tombol tutupnya
+    boleh diketuk.
+  - **Terbuka:** G10-hard (390x844 dan 844x390). Lembar "Ganti Pokémon" masih terbuka di atas kartu hasil, menutup
+    tombolnya. Kemungkinan permainan selesai saat lembar terbuka. Belum diperbaiki di game.
+  - **Terbuka:** G13 di 844x390 tidak sampai hasil dalam 240 s. Bot tertahan di pemilih "Pilih Keluarga Pokémon" dan
+    di efek serangan yang meredupkan pilihan. Belum dipastikan apakah ini batas bot atau bug game.
+  - **Terbuka:** G18 di 844x390, satu kali macet saat menjelajah. Kartu koleksi ada di bawah lipatan; kemungkinan
+    batas bot.
+  - Bot belum masuk CI; aturannya masuk setelah 3 kali hijau.
+
+## Audit gambar, objek dan ikon (owner 2026-11-28)
+Owner: "gambar, object, icon harus accurate, jangan ada bug, error atau aneh2, jangan pakai emoji, harus bagus dan
+mudah dilihat dan valid." Dua agen audit read-only; laporan lengkap: `PRD-58-audit-gambar-2026-11-28.md`.
+- Sudah diperbaiki (v65.00): rambu UAE `sg-noovertake` dan `sg-nopark` penjelasan warna salah (dicek pada gambar),
+  `sg-nopark` jawaban kini "dilarang parkir atau menunggu" sesuai rambu 377, `ln-left`/`sf-bus` tanpa rambu yang tidak
+  cocok, `sg-hospital` (gambar buatan dengan palang merah) dihapus, alt gambar soal tidak membocorkan jawaban,
+  `<script src="">` kosong di 3 halaman dihapus.
+- Terbuka, G27 Ejaan Inggris: 15 gambar gaya emoji (kategori Di Rumah dan Al-Qur'an), sekitar 20 sprite terpotong
+  (raket, sepatu roda, ring, celana, rok, jaket, dasi, lidah, leher, lengan, roket, traktor), 46 gambar di bawah 80 px
+  yang ditampilkan sampai 200 px, unta berkaki rusak, angka satu sampai empat gaya emoji.
+- Terbuka, G28 kartu LIS-10: tiga wajah emosi terpotong di dagu dan bergaya emoji.
+- Terbuka, `games/data/emoji-map.js`: 9 pemetaan menampilkan objek yang salah (pohon palem dan cemara sama, bulan
+  purnama jadi sabit, anak ayam jadi ayam dewasa, bola voli dan bisbol jadi bola sepak, sirene jadi lonceng, katak di
+  atas ular, kereta uap jadi kereta modern).
+- Terbuka, peta dunia: label simpul 7 px di 390 px, kerucut cokelat dan tabung biru tua di spanduk Arena Pokemon dan
+  Lab Sains.

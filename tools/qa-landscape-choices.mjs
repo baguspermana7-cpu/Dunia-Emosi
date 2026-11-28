@@ -37,6 +37,9 @@ const GAMES = [
   { n: 3, init: 'initGame3', screen: 'screen-game3', choiceSel: '#g3-choices .g3-choice-btn', textSel: '#g3-hint' },
   { n: 4, init: 'initGame4', screen: 'screen-game4', choiceSel: '#g4-choices .g4-choice-btn' },
   { n: 7, init: 'initGame7', screen: 'screen-game7', choiceSel: '#g7-choices .g7-choice-btn', worst: { sel: '.g7-choice-text', text: 'BUNGA MATAHARI' } },
+  // PRD-58 G2: G8 letters and G11 answers sat below the fold on a phone on its side (stacked 710 / 730 px in 390)
+  { n: 8, init: 'initGame8', screen: 'screen-game8', choiceSel: '#g8-letters .g8-letter-btn' },
+  { n: 11, init: 'initGame11', screen: 'screen-game11', choiceSel: '#g11-choices .sci-choice' },
 ];
 
 const LANDSCAPES = [{ w: 760, h: 360 }, { w: 812, h: 375 }];

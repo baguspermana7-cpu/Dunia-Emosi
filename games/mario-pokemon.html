@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Mario Pokemon ⚡</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v64.99-20261128b">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,var(--g21-sky-top,#5C94FC) 0%,var(--g21-sky-mid,#6BB6FF) 60%,var(--g21-sky-bot,#8B6F47) 100%);font-family:'Fredoka One',sans-serif;touch-action:none;-webkit-user-select:none;user-select:none;transition:background 0.4s ease}
@@ -80,7 +80,7 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 @keyframes mqPopIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
 #mq-title{font-size:11px;color:#fbbf24;font-weight:900;letter-spacing:3px;margin-bottom:4px}
 #mq-progress{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
-.mq-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.18);transition:all .25s}
+.mq-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.18);transition:transform .25s, opacity .25s, box-shadow .25s, background-color .25s, border-color .25s, color .25s, filter .25s}
 .mq-dot.active{background:#fbbf24;box-shadow:0 0 10px #fbbf24}
 .mq-dot.done{background:#4ade80;box-shadow:0 0 8px #4ade80}
 .mq-dot.fail{background:#ef4444;box-shadow:0 0 8px #ef4444}
@@ -115,7 +115,7 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 .pause-btn-resume{background:linear-gradient(160deg,#22c55e,#16a34a);border-color:#86efac;box-shadow:0 4px 0 #14532d}
 .pause-btn-retry{background:linear-gradient(160deg,#7C3AED,#6D28D9);border-color:#a78bfa;box-shadow:0 4px 0 #4C1D95}
 .pause-btn-home{background:linear-gradient(160deg,#475569,#334155);border-color:#94a3b8;box-shadow:0 4px 0 #1e293b}
-.diff-chip{padding:6px 12px;border-radius:18px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);color:#fff;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.diff-chip{padding:6px 12px;border-radius:18px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);color:#fff;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .12s, opacity .12s, box-shadow .12s, background-color .12s, border-color .12s, color .12s, filter .12s}
 .diff-chip.active{background:linear-gradient(160deg,#fbbf24,#d97706);border-color:#fde68a;color:#1f2937;box-shadow:0 3px 0 #92400e}
 
 /* ── Score popup (floating +N) ── */
@@ -229,15 +229,15 @@ body.shake{animation:screenShake .35s ease}
 
 <!-- Pixi.js 8 -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v64.99-20261128b"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
-<script src="data/win-moment.js?v=v64.99-20261128b"></script><!-- PRD-58 B4: level-win moment (VFX.Moment) -->
+<script src="vfx-engine.js?v=v65.00-20261128a"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
+<script src="data/win-moment.js?v=v65.00-20261128a"></script><!-- PRD-58 B4: level-win moment (VFX.Moment) -->
 <!-- Shared modules -->
-<script src="data/speak.js?v=v64.99-20261128b"></script>
-<script src="data/freeze-watchdog.js?v=v64.99-20261128b"></script>
-<script src="data/math-rules.js?v=v64.99-20261128b"></script>
-<script src="data/save-engine.js?v=v64.99-20261128b"></script><script src="data/hit-feel.js?v=v64.99-20261128b"></script><!-- PRD-37: hit-stop on a stomp -->
-<script src="data/emoji-map.js?v=v64.99-20261128b"></script><script src="data/ui-sprites.js?v=v64.99-20261128b"></script><!-- eco HUD sprites -->
-<script src="game-modal.js?v=v64.99-20261128b"></script>
+<script src="data/speak.js?v=v65.00-20261128a"></script>
+<script src="data/freeze-watchdog.js?v=v65.00-20261128a"></script>
+<script src="data/math-rules.js?v=v65.00-20261128a"></script>
+<script src="data/save-engine.js?v=v65.00-20261128a"></script><script src="data/hit-feel.js?v=v65.00-20261128a"></script><!-- PRD-37: hit-stop on a stomp -->
+<script src="data/emoji-map.js?v=v65.00-20261128a"></script><script src="data/ui-sprites.js?v=v65.00-20261128a"></script><!-- eco HUD sprites -->
+<script src="game-modal.js?v=v65.00-20261128a"></script>
 <!-- Hotfix #120: sprite fix + picker fix (v=20260502b) -->
 
 <script>
@@ -2742,9 +2742,9 @@ Promise.race([
 })
 </script>
 
-<script src="dunia-icons.js?v=v64.99-20261128b"></script>
-<script src="dunia-cinema.js?v=v64.99-20261128b" defer></script>
-<script src="vendor/sakuga/core.js?v=v64.99-20261128b" defer></script>
-<script src="data/dunia-sakuga.js?v=v64.99-20261128b" defer></script>
+<script src="dunia-icons.js?v=v65.00-20261128a"></script>
+<script src="dunia-cinema.js?v=v65.00-20261128a" defer></script>
+<script src="vendor/sakuga/core.js?v=v65.00-20261128a" defer></script>
+<script src="data/dunia-sakuga.js?v=v65.00-20261128a" defer></script>
 </body>
 </html>
