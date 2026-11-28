@@ -106,7 +106,7 @@ try {
     // landing shows progress
     await q.goto(BASE + '/games/relokasi-uae.html', { waitUntil: 'load' })
     const stat = await q.$eval('#stat-docs', e => e.textContent)
-    ok(/1 dari \d+ langkah selesai/.test(stat), `L1: landing shows saved document progress ("${stat}")`)
+    ok(/^1 dari 21 selesai/.test(stat), `L1: landing shows saved document progress ("${stat}")`)
     await ctxB.close()
   }
 
@@ -262,12 +262,35 @@ try {
     ok(!e4.length, `L15: page errors ${e4.length} ${e4.slice(0, 2).join(' | ')}`)
     await ctx.close()
   }
+  // L24 landing v2: "Mulai dari sini" = first open step of the family critical path; the departure is never in the past
+  {
+    const ctx = await b.createBrowserContext(), { p: l, errs: e6 } = await page(390, 844, ctx)
+    await l.goto(BASE + '/games/relokasi-uae.html', { waitUntil: 'load' })
+    const want = await l.evaluate(() => { const fm = window.UAEFamily.build([{ name: 'Anak 1', stage: 'g2' }, { name: 'Anak 2', stage: 'g2' }]); return UAEFlow.schedule(fm.steps, {}).critical[0] })
+    const s0 = await l.evaluate(() => ({ lead: window.__uaeTracker.lead, shown: !document.getElementById('start').hidden, h: document.getElementById('start-h').textContent, href: document.getElementById('start-go').getAttribute('href'), plan: document.getElementById('hero-plan').textContent, meta: document.getElementById('start-meta').textContent }))
+    ok(s0.shown && s0.lead === want && s0.href === 'visa-keluarga-uae.html#step-' + want && s0.h.length > 10 && /hari/.test(s0.meta), `L24: start card = critical-path step ${s0.lead} (want ${want}), "${s0.h.slice(0, 50)}", ${s0.meta}`)
+    ok(/berangkat sekitar .*20\d\d/.test(s0.plan) && /Target 90 hari/.test(s0.plan), `L24: hero plan "${s0.plan}"`)
+    await l.click('#start-go'); await l.waitForFunction(() => location.pathname.endsWith('visa-keluarga-uae.html'))
+    await new Promise(r => setTimeout(r, 400))
+    const op = await l.evaluate(id => { const li = document.getElementById('step-' + id), b = li && li.getBoundingClientRect(); return { open: !!li && li.querySelector('[aria-expanded]') ? li.querySelector('[aria-expanded]').getAttribute('aria-expanded') === 'true' : false, vis: !!b && b.top >= 0 && b.top < innerHeight } }, want)
+    ok(op.open && op.vis, `L24: "Buka langkah ini" opens ${want} on screen (${JSON.stringify(op)})`)
+    // a start date 4 months back with nothing done: dates run from today, the 90-day target has passed
+    await l.evaluate(() => { const k = UAEStore.KEYS.familyMeta, m = UAEStore.read(k, {}); const d = new Date(); d.setDate(d.getDate() - 120); m.start = d.toISOString().slice(0, 10); UAEStore.write(k, m) })
+    await l.goto(BASE + '/games/relokasi-uae.html', { waitUntil: 'load' })
+    const s1 = await l.evaluate(() => ({ plan: document.getElementById('hero-plan').textContent, late: window.__uaeTracker.late }))
+    await l.goto(BASE + '/games/visa-keluarga-uae.html', { waitUntil: 'load' })
+    const f1 = await l.evaluate(() => ({ anchor: window.__uaeFamily.anchor, late: window.__uaeFamily.late, sum: document.getElementById('tl-sum').textContent }))
+    const td = await l.evaluate(() => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') })
+    ok(s1.late === true && /melewati target/.test(s1.plan) && f1.anchor === td && f1.late && /dihitung dari hari ini/.test(f1.sum), `L24: start 120 days back -> late ${s1.late}, family anchor ${f1.anchor} (today ${td}): "${f1.sum.slice(0, 90)}"`)
+    ok(!e6.length, `L24: errors ${e6.length} ${e6.slice(0, 2).join(' | ')}`)
+    await ctx.close()
+  }
   // landing at 3 sizes
   for (const [w, h] of [[390, 844], [844, 390], [800, 1280]]) {
     const { p: l, errs: e3 } = await page(w, h)
     await l.goto(BASE + '/games/relokasi-uae.html', { waitUntil: 'load' })
-    const r = await l.evaluate(() => { const cards = [...document.querySelectorAll('.u-menu .u-card-link')]; return { n: cards.length, both: cards.length === 4 && cards.every(e => { const b = e.getBoundingClientRect(); return b.top >= 0 && b.bottom <= innerHeight }), ox: document.documentElement.scrollWidth - innerWidth } })
-    ok(r.both && r.ox <= 0 && !e3.length, `L1 landing ${w}x${h}: all ${r.n} menus in view ${r.both}, sideways ${r.ox}, errors ${e3.length}`)
+    const r = await l.evaluate(() => { const cards = [...document.querySelectorAll('.u-menu .u-card-link'), document.getElementById('start-go')]; return { n: cards.length - 1, both: cards.length === 5 && cards.every(e => { const b = e.getBoundingClientRect(); return b.top >= 0 && b.bottom <= innerHeight }), ox: document.documentElement.scrollWidth - innerWidth } })
+    ok(r.both && r.ox <= 0 && !e3.length, `L1 landing ${w}x${h}: all ${r.n} menus and the start button in view ${r.both}, sideways ${r.ox}, errors ${e3.length}`)
     await shot(l, `prd59-landing-${w}x${h}`)
     await l.close()
   }

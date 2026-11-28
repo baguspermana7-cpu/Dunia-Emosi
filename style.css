@@ -8484,14 +8484,15 @@ button:disabled, [aria-disabled="true"] {
   #screen-game8 > .mascot-guide { grid-column:1; grid-row:3; margin:0; }
   #screen-game8 > .g8-hint-img { grid-column:1; grid-row:4; width:clamp(64px, 18vh, 90px) !important; height:clamp(64px, 18vh, 90px) !important; margin:0; }
   #screen-game8 > .g8-hint-text { grid-column:1; grid-row:5; margin:0; }
-  #screen-game8 > .g8-slots { grid-column:2; grid-row:3; margin:0; }
-  #screen-game8 > .g8-letters { grid-column:2; grid-row:4; margin:0; }
-  #screen-game8 > .g8-backspace-btn { grid-column:2; grid-row:5; margin:0; }
+  /* v65.01: every word fits. The longest is 12 letters, hard adds 6 more tiles (18). Slots stay on ONE row and share
+     it with the delete key; tiles get rows 4-5 at 48 px, at most 3 rows of 7. Before, a 6-letter word wrapped the
+     slots and pushed the tiles to y 391-454 on a 360 px screen. */
+  #screen-game8 > .g8-slots { grid-column:2; grid-row:3; margin:0 !important; justify-self:start; width:calc(100% - 68px) !important; max-width:none !important; flex-wrap:nowrap !important; gap:4px !important; padding:5px 6px !important; }
+  #screen-game8 .g8-slot { flex:1 1 0 !important; min-width:0 !important; max-width:44px; height:40px !important; border-width:2px !important; border-radius:8px !important; font-size:clamp(15px, 5.6vh, 22px) !important; }
+  #screen-game8 > .g8-backspace-btn { grid-column:2; grid-row:3; justify-self:end; margin:0 !important; width:60px !important; min-width:60px; height:50px !important; min-height:48px !important; padding:0 !important; }
+  #screen-game8 > .g8-letters { grid-column:2; grid-row:4 / span 2; margin:0 !important; align-self:start !important; max-width:384px !important; gap:8px !important; }
+  #screen-game8 .g8-letter-btn { width:48px !important; height:48px !important; min-width:48px !important; font-size:24px !important; border-radius:12px !important; }
   #screen-game8 > .g8-progress { grid-column:1 / -1; grid-row:6; margin:0; }
-  #screen-game8 > .g8-letters { max-width:100% !important; gap:8px; }
-  #screen-game8 .g8-letter-btn { width:clamp(44px, 12.5vh, 56px) !important; height:clamp(44px, 12.5vh, 56px) !important; min-width:0 !important; font-size:clamp(20px, 6vh, 26px) !important; }
-  #screen-game8 > .g8-backspace-btn { width:auto !important; min-width:120px; height:48px !important; min-height:48px !important; padding:0 24px !important; }
-  #screen-game8 > .g8-slots { padding-top:4px !important; padding-bottom:4px !important; }
   #screen-game11.active { display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); column-gap:20px; row-gap:8px; align-items:center; justify-items:center; align-content:start; }
   #screen-game11 > .game-header, #screen-game11 > .progress-bar-wrap, #screen-game11 > #g11-explain, #screen-game11 > #g11-lanjut { grid-column:1 / -1; width:100%; }
   #screen-game11 > #g11-emoji { grid-column:1; grid-row:3; margin:0; font-size:min(30vh, 110px) !important; }

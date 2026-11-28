@@ -229,8 +229,23 @@
     return { checked: AS, fx: FX, phases: phases, steps: out, glossary: GLOSSARY, conflicts: api.conflicts, kids: kids }
   }
 
+  // L21b the family plan in calendar dates. Done steps count 0 days, so the steps still open run from `anchor`: the
+  // start date, or today once the start date is behind (else the departure could show a date already gone). The
+  // 90-day target stays counted from the start date. `first` = the first open step on the critical path, the one that
+  // sets the departure date ("Mulai dari sini").
+  function plan(F, steps, saved, start, today) {
+    var TARGET = 90, anchor = start < today ? today : start, r = F.schedule(steps, saved)
+    var open = function (id) { return F.state(saved, id).status !== 'done' }
+    var done = !steps.some(function (x) { return open(x.id) })
+    var fl = r.steps['f-flight'] || { start: r.total }
+    var finish = [F.addDays(anchor, r.total[0]), F.addDays(anchor, r.total[1])], goal = F.addDays(start, TARGET)
+    var first = r.critical.filter(open)[0] || null
+    return { anchor: anchor, start: start, goal: goal, done: done, late: !done && finish[1] > goal, first: first, schedule: r,
+      depart: [F.addDays(anchor, fl.start[0]), F.addDays(anchor, fl.start[1])], finish: finish }
+  }
+
   var api = {
-    checked: AS, build: build, glossary: GLOSSARY, stages: STAGES,
+    checked: AS, build: build, plan: plan, glossary: GLOSSARY, stages: STAGES,
     who: [{ id: 'sponsor', title: 'Saya (sponsor, di Abu Dhabi)' }, { id: 'wife', title: 'Istri (di Indonesia)' }, { id: 'child', title: 'Anak' }, { id: 'family', title: 'Berangkat dan tiba bersama' }],
     steps: steps,
     conflicts: [

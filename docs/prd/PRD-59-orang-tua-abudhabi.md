@@ -126,7 +126,7 @@ lengkap tanpa ada yang terlewat, terupdate.
 
 ### 7.1 Target
 - **Hari 0 = hari owner mulai memakai tracker (2026-11-28).** Target: keluarga (istri + anak) mendarat di Abu Dhabi
-  paling lambat **hari 90 (2026-02-26)**. Owner berangkat lebih dulu.
+  paling lambat **hari 90 (2027-02-26)**. Owner berangkat lebih dulu.
 - Tracker menghitung dari data: jalur kritis owner (visa kerja, Emirates ID, kontrak sewa Tawtheeq, sertifikat
   gaji) → syarat sponsor keluarga → entry permit istri dan anak; paralel di Indonesia: legalisasi buku nikah dan akta
   kelahiran, paspor anak, dokumen sekolah. Bila jadwal paling lambat melewati hari 90, tracker menulis langkah mana
@@ -174,3 +174,95 @@ lengkap tanpa ada yang terlewat, terupdate.
 | 6 | Tooltip + glosarium | L22 |
 | 7 | Menu Isi Koper | L19, L20 |
 | 8 | Gate penuh, rilis, cek live | CI + token live |
+
+## Landing v2 dan rencana yang tidak mundur (owner 2026-11-28: "fix, and improve, no mistake", "gunakan figcraft")
+- Desain dibuat dulu di FigCraft (`~/Documents/figcraft/relokasi/gen.py`, angka dari engine), dilihat, dua cacat
+  diperbaiki di mockup (angka biaya keluar dari baris, celah di kartu), baru dibangun.
+- Kartu "Mulai dari sini": langkah terbuka pertama di jalur terpanjang visa keluarga (yang menentukan tanggal
+  berangkat), bukan langkah pertama di daftar. Sebelumnya daftar menunjuk izin tinggal sponsor, padahal akta anak yang
+  paling lama dan bisa dikerjakan sekarang. Daftar "Yang dikerjakan sekarang" memakai langkah yang sama.
+- Empat menu sebagai kisi 2x2 dengan hitungan dan bilah, juga di angka 0. Di HP miring: hero dan kartu di kiri, menu
+  di kanan.
+- Bug yang ditutup: perkiraan berangkat dihitung dari tanggal "mulai mengurus". Bila tanggal itu sudah lewat dan
+  langkah belum selesai, tanggal berangkat bisa tampil di masa lalu. `UAEFamily.plan()` kini menghitung langkah yang
+  tersisa dari hari ini (langkah selesai = 0 hari); target 90 hari tetap dari tanggal mulai.
+- Hukum: L21b (`test-uae-data`, 6 uji, merah sebelum `plan()` ada), L24 (`qa-prd59-uae`: kartu = langkah jalur
+  terpanjang, tombol membuka langkah itu, mulai 120 hari lalu -> dihitung dari hari ini dan "melewati target"),
+  L1 diperluas: empat menu dan tombol "Buka langkah ini" di layar pertama pada 390x844, 844x390, 800x1280.
+
+## 8. Rencana eksekusi v3 (owner 2026-11-28: "sempurnakan prd dan eksekusi", "ensure all deliver on best, refined uiux and process, valid, super valid, sangat comprehensive", "ini long term, taruh di OUT_COUNTRY_RE")
+
+### 8.1 Status tiap hukum (apa yang sudah terbukti, apa yang belum)
+| Hukum | Isi | Status | Bukti / perintah |
+|---|---|---|---|
+| L1 | Landing: 4 menu dan tombol "Buka langkah ini" di layar pertama pada 390x844, 844x390, 800x1280; tautan dari beranda | hijau lokal | `qa-prd59-uae` |
+| L2-L14 | Dokumen kerja dan SIM (59A, 59B): data, simpan, cadangan, cetak, kuis, rambu | hijau, live v65.00 di repo mandiri | `test-uae-data`, `test-uae-engines`, `qa-prd59-uae` |
+| L15 | Tracker: hitungan, uang, tautan yang membuka langkah | hijau lokal | `qa-prd59-uae` |
+| L16-L18 | Visa keluarga: tiap langkah lengkap, per anak, jenjang sekolah, fakta lama ditandai | hijau | `test-uae-data` |
+| L19-L20 | Isi koper: aturan bersumber, centang tersimpan | L19 hijau; L20 belum punya blok browser sendiri | 8.5 no. 3 |
+| L21, L21b | Jadwal dari `needs`; langkah tersisa dihitung dari hari ini | hijau (6 uji merah dulu) | `test-uae-data` |
+| L22 | Tooltip di setiap parameter + glosarium | hijau di halaman dokumen dan keluarga; landing dan koper belum diukur | 8.5 no. 3 |
+| L23 | Bahasa ID/EN tanpa reload | belum dibuat | 8.3 |
+| L24 | "Mulai dari sini" = langkah jalur terpanjang; tanggal tidak mundur | hijau lokal (merah pada mutasi) | `qa-prd59-uae` |
+| L25 | Repo mandiri `OUT_COUNTRY_RE` selalu sama dengan sumber | sebagian (ekspor + uji di CI repo itu); sinkron otomatis belum | 8.2 |
+
+### 8.2 Repo mandiri `OUT_COUNTRY_RE` (jangka panjang)
+- **Satu sumber.** Halaman dan data hidup di Dunia Emosi (`games/*.html`, `games/uae/`), tempat semua gate jalan.
+  `tools/export-relocation.py <dir>` menyalinnya menjadi aplikasi mandiri: `index.html` (landing), service worker
+  sendiri (offline setelah satu kunjungan), manifest dan ikon koper sendiri, dua font, uji, workflow Pages yang
+  menjalankan uji sebelum deploy. Repo itu tidak pernah diedit tangan (berkas `SOURCE` mencatat commit asal).
+- **Simpanan sama.** Kedua situs berada di `baguspermana7-cpu.github.io`, jadi `localStorage` sama: centang di salah
+  satu muncul di yang lain. Custom domain akan memutus ini; jangan dipasang tanpa rencana migrasi (ekspor/impor JSON).
+- **L25**: (a) ekspor dua kali = versi service worker yang sama; (b) di hasil ekspor: `test-uae-data` dan
+  `test-uae-engines` 0 gagal, 5 halaman 0 error dan 0 permintaan gagal, tidak ada jalur `../`, semua halaman terbuka
+  setelah server dimatikan; (c) versi `sw.js` live = versi ekspor terakhir. Perintah: `tools/qa-relocation-export.mjs`
+  (dibuat di 8.5 no. 2), dijalankan setiap rilis yang menyentuh `games/uae/` atau 5 halaman.
+- Token GitHub hanya untuk repo itu, disimpan owner di `~/.config/out-country-re.token` (600), tidak pernah dicetak.
+
+### 8.3 Bahasa ID/EN tanpa reload (L23), rancangan
+- **Ukuran kerja (diukur):** 969 teks data (47.884 karakter): dokumen 319, keluarga 310, glosarium 54, koper 175,
+  alur SIM 106, lain 5; ditambah teks antarmuka 5 halaman dan 7 skrip.
+- **Cara:** data tetap satu sumber berbahasa Indonesia. Kamus `games/uae/uae-i18n-en.js` berbentuk
+  `{ "teks Indonesia": "English text" }` ditambah aturan berpola untuk kalimat berangka
+  (`/^(\d+) dari (\d+) selesai$/` -> `$1 of $2 done`). `uae-i18n.js` menerjemahkan simpul teks dan atribut
+  (`aria-label`, `placeholder`, `title` dokumen) di tempat, menyimpan teks asli per simpul, dan mengamati perubahan
+  DOM (pengamat dilepas selama menulis agar tidak berputar). Ganti bahasa = tukar teks di tempat: tanpa reload,
+  langkah yang terbuka dan posisi gulir tetap. Renderer tidak diubah.
+- **Tidak diterjemahkan:** nama resmi (ICP, TAMM, Tawtheeq, Emirates ID, KUA, Kemenag, Kemenkum, AHU, Kemlu,
+  Disdukcapil, M-Paspor), nama anak, isi yang diketik owner, angka dan mata uang, nama jalan.
+- **Tombol:** `ID | EN` di bilah atas tiap halaman (48 px), tersimpan di `dunia-uae-lang-v1`, berlaku di 5 halaman.
+  Mode ujian SIM "Inggris saja" tetap terpisah.
+- **Hukum L23** (`qa-prd59-uae`, merah dulu dengan kamus kosong):
+  1. penanda `window.__noReload` bertahan setelah ganti bahasa dua arah di 5 halaman;
+  2. langkah yang terbuka tetap terbuka dan `scrollY` berubah kurang dari 4 px;
+  3. dalam mode EN, tidak ada simpul teks terlihat yang masih sama dengan teks Indonesianya, kecuali daftar nama
+     resmi dan isi ketikan (daftar pengecualian tertulis di gate, tiap butir beralasan);
+  4. kembali ke ID mengembalikan teks persis seperti semula (bandingkan seluruh `innerText`);
+  5. `test-uae-data`: setiap teks data punya padanan EN, tidak ada kunci kamus yang yatim.
+- **Mutu terjemahan:** dikerjakan per berkas oleh subagen dengan glosarium tetap (legalisation, attestation, entry
+  permit, residence permit, marriage certificate, birth certificate, sponsor), lalu saya baca ulang seluruhnya:
+  angka, nama kantor, dan syarat tidak boleh berubah. Uji: setiap angka dan nama resmi di teks ID muncul sama di EN.
+
+### 8.4 Fakta yang belum terkonfirmasi (tidak dibulatkan jadi "benar")
+| Fakta | Yang diketahui | Cara memastikan |
+|---|---|---|
+| Biaya ICP entry permit dan izin tinggal per orang | ICP 100+100+100; sumber sekunder lebih tinggi | layar pembayaran ICP saat mengajukan |
+| Deposit sponsor keluarga AED 5.025 | hanya sumber sekunder | tanya PRO perusahaan atau ICP 600522222 |
+| Terjemahan Arab buku nikah | MoFA menerima Inggris; sekunder menyebut Arab | email JakartaCVO@mofa.gov.ae |
+| Pembayar asuransi tanggungan | DoH 2016 vs 2021 berbeda | HR pemberi kerja |
+| Tarif legalisasi Kemenkum | Rp 50.000 vs Rp 70.000 | layar pembayaran AHU Online |
+| Jatah bagasi Etihad CGK-AUH | tergantung tarif | e-tiket tiap orang |
+| Langkah izin obat MOHAP | lampiran MOHAP di MoFA | portal MOHAP saat mengajukan |
+| Listrik 230 V tipe G | sekunder | tidak kritis; adaptor universal |
+| Jumlah pas foto sekolah | belum ada sumber | sekolah tujuan |
+Di aplikasi: tiap butir ini bertanda "perkiraan" atau masuk daftar "Perlu dikonfirmasi"; owner mengisi angka nyata di
+kolom "biaya yang dibayar" dan catatan.
+
+### 8.5 Urutan eksekusi
+| No | Pekerjaan | Hukum | Selesai bila |
+|---|---|---|---|
+| 1 | Rilis v65.01: landing v2 + `plan()`; CI GitHub hijau; tombol relokasi live di beranda Dunia Emosi | L1, L21b, L24 | token live v65.01, `home-uae-link` ada di `index.html` live |
+| 2 | `tools/qa-relocation-export.mjs` + ekspor ulang + push ke `OUT_COUNTRY_RE` | L25 | versi `sw.js` live = ekspor |
+| 3 | Blok browser koper (L20) dan tooltip di landing/koper (L22) | L20, L22 | `qa-prd59-uae` |
+| 4 | ID/EN tanpa reload | L23 | 8.3 butir 1-5 |
+| 5 | Laporan ke owner: tiap hukum dengan bukti; yang belum terbukti ditulis lebih dulu | semua | - |

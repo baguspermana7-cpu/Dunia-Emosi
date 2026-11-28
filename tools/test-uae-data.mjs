@@ -136,6 +136,23 @@ const seenP = new Set()
   ok(two.steps.find(s => s.id === 'sp-entry').cost.max === base.max * 3 && one.steps.find(s => s.id === 'sp-entry').cost.max === base.max * 2 && two.steps.find(s => s.id === 'w-nikah-uae').cost.min === FAM.steps.find(s => s.id === 'w-nikah-uae').cost.min * 3, 'L16: per-person and per-document fees count the wife and every child')
   const r = FL.schedule(two.steps, {})
   ok(r.total[1] <= 90 && r.critical.includes('sp-entry'), `L21: family plan ${r.total} days, critical ${r.critical.join('>')}`)
+  // L21b the plan never puts the departure in the past: steps still open run from today when the start date is behind
+  {
+    const P = FAM.plan, fresh = P && P(FL, two.steps, {}, '2026-11-28', '2026-11-28')
+    ok(!!fresh && fresh.anchor === '2026-11-28' && fresh.depart[0] === FL.addDays('2026-11-28', r.steps['f-flight'].start[0]) && fresh.goal === '2027-02-26' && !fresh.late, `L21b: plan from today: depart ${fresh && fresh.depart}, goal ${fresh && fresh.goal}`)
+    const old = P && P(FL, two.steps, {}, '2026-09-01', '2026-11-28')
+    ok(!!old && old.anchor === '2026-11-28' && old.depart[0] >= '2026-11-28' && old.goal === '2026-11-30' && old.late, `L21b: start 3 months ago, nothing done: dates run from today (${old && old.depart}), target 30 Nov passed, late`)
+    const allDone = { steps: {} }; two.steps.forEach(x => { allDone.steps[x.id] = { status: 'done' } })
+    const fin = P && P(FL, two.steps, allDone, '2026-09-01', '2026-11-28')
+    ok(!!fin && fin.done && !fin.late, 'L21b: every step done: plan reports done, not late')
+    const fut = P && P(FL, two.steps, {}, '2027-01-10', '2026-11-28')
+    ok(!!fut && fut.anchor === '2027-01-10' && fut.goal === '2027-04-10', 'L21b: a future start date is kept as the anchor')
+    const nx = P && P(FL, two.steps, {}, '2026-11-28', '2026-11-28')
+    ok(!!nx && nx.first === r.critical[0], `L21b: "start here" = first open step of the critical path (${nx && nx.first})`)
+    const d1 = { steps: {} }; d1.steps[r.critical[0]] = { status: 'done' }
+    const nx2 = P && P(FL, two.steps, d1, '2026-11-28', '2026-11-28')
+    ok(!!nx2 && nx2.first !== r.critical[0] && FL.state(d1, nx2.first).status !== 'done', `L21b: after it is done the next open critical step leads (${nx2 && nx2.first})`)
+  }
   // L22 every glossary term used by some step has a tip; every step text term is explained
   ok(FAM.glossary.every(g => g.term && g.tip.length > 30), 'L22: every glossary term has an explanation')
   const used = FAM.glossary.filter(g => FAM.steps.some(s => [s.title, s.why, s.notes, s.issuer, s.where.name, ...s.bring.map(b => b.text)].join(' ').includes(g.term)))

@@ -29,16 +29,46 @@
   $('tr-total-bar').style.setProperty('--p', n ? done / n : 0)
   $('tr-total-text').textContent = done + ' dari ' + n + ' langkah selesai (' + pd.n + ' dokumen kerja, ' + pf.n + ' visa keluarga, ' + ps.n + ' SIM). Koper: ' + kpDone + ' dari ' + kpAll.length + ' barang siap.'
 
+  function costText(c) {
+    return !c.max ? 'Gratis atau termasuk paket' : (c.cur === 'AED' ? 'AED ' + c.min.toLocaleString('id-ID') + (c.min !== c.max ? '-' + c.max.toLocaleString('id-ID') : '') : rp(c.min) + (c.min !== c.max ? ' sampai ' + rp(c.max) : ''))
+  }
+  function today() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }
+  function fmt(iso) { return new Date(iso + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) }
+  function range(a, b) { return a === b ? fmt(a) : fmt(a) + ' sampai ' + fmt(b) }
+
+  // landing v2: the plan in one sentence, and "Mulai dari sini" = the open step that sets the departure date (the first
+  // open step of the family critical path); once the family visa is done, the next work-document step, then SIM
+  var pl = FM ? FM.plan(F, fam.steps, famS, meta.start || today(), today()) : null
+  if (pl && $('hero-plan')) {
+    $('hero-plan').innerHTML = pl.done ? 'Visa keluarga selesai. Lanjutkan dokumen kerja, koper, dan SIM di bawah.' :
+      'Keluarga bisa berangkat sekitar <b>' + esc(range(pl.depart[0], pl.depart[1])) + '</b>. ' +
+      (pl.late ? 'Bisa melewati target 90 hari (' + esc(fmt(pl.goal)) + '), kerjakan langkah di bawah lebih dulu.' : 'Target 90 hari: ' + esc(fmt(pl.goal)) + '.')
+  }
+  var lead = pl && pl.first ? { s: fam.steps.filter(function (x) { return x.id === pl.first })[0], href: 'visa-keluarga-uae.html#step-', why: 'Paling menentukan tanggal keluarga berangkat.' } : null
+  if (!lead) {
+    var nd0 = F.next(D.steps, docs), ns0 = F.next(S.process.steps, simP)
+    if (nd0) lead = { s: D.steps.filter(function (x) { return x.id === nd0 })[0], href: 'pindah-abudhabi.html#step-', why: 'Langkah berikutnya untuk dokumen kerja.' }
+    else if (ns0) lead = { s: S.process.steps.filter(function (x) { return x.id === ns0 })[0], href: 'ujian-sim-abudhabi.html#ps-', why: 'Langkah berikutnya untuk SIM.' }
+  }
+  if (lead && $('start')) {
+    var ls = lead.s, w = ls.where || {}, dd = ls.days
+    $('start-why').textContent = lead.why
+    $('start-h').textContent = ls.title
+    $('start-meta').textContent = [w.name || ls.issuer, (ls.cost && ls.cost.max ? costText(ls.cost) : 'gratis'), dd ? (dd.min === dd.max ? dd.min + ' hari' : dd.min + ' sampai ' + dd.max + ' hari') : ''].filter(Boolean).join(', ')
+    $('start-go').href = lead.href + ls.id
+    $('start').hidden = false
+  }
+
   // what to do now: the next open step of each tool, opened directly
   var card = function (kind, steps, saved, id, href, num) {
     if (!id) return '<li class="u-tr-next"><span class="u-tr-kind">' + kind + '</span><b>Semua langkah selesai.</b></li>'
     var s = steps.filter(function (x) { return x.id === id })[0], c = s.cost || {}
-    var cost = !c.max ? 'Gratis atau termasuk paket' : (c.cur === 'AED' ? 'AED ' + c.min.toLocaleString('id-ID') + (c.min !== c.max ? '-' + c.max.toLocaleString('id-ID') : '') : rp(c.min) + (c.min !== c.max ? ' sampai ' + rp(c.max) : ''))
+    var cost = costText(c)
     var st = F.state(saved, id).status
     return '<li class="u-tr-next"><a href="' + href + '"><span class="u-tr-kind">' + kind + ', langkah ' + num + (st === 'doing' ? ', sedang dikerjakan' : '') + '</span>' +
       '<b>' + esc(s.title) + '</b><span class="u-muted u-small">' + esc(s.issuer || '') + '</span><span class="u-money u-small">' + esc(cost) + (s.payer === 'employer' ? ', dibayar pemberi kerja' : '') + '</span></a></li>'
   }
-  var nd = F.next(D.steps, docs), ns = F.next(S.process.steps, simP), nf = F.next(fam.steps, famS)
+  var nd = F.next(D.steps, docs), ns = F.next(S.process.steps, simP), nf = (pl && pl.first) || F.next(fam.steps, famS)
   var idx = function (steps, id) { var i = 0; steps.some(function (s, k) { i = k; return s.id === id }); return i + 1 }
   $('tr-next').innerHTML = card('Dokumen', D.steps, docs, nd, 'pindah-abudhabi.html#step-' + nd, idx(D.steps, nd)) +
     card('Visa keluarga', fam.steps, famS, nf, 'visa-keluarga-uae.html#step-' + nf, idx(fam.steps, nf)) +
@@ -70,5 +100,5 @@
     '<li><b>' + (kpAll.length - kpDone) + '</b> dari ' + kpAll.length + ' barang koper belum siap</li>' +
     '<li>Biaya sendiri yang belum dibayar: <b class="u-money">' + rp(md.min + ms.min + mf.min) + ' sampai ' + rp(md.max + ms.max + mf.max) + '</b> <span class="u-muted u-small">(kurs AED ' + fx.toLocaleString('id-ID') + ')</span></li>' +
     '<li>Kesiapan ujian teori SIM: <b>' + Math.round(r.pct * 100) + '%</b>' + (r.ready ? ', siap' : r.weakestTitle && (sim.history || []).length + Object.keys(sim.q || {}).length ? ', perlu latihan ' + esc(r.weakestTitle) : '') + '</li>'
-  window.__uaeTracker = { done: done, n: n, left: left, money: [md.min + ms.min + mf.min, md.max + ms.max + mf.max], next: [nd, ns, nf], fam: pf.n, rows: rows.length, koper: [kpDone, kpAll.length] }
+  window.__uaeTracker = { done: done, n: n, left: left, money: [md.min + ms.min + mf.min, md.max + ms.max + mf.max], next: [nd, ns, nf], lead: lead ? lead.s.id : null, late: pl ? pl.late : null, fam: pf.n, rows: rows.length, koper: [kpDone, kpAll.length] }
 })()

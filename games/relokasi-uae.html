@@ -9,9 +9,9 @@
 <meta name="description" content="Dua alat untuk orang tua yang pindah kerja ke Abu Dhabi: kelengkapan dokumen dan persiapan SIM.">
 <meta name="theme-color" content="#fef9e7">
 <title>Relocation to UAE</title>
-<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.00-20261128a">
-<link rel="stylesheet" href="du-buttons.css?v=v65.00-20261128a">
-<link rel="stylesheet" href="uae/uae.css?v=v65.00-20261128a">
+<link rel="stylesheet" href="../assets/fonts/fonts.css?v=v65.01-20261128a">
+<link rel="stylesheet" href="du-buttons.css?v=v65.01-20261128a">
+<link rel="stylesheet" href="uae/uae.css?v=v65.01-20261128a">
 </head>
 <body>
 <header class="u-top">
@@ -21,10 +21,20 @@
   </div>
 </header>
 <main class="u-wrap">
+  <div class="u-land">
+  <div>
   <section class="u-hero">
     <h1>Pindah kerja ke Abu Dhabi</h1>
-    <p>Dokumen kerja, visa keluarga, isi koper, dan SIM. Semua tersimpan di perangkat ini.</p>
+    <p id="hero-plan">Dokumen kerja, visa keluarga, isi koper, dan SIM. Semua tersimpan di perangkat ini.</p>
   </section>
+  <section class="u-start" id="start" aria-labelledby="start-h" hidden>
+    <span class="u-start-k">Mulai dari sini</span>
+    <span class="u-start-why" id="start-why"></span>
+    <h2 id="start-h"></h2>
+    <span class="u-start-meta" id="start-meta"></span>
+    <a class="u-btn u-btn-primary" id="start-go" href="visa-keluarga-uae.html">Buka langkah ini</a>
+  </section>
+  </div>
   <nav class="u-menu" aria-label="Menu relokasi">
     <a class="u-card-link" href="pindah-abudhabi.html" id="menu-docs">
       <span class="u-card-ico"><svg aria-hidden="true" class="u-icon" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13l2 2 4-4"/></svg></span>
@@ -59,6 +69,7 @@
       </span>
     </a>
   </nav>
+  </div>
   <section class="u-sec u-stack" aria-labelledby="tr-h" id="tracker">
     <div class="u-panel u-stack">
       <div class="u-row u-between"><h2 id="tr-h">Tracker persiapan</h2><span class="u-score" id="tr-total">0%</span></div>
@@ -74,44 +85,39 @@
   </section>
   <p class="u-muted u-sec">Biaya dan aturan bisa berubah. Setiap angka di dalam membawa tanggal cek dan sumbernya.</p>
 </main>
-<script src="uae/uae-store.js?v=v65.00-20261128a"></script>
-<script src="uae/uae-flow.js?v=v65.00-20261128a"></script>
-<script src="uae/uae-quiz.js?v=v65.00-20261128a"></script>
-<script src="uae/uae-sim-bank.js?v=v65.00-20261128a"></script>
-<script src="uae/uae-docs-data.js?v=v65.00-20261128a"></script>
-<script src="uae/uae-family-data.js?v=v65.00-20261128a"></script>
-<script src="uae/uae-koper-data.js?v=v65.00-20261128a"></script>
-<script src="uae/uae-tracker.js?v=v65.00-20261128a"></script>
+<script src="uae/uae-store.js?v=v65.01-20261128a"></script>
+<script src="uae/uae-flow.js?v=v65.01-20261128a"></script>
+<script src="uae/uae-quiz.js?v=v65.01-20261128a"></script>
+<script src="uae/uae-sim-bank.js?v=v65.01-20261128a"></script>
+<script src="uae/uae-docs-data.js?v=v65.01-20261128a"></script>
+<script src="uae/uae-family-data.js?v=v65.01-20261128a"></script>
+<script src="uae/uae-koper-data.js?v=v65.01-20261128a"></script>
+<script src="uae/uae-tracker.js?v=v65.01-20261128a"></script>
 <script>
-// PRD-59 L1: the landing shows each tool's saved progress, from the same engines the tools use
+// PRD-59 L1: the landing shows each tool's saved progress, from the same engines the tools use. Always a count and a
+// bar, also at 0, so the 2x2 grid reads the same before and after the first tick.
 (function () {
-  function bar(el, p) { var b = document.createElement('span'); b.className = 'u-progress'; var i = document.createElement('i'); i.style.setProperty('--p', p); b.appendChild(i); el.appendChild(b) }
-  try {
-    if (window.UAEDocs) {
-      var d = UAEFlow.migrate(UAEStore.read(UAEStore.KEYS.docs, {})), p = UAEFlow.progress(UAEDocs.steps, d)
-      if (p.done || p.doing || p.items.checked) { var el = document.getElementById('stat-docs'); el.textContent = p.done + ' dari ' + p.n + ' langkah selesai'; bar(el, p.done / p.n) }
-    }
-    if (window.UAEFamily) {
-      var fm = UAEStore.read(UAEStore.KEYS.familyMeta, {}), fd = UAEFamily.build(Array.isArray(fm.kids) && fm.kids.length ? fm.kids : ['Anak 1', 'Anak 2'])
-      var fp = UAEFlow.progress(fd.steps, UAEFlow.migrate(UAEStore.read(UAEStore.KEYS.family, {})))
-      if (fp.done || fp.doing || fp.items.checked) { var ef = document.getElementById('stat-family'); ef.textContent = fp.done + ' dari ' + fp.n + ' langkah selesai'; bar(ef, fp.done / fp.n) }
-    }
-    if (window.UAEKoper) {
-      var kg = (UAEStore.read(UAEStore.KEYS.koper, {}) || {}).got || {}, kall = [].concat.apply([], UAEKoper.groups.map(function (g) { return g.items })).filter(function (x) { return x.loc !== 'jangan' })
-      var kd = kall.filter(function (x) { return kg[x.id] }).length
-      if (kd) { var ek = document.getElementById('stat-koper'); ek.textContent = kd + ' dari ' + kall.length + ' barang siap'; bar(ek, kd / kall.length) }
-    }
-    if (window.UAESim) {
-      var s = UAEQuiz.migrate(UAEStore.read(UAEStore.KEYS.sim, {})), h = s.history || [], r = UAEQuiz.readiness(UAESim, s)
-      if (h.length || Object.keys(s.q || {}).length) {
-        var e2 = document.getElementById('stat-sim'), last = h[h.length - 1]
-        e2.textContent = 'Kesiapan ujian ' + Math.round(r.pct * 100) + '%' + (last ? ', ujian terakhir ' + last.score + ' dari ' + last.total : '')
-        bar(e2, r.pct)
-      }
-    }
-  } catch (e) {}
+  function stat(id, text, p) {
+    var el = document.getElementById(id), b = document.createElement('span'), i = document.createElement('i')
+    el.textContent = text; b.className = 'u-progress'; i.style.setProperty('--p', p); b.appendChild(i); el.appendChild(b)
+  }
+  var F = UAEFlow
+  if (window.UAEDocs) { var p = F.progress(UAEDocs.steps, F.migrate(UAEStore.read(UAEStore.KEYS.docs, {}))); stat('stat-docs', p.done + ' dari ' + p.n + ' selesai', p.done / p.n) }
+  if (window.UAEFamily) {
+    var fm = UAEStore.read(UAEStore.KEYS.familyMeta, {}), fd = UAEFamily.build(Array.isArray(fm.kids) && fm.kids.length ? fm.kids : [{ name: 'Anak 1', stage: 'g2' }, { name: 'Anak 2', stage: 'g2' }])
+    var fp = F.progress(fd.steps, F.migrate(UAEStore.read(UAEStore.KEYS.family, {}))); stat('stat-family', fp.done + ' dari ' + fp.n + ' selesai', fp.done / fp.n)
+  }
+  if (window.UAEKoper) {
+    var kg = (UAEStore.read(UAEStore.KEYS.koper, {}) || {}).got || {}, kall = [].concat.apply([], UAEKoper.groups.map(function (g) { return g.items })).filter(function (x) { return x.loc !== 'jangan' })
+    var kd = kall.filter(function (x) { return kg[x.id] }).length; stat('stat-koper', kd + ' dari ' + kall.length + ' siap', kd / kall.length)
+  }
+  if (window.UAESim) {
+    var sv = UAEQuiz.migrate(UAEStore.read(UAEStore.KEYS.sim, {})), sp = F.progress(UAESim.process.steps, sv.process || { steps: {} }), h = sv.history || []
+    var practised = h.length || Object.keys(sv.q || {}).length, r = UAEQuiz.readiness(UAESim, sv)
+    stat('stat-sim', sp.done + ' dari ' + sp.n + ' selesai' + (practised ? ', teori ' + Math.round(r.pct * 100) + '%' : ''), sp.done / sp.n)
+  }
 })()
 </script>
-<script src="sw-reload.js?v=v65.00-20261128a"></script>
+<script src="sw-reload.js?v=v65.01-20261128a"></script>
 </body>
 </html>

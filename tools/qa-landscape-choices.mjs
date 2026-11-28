@@ -38,7 +38,9 @@ const GAMES = [
   { n: 4, init: 'initGame4', screen: 'screen-game4', choiceSel: '#g4-choices .g4-choice-btn' },
   { n: 7, init: 'initGame7', screen: 'screen-game7', choiceSel: '#g7-choices .g7-choice-btn', worst: { sel: '.g7-choice-text', text: 'BUNGA MATAHARI' } },
   // PRD-58 G2: G8 letters and G11 answers sat below the fold on a phone on its side (stacked 710 / 730 px in 390)
-  { n: 8, init: 'initGame8', screen: 'screen-game8', choiceSel: '#g8-letters .g8-letter-btn' },
+  // v65.01: the round the dice gave hid the bug (CI red only on a long word). worstFn sets the longest word in the
+  // bank (12 letters) plus the 6 extra tiles of "hard": 18 tiles and 12 slots must fit.
+  { n: 8, init: 'initGame8', screen: 'screen-game8', choiceSel: '#g8-letters .g8-letter-btn', worstFn: 'g8State.currentWord="PERPUSTAKAAN";g8State.userInput=[];g8State.availableLetters="PERPUSTAKAANWMQXZB".split("");renderG8Slots();renderG8Letters()' },
   { n: 11, init: 'initGame11', screen: 'screen-game11', choiceSel: '#g11-choices .sci-choice' },
 ];
 
@@ -66,7 +68,9 @@ const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox']
   await warm.close();
 }
 
-for (const g of GAMES) {
+// QA_GAMES=8,11 runs only those games (to reproduce one failure without the whole sweep)
+const ONLY = (process.env.QA_GAMES || '').split(',').filter(Boolean).map(Number);
+for (const g of GAMES.filter(x => !ONLY.length || ONLY.includes(x.n))) {
   // PRD-58 A1: "hard" is reachable now (6 choices, 12 rounds) - every size is checked at easy AND hard
   for (const vp of ['easy', 'hard'].flatMap(lvl => [...LANDSCAPES.map(v => ({ ...v, lvl })), { ...PORTRAIT, portrait: true, lvl }])) {
    try {
@@ -139,6 +143,7 @@ for (const g of GAMES) {
 
     // worst case, not the round the dice gave: every label the longest word in the bank (PRD-57 L2: two-line
     // labels pushed G7's buttons to 367 px on a 360 px screen in one run and 338 in the next)
+    if (g.worstFn) await page.evaluate(code => { (0, eval)(code) }, g.worstFn)
     if (g.worst) {
       await page.evaluate((g) => { document.querySelectorAll('#' + g.screen + ' ' + g.worst.sel).forEach(el => { if (el.childElementCount === 0) el.textContent = g.worst.text }) }, g)
       await new Promise(r => setTimeout(r, 150))
@@ -215,6 +220,7 @@ for (const g of GAMES) {
 
     if (errs.length) bootErrors.push({ game: g.n, vp: tag, errs: errs.slice(0, 3) });
     results.push({ game: g.n, vp: tag, portrait: !!vp.portrait, init: info, ...assert, shot: fname });
+    console.error(`G${g.n} ${tag} count ${assert.count} overflowBy ${assert.overflowBy}`);
     await page.close();
    } catch (e) {
     const tag = vp.portrait ? 'portrait' : `${vp.w}x${vp.h}`;
