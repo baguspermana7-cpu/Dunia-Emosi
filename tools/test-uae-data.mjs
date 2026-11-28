@@ -177,5 +177,33 @@ const seenP = new Set()
   ok(['passport', 'nikah', 'akta', 'powerbank', 'rx'].every(id => items.find(y => y.id === id).loc === 'kabin'), 'L19: originals, medicine and power bank are in the cabin bag')
   ok(KP.conflicts.length >= 3, 'L19: conflicts listed')
 }
+// ---- L23 (PRD-59 8.3): every text of the data has an English text, numbers and official names survive ----
+{
+  const EN = require('../games/uae/uae-i18n-en.js'); globalThis.UAEI18N_EN = EN
+  const T = require('../games/uae/uae-i18n.js')
+  const FMd = require('../games/uae/uae-family-data.js'), KPd = require('../games/uae/uae-koper-data.js')
+  const SKIP = /^(id|sources|src|asOf|checked|cur|url|needs|phase|who|land|loc|grade|payer|per|sign|map|tel|href|code|stage)$/
+  const texts = new Set()
+  const walk = o => { if (o == null) return; if (typeof o === 'string') { const t = o.trim().replace(/\s+/g, ' '); if (t.length > 1 && /[A-Za-z]{2}/.test(t) && !/^https?:/.test(t) && !/^\d{4}-\d\d/.test(t) && !/^[a-z0-9-]+$/.test(t)) texts.add(t); return } if (Array.isArray(o)) return o.forEach(walk); if (typeof o === 'object') for (const k in o) if (!SKIP.test(k)) walk(o[k]) }
+  walk([D.steps, D.phases, FMd.build([{ name: 'Anak 1', stage: 'g2' }, { name: 'Anak 2', stage: 'kg' }]).steps, FMd.glossary, FMd.conflicts, KPd.groups, KPd.conflicts, B.process])
+  const none = [...texts].filter(t => T.core(t) == null)
+  ok(texts.size > 700 && none.length === 0, `L23: ${none.length} of ${texts.size} data texts have no English text: ${none.slice(0, 6).join(' | ')}`)
+  const nums = s => (s.match(/\d+(?:[.,]\d+)*/g) || []).sort().join(' ')
+  const NAMES = ['ICP', 'TAMM', 'MOHRE', 'Tawtheeq', 'Emirates ID', 'KUA', 'Kemenag', 'Kemenkum', 'Kemlu', 'M-Paspor', 'SKCK', 'STEMPEL ASLI', 'Etihad', 'MOHAP', 'AED']
+  let badNum = [], badName = [], ph = []
+  for (const [k, v] of Object.entries(EN.map)) {
+    if (nums(k) !== nums(v)) badNum.push(k)
+    for (const n of NAMES) if (k.includes(n) !== v.includes(n)) badName.push(n + ': ' + k)
+    if ((k.match(/\{(\d+|tgl)\}/g) || []).sort().join() !== (v.match(/\{(\d+|tgl)\}/g) || []).sort().join()) ph.push(k)
+  }
+  ok(Object.keys(EN.map).length > 1000 && badNum.length === 0, `L23: numbers differ between ID and EN in ${badNum.length} texts: ${badNum.slice(0, 2).join(' | ').slice(0, 200)}`)
+  ok(badName.length === 0, `L23: an official name is lost or added in ${badName.length} texts: ${badName.slice(0, 2).join(' | ').slice(0, 200)}`)
+  ok(ph.length === 0, `L23: placeholders differ in ${ph.length} texts: ${ph.slice(0, 2).join(' | ')}`)
+  ok(T.core('3 dari 21 selesai') === '3 of 21 done' && T.core('1 Des 2026 sampai 4 Jan 2027') === '1 Dec 2026 to 4 Jan 2027' && T.core('Tunggu langkah 1, 2 dulu') === 'Wait for step 1, 2 first', 'L23: number template, date range and waiting rule')
+  ok(T.core('Anak Budi, Anak Sari') == null && T.t('  Budi  ') === '  Budi  ', 'L23: a text with no English entry (a typed name) is left as it is, spacing kept')
+  // the standalone export carries the generated file only, so the freshness check runs where the builder is
+  const builder = new URL('./build-uae-i18n.py', import.meta.url).pathname
+  if (require('node:fs').existsSync(builder)) ok(require('node:child_process').spawnSync('python3', [builder, '--check']).status === 0, 'L23: uae-i18n-en.js is fresh (tools/build-uae-i18n.py --check)')
+}
 console.log(`test-uae-data: ${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)

@@ -202,9 +202,9 @@ lengkap tanpa ada yang terlewat, terupdate.
 | L19-L20 | Isi koper: aturan bersumber, centang tersimpan | L19 hijau; L20 belum punya blok browser sendiri | 8.5 no. 3 |
 | L21, L21b | Jadwal dari `needs`; langkah tersisa dihitung dari hari ini | hijau (6 uji merah dulu) | `test-uae-data` |
 | L22 | Tooltip di setiap parameter + glosarium | hijau di halaman dokumen dan keluarga; landing dan koper belum diukur | 8.5 no. 3 |
-| L23 | Bahasa ID/EN tanpa reload | belum dibuat | 8.3 |
+| L23 | Bahasa ID/EN tanpa reload | hijau (v65.02): 5 halaman, 1.1k teks + aturan berpola; merah dulu dengan kamus belum lengkap (17-121 teks tersisa per halaman) | `qa-prd59-uae` (30 cek L23), `test-uae-data` (6 cek L23) |
 | L24 | "Mulai dari sini" = langkah jalur terpanjang; tanggal tidak mundur | hijau lokal (merah pada mutasi) | `qa-prd59-uae` |
-| L25 | Repo mandiri `OUT_COUNTRY_RE` selalu sama dengan sumber | sebagian (ekspor + uji di CI repo itu); sinkron otomatis belum | 8.2 |
+| L25 | Repo mandiri `OUT_COUNTRY_RE` selalu sama dengan sumber | hijau: `qa-relocation-export` 16/0; versi live = ekspor (merah sebelum push: live `79a5d5e1070b`) | `tools/qa-relocation-export.mjs --live <url>` |
 
 ### 8.2 Repo mandiri `OUT_COUNTRY_RE` (jangka panjang)
 - **Satu sumber.** Halaman dan data hidup di Dunia Emosi (`games/*.html`, `games/uae/`), tempat semua gate jalan.
@@ -266,3 +266,14 @@ kolom "biaya yang dibayar" dan catatan.
 | 3 | Blok browser koper (L20) dan tooltip di landing/koper (L22) | L20, L22 | `qa-prd59-uae` |
 | 4 | ID/EN tanpa reload | L23 | 8.3 butir 1-5 |
 | 5 | Laporan ke owner: tiap hukum dengan bukti; yang belum terbukti ditulis lebih dulu | semua | - |
+
+### 8.6 Hasil L23 (v65.02)
+- Sumber terjemahan: `games/uae/i18n/*.json` (teks Indonesia -> Inggris) dan `rules.js` (aturan berpola); `tools/build-uae-i18n.py`
+  menulis `uae-i18n-en.js` (`--check` gagal bila basi). Mesin: `uae-i18n.js`.
+- Urutan cari: teks persis, lalu templat angka (`3 dari 21 selesai` -> `{0} dari {1} selesai`), lalu aturan (tanggal,
+  "Tunggu langkah ...", gabungan `A, B` yang hanya diterjemahkan bila setiap bagian punya padanan).
+- Saat ganti bahasa, elemen di tengah layar dijaga di tempatnya; halaman yang sedang di puncak tetap di puncak.
+- Isi soal ujian SIM memakai mode bahasanya sendiri (`data-noi18n`).
+- Batas jujur: gate L23 memeriksa keadaan awal tiap halaman. Teks keadaan lain (hasil ujian, peringatan terlambat,
+  toast) diterjemahkan dari daftar literal renderer, tetapi belum diuji di browser satu per satu. Teks baru di data
+  tanpa padanan akan menggagalkan `test-uae-data`.

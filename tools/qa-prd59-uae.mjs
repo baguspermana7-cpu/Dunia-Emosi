@@ -294,6 +294,70 @@ try {
     await shot(l, `prd59-landing-${w}x${h}`)
     await l.close()
   }
+  // L23 (PRD-59 8.3): Indonesian / English in place. No reload, the open step and the scroll position stay, nothing
+  // readable is left in Indonesian, and switching back restores the page text exactly.
+  {
+    // words that only Indonesian text has; a node whose text is unchanged from ID mode and still carries one was not
+    // translated (unchanged is part of the test: English text may quote an Indonesian office name)
+    const IDW = '(yang|dan|atau|untuk|dengan|tidak|belum|sudah|dari|pada|bisa|harus|oleh|akan|juga|tanpa|tiap|bila|jika|karena|lalu|sebelum|setelah|dalam|langkah|biaya|selesai|lembar|sumber|dicek|sampai|buka|tutup|siap|perkiraan|gratis|asli|fotokopi|istri|lihat|simpan|hapus|catatan|pilih|semua|barang|orang|berkas|sekolah|kantor|surat|hari|kerja|ibu|anak|saya|suami|koper|akta|nikah|obat|uang|tas|baju|sepatu|ujian|soal|rambu|jalan)'
+    // kept on purpose, each with its reason
+    const KEEP = [
+      /^Anak \d+(, Anak \d+)*$/,                       // nothing: the gate types no names, so this never matches; names the owner types stay
+      /Direktorat Pembelajaran dan Kemahasiswaan/,     // official office names are not translated
+      /^Kementerian Luar Negeri, Direktorat Konsuler$/,
+      /^Abu Dhabi \(DARI \/ TAMM, Tawtheeq\)$/,        // three system names
+      /^(STEMPEL ASLI|Kantor Imigrasi .*|Jl\. .*)$/,   // an application name, office names, street addresses
+    ]
+    for (const f of ['relokasi-uae.html', 'pindah-abudhabi.html', 'visa-keluarga-uae.html', 'koper-uae.html', 'ujian-sim-abudhabi.html']) {
+      const { p, errs } = await page(390, 844)
+      await p.goto(BASE + '/games/' + f, { waitUntil: 'load' })
+      await p.waitForSelector('.u-lang button[data-lang="en"]', { timeout: 15000 }).catch(() => {})
+      await sleep(400)
+      const pre = await p.evaluate(() => {
+        window.__noReload = 1
+        const h = document.querySelector('.u-step-head'); if (h) { h.click(); h.scrollIntoView({ block: 'center' }) }
+        const el = document.querySelector('.u-sec:last-of-type'); if (!h && el) el.scrollIntoView()
+        window.__anc = document.elementFromPoint(innerWidth / 2, innerHeight / 2)
+        window.__idText = new Set(); { const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) window.__idText.add(n.data.trim().replace(/\s+/g, ' ')) }
+        for (const e of document.querySelectorAll('[aria-label],[placeholder],[title]')) for (const a of ['aria-label', 'placeholder', 'title']) if (e.getAttribute(a)) window.__idText.add(e.getAttribute(a))
+        return { text: document.body.innerText, y: Math.round(window.__anc.getBoundingClientRect().top), open: document.querySelectorAll('.u-step.open, li.open').length, btn: !!document.querySelector('.u-lang button[data-lang="en"]') }
+      })
+      await p.evaluate(() => { const b = document.querySelector('.u-lang button[data-lang="en"]'); if (b) b.click() })
+      await sleep(300)
+      const en = await p.evaluate((IDW, KEEP) => {
+        const re = new RegExp('\\b' + IDW + '\\b', 'i'), keep = KEEP.map(k => new RegExp(k.source, k.flags)), left = []
+        const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n
+        while ((n = w.nextNode())) {
+          const pe = n.parentElement; if (!pe || pe.closest('[data-noi18n],script,style,textarea')) continue
+          const t = n.data.trim().replace(/\s+/g, ' ')
+          if (t && window.__idText.has(t) && re.test(t) && !keep.some(k => k.test(t))) left.push(t.slice(0, 200))
+        }
+        for (const e of document.querySelectorAll('[aria-label],[placeholder],[title]')) { if (e.closest('[data-noi18n]')) continue; for (const a of ['aria-label', 'placeholder', 'title']) { const v = e.getAttribute(a); if (v && window.__idText.has(v) && re.test(v) && !keep.some(k => k.test(v))) left.push('@' + a + ' ' + v.slice(0, 200)) } }
+        return { left: [...new Set(left)], marker: window.__noReload === 1, y: Math.round(window.__anc.getBoundingClientRect().top), open: document.querySelectorAll('.u-step.open, li.open').length, lang: document.documentElement.lang, pressed: document.querySelector('.u-lang button[data-lang="en"]').getAttribute('aria-pressed'), text: document.body.innerText, ox: document.documentElement.scrollWidth - innerWidth, saved: localStorage.getItem('dunia-uae-lang-v1') }
+      }, IDW, KEEP.map(k => ({ source: k.source, flags: k.flags })))
+      ok(pre.btn && en.marker && en.lang === 'en' && en.pressed === 'true' && en.saved === 'en', `L23 ${f}: switch to EN with no reload (marker ${en.marker}, lang ${en.lang}, saved ${en.saved})`)
+      ok(en.open === pre.open && Math.abs(en.y - pre.y) < 4, `L23 ${f}: open steps ${pre.open} -> ${en.open}, the element at screen centre stays at y ${pre.y} -> ${en.y}`)
+      ok(en.text !== pre.text && en.left.length === 0, `L23 ${f}: Indonesian text left in EN mode ${en.left.length} ${en.left.slice(0, 4).join(' | ')}`)
+      ok(en.ox <= 0, `L23 ${f}: no sideways scroll in EN (${en.ox})`)
+      // a page at its top stays at its top; the switch is 2 buttons of 48 px inside the screen
+      await p.evaluate(() => { document.querySelector('.u-lang button[data-lang="id"]').click(); scrollTo(0, 0) }); await sleep(150)
+      const top = await p.evaluate(() => { document.querySelector('.u-lang button[data-lang="en"]').click(); const g = document.querySelector('.u-lang').getBoundingClientRect(); return { y: scrollY, right: g.right, min: Math.min(...[...document.querySelectorAll('.u-lang button')].map(x => Math.min(x.getBoundingClientRect().width, x.getBoundingClientRect().height))) } })
+      ok(top.y === 0 && top.right <= 390 && top.min >= 48, `L23 ${f}: at the top the page stays at scroll ${top.y}; switch ends at x ${Math.round(top.right)}, buttons ${Math.round(top.min)} px`)
+      if (process.env.QA_L23_OUT) fs.appendFileSync(process.env.QA_L23_OUT, en.left.join('\n') + '\n')
+      await shot(p, 'prd59-en-' + f.replace('.html', ''))
+      await p.evaluate(() => document.querySelector('.u-lang button[data-lang="id"]').click())
+      await sleep(300)
+      const back = await p.evaluate(() => ({ text: document.body.innerText, marker: window.__noReload === 1, lang: document.documentElement.lang }))
+      ok(back.marker && back.lang === 'id' && back.text === pre.text, `L23 ${f}: back to ID restores the page text exactly (${back.text === pre.text}), still no reload`)
+      // the choice follows to the next page
+      await p.evaluate(() => document.querySelector('.u-lang button[data-lang="en"]').click())
+      await p.reload({ waitUntil: 'load' }); await sleep(400)
+      const kept = await p.evaluate(() => ({ lang: document.documentElement.lang, h1: (document.querySelector('h1') || {}).textContent || '' }))
+      ok(kept.lang === 'en' && errs.length === 0, `L23 ${f}: EN kept after a reload ("${kept.h1.slice(0, 40)}"), errors ${errs.length} ${errs[0] || ''}`)
+      await p.evaluate(() => localStorage.removeItem('dunia-uae-lang-v1'))
+      await p.close()
+    }
+  }
 } finally { await b.close() }
 console.log(`qa-prd59-uae: ${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)
